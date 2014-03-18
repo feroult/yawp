@@ -8,6 +8,7 @@
 
 	<groupId>endpoint</groupId>
 	<artifactId>endpoint</artifactId>
+    <name>endpoint (wink branch)</name>
 
 	<properties>
 		<appengine.app.version>1</appengine.app.version>

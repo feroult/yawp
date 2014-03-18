@@ -7,8 +7,8 @@
 	<version>1.0-SNAPSHOT</version>
 
 	<groupId>endpoint</groupId>
-	<artifactId>endpoint-wavez</artifactId>
-    <name>endpoint (wavez branch)</name>
+	<artifactId>endpoint-wink</artifactId>
+    <name>endpoint (wink branch)</name>
 
 	<properties>
 		<appengine.app.version>1</appengine.app.version>

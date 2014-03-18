@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import endpoint.models.SimpleObject;
+import endpoint.SimpleObject;
 import endpoint.utils.JsonUtils;
 
 public class JsonUtilsTest {

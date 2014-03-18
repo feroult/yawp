@@ -11,8 +11,8 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 
-import endpoint.models.actions.RepositoryActions;
-import endpoint.models.hooks.RepositoryHooks;
+import endpoint.actions.RepositoryActions;
+import endpoint.hooks.RepositoryHooks;
 
 public class GAETest {
 

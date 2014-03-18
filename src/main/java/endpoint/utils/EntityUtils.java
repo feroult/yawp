@@ -11,8 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 
-import endpoint.models.DatastoreObject;
-import endpoint.models.Index;
+import endpoint.DatastoreObject;
+import endpoint.Index;
 
 public class EntityUtils {
 

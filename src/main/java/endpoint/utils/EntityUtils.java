@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Text;
 
 import endpoint.DatastoreObject;
 import endpoint.Index;
@@ -160,7 +161,7 @@ public class EntityUtils {
 				if (value == null) {
 					return null;
 				}
-				return JsonUtils.to(value);
+				return new Text(JsonUtils.to(value));
 			}
 
 			return value;
@@ -201,10 +202,12 @@ public class EntityUtils {
 			return;
 		}
 
+		String json = ((Text) value).getValue();
+
 		if (isList(field)) {
-			field.set(object, JsonUtils.fromArray((String) value, getListClass(field)));
+			field.set(object, JsonUtils.fromArray(json, getListClass(field)));
 		} else {
-			field.set(object, JsonUtils.from((String) value, field.getType()));
+			field.set(object, JsonUtils.from(json, field.getType()));
 		}
 	}
 

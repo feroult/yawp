@@ -2,7 +2,9 @@ package endpoint;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -108,4 +110,25 @@ public class RepositoryTest extends GAETest {
 		assertEquals("xpto", object.getNotADatastoreObject().getName());
 	}
 
+	@Test
+	public void testJsonArrayProperty() {
+		SimpleObject object = new SimpleObject();
+
+		object.setaString("xpto");
+
+		List<NotADatastoreObject> list = new ArrayList<NotADatastoreObject>();
+
+		list.add(new NotADatastoreObject("xpto1"));
+		list.add(new NotADatastoreObject("xpto2"));
+
+		object.setNotADatastoreObjectList(list);
+
+		r.save(object);
+
+		object = r.findById(object.getId(), SimpleObject.class);
+
+		assertEquals("xpto", object.getaString());
+		assertEquals("xpto1", object.getNotADatastoreObjectList().get(0).getName());
+		assertEquals("xpto2", object.getNotADatastoreObjectList().get(1).getName());
+	}
 }

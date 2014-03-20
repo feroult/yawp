@@ -74,7 +74,7 @@ public class Repository {
 		Field[] fields = EntityUtils.getFields(object.getClass());
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
-			if (!EntityUtils.isListField(field)) {
+			if (!EntityUtils.isSaveAsList(field)) {
 				continue;
 			}
 
@@ -147,7 +147,7 @@ public class Repository {
 		Field[] fields = EntityUtils.getFields(object.getClass());
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
-			if (!EntityUtils.isListField(field)) {
+			if (!EntityUtils.isSaveAsList(field)) {
 				continue;
 			}
 

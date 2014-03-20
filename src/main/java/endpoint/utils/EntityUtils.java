@@ -28,11 +28,11 @@ public class EntityUtils {
 
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
-			if (isControlField(field)) {
+			if (isControl(field)) {
 				continue;
 			}
 
-			if (isListField(field)) {
+			if (isSaveAsList(field)) {
 				continue;
 			}
 
@@ -50,11 +50,11 @@ public class EntityUtils {
 
 			for (int i = 0; i < fields.length; i++) {
 				Field field = fields[i];
-				if (isControlField(field)) {
+				if (isControl(field)) {
 					continue;
 				}
 
-				if (isListField(field)) {
+				if (isSaveAsList(field)) {
 					continue;
 				}
 
@@ -84,10 +84,6 @@ public class EntityUtils {
 		}
 
 		throw new RuntimeException("cant find list generic type");
-	}
-
-	public static boolean isListField(Field field) {
-		return List.class.isAssignableFrom(field.getType());
 	}
 
 	public static <T extends DatastoreObject> String getIndexFieldName(String fieldName, Class<T> clazz) {
@@ -173,44 +169,79 @@ public class EntityUtils {
 		}
 	}
 
-	private static boolean isSaveAsJson(Field field) {
-		return field.getAnnotation(JSON.class) != null;
-	}
-
-	private static boolean isEnum(Object value) {
-		return value != null && value.getClass().isEnum();
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static <T extends DatastoreObject> void setObjectProperty(T object, Entity entity, Field field) throws IllegalAccessException {
 		field.setAccessible(true);
 
 		Object value = entity.getProperty(field.getName());
 
-		if (field.getType().isEnum()) {
-			if (value != null) {
-				field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
-			}
+		if (isEnum(field)) {
+			setEnumProperty(object, field, value);
 			return;
 		}
 
 		if (isSaveAsJson(field)) {
-			if (value != null) {
-				field.set(object, JsonUtils.from((String) value, field.getType()));
-			}
+			setJsonProperty(object, field, value);
 			return;
 		}
 
-		if (field.getType().getName().equals("int")) {
-			field.set(object, ((Long) value).intValue());
+		if (isInt(field)) {
+			setIntProperty(object, field, value);
 			return;
 		}
 
 		field.set(object, value);
 	}
 
-	private static boolean isControlField(Field field) {
+	private static <T extends DatastoreObject> void setIntProperty(T object, Field field, Object value) throws IllegalAccessException {
+		field.set(object, ((Long) value).intValue());
+	}
+
+	private static <T extends DatastoreObject> void setJsonProperty(T object, Field field, Object value) throws IllegalAccessException {
+		if (value == null) {
+			return;
+		}
+
+		if (isList(field)) {
+			field.set(object, JsonUtils.fromArray((String) value, getListClass(field)));
+		} else {
+			field.set(object, JsonUtils.from((String) value, field.getType()));
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private static <T extends DatastoreObject> void setEnumProperty(T object, Field field, Object value) throws IllegalAccessException {
+		if (value == null) {
+			return;
+		}
+
+		field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
+	}
+
+	private static boolean isControl(Field field) {
 		return Key.class.equals(field.getType()) || field.isSynthetic();
 	}
 
+	private static boolean isSaveAsJson(Field field) {
+		return field.getAnnotation(JSON.class) != null;
+	}
+
+	public static boolean isSaveAsList(Field field) {
+		return isList(field) && !isSaveAsJson(field);
+	}
+
+	private static boolean isList(Field field) {
+		return List.class.isAssignableFrom(field.getType());
+	}
+
+	private static boolean isEnum(Object value) {
+		return value != null && value.getClass().isEnum();
+	}
+
+	private static boolean isEnum(Field field) {
+		return field.getType().isEnum();
+	}
+
+	private static boolean isInt(Field field) {
+		return field.getType().getName().equals("int");
+	}
 }

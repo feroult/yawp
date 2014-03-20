@@ -29,6 +29,9 @@ public class SimpleObject extends DatastoreObject {
 	@JSON
 	private NotADatastoreObject notADatastoreObject;
 
+	@JSON
+	private List<NotADatastoreObject> notADatastoreObjectList;
+
 	private transient String changeInCallback;
 
 	public SimpleObject() {
@@ -111,6 +114,14 @@ public class SimpleObject extends DatastoreObject {
 
 	public void setNotADatastoreObject(NotADatastoreObject notADatastoreObject) {
 		this.notADatastoreObject = notADatastoreObject;
+	}
+
+	public List<NotADatastoreObject> getNotADatastoreObjectList() {
+		return notADatastoreObjectList;
+	}
+
+	public void setNotADatastoreObjectList(List<NotADatastoreObject> notADatastoreObjectList) {
+		this.notADatastoreObjectList = notADatastoreObjectList;
 	}
 
 	public String getChangeInCallback() {

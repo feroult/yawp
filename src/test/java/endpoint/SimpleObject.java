@@ -26,10 +26,10 @@ public class SimpleObject extends DatastoreObject {
 
 	private List<AnotherSimpleObject> aList;
 
-	@JSON
+	@Json
 	private NotADatastoreObject notADatastoreObject;
 
-	@JSON
+	@Json
 	private List<NotADatastoreObject> notADatastoreObjectList;
 
 	private transient String changeInCallback;

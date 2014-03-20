@@ -14,7 +14,7 @@ import com.google.appengine.api.datastore.Text;
 
 import endpoint.DatastoreObject;
 import endpoint.Index;
-import endpoint.JSON;
+import endpoint.Json;
 
 public class EntityUtils {
 
@@ -225,7 +225,7 @@ public class EntityUtils {
 	}
 
 	private static boolean isSaveAsJson(Field field) {
-		return field.getAnnotation(JSON.class) != null;
+		return field.getAnnotation(Json.class) != null;
 	}
 
 	public static boolean isSaveAsList(Field field) {

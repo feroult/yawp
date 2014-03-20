@@ -13,6 +13,7 @@ import com.google.appengine.api.datastore.Key;
 
 import endpoint.DatastoreObject;
 import endpoint.Index;
+import endpoint.JSON;
 
 public class EntityUtils {
 
@@ -159,10 +160,21 @@ public class EntityUtils {
 				return value.toString();
 			}
 
+			if (isSaveAsJson(field)) {
+				if (value == null) {
+					return null;
+				}
+				return JsonUtils.to(value);
+			}
+
 			return value;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static boolean isSaveAsJson(Field field) {
+		return field.getAnnotation(JSON.class) != null;
 	}
 
 	private static boolean isEnum(Object value) {
@@ -177,14 +189,24 @@ public class EntityUtils {
 
 		if (field.getType().isEnum()) {
 			if (value != null) {
-				value = Enum.valueOf((Class) field.getType(), value.toString());
+				field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
 			}
-			field.set(object, value);
-		} else if (field.getType().getName().equals("int")) {
-			field.set(object, ((Long) value).intValue());
-		} else {
-			field.set(object, value);
+			return;
 		}
+
+		if (isSaveAsJson(field)) {
+			if (value != null) {
+				field.set(object, JsonUtils.from((String) value, field.getType()));
+			}
+			return;
+		}
+
+		if (field.getType().getName().equals("int")) {
+			field.set(object, ((Long) value).intValue());
+			return;
+		}
+
+		field.set(object, value);
 	}
 
 	private static boolean isControlField(Field field) {

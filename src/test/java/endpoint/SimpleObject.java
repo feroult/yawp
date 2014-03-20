@@ -11,14 +11,23 @@ import endpoint.utils.DateUtils;
 
 public class SimpleObject extends DatastoreObject {
 	private int aInt;
+
 	@Index
 	private long aLong;
+
 	private double aDouble;
+
 	private boolean aBoolean;
+
 	private Date aDate;
+
 	@Index(normalize = true)
 	private String aString;
+
 	private List<AnotherSimpleObject> aList;
+
+	@JSON
+	private NotADatastoreObject notADatastoreObject;
 
 	private transient String changeInCallback;
 
@@ -94,6 +103,14 @@ public class SimpleObject extends DatastoreObject {
 
 	public void setaList(List<AnotherSimpleObject> aList) {
 		this.aList = aList;
+	}
+
+	public NotADatastoreObject getNotADatastoreObject() {
+		return notADatastoreObject;
+	}
+
+	public void setNotADatastoreObject(NotADatastoreObject notADatastoreObject) {
+		this.notADatastoreObject = notADatastoreObject;
 	}
 
 	public String getChangeInCallback() {

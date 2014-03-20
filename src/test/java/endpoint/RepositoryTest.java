@@ -93,4 +93,19 @@ public class RepositoryTest extends GAETest {
 		assertEquals("anotherObject2", object.getaList().get(0).getaString());
 	}
 
+	@Test
+	public void testJsonProperty() {
+		SimpleObject object = new SimpleObject();
+
+		object.setaString("xpto");
+		object.setNotADatastoreObject(new NotADatastoreObject("xpto"));
+
+		r.save(object);
+
+		object = r.findById(object.getId(), SimpleObject.class);
+
+		assertEquals("xpto", object.getaString());
+		assertEquals("xpto", object.getNotADatastoreObject().getName());
+	}
+
 }

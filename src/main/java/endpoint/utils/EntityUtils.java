@@ -1,8 +1,10 @@
 package endpoint.utils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -70,7 +72,20 @@ public class EntityUtils {
 	}
 
 	public static <T extends DatastoreObject> Field[] getFields(Class<T> clazz) {
-		return ArrayUtils.addAll(DatastoreObject.class.getDeclaredFields(), clazz.getDeclaredFields());
+		Field[] allFields = ArrayUtils.addAll(DatastoreObject.class.getDeclaredFields(), clazz.getDeclaredFields());
+
+		List<Field> fields = new ArrayList<Field>();
+
+		for (int i = 0; i < allFields.length; i++) {
+			Field field = allFields[i];
+			if (Modifier.isStatic(field.getModifiers())) {
+				continue;
+			}
+
+			fields.add(field);
+		}
+
+		return fields.toArray(new Field[fields.size()]);
 	}
 
 	@SuppressWarnings("unchecked")

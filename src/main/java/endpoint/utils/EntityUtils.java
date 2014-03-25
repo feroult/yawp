@@ -127,7 +127,7 @@ public class EntityUtils {
 				return normalizeValue(value);
 			}
 
-			if (isDate(field)) {
+			if (isDate(field) && value instanceof String) {
 				return DateUtils.toTimestamp((String) value);
 			}
 

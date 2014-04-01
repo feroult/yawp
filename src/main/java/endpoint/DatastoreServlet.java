@@ -20,7 +20,7 @@ public class DatastoreServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 8155293897299089610L;
 
-	private Class<? extends DatastoreObject> clazz;
+	protected Class<? extends DatastoreObject> clazz;
 
 	@SuppressWarnings("unchecked")
 	@Override

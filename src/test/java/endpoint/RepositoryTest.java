@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import endpoint.Repository;
 import endpoint.utils.DateUtils;
 import endpoint.utils.GAETest;
 
@@ -131,4 +130,5 @@ public class RepositoryTest extends GAETest {
 		assertEquals("xpto1", object.getNotADatastoreObjectList().get(0).getName());
 		assertEquals("xpto2", object.getNotADatastoreObjectList().get(1).getName());
 	}
+
 }

@@ -176,6 +176,10 @@ public class DatastoreQuery<T extends DatastoreObject> {
 		throw new RuntimeException("invalid sort direction");
 	}
 
+	protected Class<T> getClazz() {
+		return clazz;
+	}
+
 	private FilterOperator getFilterOperator(Object o) {
 		String operator = (String) o;
 
@@ -202,4 +206,5 @@ public class DatastoreQuery<T extends DatastoreObject> {
 		}
 		throw new RuntimeException("invalid filter operator");
 	}
+
 }

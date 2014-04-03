@@ -32,7 +32,6 @@ public class NamespaceRepository extends Repository {
 		} finally {
 			namespace.reset();
 		}
-
 	}
 
 	@Override
@@ -43,7 +42,6 @@ public class NamespaceRepository extends Repository {
 		} finally {
 			namespace.reset();
 		}
-
 	}
 
 	@Override
@@ -54,7 +52,6 @@ public class NamespaceRepository extends Repository {
 		} finally {
 			namespace.reset();
 		}
-
 	}
 
 	@Override
@@ -65,7 +62,6 @@ public class NamespaceRepository extends Repository {
 		} finally {
 			namespace.reset();
 		}
-
 	}
 
 	@Override
@@ -76,6 +72,5 @@ public class NamespaceRepository extends Repository {
 		} finally {
 			namespace.reset();
 		}
-
 	}
 }

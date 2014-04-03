@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.reflections.Reflections;
 
+import endpoint.actions.RepositoryActions;
+import endpoint.hooks.RepositoryHooks;
 import endpoint.response.HttpResponse;
 import endpoint.response.JsonResponse;
 import endpoint.utils.JsonUtils;
@@ -25,38 +27,30 @@ public class DatastoreServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 8155293897299089610L;
 
-	protected String packagePrefix;
+	private Map<String, Class<? extends DatastoreObject>> endpoints = new HashMap<String, Class<? extends DatastoreObject>>();
 
-	private Map<String, Class<? extends DatastoreObject>> endpoints = new HashMap<String, Class<? extends DatastoreObject>>();;
-
-	@SuppressWarnings("unchecked")
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		String servletName = config.getServletName();
-
-		// try {
-		// // clazzX = (Class<? extends DatastoreObject>)
-		// Class.forName(servletName);
-		// } catch (ClassNotFoundException e) {
-		// throw new RuntimeException(e);
-		// }
+		String packagePrefix = config.getInitParameter("packagePrefix");
+		scanActionsAndHooks(packagePrefix);
+		scanEndpoints(packagePrefix);
 	}
 
 	public DatastoreServlet() {
 	}
 
-	public DatastoreServlet(Class<? extends DatastoreObject> clazz) {
-		// this.clazzX = clazz;
+	protected DatastoreServlet(String packagePrefix) {
+		scanEndpoints(packagePrefix);
 	}
 
-	protected DatastoreServlet(String packagePrefix) {
-		this.packagePrefix = packagePrefix;
-		scanEndpoints();
+	private void scanActionsAndHooks(String packagePrefix) {
+		RepositoryActions.scan(packagePrefix);
+		RepositoryHooks.scan(packagePrefix);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void scanEndpoints() {
+	private void scanEndpoints(String packagePrefix) {
 		Reflections reflections = new Reflections(packagePrefix);
 		Set<Class<?>> clazzes = reflections.getTypesAnnotatedWith(Endpoint.class);
 
@@ -78,7 +72,7 @@ public class DatastoreServlet extends HttpServlet {
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		try {
-			HttpResponse responseJson = execute(req.getMethod(), getEndpointPath(req), JsonUtils.readJson(req.getReader()),
+			HttpResponse responseJson = execute(req, req.getMethod(), getPath(req), JsonUtils.readJson(req.getReader()),
 					req.getParameter("q"));
 
 			response(resp, responseJson);
@@ -88,58 +82,59 @@ public class DatastoreServlet extends HttpServlet {
 		}
 	}
 
-	private String getEndpointPath(HttpServletRequest req) {
+	private String getPath(HttpServletRequest req) {
 		return req.getRequestURI().substring(req.getServletPath().length());
 	}
 
-	protected HttpResponse execute(String method, String path, String requestJson, String q) {
+	protected HttpResponse execute(HttpServletRequest req, String method, String path, String requestJson, String q) {
 		DatastoreRouter router = new DatastoreRouter(method, path);
-
 		Class<? extends DatastoreObject> clazz = endpoints.get(router.getEndpointPath());
+
+		Repository r = getRepository(req);
 
 		switch (router.getAction()) {
 		case INDEX:
-			return new JsonResponse(index(clazz, q));
+			return new JsonResponse(index(r, clazz, q));
 		case SHOW:
-			return new JsonResponse(get(clazz, router.getId()));
+			return new JsonResponse(get(r, clazz, router.getId()));
 		case CREATE:
-			return new JsonResponse(save(clazz, requestJson));
+			return new JsonResponse(save(r, clazz, requestJson));
 		case UPDATE:
-			return new JsonResponse(save(clazz, requestJson));
+			return new JsonResponse(save(r, clazz, requestJson));
 		case CUSTOM:
-			return action(clazz, router.getMethod(), router.getCustomAction(), router.getId());
+			return action(r, clazz, router.getMethod(), router.getCustomAction(), router.getId());
 		}
 
 		throw new IllegalArgumentException("Invalid datastore action");
 	}
 
-	private HttpResponse action(Class<? extends DatastoreObject> clazz, String method, String customAction, Long id) {
-		Repository r = new Repository();
+	protected Repository getRepository(HttpServletRequest req) {
+		return new Repository();
+	}
+
+	private HttpResponse action(Repository r, Class<? extends DatastoreObject> clazz, String method, String customAction, Long id) {
 		return r.action(clazz, method, customAction, id);
 	}
 
-	private String save(Class<? extends DatastoreObject> clazz, String json) {
+	private String save(Repository r, Class<? extends DatastoreObject> clazz, String json) {
 		logger.warning("JSON: " + json);
 
 		if (JsonUtils.isJsonArray(json)) {
-			return saveFromArray(clazz, json);
+			return saveFromArray(r, clazz, json);
 		} else {
-			return saveFromObject(clazz, json);
+			return saveFromObject(r, clazz, json);
 		}
 	}
 
-	private String saveFromObject(Class<? extends DatastoreObject> clazz, String json) {
+	private String saveFromObject(Repository r, Class<? extends DatastoreObject> clazz, String json) {
 		DatastoreObject object = JsonUtils.from(json, clazz);
 
-		Repository r = new Repository();
 		r.save(object);
 
 		return JsonUtils.to(object);
 	}
 
-	private String saveFromArray(Class<? extends DatastoreObject> clazz, String json) {
-		Repository r = new Repository();
-
+	private String saveFromArray(Repository r, Class<? extends DatastoreObject> clazz, String json) {
 		List<? extends DatastoreObject> objects = JsonUtils.fromArray(json, clazz);
 
 		for (DatastoreObject object : objects) {
@@ -149,9 +144,7 @@ public class DatastoreServlet extends HttpServlet {
 		return JsonUtils.to(objects);
 	}
 
-	private String index(Class<? extends DatastoreObject> clazz, String q) {
-		Repository r = new Repository();
-
+	private String index(Repository r, Class<? extends DatastoreObject> clazz, String q) {
 		if (q == null) {
 			return JsonUtils.to(r.all(clazz));
 		}
@@ -159,8 +152,7 @@ public class DatastoreServlet extends HttpServlet {
 		return JsonUtils.to(r.query(clazz).options(DatastoreQueryOptions.parse(q)).asList());
 	}
 
-	private String get(Class<? extends DatastoreObject> clazz, long id) {
-		Repository r = new Repository();
+	private String get(Repository r, Class<? extends DatastoreObject> clazz, long id) {
 		return JsonUtils.to(r.findById(id, clazz));
 	}
 

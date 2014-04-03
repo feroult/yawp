@@ -108,6 +108,7 @@ public class DatastoreServlet extends HttpServlet {
 		throw new IllegalArgumentException("Invalid datastore action");
 	}
 
+	// TODO this req here is a big bad smell
 	protected Repository getRepository(HttpServletRequest req) {
 		return new Repository();
 	}

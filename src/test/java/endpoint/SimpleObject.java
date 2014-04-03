@@ -5,10 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.util.Date;
 import java.util.List;
 
-import endpoint.DatastoreObject;
-import endpoint.Index;
 import endpoint.utils.DateUtils;
 
+@Endpoint("/simpleobjects")
 public class SimpleObject extends DatastoreObject {
 	private int aInt;
 

@@ -19,12 +19,12 @@ public class DatastoreServletTest extends GAETest {
 
 	@Before
 	public void before() {
-		servlet = new DatastoreServlet(SimpleObject.class);
+		servlet = new DatastoreServlet("endpoint");
 	}
 
 	@Test
 	public void testCreate() {
-		String json = servlet.execute("POST", "/api/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
+		String json = servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
 
 		SimpleObject object = JsonUtils.from(json, SimpleObject.class);
 
@@ -36,7 +36,7 @@ public class DatastoreServletTest extends GAETest {
 
 	@Test
 	public void testCreateArray() {
-		String json = servlet.execute("POST", "/api/simpleobjects", SIMPLE_ARRAY_JSON, null).getText();
+		String json = servlet.execute("POST", "/simpleobjects", SIMPLE_ARRAY_JSON, null).getText();
 
 		List<SimpleObject> objects = JsonUtils.fromArray(json, SimpleObject.class);
 
@@ -49,10 +49,10 @@ public class DatastoreServletTest extends GAETest {
 
 	@Test
 	public void testIndex() {
-		servlet.execute("POST", "/api/simpleobjects", SIMPLE_OBJECT_JSON, null);
-		servlet.execute("POST", "/api/simpleobjects", SIMPLE_OBJECT_JSON, null);
+		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);
+		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);
 
-		String json = servlet.execute("GET", "/api/simpleobjects", null, null).getText();
+		String json = servlet.execute("GET", "/simpleobjects", null, null).getText();
 
 		List<SimpleObject> objects = JsonUtils.fromArray(json, SimpleObject.class);
 
@@ -63,11 +63,11 @@ public class DatastoreServletTest extends GAETest {
 
 	@Test
 	public void testCustomAction() {
-		String json = servlet.execute("POST", "/api/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
+		String json = servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
 
 		SimpleObject object = JsonUtils.from(json, SimpleObject.class);
 
-		json = servlet.execute("PUT", "/api/simpleobjects/" + object.getId() + "/active", null, null).getText();
+		json = servlet.execute("PUT", "/simpleobjects/" + object.getId() + "/active", null, null).getText();
 
 		object = JsonUtils.from(json, SimpleObject.class);
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "i was changed in action");

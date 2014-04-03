@@ -14,6 +14,8 @@ public class DatastoreRouter {
 
 	private Long id;
 
+	private String endpointPath;
+
 	public DatastoreRouter(String method, String path) {
 		this.method = method;
 		this.path = path;
@@ -32,14 +34,16 @@ public class DatastoreRouter {
 	private void parsePath() {
 		String[] parts = path.split("/");
 
-		// /api/devices/100
-		if (parts.length >= 4) {
-			id = Long.valueOf(parts[3]);
+		endpointPath = "/" + parts[1];
+
+		// /devices/100
+		if (parts.length >= 3) {
+			id = Long.valueOf(parts[2]);
 		}
 
-		// /api/devices/100/active
-		if (parts.length == 5) {
-			customAction = parts[4];
+		// /devices/100/active
+		if (parts.length == 4) {
+			customAction = parts[3];
 		}
 	}
 
@@ -88,5 +92,9 @@ public class DatastoreRouter {
 
 	public String getPath() {
 		return path;
+	}
+
+	public String getEndpointPath() {
+		return endpointPath;
 	}
 }

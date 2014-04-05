@@ -23,14 +23,22 @@ import endpoint.utils.EntityUtils;
 public class DatastoreQuery<T extends DatastoreObject> {
 
 	private Class<T> clazz;
+
+	private Namespace namespace;
+
 	private Key parentKey;
+
 	private Object[] where;
+
 	private String[] order;
+
 	private Integer limit;
+
 	private String cursor;
 
-	public DatastoreQuery(Class<T> clazz) {
+	public DatastoreQuery(Class<T> clazz, Namespace namespace) {
 		this.clazz = clazz;
+		this.namespace = namespace;
 	}
 
 	public DatastoreQuery<T> where(Object... values) {
@@ -79,9 +87,28 @@ public class DatastoreQuery<T extends DatastoreObject> {
 	}
 
 	public List<T> asList() {
-		PreparedQuery pq = prepareQuery();
-		FetchOptions fetchOptions = configureFetchOptions();
-		return executeQuery(pq, fetchOptions);
+		namespace.set(getClazz());
+		try {
+			PreparedQuery pq = prepareQuery();
+			FetchOptions fetchOptions = configureFetchOptions();
+			return executeQuery(pq, fetchOptions);
+		} finally {
+			namespace.reset();
+		}
+	}
+
+	public T first() {
+		namespace.set(getClazz());
+		try {
+
+			List<T> list = limit(1).asList();
+			if (list.size() == 0) {
+				return null;
+			}
+			return list.get(0);
+		} finally {
+			namespace.reset();
+		}
 	}
 
 	private List<T> executeQuery(PreparedQuery pq, FetchOptions fetchOptions) {
@@ -156,14 +183,6 @@ public class DatastoreQuery<T extends DatastoreObject> {
 			return;
 		}
 		q.setAncestor(parentKey);
-	}
-
-	public T first() {
-		List<T> list = limit(1).asList();
-		if (list.size() == 0) {
-			return null;
-		}
-		return list.get(0);
 	}
 
 	private SortDirection getSortDirection(String order) {

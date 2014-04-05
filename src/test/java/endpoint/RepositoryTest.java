@@ -6,20 +6,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import endpoint.utils.DateUtils;
-import endpoint.utils.GAETest;
+import endpoint.utils.EndpointTestCase;
 
-public class RepositoryTest extends GAETest {
-
-	private Repository r;
-
-	@Before
-	public void before() {
-		r = new Repository();
-	}
+public class RepositoryTest extends EndpointTestCase {
 
 	@Test
 	public void testSave() {

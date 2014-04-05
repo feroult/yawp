@@ -4,23 +4,14 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import endpoint.DatastoreQuery;
 import endpoint.DatastoreQueryOptions;
-import endpoint.Repository;
 import endpoint.utils.DateUtils;
-import endpoint.utils.GAETest;
+import endpoint.utils.EndpointTestCase;
 
-public class DatastoreQueryTest extends GAETest {
-
-	private Repository r;
-
-	@Before
-	public void before() {
-		r = new Repository();
-	}
+public class DatastoreQueryTest extends EndpointTestCase {
 
 	private void saveThreeObjects() {
 		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1"));

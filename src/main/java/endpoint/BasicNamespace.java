@@ -2,13 +2,17 @@ package endpoint;
 
 import com.google.appengine.api.NamespaceManager;
 
-public class SimpleNamespaceHandler implements NamespaceHandler {
+public class BasicNamespace implements Namespace {
 
-	private String ns;
+	protected String ns;
 
-	private String previousNs;
+	protected String previousNs;
 
-	public SimpleNamespaceHandler(String ns) {
+	public BasicNamespace() {
+		this(Namespace.GLOBAL);
+	}
+
+	public BasicNamespace(String ns) {
 		this.ns = ns;
 	}
 

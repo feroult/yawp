@@ -2,16 +2,14 @@ package endpoint.hooks;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import endpoint.DatastoreObject;
-import endpoint.Repository;
 import endpoint.SimpleObject;
 import endpoint.utils.DateUtils;
-import endpoint.utils.GAETest;
+import endpoint.utils.EndpointTestCase;
 
-public class HookTest extends GAETest {
+public class HookTest extends EndpointTestCase {
 
 	public class Product extends DatastoreObject {
 		private String name;
@@ -23,13 +21,6 @@ public class HookTest extends GAETest {
 		public void setName(String name) {
 			this.name = name;
 		}
-	}
-
-	private Repository r;
-
-	@Before
-	public void before() {
-		r = new Repository();
 	}
 
 	@Test

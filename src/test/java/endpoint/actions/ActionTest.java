@@ -5,24 +5,15 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import endpoint.Repository;
 import endpoint.SimpleObject;
 import endpoint.response.HttpResponse;
 import endpoint.utils.DateUtils;
-import endpoint.utils.GAETest;
+import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
 
-public class ActionTest extends GAETest {
-
-	private Repository r;
-
-	@Before
-	public void before() {
-		r = new Repository();
-	}
+public class ActionTest extends EndpointTestCase {
 
 	@Test
 	public void testSimpleAction() {

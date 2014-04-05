@@ -7,10 +7,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import endpoint.utils.GAETest;
+import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
 
-public class DatastoreServletTest extends GAETest {
+public class DatastoreServletTest extends EndpointTestCase {
 
 	private static final String SIMPLE_OBJECT_JSON = "{aInt : 1, aLong : 1, aDouble : 1.1, aBoolean : true, aDate : '2013/12/26 23:55:01', aString : object1, aList : [{aString : anotherObject1}]}";
 	private static final String SIMPLE_ARRAY_JSON = String.format("[%s, %s]", SIMPLE_OBJECT_JSON, SIMPLE_OBJECT_JSON);

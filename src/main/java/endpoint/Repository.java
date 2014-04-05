@@ -23,51 +23,98 @@ public class Repository {
 
 	private static Logger logger = Logger.getLogger(Repository.class.getSimpleName());
 
+	private Namespace namespace;
+
+	public Repository() {
+		this(new BasicNamespace());
+	}
+
+	public Repository(String ns) {
+		this(new BasicNamespace(ns));
+	}
+
+	public Repository(Namespace namespace) {
+		this.namespace = namespace;
+	}
+
 	public void save(DatastoreObject object) {
-		RepositoryHooks.beforeSave(this, object);
+		namespace.set(object.getClass());
+		try {
+			RepositoryHooks.beforeSave(this, object);
 
-		Entity entity = createEntity(object);
-		EntityUtils.toEntity(object, entity);
-		saveEntity(object, entity, null);
-		saveLists(object, entity);
+			Entity entity = createEntity(object);
+			EntityUtils.toEntity(object, entity);
+			saveEntity(object, entity, null);
+			saveLists(object, entity);
 
-		RepositoryHooks.afterSave(this, object);
+			RepositoryHooks.afterSave(this, object);
+		} finally {
+			namespace.reset();
+		}
 	}
 
 	public HttpResponse action(Class<? extends DatastoreObject> clazz, String method, String action, long id, Map<String, String> params) {
-		return RepositoryActions.execute(this, clazz, method, action, id, params);
+		namespace.set(clazz);
+		try {
+			return RepositoryActions.execute(this, clazz, method, action, id, params);
+		} finally {
+			namespace.reset();
+		}
 	}
 
 	public <T extends DatastoreObject> List<T> all(Class<T> clazz) {
-		return query(clazz).asList();
+		namespace.set(clazz);
+		try {
+			return query(clazz).asList();
+		} finally {
+			namespace.reset();
+		}
 	}
 
 	public <T extends DatastoreObject> T findByKey(Key key, Class<T> clazz) {
-		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
-
+		namespace.set(clazz);
 		try {
-			Entity entity = datastoreService.get(key);
-			T object = EntityUtils.toObject(entity, clazz);
-			loadLists(object);
-			return object;
-		} catch (EntityNotFoundException e) {
-			logger.warning("entity not found: " + e.getMessage());
-			return null;
+
+			DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
+
+			try {
+				Entity entity = datastoreService.get(key);
+				T object = EntityUtils.toObject(entity, clazz);
+				loadLists(object);
+				return object;
+			} catch (EntityNotFoundException e) {
+				logger.warning("entity not found: " + e.getMessage());
+				return null;
+			}
+		} finally {
+			namespace.reset();
 		}
 	}
 
 	public <T extends DatastoreObject> T findById(long id, Class<T> clazz) {
-		return findByKey(KeyFactory.createKey(EntityUtils.getKind(clazz), id), clazz);
+		namespace.set(clazz);
+		try {
+
+			return findByKey(KeyFactory.createKey(EntityUtils.getKind(clazz), id), clazz);
+		} finally {
+			namespace.reset();
+		}
+	}
+
+	public <T extends DatastoreObject> DatastoreQuery<T> query(Class<T> clazz) {
+		namespace.set(clazz);
+		try {
+
+			return new DatastoreQuery<T>(clazz, namespace);
+		} finally {
+			namespace.reset();
+		}
 	}
 
 	private void saveEntity(DatastoreObject object, Entity entity, String action) {
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 		Key key = datastoreService.put(entity);
 		object.setKey(key);
-	}
-
-	public <T extends DatastoreObject> DatastoreQuery<T> query(Class<T> clazz) {
-		return new DatastoreQuery<T>(clazz);
 	}
 
 	@SuppressWarnings("unchecked")

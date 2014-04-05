@@ -6,17 +6,17 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import endpoint.utils.GAETest;
+import endpoint.utils.EndpointTestCase;
 
-public class NamespaceRespositoryTest extends GAETest {
+public class RespositoryNamespaceTest extends EndpointTestCase {
 
 	private Repository r1;
 	private Repository r2;
 
 	@Before
 	public void before() {
-		r1 = new NamespaceRepository(new SimpleNamespaceHandler("ns1"));
-		r2 = new NamespaceRepository(new SimpleNamespaceHandler("ns2"));
+		r1 = new Repository("ns1");
+		r2 = new Repository("ns2");
 	}
 
 	@Test

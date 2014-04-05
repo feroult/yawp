@@ -37,6 +37,10 @@ public class Repository {
 		this.namespace = namespace;
 	}
 
+	public void namespace(String ns) {
+		this.namespace = new BasicNamespace(ns);
+	}
+	
 	public void save(DatastoreObject object) {
 		namespace.set(object.getClass());
 		try {

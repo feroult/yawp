@@ -13,7 +13,7 @@ public class BasicNamespace implements Namespace {
 	}
 
 	public BasicNamespace(String ns) {
-		this.ns = ns;
+		this.ns = ns == null ? Namespace.GLOBAL : ns;
 	}
 
 	@Override

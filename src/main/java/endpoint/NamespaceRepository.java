@@ -1,6 +1,7 @@
 package endpoint;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.appengine.api.datastore.Key;
 
@@ -25,10 +26,10 @@ public class NamespaceRepository extends Repository {
 	}
 
 	@Override
-	public HttpResponse action(Class<? extends DatastoreObject> clazz, String method, String action, long id) {
+	public HttpResponse action(Class<? extends DatastoreObject> clazz, String method, String action, long id, Map<String, String> params) {
 		namespace.set(clazz);
 		try {
-			return super.action(clazz, method, action, id);
+			return super.action(clazz, method, action, id, params);
 		} finally {
 			namespace.reset();
 		}

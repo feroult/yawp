@@ -73,7 +73,8 @@ public class RepositoryActions {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static HttpResponse execute(Repository r, Class<? extends DatastoreObject> objectClazz, String httpMethod, String action, Long id) {
+	public static HttpResponse execute(Repository r, Class<? extends DatastoreObject> objectClazz, String httpMethod, String action,
+			Long id, Map<String, String> params) {
 
 		try {
 			Method method = actions.get(getActionKey(objectClazz, httpMethod, action));
@@ -82,7 +83,12 @@ public class RepositoryActions {
 			Action actionInstance = actionClazz.newInstance();
 			actionInstance.setRepository(r);
 
-			Object ret = method.invoke(actionInstance, id);
+			Object ret;
+			if (method.getParameterTypes().length == 1) {
+				ret = method.invoke(actionInstance, id);
+			} else {
+				ret = method.invoke(actionInstance, id, params);
+			}
 
 			if (method.getReturnType().equals(Void.TYPE)) {
 				return null;

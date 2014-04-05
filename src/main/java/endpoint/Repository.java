@@ -3,6 +3,7 @@ package endpoint;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -33,8 +34,8 @@ public class Repository {
 		RepositoryHooks.afterSave(this, object);
 	}
 
-	public HttpResponse action(Class<? extends DatastoreObject> clazz, String method, String action, long id) {
-		return RepositoryActions.execute(this, clazz, method, action, id);
+	public HttpResponse action(Class<? extends DatastoreObject> clazz, String method, String action, long id, Map<String, String> params) {
+		return RepositoryActions.execute(this, clazz, method, action, id, params);
 	}
 
 	public <T extends DatastoreObject> List<T> all(Class<T> clazz) {

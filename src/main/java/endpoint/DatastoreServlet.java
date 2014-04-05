@@ -1,6 +1,7 @@
 package endpoint;
 
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,8 +73,7 @@ public class DatastoreServlet extends HttpServlet {
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 		try {
-			HttpResponse responseJson = execute(req, req.getMethod(), getPath(req), JsonUtils.readJson(req.getReader()),
-					req.getParameter("q"));
+			HttpResponse responseJson = execute(req, req.getMethod(), getPath(req), JsonUtils.readJson(req.getReader()), makeParams(req));
 
 			response(resp, responseJson);
 
@@ -82,11 +82,24 @@ public class DatastoreServlet extends HttpServlet {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
+	private Map<String, String> makeParams(HttpServletRequest req) {
+		Map<String, String> map = new HashMap<String, String>();
+
+		Enumeration e = req.getParameterNames();
+		while (e.hasMoreElements()) {
+			String name = (String) e.nextElement();
+			map.put(name, req.getParameter(name));
+		}
+
+		return map;
+	}
+
 	private String getPath(HttpServletRequest req) {
 		return req.getRequestURI().substring(req.getServletPath().length());
 	}
 
-	protected HttpResponse execute(HttpServletRequest req, String method, String path, String requestJson, String q) {
+	protected HttpResponse execute(HttpServletRequest req, String method, String path, String requestJson, Map<String, String> params) {
 		DatastoreRouter router = new DatastoreRouter(method, path);
 		Class<? extends DatastoreObject> clazz = endpoints.get(router.getEndpointPath());
 
@@ -94,7 +107,7 @@ public class DatastoreServlet extends HttpServlet {
 
 		switch (router.getAction()) {
 		case INDEX:
-			return new JsonResponse(index(r, clazz, q));
+			return new JsonResponse(index(r, clazz, params == null ? null : params.get("q")));
 		case SHOW:
 			return new JsonResponse(get(r, clazz, router.getId()));
 		case CREATE:
@@ -102,7 +115,7 @@ public class DatastoreServlet extends HttpServlet {
 		case UPDATE:
 			return new JsonResponse(save(r, clazz, requestJson));
 		case CUSTOM:
-			return action(r, clazz, router.getMethod(), router.getCustomAction(), router.getId());
+			return action(r, clazz, router.getMethod(), router.getCustomAction(), router.getId(), params);
 		}
 
 		throw new IllegalArgumentException("Invalid datastore action");
@@ -113,8 +126,9 @@ public class DatastoreServlet extends HttpServlet {
 		return new Repository();
 	}
 
-	private HttpResponse action(Repository r, Class<? extends DatastoreObject> clazz, String method, String customAction, Long id) {
-		return r.action(clazz, method, customAction, id);
+	private HttpResponse action(Repository r, Class<? extends DatastoreObject> clazz, String method, String customAction, Long id,
+			Map<String, String> params) {
+		return r.action(clazz, method, customAction, id, params);
 	}
 
 	private String save(Repository r, Class<? extends DatastoreObject> clazz, String json) {

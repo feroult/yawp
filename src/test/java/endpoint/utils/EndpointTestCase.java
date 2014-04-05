@@ -18,7 +18,9 @@ import endpoint.hooks.RepositoryHooks;
 public class EndpointTestCase {
 
 	private static final String LOGGED_USER_ID = "10";
+
 	private LocalServiceTestHelper helper;
+
 	protected Repository r;
 
 	@BeforeClass

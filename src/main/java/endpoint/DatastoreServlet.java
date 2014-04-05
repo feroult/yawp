@@ -103,7 +103,7 @@ public class DatastoreServlet extends HttpServlet {
 		DatastoreRouter router = new DatastoreRouter(method, path);
 		Class<? extends DatastoreObject> clazz = endpoints.get(router.getEndpointPath());
 
-		Repository r = getRepository(req);
+		Repository r = getRepository(params);
 
 		switch (router.getAction()) {
 		case INDEX:
@@ -121,8 +121,7 @@ public class DatastoreServlet extends HttpServlet {
 		throw new IllegalArgumentException("Invalid datastore action");
 	}
 
-	// TODO this req here is a big bad smell
-	protected Repository getRepository(HttpServletRequest req) {
+	protected Repository getRepository(Map<String, String> params) {
 		return new Repository();
 	}
 

@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Endpoint {
 
-	String value();
+	String path();
+
+	boolean index() default true;
 
 }

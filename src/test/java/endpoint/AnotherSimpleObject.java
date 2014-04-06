@@ -3,6 +3,7 @@ package endpoint;
 import static org.junit.Assert.assertEquals;
 import endpoint.DatastoreObject;
 
+@Endpoint(path = "/anothersimpleobjects", index = false)
 public class AnotherSimpleObject extends DatastoreObject {
 
 	private String aString;

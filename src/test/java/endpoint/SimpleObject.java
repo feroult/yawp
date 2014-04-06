@@ -7,7 +7,7 @@ import java.util.List;
 
 import endpoint.utils.DateUtils;
 
-@Endpoint("/simpleobjects")
+@Endpoint(path = "/simpleobjects")
 public class SimpleObject extends DatastoreObject {
 	private int aInt;
 

@@ -18,6 +18,7 @@ import org.reflections.Reflections;
 
 import endpoint.actions.RepositoryActions;
 import endpoint.hooks.RepositoryHooks;
+import endpoint.response.ForbiddenResponse;
 import endpoint.response.HttpResponse;
 import endpoint.response.JsonResponse;
 import endpoint.utils.JsonUtils;
@@ -57,7 +58,7 @@ public class DatastoreServlet extends HttpServlet {
 
 		for (Class<?> endpoint : clazzes) {
 			Endpoint annotation = endpoint.getAnnotation(Endpoint.class);
-			endpoints.put(annotation.value(), (Class<? extends DatastoreObject>) endpoint);
+			endpoints.put(annotation.path(), (Class<? extends DatastoreObject>) endpoint);
 		}
 	}
 
@@ -68,21 +69,19 @@ public class DatastoreServlet extends HttpServlet {
 		httpResponse.execute(resp);
 	}
 
-	private void forbidden(HttpServletResponse resp) {
-		resp.setStatus(403);
-	}
-
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+		HttpResponse httpResponse;
 		try {
-			HttpResponse responseJson = execute(req, req.getMethod(), getPath(req), JsonUtils.readJson(req.getReader()), makeParams(req));
 
-			response(resp, responseJson);
+			httpResponse = execute(req.getMethod(), getPath(req), JsonUtils.readJson(req.getReader()), makeParams(req));
 
 		} catch (DatastoreException e) {
-			forbidden(resp);
+			httpResponse = new ForbiddenResponse();
 		}
+
+		response(resp, httpResponse);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -102,14 +101,19 @@ public class DatastoreServlet extends HttpServlet {
 		return req.getRequestURI().substring(req.getServletPath().length());
 	}
 
-	protected HttpResponse execute(HttpServletRequest req, String method, String path, String requestJson, Map<String, String> params) {
+	protected HttpResponse execute(String method, String path, String requestJson, Map<String, String> params) {
 		DatastoreRouter router = new DatastoreRouter(method, path);
 		Class<? extends DatastoreObject> clazz = endpoints.get(router.getEndpointPath());
+
+		Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
 
 		Repository r = getRepository(params);
 
 		switch (router.getAction()) {
 		case INDEX:
+			if (!endpoint.index()) {
+				return new ForbiddenResponse();
+			}
 			return new JsonResponse(index(r, clazz, params == null ? null : params.get("q")));
 		case SHOW:
 			return new JsonResponse(get(r, clazz, router.getId()));

@@ -34,15 +34,11 @@ public class Repository {
 	}
 
 	public Repository() {
-		this(new Namespace());
+		this.namespace = new Namespace();
 	}
 
 	public Repository(String ns) {
-		this(new Namespace(ns));
-	}
-
-	public Repository(Namespace namespace) {
-		this.namespace = namespace;
+		this.namespace = new Namespace(ns);
 	}
 
 	public Repository namespace(String ns) {

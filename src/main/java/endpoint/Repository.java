@@ -25,6 +25,10 @@ public class Repository {
 
 	private Namespace namespace;
 
+	public static Repository r() {		
+		return new Repository();
+	}
+	
 	public Repository() {
 		this(new BasicNamespace());
 	}

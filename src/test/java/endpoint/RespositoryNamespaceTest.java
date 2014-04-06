@@ -15,8 +15,8 @@ public class RespositoryNamespaceTest extends EndpointTestCase {
 
 	@Before
 	public void before() {
-		r1 = new Repository("ns1");
-		r2 = new Repository("ns2");
+		r1 = Repository.r("ns1");
+		r2 = Repository.r("ns2");
 	}
 
 	@Test

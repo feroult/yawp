@@ -129,7 +129,7 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	protected Repository getRepository(Map<String, String> params) {
-		return new Repository();
+		return Repository.r();
 	}
 
 	private HttpResponse action(Repository r, Class<? extends DatastoreObject> clazz, String method, String customAction, Long id,

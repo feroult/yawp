@@ -43,7 +43,7 @@ public class EndpointTestCase {
 
 	@Before
 	public void setupRepository() {
-		r = new Repository(LOGGED_USER_ID);
+		r = Repository.r(LOGGED_USER_ID);
 	}
 
 	@After

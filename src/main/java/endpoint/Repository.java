@@ -33,11 +33,11 @@ public class Repository {
 		return new Repository(ns);
 	}
 
-	public Repository() {
+	private Repository() {
 		this.namespace = new Namespace();
 	}
 
-	public Repository(String ns) {
+	private Repository(String ns) {
 		this.namespace = new Namespace(ns);
 	}
 

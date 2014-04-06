@@ -15,7 +15,7 @@ public class Namespace {
 	}
 
 	public Namespace(String ns) {
-		this.ns = ns == null ? GLOBAL : ns;
+		this.ns = normalizeNs(ns);
 	}
 
 	public void set(Class<? extends DatastoreObject> clazz) {
@@ -32,11 +32,14 @@ public class Namespace {
 	}
 
 	public void setNs(String ns) {
-		this.ns = ns;		
+		this.ns = normalizeNs(ns);
 	}
 
 	public String getNs() {
 		return ns;
 	}
 
+	private String normalizeNs(String ns) {
+		return ns == null ? GLOBAL : ns;
+	}
 }

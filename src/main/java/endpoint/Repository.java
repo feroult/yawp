@@ -25,16 +25,20 @@ public class Repository {
 
 	private Namespace namespace;
 
-	public static Repository r() {		
+	public static Repository r() {
 		return new Repository();
 	}
-	
+
+	public static Repository r(String ns) {
+		return new Repository(ns);
+	}
+
 	public Repository() {
-		this(new BasicNamespace());
+		this(new Namespace());
 	}
 
 	public Repository(String ns) {
-		this(new BasicNamespace(ns));
+		this(new Namespace(ns));
 	}
 
 	public Repository(Namespace namespace) {
@@ -42,19 +46,14 @@ public class Repository {
 	}
 
 	public Repository namespace(String ns) {
-		this.namespace = new BasicNamespace(ns);
-		return this;
-	}
-
-	public Repository namespace() {
-		this.namespace = new BasicNamespace();
+		namespace.setNs(ns);
 		return this;
 	}
 
 	public String currentNamespace() {
-		return namespace.get();
+		return namespace.getNs();
 	}
-	
+
 	public void save(DatastoreObject object) {
 		namespace.set(object.getClass());
 		try {
@@ -229,5 +228,4 @@ public class Repository {
 			}
 		}
 	}
-
 }

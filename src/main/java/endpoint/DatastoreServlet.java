@@ -62,6 +62,9 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	private void response(HttpServletResponse resp, HttpResponse httpResponse) throws IOException {
+		if (httpResponse == null) {
+			return;
+		}
 		httpResponse.execute(resp);
 	}
 

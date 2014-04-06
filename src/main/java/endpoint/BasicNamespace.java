@@ -27,4 +27,9 @@ public class BasicNamespace implements Namespace {
 		NamespaceManager.set(previousNs);
 	}
 
+	@Override
+	public String get() {
+		return ns;
+	}
+
 }

@@ -51,6 +51,10 @@ public class Repository {
 		return this;
 	}
 
+	public String currentNamespace() {
+		return namespace.get();
+	}
+	
 	public void save(DatastoreObject object) {
 		namespace.set(object.getClass());
 		try {
@@ -225,4 +229,5 @@ public class Repository {
 			}
 		}
 	}
+
 }

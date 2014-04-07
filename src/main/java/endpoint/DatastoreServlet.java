@@ -120,6 +120,9 @@ public class DatastoreServlet extends HttpServlet {
 		case CREATE:
 			return new JsonResponse(save(r, clazz, requestJson));
 		case UPDATE:
+			if (!endpoint.update()) {
+				return new ForbiddenResponse();
+			}			
 			return new JsonResponse(save(r, clazz, requestJson));
 		case CUSTOM:
 			return action(r, clazz, router.getMethod(), router.getCustomAction(), router.getId(), params);

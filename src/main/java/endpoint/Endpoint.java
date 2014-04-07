@@ -13,4 +13,6 @@ public @interface Endpoint {
 
 	boolean index() default true;
 
+	boolean update() default true;
+
 }

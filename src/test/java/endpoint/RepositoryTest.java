@@ -1,6 +1,7 @@
 package endpoint;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -123,4 +124,20 @@ public class RepositoryTest extends EndpointTestCase {
 		assertEquals("xpto2", object.getNotADatastoreObjectList().get(1).getName());
 	}
 
+	@Test
+	public void testDelete() {
+		SimpleObject object = new SimpleObject("xpto");
+
+		List<AnotherSimpleObject> list = new ArrayList<AnotherSimpleObject>();
+		list.add(new AnotherSimpleObject("xpto1"));
+		list.add(new AnotherSimpleObject("xpto2"));
+		object.setaList(list);
+
+		r.save(object);
+
+		r.delete(object.getId(), SimpleObject.class);
+
+		assertNull(r.findById(object.getId(), SimpleObject.class));
+		assertEquals(0, r.query(AnotherSimpleObject.class).parentKey(object.getKey()).asList().size());
+	}
 }

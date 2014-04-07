@@ -13,11 +13,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
 
 import endpoint.DatastoreObject;
 import endpoint.Index;
 import endpoint.Json;
+import endpoint.SimpleObject;
 
 public class EntityUtils {
 
@@ -135,6 +137,10 @@ public class EntityUtils {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public static Key createKey(Long id, Class<SimpleObject> clazz) {
+		return KeyFactory.createKey(getKind(clazz), id);
 	}
 
 	private static void setEntityProperty(DatastoreObject object, Entity entity, Field field) {

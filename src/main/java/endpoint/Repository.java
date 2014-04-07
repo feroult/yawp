@@ -124,6 +124,34 @@ public class Repository {
 		}
 	}
 
+	public void delete(Long id, Class<SimpleObject> clazz) {
+		namespace.set(clazz);
+		try {
+			DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
+
+			Key key = EntityUtils.createKey(id, clazz);
+			datastoreService.delete(key);
+			deleteLists(key, clazz);
+
+		} finally {
+			namespace.reset();
+		}
+
+	}
+
+	private void deleteLists(Key key, Class<SimpleObject> clazz) {
+		Field[] fields = EntityUtils.getFields(clazz);
+		for (int i = 0; i < fields.length; i++) {
+			Field field = fields[i];
+			if (!EntityUtils.isSaveAsList(field)) {
+				continue;
+			}
+
+			field.setAccessible(true);
+			deleteChilds(key, EntityUtils.getListClass(field));
+		}
+	}
+
 	private void saveEntity(DatastoreObject object, Entity entity, String action) {
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 		Key key = datastoreService.put(entity);

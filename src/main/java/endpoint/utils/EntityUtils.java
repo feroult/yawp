@@ -19,7 +19,6 @@ import com.google.appengine.api.datastore.Text;
 import endpoint.DatastoreObject;
 import endpoint.Index;
 import endpoint.Json;
-import endpoint.SimpleObject;
 
 public class EntityUtils {
 
@@ -139,7 +138,7 @@ public class EntityUtils {
 		}
 	}
 	
-	public static Key createKey(Long id, Class<SimpleObject> clazz) {
+	public static Key createKey(Long id, Class<? extends DatastoreObject> clazz) {
 		return KeyFactory.createKey(getKind(clazz), id);
 	}
 

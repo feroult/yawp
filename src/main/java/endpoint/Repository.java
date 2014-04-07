@@ -124,7 +124,11 @@ public class Repository {
 		}
 	}
 
-	public void delete(Long id, Class<SimpleObject> clazz) {
+	public void delete(DatastoreObject object) {
+		delete(object.getId(), object.getClass());
+	}
+
+	public void delete(Long id, Class<? extends DatastoreObject> clazz) {
 		namespace.set(clazz);
 		try {
 			DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
@@ -139,7 +143,7 @@ public class Repository {
 
 	}
 
-	private void deleteLists(Key key, Class<SimpleObject> clazz) {
+	private void deleteLists(Key key, Class<? extends DatastoreObject> clazz) {
 		Field[] fields = EntityUtils.getFields(clazz);
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
@@ -252,4 +256,5 @@ public class Repository {
 			}
 		}
 	}
+
 }

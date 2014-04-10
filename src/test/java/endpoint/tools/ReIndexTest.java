@@ -1,7 +1,10 @@
 package endpoint.tools;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,8 +36,9 @@ public class ReIndexTest extends EndpointTestCase {
 		assertNull(queryEntity("person", "name", "john"));
 		assertNull(queryEntity("person", "name", "peter"));
 
-		ReIndex.now("person", "name");
+		List<Long> ids = ReIndex.now("person", "name");
 
+		assertEquals(2, ids.size());
 		assertNotNull(queryEntity("person", "name", "john"));
 		assertNotNull(queryEntity("person", "name", "peter"));
 	}
@@ -46,8 +50,9 @@ public class ReIndexTest extends EndpointTestCase {
 		assertNull(queryEntity("person", "name", "john"));
 		assertNull(queryEntity("person", "age", 10));
 
-		ReIndex.now("person", "name", "age");
+		List<Long> ids = ReIndex.now("person", "name", "age");
 
+		assertEquals(1, ids.size());
 		assertNotNull(queryEntity("person", "name", "john"));
 		assertNotNull(queryEntity("person", "age", 10));
 	}
@@ -58,8 +63,9 @@ public class ReIndexTest extends EndpointTestCase {
 		assertNull(queryEntity("person", "name", "john"));
 		assertNull(queryEntity("person", "age", 10));
 
-		ReIndex.parse("/person/name/age/").now();
+		List<Long> ids = ReIndex.parse("/person/name/age/").now();
 
+		assertEquals(1, ids.size());
 		assertNotNull(queryEntity("person", "name", "john"));
 		assertNotNull(queryEntity("person", "age", 10));
 	}

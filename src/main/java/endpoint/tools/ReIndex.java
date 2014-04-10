@@ -1,6 +1,8 @@
 package endpoint.tools;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -18,9 +20,9 @@ public class ReIndex {
 		this.properties = properties;
 	}
 
-	public static void now(String kind, String... properties) {
+	public static List<Long> now(String kind, String... properties) {
 		ReIndex reIndex = new ReIndex(kind, properties);
-		reIndex.now();
+		return reIndex.now();
 	}
 
 	public static ReIndex parse(String path) {
@@ -40,7 +42,9 @@ public class ReIndex {
 		return parts.length >= 2;
 	}
 
-	public void now() {
+	public List<Long> now() {
+		List<Long> affectedIds = new ArrayList<Long>();
+
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 		Query q = new Query(kind);
 		PreparedQuery pq = datastoreService.prepare(q);
@@ -51,8 +55,12 @@ public class ReIndex {
 				String property = properties[i];
 				entity.setProperty(property, entity.getProperty(property));
 			}
+
+			affectedIds.add(entity.getKey().getId());
 			datastoreService.put(entity);
 		}
+
+		return affectedIds;
 	}
 
 }

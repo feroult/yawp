@@ -1,6 +1,8 @@
 package endpoint.tools;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,7 +22,13 @@ public class ReIndexServlet extends HttpServlet {
 			return;
 		}
 
-		ReIndex.parse(getPath(req)).now();
+		resp.setContentType("text/plain");
+		execute(getPath(req), resp.getWriter());
+	}
+
+	private void execute(String path, PrintWriter writer) {
+		List<Long> ids = ReIndex.parse(path).now();
+		writer.print("Total re-indexed entities: " + ids.size());
 	}
 
 	private String getPath(HttpServletRequest req) {

@@ -52,6 +52,18 @@ public class ReIndexTest extends EndpointTestCase {
 		assertNotNull(queryEntity("person", "age", 10));
 	}
 
+	@Test
+	public void textReIndexUrlAPI() {
+		createEntityWithProperty("person", "name", "john", "age", 10);
+		assertNull(queryEntity("person", "name", "john"));
+		assertNull(queryEntity("person", "age", 10));
+
+		ReIndex.parse("/person/name/age/").now();
+
+		assertNotNull(queryEntity("person", "name", "john"));
+		assertNotNull(queryEntity("person", "age", 10));
+	}
+
 	private Entity queryEntity(String kind, String property, Object value) {
 		Query q = new Query(kind);
 		q.setFilter(new FilterPredicate(property, FilterOperator.EQUAL, value));

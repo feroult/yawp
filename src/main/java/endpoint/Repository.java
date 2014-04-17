@@ -229,10 +229,11 @@ public class Repository {
 	private Entity createEntityForChild(DatastoreObject object, DatastoreObject parent) {
 		Entity entity = null;
 
-		if (object.getKey() == null) {
-			entity = new Entity(EntityUtils.getKind(object.getClass()), parent.getKey());
+		Key currentKey = EntityUtils.getKey(object);
+		if (currentKey == null) {
+			entity = new Entity(EntityUtils.getKind(object.getClass()), EntityUtils.getKey(parent));
 		} else {
-			Key key = KeyFactory.createKey(parent.getKey(), object.getKey().getKind(), object.getKey().getId());
+			Key key = KeyFactory.createKey(EntityUtils.getKey(parent), currentKey.getKind(), currentKey.getId());
 			entity = new Entity(key);
 		}
 		return entity;

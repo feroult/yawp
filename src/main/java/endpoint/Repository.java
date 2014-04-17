@@ -125,7 +125,7 @@ public class Repository {
 	}
 
 	public void delete(DatastoreObject object) {
-		delete(object.getId(), object.getClass());
+		delete(EntityUtils.getId(object), object.getClass());
 	}
 
 	public void delete(Long id, Class<? extends DatastoreObject> clazz) {

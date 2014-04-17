@@ -18,7 +18,7 @@ public class Namespace {
 		this.ns = normalizeNs(ns);
 	}
 
-	public void set(Class<? extends DatastoreObject> clazz) {
+	public void set(Class<?> clazz) {
 		previousNs = NamespaceManager.get();
 		if (clazz.isAnnotationPresent(Global.class)) {
 			NamespaceManager.set(GLOBAL);

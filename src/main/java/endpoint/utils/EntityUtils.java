@@ -91,6 +91,12 @@ public class EntityUtils {
 			throw new RuntimeException(e);
 		}
 	}
+	
+
+	public static Long getId(Object object) {
+		return getKey(object).getId();
+	}
+
 
 	public static <T extends DatastoreObject> Field[] getFields(Class<T> clazz) {
 		Field[] allFields = ArrayUtils.addAll(DatastoreObject.class.getDeclaredFields(), clazz.getDeclaredFields());

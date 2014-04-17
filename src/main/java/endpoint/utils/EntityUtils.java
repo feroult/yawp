@@ -137,7 +137,7 @@ public class EntityUtils {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static Key createKey(Long id, Class<? extends DatastoreObject> clazz) {
 		return KeyFactory.createKey(getKind(clazz), id);
 	}
@@ -274,6 +274,6 @@ public class EntityUtils {
 	}
 
 	private static boolean isInt(Field field) {
-		return field.getType().getName().equals("int");
+		return Integer.class.isAssignableFrom(field.getType()) || field.getType().getName().equals("int");
 	}
 }

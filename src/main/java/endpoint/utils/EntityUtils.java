@@ -1,6 +1,7 @@
 package endpoint.utils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -8,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -49,7 +52,7 @@ public class EntityUtils {
 		try {
 			T object = clazz.newInstance();
 
-			object.setKey(entity.getKey());
+			setKey(object, entity.getKey());
 
 			Field[] fields = getFields(clazz);
 
@@ -69,6 +72,22 @@ public class EntityUtils {
 			return object;
 
 		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static <T extends DatastoreObject> void setKey(T object, Key key) {
+		try {
+			BeanUtils.setProperty(object, "key", key);
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Key getKey(Object object) {
+		try {
+			return (Key) PropertyUtils.getProperty(object, "key");
+		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -137,7 +156,7 @@ public class EntityUtils {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static Key createKey(Long id, Class<? extends DatastoreObject> clazz) {
 		return KeyFactory.createKey(getKind(clazz), id);
 	}

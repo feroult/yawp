@@ -159,7 +159,7 @@ public class Repository {
 	private void saveEntity(DatastoreObject object, Entity entity, String action) {
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 		Key key = datastoreService.put(entity);
-		object.setKey(key);
+		EntityUtils.setKey(object, key);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -215,10 +215,12 @@ public class Repository {
 	private Entity createEntity(DatastoreObject object) {
 		Entity entity = null;
 
-		if (object.getKey() == null) {
+		Key currentKey = EntityUtils.getKey(object);
+
+		if (currentKey == null) {
 			entity = new Entity(EntityUtils.getKind(object.getClass()));
 		} else {
-			Key key = KeyFactory.createKey(object.getKey().getKind(), object.getKey().getId());
+			Key key = KeyFactory.createKey(currentKey.getKind(), currentKey.getId());
 			entity = new Entity(key);
 		}
 		return entity;

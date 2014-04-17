@@ -183,7 +183,7 @@ public class Repository {
 
 	private void saveList(Class<? extends DatastoreObject> childClazz, List<DatastoreObject> childs, DatastoreObject parentObject) {
 
-		deleteChilds(parentObject.getKey(), childClazz);
+		deleteChilds(EntityUtils.getKey(parentObject), childClazz);
 
 		if (childs == null) {
 			return;
@@ -250,7 +250,7 @@ public class Repository {
 			field.setAccessible(true);
 
 			List<DatastoreObject> list = new ArrayList<DatastoreObject>();
-			list.addAll(query(EntityUtils.getListClass(field)).parentKey(object.getKey()).asList());
+			list.addAll(query(EntityUtils.getListClass(field)).parentKey(EntityUtils.getKey(object)).asList());
 
 			try {
 				field.set(object, list);

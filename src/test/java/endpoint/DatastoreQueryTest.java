@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import endpoint.DatastoreQuery;
-import endpoint.DatastoreQueryOptions;
 import endpoint.utils.DateUtils;
 import endpoint.utils.EndpointTestCase;
 
@@ -121,5 +119,15 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		objects = r.query(SimpleObject.class).cursor(q.getCursor()).order("aString", "desc").limit(1).list().now();
 		assertEquals(1, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
+	}
+
+	@Test
+	public void testQueryById() {
+		SimpleObject object = new SimpleObject("xpto");
+
+		r.save(object);
+
+		object = r.query(SimpleObject.class).id(object.getId()).now();
+		assertEquals("xpto", object.getaString());
 	}
 }

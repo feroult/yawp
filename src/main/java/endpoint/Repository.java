@@ -84,41 +84,10 @@ public class Repository {
 		}
 	}
 
-	public <T> DatastoreResult<T> find(Class<T> clazz, Key key) {
-		namespace.set(clazz);
-		try {
-
-			DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
-
-			try {
-				Entity entity = datastoreService.get(key);
-				T object = EntityUtils.toObject(entity, clazz);
-				loadLists(object);
-				return new DatastoreResult<T>(object);
-			} catch (EntityNotFoundException e) {
-				logger.warning("entity not found: " + e.getMessage());
-				return new DatastoreResult<T>();
-			}
-		} finally {
-			namespace.reset();
-		}
-	}
-
-	public <T> DatastoreResult<T> find(Class<T> clazz, long id) {
-		namespace.set(clazz);
-		try {
-
-			return find(clazz, KeyFactory.createKey(EntityUtils.getKind(clazz), id));
-		} finally {
-			namespace.reset();
-		}
-	}
-
 	public <T> DatastoreQuery<T> query(Class<T> clazz) {
 		namespace.set(clazz);
 		try {
-
-			return new DatastoreQuery<T>(clazz, namespace);
+			return DatastoreQuery.q(clazz, namespace);
 		} finally {
 			namespace.reset();
 		}

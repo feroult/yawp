@@ -134,8 +134,7 @@ public class DatastoreServlet extends HttpServlet {
 		return Repository.r();
 	}
 
-	private HttpResponse action(Repository r, Class<?> clazz, String method, String customAction, Long id,
-			Map<String, String> params) {
+	private HttpResponse action(Repository r, Class<?> clazz, String method, String customAction, Long id, Map<String, String> params) {
 		return r.action(clazz, method, customAction, id, params);
 	}
 
@@ -176,7 +175,7 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	private String get(Repository r, Class<?> clazz, long id) {
-		return JsonUtils.to(r.find(clazz, id));
+		return JsonUtils.to(r.query(clazz).id(id).now());
 	}
 
 }

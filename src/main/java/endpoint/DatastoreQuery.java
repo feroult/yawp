@@ -1,5 +1,6 @@
 package endpoint;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +8,7 @@ import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -36,7 +38,16 @@ public class DatastoreQuery<T> {
 
 	private String cursor;
 
-	public DatastoreQuery(Class<T> clazz, Namespace namespace) {
+	public static <T> DatastoreQuery<T> q(Class<T> clazz, Namespace namespace) {
+		namespace.set(clazz);
+		try {
+			return new DatastoreQuery<T>(clazz, namespace);
+		} finally {
+			namespace.reset();
+		}
+	}
+
+	private DatastoreQuery(Class<T> clazz, Namespace namespace) {
 		this.clazz = clazz;
 		this.namespace = namespace;
 	}
@@ -107,6 +118,45 @@ public class DatastoreQuery<T> {
 			return new DatastoreResult<T>(list.get(0));
 		} finally {
 			namespace.reset();
+		}
+	}
+
+	public DatastoreResult<T> id(Long id) {
+		try {
+
+			DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
+
+			try {
+				Entity entity = datastoreService.get(EntityUtils.createKey(id, clazz));
+				T object = EntityUtils.toObject(entity, clazz);
+				loadLists(object);
+				return new DatastoreResult<T>(object);
+			} catch (EntityNotFoundException e) {
+				return new DatastoreResult<T>();
+			}
+		} finally {
+			namespace.reset();
+		}
+	}
+
+	private void loadLists(Object object) {
+		Field[] fields = EntityUtils.getFields(object.getClass());
+		for (int i = 0; i < fields.length; i++) {
+			Field field = fields[i];
+			if (!EntityUtils.isSaveAsList(field)) {
+				continue;
+			}
+
+			field.setAccessible(true);
+
+			List<Object> list = new ArrayList<Object>();
+			list.addAll(q(EntityUtils.getListClass(field), namespace).parent(EntityUtils.getKey(object)).list().now());
+
+			try {
+				field.set(object, list);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 
@@ -227,5 +277,4 @@ public class DatastoreQuery<T> {
 		}
 		throw new RuntimeException("invalid filter operator");
 	}
-
 }

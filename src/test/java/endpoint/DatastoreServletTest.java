@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -76,9 +78,28 @@ public class DatastoreServletTest extends EndpointTestCase {
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "i was changed in action");
 	}
 
+//	@Test
+//	public void testTransformer() {
+//		SimpleObject object = JsonUtils.from(servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText(),
+//				SimpleObject.class);
+//
+//		String json = servlet.execute("GET", "/simpleobjects/" + object.getId(), null, q("{transform:'simple'}")).getText();
+//
+//		@SuppressWarnings("rawtypes")
+//		Map map = JsonUtils.from(json, Map.class);
+//
+//		assertEquals("object1", map.get(object.getId()));
+//	}
+
 	@Test
 	public void testEndpointRestrictions() {
 		assertFalse(ForbiddenResponse.class.isInstance(servlet.execute("GET", "/simpleobjects", SIMPLE_OBJECT_JSON, null)));
 		assertTrue(ForbiddenResponse.class.isInstance(servlet.execute("GET", "/anothersimpleobjects", SIMPLE_OBJECT_JSON, null)));
+	}
+
+	private Map<String, String> q(String s) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("q", s);
+		return map;
 	}
 }

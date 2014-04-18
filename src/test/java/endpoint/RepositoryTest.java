@@ -19,7 +19,7 @@ public class RepositoryTest extends EndpointTestCase {
 		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
 
 		r.save(object);
-		object = r.find(SimpleObject.class, object.getKey());
+		object = r.find(SimpleObject.class, object.getKey()).now();
 
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 	}
@@ -30,7 +30,7 @@ public class RepositoryTest extends EndpointTestCase {
 		object.setaList(Arrays.asList(new AnotherSimpleObject("anotherObject1")));
 
 		r.save(object);
-		object = r.find(SimpleObject.class, object.getKey());
+		object = r.find(SimpleObject.class, object.getKey()).now();
 
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 		assertEquals(1, object.getaList().size());
@@ -48,8 +48,8 @@ public class RepositoryTest extends EndpointTestCase {
 		r.save(object1);
 		r.save(object2);
 
-		object1 = r.find(SimpleObject.class, object1.getKey());
-		object2 = r.find(SimpleObject.class, object2.getKey());
+		object1 = r.find(SimpleObject.class, object1.getKey()).now();
+		object2 = r.find(SimpleObject.class, object2.getKey()).now();
 
 		object1.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 		assertEquals(1, object1.getaList().size());
@@ -77,11 +77,11 @@ public class RepositoryTest extends EndpointTestCase {
 		object.setaList(Arrays.asList(new AnotherSimpleObject("anotherObject1")));
 		r.save(object);
 
-		object = r.find(SimpleObject.class, object.getKey());
+		object = r.find(SimpleObject.class, object.getKey()).now();
 		object.setaList(Arrays.asList(new AnotherSimpleObject("anotherObject2")));
 		r.save(object);
 
-		object = r.find(SimpleObject.class, object.getKey());
+		object = r.find(SimpleObject.class, object.getKey()).now();
 
 		assertEquals(1, object.getaList().size());
 		assertEquals("anotherObject2", object.getaList().get(0).getaString());
@@ -138,6 +138,6 @@ public class RepositoryTest extends EndpointTestCase {
 		r.delete(object.getId(), SimpleObject.class);
 
 		assertNull(r.find(SimpleObject.class, object.getId()).now());
-		assertEquals(0, r.query(AnotherSimpleObject.class).parentKey(object.getKey()).asList().size());
+		assertEquals(0, r.query(AnotherSimpleObject.class).parent(object.getKey()).list().now().size());
 	}
 }

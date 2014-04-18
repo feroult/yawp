@@ -172,7 +172,7 @@ public class DatastoreServlet extends HttpServlet {
 			return JsonUtils.to(r.all(clazz));
 		}
 
-		return JsonUtils.to(r.query(clazz).options(DatastoreQueryOptions.parse(q)).asList());
+		return JsonUtils.to(r.query(clazz).options(DatastoreQueryOptions.parse(q)).list());
 	}
 
 	private String get(Repository r, Class<?> clazz, long id) {

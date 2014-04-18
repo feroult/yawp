@@ -19,4 +19,16 @@ public class DatastoreResultTest extends EndpointTestCase {
 		assertEquals("xpto", object.getaString());
 	}
 
+	@Test
+	public void testQuery() {
+		SimpleObject object = new SimpleObject("xpto");
+		r.save(object);
+
+		DatastoreResult<SimpleObject> result = r.query(SimpleObject.class).first();
+		object = result.now();
+		
+		assertEquals("xpto", object.getaString());
+	}
+	
+
 }

@@ -32,8 +32,8 @@ public class RespositoryNamespaceTest extends EndpointTestCase {
 	public void testQuery() {
 		r2.save(new SimpleObject("xpto2"));
 
-		assertNotNull(r2.query(SimpleObject.class).where("aString", "=", "xpto2").first());
-		assertNull(r1.query(SimpleObject.class).where("aString", "=", "xpto2").first());
+		assertNotNull(r2.query(SimpleObject.class).where("aString", "=", "xpto2").first().now());
+		assertNull(r1.query(SimpleObject.class).where("aString", "=", "xpto2").first().now());
 	}
 
 	@Test
@@ -50,7 +50,7 @@ public class RespositoryNamespaceTest extends EndpointTestCase {
 		object1.setaString("lala");
 		r1.save(object1);
 
-		assertNull(r1.query(SimpleObject.class).where("aString", "=", "xpto").first());
-		assertNotNull(r2.query(SimpleObject.class).where("aString", "=", "xpto").first());
+		assertNull(r1.query(SimpleObject.class).where("aString", "=", "xpto").first().now());
+		assertNotNull(r2.query(SimpleObject.class).where("aString", "=", "xpto").first().now());
 	}
 }

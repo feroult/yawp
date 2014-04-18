@@ -78,13 +78,13 @@ public class Repository {
 	public <T extends Object> List<T> all(Class<T> clazz) {
 		namespace.set(clazz);
 		try {
-			return query(clazz).asList();
+			return query(clazz).list().now();
 		} finally {
 			namespace.reset();
 		}
 	}
 
-	public <T extends Object> T find(Class<T> clazz, Key key) {
+	public <T> DatastoreResult<T> find(Class<T> clazz, Key key) {
 		namespace.set(clazz);
 		try {
 
@@ -94,10 +94,10 @@ public class Repository {
 				Entity entity = datastoreService.get(key);
 				T object = EntityUtils.toObject(entity, clazz);
 				loadLists(object);
-				return object;
+				return new DatastoreResult<T>(object);
 			} catch (EntityNotFoundException e) {
 				logger.warning("entity not found: " + e.getMessage());
-				return null;
+				return new DatastoreResult<T>();
 			}
 		} finally {
 			namespace.reset();
@@ -108,7 +108,7 @@ public class Repository {
 		namespace.set(clazz);
 		try {
 
-			return new DatastoreResult<T>(find(clazz, KeyFactory.createKey(EntityUtils.getKind(clazz), id)));
+			return find(clazz, KeyFactory.createKey(EntityUtils.getKind(clazz), id));
 		} finally {
 			namespace.reset();
 		}
@@ -250,7 +250,7 @@ public class Repository {
 			field.setAccessible(true);
 
 			List<Object> list = new ArrayList<Object>();
-			list.addAll(query(EntityUtils.getListClass(field)).parentKey(EntityUtils.getKey(object)).asList());
+			list.addAll(query(EntityUtils.getListClass(field)).parent(EntityUtils.getKey(object)).list().now());
 
 			try {
 				field.set(object, list);

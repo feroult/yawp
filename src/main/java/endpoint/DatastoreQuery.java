@@ -46,7 +46,7 @@ public class DatastoreQuery<T extends Object> {
 		return this;
 	}
 
-	public DatastoreQuery<T> parentKey(Key parentKey) {
+	public DatastoreQuery<T> parent(Key parentKey) {
 		this.parentKey = parentKey;
 		return this;
 	}
@@ -86,32 +86,34 @@ public class DatastoreQuery<T extends Object> {
 		return this;
 	}
 
-	public List<T> asList() {
+	public DatastoreResultList<T> list() {
 		namespace.set(getClazz());
 		try {
-			PreparedQuery pq = prepareQuery();
-			FetchOptions fetchOptions = configureFetchOptions();
-			return executeQuery(pq, fetchOptions);
+			return new DatastoreResultList<T>(executeQuery());
 		} finally {
 			namespace.reset();
 		}
 	}
 
-	public T first() {
+	public DatastoreResult<T> first() {
 		namespace.set(getClazz());
 		try {
+			limit(1);
 
-			List<T> list = limit(1).asList();
+			List<T> list = executeQuery();
 			if (list.size() == 0) {
-				return null;
+				return new DatastoreResult<T>();
 			}
-			return list.get(0);
+			return new DatastoreResult<T>(list.get(0));
 		} finally {
 			namespace.reset();
 		}
 	}
 
-	private List<T> executeQuery(PreparedQuery pq, FetchOptions fetchOptions) {
+	private List<T> executeQuery() {
+		PreparedQuery pq = prepareQuery();
+		FetchOptions fetchOptions = configureFetchOptions();
+
 		QueryResultList<Entity> queryResult = pq.asQueryResultList(fetchOptions);
 
 		List<T> objects = new ArrayList<T>();

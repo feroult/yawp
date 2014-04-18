@@ -93,8 +93,8 @@ public class DatastoreServletTest extends EndpointTestCase {
 
 	@Test
 	public void testTransformerInIndex() {
-		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
-		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
+		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);
+		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);
 
 		String json = servlet.execute("GET", "/simpleobjects", null, t("simple")).getText();
 

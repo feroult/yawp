@@ -66,7 +66,7 @@ public class RepositoryTest extends EndpointTestCase {
 
 		r.save(object);
 
-		object = r.find(SimpleObject.class, 1l);
+		object = r.find(SimpleObject.class, 1l).now();
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 
 	}
@@ -96,7 +96,7 @@ public class RepositoryTest extends EndpointTestCase {
 
 		r.save(object);
 
-		object = r.find(SimpleObject.class, object.getId());
+		object = r.find(SimpleObject.class, object.getId()).now();
 
 		assertEquals("xpto", object.getaString());
 		assertEquals("xpto", object.getNotADatastoreObject().getName());
@@ -117,7 +117,7 @@ public class RepositoryTest extends EndpointTestCase {
 
 		r.save(object);
 
-		object = r.find(SimpleObject.class, object.getId());
+		object = r.find(SimpleObject.class, object.getId()).now();
 
 		assertEquals("xpto", object.getaString());
 		assertEquals("xpto1", object.getNotADatastoreObjectList().get(0).getName());
@@ -137,7 +137,7 @@ public class RepositoryTest extends EndpointTestCase {
 
 		r.delete(object.getId(), SimpleObject.class);
 
-		assertNull(r.find(SimpleObject.class, object.getId()));
+		assertNull(r.find(SimpleObject.class, object.getId()).now());
 		assertEquals(0, r.query(AnotherSimpleObject.class).parentKey(object.getKey()).asList().size());
 	}
 }

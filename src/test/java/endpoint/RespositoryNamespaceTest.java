@@ -24,8 +24,8 @@ public class RespositoryNamespaceTest extends EndpointTestCase {
 		SimpleObject object1 = new SimpleObject("xpto1");
 		r1.save(object1);
 
-		assertNotNull(r1.find(SimpleObject.class, object1.getKey().getId()));
-		assertNull(r2.find(SimpleObject.class, object1.getKey().getId()));
+		assertNotNull(r1.find(SimpleObject.class, object1.getKey().getId()).now());
+		assertNull(r2.find(SimpleObject.class, object1.getKey().getId()).now());
 	}
 
 	@Test

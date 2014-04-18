@@ -21,6 +21,7 @@ import endpoint.hooks.RepositoryHooks;
 import endpoint.response.ForbiddenResponse;
 import endpoint.response.HttpResponse;
 import endpoint.response.JsonResponse;
+import endpoint.transformers.RepositoryTransformers;
 import endpoint.utils.JsonUtils;
 
 public class DatastoreServlet extends HttpServlet {
@@ -35,7 +36,7 @@ public class DatastoreServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		String packagePrefix = config.getInitParameter("packagePrefix");
-		scanActionsAndHooks(packagePrefix);
+		bootEndpoint(packagePrefix);
 		scanEndpoints(packagePrefix);
 	}
 
@@ -46,9 +47,10 @@ public class DatastoreServlet extends HttpServlet {
 		scanEndpoints(packagePrefix);
 	}
 
-	private void scanActionsAndHooks(String packagePrefix) {
+	private void bootEndpoint(String packagePrefix) {
 		RepositoryActions.scan(packagePrefix);
 		RepositoryHooks.scan(packagePrefix);
+		RepositoryTransformers.scan(packagePrefix);
 	}
 
 	private void scanEndpoints(String packagePrefix) {

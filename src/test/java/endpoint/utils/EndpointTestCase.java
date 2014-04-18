@@ -14,6 +14,7 @@ import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig
 import endpoint.Repository;
 import endpoint.actions.RepositoryActions;
 import endpoint.hooks.RepositoryHooks;
+import endpoint.transformers.RepositoryTransformers;
 
 public class EndpointTestCase {
 
@@ -27,6 +28,7 @@ public class EndpointTestCase {
 	public static void bootEndpoint() {
 		RepositoryActions.scan("endpoint");
 		RepositoryHooks.scan("endpoint");
+		RepositoryTransformers.scan("endpoint");
 	}
 
 	@Before

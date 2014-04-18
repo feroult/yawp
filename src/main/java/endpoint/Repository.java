@@ -1,7 +1,6 @@
 package endpoint;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -9,7 +8,6 @@ import java.util.logging.Logger;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Query;
@@ -21,6 +19,7 @@ import endpoint.utils.EntityUtils;
 
 public class Repository {
 
+	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(Repository.class.getSimpleName());
 
 	private Namespace namespace;
@@ -46,6 +45,10 @@ public class Repository {
 		return this;
 	}
 
+	public Namespace namespace() {
+		return namespace;
+	}
+	
 	public String currentNamespace() {
 		return namespace.getNs();
 	}
@@ -85,12 +88,7 @@ public class Repository {
 	}
 
 	public <T> DatastoreQuery<T> query(Class<T> clazz) {
-		namespace.set(clazz);
-		try {
-			return DatastoreQuery.q(clazz, namespace);
-		} finally {
-			namespace.reset();
-		}
+		return DatastoreQuery.q(clazz, this);
 	}
 
 	public void delete(Object object) {
@@ -206,26 +204,5 @@ public class Repository {
 			entity = new Entity(key);
 		}
 		return entity;
-	}
-
-	private void loadLists(Object object) {
-		Field[] fields = EntityUtils.getFields(object.getClass());
-		for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
-			if (!EntityUtils.isSaveAsList(field)) {
-				continue;
-			}
-
-			field.setAccessible(true);
-
-			List<Object> list = new ArrayList<Object>();
-			list.addAll(query(EntityUtils.getListClass(field)).parent(EntityUtils.getKey(object)).list().now());
-
-			try {
-				field.set(object, list);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
 	}
 }

@@ -26,7 +26,7 @@ public class DatastoreQuery<T> {
 
 	private Class<T> clazz;
 
-	private Namespace namespace;
+	private Repository r;
 
 	private Key parentKey;
 
@@ -38,18 +38,13 @@ public class DatastoreQuery<T> {
 
 	private String cursor;
 
-	public static <T> DatastoreQuery<T> q(Class<T> clazz, Namespace namespace) {
-		namespace.set(clazz);
-		try {
-			return new DatastoreQuery<T>(clazz, namespace);
-		} finally {
-			namespace.reset();
-		}
+	public static <T> DatastoreQuery<T> q(Class<T> clazz, Repository r) {
+		return new DatastoreQuery<T>(clazz, r);
 	}
 
-	private DatastoreQuery(Class<T> clazz, Namespace namespace) {
+	private DatastoreQuery(Class<T> clazz, Repository r) {
 		this.clazz = clazz;
-		this.namespace = namespace;
+		this.r = r;
 	}
 
 	public DatastoreQuery<T> where(Object... values) {
@@ -98,44 +93,44 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreResultList<T> list() {
-		namespace.set(getClazz());
+		r.namespace().set(getClazz());
 		try {
 			return new DatastoreResultList<T>(executeQuery());
 		} finally {
-			namespace.reset();
+			r.namespace().reset();
 		}
 	}
 
 	public DatastoreResult<T> first() {
-		namespace.set(getClazz());
+		r.namespace().set(getClazz());
 		try {
 			limit(1);
 
 			List<T> list = executeQuery();
 			if (list.size() == 0) {
-				return new DatastoreResult<T>();
+				return new DatastoreResult<T>(r);
 			}
-			return new DatastoreResult<T>(list.get(0));
+			return new DatastoreResult<T>(r, list.get(0));
 		} finally {
-			namespace.reset();
+			r.namespace().reset();
 		}
 	}
 
 	public DatastoreResult<T> id(Long id) {
+		r.namespace().set(getClazz());
 		try {
-
 			DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 
 			try {
 				Entity entity = datastoreService.get(EntityUtils.createKey(id, clazz));
 				T object = EntityUtils.toObject(entity, clazz);
 				loadLists(object);
-				return new DatastoreResult<T>(object);
+				return new DatastoreResult<T>(r, object);
 			} catch (EntityNotFoundException e) {
-				return new DatastoreResult<T>();
+				return new DatastoreResult<T>(r);
 			}
 		} finally {
-			namespace.reset();
+			r.namespace().reset();
 		}
 	}
 
@@ -150,7 +145,7 @@ public class DatastoreQuery<T> {
 			field.setAccessible(true);
 
 			List<Object> list = new ArrayList<Object>();
-			list.addAll(q(EntityUtils.getListClass(field), namespace).parent(EntityUtils.getKey(object)).list().now());
+			list.addAll(q(EntityUtils.getListClass(field), r).parent(EntityUtils.getKey(object)).list().now());
 
 			try {
 				field.set(object, list);

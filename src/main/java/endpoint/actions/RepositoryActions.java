@@ -41,7 +41,7 @@ public class RepositoryActions {
 
 		for (Class<? extends Action> actionClazz : clazzes) {
 			Target annotation = actionClazz.getAnnotation(Target.class);
-			Class<? extends Object> objectClazz = annotation.value();
+			Class<?> objectClazz = annotation.value();
 
 			addActionForObject(objectClazz, actionClazz);
 		}
@@ -49,7 +49,7 @@ public class RepositoryActions {
 		packages.add(packagePrefix);
 	}
 
-	private static void addActionForObject(Class<? extends Object> objectClazz, Class<? extends Action> actionClazz) {
+	private static void addActionForObject(Class<?> objectClazz, Class<? extends Action> actionClazz) {
 		for (String httpMethod : httpAnnotations.keySet()) {
 			Class<? extends Annotation> httpMethodAnnotation = httpAnnotations.get(httpMethod);
 
@@ -67,12 +67,12 @@ public class RepositoryActions {
 		}
 	}
 
-	private static String getActionKey(Class<? extends Object> objectClazz, String httpMethod, String action) {
+	private static String getActionKey(Class<?> objectClazz, String httpMethod, String action) {
 		return String.format("%s-%s-%s", objectClazz.getSimpleName(), httpMethod, action);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static HttpResponse execute(Repository r, Class<? extends Object> objectClazz, String httpMethod, String action,
+	public static HttpResponse execute(Repository r, Class<?> objectClazz, String httpMethod, String action,
 			Long id, Map<String, String> params) {
 
 		try {

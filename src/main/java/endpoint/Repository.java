@@ -66,7 +66,7 @@ public class Repository {
 		}
 	}
 
-	public HttpResponse action(Class<? extends Object> clazz, String method, String action, long id, Map<String, String> params) {
+	public HttpResponse action(Class<?> clazz, String method, String action, long id, Map<String, String> params) {
 		namespace.set(clazz);
 		try {
 			return RepositoryActions.execute(this, clazz, method, action, id, params);
@@ -128,7 +128,7 @@ public class Repository {
 		delete(EntityUtils.getId(object), object.getClass());
 	}
 
-	public void delete(Long id, Class<? extends Object> clazz) {
+	public void delete(Long id, Class<?> clazz) {
 		namespace.set(clazz);
 		try {
 			DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
@@ -143,7 +143,7 @@ public class Repository {
 
 	}
 
-	private void deleteLists(Key key, Class<? extends Object> clazz) {
+	private void deleteLists(Key key, Class<?> clazz) {
 		Field[] fields = EntityUtils.getFields(clazz);
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
@@ -181,7 +181,7 @@ public class Repository {
 		}
 	}
 
-	private void saveList(Class<? extends Object> childClazz, List<Object> childs, Object parentObject) {
+	private void saveList(Class<?> childClazz, List<Object> childs, Object parentObject) {
 
 		deleteChilds(EntityUtils.getKey(parentObject), childClazz);
 
@@ -196,7 +196,7 @@ public class Repository {
 		}
 	}
 
-	private void deleteChilds(Key parentKey, Class<? extends Object> childClazz) {
+	private void deleteChilds(Key parentKey, Class<?> childClazz) {
 		DatastoreService service = DatastoreServiceFactory.getDatastoreService();
 
 		Query query = new Query(EntityUtils.getKind(childClazz));

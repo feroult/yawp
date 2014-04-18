@@ -26,7 +26,7 @@ public class EntityUtils {
 
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
 
-	public static String getKind(Class<? extends Object> clazz) {
+	public static String getKind(Class<?> clazz) {
 		return clazz.getSimpleName();
 	}
 
@@ -115,13 +115,13 @@ public class EntityUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Class<? extends Object> getListClass(Field field) {
+	public static Class<?> getListClass(Field field) {
 		Type genericFieldType = field.getGenericType();
 		if (genericFieldType instanceof ParameterizedType) {
 			ParameterizedType aType = (ParameterizedType) genericFieldType;
 			Type[] fieldArgTypes = aType.getActualTypeArguments();
 			for (Type fieldArgType : fieldArgTypes) {
-				return (Class<? extends Object>) fieldArgType;
+				return (Class<?>) fieldArgType;
 			}
 		}
 
@@ -162,7 +162,7 @@ public class EntityUtils {
 		}
 	}
 
-	public static Key createKey(Long id, Class<? extends Object> clazz) {
+	public static Key createKey(Long id, Class<?> clazz) {
 		return KeyFactory.createKey(getKind(clazz), id);
 	}
 

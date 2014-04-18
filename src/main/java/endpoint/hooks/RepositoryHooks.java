@@ -28,7 +28,7 @@ public class RepositoryHooks {
 		Set<Class<? extends Hook>> clazzes = reflections.getSubTypesOf(Hook.class);
 
 		for (Class<? extends Hook> hookClazz : clazzes) {
-			Class<? extends Object> objectClazz = null;
+			Class<?> objectClazz = null;
 
 			Target annotation = hookClazz.getAnnotation(Target.class);
 			if (annotation != null) {
@@ -43,7 +43,7 @@ public class RepositoryHooks {
 		packages.add(packagePrefix);
 	}
 
-	private static void addHookForObject(Class<? extends Object> objectClazz, Class<? extends Hook> clazz) {
+	private static void addHookForObject(Class<?> objectClazz, Class<? extends Hook> clazz) {
 		List<Class<? extends Hook>> objectHooks = null;
 
 		String objectName = objectClazz.getSimpleName();

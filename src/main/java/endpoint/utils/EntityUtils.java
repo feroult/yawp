@@ -91,11 +91,9 @@ public class EntityUtils {
 		}
 	}
 
-
 	public static Long getId(Object object) {
 		return getKey(object).getId();
 	}
-
 
 	public static <T extends Object> Field[] getFields(Class<T> clazz) {
 		Field[] allFields = ArrayUtils.addAll(Object.class.getDeclaredFields(), clazz.getDeclaredFields());
@@ -114,7 +112,6 @@ public class EntityUtils {
 		return fields.toArray(new Field[fields.size()]);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static Class<?> getListClass(Field field) {
 		Type genericFieldType = field.getGenericType();
 		if (genericFieldType instanceof ParameterizedType) {
@@ -298,6 +295,6 @@ public class EntityUtils {
 	}
 
 	private static boolean isInt(Field field) {
-		return field.getType().getName().equals("int");
+		return Integer.class.isAssignableFrom(field.getType()) || field.getType().getName().equals("int");
 	}
 }

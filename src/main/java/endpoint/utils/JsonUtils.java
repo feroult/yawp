@@ -4,23 +4,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class JsonUtils {
 
 	public static <T> T from(String json, Class<T> clazz) {
-		JsonObject jsonObject = (JsonObject) new JsonParser().parse(json);
-		return from(jsonObject, clazz);
+		JsonElement jsoneElement = (JsonElement) new JsonParser().parse(json);
+		return from(jsoneElement, clazz);
 	}
-	
+
 	private static Gson buildGson() {
-		Gson gson = new GsonBuilder().setDateFormat(DateUtils.TIMESTAMP_FORMAT).create();		
+		Gson gson = new GsonBuilder().setDateFormat(DateUtils.TIMESTAMP_FORMAT).create();
 		return gson;
 	}
 
@@ -29,19 +27,19 @@ public class JsonUtils {
 		return gson.toJson(o);
 	}
 
-	private static <T> T from(JsonObject json, Class<T> clazz) {
+	private static <T> T from(JsonElement json, Class<T> clazz) {
 		Gson gson = buildGson();
 		return gson.fromJson(json, clazz);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	public static <T> List<T> fromArray(String json, Class<T> clazz) {
 		List<T> result = new ArrayList<T>();
 
 		Gson gson = buildGson();
-		List<Map> listMap = gson.fromJson(json, List.class);
-		for (Map map : listMap) {
-			result.add(from(to(map), clazz));
+		List<Object> list = gson.fromJson(json, List.class);
+		for (Object obj : list) {
+			result.add(from(to(obj), clazz));
 		}
 
 		return result;
@@ -60,9 +58,9 @@ public class JsonUtils {
 
 		return sb.toString();
 	}
-	
+
 	public static boolean isJsonArray(String json) {
 		JsonElement parsed = new JsonParser().parse(json);
-		return parsed.isJsonArray();		
+		return parsed.isJsonArray();
 	}
 }

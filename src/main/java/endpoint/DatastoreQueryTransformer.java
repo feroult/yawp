@@ -28,7 +28,7 @@ public class DatastoreQueryTransformer<T> {
 
 	public DatastoreQueryTransformer<T> parent(Key parentKey) {
 		query.parent(parentKey);
-		return null;
+		return this;
 	}
 
 	public DatastoreQueryTransformer<T> order(String... values) {

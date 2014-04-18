@@ -84,7 +84,7 @@ public class Repository {
 		}
 	}
 
-	public <T extends Object> T findByKey(Key key, Class<T> clazz) {
+	public <T extends Object> T find(Class<T> clazz, Key key) {
 		namespace.set(clazz);
 		try {
 
@@ -104,11 +104,11 @@ public class Repository {
 		}
 	}
 
-	public <T extends Object> T findById(long id, Class<T> clazz) {
+	public <T extends Object> T find(Class<T> clazz, long id) {
 		namespace.set(clazz);
 		try {
 
-			return findByKey(KeyFactory.createKey(EntityUtils.getKind(clazz), id), clazz);
+			return find(clazz, KeyFactory.createKey(EntityUtils.getKind(clazz), id));
 		} finally {
 			namespace.reset();
 		}

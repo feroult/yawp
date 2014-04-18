@@ -176,7 +176,7 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	private String get(Repository r, Class<?> clazz, long id) {
-		return JsonUtils.to(r.findById(id, clazz));
+		return JsonUtils.to(r.find(clazz, id));
 	}
 
 }

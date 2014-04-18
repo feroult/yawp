@@ -42,9 +42,20 @@ public class DatastoreQuery<T> {
 		return new DatastoreQuery<T>(clazz, r);
 	}
 
+	protected DatastoreQuery() {
+	}
+
 	private DatastoreQuery(Class<T> clazz, Repository r) {
 		this.clazz = clazz;
 		this.r = r;
+	}
+
+	public DatastoreQueryTransformer<?> transform(String transformName) {
+		return new DatastoreQueryTransformer<Object>(this, Object.class, transformName);
+	}
+
+	public <TT> DatastoreQueryTransformer<TT> transform(Class<TT> transformClazz, String transformName) {
+		return new DatastoreQueryTransformer<TT>(this, transformClazz, transformName);
 	}
 
 	public DatastoreQuery<T> where(Object... values) {
@@ -76,6 +87,10 @@ public class DatastoreQuery<T> {
 		return this.cursor;
 	}
 
+	public Repository getRepository() {
+		return this.r;
+	}
+
 	public DatastoreQuery<T> options(DatastoreQueryOptions options) {
 		if (options.getWhere() != null) {
 			where(options.getWhere());
@@ -92,31 +107,31 @@ public class DatastoreQuery<T> {
 		return this;
 	}
 
-	public DatastoreResultList<T> list() {
+	public List<T> list() {
 		r.namespace().set(getClazz());
 		try {
-			return new DatastoreResultList<T>(r, executeQuery());
+			return executeQuery();
 		} finally {
 			r.namespace().reset();
 		}
 	}
 
-	public DatastoreResult<T> first() {
+	public T first() {
 		r.namespace().set(getClazz());
 		try {
 			limit(1);
 
 			List<T> list = executeQuery();
 			if (list.size() == 0) {
-				return new DatastoreResult<T>(r);
+				return null;
 			}
-			return new DatastoreResult<T>(r, list.get(0));
+			return list.get(0);
 		} finally {
 			r.namespace().reset();
 		}
 	}
 
-	public DatastoreResult<T> id(Long id) {
+	public T id(Long id) {
 		r.namespace().set(getClazz());
 		try {
 			DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
@@ -125,9 +140,9 @@ public class DatastoreQuery<T> {
 				Entity entity = datastoreService.get(EntityUtils.createKey(id, clazz));
 				T object = EntityUtils.toObject(entity, clazz);
 				loadLists(object);
-				return new DatastoreResult<T>(r, object);
+				return object;
 			} catch (EntityNotFoundException e) {
-				return new DatastoreResult<T>(r);
+				return null;
 			}
 		} finally {
 			r.namespace().reset();
@@ -145,7 +160,7 @@ public class DatastoreQuery<T> {
 			field.setAccessible(true);
 
 			List<Object> list = new ArrayList<Object>();
-			list.addAll(q(EntityUtils.getListClass(field), r).parent(EntityUtils.getKey(object)).list().now());
+			list.addAll(q(EntityUtils.getListClass(field), r).parent(EntityUtils.getKey(object)).list());
 
 			try {
 				field.set(object, list);
@@ -272,4 +287,5 @@ public class DatastoreQuery<T> {
 		}
 		throw new RuntimeException("invalid filter operator");
 	}
+
 }

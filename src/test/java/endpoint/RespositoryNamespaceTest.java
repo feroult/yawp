@@ -24,16 +24,16 @@ public class RespositoryNamespaceTest extends EndpointTestCase {
 		SimpleObject object1 = new SimpleObject("xpto1");
 		r1.save(object1);
 
-		assertNotNull(r1.query(SimpleObject.class).id(object1.getId()).now());
-		assertNull(r2.query(SimpleObject.class).id(object1.getId()).now());
+		assertNotNull(r1.query(SimpleObject.class).id(object1.getId()));
+		assertNull(r2.query(SimpleObject.class).id(object1.getId()));
 	}
 
 	@Test
 	public void testQuery() {
 		r2.save(new SimpleObject("xpto2"));
 
-		assertNotNull(r2.query(SimpleObject.class).where("aString", "=", "xpto2").first().now());
-		assertNull(r1.query(SimpleObject.class).where("aString", "=", "xpto2").first().now());
+		assertNotNull(r2.query(SimpleObject.class).where("aString", "=", "xpto2").first());
+		assertNull(r1.query(SimpleObject.class).where("aString", "=", "xpto2").first());
 	}
 
 	@Test
@@ -44,13 +44,13 @@ public class RespositoryNamespaceTest extends EndpointTestCase {
 		r1.save(object1);
 		r2.save(object2);
 
-		assertNotNull(r1.query(SimpleObject.class).id(object1.getId()).now());
-		assertNotNull(r2.query(SimpleObject.class).id(object2.getId()).now());
+		assertNotNull(r1.query(SimpleObject.class).id(object1.getId()));
+		assertNotNull(r2.query(SimpleObject.class).id(object2.getId()));
 
 		object1.setaString("lala");
 		r1.save(object1);
 
-		assertNull(r1.query(SimpleObject.class).where("aString", "=", "xpto").first().now());
-		assertNotNull(r2.query(SimpleObject.class).where("aString", "=", "xpto").first().now());
+		assertNull(r1.query(SimpleObject.class).where("aString", "=", "xpto").first());
+		assertNotNull(r2.query(SimpleObject.class).where("aString", "=", "xpto").first());
 	}
 }

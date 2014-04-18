@@ -81,7 +81,7 @@ public class Repository {
 	public <T> List<T> all(Class<T> clazz) {
 		namespace.set(clazz);
 		try {
-			return query(clazz).list().now();
+			return query(clazz).list();
 		} finally {
 			namespace.reset();
 		}

@@ -18,10 +18,8 @@ public class TransformerTest extends EndpointTestCase {
 		r.save(object);
 
 		@SuppressWarnings("unchecked")
-		Map<Long, String> map = r.query(SimpleObject.class).id(object.getId()).transform(Map.class, "simple").now();
+		Map<Long, String> map = r.query(SimpleObject.class).transform(Map.class, "simple").id(object.getId());
 
-		// r.query(SimpleObject.class).transform(Map.class, "simple").id(object.getId());
-		
 		assertEquals("xpto", map.get(object.getId()));
 	}
 
@@ -35,7 +33,7 @@ public class TransformerTest extends EndpointTestCase {
 		r.save(object3);
 
 		@SuppressWarnings("rawtypes")
-		List<Map> list = r.query(SimpleObject.class).order("aString", "asc").list().transform(Map.class, "simple").now();
+		List<Map> list = r.query(SimpleObject.class).transform(Map.class, "simple").order("aString", "asc").list();
 
 		assertEquals("xpto1", list.get(0).get(object1.getId()));
 		assertEquals("xpto2", list.get(1).get(object2.getId()));

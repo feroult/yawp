@@ -25,7 +25,7 @@ public class ActionTest extends EndpointTestCase {
 
 		assertEquals("i was changed in action", object.getaString());
 
-		object = r.query(SimpleObject.class).id(object.getId()).now();
+		object = r.query(SimpleObject.class).id(object.getId());
 		assertEquals("i was changed in action", object.getaString());
 	}
 

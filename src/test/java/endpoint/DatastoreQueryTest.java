@@ -34,7 +34,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object4"));
 
-		List<SimpleObject> objects = r.query(SimpleObject.class).where("aLong", "=", 1l).list().now();
+		List<SimpleObject> objects = r.query(SimpleObject.class).where("aLong", "=", 1l).list();
 
 		assertEquals(3, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
@@ -46,7 +46,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testWhereWithUnicode() {
 		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "\u00c1"));
 
-		List<SimpleObject> objects = r.query(SimpleObject.class).where("aString", "=", "\u00c1").list().now();
+		List<SimpleObject> objects = r.query(SimpleObject.class).where("aString", "=", "\u00c1").list();
 
 		assertEquals(1, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "\u00c1");
@@ -57,7 +57,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
 
-		List<SimpleObject> objects = r.query(SimpleObject.class).where("aLong", "=", 1l, "aString", "=", "object2").list().now();
+		List<SimpleObject> objects = r.query(SimpleObject.class).where("aLong", "=", 1l, "aString", "=", "object2").list();
 
 		assertEquals(1, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
@@ -70,7 +70,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse("{where: ['aLong', '=', 1], order: ['aString', 'desc'], limit: 2}");
 
-		List<SimpleObject> objects = r.query(SimpleObject.class).options(options).list().now();
+		List<SimpleObject> objects = r.query(SimpleObject.class).options(options).list();
 
 		assertEquals(2, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object3");
@@ -83,7 +83,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		// 'A' with accent
 		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "\u00c1"));
 
-		List<SimpleObject> objects = r.query(SimpleObject.class).order("aString", "desc").list().now();
+		List<SimpleObject> objects = r.query(SimpleObject.class).order("aString", "desc").list();
 
 		assertEquals(4, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object3");
@@ -96,7 +96,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testLimit() {
 		saveThreeObjects();
 
-		List<SimpleObject> objects = r.query(SimpleObject.class).order("aString", "desc").limit(1).list().now();
+		List<SimpleObject> objects = r.query(SimpleObject.class).order("aString", "desc").limit(1).list();
 
 		assertEquals(1, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object3");
@@ -108,15 +108,15 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
 		DatastoreQuery<SimpleObject> q = r.query(SimpleObject.class).order("aString", "desc").limit(1);
 
-		List<SimpleObject> objects = q.list().now();
+		List<SimpleObject> objects = q.list();
 		assertEquals(1, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object3");
 
-		objects = q.list().now();
+		objects = q.list();
 		assertEquals(1, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
 
-		objects = r.query(SimpleObject.class).cursor(q.getCursor()).order("aString", "desc").limit(1).list().now();
+		objects = r.query(SimpleObject.class).cursor(q.getCursor()).order("aString", "desc").limit(1).list();
 		assertEquals(1, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 	}
@@ -127,7 +127,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
 		r.save(object);
 
-		object = r.query(SimpleObject.class).id(object.getId()).now();
+		object = r.query(SimpleObject.class).id(object.getId());
 		assertEquals("xpto", object.getaString());
 	}
 }

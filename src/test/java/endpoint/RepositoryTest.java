@@ -61,17 +61,6 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testFindById() {
-		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
-
-		r.save(object);
-
-		object = r.query(SimpleObject.class).id(object.getId()).now();
-		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
-
-	}
-
-	@Test
 	public void testDontDuplicateChildList() {
 		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
 		object.setaList(Arrays.asList(new AnotherSimpleObject("anotherObject1")));

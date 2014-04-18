@@ -122,7 +122,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testQueryById() {
+	public void testFindById() {
 		SimpleObject object = new SimpleObject("xpto");
 
 		r.save(object);

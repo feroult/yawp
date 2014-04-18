@@ -15,4 +15,9 @@ public class DatastoreResult<T> {
 		return object;
 	}
 
+	public DatastoreResult<T> transform(String name) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
 }

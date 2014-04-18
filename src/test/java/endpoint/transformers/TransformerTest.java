@@ -11,11 +11,15 @@ public class TransformerTest extends EndpointTestCase {
 	public void testSimpleTransformer() {
 		SimpleObject object = new SimpleObject("xpto");
 		r.save(object);
-		
-//		Object o = r.find(SimpleObject.class, object.getId()).transform("simple").now();
-//		
-//		r.query(SimpleObject.class).first().transform("simple").now();
-		
+
+		// r.query(SimpleObject.class).id(objectId).transform("simple").now();
+
+		Object o = r.find(SimpleObject.class, object.getId()).transform("simple").now();
+
+		o.toString();
+		//
+		// r.query(SimpleObject.class).first().transform("simple").now();
+
 	}
 
 }

@@ -95,7 +95,7 @@ public class DatastoreQuery<T> {
 	public DatastoreResultList<T> list() {
 		r.namespace().set(getClazz());
 		try {
-			return new DatastoreResultList<T>(executeQuery());
+			return new DatastoreResultList<T>(r, executeQuery());
 		} finally {
 			r.namespace().reset();
 		}

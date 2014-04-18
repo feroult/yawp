@@ -13,8 +13,8 @@ public class DatastoreResult<T> {
 	}
 
 	public DatastoreResult(Repository r, T object) {
-		this.object = object;
 		this.r = r;
+		this.object = object;
 	}
 
 	public T now() {

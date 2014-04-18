@@ -2,6 +2,7 @@ package endpoint.transformers;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -20,6 +21,23 @@ public class TransformerTest extends EndpointTestCase {
 		Map<Long, String> map = r.query(SimpleObject.class).id(object.getId()).transform(Map.class, "simple").now();
 
 		assertEquals("xpto", map.get(object.getId()));
+	}
+
+	@Test
+	public void testListResult() {
+		SimpleObject object1 = new SimpleObject("xpto1");
+		SimpleObject object2 = new SimpleObject("xpto2");
+		SimpleObject object3 = new SimpleObject("xpto3");
+		r.save(object1);
+		r.save(object2);
+		r.save(object3);
+
+		@SuppressWarnings("rawtypes")
+		List<Map> list = r.query(SimpleObject.class).order("aString", "asc").list().transform(Map.class, "simple").now();
+
+		assertEquals("xpto1", list.get(0).get(object1.getId()));
+		assertEquals("xpto2", list.get(1).get(object2.getId()));
+		assertEquals("xpto3", list.get(2).get(object3.getId()));
 	}
 
 }

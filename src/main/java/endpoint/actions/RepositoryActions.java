@@ -40,6 +40,9 @@ public class RepositoryActions {
 		Set<Class<? extends Action>> clazzes = reflections.getSubTypesOf(Action.class);
 
 		for (Class<? extends Action> actionClazz : clazzes) {
+			if (!actionClazz.isAnnotationPresent(Target.class)) {
+				continue;
+			}
 			Target annotation = actionClazz.getAnnotation(Target.class);
 			Class<?> objectClazz = annotation.value();
 
@@ -72,8 +75,8 @@ public class RepositoryActions {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static HttpResponse execute(Repository r, Class<?> objectClazz, String httpMethod, String action,
-			Long id, Map<String, String> params) {
+	public static HttpResponse execute(Repository r, Class<?> objectClazz, String httpMethod, String action, Long id,
+			Map<String, String> params) {
 
 		try {
 			Method method = actions.get(getActionKey(objectClazz, httpMethod, action));

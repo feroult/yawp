@@ -1,11 +1,9 @@
 package endpoint.hooks;
 
-import endpoint.DatastoreObject;
-import endpoint.hooks.Hook;
 import endpoint.hooks.HookTest.Product;
 
 public class GenericHook extends Hook {
-	public void afterSave(DatastoreObject o) {
+	public void afterSave(Object o) {
 		if (!Product.class.isInstance(o)) {
 			return;
 		}

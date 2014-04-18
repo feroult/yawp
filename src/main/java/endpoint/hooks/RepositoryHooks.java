@@ -11,7 +11,6 @@ import java.util.Set;
 import org.reflections.Reflections;
 
 import endpoint.DatastoreException;
-import endpoint.DatastoreObject;
 import endpoint.Repository;
 import endpoint.Target;
 
@@ -29,13 +28,13 @@ public class RepositoryHooks {
 		Set<Class<? extends Hook>> clazzes = reflections.getSubTypesOf(Hook.class);
 
 		for (Class<? extends Hook> hookClazz : clazzes) {
-			Class<? extends DatastoreObject> objectClazz = null;
+			Class<? extends Object> objectClazz = null;
 
 			Target annotation = hookClazz.getAnnotation(Target.class);
 			if (annotation != null) {
 				objectClazz = annotation.value();
 			} else {
-				objectClazz = DatastoreObject.class;
+				objectClazz = Object.class;
 			}
 
 			addHookForObject(objectClazz, hookClazz);
@@ -44,7 +43,7 @@ public class RepositoryHooks {
 		packages.add(packagePrefix);
 	}
 
-	private static void addHookForObject(Class<? extends DatastoreObject> objectClazz, Class<? extends Hook> clazz) {
+	private static void addHookForObject(Class<? extends Object> objectClazz, Class<? extends Hook> clazz) {
 		List<Class<? extends Hook>> objectHooks = null;
 
 		String objectName = objectClazz.getSimpleName();
@@ -58,22 +57,22 @@ public class RepositoryHooks {
 		objectHooks.add(clazz);
 	}
 
-	public static void beforeSave(Repository r, DatastoreObject object) {
+	public static void beforeSave(Repository r, Object object) {
 		invokeHooks(r, object, "beforeSave");
 	}
 
-	public static void afterSave(Repository r, DatastoreObject object) {
+	public static void afterSave(Repository r, Object object) {
 		invokeHooks(r, object, "afterSave");
 	}
 
-	private static void invokeHooks(Repository r, DatastoreObject object, String methodName) {
+	private static void invokeHooks(Repository r, Object object, String methodName) {
 		List<Class<? extends Hook>> objectHooks = new ArrayList<Class<? extends Hook>>();
 		if (hooks.containsKey(object.getClass().getSimpleName())) {
 			objectHooks.addAll(hooks.get(object.getClass().getSimpleName()));
 		}
 
-		if (hooks.containsKey(DatastoreObject.class.getSimpleName())) {
-			objectHooks.addAll(hooks.get(DatastoreObject.class.getSimpleName()));
+		if (hooks.containsKey(Object.class.getSimpleName())) {
+			objectHooks.addAll(hooks.get(Object.class.getSimpleName()));
 		}
 
 		for (Class<? extends Hook> hookClazz : objectHooks) {
@@ -81,14 +80,14 @@ public class RepositoryHooks {
 		}
 	}
 
-	private static void invokeHookMethod(Repository r, DatastoreObject object, String methodName, Class<? extends Hook> hookClazz) {
+	private static void invokeHookMethod(Repository r, Object object, String methodName, Class<? extends Hook> hookClazz) {
 		try {
 			Hook hook = hookClazz.newInstance();
 			hook.setRepository(r);
 
 			Method method = null;
 
-			method = getMethod(hook, methodName, DatastoreObject.class);
+			method = getMethod(hook, methodName, Object.class);
 
 			if (method == null) {
 				method = getMethod(hook, methodName, object.getClass());

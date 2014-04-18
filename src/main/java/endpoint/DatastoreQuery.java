@@ -20,7 +20,7 @@ import com.google.appengine.api.datastore.QueryResultList;
 
 import endpoint.utils.EntityUtils;
 
-public class DatastoreQuery<T extends DatastoreObject> {
+public class DatastoreQuery<T extends Object> {
 
 	private Class<T> clazz;
 

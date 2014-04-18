@@ -50,7 +50,7 @@ public class Repository {
 		return namespace.getNs();
 	}
 
-	public void save(DatastoreObject object) {
+	public void save(Object object) {
 		namespace.set(object.getClass());
 		try {
 			RepositoryHooks.beforeSave(this, object);
@@ -66,7 +66,7 @@ public class Repository {
 		}
 	}
 
-	public HttpResponse action(Class<? extends DatastoreObject> clazz, String method, String action, long id, Map<String, String> params) {
+	public HttpResponse action(Class<? extends Object> clazz, String method, String action, long id, Map<String, String> params) {
 		namespace.set(clazz);
 		try {
 			return RepositoryActions.execute(this, clazz, method, action, id, params);
@@ -75,7 +75,7 @@ public class Repository {
 		}
 	}
 
-	public <T extends DatastoreObject> List<T> all(Class<T> clazz) {
+	public <T extends Object> List<T> all(Class<T> clazz) {
 		namespace.set(clazz);
 		try {
 			return query(clazz).asList();
@@ -84,7 +84,7 @@ public class Repository {
 		}
 	}
 
-	public <T extends DatastoreObject> T findByKey(Key key, Class<T> clazz) {
+	public <T extends Object> T findByKey(Key key, Class<T> clazz) {
 		namespace.set(clazz);
 		try {
 
@@ -104,7 +104,7 @@ public class Repository {
 		}
 	}
 
-	public <T extends DatastoreObject> T findById(long id, Class<T> clazz) {
+	public <T extends Object> T findById(long id, Class<T> clazz) {
 		namespace.set(clazz);
 		try {
 
@@ -114,7 +114,7 @@ public class Repository {
 		}
 	}
 
-	public <T extends DatastoreObject> DatastoreQuery<T> query(Class<T> clazz) {
+	public <T extends Object> DatastoreQuery<T> query(Class<T> clazz) {
 		namespace.set(clazz);
 		try {
 
@@ -124,11 +124,11 @@ public class Repository {
 		}
 	}
 
-	public void delete(DatastoreObject object) {
+	public void delete(Object object) {
 		delete(EntityUtils.getId(object), object.getClass());
 	}
 
-	public void delete(Long id, Class<? extends DatastoreObject> clazz) {
+	public void delete(Long id, Class<? extends Object> clazz) {
 		namespace.set(clazz);
 		try {
 			DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
@@ -143,7 +143,7 @@ public class Repository {
 
 	}
 
-	private void deleteLists(Key key, Class<? extends DatastoreObject> clazz) {
+	private void deleteLists(Key key, Class<? extends Object> clazz) {
 		Field[] fields = EntityUtils.getFields(clazz);
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
@@ -156,14 +156,14 @@ public class Repository {
 		}
 	}
 
-	private void saveEntity(DatastoreObject object, Entity entity, String action) {
+	private void saveEntity(Object object, Entity entity, String action) {
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 		Key key = datastoreService.put(entity);
 		EntityUtils.setKey(object, key);
 	}
 
 	@SuppressWarnings("unchecked")
-	private void saveLists(DatastoreObject object, Entity entity) {
+	private void saveLists(Object object, Entity entity) {
 		Field[] fields = EntityUtils.getFields(object.getClass());
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
@@ -174,14 +174,14 @@ public class Repository {
 			field.setAccessible(true);
 
 			try {
-				saveList(EntityUtils.getListClass(field), (List<DatastoreObject>) field.get(object), object);
+				saveList(EntityUtils.getListClass(field), (List<Object>) field.get(object), object);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}
 	}
 
-	private void saveList(Class<? extends DatastoreObject> childClazz, List<DatastoreObject> childs, DatastoreObject parentObject) {
+	private void saveList(Class<? extends Object> childClazz, List<Object> childs, Object parentObject) {
 
 		deleteChilds(EntityUtils.getKey(parentObject), childClazz);
 
@@ -189,14 +189,14 @@ public class Repository {
 			return;
 		}
 
-		for (DatastoreObject child : childs) {
+		for (Object child : childs) {
 			Entity entity = createEntityForChild(child, parentObject);
 			EntityUtils.toEntity(child, entity);
 			saveEntity(child, entity, null);
 		}
 	}
 
-	private void deleteChilds(Key parentKey, Class<? extends DatastoreObject> childClazz) {
+	private void deleteChilds(Key parentKey, Class<? extends Object> childClazz) {
 		DatastoreService service = DatastoreServiceFactory.getDatastoreService();
 
 		Query query = new Query(EntityUtils.getKind(childClazz));
@@ -212,7 +212,7 @@ public class Repository {
 
 	}
 
-	private Entity createEntity(DatastoreObject object) {
+	private Entity createEntity(Object object) {
 		Entity entity = null;
 
 		Key currentKey = EntityUtils.getKey(object);
@@ -226,7 +226,7 @@ public class Repository {
 		return entity;
 	}
 
-	private Entity createEntityForChild(DatastoreObject object, DatastoreObject parent) {
+	private Entity createEntityForChild(Object object, Object parent) {
 		Entity entity = null;
 
 		Key currentKey = EntityUtils.getKey(object);
@@ -239,7 +239,7 @@ public class Repository {
 		return entity;
 	}
 
-	private void loadLists(DatastoreObject object) {
+	private void loadLists(Object object) {
 		Field[] fields = EntityUtils.getFields(object.getClass());
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
@@ -249,7 +249,7 @@ public class Repository {
 
 			field.setAccessible(true);
 
-			List<DatastoreObject> list = new ArrayList<DatastoreObject>();
+			List<Object> list = new ArrayList<Object>();
 			list.addAll(query(EntityUtils.getListClass(field)).parentKey(EntityUtils.getKey(object)).asList());
 
 			try {

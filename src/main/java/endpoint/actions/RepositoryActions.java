@@ -10,7 +10,6 @@ import java.util.Set;
 import org.reflections.Reflections;
 
 import endpoint.DatastoreException;
-import endpoint.DatastoreObject;
 import endpoint.Repository;
 import endpoint.Target;
 import endpoint.response.HttpResponse;
@@ -42,7 +41,7 @@ public class RepositoryActions {
 
 		for (Class<? extends Action> actionClazz : clazzes) {
 			Target annotation = actionClazz.getAnnotation(Target.class);
-			Class<? extends DatastoreObject> objectClazz = annotation.value();
+			Class<? extends Object> objectClazz = annotation.value();
 
 			addActionForObject(objectClazz, actionClazz);
 		}
@@ -50,7 +49,7 @@ public class RepositoryActions {
 		packages.add(packagePrefix);
 	}
 
-	private static void addActionForObject(Class<? extends DatastoreObject> objectClazz, Class<? extends Action> actionClazz) {
+	private static void addActionForObject(Class<? extends Object> objectClazz, Class<? extends Action> actionClazz) {
 		for (String httpMethod : httpAnnotations.keySet()) {
 			Class<? extends Annotation> httpMethodAnnotation = httpAnnotations.get(httpMethod);
 
@@ -68,12 +67,12 @@ public class RepositoryActions {
 		}
 	}
 
-	private static String getActionKey(Class<? extends DatastoreObject> objectClazz, String httpMethod, String action) {
+	private static String getActionKey(Class<? extends Object> objectClazz, String httpMethod, String action) {
 		return String.format("%s-%s-%s", objectClazz.getSimpleName(), httpMethod, action);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static HttpResponse execute(Repository r, Class<? extends DatastoreObject> objectClazz, String httpMethod, String action,
+	public static HttpResponse execute(Repository r, Class<? extends Object> objectClazz, String httpMethod, String action,
 			Long id, Map<String, String> params) {
 
 		try {

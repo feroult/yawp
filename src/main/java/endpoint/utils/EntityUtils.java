@@ -19,7 +19,6 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
 
-import endpoint.DatastoreObject;
 import endpoint.Index;
 import endpoint.Json;
 
@@ -27,11 +26,11 @@ public class EntityUtils {
 
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
 
-	public static String getKind(Class<? extends DatastoreObject> clazz) {
+	public static String getKind(Class<? extends Object> clazz) {
 		return clazz.getSimpleName();
 	}
 
-	public static void toEntity(DatastoreObject object, Entity entity) {
+	public static void toEntity(Object object, Entity entity) {
 		Field[] fields = getFields(object.getClass());
 
 		for (int i = 0; i < fields.length; i++) {
@@ -48,7 +47,7 @@ public class EntityUtils {
 		}
 	}
 
-	public static <T extends DatastoreObject> T toObject(Entity entity, Class<T> clazz) {
+	public static <T extends Object> T toObject(Entity entity, Class<T> clazz) {
 		try {
 			T object = clazz.newInstance();
 
@@ -76,7 +75,7 @@ public class EntityUtils {
 		}
 	}
 
-	public static <T extends DatastoreObject> void setKey(T object, Key key) {
+	public static <T extends Object> void setKey(T object, Key key) {
 		try {
 			BeanUtils.setProperty(object, "key", key);
 		} catch (IllegalAccessException | InvocationTargetException e) {
@@ -91,15 +90,15 @@ public class EntityUtils {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 
 	public static Long getId(Object object) {
 		return getKey(object).getId();
 	}
 
 
-	public static <T extends DatastoreObject> Field[] getFields(Class<T> clazz) {
-		Field[] allFields = ArrayUtils.addAll(DatastoreObject.class.getDeclaredFields(), clazz.getDeclaredFields());
+	public static <T extends Object> Field[] getFields(Class<T> clazz) {
+		Field[] allFields = ArrayUtils.addAll(Object.class.getDeclaredFields(), clazz.getDeclaredFields());
 
 		List<Field> fields = new ArrayList<Field>();
 
@@ -116,20 +115,20 @@ public class EntityUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Class<? extends DatastoreObject> getListClass(Field field) {
+	public static Class<? extends Object> getListClass(Field field) {
 		Type genericFieldType = field.getGenericType();
 		if (genericFieldType instanceof ParameterizedType) {
 			ParameterizedType aType = (ParameterizedType) genericFieldType;
 			Type[] fieldArgTypes = aType.getActualTypeArguments();
 			for (Type fieldArgType : fieldArgTypes) {
-				return (Class<? extends DatastoreObject>) fieldArgType;
+				return (Class<? extends Object>) fieldArgType;
 			}
 		}
 
 		throw new RuntimeException("cant find list generic type");
 	}
 
-	public static <T extends DatastoreObject> String getIndexFieldName(String fieldName, Class<T> clazz) {
+	public static <T extends Object> String getIndexFieldName(String fieldName, Class<T> clazz) {
 		try {
 			Field field = clazz.getDeclaredField(fieldName);
 			Index index = field.getAnnotation(Index.class);
@@ -144,7 +143,7 @@ public class EntityUtils {
 		}
 	}
 
-	public static <T extends DatastoreObject> Object getIndexFieldValue(String fieldName, Class<T> clazz, Object value) {
+	public static <T extends Object> Object getIndexFieldValue(String fieldName, Class<T> clazz, Object value) {
 		try {
 			Field field = clazz.getDeclaredField(fieldName);
 			Index index = field.getAnnotation(Index.class);
@@ -163,11 +162,11 @@ public class EntityUtils {
 		}
 	}
 
-	public static Key createKey(Long id, Class<? extends DatastoreObject> clazz) {
+	public static Key createKey(Long id, Class<? extends Object> clazz) {
 		return KeyFactory.createKey(getKind(clazz), id);
 	}
 
-	private static void setEntityProperty(DatastoreObject object, Entity entity, Field field) {
+	private static void setEntityProperty(Object object, Entity entity, Field field) {
 		Object value = getFieldValue(field, object);
 
 		Index index = field.getAnnotation(Index.class);
@@ -198,7 +197,7 @@ public class EntityUtils {
 		return StringUtils.stripAccents((String) o);
 	}
 
-	private static Object getFieldValue(Field field, DatastoreObject object) {
+	private static Object getFieldValue(Field field, Object object) {
 		try {
 			field.setAccessible(true);
 			Object value = field.get(object);
@@ -220,7 +219,7 @@ public class EntityUtils {
 		}
 	}
 
-	private static <T extends DatastoreObject> void setObjectProperty(T object, Entity entity, Field field) throws IllegalAccessException {
+	private static <T extends Object> void setObjectProperty(T object, Entity entity, Field field) throws IllegalAccessException {
 		field.setAccessible(true);
 
 		Object value = entity.getProperty(field.getName());
@@ -243,11 +242,11 @@ public class EntityUtils {
 		field.set(object, value);
 	}
 
-	private static <T extends DatastoreObject> void setIntProperty(T object, Field field, Object value) throws IllegalAccessException {
+	private static <T extends Object> void setIntProperty(T object, Field field, Object value) throws IllegalAccessException {
 		field.set(object, ((Long) value).intValue());
 	}
 
-	private static <T extends DatastoreObject> void setJsonProperty(T object, Field field, Object value) throws IllegalAccessException {
+	private static <T extends Object> void setJsonProperty(T object, Field field, Object value) throws IllegalAccessException {
 		if (value == null) {
 			return;
 		}
@@ -262,7 +261,7 @@ public class EntityUtils {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static <T extends DatastoreObject> void setEnumProperty(T object, Field field, Object value) throws IllegalAccessException {
+	private static <T extends Object> void setEnumProperty(T object, Field field, Object value) throws IllegalAccessException {
 		if (value == null) {
 			return;
 		}

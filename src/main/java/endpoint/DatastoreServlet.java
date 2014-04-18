@@ -115,9 +115,9 @@ public class DatastoreServlet extends HttpServlet {
 			if (!endpoint.index()) {
 				return new ForbiddenResponse();
 			}
-			return new JsonResponse(index(r, clazz, params == null ? null : params.get("q")));
+			return new JsonResponse(index(r, clazz, q(params), t(params)));
 		case SHOW:
-			return new JsonResponse(get(r, clazz, router.getId()));
+			return new JsonResponse(get(r, clazz, router.getId(), t(params)));
 		case CREATE:
 			return new JsonResponse(save(r, clazz, requestJson));
 		case UPDATE:
@@ -130,6 +130,14 @@ public class DatastoreServlet extends HttpServlet {
 		}
 
 		throw new IllegalArgumentException("Invalid datastore action");
+	}
+
+	private String q(Map<String, String> params) {
+		return params == null ? null : params.get("q");
+	}
+
+	private String t(Map<String, String> params) {
+		return params == null ? null : params.get("t");
 	}
 
 	protected Repository getRepository(Map<String, String> params) {
@@ -168,15 +176,25 @@ public class DatastoreServlet extends HttpServlet {
 		return JsonUtils.to(objects);
 	}
 
-	private String index(Repository r, Class<?> clazz, String q) {
-		if (q == null) {
-			return JsonUtils.to(r.all(clazz));
+	private String index(Repository r, Class<?> clazz, String q, String t) {
+		DatastoreQuery<?> query = r.query(clazz);
+
+		if (q != null) {
+			query.options(DatastoreQueryOptions.parse(q));
 		}
 
-		return JsonUtils.to(r.query(clazz).options(DatastoreQueryOptions.parse(q)).list());
+		if (t != null) {
+			return JsonUtils.to(query.transform(t).list());
+		}
+
+		return JsonUtils.to(query.list());
 	}
 
-	private String get(Repository r, Class<?> clazz, long id) {
+	private String get(Repository r, Class<?> clazz, long id, String t) {
+		if (t != null) {
+			return JsonUtils.to(r.query(clazz).transform(t).id(id));
+		}
+
 		return JsonUtils.to(r.query(clazz).id(id));
 	}
 

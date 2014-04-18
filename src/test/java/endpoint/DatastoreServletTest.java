@@ -78,18 +78,32 @@ public class DatastoreServletTest extends EndpointTestCase {
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "i was changed in action");
 	}
 
-//	@Test
-//	public void testTransformer() {
-//		SimpleObject object = JsonUtils.from(servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText(),
-//				SimpleObject.class);
-//
-//		String json = servlet.execute("GET", "/simpleobjects/" + object.getId(), null, q("{transform:'simple'}")).getText();
-//
-//		@SuppressWarnings("rawtypes")
-//		Map map = JsonUtils.from(json, Map.class);
-//
-//		assertEquals("object1", map.get(object.getId()));
-//	}
+	@Test
+	public void testTransformerInShow() {
+		SimpleObject object = JsonUtils.from(servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText(),
+				SimpleObject.class);
+
+		String json = servlet.execute("GET", "/simpleobjects/" + object.getId(), null, t("simple")).getText();
+
+		@SuppressWarnings("rawtypes")
+		Map map = JsonUtils.from(json, Map.class);
+
+		assertEquals("object1", map.get("object1"));
+	}
+
+	@Test
+	public void testTransformerInIndex() {
+		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
+		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
+
+		String json = servlet.execute("GET", "/simpleobjects", null, t("simple")).getText();
+
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		List<Map> list = JsonUtils.from(json, List.class);
+
+		assertEquals("object1", list.get(0).get("object1"));
+		assertEquals("object1", list.get(1).get("object1"));
+	}
 
 	@Test
 	public void testEndpointRestrictions() {
@@ -97,9 +111,9 @@ public class DatastoreServletTest extends EndpointTestCase {
 		assertTrue(ForbiddenResponse.class.isInstance(servlet.execute("GET", "/anothersimpleobjects", SIMPLE_OBJECT_JSON, null)));
 	}
 
-	private Map<String, String> q(String s) {
+	private Map<String, String> t(String s) {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("q", s);
+		map.put("t", s);
 		return map;
 	}
 }

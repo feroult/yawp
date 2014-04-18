@@ -9,9 +9,9 @@ import endpoint.Target;
 @Target(SimpleObject.class)
 public class SimpleObjectTransformer extends Transformer {
 
-	public Map<Long, String> simple(SimpleObject object) {
-		Map<Long, String> map = new HashMap<Long, String>();
-		map.put(object.getId(), object.getaString());
+	public Map<String, String> simple(SimpleObject object) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put(object.getaString(), object.getaString());
 		return map;
 	}
 

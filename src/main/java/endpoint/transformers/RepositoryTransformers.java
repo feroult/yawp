@@ -55,7 +55,7 @@ public class RepositoryTransformers {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Object execute(Repository r, Object object, String name) {
+	public static <T> T execute(Repository r, Class<T> clazz, Object object, String name) {
 
 		try {
 			Method method = transformers.get(getTransformerKey(object.getClass(), name));
@@ -64,7 +64,7 @@ public class RepositoryTransformers {
 			Transformer transformerInstance = transformerClazz.newInstance();
 			transformerInstance.setRepository(r);
 
-			return method.invoke(transformerInstance, object);
+			return (T) method.invoke(transformerInstance, object);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}

@@ -22,8 +22,12 @@ public class DatastoreResult<T> {
 	}
 
 	public DatastoreResult<?> transform(String name) {
-		Object transformedObject = RepositoryTransformers.execute(r, object, name);
-		return new DatastoreResult<Object>(r, transformedObject);
+		return transform(Object.class, name);
+	}
+
+	public <TT> DatastoreResult<TT> transform(Class<TT> clazz, String name) {
+		TT transformedObject = RepositoryTransformers.execute(r, clazz, object, name);
+		return new DatastoreResult<TT>(r, transformedObject);
 	}
 
 }

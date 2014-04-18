@@ -47,7 +47,7 @@ public class EntityUtils {
 		}
 	}
 
-	public static <T extends Object> T toObject(Entity entity, Class<T> clazz) {
+	public static <T> T toObject(Entity entity, Class<T> clazz) {
 		try {
 			T object = clazz.newInstance();
 
@@ -75,7 +75,7 @@ public class EntityUtils {
 		}
 	}
 
-	public static <T extends Object> void setKey(T object, Key key) {
+	public static <T> void setKey(T object, Key key) {
 		try {
 			BeanUtils.setProperty(object, "key", key);
 		} catch (IllegalAccessException | InvocationTargetException e) {
@@ -95,7 +95,7 @@ public class EntityUtils {
 		return getKey(object).getId();
 	}
 
-	public static <T extends Object> Field[] getFields(Class<T> clazz) {
+	public static <T> Field[] getFields(Class<T> clazz) {
 		Field[] allFields = ArrayUtils.addAll(Object.class.getDeclaredFields(), clazz.getDeclaredFields());
 
 		List<Field> fields = new ArrayList<Field>();
@@ -125,7 +125,7 @@ public class EntityUtils {
 		throw new RuntimeException("cant find list generic type");
 	}
 
-	public static <T extends Object> String getIndexFieldName(String fieldName, Class<T> clazz) {
+	public static <T> String getIndexFieldName(String fieldName, Class<T> clazz) {
 		try {
 			Field field = clazz.getDeclaredField(fieldName);
 			Index index = field.getAnnotation(Index.class);
@@ -140,7 +140,7 @@ public class EntityUtils {
 		}
 	}
 
-	public static <T extends Object> Object getIndexFieldValue(String fieldName, Class<T> clazz, Object value) {
+	public static <T> Object getIndexFieldValue(String fieldName, Class<T> clazz, Object value) {
 		try {
 			Field field = clazz.getDeclaredField(fieldName);
 			Index index = field.getAnnotation(Index.class);
@@ -216,7 +216,7 @@ public class EntityUtils {
 		}
 	}
 
-	private static <T extends Object> void setObjectProperty(T object, Entity entity, Field field) throws IllegalAccessException {
+	private static <T> void setObjectProperty(T object, Entity entity, Field field) throws IllegalAccessException {
 		field.setAccessible(true);
 
 		Object value = entity.getProperty(field.getName());
@@ -239,11 +239,11 @@ public class EntityUtils {
 		field.set(object, value);
 	}
 
-	private static <T extends Object> void setIntProperty(T object, Field field, Object value) throws IllegalAccessException {
+	private static <T> void setIntProperty(T object, Field field, Object value) throws IllegalAccessException {
 		field.set(object, ((Long) value).intValue());
 	}
 
-	private static <T extends Object> void setJsonProperty(T object, Field field, Object value) throws IllegalAccessException {
+	private static <T> void setJsonProperty(T object, Field field, Object value) throws IllegalAccessException {
 		if (value == null) {
 			return;
 		}
@@ -258,7 +258,7 @@ public class EntityUtils {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static <T extends Object> void setEnumProperty(T object, Field field, Object value) throws IllegalAccessException {
+	private static <T> void setEnumProperty(T object, Field field, Object value) throws IllegalAccessException {
 		if (value == null) {
 			return;
 		}

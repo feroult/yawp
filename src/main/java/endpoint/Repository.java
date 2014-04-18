@@ -75,7 +75,7 @@ public class Repository {
 		}
 	}
 
-	public <T extends Object> List<T> all(Class<T> clazz) {
+	public <T> List<T> all(Class<T> clazz) {
 		namespace.set(clazz);
 		try {
 			return query(clazz).list().now();
@@ -114,7 +114,7 @@ public class Repository {
 		}
 	}
 
-	public <T extends Object> DatastoreQuery<T> query(Class<T> clazz) {
+	public <T> DatastoreQuery<T> query(Class<T> clazz) {
 		namespace.set(clazz);
 		try {
 

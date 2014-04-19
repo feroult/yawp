@@ -191,7 +191,7 @@ public class EntityUtils {
 			return o;
 		}
 
-		return StringUtils.stripAccents((String) o);
+		return StringUtils.stripAccents((String) o).toLowerCase();
 	}
 
 	private static Object getFieldValue(Field field, Object object) {

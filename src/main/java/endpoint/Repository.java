@@ -48,7 +48,7 @@ public class Repository {
 	public Namespace namespace() {
 		return namespace;
 	}
-	
+
 	public String currentNamespace() {
 		return namespace.getNs();
 	}
@@ -79,12 +79,7 @@ public class Repository {
 	}
 
 	public <T> List<T> all(Class<T> clazz) {
-		namespace.set(clazz);
-		try {
-			return query(clazz).list();
-		} finally {
-			namespace.reset();
-		}
+		return query(clazz).list();
 	}
 
 	public <T> DatastoreQuery<T> query(Class<T> clazz) {

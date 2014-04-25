@@ -22,8 +22,8 @@ public class ReIndexTest extends EndpointTestCase {
 
 	@Test
 	public void testReIndexOneProperty() {
-		helper.createEntityWithProperty("person", "name", "john");
-		helper.createEntityWithProperty("person", "name", "peter");
+		helper.createEntityWithUnindexedProperty("person", "name", "john");
+		helper.createEntityWithUnindexedProperty("person", "name", "peter");
 
 		assertNull(helper.queryEntity("person", "name", "john"));
 		assertNull(helper.queryEntity("person", "name", "peter"));
@@ -37,7 +37,7 @@ public class ReIndexTest extends EndpointTestCase {
 
 	@Test
 	public void testReIndexTwoProperties() {
-		helper.createEntityWithProperty("person", "name", "john", "age", 10);
+		helper.createEntityWithUnindexedProperty("person", "name", "john", "age", 10);
 
 		assertNull(helper.queryEntity("person", "name", "john"));
 		assertNull(helper.queryEntity("person", "age", 10));
@@ -51,7 +51,7 @@ public class ReIndexTest extends EndpointTestCase {
 
 	@Test
 	public void textReIndexUrlAPI() {
-		helper.createEntityWithProperty("person", "name", "john", "age", 10);
+		helper.createEntityWithUnindexedProperty("person", "name", "john", "age", 10);
 		assertNull(helper.queryEntity("person", "name", "john"));
 		assertNull(helper.queryEntity("person", "age", 10));
 

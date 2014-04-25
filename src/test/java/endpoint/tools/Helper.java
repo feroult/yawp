@@ -19,12 +19,24 @@ public class Helper {
 		return pq.asSingleEntity();
 	}
 
-	public void createEntityWithProperty(String kind, Object... propertiesAndValues) {
+	public void createEntityWithIndexedProperty(String kind, Object... propertiesAndValues) {
+		createEntity(kind, true, propertiesAndValues);
+	}
+
+	public void createEntityWithUnindexedProperty(String kind, Object... propertiesAndValues) {
+		createEntity(kind, false, propertiesAndValues);
+	}
+
+	public void createEntity(String kind, boolean indexed, Object... propertiesAndValues) {
 		Entity entity = new Entity(kind);
 		for (int i = 0; i < propertiesAndValues.length; i += 2) {
 			String property = (String) propertiesAndValues[i];
 			Object value = propertiesAndValues[i + 1];
-			entity.setUnindexedProperty(property, value);
+			if (indexed) {
+				entity.setProperty(property, value);
+			} else {
+				entity.setUnindexedProperty(property, value);
+			}
 		}
 		datastoreService.put(entity);
 	}

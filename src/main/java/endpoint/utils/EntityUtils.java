@@ -19,6 +19,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
 
+import endpoint.Id;
 import endpoint.Index;
 import endpoint.Json;
 
@@ -77,6 +78,14 @@ public class EntityUtils {
 
 	public static <T> void setKey(T object, Key key) {
 		try {
+			Field field = getAnnotatedId(object);
+
+			if (field != null) {
+				field.setAccessible(true);
+				field.set(object, key.getId());
+				return;
+			}
+
 			BeanUtils.setProperty(object, "key", key);
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			throw new RuntimeException(e);
@@ -85,10 +94,31 @@ public class EntityUtils {
 
 	public static Key getKey(Object object) {
 		try {
+			Field field = getAnnotatedId(object);
+
+			if (field != null) {
+				field.setAccessible(true);
+				if (field.get(object) == null) {
+					return null;
+				}
+				return createKey((Long) field.get(object), object.getClass());
+			}
+
 			return (Key) PropertyUtils.getProperty(object, "key");
+
 		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static Field getAnnotatedId(Object object) {
+		Class<?> clazz = object.getClass();
+		for (Field field : clazz.getDeclaredFields()) {
+			if (field.isAnnotationPresent(Id.class)) {
+				return field;
+			}
+		}
+		return null;
 	}
 
 	public static Long getId(Object object) {

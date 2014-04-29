@@ -1,11 +1,13 @@
 package endpoint;
 
 import static org.junit.Assert.assertEquals;
-import endpoint.DatastoreObject;
 
 @Endpoint(path = "/anothersimpleobjects", index = false)
-public class AnotherSimpleObject extends DatastoreObject {
+public class AnotherSimpleObject {
 
+	@Id
+	private Long id;
+	
 	private String aString;
 
 	public AnotherSimpleObject() {
@@ -25,12 +27,7 @@ public class AnotherSimpleObject extends DatastoreObject {
 		this.aString = aString;
 	}
 
-	public void assertAnotherObject(String aString) {
-		assertEquals(AnotherSimpleObject.class.getSimpleName(), getKey().getKind());
-		assertFields(aString);
-	}
-
-	private void assertFields(String aString) {
+	public void assertAnotherObject(String aString) {		
 		assertEquals(aString, getaString());
 	}
 

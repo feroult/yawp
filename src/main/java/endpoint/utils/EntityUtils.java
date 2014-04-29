@@ -297,7 +297,7 @@ public class EntityUtils {
 	}
 
 	private static boolean isControl(Field field) {
-		return Key.class.equals(field.getType()) || field.isSynthetic();
+		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class) || field.isSynthetic();
 	}
 
 	private static boolean isSaveAsJson(Field field) {

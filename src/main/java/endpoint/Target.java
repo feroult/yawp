@@ -6,6 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Target {
 
-	Class<? extends DatastoreObject> value() default DatastoreObject.class;
+	Class<?> value() default DatastoreObject.class;
 
 }

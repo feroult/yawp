@@ -1,8 +1,6 @@
 package endpoint.hooks;
 
-import endpoint.hooks.HookTest.Product;
-
-public class GenericHook extends Hook {
+public class AllTargetsHook extends Hook {
 	public void afterSave(Object o) {
 		if (!Product.class.isInstance(o)) {
 			return;

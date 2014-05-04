@@ -11,6 +11,7 @@ import java.util.Set;
 import org.reflections.Reflections;
 
 import endpoint.DatastoreException;
+import endpoint.DatastoreQuery;
 import endpoint.Repository;
 import endpoint.Target;
 
@@ -58,17 +59,21 @@ public class RepositoryHooks {
 	}
 
 	public static void beforeSave(Repository r, Object object) {
-		invokeHooks(r, object, "beforeSave");
+		invokeHooks(r, object.getClass(), object, "beforeSave");
 	}
 
 	public static void afterSave(Repository r, Object object) {
-		invokeHooks(r, object, "afterSave");
+		invokeHooks(r, object.getClass(), object, "afterSave");
 	}
 
-	private static void invokeHooks(Repository r, Object object, String methodName) {
+	public static <T> void beforeQuery(Repository r, DatastoreQuery<T> q, Class<T> clazz) {
+		invokeHooks(r, clazz, q, "beforeQuery");
+	}
+
+	private static void invokeHooks(Repository r, Class<?> targetClazz, Object object, String methodName) {
 		List<Class<? extends Hook>> objectHooks = new ArrayList<Class<? extends Hook>>();
-		if (hooks.containsKey(object.getClass().getSimpleName())) {
-			objectHooks.addAll(hooks.get(object.getClass().getSimpleName()));
+		if (hooks.containsKey(targetClazz.getSimpleName())) {
+			objectHooks.addAll(hooks.get(targetClazz.getSimpleName()));
 		}
 
 		if (hooks.containsKey(Object.class.getSimpleName())) {

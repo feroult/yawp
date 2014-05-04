@@ -83,7 +83,9 @@ public class Repository {
 	}
 
 	public <T> DatastoreQuery<T> query(Class<T> clazz) {
-		return DatastoreQuery.q(clazz, this);
+		DatastoreQuery<T> q = DatastoreQuery.q(clazz, this);
+		RepositoryHooks.beforeQuery(this, q, clazz);
+		return q;
 	}
 
 	public void delete(Object object) {

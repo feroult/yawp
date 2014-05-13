@@ -13,6 +13,8 @@ import endpoint.DatastoreException;
 import endpoint.Repository;
 import endpoint.Target;
 import endpoint.response.HttpResponse;
+import endpoint.response.JsonResponse;
+import endpoint.utils.JsonUtils;
 
 public class RepositoryActions {
 
@@ -96,7 +98,12 @@ public class RepositoryActions {
 				return null;
 			}
 
-			return (HttpResponse) ret;
+			if (HttpResponse.class.isInstance(ret)) {
+				return (HttpResponse) ret;
+			}
+
+			return new JsonResponse(JsonUtils.to(ret));
+
 		} catch (Exception e) {
 			if (e.getCause() != null && DatastoreException.class.isInstance(e.getCause())) {
 				throw (DatastoreException) e.getCause();

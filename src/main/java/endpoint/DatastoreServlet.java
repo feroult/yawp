@@ -65,7 +65,7 @@ public class DatastoreServlet extends HttpServlet {
 
 	private void response(HttpServletResponse resp, HttpResponse httpResponse) throws IOException {
 		if (httpResponse == null) {
-			JsonResponse jsonResponse = new JsonResponse("{'status':'ok'}");
+			JsonResponse jsonResponse = new JsonResponse("{\"status\":\"ok\"}");
 			jsonResponse.execute(resp);
 			return;
 		}

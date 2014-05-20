@@ -1,5 +1,6 @@
 package endpoint.tools;
 
+import com.google.appengine.api.NamespaceManager;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -7,6 +8,11 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
 public class DeleteAll {
+
+	public static void now(String ns) {
+		NamespaceManager.set(ns);
+		now();
+	}
 
 	public static void now() {
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

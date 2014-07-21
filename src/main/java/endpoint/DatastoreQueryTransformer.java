@@ -31,8 +31,8 @@ public class DatastoreQueryTransformer<T> {
 		return this;
 	}
 
-	public DatastoreQueryTransformer<T> order(String... values) {
-		query.order(values);
+	public DatastoreQueryTransformer<T> order(String property, String direction) {
+		query.order(property, direction);
 		return this;
 	}
 
@@ -62,7 +62,7 @@ public class DatastoreQueryTransformer<T> {
 		for (Object object : list) {
 			transformedList.add(RepositoryTransformers.execute(query.getRepository(), transformClazz, object, transformName));
 		}
-		
+
 		// TODO: sort by inner attributes here?
 
 		return transformedList;

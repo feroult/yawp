@@ -5,10 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-import endpoint.DatastoreQueryTransformer;
 import endpoint.SimpleObject;
 import endpoint.utils.EndpointTestCase;
 
@@ -42,28 +40,31 @@ public class TransformerTest extends EndpointTestCase {
 		assertEquals("xpto3", list.get(2).get("innerObject"));
 	}
 
-	@Test
-	@Ignore
-	@SuppressWarnings("rawtypes")
-	public void testListResultWithInnerOrder() {
-		SimpleObject object1 = new SimpleObject("xpto1");
-		SimpleObject object2 = new SimpleObject("xpto2");
-		SimpleObject object3 = new SimpleObject("xpto3");
-		r.save(object1);
-		r.save(object2);
-		r.save(object3);
+	// @Test
+	// @Ignore
+	// @SuppressWarnings("rawtypes")
+	// public void testListResultWithInnerOrder() {
+	// SimpleObject object1 = new SimpleObject("xpto1");
+	// SimpleObject object2 = new SimpleObject("xpto2");
+	// SimpleObject object3 = new SimpleObject("xpto3");
+	// r.save(object1);
+	// r.save(object2);
+	// r.save(object3);
+	//
+	// DatastoreQueryTransformer<Map> transform =
+	// r.query(SimpleObject.class).transform(Map.class, "simple");
+	//
+	// //List<Map> list = transform.order("aString", "asc", "innerObject",
+	// array("value", "desc")).list();
+	// //List<Map> list = transform.order("aString", "asc").list();
+	// List<Map> list = transform.order("aString", "asc").order("innerObject",
+	// "name", "asc").list();
+	//
+	// assertEquals("xpto1", list.get(0).get("xpto1"));
+	// }
 
-		DatastoreQueryTransformer<Map> transform = r.query(SimpleObject.class).transform(Map.class, "simple");
-		
-		//List<Map> list = transform.order("aString", "asc", "innerObject", array("value", "desc")).list();
-		//List<Map> list = transform.order("aString", "asc").list();
-		List<Map> list = transform.order("aString", "asc").order("innerObject", "name", "asc").list();
-		
-		assertEquals("xpto1", list.get(0).get("xpto1"));
-	}
-
-	private String[] array(String value, String direction) {
-		return new String[] { value, direction };
-	}
+//	private String[] array(String value, String direction) {
+//		return new String[] { value, direction };
+//	}
 
 }

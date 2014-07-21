@@ -32,7 +32,7 @@ public class DatastoreQuery<T> {
 
 	private Object[] where;
 
-	private String[] order;
+	private List<DatastoreQueryOrder> orders = new ArrayList<DatastoreQueryOrder>();
 
 	private Integer limit;
 
@@ -68,8 +68,9 @@ public class DatastoreQuery<T> {
 		return this;
 	}
 
-	public DatastoreQuery<T> order(String... values) {
-		this.order = values;
+	public DatastoreQuery<T> order(String property, String direction) {
+		DatastoreQueryOrder order = new DatastoreQueryOrder(property, direction);
+		orders.add(order);
 		return this;
 	}
 
@@ -97,7 +98,8 @@ public class DatastoreQuery<T> {
 		}
 
 		if (options.getOrder() != null) {
-			order(options.getOrder());
+			// TODO change this
+			order(options.getOrder()[0], options.getOrder()[1]);
 		}
 
 		if (options.getLimit() != null) {
@@ -211,11 +213,14 @@ public class DatastoreQuery<T> {
 	}
 
 	private void prepareQueryOrder(Query q) {
-		if (order == null) {
+		if (orders.isEmpty()) {
 			return;
 		}
-		String string = EntityUtils.getIndexFieldName(order[0], clazz);
-		q.addSort(string, getSortDirection(order[1]));
+
+		DatastoreQueryOrder order = orders.get(0);
+
+		String string = EntityUtils.getIndexFieldName(order.getProperty(), clazz);
+		q.addSort(string, getSortDirection(order.getDirection()));
 	}
 
 	private void prepareQueryWhere(Query q) {

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import endpoint.utils.DateUtils;
@@ -90,6 +91,22 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		objects.get(1).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
 		objects.get(2).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 		objects.get(3).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "\u00c1");
+	}
+
+	@Test
+	@Ignore
+	public void testOrderWithTwoProperties() {
+		saveThreeObjects();
+		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
+		r.save(new SimpleObject(1, 3l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object3"));
+
+		List<SimpleObject> objects = r.query(SimpleObject.class).order("aString", "desc").order("aLong", "asc").list();
+
+		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object3");
+		objects.get(0).assertObject(1, 3l, 1.1, true, "2013/12/26 23:55:01", "object3");
+		objects.get(1).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
+		objects.get(0).assertObject(1, 2l, 1.1, true, "2013/12/26 23:55:01", "object2");
+		objects.get(2).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 	}
 
 	@Test

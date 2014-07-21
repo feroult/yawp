@@ -69,8 +69,7 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> order(String property, String direction) {
-		DatastoreQueryOrder order = new DatastoreQueryOrder(property, direction);
-		orders.add(order);
+		orders.add(new DatastoreQueryOrder(property, direction));
 		return this;
 	}
 
@@ -217,10 +216,10 @@ public class DatastoreQuery<T> {
 			return;
 		}
 
-		DatastoreQueryOrder order = orders.get(0);
-
-		String string = EntityUtils.getIndexFieldName(order.getProperty(), clazz);
-		q.addSort(string, getSortDirection(order.getDirection()));
+		for (DatastoreQueryOrder order : orders) {
+			String string = EntityUtils.getIndexFieldName(order.getProperty(), clazz);
+			q.addSort(string, getSortDirection(order.getDirection()));
+		}
 	}
 
 	private void prepareQueryWhere(Query q) {

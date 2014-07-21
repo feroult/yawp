@@ -62,6 +62,8 @@ public class DatastoreQueryTransformer<T> {
 		for (Object object : list) {
 			transformedList.add(RepositoryTransformers.execute(query.getRepository(), transformClazz, object, transformName));
 		}
+		
+		// TODO: sort by inner attributes here?
 
 		return transformedList;
 	}

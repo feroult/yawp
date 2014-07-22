@@ -40,6 +40,7 @@ public class TransformerTest extends EndpointTestCase {
 		assertEquals("xpto3", list.get(2).get("innerObject"));
 	}
 
+	// TODO remove it ?!
 	// @Test
 	// @Ignore
 	// @SuppressWarnings("rawtypes")

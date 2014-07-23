@@ -12,7 +12,7 @@ import com.google.gson.JsonPrimitive;
 public class DatastoreQueryOptions {
 
 	private Object[] where;
-	private String[] order;
+	private List<DatastoreQueryOrder> orders;
 	private Integer limit;
 
 	public static DatastoreQueryOptions parse(String json) {
@@ -22,7 +22,7 @@ public class DatastoreQueryOptions {
 	public DatastoreQueryOptions(String json) {
 		JsonObject jsonObject = (JsonObject) new JsonParser().parse(json);
 		this.where = parseWhere(jsonObject.getAsJsonArray("where"));
-		this.order = parseOrder(jsonObject.getAsJsonArray("order"));
+		this.orders = parseOrder(jsonObject.getAsJsonArray("order"));
 		this.limit = parseLimit(jsonObject.get("limit"));
 	}
 
@@ -34,18 +34,20 @@ public class DatastoreQueryOptions {
 		return jsonElement.getAsInt();
 	}
 
-	private String[] parseOrder(JsonArray jsonArray) {
+	private List<DatastoreQueryOrder> parseOrder(JsonArray jsonArray) {
 		if (jsonArray == null) {
 			return null;
 		}
 
-		List<String> order = new ArrayList<String>();
+		List<DatastoreQueryOrder> orders = new ArrayList<DatastoreQueryOrder>();
 
 		for (JsonElement jsonElement : jsonArray) {
-			order.add(jsonElement.getAsString());
+			String property = jsonElement.getAsJsonObject().get("p").getAsString();
+			String direction = jsonElement.getAsJsonObject().get("d").getAsString();
+			orders.add(new DatastoreQueryOrder(property, direction));
 		}
 
-		return order.toArray(new String[order.size()]);
+		return orders;
 	}
 
 	private Object[] parseWhere(JsonArray jsonArray) {
@@ -83,8 +85,8 @@ public class DatastoreQueryOptions {
 		return this.where;
 	}
 
-	public String[] getOrder() {
-		return this.order;
+	public List<DatastoreQueryOrder> getOrders() {
+		return orders;
 	}
 
 	public Integer getLimit() {

@@ -68,7 +68,8 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object4"));
 
-		DatastoreQueryOptions options = DatastoreQueryOptions.parse("{where: ['aLong', '=', 1], order: ['aString', 'desc'], limit: 2}");
+		DatastoreQueryOptions options = DatastoreQueryOptions
+				.parse("{where: ['aLong', '=', 1], order: [{p:'aString', d:'desc'}], limit: 2}");
 
 		List<SimpleObject> objects = r.query(SimpleObject.class).options(options).list();
 

@@ -104,9 +104,8 @@ public class DatastoreQuery<T> {
 			where(options.getWhere());
 		}
 
-		if (options.getOrder() != null) {
-			// TODO change this
-			order(options.getOrder()[0], options.getOrder()[1]);
+		if (!options.getOrders().isEmpty()) {
+			preOrders.addAll(options.getOrders());
 		}
 
 		if (options.getLimit() != null) {

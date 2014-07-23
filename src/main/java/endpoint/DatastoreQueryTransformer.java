@@ -31,8 +31,23 @@ public class DatastoreQueryTransformer<T> {
 		return this;
 	}
 
+	public DatastoreQueryTransformer<T> order(String property) {
+		order(property, null);
+		return this;
+	}
+
 	public DatastoreQueryTransformer<T> order(String property, String direction) {
 		query.order(property, direction);
+		return this;
+	}
+
+	public DatastoreQueryTransformer<T> sort(String property) {
+		sort(property, null);
+		return this;
+	}
+
+	public DatastoreQueryTransformer<T> sort(String property, String direction) {
+		query.sort(property, direction);
 		return this;
 	}
 

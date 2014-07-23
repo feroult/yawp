@@ -71,8 +71,18 @@ public class DatastoreQuery<T> {
 		return this;
 	}
 
+	public DatastoreQuery<T> order(String property) {
+		order(property, null);
+		return this;
+	}
+
 	public DatastoreQuery<T> order(String property, String direction) {
 		preOrders.add(new DatastoreQueryOrder(property, direction));
+		return this;
+	}
+
+	public DatastoreQuery<T> sort(String property) {
+		sort(property, null);
 		return this;
 	}
 

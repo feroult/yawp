@@ -40,10 +40,16 @@ public class DatastoreQueryOrder {
 	}
 
 	public boolean isAsc() {
+		if (direction == null) {
+			return true;
+		}
 		return direction.equalsIgnoreCase("asc");
 	}
 
 	public boolean isDesc() {
+		if (direction == null) {
+			return false;
+		}
 		return direction.equalsIgnoreCase("desc");
 	}
 

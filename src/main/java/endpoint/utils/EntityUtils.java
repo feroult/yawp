@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -250,6 +251,10 @@ public class EntityUtils {
 
 	public static Object getter(Object o, String property) {
 		try {
+			if (Map.class.isInstance(o)) {
+				return ((Map<?, ?>) o).get(property);
+			}
+
 			return new PropertyDescriptor(property, o.getClass()).getReadMethod().invoke(o);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
 			throw new RuntimeException(e);

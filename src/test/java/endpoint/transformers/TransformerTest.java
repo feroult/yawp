@@ -33,11 +33,11 @@ public class TransformerTest extends EndpointTestCase {
 		r.save(object3);
 
 		@SuppressWarnings("rawtypes")
-		List<Map> list = r.query(SimpleObject.class).transform(Map.class, "simple").sort("aString").list();
+		List<Map> list = r.query(SimpleObject.class).transform(Map.class, "simple").sort("innerObject", "desc").list();
 
-		assertEquals("xpto1", list.get(0).get("innerObject"));
+		assertEquals("xpto3", list.get(0).get("innerObject"));
 		assertEquals("xpto2", list.get(1).get("innerObject"));
-		assertEquals("xpto3", list.get(2).get("innerObject"));
+		assertEquals("xpto1", list.get(2).get("innerObject"));
 	}
 
 }

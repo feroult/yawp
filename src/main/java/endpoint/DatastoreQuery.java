@@ -129,13 +129,19 @@ public class DatastoreQuery<T> {
 		return this;
 	}
 
-	public List<T> list() {
+	public List<T> unsortedList() {
 		r.namespace().set(getClazz());
 		try {
 			return executeQuery();
 		} finally {
 			r.namespace().reset();
 		}
+	}
+
+	public List<T> list() {
+		List<T> list = unsortedList();
+		sortList(list);
+		return list;
 	}
 
 	public T first() {
@@ -206,14 +212,14 @@ public class DatastoreQuery<T> {
 		}
 
 		this.cursor = queryResult.getCursor().toWebSafeString();
-		return doPostOrder(objects);
+		return objects;
 	}
 
-	private List<T> doPostOrder(List<T> objects) {
-		Collections.sort(objects, new Comparator<T>() {
+	public void sortList(List<?> objects) {
+		Collections.sort(objects, new Comparator<Object>() {
 			@SuppressWarnings("rawtypes")
 			@Override
-			public int compare(T o1, T o2) {
+			public int compare(Object o1, Object o2) {
 				for (DatastoreQueryOrder order : postOrders) {
 					Comparable value1 = (Comparable) EntityUtils.getter(o1, order.getProperty());
 					Comparable value2 = (Comparable) EntityUtils.getter(o2, order.getProperty());
@@ -231,7 +237,6 @@ public class DatastoreQuery<T> {
 				return 0;
 			}
 		});
-		return objects;
 	}
 
 	private FetchOptions configureFetchOptions() {

@@ -1,5 +1,7 @@
 package endpoint.utils;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -242,6 +244,14 @@ public class EntityUtils {
 
 			return value;
 		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static Object getter(Object o, String property) {
+		try {
+			return new PropertyDescriptor(property, o.getClass()).getReadMethod().invoke(o);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
 			throw new RuntimeException(e);
 		}
 	}

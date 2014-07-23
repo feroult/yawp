@@ -80,14 +80,14 @@ public class RepositoryTest extends EndpointTestCase {
 	public void testJsonProperty() {
 		SimpleObject object = new SimpleObject();
 
-		object.setaString("xpto");
+		object.setAString("xpto");
 		object.setNotADatastoreObject(new NotADatastoreObject("xpto"));
 
 		r.save(object);
 
 		object = r.query(SimpleObject.class).id(object.getId());
 
-		assertEquals("xpto", object.getaString());
+		assertEquals("xpto", object.getAString());
 		assertEquals("xpto", object.getNotADatastoreObject().getName());
 	}
 
@@ -95,7 +95,7 @@ public class RepositoryTest extends EndpointTestCase {
 	public void testJsonArrayProperty() {
 		SimpleObject object = new SimpleObject();
 
-		object.setaString("xpto");
+		object.setAString("xpto");
 
 		List<NotADatastoreObject> list = new ArrayList<NotADatastoreObject>();
 
@@ -108,7 +108,7 @@ public class RepositoryTest extends EndpointTestCase {
 
 		object = r.query(SimpleObject.class).id(object.getId());
 
-		assertEquals("xpto", object.getaString());
+		assertEquals("xpto", object.getAString());
 		assertEquals("xpto1", object.getNotADatastoreObjectList().get(0).getName());
 		assertEquals("xpto2", object.getNotADatastoreObjectList().get(1).getName());
 	}

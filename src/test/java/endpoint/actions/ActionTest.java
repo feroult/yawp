@@ -23,10 +23,10 @@ public class ActionTest extends EndpointTestCase {
 		HttpResponse response = r.action(SimpleObject.class, "PUT", "active", object.getId(), null);
 		object = JsonUtils.from(response.getText(), SimpleObject.class);
 
-		assertEquals("i was changed in action", object.getaString());
+		assertEquals("i was changed in action", object.getAString());
 
 		object = r.query(SimpleObject.class).id(object.getId());
-		assertEquals("i was changed in action", object.getaString());
+		assertEquals("i was changed in action", object.getAString());
 	}
 
 	@Test

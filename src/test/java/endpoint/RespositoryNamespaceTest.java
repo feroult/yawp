@@ -47,7 +47,7 @@ public class RespositoryNamespaceTest extends EndpointTestCase {
 		assertNotNull(r1.query(SimpleObject.class).id(object1.getId()));
 		assertNotNull(r2.query(SimpleObject.class).id(object2.getId()));
 
-		object1.setaString("lala");
+		object1.setAString("lala");
 		r1.save(object1);
 
 		assertNull(r1.query(SimpleObject.class).where("aString", "=", "xpto").first());

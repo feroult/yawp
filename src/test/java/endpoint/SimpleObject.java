@@ -59,11 +59,11 @@ public class SimpleObject extends DatastoreObject {
 		this.aInt = aInt;
 	}
 
-	public long getaLong() {
+	public long getALong() {
 		return aLong;
 	}
 
-	public void setaLong(long aLong) {
+	public void setALong(long aLong) {
 		this.aLong = aLong;
 	}
 
@@ -91,11 +91,11 @@ public class SimpleObject extends DatastoreObject {
 		this.aDate = aDate;
 	}
 
-	public String getaString() {
+	public String getAString() {
 		return aString;
 	}
 
-	public void setaString(String aString) {
+	public void setAString(String aString) {
 		this.aString = aString;
 	}
 
@@ -142,11 +142,11 @@ public class SimpleObject extends DatastoreObject {
 
 	private void assertFields(int aInt, long aLong, double aDouble, boolean aBoolean, String timestamp, String aString) {
 		assertEquals(aInt, getaInt());
-		assertEquals(aLong, getaLong());
+		assertEquals(aLong, getALong());
 		assertEquals(aDouble, getaDouble(), 0);
 		assertEquals(aBoolean, isaBoolean());
 		assertEquals(DateUtils.toTimestamp(timestamp), getaDate());
-		assertEquals(aString, getaString());
+		assertEquals(aString, getAString());
 	}
 
 }

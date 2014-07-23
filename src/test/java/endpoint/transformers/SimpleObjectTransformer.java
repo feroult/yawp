@@ -11,7 +11,7 @@ public class SimpleObjectTransformer extends Transformer {
 
 	public Map<String, String> simple(SimpleObject object) {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("innerObject", object.getaString());
+		map.put("innerObject", object.getAString());
 		return map;
 	}
 

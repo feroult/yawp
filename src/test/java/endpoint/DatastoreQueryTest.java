@@ -106,16 +106,14 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		objects.get(3).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
 		objects.get(4).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 	}
-	
-	@Test
-	public void testPostOrder() {
-		saveThreeObjects();
 
-		//List<SimpleObject> objects = r.query(SimpleObject.class).order("aString", "desc").order("aLong", "desc").list();
-		List<SimpleObject> objects = r.query(SimpleObject.class).order("aString", "desc").order("aLong", "desc").list();
-		
-		r.query(SimpleObject.class).postOrder("aString", "desc").postOrder("aLong")
-		
+	@Test
+	public void testSort() {
+		saveThreeObjects();
+		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
+		r.save(new SimpleObject(1, 3l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object3"));
+
+		List<SimpleObject> objects = r.query(SimpleObject.class).sort("aString", "desc").sort("aLong", "desc").list();
 
 		objects.get(0).assertObject(1, 3l, 1.1, true, "2013/12/26 23:55:01", "object3");
 		objects.get(1).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object3");
@@ -160,6 +158,6 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		r.save(object);
 
 		object = r.query(SimpleObject.class).id(object.getId());
-		assertEquals("xpto", object.getaString());
+		assertEquals("xpto", object.getAString());
 	}
 }

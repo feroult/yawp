@@ -2,6 +2,8 @@ package endpoint;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.google.appengine.api.datastore.Cursor;
@@ -17,7 +19,6 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultList;
 
 import endpoint.utils.EntityUtils;
@@ -32,7 +33,9 @@ public class DatastoreQuery<T> {
 
 	private Object[] where;
 
-	private List<DatastoreQueryOrder> orders = new ArrayList<DatastoreQueryOrder>();
+	private List<DatastoreQueryOrder> preOrders = new ArrayList<DatastoreQueryOrder>();
+
+	private List<DatastoreQueryOrder> postOrders = new ArrayList<DatastoreQueryOrder>();
 
 	private Integer limit;
 
@@ -69,7 +72,12 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> order(String property, String direction) {
-		orders.add(new DatastoreQueryOrder(property, direction));
+		preOrders.add(new DatastoreQueryOrder(property, direction));
+		return this;
+	}
+
+	public DatastoreQuery<T> sort(String property, String direction) {
+		postOrders.add(new DatastoreQueryOrder(property, direction));
 		return this;
 	}
 
@@ -185,6 +193,31 @@ public class DatastoreQuery<T> {
 		}
 
 		this.cursor = queryResult.getCursor().toWebSafeString();
+		return doPostOrder(objects);
+	}
+
+	private List<T> doPostOrder(List<T> objects) {
+		Collections.sort(objects, new Comparator<T>() {
+			@SuppressWarnings("rawtypes")
+			@Override
+			public int compare(T o1, T o2) {
+				for (DatastoreQueryOrder order : postOrders) {
+					Comparable value1 = (Comparable) EntityUtils.getter(o1, order.getProperty());
+					Comparable value2 = (Comparable) EntityUtils.getter(o2, order.getProperty());
+
+					@SuppressWarnings("unchecked")
+					int compare = value1.compareTo(value2);
+					if (compare == 0) {
+						continue;
+					}
+					if (order.isDesc()) {
+						return compare * -1;
+					}
+					return compare;
+				}
+				return 0;
+			}
+		});
 		return objects;
 	}
 
@@ -212,13 +245,13 @@ public class DatastoreQuery<T> {
 	}
 
 	private void prepareQueryOrder(Query q) {
-		if (orders.isEmpty()) {
+		if (preOrders.isEmpty()) {
 			return;
 		}
 
-		for (DatastoreQueryOrder order : orders) {
+		for (DatastoreQueryOrder order : preOrders) {
 			String string = EntityUtils.getIndexFieldName(order.getProperty(), clazz);
-			q.addSort(string, getSortDirection(order.getDirection()));
+			q.addSort(string, order.getSortDirection());
 		}
 	}
 
@@ -249,16 +282,6 @@ public class DatastoreQuery<T> {
 			return;
 		}
 		q.setAncestor(parentKey);
-	}
-
-	private SortDirection getSortDirection(String order) {
-		if (order.equalsIgnoreCase("desc")) {
-			return SortDirection.DESCENDING;
-		}
-		if (order.equalsIgnoreCase("asc")) {
-			return SortDirection.ASCENDING;
-		}
-		throw new RuntimeException("invalid sort direction");
 	}
 
 	protected Class<T> getClazz() {

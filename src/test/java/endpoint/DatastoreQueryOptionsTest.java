@@ -17,18 +17,20 @@ public class DatastoreQueryOptionsTest {
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
 
 		assertNull(options.getWhere());
-		assertNull(options.getOrders());
+		assertNull(options.getPreOrders());
+		assertNull(options.getPostOrders());
 		assertNull(options.getLimit());
 	}
 
 	@Test
 	public void testQueryOptions() {
-		String q = "{where: ['aLong', '=', 1, 'aInt', '=', 3, 'aDouble', '=', 4.3], order: [{p:'aString', d:'desc'}], limit: 2}";
+		String q = "{where: ['aLong', '=', 1, 'aInt', '=', 3, 'aDouble', '=', 4.3], order: [{p:'aString', d:'desc'}], sort: [{p:'aLong', d:'desc'}], limit: 2}";
 
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
 
 		assertArrayEquals(new Object[] { "aLong", "=", 1l, "aInt", "=", 3l, "aDouble", "=", 4.3 }, options.getWhere());
-		assertOrderEquals("aString", "desc", options.getOrders().get(0));
+		assertOrderEquals("aString", "desc", options.getPreOrders().get(0));
+		assertOrderEquals("aLong", "desc", options.getPostOrders().get(0));
 		assertEquals(new Integer(2), options.getLimit());
 	}
 

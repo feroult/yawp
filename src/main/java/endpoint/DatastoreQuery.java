@@ -77,7 +77,7 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> order(String property, String direction) {
-		preOrders.add(new DatastoreQueryOrder(property, direction));
+		preOrders.add(new DatastoreQueryOrder(null, property, direction));
 		return this;
 	}
 
@@ -87,7 +87,12 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> sort(String property, String direction) {
-		postOrders.add(new DatastoreQueryOrder(property, direction));
+		sort(null, property, direction);
+		return this;
+	}
+
+	public DatastoreQuery<T> sort(String entity, String property, String direction) {
+		postOrders.add(new DatastoreQueryOrder(entity, property, direction));
 		return this;
 	}
 
@@ -217,21 +222,15 @@ public class DatastoreQuery<T> {
 
 	public void sortList(List<?> objects) {
 		Collections.sort(objects, new Comparator<Object>() {
-			@SuppressWarnings("rawtypes")
 			@Override
 			public int compare(Object o1, Object o2) {
 				for (DatastoreQueryOrder order : postOrders) {
-					Comparable value1 = (Comparable) EntityUtils.getter(o1, order.getProperty());
-					Comparable value2 = (Comparable) EntityUtils.getter(o2, order.getProperty());
+					int compare = order.compare(o1, o2);
 
-					@SuppressWarnings("unchecked")
-					int compare = value1.compareTo(value2);
 					if (compare == 0) {
 						continue;
 					}
-					if (order.isDesc()) {
-						return compare * -1;
-					}
+
 					return compare;
 				}
 				return 0;

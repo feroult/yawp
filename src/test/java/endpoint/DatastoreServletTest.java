@@ -88,7 +88,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 		@SuppressWarnings("rawtypes")
 		Map map = JsonUtils.from(json, Map.class);
 
-		assertEquals("object1", map.get("innerObject"));
+		assertEquals("object1", map.get("innerValue"));
 	}
 
 	@Test
@@ -101,8 +101,8 @@ public class DatastoreServletTest extends EndpointTestCase {
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		List<Map> list = JsonUtils.from(json, List.class);
 
-		assertEquals("object1", list.get(0).get("innerObject"));
-		assertEquals("object1", list.get(1).get("innerObject"));
+		assertEquals("object1", list.get(0).get("innerValue"));
+		assertEquals("object1", list.get(1).get("innerValue"));
 	}
 
 	@Test

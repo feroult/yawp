@@ -44,9 +44,10 @@ public class DatastoreQueryOptions {
 		List<DatastoreQueryOrder> orders = new ArrayList<DatastoreQueryOrder>();
 
 		for (JsonElement jsonElement : jsonArray) {
+			String entity = jsonElement.getAsJsonObject().get("p").getAsString();
 			String property = jsonElement.getAsJsonObject().get("p").getAsString();
 			String direction = jsonElement.getAsJsonObject().get("d").getAsString();
-			orders.add(new DatastoreQueryOrder(property, direction));
+			orders.add(new DatastoreQueryOrder(entity, property, direction));
 		}
 
 		return orders;

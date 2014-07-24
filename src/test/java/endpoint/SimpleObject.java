@@ -41,6 +41,11 @@ public class SimpleObject extends DatastoreObject {
 		this.aString = aString;
 	}
 
+	public SimpleObject(String aString, long aLong) {
+		this.aString = aString;
+		this.aLong = aLong;
+	}
+	
 	public SimpleObject(int aInt, long aLong, double aDouble, boolean aBoolean, Date aDate, String aString) {
 		super();
 		this.aInt = aInt;

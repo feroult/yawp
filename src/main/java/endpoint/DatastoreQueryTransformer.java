@@ -51,6 +51,11 @@ public class DatastoreQueryTransformer<T> {
 		return this;
 	}
 
+	public DatastoreQueryTransformer<T> sort(String entity, String property, String direction) {
+		query.sort(entity, property, direction);
+		return this;
+	}
+
 	public DatastoreQueryTransformer<T> limit(int limit) {
 		query.limit(limit);
 		return this;

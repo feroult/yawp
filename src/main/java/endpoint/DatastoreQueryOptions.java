@@ -44,13 +44,21 @@ public class DatastoreQueryOptions {
 		List<DatastoreQueryOrder> orders = new ArrayList<DatastoreQueryOrder>();
 
 		for (JsonElement jsonElement : jsonArray) {
-			String entity = jsonElement.getAsJsonObject().get("p").getAsString();
-			String property = jsonElement.getAsJsonObject().get("p").getAsString();
-			String direction = jsonElement.getAsJsonObject().get("d").getAsString();
+			String entity = getJsonObjectValue(jsonElement, "e");
+			String property = getJsonObjectValue(jsonElement, "p");
+			String direction = getJsonObjectValue(jsonElement, "d");
 			orders.add(new DatastoreQueryOrder(entity, property, direction));
 		}
 
 		return orders;
+	}
+
+	private String getJsonObjectValue(JsonElement jsonElement, String key) {
+		JsonObject jsonObject = jsonElement.getAsJsonObject();
+		if (!jsonObject.has(key)) {
+			return null;
+		}
+		return jsonObject.get(key).getAsString();
 	}
 
 	private Object[] parseWhere(JsonArray jsonArray) {

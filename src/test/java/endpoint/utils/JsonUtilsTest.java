@@ -2,12 +2,13 @@ package endpoint.utils;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
 import endpoint.SimpleObject;
-import endpoint.utils.JsonUtils;
 
 public class JsonUtilsTest {
 
@@ -30,6 +31,21 @@ public class JsonUtilsTest {
 		objects.get(0).assertObjectWithoutKey(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 		objects.get(0).assertObjectWithoutKey(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 		objects.get(0).assertObjectWithoutKey(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
+	}
+
+	@Test
+	public void testMapWithLongKey() {
+		Map<Long, String> map = new HashMap<Long, String>();
+
+		map.put(1l, "xpto1");
+		map.put(2l, "xpto2");
+
+		String json = JsonUtils.to(map);
+
+		map = (Map<Long, String>) JsonUtils.fromMap(json, Long.class);
+
+		assertEquals("xpto1", map.get(1l));
+		assertEquals("xpto2", map.get(2l));
 	}
 
 }

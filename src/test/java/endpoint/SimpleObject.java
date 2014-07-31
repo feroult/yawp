@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import endpoint.utils.DateUtils;
 
@@ -30,6 +31,9 @@ public class SimpleObject extends DatastoreObject {
 
 	@Json
 	private List<NotADatastoreObject> notADatastoreObjectList;
+	
+	@Json
+	private Map<Long, String> aMap;
 
 	private transient String changeInCallback;
 
@@ -134,6 +138,14 @@ public class SimpleObject extends DatastoreObject {
 
 	public void setChangeInCallback(String changeInCallback) {
 		this.changeInCallback = changeInCallback;
+	}
+
+	public Map<Long, String> getAMap() {
+		return aMap;
+	}
+
+	public void setAMap(Map<Long, String> aMap) {
+		this.aMap = aMap;
 	}
 
 	public void assertObject(int aInt, long aLong, double aDouble, boolean aBoolean, String timestamp, String aString) {

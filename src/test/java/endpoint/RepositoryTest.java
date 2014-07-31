@@ -5,8 +5,11 @@ import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import endpoint.utils.DateUtils;
@@ -111,6 +114,25 @@ public class RepositoryTest extends EndpointTestCase {
 		assertEquals("xpto", object.getAString());
 		assertEquals("xpto1", object.getNotADatastoreObjectList().get(0).getName());
 		assertEquals("xpto2", object.getNotADatastoreObjectList().get(1).getName());
+	}
+
+	@Test
+	@Ignore
+	public void testJsonMapWithLongKeyProperty() {
+		SimpleObject object = new SimpleObject();
+
+		Map<Long, String> map = new HashMap<Long, String>();
+
+		map.put(1l, "xpto1");
+		map.put(2l, "xpto2");
+
+		object.setAMap(map);
+
+		r.save(object);
+
+		object = r.query(SimpleObject.class).id(object.getId());
+		assertEquals("xpto1", object.getAMap().get(1l));
+		assertEquals("xpto2", object.getAMap().get(2l));
 	}
 
 	@Test

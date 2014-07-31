@@ -2,19 +2,23 @@ package endpoint.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 public class JsonUtils {
 
 	public static <T> T from(String json, Class<T> clazz) {
 		JsonElement jsoneElement = (JsonElement) new JsonParser().parse(json);
-		return from(jsoneElement, clazz);
+		Gson gson = buildGson();
+		return gson.fromJson(jsoneElement, clazz);
 	}
 
 	private static Gson buildGson() {
@@ -25,11 +29,6 @@ public class JsonUtils {
 	public static String to(Object o) {
 		Gson gson = buildGson();
 		return gson.toJson(o);
-	}
-
-	private static <T> T from(JsonElement json, Class<T> clazz) {
-		Gson gson = buildGson();
-		return gson.fromJson(json, clazz);
 	}
 
 	@SuppressWarnings({ "unchecked" })
@@ -43,6 +42,18 @@ public class JsonUtils {
 		}
 
 		return result;
+	}
+
+	public static Map<Long, String> fromMap(String json, Class<?> clazz) {
+		Type type = getMapTypeToken(clazz);
+		JsonElement jsoneElement = (JsonElement) new JsonParser().parse(json);
+		Gson gson = buildGson();
+		return gson.fromJson(jsoneElement, type);
+	}
+
+	private static Type getMapTypeToken(Class<?> clazz) {
+		return new TypeToken<Map<Long, ?>>() {
+		}.getType();
 	}
 
 	public static String readJson(BufferedReader reader) {

@@ -145,6 +145,11 @@ public class EntityUtils {
 		return fields.toArray(new Field[fields.size()]);
 	}
 
+	private static Class<?> getMapKeyClass(Field field) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public static Class<?> getListClass(Field field) {
 		Type genericFieldType = field.getGenericType();
 		if (genericFieldType instanceof ParameterizedType) {
@@ -297,7 +302,11 @@ public class EntityUtils {
 
 		if (isList(field)) {
 			field.set(object, JsonUtils.fromArray(json, getListClass(field)));
-		} else {
+		}
+		// if (isMap(field)) {
+		// field.set(object, JsonUtils.fromMap(json, getMapKeyClass(field)));
+		// }
+		else {
 			field.set(object, JsonUtils.from(json, field.getType()));
 		}
 	}
@@ -325,6 +334,10 @@ public class EntityUtils {
 
 	private static boolean isList(Field field) {
 		return List.class.isAssignableFrom(field.getType());
+	}
+
+	private static boolean isMap(Field field) {
+		return Map.class.isAssignableFrom(field.getType());
 	}
 
 	private static boolean isDate(Field field) {

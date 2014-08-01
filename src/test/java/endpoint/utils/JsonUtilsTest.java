@@ -42,7 +42,7 @@ public class JsonUtilsTest {
 
 		String json = JsonUtils.to(map);
 
-		map = (Map<Long, String>) JsonUtils.fromMap(json, Long.class);
+		map = JsonUtils.fromMap(json, Long.class, String.class);
 
 		assertEquals("xpto1", map.get(1l));
 		assertEquals("xpto2", map.get(2l));

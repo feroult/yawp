@@ -44,8 +44,8 @@ public class JsonUtils {
 		return result;
 	}
 
-	public static Map<Long, String> fromMap(String json, Class<?> clazz) {
-		Type type = getMapTypeToken(clazz);
+	public static <K, V> Map<K, V> fromMap(String json, Class<K> keyClazz, Class<V> valueClazz) {
+		Type type = getMapTypeToken(keyClazz);
 		JsonElement jsoneElement = (JsonElement) new JsonParser().parse(json);
 		Gson gson = buildGson();
 		return gson.fromJson(jsoneElement, type);

@@ -146,11 +146,15 @@ public class EntityUtils {
 	}
 
 	public static Class<?> getParametrizedType(Field field) {
+		return (Class<?>) getParametrizedTypes(field)[0];
+	}
+
+	private static Type[] getParametrizedTypes(Field field) {
 		Type genericFieldType = field.getGenericType();
 		if (genericFieldType instanceof ParameterizedType) {
 			ParameterizedType aType = (ParameterizedType) genericFieldType;
 			Type[] fieldArgTypes = aType.getActualTypeArguments();
-			return (Class<?>) fieldArgTypes[0];
+			return fieldArgTypes;
 		}
 
 		throw new RuntimeException("cant find list generic type");
@@ -296,7 +300,8 @@ public class EntityUtils {
 		if (isList(field)) {
 			field.set(object, JsonUtils.fromArray(json, getParametrizedType(field)));
 		} else if (isMap(field)) {
-			field.set(object, JsonUtils.fromMap(json, getParametrizedType(field), Object.class));
+			Type[] types = getParametrizedTypes(field);
+			field.set(object, JsonUtils.fromMap(json, types[0], types[1]));
 		} else {
 			field.set(object, JsonUtils.from(json, field.getType()));
 		}

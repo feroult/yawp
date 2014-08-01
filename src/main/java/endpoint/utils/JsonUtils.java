@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 
 public class JsonUtils {
 
@@ -44,28 +43,19 @@ public class JsonUtils {
 		return result;
 	}
 
+	public static Object fromMap(String json, Type keyType, Type valueType) {
+		return fromMap(json, (Class<?>) keyType, (Class<?>) valueType);
+	}
+
 	public static <K, V> Map<K, V> fromMap(String json, Class<K> keyClazz, Class<V> valueClazz) {
-		Type type = getMapKeyTypeToken(keyClazz);
+		Type type = getMapKeyTypeToken(keyClazz, valueClazz);
 		JsonElement jsoneElement = (JsonElement) new JsonParser().parse(json);
 		Gson gson = buildGson();
 		return gson.fromJson(jsoneElement, type);
 	}
 
-	private static Type getMapKeyTypeToken(Class<?> clazz) {
-		if (clazz.equals(Long.class)) {
-			return new TypeToken<Map<Long, ?>>() {
-			}.getType();
-		}
-		if (clazz.equals(Integer.class)) {
-			return new TypeToken<Map<Integer, ?>>() {
-			}.getType();
-		}
-		if (clazz.equals(String.class)) {
-			return new TypeToken<Map<String, ?>>() {
-			}.getType();
-		}
-		return new TypeToken<Map<Object, ?>>() {
-		}.getType();
+	private static Type getMapKeyTypeToken(Class<?> keyClazz, Class<?> valueClazz) {
+		return new ParameterizedTypeImpl(Map.class, new Type[] { keyClazz, valueClazz }, null);
 	}
 
 	public static String readJson(BufferedReader reader) {

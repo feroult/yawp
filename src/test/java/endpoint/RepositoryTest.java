@@ -116,21 +116,21 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testJsonMapWithLongKeyProperty() {
+	public void testJsonMapWithLongKeyAndObjectValue() {
 		SimpleObject object = new SimpleObject();
 
-		Map<Long, String> map = new HashMap<Long, String>();
+		Map<Long, NotADatastoreObject> map = new HashMap<Long, NotADatastoreObject>();
 
-		map.put(1l, "xpto1");
-		map.put(2l, "xpto2");
+		map.put(1l, new NotADatastoreObject("xpto1"));
+		map.put(2l, new NotADatastoreObject("xpto2"));
 
 		object.setAMap(map);
 
 		r.save(object);
 
 		object = r.query(SimpleObject.class).id(object.getId());
-		assertEquals("xpto1", object.getAMap().get(1l));
-		assertEquals("xpto2", object.getAMap().get(2l));
+		assertEquals("xpto1", object.getAMap().get(1l).getName());
+		assertEquals("xpto2", object.getAMap().get(2l).getName());
 	}
 
 	@Test

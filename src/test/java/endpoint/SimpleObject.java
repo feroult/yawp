@@ -31,9 +31,9 @@ public class SimpleObject extends DatastoreObject {
 
 	@Json
 	private List<NotADatastoreObject> notADatastoreObjectList;
-	
+
 	@Json
-	private Map<Long, String> aMap;
+	private Map<Long, NotADatastoreObject> aMap;
 
 	private transient String changeInCallback;
 
@@ -49,7 +49,7 @@ public class SimpleObject extends DatastoreObject {
 		this.aString = aString;
 		this.aLong = aLong;
 	}
-	
+
 	public SimpleObject(int aInt, long aLong, double aDouble, boolean aBoolean, Date aDate, String aString) {
 		super();
 		this.aInt = aInt;
@@ -140,11 +140,11 @@ public class SimpleObject extends DatastoreObject {
 		this.changeInCallback = changeInCallback;
 	}
 
-	public Map<Long, String> getAMap() {
+	public Map<Long, NotADatastoreObject> getAMap() {
 		return aMap;
 	}
 
-	public void setAMap(Map<Long, String> aMap) {
+	public void setAMap(Map<Long, NotADatastoreObject> aMap) {
 		this.aMap = aMap;
 	}
 

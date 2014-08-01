@@ -45,14 +45,26 @@ public class JsonUtils {
 	}
 
 	public static <K, V> Map<K, V> fromMap(String json, Class<K> keyClazz, Class<V> valueClazz) {
-		Type type = getMapTypeToken(keyClazz);
+		Type type = getMapKeyTypeToken(keyClazz);
 		JsonElement jsoneElement = (JsonElement) new JsonParser().parse(json);
 		Gson gson = buildGson();
 		return gson.fromJson(jsoneElement, type);
 	}
 
-	private static Type getMapTypeToken(Class<?> clazz) {
-		return new TypeToken<Map<Long, ?>>() {
+	private static Type getMapKeyTypeToken(Class<?> clazz) {
+		if (clazz.equals(Long.class)) {
+			return new TypeToken<Map<Long, ?>>() {
+			}.getType();
+		}
+		if (clazz.equals(Integer.class)) {
+			return new TypeToken<Map<Integer, ?>>() {
+			}.getType();
+		}
+		if (clazz.equals(String.class)) {
+			return new TypeToken<Map<String, ?>>() {
+			}.getType();
+		}
+		return new TypeToken<Map<Object, ?>>() {
 		}.getType();
 	}
 

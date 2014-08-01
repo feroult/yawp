@@ -193,7 +193,7 @@ public class DatastoreQuery<T> {
 			field.setAccessible(true);
 
 			List<Object> list = new ArrayList<Object>();
-			list.addAll(q(EntityUtils.getListClass(field), r).parent(EntityUtils.getKey(object)).list());
+			list.addAll(q(EntityUtils.getParametrizedType(field), r).parent(EntityUtils.getKey(object)).list());
 
 			try {
 				field.set(object, list);

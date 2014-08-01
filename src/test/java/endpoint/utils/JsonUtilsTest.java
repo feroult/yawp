@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import endpoint.SimpleObject;
@@ -46,6 +47,22 @@ public class JsonUtilsTest {
 
 		assertEquals("xpto1", map.get(1l));
 		assertEquals("xpto2", map.get(2l));
+	}
+
+	@Test
+	@Ignore
+	public void testMapWithComplexObjectValue() {
+		Map<Long, SimpleObject> map = new HashMap<Long, SimpleObject>();
+
+		map.put(1l, new SimpleObject("xpto1"));
+		map.put(2l, new SimpleObject("xpto2"));
+
+		String json = JsonUtils.to(map);
+
+		map = JsonUtils.fromMap(json, Long.class, SimpleObject.class);
+
+		assertEquals("xpto1", map.get(1l).getAString());
+		assertEquals("xpto2", map.get(2l).getAString());
 	}
 
 }

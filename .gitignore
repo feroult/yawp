@@ -7,6 +7,10 @@ tmp
 target
 test-output
 
+endpoint.iml
+endpoint.ipr
+endpoint.iws
+
 # Package Files #
 *.jar
 *.war

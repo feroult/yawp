@@ -1,28 +1,20 @@
 package endpoint;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
+import endpoint.actions.RepositoryActions;
+import endpoint.hooks.RepositoryHooks;
+import endpoint.response.*;
+import endpoint.transformers.RepositoryTransformers;
+import endpoint.utils.JsonUtils;
+import org.reflections.Reflections;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.reflections.Reflections;
-
-import endpoint.actions.RepositoryActions;
-import endpoint.hooks.RepositoryHooks;
-import endpoint.response.ForbiddenResponse;
-import endpoint.response.HttpResponse;
-import endpoint.response.JsonResponse;
-import endpoint.transformers.RepositoryTransformers;
-import endpoint.utils.JsonUtils;
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class DatastoreServlet extends HttpServlet {
 
@@ -80,6 +72,8 @@ public class DatastoreServlet extends HttpServlet {
 
 			httpResponse = execute(req.getMethod(), getPath(req), JsonUtils.readJson(req.getReader()), makeParams(req));
 
+		} catch (HttpException e) {
+			httpResponse = new ErrorResponse(e.getHttpStatus(), e.getText());
 		} catch (DatastoreException e) {
 			httpResponse = new ForbiddenResponse();
 		}
@@ -113,22 +107,22 @@ public class DatastoreServlet extends HttpServlet {
 		Repository r = getRepository(params);
 
 		switch (router.getAction()) {
-		case INDEX:
-			if (!endpoint.index()) {
-				return new ForbiddenResponse();
-			}
-			return new JsonResponse(index(r, clazz, q(params), t(params)));
-		case SHOW:
-			return new JsonResponse(get(r, clazz, router.getId(), t(params)));
-		case CREATE:
-			return new JsonResponse(save(r, clazz, requestJson));
-		case UPDATE:
-			if (!endpoint.update()) {
-				return new ForbiddenResponse();
-			}
-			return new JsonResponse(save(r, clazz, requestJson));
-		case CUSTOM:
-			return action(r, clazz, router.getMethod(), router.getCustomAction(), router.getId(), params);
+			case INDEX:
+				if (!endpoint.index()) {
+					return new ForbiddenResponse();
+				}
+				return new JsonResponse(index(r, clazz, q(params), t(params)));
+			case SHOW:
+				return new JsonResponse(get(r, clazz, router.getId(), t(params)));
+			case CREATE:
+				return new JsonResponse(save(r, clazz, requestJson));
+			case UPDATE:
+				if (!endpoint.update()) {
+					return new ForbiddenResponse();
+				}
+				return new JsonResponse(save(r, clazz, requestJson));
+			case CUSTOM:
+				return action(r, clazz, router.getMethod(), router.getCustomAction(), router.getId(), params);
 		}
 
 		throw new IllegalArgumentException("Invalid datastore action");

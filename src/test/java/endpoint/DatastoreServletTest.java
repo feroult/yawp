@@ -1,19 +1,16 @@
 package endpoint;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import endpoint.response.ErrorResponse;
+import endpoint.utils.EndpointTestCase;
+import endpoint.utils.JsonUtils;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import endpoint.response.ForbiddenResponse;
-import endpoint.utils.EndpointTestCase;
-import endpoint.utils.JsonUtils;
+import static org.junit.Assert.*;
 
 public class DatastoreServletTest extends EndpointTestCase {
 
@@ -107,11 +104,11 @@ public class DatastoreServletTest extends EndpointTestCase {
 
 	@Test
 	public void testEndpointRestrictions() {
-		assertFalse(ForbiddenResponse.class.isInstance(servlet.execute("GET", "/simpleobjects", SIMPLE_OBJECT_JSON, null)));
-		assertTrue(ForbiddenResponse.class.isInstance(servlet.execute("GET", "/anothersimpleobjects", SIMPLE_OBJECT_JSON, null)));
+		assertFalse(ErrorResponse.class.isInstance(servlet.execute("GET", "/simpleobjects", SIMPLE_OBJECT_JSON, null)));
+		assertTrue(ErrorResponse.class.isInstance(servlet.execute("GET", "/anothersimpleobjects", SIMPLE_OBJECT_JSON, null)));
 	}
 
-	private Map<String, String> t(String s) {
+    private Map<String, String> t(String s) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("t", s);
 		return map;

@@ -1,14 +1,8 @@
 package endpoint.actions;
 
-import endpoint.Repository;
+import endpoint.RepositoryFeature;
 
-// TODO move actions to controller layer
-public class Action {
+public class Action extends RepositoryFeature {
 
-	protected Repository r;
-
-	public void setRepository(Repository r) {
-		this.r = r;
-	}
 
 }

@@ -1,11 +1,7 @@
 package endpoint.hooks;
 
-import endpoint.Repository;
+import endpoint.RepositoryFeature;
 
-public class Hook {
-	protected Repository r;
+public class Hook extends RepositoryFeature {
 
-	public void setRepository(Repository r) {
-		this.r = r;
-	}
 }

@@ -2,6 +2,9 @@ package endpoint.utils;
 
 import static org.junit.Assert.assertEquals;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +68,7 @@ public class JsonUtilsTest {
 	}
 
 	@Test
-	public void testMapWithListOfComplexObjectValue() {
+	public void testMapWithListOfComplexObjectValue() throws NoSuchFieldException, SecurityException {
 		Map<Long, List<SimpleObject>> map = new HashMap<Long, List<SimpleObject>>();
 
 		map.put(1l, Arrays.asList(new SimpleObject("xpto1"), new SimpleObject("xpto2")));
@@ -77,6 +80,23 @@ public class JsonUtilsTest {
 //
 //		assertEquals("xpto1", map.get(1l).getAString());
 //		assertEquals("xpto2", map.get(2l).getAString());
+		
+		getParametrizedTypes(Xpto.class.getDeclaredField("map"));
+	}
+	
+	class Xpto {
+		private Map<Long, List<SimpleObject>> map = new HashMap<Long, List<SimpleObject>>();
 	}
 
+	
+	private static Type[] getParametrizedTypes(Field field) {
+		Type genericFieldType = field.getGenericType();
+		if (genericFieldType instanceof ParameterizedType) {
+			ParameterizedType aType = (ParameterizedType) genericFieldType;
+			Type[] fieldArgTypes = aType.getActualTypeArguments();
+			return fieldArgTypes;
+		}
+
+		throw new RuntimeException("cant find list generic type");
+	}
 }

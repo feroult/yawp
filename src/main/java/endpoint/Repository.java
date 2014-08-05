@@ -69,7 +69,7 @@ public class Repository {
 		}
 	}
 
-	public HttpResponse action(Class<?> clazz, String method, String action, long id, Map<String, String> params) {
+	public HttpResponse action(Class<?> clazz, String method, String action, Long id, Map<String, String> params) {
 		namespace.set(clazz);
 		try {
 			return RepositoryActions.execute(this, clazz, method, action, id, params);

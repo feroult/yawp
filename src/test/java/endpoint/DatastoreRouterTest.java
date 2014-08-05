@@ -56,4 +56,13 @@ public class DatastoreRouterTest {
 		assertEquals((Long) 100l, router.getId());
 	}
 
+	@Test
+	public void testCustomActionOverCollection() {
+		DatastoreRouter router = new DatastoreRouter("PUT", "/devices/active");
+
+		assertEquals("/devices", router.getEndpointPath());
+		assertEquals(ActionType.CUSTOM, router.getAction());
+		assertEquals("active", router.getCustomAction());
+		assertEquals(null, router.getId());
+	}
 }

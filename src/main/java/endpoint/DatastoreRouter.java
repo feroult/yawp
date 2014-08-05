@@ -38,7 +38,11 @@ public class DatastoreRouter {
 
 		// /devices/100
 		if (parts.length >= 3) {
-			id = Long.valueOf(parts[2]);
+			try {
+				id = Long.valueOf(parts[2]);
+			} catch (NumberFormatException e) {
+				customAction = parts[2];
+			}
 		}
 
 		// /devices/100/active

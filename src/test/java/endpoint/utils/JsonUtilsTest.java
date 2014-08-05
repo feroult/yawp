@@ -2,6 +2,7 @@ package endpoint.utils;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,21 @@ public class JsonUtilsTest {
 
 		assertEquals("xpto1", map.get(1l).getAString());
 		assertEquals("xpto2", map.get(2l).getAString());
+	}
+
+	@Test
+	public void testMapWithListOfComplexObjectValue() {
+		Map<Long, List<SimpleObject>> map = new HashMap<Long, List<SimpleObject>>();
+
+		map.put(1l, Arrays.asList(new SimpleObject("xpto1"), new SimpleObject("xpto2")));
+		map.put(2l, Arrays.asList(new SimpleObject("xpto3"), new SimpleObject("xpto4")));
+
+		String json = JsonUtils.to(map);
+
+//		map = JsonUtils.fromMap(json, Long.class, SimpleObject.class);
+//
+//		assertEquals("xpto1", map.get(1l).getAString());
+//		assertEquals("xpto2", map.get(2l).getAString());
 	}
 
 }

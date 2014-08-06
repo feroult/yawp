@@ -163,7 +163,7 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	private String saveFromArray(Repository r, Class<?> clazz, String json) {
-		List<?> objects = JsonUtils.fromArray(json, clazz);
+		List<?> objects = JsonUtils.fromList(json, clazz);
 
 		for (Object object : objects) {
 			r.save(object);

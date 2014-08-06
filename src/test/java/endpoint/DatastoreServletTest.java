@@ -40,7 +40,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 	public void testCreateArray() {
 		String json = servlet.execute("POST", "/simpleobjects", SIMPLE_ARRAY_JSON, null).getText();
 
-		List<SimpleObject> objects = JsonUtils.fromArray(json, SimpleObject.class);
+		List<SimpleObject> objects = JsonUtils.fromList(json, SimpleObject.class);
 
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 		objects.get(1).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
@@ -56,7 +56,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 
 		String json = servlet.execute("GET", "/simpleobjects", null, null).getText();
 
-		List<SimpleObject> objects = JsonUtils.fromArray(json, SimpleObject.class);
+		List<SimpleObject> objects = JsonUtils.fromList(json, SimpleObject.class);
 
 		assertEquals(2, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");

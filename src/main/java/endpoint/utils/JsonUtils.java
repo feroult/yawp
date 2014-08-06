@@ -3,7 +3,6 @@ package endpoint.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +13,15 @@ import com.google.gson.JsonParser;
 
 public class JsonUtils {
 
-	public static <T> T from(String json, Class<T> clazz) {
+	public static Object from(String json, Type type) {
 		JsonElement jsoneElement = (JsonElement) new JsonParser().parse(json);
 		Gson gson = buildGson();
-		return gson.fromJson(jsoneElement, clazz);
+		return gson.fromJson(jsoneElement, type);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T from(String json, Class<T> clazz) {
+		return (T) from(json, (Type) clazz);
 	}
 
 	private static Gson buildGson() {
@@ -30,32 +34,27 @@ public class JsonUtils {
 		return gson.toJson(o);
 	}
 
-	@SuppressWarnings({ "unchecked" })
-	public static <T> List<T> fromArray(String json, Class<T> clazz) {
-		List<T> result = new ArrayList<T>();
-
-		Gson gson = buildGson();
-		List<Object> list = gson.fromJson(json, List.class);
-		for (Object obj : list) {
-			result.add(from(to(obj), clazz));
-		}
-
-		return result;
-	}
-
 	public static Object fromMap(String json, Type keyType, Type valueType) {
 		return fromMap(json, (Class<?>) keyType, (Class<?>) valueType);
 	}
 
-	public static <K, V> Map<K, V> fromMap(String json, Class<K> keyClazz, Class<V> valueClazz) {
-		Type type = getMapTypeToken(keyClazz, valueClazz);
-		JsonElement jsoneElement = (JsonElement) new JsonParser().parse(json);
-		Gson gson = buildGson();
-		return gson.fromJson(jsoneElement, type);
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> fromList(String json, Class<T> clazz) {
+		ParameterizedTypeImpl type = new ParameterizedTypeImpl(List.class, new Type[] { clazz }, null);
+		return (List<T>) from(json, type);
 	}
 
-	private static Type getMapTypeToken(Class<?> keyClazz, Class<?> valueClazz) {
-		return new ParameterizedTypeImpl(Map.class, new Type[] { keyClazz, valueClazz }, null);
+	@SuppressWarnings("unchecked")
+	public static <K, V> Map<K, V> fromMap(String json, Class<K> keyClazz, Class<V> valueClazz) {
+		ParameterizedTypeImpl type = new ParameterizedTypeImpl(Map.class, new Type[] { keyClazz, valueClazz }, null);
+		return (Map<K, V>) from(json, type);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <K, V> Map<K, List<V>> fromMapList(String json, Class<K> keyClazz, Class<V> valueClazz) {
+		Type listType = new ParameterizedTypeImpl(List.class, new Type[] { valueClazz }, null);
+		Type type = new ParameterizedTypeImpl(Map.class, new Type[] { keyClazz, listType }, null);
+		return (Map<K, List<V>>) from(json, type);
 	}
 
 	public static String readJson(BufferedReader reader) {

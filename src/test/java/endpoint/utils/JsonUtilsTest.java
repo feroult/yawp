@@ -2,9 +2,6 @@ package endpoint.utils;
 
 import static org.junit.Assert.assertEquals;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +25,7 @@ public class JsonUtilsTest {
 	public void testFromArray() {
 		String json = String.format("[%s, %s, %s]", SIMPLE_OBJECT_JSON, SIMPLE_OBJECT_JSON, SIMPLE_OBJECT_JSON);
 
-		List<SimpleObject> objects = JsonUtils.fromArray(json, SimpleObject.class);
+		List<SimpleObject> objects = JsonUtils.fromList(json, SimpleObject.class);
 
 		assertEquals(3, objects.size());
 
@@ -76,27 +73,11 @@ public class JsonUtilsTest {
 
 		String json = JsonUtils.to(map);
 
-//		map = JsonUtils.fromMap(json, Long.class, SimpleObject.class);
-//
-//		assertEquals("xpto1", map.get(1l).getAString());
-//		assertEquals("xpto2", map.get(2l).getAString());
-		
-		getParametrizedTypes(Xpto.class.getDeclaredField("map"));
-	}
-	
-	class Xpto {
-		private Map<Long, List<SimpleObject>> map = new HashMap<Long, List<SimpleObject>>();
-	}
+		map = JsonUtils.fromMapList(json, Long.class, SimpleObject.class);
 
-	
-	private static Type[] getParametrizedTypes(Field field) {
-		Type genericFieldType = field.getGenericType();
-		if (genericFieldType instanceof ParameterizedType) {
-			ParameterizedType aType = (ParameterizedType) genericFieldType;
-			Type[] fieldArgTypes = aType.getActualTypeArguments();
-			return fieldArgTypes;
-		}
-
-		throw new RuntimeException("cant find list generic type");
+		assertEquals("xpto1", map.get(1l).get(0).getAString());
+		assertEquals("xpto2", map.get(1l).get(1).getAString());
+		assertEquals("xpto3", map.get(2l).get(0).getAString());
+		assertEquals("xpto4", map.get(2l).get(1).getAString());
 	}
 }

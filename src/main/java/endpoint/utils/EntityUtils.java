@@ -157,7 +157,7 @@ public class EntityUtils {
 			return fieldArgTypes;
 		}
 
-		throw new RuntimeException("cant find list generic type");
+		return null;
 	}
 
 	public static <T> String getIndexFieldName(String fieldName, Class<T> clazz) {
@@ -298,7 +298,7 @@ public class EntityUtils {
 		String json = ((Text) value).getValue();
 
 		if (isList(field)) {
-			field.set(object, JsonUtils.fromArray(json, getParametrizedType(field)));
+			field.set(object, JsonUtils.fromList(json, getParametrizedType(field)));
 		} else if (isMap(field)) {
 			Type[] types = getParametrizedTypes(field);
 			field.set(object, JsonUtils.fromMap(json, types[0], types[1]));

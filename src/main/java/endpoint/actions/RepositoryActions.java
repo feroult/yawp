@@ -88,7 +88,9 @@ public class RepositoryActions {
 			actionInstance.setRepository(r);
 
 			Object ret;
-			if (method.getParameterTypes().length == 1) {
+			if (method.getParameterTypes().length == 0) {
+				ret = method.invoke(actionInstance);
+			} else if (method.getParameterTypes().length == 1) {
 				ret = method.invoke(actionInstance, id);
 			} else {
 				ret = method.invoke(actionInstance, id, params);

@@ -37,4 +37,10 @@ public class ActionTest extends EndpointTestCase {
 		HttpResponse response = r.action(SimpleObject.class, "PUT", "params_action", 1l, params);
 		assertEquals("xpto", response.getText());
 	}
+
+	@Test
+	public void testActionOverCollection() {
+		HttpResponse response = r.action(SimpleObject.class, "GET", "me", null, null);
+		assertEquals("xpto", response.getText());
+	}
 }

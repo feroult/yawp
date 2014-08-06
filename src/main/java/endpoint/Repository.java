@@ -116,7 +116,7 @@ public class Repository {
 			}
 
 			field.setAccessible(true);
-			deleteChilds(key, EntityUtils.getParametrizedType(field));
+			deleteChilds(key, EntityUtils.getListType(field));
 		}
 	}
 
@@ -138,7 +138,7 @@ public class Repository {
 			field.setAccessible(true);
 
 			try {
-				saveList(EntityUtils.getParametrizedType(field), (List<Object>) field.get(object), object);
+				saveList(EntityUtils.getListType(field), (List<Object>) field.get(object), object);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

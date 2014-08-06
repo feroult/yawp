@@ -145,7 +145,7 @@ public class EntityUtils {
 		return fields.toArray(new Field[fields.size()]);
 	}
 
-	public static Class<?> getParametrizedType(Field field) {
+	public static Class<?> getListType(Field field) {
 		return (Class<?>) getParametrizedTypes(field)[0];
 	}
 
@@ -157,7 +157,7 @@ public class EntityUtils {
 			return fieldArgTypes;
 		}
 
-		return null;
+		throw new RuntimeException("can't get generic type");
 	}
 
 	public static <T> String getIndexFieldName(String fieldName, Class<T> clazz) {
@@ -296,15 +296,7 @@ public class EntityUtils {
 		}
 
 		String json = ((Text) value).getValue();
-
-		if (isList(field)) {
-			field.set(object, JsonUtils.fromList(json, getParametrizedType(field)));
-		} else if (isMap(field)) {
-			Type[] types = getParametrizedTypes(field);
-			field.set(object, JsonUtils.fromMap(json, types[0], types[1]));
-		} else {
-			field.set(object, JsonUtils.from(json, field.getType()));
-		}
+		field.set(object, JsonUtils.from(json, field.getGenericType()));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -330,10 +322,6 @@ public class EntityUtils {
 
 	private static boolean isList(Field field) {
 		return List.class.isAssignableFrom(field.getType());
-	}
-
-	private static boolean isMap(Field field) {
-		return Map.class.isAssignableFrom(field.getType());
 	}
 
 	private static boolean isDate(Field field) {

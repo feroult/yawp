@@ -29,7 +29,9 @@ public class ErrorResponse extends HttpResponse {
 	@Override
 	public void execute(HttpServletResponse resp) throws IOException {
 		resp.setStatus(httpStatus);
-		resp.getWriter().write(text);
+		if (text != null) {
+			resp.getWriter().write(text);
+		}
 	}
 
 }

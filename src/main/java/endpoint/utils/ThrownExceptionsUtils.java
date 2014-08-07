@@ -9,7 +9,10 @@ import endpoint.HttpException;
 
 public final class ThrownExceptionsUtils {
 
-	private static final List<Class<? extends RuntimeException>> ALLOWED_EXCEPTIONS = Arrays.asList(DatastoreException.class, HttpException.class);
+	private static final List<Class<? extends RuntimeException>> ALLOWED_EXCEPTIONS = Arrays.asList(
+		DatastoreException.class,
+		HttpException.class
+	);
 
 	private ThrownExceptionsUtils() {
 		throw new RuntimeException("Should never be instanciated.");

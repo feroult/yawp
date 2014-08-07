@@ -29,4 +29,9 @@ public class HttpException extends RuntimeException {
 	public String getText() {
 		return text;
 	}
+
+	@Override
+	public String toString() {
+		return "<HttpException status:" + this.httpStatus + " text:'" + text + "'>";
+	}
 }

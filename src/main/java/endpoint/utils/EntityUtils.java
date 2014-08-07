@@ -165,6 +165,10 @@ public class EntityUtils {
 			Field field = clazz.getDeclaredField(fieldName);
 			Index index = field.getAnnotation(Index.class);
 
+			if (index == null) {
+				throw new RuntimeException("You must add @Index annotation the the field '" + fieldName + "' if you want to use it as a index in where statements.");
+			}
+
 			if (index.normalize()) {
 				return NORMALIZED_FIELD_PREFIX + fieldName;
 			}

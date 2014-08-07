@@ -1,11 +1,19 @@
 package endpoint.hooks;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.reflections.Reflections;
 
-import endpoint.*;
+import endpoint.DatastoreQuery;
+import endpoint.Repository;
+import endpoint.Target;
+import endpoint.utils.ThrownExceptionsUtils;
 
 public class RepositoryHooks {
 	private static Map<String, List<Class<? extends Hook>>> hooks = new HashMap<String, List<Class<? extends Hook>>>();
@@ -96,19 +104,7 @@ public class RepositoryHooks {
 
 			method.invoke(hook, object);
 		} catch (Exception e) {
-			Throwable cause = e;
-			while (cause instanceof InvocationTargetException) {
-				cause = cause.getCause();
-			}
-
-			final List<Class<? extends RuntimeException>> allowedExceptions = Arrays.asList(DatastoreException.class, HttpException.class);
-
-			for (Class<? extends RuntimeException> klass : allowedExceptions) {
-				if (klass.isInstance(cause)) {
-					throw (RuntimeException) cause;
-				}
-			}
-			throw new RuntimeException(cause);
+			throw ThrownExceptionsUtils.handle(e);
 		}
 	}
 

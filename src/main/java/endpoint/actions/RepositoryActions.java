@@ -9,12 +9,12 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
-import endpoint.DatastoreException;
 import endpoint.Repository;
 import endpoint.Target;
 import endpoint.response.HttpResponse;
 import endpoint.response.JsonResponse;
 import endpoint.utils.JsonUtils;
+import endpoint.utils.ThrownExceptionsUtils;
 
 public class RepositoryActions {
 
@@ -107,11 +107,7 @@ public class RepositoryActions {
 			return new JsonResponse(JsonUtils.to(ret));
 
 		} catch (Exception e) {
-			if (e.getCause() != null && DatastoreException.class.isInstance(e.getCause())) {
-				throw (DatastoreException) e.getCause();
-			}
-
-			throw new RuntimeException(e);
+			throw ThrownExceptionsUtils.handle(e);
 		}
 	}
 

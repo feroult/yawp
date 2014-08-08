@@ -31,7 +31,7 @@ public class HookTest extends EndpointTestCase {
 		saveProduct("xpto");
 		saveProduct("abcd");
 
-		List<Product> products = r.query(Product.class).list();
+		List<Product> products = r.queryWithHooks(Product.class).list();
 		assertEquals(1, products.size());
 		assertEquals("xpto", products.get(0).getName());
 	}

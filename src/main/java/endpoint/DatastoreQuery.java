@@ -278,15 +278,17 @@ public class DatastoreQuery<T> {
 		if (where == null) {
 			return;
 		}
-		List<Filter> filters = new ArrayList<Filter>();
 
-		int i = 0;
-		while (i < where.length) {
+		if (where.length % 3 != 0) {
+			throw new RuntimeException("Malformed WHERE clause expression; you must always add: [field] [operator] [value]");
+		}
+
+		List<Filter> filters = new ArrayList<Filter>();
+		for (int i = 0; i < where.length; i += 3) {
 			String fieldName = (String) where[i + 0];
 			String indexFieldName = EntityUtils.getIndexFieldName(fieldName, clazz);
 			Object value = EntityUtils.getIndexFieldValue(fieldName, clazz, where[i + 2]);
 			filters.add(new FilterPredicate(indexFieldName, getFilterOperator(where[i + 1]), value));
-			i += 3;
 		}
 
 		if (filters.size() > 1) {
@@ -310,6 +312,7 @@ public class DatastoreQuery<T> {
 	private FilterOperator getFilterOperator(Object o) {
 		String operator = (String) o;
 
+		// :) return FilterOperator.valueOf(operator);
 		if (operator.equals("=")) {
 			return FilterOperator.EQUAL;
 		}

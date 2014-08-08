@@ -160,41 +160,71 @@ public class EntityUtils {
 		throw new RuntimeException("can't get generic type");
 	}
 
-	public static <T> String getIndexFieldName(String fieldName, Class<T> clazz) {
-		try {
-			Field field = clazz.getDeclaredField(fieldName);
-
-			if (!hasIndex(field)) {
-				throw new RuntimeException("You must add @Index annotation the the field '" + fieldName
-						+ "' if you want to use it as a index in where statements.");
+	private static Field getFieldFromAnyParent(Class<?> clazz, String fieldName) {
+		while (clazz != null) {
+			try {
+				return clazz.getDeclaredField(fieldName);
+			} catch (NoSuchFieldException ex) {
+				clazz = clazz.getSuperclass();
 			}
-
-			if (isIndexNormalizable(field)) {
-				return NORMALIZED_FIELD_PREFIX + fieldName;
-			}
-
-			return fieldName;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
 		}
+
+		throw new RuntimeException("Field '" + fieldName + "'not found in entity " + clazz, new NoSuchFieldException(fieldName));
+	}
+
+	public static <T> String getIndexFieldName(String fieldName, Class<T> clazz) {
+		Field field = getFieldFromAnyParent(clazz, fieldName);
+
+		if (isKey(field)) {
+			return Entity.KEY_RESERVED_PROPERTY;
+		}
+
+		if (isIndexNormalizable(field)) {
+			return NORMALIZED_FIELD_PREFIX + fieldName;
+		}
+
+		return fieldName;
+	}
+
+	private static boolean isKey(Field field) {
+		return field.getAnnotation(Id.class) != null || field.getType().equals(Key.class);
+	}
+
+	private static Index getIndex(Field field) {
+		Index index = field.getAnnotation(Index.class);
+		if (index == null) {
+			throw new RuntimeException("You must add @Index annotation the the field '" + field.getName() + "' if you want to use it as a index in where statements.");
+		}
+		return index;
 	}
 
 	public static <T> Object getIndexFieldValue(String fieldName, Class<T> clazz, Object value) {
-		try {
-			Field field = clazz.getDeclaredField(fieldName);
+		Field field = getFieldFromAnyParent(clazz, fieldName);
 
-			if (isIndexNormalizable(field)) {
-				return normalizeValue(value);
+		if (isKey(field)) {
+			if (value instanceof Key) {
+				return value;
 			}
 
-			if (isDate(field) && value instanceof String) {
-				return DateUtils.toTimestamp((String) value);
+			Long id;
+			if (value instanceof Long) {
+				id = (Long) value;
+			} else {
+				id = Long.parseLong(value.toString());
 			}
 
-			return value;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+			return createKey(id, clazz);
 		}
+
+		if (getIndex(field).normalize()) {
+			return normalizeValue(value);
+		}
+
+		if (isDate(field) && value instanceof String) {
+			return DateUtils.toTimestamp((String) value);
+		}
+
+		return value;
 	}
 
 	public static Key createKey(Long id, Class<?> clazz) {
@@ -314,8 +344,7 @@ public class EntityUtils {
 	}
 
 	private static boolean isIndexNormalizable(Field field) {
-		Index indexX = field.getAnnotation(Index.class);
-		return indexX.normalize() && isString(field);
+		return getIndex(field).normalize() && isString(field);
 	}
 
 	private static boolean isControl(Field field) {

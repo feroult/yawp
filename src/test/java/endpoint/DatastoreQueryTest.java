@@ -152,6 +152,26 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
+	public void testFindByIdUsingWhere() {
+		SimpleObject object = new SimpleObject("xpto");
+
+		r.save(object);
+
+		object = r.query(SimpleObject.class).where("key", "=", object.getId()).first();
+		assertEquals("xpto", object.getAString());
+	}
+
+	@Test
+	public void testFindByIdUsingWhereWithLongId() {
+		ObjectWithLongId object = new ObjectWithLongId("xpto");
+
+		r.save(object);
+
+		object = r.query(ObjectWithLongId.class).where("key", "=", object.key).first();
+		assertEquals("xpto", object.text);
+	}
+
+	@Test
 	public void testFindById() {
 		SimpleObject object = new SimpleObject("xpto");
 
@@ -160,4 +180,20 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		object = r.query(SimpleObject.class).id(object.getId());
 		assertEquals("xpto", object.getAString());
 	}
+
+	public static class ObjectWithLongId {
+
+		@Id
+		Long key;
+
+		String text;
+
+		public ObjectWithLongId() {
+		}
+
+		public ObjectWithLongId(String text) {
+			this.text = text;
+		}
+	}
+
 }

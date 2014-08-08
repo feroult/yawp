@@ -188,10 +188,10 @@ public class DatastoreServlet extends HttpServlet {
 
 	private String get(Repository r, Class<?> clazz, long id, String t) {
 		if (t != null) {
-			return JsonUtils.to(r.queryWithHooks(clazz).transform(t).id(id));
+			return JsonUtils.to(r.query(clazz).transform(t).id(id));
 		}
 
-		return JsonUtils.to(r.queryWithHooks(clazz).id(id));
+		return JsonUtils.to(r.query(clazz).id(id));
 	}
 
 }

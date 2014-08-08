@@ -64,6 +64,17 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
+	public void testChainedWheresMultipleStatements() {
+		saveThreeObjects();
+		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
+
+		List<SimpleObject> objects = r.query(SimpleObject.class).where("aLong", "=", 1l).where("aString", "=", "object2").list();
+
+		assertEquals(1, objects.size());
+		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
+	}
+
+	@Test
 	public void testOptions() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object4"));

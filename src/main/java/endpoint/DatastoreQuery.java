@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -62,7 +64,7 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> where(Object... values) {
-		this.where = values;
+		this.where = ArrayUtils.addAll(this.where, values);
 		return this;
 	}
 

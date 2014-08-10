@@ -164,12 +164,12 @@ public class EntityUtils {
 		try {
 			Field field = clazz.getDeclaredField(fieldName);
 
-			if (!hasIndexAnnotation(field)) {
+			if (!hasIndex(field)) {
 				throw new RuntimeException("You must add @Index annotation the the field '" + fieldName
 						+ "' if you want to use it as a index in where statements.");
 			}
 
-			if (isNormalizable(field)) {
+			if (isIndexNormalizable(field)) {
 				return NORMALIZED_FIELD_PREFIX + fieldName;
 			}
 
@@ -183,7 +183,7 @@ public class EntityUtils {
 		try {
 			Field field = clazz.getDeclaredField(fieldName);
 
-			if (isNormalizable(field)) {
+			if (isIndexNormalizable(field)) {
 				return normalizeValue(value);
 			}
 
@@ -204,14 +204,12 @@ public class EntityUtils {
 	private static void setEntityProperty(Object object, Entity entity, Field field) {
 		Object value = getFieldValue(field, object);
 
-		Index index = field.getAnnotation(Index.class);
-
-		if (index == null) {
+		if (!hasIndex(field)) {
 			entity.setUnindexedProperty(field.getName(), value);
 			return;
 		}
 
-		if (isNormalizable(field)) {
+		if (isIndexNormalizable(field)) {
 			entity.setProperty(NORMALIZED_FIELD_PREFIX + field.getName(), normalizeValue(value));
 			entity.setUnindexedProperty(field.getName(), value);
 			return;
@@ -311,11 +309,11 @@ public class EntityUtils {
 		field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
 	}
 
-	private static boolean hasIndexAnnotation(Field field) {
+	private static boolean hasIndex(Field field) {
 		return field.getAnnotation(Index.class) != null;
 	}
 
-	private static boolean isNormalizable(Field field) {
+	private static boolean isIndexNormalizable(Field field) {
 		Index indexX = field.getAnnotation(Index.class);
 		return indexX.normalize() && isString(field);
 	}

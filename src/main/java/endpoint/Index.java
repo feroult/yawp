@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface Index {
 
-	boolean normalize() default false;
+	boolean normalize() default true;
 
 }

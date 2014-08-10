@@ -163,13 +163,13 @@ public class EntityUtils {
 	public static <T> String getIndexFieldName(String fieldName, Class<T> clazz) {
 		try {
 			Field field = clazz.getDeclaredField(fieldName);
-			Index index = field.getAnnotation(Index.class);
 
-			if (index == null) {
-				throw new RuntimeException("You must add @Index annotation the the field '" + fieldName + "' if you want to use it as a index in where statements.");
+			if (!hasIndexAnnotation(field)) {
+				throw new RuntimeException("You must add @Index annotation the the field '" + fieldName
+						+ "' if you want to use it as a index in where statements.");
 			}
 
-			if (index.normalize()) {
+			if (isNormalizable(field)) {
 				return NORMALIZED_FIELD_PREFIX + fieldName;
 			}
 
@@ -182,9 +182,8 @@ public class EntityUtils {
 	public static <T> Object getIndexFieldValue(String fieldName, Class<T> clazz, Object value) {
 		try {
 			Field field = clazz.getDeclaredField(fieldName);
-			Index index = field.getAnnotation(Index.class);
 
-			if (index.normalize()) {
+			if (isNormalizable(field)) {
 				return normalizeValue(value);
 			}
 
@@ -212,7 +211,7 @@ public class EntityUtils {
 			return;
 		}
 
-		if (index.normalize()) {
+		if (isNormalizable(field)) {
 			entity.setProperty(NORMALIZED_FIELD_PREFIX + field.getName(), normalizeValue(value));
 			entity.setUnindexedProperty(field.getName(), value);
 			return;
@@ -312,6 +311,15 @@ public class EntityUtils {
 		field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
 	}
 
+	private static boolean hasIndexAnnotation(Field field) {
+		return field.getAnnotation(Index.class) != null;
+	}
+
+	private static boolean isNormalizable(Field field) {
+		Index indexX = field.getAnnotation(Index.class);
+		return indexX.normalize() && isString(field);
+	}
+
 	private static boolean isControl(Field field) {
 		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class) || field.isSynthetic();
 	}
@@ -326,6 +334,10 @@ public class EntityUtils {
 
 	private static boolean isList(Field field) {
 		return List.class.isAssignableFrom(field.getType());
+	}
+
+	private static boolean isString(Field field) {
+		return String.class.isAssignableFrom(field.getType());
 	}
 
 	private static boolean isDate(Field field) {

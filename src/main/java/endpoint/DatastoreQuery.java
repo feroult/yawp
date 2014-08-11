@@ -43,14 +43,18 @@ public class DatastoreQuery<T> {
 
 	private String cursor;
 
+	private boolean lazy;
+
 	public static <T> DatastoreQuery<T> q(Class<T> clazz, Repository r) {
 		return new DatastoreQuery<T>(clazz, r);
 	}
 
 	protected DatastoreQuery() {
+		this.lazy = true;
 	}
 
 	private DatastoreQuery(Class<T> clazz, Repository r) {
+		this();
 		this.clazz = clazz;
 		this.r = r;
 	}
@@ -166,6 +170,23 @@ public class DatastoreQuery<T> {
 		}
 	}
 
+	public T only() throws NoResultException, MoreThanOneResultException {
+		r.namespace().set(getClazz());
+		try {
+			List<T> list = executeQuery();
+			if (list.size() == 1) {
+				return list.get(0);
+			}
+			if (list.size() == 0) {
+				throw new NoResultException();
+			}
+			throw new MoreThanOneResultException();
+		} finally {
+			r.namespace().reset();
+		}
+	}
+
+	@Deprecated
 	public T id(Long id) {
 		r.namespace().set(getClazz());
 		try {
@@ -215,6 +236,9 @@ public class DatastoreQuery<T> {
 
 		for (Entity entity : queryResult) {
 			T object = EntityUtils.toObject(entity, clazz);
+			if (!lazy) {
+				loadLists(object);
+			}
 			objects.add(object);
 		}
 
@@ -337,4 +361,21 @@ public class DatastoreQuery<T> {
 		throw new RuntimeException("invalid filter operator");
 	}
 
+	public DatastoreQuery<T> whereById(String operator, Long id) {
+		return where(EntityUtils.getIdFieldName(clazz), operator, id);
+	}
+
+	public T returnById(Long id) {
+		return whereById("=", id).eager().only();
+	}
+
+	public DatastoreQuery<T> eager() {
+		this.lazy = false;
+		return this;
+	}
+
+	public DatastoreQuery<T> lazy() {
+		this.lazy = true;
+		return this;
+	}
 }

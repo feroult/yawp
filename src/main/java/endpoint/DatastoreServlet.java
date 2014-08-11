@@ -1,20 +1,28 @@
 package endpoint;
 
-import endpoint.actions.RepositoryActions;
-import endpoint.hooks.RepositoryHooks;
-import endpoint.response.*;
-import endpoint.transformers.RepositoryTransformers;
-import endpoint.utils.JsonUtils;
-import org.reflections.Reflections;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.*;
-import java.util.logging.Logger;
+
+import org.reflections.Reflections;
+
+import endpoint.actions.RepositoryActions;
+import endpoint.hooks.RepositoryHooks;
+import endpoint.response.ErrorResponse;
+import endpoint.response.HttpResponse;
+import endpoint.response.JsonResponse;
+import endpoint.transformers.RepositoryTransformers;
+import endpoint.utils.JsonUtils;
 
 public class DatastoreServlet extends HttpServlet {
 
@@ -75,7 +83,7 @@ public class DatastoreServlet extends HttpServlet {
 		} catch (HttpException e) {
 			httpResponse = new ErrorResponse(e.getHttpStatus(), e.getText());
 		} catch (DatastoreException e) {
-			httpResponse = new ForbiddenResponse();
+			httpResponse = new ErrorResponse(403);
 		}
 
 		response(resp, httpResponse);
@@ -109,16 +117,20 @@ public class DatastoreServlet extends HttpServlet {
 		switch (router.getAction()) {
 			case INDEX:
 				if (!endpoint.index()) {
-					return new ForbiddenResponse();
+					return new ErrorResponse(403);
 				}
 				return new JsonResponse(index(r, clazz, q(params), t(params)));
 			case SHOW:
-				return new JsonResponse(get(r, clazz, router.getId(), t(params)));
+				try {
+					return new JsonResponse(get(r, clazz, router.getId(), t(params)));
+				} catch (NoResultException e) {
+					return new ErrorResponse(404);
+				}
 			case CREATE:
 				return new JsonResponse(save(r, clazz, requestJson));
 			case UPDATE:
 				if (!endpoint.update()) {
-					return new ForbiddenResponse();
+					return new ErrorResponse(403);
 				}
 				return new JsonResponse(save(r, clazz, requestJson));
 			case CUSTOM:
@@ -186,12 +198,9 @@ public class DatastoreServlet extends HttpServlet {
 		return JsonUtils.to(query.list());
 	}
 
-	private String get(Repository r, Class<?> clazz, long id, String t) {
-		if (t != null) {
-			return JsonUtils.to(r.query(clazz).transform(t).id(id));
-		}
-
-		return JsonUtils.to(r.query(clazz).id(id));
+	private String get(Repository r, Class<?> clazz, Long id, String t) {
+		DatastoreQuery<?> query = r.query(clazz).whereById("=", id);
+		return JsonUtils.to(t == null ? query.only() : query.transform(t).only());
 	}
 
 }

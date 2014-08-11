@@ -18,7 +18,7 @@ public class TransformerTest extends EndpointTestCase {
 		r.save(object);
 
 		@SuppressWarnings("unchecked")
-		Map<String, String> map = r.query(SimpleObject.class).transform(Map.class, "simple").id(object.getId());
+		Map<String, String> map = r.query(SimpleObject.class).transform(Map.class, "simple").returnById(object.getId());
 
 		assertEquals("xpto", map.get("innerValue"));
 	}

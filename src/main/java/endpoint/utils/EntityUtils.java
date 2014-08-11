@@ -115,9 +115,34 @@ public class EntityUtils {
 	}
 
 	private static Field getAnnotatedId(Object object) {
-		Class<?> clazz = object.getClass();
-		for (Field field : clazz.getDeclaredFields()) {
+		return getAnnotatedIdFromClass(object.getClass());
+	}
+
+	public static String getIdFieldName(Class<?> clazz) {
+		Field field = getAnnotatedIdFromClass(clazz);
+
+		if (field == null) {
+			field = getKeyFieldFromClass(clazz);
+			if (field == null) {
+				throw new RuntimeException("No @Id annotated field found in class " + clazz.getSimpleName());
+			}
+		}
+
+		return field.getName();
+	}
+
+	private static Field getAnnotatedIdFromClass(Class<?> clazz) {
+		for (Field field : ReflectionUtils.getFieldsRecursively(clazz)) {
 			if (field.isAnnotationPresent(Id.class)) {
+				return field;
+			}
+		}
+		return null;
+	}
+
+	private static Field getKeyFieldFromClass(Class<?> clazz) {
+		for (Field field : ReflectionUtils.getFieldsRecursively(clazz)) {
+			if (Key.class.isAssignableFrom(field.getType())) {
 				return field;
 			}
 		}

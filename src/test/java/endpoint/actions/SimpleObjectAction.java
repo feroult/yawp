@@ -12,7 +12,7 @@ public class SimpleObjectAction extends Action {
 
 	@PUT("active")
 	public JsonResponse activate(Long id) {
-		SimpleObject object = r.query(SimpleObject.class).id(id);
+		SimpleObject object = r.query(SimpleObject.class).returnById(id);
 		object.setAString("i was changed in action");
 		r.save(object);
 		return new JsonResponse(JsonUtils.to(object));

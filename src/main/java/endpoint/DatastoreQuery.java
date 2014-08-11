@@ -12,7 +12,6 @@ import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -186,25 +185,6 @@ public class DatastoreQuery<T> {
 		}
 	}
 
-	@Deprecated
-	public T id(Long id) {
-		r.namespace().set(getClazz());
-		try {
-			DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
-
-			try {
-				Entity entity = datastoreService.get(EntityUtils.createKey(id, clazz));
-				T object = EntityUtils.toObject(entity, clazz);
-				loadLists(object);
-				return object;
-			} catch (EntityNotFoundException e) {
-				return null;
-			}
-		} finally {
-			r.namespace().reset();
-		}
-	}
-
 	private void loadLists(Object object) {
 		Field[] fields = EntityUtils.getFields(object.getClass());
 		for (int i = 0; i < fields.length; i++) {
@@ -365,7 +345,7 @@ public class DatastoreQuery<T> {
 		return where(EntityUtils.getIdFieldName(clazz), operator, id);
 	}
 
-	public T returnById(Long id) {
+	public T id(Long id) {
 		return whereById("=", id).eager().only();
 	}
 

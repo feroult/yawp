@@ -7,7 +7,6 @@ import com.google.appengine.api.datastore.Key;
 
 import endpoint.transformers.RepositoryTransformers;
 
-// TODO why not inherit from DatastoreQuery ???
 public class DatastoreQueryTransformer<T> {
 
 	private DatastoreQuery<?> query;
@@ -101,11 +100,6 @@ public class DatastoreQueryTransformer<T> {
 		return RepositoryTransformers.execute(query.getRepository(), transformClazz, query.only(), transformName);
 	}
 
-	public T returnById(Long id) {
-		return RepositoryTransformers.execute(query.getRepository(), transformClazz, query.returnById(id), transformName);
-	}
-
-	@Deprecated
 	public T id(Long id) {
 		return RepositoryTransformers.execute(query.getRepository(), transformClazz, query.id(id), transformName);
 	}

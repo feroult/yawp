@@ -21,7 +21,7 @@ public class RepositoryTest extends EndpointTestCase {
 		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
 
 		r.save(object);
-		object = r.query(SimpleObject.class).returnById(object.getId());
+		object = r.query(SimpleObject.class).id(object.getId());
 
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 	}
@@ -32,7 +32,7 @@ public class RepositoryTest extends EndpointTestCase {
 		object.setaList(Arrays.asList(new AnotherSimpleObject("anotherObject1")));
 
 		r.save(object);
-		object = r.query(SimpleObject.class).returnById(object.getId());
+		object = r.query(SimpleObject.class).id(object.getId());
 
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 		assertEquals(1, object.getaList().size());
@@ -50,8 +50,8 @@ public class RepositoryTest extends EndpointTestCase {
 		r.save(object1);
 		r.save(object2);
 
-		object1 = r.query(SimpleObject.class).returnById(object1.getId());
-		object2 = r.query(SimpleObject.class).returnById(object2.getId());
+		object1 = r.query(SimpleObject.class).id(object1.getId());
+		object2 = r.query(SimpleObject.class).id(object2.getId());
 
 		object1.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 		assertEquals(1, object1.getaList().size());
@@ -68,11 +68,11 @@ public class RepositoryTest extends EndpointTestCase {
 		object.setaList(Arrays.asList(new AnotherSimpleObject("anotherObject1")));
 		r.save(object);
 
-		object = r.query(SimpleObject.class).returnById(object.getId());
+		object = r.query(SimpleObject.class).id(object.getId());
 		object.setaList(Arrays.asList(new AnotherSimpleObject("anotherObject2")));
 		r.save(object);
 
-		object = r.query(SimpleObject.class).returnById(object.getId());
+		object = r.query(SimpleObject.class).id(object.getId());
 
 		assertEquals(1, object.getaList().size());
 		assertEquals("anotherObject2", object.getaList().get(0).getaString());
@@ -87,7 +87,7 @@ public class RepositoryTest extends EndpointTestCase {
 
 		r.save(object);
 
-		object = r.query(SimpleObject.class).returnById(object.getId());
+		object = r.query(SimpleObject.class).id(object.getId());
 
 		assertEquals("xpto", object.getAString());
 		assertEquals("xpto", object.getNotADatastoreObject().getName());
@@ -108,7 +108,7 @@ public class RepositoryTest extends EndpointTestCase {
 
 		r.save(object);
 
-		object = r.query(SimpleObject.class).returnById(object.getId());
+		object = r.query(SimpleObject.class).id(object.getId());
 
 		assertEquals("xpto", object.getAString());
 		assertEquals("xpto1", object.getNotADatastoreObjectList().get(0).getName());
@@ -128,7 +128,7 @@ public class RepositoryTest extends EndpointTestCase {
 
 		r.save(object);
 
-		object = r.query(SimpleObject.class).returnById(object.getId());
+		object = r.query(SimpleObject.class).id(object.getId());
 		assertEquals("xpto1", object.getAMap().get(1l).getName());
 		assertEquals("xpto2", object.getAMap().get(2l).getName());
 	}
@@ -147,7 +147,7 @@ public class RepositoryTest extends EndpointTestCase {
 		r.delete(object.getId(), SimpleObject.class);
 
 		try {
-			r.query(SimpleObject.class).returnById(object.getId());
+			r.query(SimpleObject.class).id(object.getId());
 			assertTrue(false);
 		} catch (NoResultException ex) {
 		}

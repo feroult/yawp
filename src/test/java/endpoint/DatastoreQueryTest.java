@@ -177,7 +177,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
 		r.save(object);
 
-		object = r.query(SimpleObject.class).returnById(object.getId());
+		object = r.query(SimpleObject.class).id(object.getId());
 		assertEquals("xpto", object.getAString());
 	}
 

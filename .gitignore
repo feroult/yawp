@@ -6,6 +6,7 @@ tmp
 .settings
 target
 test-output
+bin
 
 endpoint.iml
 endpoint.ipr
@@ -19,7 +20,4 @@ endpoint.iws
 wink.js
 log
 release
-/target
-/target
-/target
 /target

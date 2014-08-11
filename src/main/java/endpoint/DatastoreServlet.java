@@ -106,7 +106,7 @@ public class DatastoreServlet extends HttpServlet {
 		return req.getRequestURI().substring(req.getServletPath().length());
 	}
 
-	protected HttpResponse execute(String method, String path, String requestJson, Map<String, String> params) {
+	protected HttpResponse execute(String method, String path, String requestJson, Map<String, String> params) throws HttpException {
 		DatastoreRouter router = new DatastoreRouter(method, path);
 		Class<?> clazz = endpoints.get(router.getEndpointPath());
 
@@ -117,20 +117,20 @@ public class DatastoreServlet extends HttpServlet {
 		switch (router.getAction()) {
 			case INDEX:
 				if (!endpoint.index()) {
-					return new ErrorResponse(403);
+					throw new HttpException(403);
 				}
 				return new JsonResponse(index(r, clazz, q(params), t(params)));
 			case SHOW:
 				try {
 					return new JsonResponse(get(r, clazz, router.getId(), t(params)));
 				} catch (NoResultException e) {
-					return new ErrorResponse(404);
+					throw new HttpException(404);
 				}
 			case CREATE:
 				return new JsonResponse(save(r, clazz, requestJson));
 			case UPDATE:
 				if (!endpoint.update()) {
-					return new ErrorResponse(403);
+					throw new HttpException(403);
 				}
 				return new JsonResponse(save(r, clazz, requestJson));
 			case CUSTOM:
@@ -152,11 +152,11 @@ public class DatastoreServlet extends HttpServlet {
 		return Repository.r();
 	}
 
-	private HttpResponse action(Repository r, Class<?> clazz, String method, String customAction, Long id, Map<String, String> params) {
+	private HttpResponse action(Repository r, Class<?> clazz, String method, String customAction, Long id, Map<String, String> params) throws HttpException {
 		return r.action(clazz, method, customAction, id, params);
 	}
 
-	private String save(Repository r, Class<?> clazz, String json) {
+	private String save(Repository r, Class<?> clazz, String json) throws HttpException {
 		logger.warning("JSON: " + json);
 
 		if (JsonUtils.isJsonArray(json)) {
@@ -166,7 +166,7 @@ public class DatastoreServlet extends HttpServlet {
 		}
 	}
 
-	private String saveFromObject(Repository r, Class<?> clazz, String json) {
+	private String saveFromObject(Repository r, Class<?> clazz, String json) throws HttpException {
 		Object object = JsonUtils.from(json, clazz);
 
 		r.save(object);
@@ -174,7 +174,7 @@ public class DatastoreServlet extends HttpServlet {
 		return JsonUtils.to(object);
 	}
 
-	private String saveFromArray(Repository r, Class<?> clazz, String json) {
+	private String saveFromArray(Repository r, Class<?> clazz, String json) throws HttpException {
 		List<?> objects = JsonUtils.fromList(json, clazz);
 
 		for (Object object : objects) {
@@ -184,7 +184,7 @@ public class DatastoreServlet extends HttpServlet {
 		return JsonUtils.to(objects);
 	}
 
-	private String index(Repository r, Class<?> clazz, String q, String t) {
+	private String index(Repository r, Class<?> clazz, String q, String t) throws HttpException {
 		DatastoreQuery<?> query = r.queryWithHooks(clazz);
 
 		if (q != null) {
@@ -198,9 +198,8 @@ public class DatastoreServlet extends HttpServlet {
 		return JsonUtils.to(query.list());
 	}
 
-	private <T> String get(Repository r, Class<T> clazz, Long id, String t) {
-		DatastoreQuery<T> query = r.query(clazz).whereById("=", id);
-		RepositoryHooks.beforeQuery(r, query, clazz);
+	private String get(Repository r, Class<?> clazz, Long id, String t) throws HttpException {
+		DatastoreQuery<?> query = r.queryWithHooks(clazz).whereById("=", id);
 		return JsonUtils.to(t == null ? query.only() : query.transform(t).only());
 	}
 

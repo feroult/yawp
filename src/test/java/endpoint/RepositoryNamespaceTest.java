@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import endpoint.utils.EndpointTestCase;
 
-public class RespositoryNamespaceTest extends EndpointTestCase {
+public class RepositoryNamespaceTest extends EndpointTestCase {
 
 	private Repository r1;
 	private Repository r2;
@@ -20,7 +20,7 @@ public class RespositoryNamespaceTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testFindById() {
+	public void testFindById() throws HttpException {
 		SimpleObject object1 = new SimpleObject("xpto1");
 		r1.save(object1);
 
@@ -29,7 +29,7 @@ public class RespositoryNamespaceTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testQuery() {
+	public void testQuery() throws HttpException {
 		r2.save(new SimpleObject("xpto2"));
 
 		assertNotNull(r2.query(SimpleObject.class).where("aString", "=", "xpto2").first());
@@ -37,7 +37,7 @@ public class RespositoryNamespaceTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testSaveAndChange() {
+	public void testSaveAndChange() throws HttpException {
 		SimpleObject object1 = new SimpleObject("xpto");
 		SimpleObject object2 = new SimpleObject("xpto");
 

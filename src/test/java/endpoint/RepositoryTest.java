@@ -17,7 +17,7 @@ import endpoint.utils.EndpointTestCase;
 public class RepositoryTest extends EndpointTestCase {
 
 	@Test
-	public void testSave() {
+	public void testSave() throws HttpException {
 		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
 
 		r.save(object);
@@ -27,7 +27,7 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testSaveWithList() {
+	public void testSaveWithList() throws HttpException {
 		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
 		object.setaList(Arrays.asList(new AnotherSimpleObject("anotherObject1")));
 
@@ -40,7 +40,7 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testSaveTwoObjectsWithList() {
+	public void testSaveTwoObjectsWithList() throws HttpException {
 		SimpleObject object1 = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
 		object1.setaList(Arrays.asList(new AnotherSimpleObject("anotherObject1")));
 
@@ -63,7 +63,7 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testDontDuplicateChildList() {
+	public void testDontDuplicateChildList() throws HttpException {
 		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
 		object.setaList(Arrays.asList(new AnotherSimpleObject("anotherObject1")));
 		r.save(object);
@@ -79,7 +79,7 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testJsonProperty() {
+	public void testJsonProperty() throws HttpException {
 		SimpleObject object = new SimpleObject();
 
 		object.setAString("xpto");
@@ -94,7 +94,7 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testJsonArrayProperty() {
+	public void testJsonArrayProperty() throws HttpException {
 		SimpleObject object = new SimpleObject();
 
 		object.setAString("xpto");
@@ -116,7 +116,7 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testJsonMapWithLongKeyAndObjectValue() {
+	public void testJsonMapWithLongKeyAndObjectValue() throws HttpException {
 		SimpleObject object = new SimpleObject();
 
 		Map<Long, NotADatastoreObject> map = new HashMap<Long, NotADatastoreObject>();
@@ -134,7 +134,7 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testDelete() {
+	public void testDelete() throws HttpException {
 		SimpleObject object = new SimpleObject("xpto");
 
 		List<AnotherSimpleObject> list = new ArrayList<AnotherSimpleObject>();

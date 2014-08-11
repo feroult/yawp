@@ -2,7 +2,7 @@ package endpoint;
 
 import com.google.gson.JsonElement;
 
-public class HttpException extends RuntimeException {
+public class HttpException extends Exception {
 
 	private static final long serialVersionUID = -1369195874459839005L;
 

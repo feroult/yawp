@@ -9,27 +9,28 @@ import endpoint.HttpException;
 
 public final class ThrownExceptionsUtils {
 
-	private static final List<Class<? extends RuntimeException>> ALLOWED_EXCEPTIONS = Arrays.asList(
-		DatastoreException.class,
-		HttpException.class
-	);
+	private static final List<Class<? extends RuntimeException>> ALLOWED_EXCEPTIONS = Arrays.<Class<? extends RuntimeException>>asList(DatastoreException.class);
 
 	private ThrownExceptionsUtils() {
 		throw new RuntimeException("Should never be instanciated.");
 	}
 
-	public static RuntimeException handle(Throwable ex) {
+	public static HttpException handle(Throwable ex) {
 		Throwable cause = ex;
 		while (cause instanceof InvocationTargetException) {
 			cause = cause.getCause();
 		}
 
+		if (cause instanceof HttpException) {
+			return (HttpException) cause;
+		}
+
 		for (Class<? extends RuntimeException> klass : ALLOWED_EXCEPTIONS) {
 			if (klass.isInstance(cause)) {
-				return (RuntimeException) cause;
+				throw (RuntimeException) cause;
 			}
 		}
 
-		return new RuntimeException(cause);
+		throw new RuntimeException(cause);
 	}
 }

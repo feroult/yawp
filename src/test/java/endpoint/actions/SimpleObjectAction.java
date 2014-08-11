@@ -2,6 +2,7 @@ package endpoint.actions;
 
 import java.util.Map;
 
+import endpoint.HttpException;
 import endpoint.SimpleObject;
 import endpoint.Target;
 import endpoint.response.JsonResponse;
@@ -11,7 +12,7 @@ import endpoint.utils.JsonUtils;
 public class SimpleObjectAction extends Action {
 
 	@PUT("active")
-	public JsonResponse activate(Long id) {
+	public JsonResponse activate(Long id) throws HttpException {
 		SimpleObject object = r.query(SimpleObject.class).id(id);
 		object.setAString("i was changed in action");
 		r.save(object);

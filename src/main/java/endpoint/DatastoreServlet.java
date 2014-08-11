@@ -198,8 +198,9 @@ public class DatastoreServlet extends HttpServlet {
 		return JsonUtils.to(query.list());
 	}
 
-	private String get(Repository r, Class<?> clazz, Long id, String t) {
-		DatastoreQuery<?> query = r.query(clazz).whereById("=", id);
+	private <T> String get(Repository r, Class<T> clazz, Long id, String t) {
+		DatastoreQuery<T> query = r.query(clazz).whereById("=", id);
+		RepositoryHooks.beforeQuery(r, query, clazz);
 		return JsonUtils.to(t == null ? query.only() : query.transform(t).only());
 	}
 

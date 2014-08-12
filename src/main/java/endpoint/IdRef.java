@@ -22,11 +22,7 @@ public class IdRef<T> {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public static <TT> IdRef<TT> create(Repository r, Class<TT> clazz, long id) {
+	public static <TT> IdRef<TT> create(Repository r, Class<TT> clazz, Long id) {
 		return new IdRef<TT>(r, clazz, id);
 	}
 }

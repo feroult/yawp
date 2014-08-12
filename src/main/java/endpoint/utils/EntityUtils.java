@@ -26,6 +26,7 @@ import endpoint.Index;
 import endpoint.Json;
 import endpoint.Repository;
 
+// TODO make it not static and repository aware
 public class EntityUtils {
 
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
@@ -69,7 +70,7 @@ public class EntityUtils {
 					continue;
 				}
 
-				setObjectProperty(object, entity, field);
+				setObjectProperty(r, object, entity, field);
 			}
 
 			return object;
@@ -295,15 +296,21 @@ public class EntityUtils {
 			field.setAccessible(true);
 			Object value = field.get(object);
 
+			if (value == null) {
+				return null;
+			}
+
 			if (isEnum(value)) {
 				return value.toString();
 			}
 
 			if (isSaveAsJson(field)) {
-				if (value == null) {
-					return null;
-				}
 				return new Text(JsonUtils.to(value));
+			}
+
+			if (isIdRef(field)) {
+				IdRef<?> idRef = (IdRef<?>) value;
+				return idRef.getId();
 			}
 
 			return value;
@@ -324,10 +331,15 @@ public class EntityUtils {
 		}
 	}
 
-	private static <T> void setObjectProperty(T object, Entity entity, Field field) throws IllegalAccessException {
+	private static <T> void setObjectProperty(Repository r, T object, Entity entity, Field field) throws IllegalAccessException {
 		field.setAccessible(true);
 
 		Object value = entity.getProperty(field.getName());
+
+		if (value == null) {
+			field.set(object, null);
+			return;
+		}
 
 		if (isEnum(field)) {
 			setEnumProperty(object, field, value);
@@ -344,7 +356,17 @@ public class EntityUtils {
 			return;
 		}
 
+		if (isIdRef(field)) {
+			setIdRefProperty(r, object, field, value);
+			return;
+		}
+
 		field.set(object, value);
+	}
+
+	private static <T> void setIdRefProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
+		IdRef<?> idRef = IdRef.create(r, getListType(field), (Long) value);
+		field.set(object, idRef);
 	}
 
 	private static <T> void setIntProperty(T object, Field field, Object value) throws IllegalAccessException {

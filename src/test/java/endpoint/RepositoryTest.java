@@ -151,6 +151,6 @@ public class RepositoryTest extends EndpointTestCase {
 			assertTrue(false);
 		} catch (NoResultException ex) {
 		}
-		assertEquals(0, r.query(AnotherSimpleObject.class).parent(object.getKey()).list().size());
+		assertEquals(0, r.query(AnotherSimpleObject.class).parent(object.getId(), SimpleObject.class).list().size());
 	}
 }

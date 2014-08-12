@@ -1,12 +1,23 @@
 package endpoint.hooks;
 
-import endpoint.DatastoreObject;
+import endpoint.Id;
 import endpoint.Index;
 
-public class Product extends DatastoreObject {
+public class Product {
+
+	@Id
+	private Long id;
 
 	@Index(normalize = true)
 	private String name;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;

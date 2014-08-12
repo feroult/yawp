@@ -9,7 +9,11 @@ import java.util.Map;
 import endpoint.utils.DateUtils;
 
 @Endpoint(path = "/simpleobjects")
-public class SimpleObject extends DatastoreObject {
+public class SimpleObject  {
+	
+	@Id
+	private Long id;
+	
 	private int aInt;
 
 	@Index
@@ -58,6 +62,14 @@ public class SimpleObject extends DatastoreObject {
 		this.aBoolean = aBoolean;
 		this.aDate = aDate;
 		this.aString = aString;
+	}
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public int getaInt() {
@@ -149,7 +161,6 @@ public class SimpleObject extends DatastoreObject {
 	}
 
 	public void assertObject(int aInt, long aLong, double aDouble, boolean aBoolean, String timestamp, String aString) {
-		assertEquals(SimpleObject.class.getSimpleName(), getKey().getKind());
 		assertFields(aInt, aLong, aDouble, aBoolean, timestamp, aString);
 	}
 

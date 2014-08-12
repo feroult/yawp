@@ -71,6 +71,16 @@ public class DatastoreQuery<T> {
 		return this;
 	}
 
+	public DatastoreQuery<T> parent(Long parentId, Class<?> parentClazz) {
+		r.namespace().set(getClazz());
+		try {
+			Key createKey = EntityUtils.createKey(parentId, parentClazz);
+			return parent(createKey);
+		} finally {
+			r.namespace().reset();
+		}
+	}
+
 	public DatastoreQuery<T> parent(Key parentKey) {
 		this.parentKey = parentKey;
 		return this;

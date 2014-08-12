@@ -12,8 +12,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -81,7 +79,7 @@ public class EntityUtils {
 
 	public static <T> void setKey(T object, Key key) {
 		try {
-			Field field = getAnnotatedId(object);
+			Field field = getIdField(object.getClass());
 
 			if (field != null) {
 				field.setAccessible(true);
@@ -89,36 +87,32 @@ public class EntityUtils {
 				return;
 			}
 
-			BeanUtils.setProperty(object, "key", key);
-		} catch (IllegalAccessException | InvocationTargetException e) {
+		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	public static Key getKey(Object object) {
 		try {
-			Field field = getAnnotatedId(object);
+			Field field = getIdField(object.getClass());
 
-			if (field != null) {
-				field.setAccessible(true);
-				if (field.get(object) == null) {
-					return null;
-				}
-				return createKey((Long) field.get(object), object.getClass());
+			field.setAccessible(true);
+			if (field.get(object) == null) {
+				return null;
 			}
 
-			return (Key) PropertyUtils.getProperty(object, "key");
+			return createKey((Long) field.get(object), object.getClass());
 
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private static Field getAnnotatedId(Object object) {
-		return getAnnotatedIdFromClass(object.getClass());
+	public static String getIdFieldName(Class<?> clazz) {
+		return getIdField(clazz).getName();
 	}
 
-	public static String getIdFieldName(Class<?> clazz) {
+	private static Field getIdField(Class<?> clazz) {
 		Field field = getAnnotatedIdFromClass(clazz);
 
 		if (field == null) {
@@ -127,8 +121,7 @@ public class EntityUtils {
 				throw new RuntimeException("No @Id annotated field found in class " + clazz.getSimpleName());
 			}
 		}
-
-		return field.getName();
+		return field;
 	}
 
 	private static Field getAnnotatedIdFromClass(Class<?> clazz) {
@@ -218,7 +211,8 @@ public class EntityUtils {
 	private static Index getIndex(Field field) {
 		Index index = field.getAnnotation(Index.class);
 		if (index == null) {
-			throw new RuntimeException("You must add @Index annotation the the field '" + field.getName() + "' if you want to use it as a index in where statements.");
+			throw new RuntimeException("You must add @Index annotation the the field '" + field.getName()
+					+ "' if you want to use it as a index in where statements.");
 		}
 		return index;
 	}

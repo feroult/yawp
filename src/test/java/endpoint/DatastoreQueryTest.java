@@ -157,7 +157,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
 		r.save(object);
 
-		object = r.query(SimpleObject.class).where("key", "=", object.getId()).first();
+		object = r.query(SimpleObject.class).where("id", "=", object.getId()).first();
 		assertEquals("xpto", object.getAString());
 	}
 

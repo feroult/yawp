@@ -11,27 +11,33 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-public class JsonUtils {
+import endpoint.IdRef;
+import endpoint.Repository;
 
-	public static Object from(String json, Type type) {
+//TODO make it not static and repository aware
+public class JsonUtils {
+	
+	private static Gson buildGson(Repository r) {
+		GsonBuilder builder = new GsonBuilder();
+		builder.setDateFormat(DateUtils.TIMESTAMP_FORMAT);
+		builder.registerTypeAdapter(IdRef.class, new IdRefJsonAdapter(r));
+		return builder.create();
+	}
+
+	public static Object from(Repository r, String json, Type type) {
 		JsonElement jsoneElement = (JsonElement) new JsonParser().parse(json);
-		Gson gson = buildGson();
+		Gson gson = buildGson(r);
 		return gson.fromJson(jsoneElement, type);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <T> T from(String json, Class<T> clazz) {
-		return (T) from(json, (Type) clazz);
-	}
-
-	private static Gson buildGson() {
-		Gson gson = new GsonBuilder().setDateFormat(DateUtils.TIMESTAMP_FORMAT).create();
-		return gson;
-	}
-
 	public static String to(Object o) {
-		Gson gson = buildGson();
+		Gson gson = buildGson(null);
 		return gson.toJson(o);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T from(Repository r, String json, Class<T> clazz) {
+		return (T) from(r, json, (Type) clazz);
 	}
 
 	public static Object fromMap(String json, Type keyType, Type valueType) {
@@ -39,22 +45,22 @@ public class JsonUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> List<T> fromList(String json, Class<T> clazz) {
+	public static <T> List<T> fromList(Repository r, String json, Class<T> clazz) {
 		ParameterizedTypeImpl type = new ParameterizedTypeImpl(List.class, new Type[] { clazz }, null);
-		return (List<T>) from(json, type);
+		return (List<T>) from(r, json, type);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <K, V> Map<K, V> fromMap(String json, Class<K> keyClazz, Class<V> valueClazz) {
+	public static <K, V> Map<K, V> fromMap(Repository r, String json, Class<K> keyClazz, Class<V> valueClazz) {
 		ParameterizedTypeImpl type = new ParameterizedTypeImpl(Map.class, new Type[] { keyClazz, valueClazz }, null);
-		return (Map<K, V>) from(json, type);
+		return (Map<K, V>) from(r, json, type);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <K, V> Map<K, List<V>> fromMapList(String json, Class<K> keyClazz, Class<V> valueClazz) {
+	public static <K, V> Map<K, List<V>> fromMapList(Repository r, String json, Class<K> keyClazz, Class<V> valueClazz) {
 		Type listType = new ParameterizedTypeImpl(List.class, new Type[] { valueClazz }, null);
 		Type type = new ParameterizedTypeImpl(Map.class, new Type[] { keyClazz, listType }, null);
-		return (Map<K, List<V>>) from(json, type);
+		return (Map<K, List<V>>) from(r, json, type);
 	}
 
 	public static String readJson(BufferedReader reader) {

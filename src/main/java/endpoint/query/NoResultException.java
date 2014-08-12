@@ -1,4 +1,4 @@
-package endpoint;
+package endpoint.query;
 
 public class NoResultException extends RuntimeException {
 

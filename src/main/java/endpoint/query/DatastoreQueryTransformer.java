@@ -1,4 +1,4 @@
-package endpoint;
+package endpoint.query;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +21,19 @@ public class DatastoreQueryTransformer<T> {
 		this.transformName = transformName;
 	}
 
+	@Deprecated
 	public DatastoreQueryTransformer<T> where(Object... values) {
 		query.where(values);
+		return this;
+	}
+	
+	public DatastoreQueryTransformer<T> where(String field, String operator, Object value) {
+		query.where(field, operator, value);
+		return this;
+	}
+	
+	public DatastoreQueryTransformer<T> where(Condition c) {
+		query.where(c);
 		return this;
 	}
 

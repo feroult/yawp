@@ -18,6 +18,9 @@ import org.reflections.Reflections;
 
 import endpoint.actions.RepositoryActions;
 import endpoint.hooks.RepositoryHooks;
+import endpoint.query.DatastoreQuery;
+import endpoint.query.DatastoreQueryOptions;
+import endpoint.query.NoResultException;
 import endpoint.response.ErrorResponse;
 import endpoint.response.HttpResponse;
 import endpoint.response.JsonResponse;

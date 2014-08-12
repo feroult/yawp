@@ -1,11 +1,18 @@
 package endpoint;
 
+import static endpoint.query.Condition.and;
+import static endpoint.query.Condition.c;
+import static endpoint.query.Condition.or;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.junit.Test;
 
+import endpoint.query.DatastoreQuery;
+import endpoint.query.DatastoreQueryOptions;
 import endpoint.utils.DateUtils;
 import endpoint.utils.EndpointTestCase;
 
@@ -45,10 +52,53 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
 
+		@SuppressWarnings("deprecation")
 		List<SimpleObject> objects = r.query(SimpleObject.class).where("aLong", "=", 1l, "aString", "=", "object2").list();
 
 		assertEquals(1, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
+	}
+	
+	@Test
+	public void testChainedWheresWithNewAPI() throws HttpException {
+		saveThreeObjects();
+		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
+
+		List<SimpleObject> objects = r.query(SimpleObject.class).where(and(c("aLong", "=", 1l), c("aString", "=", "object2"))).list();
+
+		assertEquals(1, objects.size());
+		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
+	}
+	
+	@Test
+	public void testWhereWithOr() throws HttpException {
+		saveThreeObjects();
+		List<SimpleObject> objects = r.query(SimpleObject.class).where(or(c("aString", "=", "object1"), c("aString", "=", "object2"))).list();
+
+		assertEquals(2, objects.size());
+		Collections.sort(objects, new Comparator<SimpleObject>() {
+			@Override
+			public int compare(SimpleObject o1, SimpleObject o2) {
+				return o1.getAString().compareTo(o2.getAString());
+			}
+		});
+
+		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
+		objects.get(1).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
+	}
+
+	@Test
+	public void testWhereWithComplexAndOrStructure() throws HttpException {
+		saveThreeObjects();
+		List<SimpleObject> objects = r.query(SimpleObject.class).where(or(and(c("aString", "=", "object2"), c("aString", "=", "object1")), and(c("aString", "=", "object2"), c("aString", "=", "object2")))).list();
+
+		assertEquals(1, objects.size());
+		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
+		
+		objects = r.query(SimpleObject.class).where(or(and(c("aString", "=", "object1"), c("aString", "=", "object1")), and(c("aString", "=", "object2"), c("aString", "=", "object1")))).list();
+
+		assertEquals(1, objects.size());
+		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 	}
 
 	@Test

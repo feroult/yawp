@@ -1,7 +1,6 @@
 package endpoint;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +9,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import endpoint.query.NoResultException;
 import endpoint.utils.DateUtils;
 import endpoint.utils.EndpointTestCase;
 

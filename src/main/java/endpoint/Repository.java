@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 
 import endpoint.actions.RepositoryActions;
 import endpoint.hooks.RepositoryHooks;
+import endpoint.query.DatastoreQuery;
 import endpoint.response.HttpResponse;
 import endpoint.utils.EntityUtils;
 

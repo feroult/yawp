@@ -190,7 +190,7 @@ public class EntityUtils {
 		throw new RuntimeException("Field '" + fieldName + "'not found in entity " + clazz, new NoSuchFieldException(fieldName));
 	}
 
-	public static <T> String getIndexFieldName(String fieldName, Class<T> clazz) {
+	public static <T> String getActualFieldName(String fieldName, Class<T> clazz) {
 		Field field = getFieldFromAnyParent(clazz, fieldName);
 
 		if (isKey(field)) {
@@ -217,7 +217,7 @@ public class EntityUtils {
 		return index;
 	}
 
-	public static <T> Object getIndexFieldValue(String fieldName, Class<T> clazz, Object value) {
+	public static <T> Object getActualFieldValue(String fieldName, Class<T> clazz, Object value) {
 		Field field = getFieldFromAnyParent(clazz, fieldName);
 
 		if (isKey(field)) {

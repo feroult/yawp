@@ -6,7 +6,8 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
-import endpoint.DatastoreQueryOptions;
+import endpoint.query.DatastoreQueryOptions;
+import endpoint.query.DatastoreQueryOrder;
 
 public class DatastoreQueryOptionsTest {
 

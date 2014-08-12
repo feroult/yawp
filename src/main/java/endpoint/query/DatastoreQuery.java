@@ -1,11 +1,9 @@
-package endpoint;
+package endpoint.query;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -15,12 +13,9 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
-import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.QueryResultList;
 
+import endpoint.Repository;
 import endpoint.utils.EntityUtils;
 
 public class DatastoreQuery<T> {
@@ -31,7 +26,7 @@ public class DatastoreQuery<T> {
 
 	private Key parentKey;
 
-	private Object[] where;
+	private Condition condition;
 
 	private List<DatastoreQueryOrder> preOrders = new ArrayList<DatastoreQueryOrder>();
 
@@ -58,8 +53,27 @@ public class DatastoreQuery<T> {
 		return new DatastoreQueryTransformer<TT>(this, transformClazz, transformName);
 	}
 
+	@Deprecated
 	public DatastoreQuery<T> where(Object... values) {
-		this.where = ArrayUtils.addAll(this.where, values);
+		if (values.length % 3 != 0) {
+			throw new RuntimeException("You must pass values 3 at a time.");
+		}
+		for (int i = 0; i < values.length; i += 3) {
+			where(values[i].toString(), values[i + 1].toString(), values[i + 2]);
+		}
+		return this;
+	}
+	
+	public DatastoreQuery<T> where(String field, String operator, Object value) {
+		return where(Condition.c(field, operator, value));
+	}
+	
+	public DatastoreQuery<T> where(Condition c) {
+		if (condition == null) {
+			condition = c;
+		} else {
+			condition = Condition.and(condition, c);
+		}
 		return this;
 	}
 
@@ -200,7 +214,9 @@ public class DatastoreQuery<T> {
 			objects.add(object);
 		}
 
-		this.cursor = queryResult.getCursor().toWebSafeString();
+		if (queryResult.getCursor() != null) {
+			this.cursor = queryResult.getCursor().toWebSafeString();
+		}
 		return objects;
 	}
 
@@ -251,32 +267,14 @@ public class DatastoreQuery<T> {
 		}
 
 		for (DatastoreQueryOrder order : preOrders) {
-			String string = EntityUtils.getIndexFieldName(order.getProperty(), clazz);
+			String string = EntityUtils.getActualFieldName(order.getProperty(), clazz);
 			q.addSort(string, order.getSortDirection());
 		}
 	}
 
 	private void prepareQueryWhere(Query q) {
-		if (where == null) {
-			return;
-		}
-
-		if (where.length % 3 != 0) {
-			throw new RuntimeException("Malformed WHERE clause expression; you must always add: [field] [operator] [value]");
-		}
-
-		List<Filter> filters = new ArrayList<Filter>();
-		for (int i = 0; i < where.length; i += 3) {
-			String fieldName = (String) where[i + 0];
-			String indexFieldName = EntityUtils.getIndexFieldName(fieldName, clazz);
-			Object value = EntityUtils.getIndexFieldValue(fieldName, clazz, where[i + 2]);
-			filters.add(new FilterPredicate(indexFieldName, getFilterOperator(where[i + 1]), value));
-		}
-
-		if (filters.size() > 1) {
-			q.setFilter(CompositeFilterOperator.and(filters));
-		} else {
-			q.setFilter(filters.get(0));
+		if (condition != null) {
+			q.setFilter(condition.getPredicate(clazz));
 		}
 	}
 
@@ -289,34 +287,6 @@ public class DatastoreQuery<T> {
 
 	protected Class<T> getClazz() {
 		return clazz;
-	}
-
-	private FilterOperator getFilterOperator(Object o) {
-		String operator = (String) o;
-
-		// :) return FilterOperator.valueOf(operator);
-		if (operator.equals("=")) {
-			return FilterOperator.EQUAL;
-		}
-		if (operator.equals(">")) {
-			return FilterOperator.GREATER_THAN;
-		}
-		if (operator.equals(">=")) {
-			return FilterOperator.GREATER_THAN_OR_EQUAL;
-		}
-		if (operator.equalsIgnoreCase("in")) {
-			return FilterOperator.IN;
-		}
-		if (operator.equals("<")) {
-			return FilterOperator.LESS_THAN;
-		}
-		if (operator.equals("<=")) {
-			return FilterOperator.LESS_THAN_OR_EQUAL;
-		}
-		if (operator.equals("!=")) {
-			return FilterOperator.NOT_EQUAL;
-		}
-		throw new RuntimeException("invalid filter operator");
 	}
 
 	public DatastoreQuery<T> whereById(String operator, Long id) {

@@ -1,7 +1,7 @@
 package endpoint.hooks;
 
-import endpoint.DatastoreQuery;
 import endpoint.Target;
+import endpoint.query.DatastoreQuery;
 
 @Target(Product.class)
 public class BeforeQueryHook extends Hook {

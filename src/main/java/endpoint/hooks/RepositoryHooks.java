@@ -10,10 +10,10 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
-import endpoint.DatastoreQuery;
 import endpoint.HttpException;
 import endpoint.Repository;
 import endpoint.Target;
+import endpoint.query.DatastoreQuery;
 import endpoint.utils.ThrownExceptionsUtils;
 
 public class RepositoryHooks {

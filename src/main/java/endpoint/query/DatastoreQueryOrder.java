@@ -1,4 +1,4 @@
-package endpoint;
+package endpoint.query;
 
 import com.google.appengine.api.datastore.Query.SortDirection;
 

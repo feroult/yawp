@@ -196,7 +196,7 @@ public class DatastoreQuery<T> {
 		List<T> objects = new ArrayList<T>();
 
 		for (Entity entity : queryResult) {
-			T object = EntityUtils.toObject(entity, clazz);
+			T object = EntityUtils.toObject(r, entity, clazz);
 			objects.add(object);
 		}
 

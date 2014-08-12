@@ -9,7 +9,7 @@ import endpoint.utils.EndpointTestCase;
 public class IdRefTest extends EndpointTestCase {
 
 	@Test
-	public void testSave() {
+	public void testSave() throws HttpException {
 		ObjectWithIdRef object = new ObjectWithIdRef("xpto");
 		r.save(object);
 

@@ -21,9 +21,12 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
 
 import endpoint.Id;
+import endpoint.IdRef;
 import endpoint.Index;
 import endpoint.Json;
+import endpoint.Repository;
 
+// TODO make it not static and repository aware
 public class EntityUtils {
 
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
@@ -49,11 +52,11 @@ public class EntityUtils {
 		}
 	}
 
-	public static <T> T toObject(Entity entity, Class<T> clazz) {
+	public static <T> T toObject(Repository r, Entity entity, Class<T> clazz) {
 		try {
 			T object = clazz.newInstance();
 
-			setKey(object, entity.getKey());
+			setKey(r, object, entity.getKey());
 
 			Field[] fields = getFields(clazz);
 
@@ -67,7 +70,7 @@ public class EntityUtils {
 					continue;
 				}
 
-				setObjectProperty(object, entity, field);
+				setObjectProperty(r, object, entity, field);
 			}
 
 			return object;
@@ -77,14 +80,15 @@ public class EntityUtils {
 		}
 	}
 
-	public static <T> void setKey(T object, Key key) {
+	public static <T> void setKey(Repository r, T object, Key key) {
 		try {
 			Field field = getIdField(object.getClass());
+			field.setAccessible(true);
 
-			if (field != null) {
-				field.setAccessible(true);
+			if (!isIdRef(field)) {
 				field.set(object, key.getId());
-				return;
+			} else {
+				field.set(object, IdRef.create(r, object.getClass(), key.getId()));
 			}
 
 		} catch (IllegalAccessException e) {
@@ -101,11 +105,23 @@ public class EntityUtils {
 				return null;
 			}
 
-			return createKey((Long) field.get(object), object.getClass());
+			return createKeyFromIdField(object, field);
 
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static Key createKeyFromIdField(Object object, Field field) throws IllegalAccessException {
+		Long id = null;
+
+		if (!isIdRef(field)) {
+			id = (Long) field.get(object);
+		} else {
+			id = ((IdRef<?>) field.get(object)).asLong();
+		}
+
+		return createKey(id, object.getClass());
 	}
 
 	public static String getIdFieldName(Class<?> clazz) {
@@ -235,8 +251,12 @@ public class EntityUtils {
 			return createKey(id, clazz);
 		}
 
-		if (getIndex(field).normalize()) {
+		if (isIndexNormalizable(field)) {
 			return normalizeValue(value);
+		}
+
+		if (value instanceof IdRef) {
+			return ((IdRef<?>) value).asLong();
 		}
 
 		if (isDate(field) && value instanceof String) {
@@ -284,15 +304,21 @@ public class EntityUtils {
 			field.setAccessible(true);
 			Object value = field.get(object);
 
+			if (value == null) {
+				return null;
+			}
+
 			if (isEnum(value)) {
 				return value.toString();
 			}
 
 			if (isSaveAsJson(field)) {
-				if (value == null) {
-					return null;
-				}
 				return new Text(JsonUtils.to(value));
+			}
+
+			if (isIdRef(field)) {
+				IdRef<?> idRef = (IdRef<?>) value;
+				return idRef.asLong();
 			}
 
 			return value;
@@ -313,10 +339,15 @@ public class EntityUtils {
 		}
 	}
 
-	private static <T> void setObjectProperty(T object, Entity entity, Field field) throws IllegalAccessException {
+	private static <T> void setObjectProperty(Repository r, T object, Entity entity, Field field) throws IllegalAccessException {
 		field.setAccessible(true);
 
 		Object value = entity.getProperty(field.getName());
+
+		if (value == null) {
+			field.set(object, null);
+			return;
+		}
 
 		if (isEnum(field)) {
 			setEnumProperty(object, field, value);
@@ -324,7 +355,7 @@ public class EntityUtils {
 		}
 
 		if (isSaveAsJson(field)) {
-			setJsonProperty(object, field, value);
+			setJsonProperty(r, object, field, value);
 			return;
 		}
 
@@ -333,20 +364,30 @@ public class EntityUtils {
 			return;
 		}
 
+		if (isIdRef(field)) {
+			setIdRefProperty(r, object, field, value);
+			return;
+		}
+
 		field.set(object, value);
+	}
+
+	private static <T> void setIdRefProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
+		IdRef<?> idRef = IdRef.create(r, getListType(field), (Long) value);
+		field.set(object, idRef);
 	}
 
 	private static <T> void setIntProperty(T object, Field field, Object value) throws IllegalAccessException {
 		field.set(object, ((Long) value).intValue());
 	}
 
-	private static <T> void setJsonProperty(T object, Field field, Object value) throws IllegalAccessException {
+	private static <T> void setJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
 		if (value == null) {
 			return;
 		}
 
 		String json = ((Text) value).getValue();
-		field.set(object, JsonUtils.from(json, field.getGenericType()));
+		field.set(object, JsonUtils.from(r, json, field.getGenericType()));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -368,6 +409,10 @@ public class EntityUtils {
 
 	private static boolean isControl(Field field) {
 		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class) || field.isSynthetic();
+	}
+
+	private static boolean isIdRef(Field field) {
+		return IdRef.class.isAssignableFrom(field.getType());
 	}
 
 	private static boolean isSaveAsJson(Field field) {

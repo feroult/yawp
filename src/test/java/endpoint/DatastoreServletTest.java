@@ -35,7 +35,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 			return;
 		}
 
-		SimpleObject object = JsonUtils.from(json, SimpleObject.class);
+		SimpleObject object = JsonUtils.from(r, json, SimpleObject.class);
 
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 	}
@@ -50,7 +50,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 			return;
 		}
 
-		List<SimpleObject> objects = JsonUtils.fromList(json, SimpleObject.class);
+		List<SimpleObject> objects = JsonUtils.fromList(r, json, SimpleObject.class);
 
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 		objects.get(1).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
@@ -69,7 +69,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 			return;
 		}
 
-		List<SimpleObject> objects = JsonUtils.fromList(json, SimpleObject.class);
+		List<SimpleObject> objects = JsonUtils.fromList(r, json, SimpleObject.class);
 
 		assertEquals(2, objects.size());
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
@@ -83,7 +83,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 		try {
 			json = servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
 
-			object = JsonUtils.from(json, SimpleObject.class);
+			object = JsonUtils.from(r, json, SimpleObject.class);
 
 			json = servlet.execute("PUT", "/simpleobjects/" + object.getId() + "/active", null, null).getText();
 		} catch (HttpException e) {
@@ -91,7 +91,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 			return;
 		}
 
-		object = JsonUtils.from(json, SimpleObject.class);
+		object = JsonUtils.from(r, json, SimpleObject.class);
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "i was changed in action");
 	}
 
@@ -99,7 +99,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 	public void testTransformerInShow() {
 		String json;
 		try {
-			SimpleObject object = JsonUtils.from(servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText(),
+			SimpleObject object = JsonUtils.from(r, servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText(),
 					SimpleObject.class);
 
 			json = servlet.execute("GET", "/simpleobjects/" + object.getId(), null, t("simple")).getText();
@@ -109,7 +109,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 		}
 
 		@SuppressWarnings("rawtypes")
-		Map map = JsonUtils.from(json, Map.class);
+		Map map = JsonUtils.from(r, json, Map.class);
 
 		assertEquals("object1", map.get("innerValue"));
 	}
@@ -128,7 +128,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 		}
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		List<Map> list = JsonUtils.from(json, List.class);
+		List<Map> list = JsonUtils.from(r, json, List.class);
 
 		assertEquals("object1", list.get(0).get("innerValue"));
 		assertEquals("object1", list.get(1).get("innerValue"));

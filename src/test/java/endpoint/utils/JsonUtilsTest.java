@@ -17,7 +17,7 @@ public class JsonUtilsTest {
 
 	@Test
 	public void testFrom() {
-		SimpleObject object = JsonUtils.from(SIMPLE_OBJECT_JSON, SimpleObject.class);
+		SimpleObject object = JsonUtils.from(null, SIMPLE_OBJECT_JSON, SimpleObject.class);
 		object.assertObjectWithoutKey(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 	}
 
@@ -25,7 +25,7 @@ public class JsonUtilsTest {
 	public void testFromArray() {
 		String json = String.format("[%s, %s, %s]", SIMPLE_OBJECT_JSON, SIMPLE_OBJECT_JSON, SIMPLE_OBJECT_JSON);
 
-		List<SimpleObject> objects = JsonUtils.fromList(json, SimpleObject.class);
+		List<SimpleObject> objects = JsonUtils.fromList(null, json, SimpleObject.class);
 
 		assertEquals(3, objects.size());
 
@@ -43,7 +43,7 @@ public class JsonUtilsTest {
 
 		String json = JsonUtils.to(map);
 
-		map = JsonUtils.fromMap(json, Long.class, String.class);
+		map = JsonUtils.fromMap(null, json, Long.class, String.class);
 
 		assertEquals("xpto1", map.get(1l));
 		assertEquals("xpto2", map.get(2l));
@@ -58,7 +58,7 @@ public class JsonUtilsTest {
 
 		String json = JsonUtils.to(map);
 
-		map = JsonUtils.fromMap(json, Long.class, SimpleObject.class);
+		map = JsonUtils.fromMap(null, json, Long.class, SimpleObject.class);
 
 		assertEquals("xpto1", map.get(1l).getAString());
 		assertEquals("xpto2", map.get(2l).getAString());
@@ -73,7 +73,7 @@ public class JsonUtilsTest {
 
 		String json = JsonUtils.to(map);
 
-		map = JsonUtils.fromMapList(json, Long.class, SimpleObject.class);
+		map = JsonUtils.fromMapList(null, json, Long.class, SimpleObject.class);
 
 		assertEquals("xpto1", map.get(1l).get(0).getAString());
 		assertEquals("xpto2", map.get(1l).get(1).getAString());

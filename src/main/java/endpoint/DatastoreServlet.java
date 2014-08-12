@@ -170,7 +170,7 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	private String saveFromObject(Repository r, Class<?> clazz, String json) throws HttpException {
-		Object object = JsonUtils.from(json, clazz);
+		Object object = JsonUtils.from(r, json, clazz);
 
 		r.save(object);
 
@@ -178,7 +178,7 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	private String saveFromArray(Repository r, Class<?> clazz, String json) throws HttpException {
-		List<?> objects = JsonUtils.fromList(json, clazz);
+		List<?> objects = JsonUtils.fromList(r, json, clazz);
 
 		for (Object object : objects) {
 			r.save(object);

@@ -7,11 +7,15 @@ public class AnotherSimpleObject {
 
 	@Id
 	private Long id;
-	
+
 	private String aString;
 
 	public AnotherSimpleObject() {
 
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public AnotherSimpleObject(String aString) {
@@ -27,7 +31,7 @@ public class AnotherSimpleObject {
 		this.aString = aString;
 	}
 
-	public void assertAnotherObject(String aString) {		
+	public void assertAnotherObject(String aString) {
 		assertEquals(aString, getaString());
 	}
 

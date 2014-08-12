@@ -5,6 +5,8 @@ public class ObjectWithIdRef {
 	@Id
 	private IdRef<ObjectWithIdRef> id;
 
+	private IdRef<AnotherSimpleObject> anotherSimpleObjectId;
+	
 	private String text;
 
 	public ObjectWithIdRef() {
@@ -30,4 +32,12 @@ public class ObjectWithIdRef {
 	public void setText(String text) {
 		this.text = text;
 	}
+
+	public IdRef<AnotherSimpleObject> getAnotherSimpleObjectId() {
+		return anotherSimpleObjectId;
+	}
+
+	public void setAnotherSimpleObjectId(IdRef<AnotherSimpleObject> anotherSimpleObjectId) {
+		this.anotherSimpleObjectId = anotherSimpleObjectId;
+	}	
 }

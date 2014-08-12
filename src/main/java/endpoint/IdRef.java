@@ -18,7 +18,7 @@ public class IdRef<T> {
 		return r.query(clazz).id(id);
 	}
 
-	public Long getId() {
+	public Long asLong() {
 		return id;
 	}
 

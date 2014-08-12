@@ -110,7 +110,7 @@ public class EntityUtils {
 			if (!isIdRef(field)) {
 				id = (Long) field.get(object);
 			} else {
-				id = ((IdRef<?>) field.get(object)).getId();
+				id = ((IdRef<?>) field.get(object)).asLong();
 			}
 
 			return createKey(id, object.getClass());
@@ -310,7 +310,7 @@ public class EntityUtils {
 
 			if (isIdRef(field)) {
 				IdRef<?> idRef = (IdRef<?>) value;
-				return idRef.getId();
+				return idRef.asLong();
 			}
 
 			return value;

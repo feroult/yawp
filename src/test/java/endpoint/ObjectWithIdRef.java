@@ -1,12 +1,17 @@
 package endpoint;
 
+import java.util.List;
+
 public class ObjectWithIdRef {
 
 	@Id
 	private IdRef<ObjectWithIdRef> id;
 
 	private IdRef<AnotherSimpleObject> anotherSimpleObjectId;
-	
+
+	@Json
+	private List<IdRef<AnotherSimpleObject>> objectIds;
+
 	private String text;
 
 	public ObjectWithIdRef() {
@@ -39,5 +44,14 @@ public class ObjectWithIdRef {
 
 	public void setAnotherSimpleObjectId(IdRef<AnotherSimpleObject> anotherSimpleObjectId) {
 		this.anotherSimpleObjectId = anotherSimpleObjectId;
-	}	
+	}
+
+	public List<IdRef<AnotherSimpleObject>> getObjectIds() {
+		return objectIds;
+	}
+
+	public void setObjectIds(List<IdRef<AnotherSimpleObject>> objectIds) {
+		this.objectIds = objectIds;
+	}
+
 }

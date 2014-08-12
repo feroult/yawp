@@ -326,4 +326,5 @@ public class DatastoreQuery<T> {
 	public T id(Long id) {
 		return whereById("=", id).only();
 	}
+	
 }

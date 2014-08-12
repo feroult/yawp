@@ -105,19 +105,23 @@ public class EntityUtils {
 				return null;
 			}
 
-			Long id = null;
-
-			if (!isIdRef(field)) {
-				id = (Long) field.get(object);
-			} else {
-				id = ((IdRef<?>) field.get(object)).asLong();
-			}
-
-			return createKey(id, object.getClass());
+			return createKeyFromIdField(object, field);
 
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private static Key createKeyFromIdField(Object object, Field field) throws IllegalAccessException {
+		Long id = null;
+
+		if (!isIdRef(field)) {
+			id = (Long) field.get(object);
+		} else {
+			id = ((IdRef<?>) field.get(object)).asLong();
+		}
+
+		return createKey(id, object.getClass());
 	}
 
 	public static String getIdFieldName(Class<?> clazz) {
@@ -247,8 +251,12 @@ public class EntityUtils {
 			return createKey(id, clazz);
 		}
 
-		if (getIndex(field).normalize()) {
+		if (isIndexNormalizable(field)) {
 			return normalizeValue(value);
+		}
+
+		if (value instanceof IdRef) {
+			return ((IdRef<?>) value).asLong();
 		}
 
 		if (isDate(field) && value instanceof String) {

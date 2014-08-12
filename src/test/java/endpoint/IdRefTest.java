@@ -30,6 +30,21 @@ public class IdRefTest extends EndpointTestCase {
 	}
 
 	@Test
+	public void testQuery() throws HttpException {
+		ObjectWithIdRef object = saveObjectWithRelation();
+
+		object = r.query(ObjectWithIdRef.class).where("id", "=", object.getId().asLong()).only();
+		assertEquals("xpto", object.getText());
+
+		object = r.query(ObjectWithIdRef.class).where("anotherSimpleObjectId", "=", object.getAnotherSimpleObjectId().asLong()).only();
+		assertEquals("xpto", object.getText());
+
+		object = r.query(ObjectWithIdRef.class).where("anotherSimpleObjectId", "=", object.getAnotherSimpleObjectId()).only();
+		assertEquals("xpto", object.getText());
+
+	}
+
+	@Test
 	public void testJsonConversion() throws HttpException {
 		ObjectWithIdRef object = saveObjectWithRelation();
 

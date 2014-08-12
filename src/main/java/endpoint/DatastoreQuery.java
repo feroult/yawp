@@ -324,14 +324,6 @@ public class DatastoreQuery<T> {
 	}
 
 	public T id(Long id) {
-		return whereById("=", id).eager().only();
-	}
-
-	public DatastoreQuery<T> eager() {
-		return this;
-	}
-
-	public DatastoreQuery<T> lazy() {
-		return this;
+		return whereById("=", id).only();
 	}
 }

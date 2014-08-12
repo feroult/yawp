@@ -21,8 +21,10 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
 
 import endpoint.Id;
+import endpoint.IdRef;
 import endpoint.Index;
 import endpoint.Json;
+import endpoint.Repository;
 
 public class EntityUtils {
 
@@ -49,11 +51,11 @@ public class EntityUtils {
 		}
 	}
 
-	public static <T> T toObject(Entity entity, Class<T> clazz) {
+	public static <T> T toObject(Repository r, Entity entity, Class<T> clazz) {
 		try {
 			T object = clazz.newInstance();
 
-			setKey(object, entity.getKey());
+			setKey(r, object, entity.getKey());
 
 			Field[] fields = getFields(clazz);
 
@@ -77,14 +79,15 @@ public class EntityUtils {
 		}
 	}
 
-	public static <T> void setKey(T object, Key key) {
+	public static <T> void setKey(Repository r, T object, Key key) {
 		try {
 			Field field = getIdField(object.getClass());
+			field.setAccessible(true);
 
-			if (field != null) {
-				field.setAccessible(true);
+			if (!isIdRef(field)) {
 				field.set(object, key.getId());
-				return;
+			} else {
+				field.set(object, IdRef.create(r, object.getClass(), key.getId()));
 			}
 
 		} catch (IllegalAccessException e) {
@@ -101,7 +104,15 @@ public class EntityUtils {
 				return null;
 			}
 
-			return createKey((Long) field.get(object), object.getClass());
+			Long id = null;
+
+			if (!isIdRef(field)) {
+				id = (Long) field.get(object);
+			} else {
+				id = ((IdRef<?>) field.get(object)).getId();
+			}
+
+			return createKey(id, object.getClass());
 
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
@@ -368,6 +379,10 @@ public class EntityUtils {
 
 	private static boolean isControl(Field field) {
 		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class) || field.isSynthetic();
+	}
+
+	private static boolean isIdRef(Field field) {
+		return IdRef.class.isAssignableFrom(field.getType());
 	}
 
 	private static boolean isSaveAsJson(Field field) {

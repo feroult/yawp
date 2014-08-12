@@ -7,6 +7,10 @@ public class ObjectWithIdRef {
 
 	private String text;
 
+	public ObjectWithIdRef() {
+
+	}
+
 	public ObjectWithIdRef(String text) {
 		this.text = text;
 	}

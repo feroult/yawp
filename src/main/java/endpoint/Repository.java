@@ -105,7 +105,7 @@ public class Repository {
 	private void saveEntity(Object object, Entity entity, String action) {
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 		Key key = datastoreService.put(entity);
-		EntityUtils.setKey(object, key);
+		EntityUtils.setKey(this, object, key);
 	}
 
 	private Entity createEntity(Object object) {

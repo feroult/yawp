@@ -24,7 +24,7 @@ public class IdRefJsonAdapter implements JsonSerializer<IdRef<?>>, JsonDeseriali
 
 	@Override
 	public JsonElement serialize(IdRef<?> idRef, Type type, JsonSerializationContext ctx) {
-		return new JsonPrimitive(idRef.getId());
+		return new JsonPrimitive(idRef.asLong());
 	}
 
 	@Override

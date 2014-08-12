@@ -22,7 +22,7 @@ public class ActionTest extends EndpointTestCase {
 		r.save(object);
 
 		HttpResponse response = r.action(SimpleObject.class, "PUT", "active", object.getId(), null);
-		object = JsonUtils.from(response.getText(), SimpleObject.class);
+		object = JsonUtils.from(r, response.getText(), SimpleObject.class);
 
 		assertEquals("i was changed in action", object.getAString());
 

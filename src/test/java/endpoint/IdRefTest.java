@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import endpoint.utils.EndpointTestCase;
+import endpoint.utils.JsonUtils;
 
 public class IdRefTest extends EndpointTestCase {
 
@@ -20,6 +21,26 @@ public class IdRefTest extends EndpointTestCase {
 
 	@Test
 	public void testWithRelation() throws HttpException {
+		ObjectWithIdRef object = saveObjectWithRelation();
+
+		object = object.getId().fetch();
+		AnotherSimpleObject anotherObject = object.getAnotherSimpleObjectId().fetch();
+
+		assertEquals("haha", anotherObject.getaString());
+	}
+
+	@Test
+	public void testJsonConversion() throws HttpException {
+		ObjectWithIdRef object = saveObjectWithRelation();
+
+		String json = JsonUtils.to(object);
+		object = JsonUtils.from(r, json, ObjectWithIdRef.class);
+
+		AnotherSimpleObject anotherObject = object.getAnotherSimpleObjectId().fetch();
+		assertEquals("haha", anotherObject.getaString());
+	}
+
+	private ObjectWithIdRef saveObjectWithRelation() throws HttpException {
 		AnotherSimpleObject anotherObject = new AnotherSimpleObject("haha");
 		r.save(anotherObject);
 
@@ -28,9 +49,6 @@ public class IdRefTest extends EndpointTestCase {
 
 		r.save(object);
 
-		object = object.getId().fetch();
-		anotherObject = object.getAnotherSimpleObjectId().fetch();
-
-		assertEquals("haha", anotherObject.getaString());
+		return object;
 	}
 }

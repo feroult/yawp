@@ -347,7 +347,7 @@ public class EntityUtils {
 		}
 
 		if (isSaveAsJson(field)) {
-			setJsonProperty(object, field, value);
+			setJsonProperty(r, object, field, value);
 			return;
 		}
 
@@ -373,13 +373,13 @@ public class EntityUtils {
 		field.set(object, ((Long) value).intValue());
 	}
 
-	private static <T> void setJsonProperty(T object, Field field, Object value) throws IllegalAccessException {
+	private static <T> void setJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
 		if (value == null) {
 			return;
 		}
 
 		String json = ((Text) value).getValue();
-		field.set(object, JsonUtils.from(json, field.getGenericType()));
+		field.set(object, JsonUtils.from(r, json, field.getGenericType()));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

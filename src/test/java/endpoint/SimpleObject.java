@@ -9,11 +9,11 @@ import java.util.Map;
 import endpoint.utils.DateUtils;
 
 @Endpoint(path = "/simpleobjects")
-public class SimpleObject  {
-	
+public class SimpleObject {
+
 	@Id
 	private Long id;
-	
+
 	private int aInt;
 
 	@Index
@@ -27,8 +27,6 @@ public class SimpleObject  {
 
 	@Index(normalize = true)
 	private String aString;
-
-	private List<AnotherSimpleObject> aList;
 
 	@Json
 	private NotADatastoreObject notADatastoreObject;
@@ -63,7 +61,7 @@ public class SimpleObject  {
 		this.aDate = aDate;
 		this.aString = aString;
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -118,14 +116,6 @@ public class SimpleObject  {
 
 	public void setAString(String aString) {
 		this.aString = aString;
-	}
-
-	public List<AnotherSimpleObject> getaList() {
-		return aList;
-	}
-
-	public void setaList(List<AnotherSimpleObject> aList) {
-		this.aList = aList;
 	}
 
 	public NotADatastoreObject getNotADatastoreObject() {

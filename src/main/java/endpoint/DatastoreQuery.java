@@ -1,6 +1,5 @@
 package endpoint;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -42,18 +41,11 @@ public class DatastoreQuery<T> {
 
 	private String cursor;
 
-	private boolean lazy;
-
 	public static <T> DatastoreQuery<T> q(Class<T> clazz, Repository r) {
 		return new DatastoreQuery<T>(clazz, r);
 	}
 
-	protected DatastoreQuery() {
-		this.lazy = true;
-	}
-
 	private DatastoreQuery(Class<T> clazz, Repository r) {
-		this();
 		this.clazz = clazz;
 		this.r = r;
 	}
@@ -195,27 +187,6 @@ public class DatastoreQuery<T> {
 		}
 	}
 
-	private void loadLists(Object object) {
-		Field[] fields = EntityUtils.getFields(object.getClass());
-		for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
-			if (!EntityUtils.isSaveAsList(field)) {
-				continue;
-			}
-
-			field.setAccessible(true);
-
-			List<Object> list = new ArrayList<Object>();
-			list.addAll(q(EntityUtils.getListType(field), r).parent(EntityUtils.getKey(object)).list());
-
-			try {
-				field.set(object, list);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
-
 	private List<T> executeQuery() {
 		PreparedQuery pq = prepareQuery();
 		FetchOptions fetchOptions = configureFetchOptions();
@@ -226,9 +197,6 @@ public class DatastoreQuery<T> {
 
 		for (Entity entity : queryResult) {
 			T object = EntityUtils.toObject(entity, clazz);
-			if (!lazy) {
-				loadLists(object);
-			}
 			objects.add(object);
 		}
 
@@ -360,12 +328,10 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> eager() {
-		this.lazy = false;
 		return this;
 	}
 
 	public DatastoreQuery<T> lazy() {
-		this.lazy = true;
 		return this;
 	}
 }

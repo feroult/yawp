@@ -38,9 +38,6 @@ public class DatastoreServletTest extends EndpointTestCase {
 		SimpleObject object = JsonUtils.from(json, SimpleObject.class);
 
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
-
-		assertEquals(1, object.getaList().size());
-		object.getaList().get(0).assertAnotherObject("anotherObject1");
 	}
 
 	@Test
@@ -57,9 +54,6 @@ public class DatastoreServletTest extends EndpointTestCase {
 
 		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 		objects.get(1).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
-
-		assertEquals(1, objects.get(0).getaList().size());
-		objects.get(0).getaList().get(0).assertAnotherObject("anotherObject1");
 	}
 
 	@Test

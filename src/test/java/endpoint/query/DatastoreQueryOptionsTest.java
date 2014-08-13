@@ -50,11 +50,8 @@ public class DatastoreQueryOptionsTest {
 		String q = "{where: {op: 'and', c: [{p: 'aLong', op: '=', v: 1}, {p: 'aInt', op: '=', v: 3}]}}";
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
 
-		assertEquals(JoinedCondition.class, options.getCondition().getClass());
-		JoinedCondition condition = (JoinedCondition) options.getCondition();
-
-		assertEquals(LogicalOperator.AND, condition.getOperator());
-		assertEquals(2, condition.getConditions().length);
+		JoinedCondition condition = assertJoinedCondition(options.getCondition(), LogicalOperator.AND, 2);
+		
 		assertSimpleCondition(condition.getConditions()[0], "aLong", FilterOperator.EQUAL, 1l);
 		assertSimpleCondition(condition.getConditions()[1], "aInt", FilterOperator.EQUAL, 3l);
 	}
@@ -62,7 +59,15 @@ public class DatastoreQueryOptionsTest {
 	@Test
 	@Ignore
 	public void testWhereJoinedConditionsWithPrecedence() {
-		String q = "{op: 'and', c: [{p: 'aLong', op: '=', v: 1}, {op: 'or', c: [{p: 'aInt', op: '=', v: 3}, {p: 'aDouble', op: '=', v: 4.3}]}}";
+		String q = "{where: {op: 'and', c: [{p: 'aLong', op: '=', v: 1}, {op: 'or', c: [{p: 'aInt', op: '=', v: 3}, {p: 'aDouble', op: '=', v: 4.3}]}}}";
+	}
+	
+	private JoinedCondition assertJoinedCondition(Condition c, LogicalOperator operator, int length) {
+		assertEquals(JoinedCondition.class, c.getClass());
+		JoinedCondition condition = (JoinedCondition) c;
+		assertEquals(operator, condition.getOperator());
+		assertEquals(length, condition.getConditions().length);
+		return condition;
 	}
 
 	private void assertSimpleCondition(Condition c, String p, FilterOperator op, long value) {

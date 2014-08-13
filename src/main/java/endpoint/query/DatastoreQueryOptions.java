@@ -51,16 +51,16 @@ public class DatastoreQueryOptions {
 		List<DatastoreQueryOrder> orders = new ArrayList<DatastoreQueryOrder>();
 
 		for (JsonElement jsonElement : jsonArray) {
-			String entity = getJsonObjectValue(jsonElement, "e");
-			String property = getJsonObjectValue(jsonElement, "p");
-			String direction = getJsonObjectValue(jsonElement, "d");
+			String entity = getJsonStringValue(jsonElement, "e");
+			String property = getJsonStringValue(jsonElement, "p");
+			String direction = getJsonStringValue(jsonElement, "d");
 			orders.add(new DatastoreQueryOrder(entity, property, direction));
 		}
 
 		return orders;
 	}
 
-	private String getJsonObjectValue(JsonElement jsonElement, String key) {
+	private String getJsonStringValue(JsonElement jsonElement, String key) {
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 		if (!jsonObject.has(key)) {
 			return null;
@@ -79,27 +79,28 @@ public class DatastoreQueryOptions {
 		List<Object> where = new ArrayList<Object>();
 
 		for (JsonElement jsonElement : jsonArray) {
-			JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
-
-			if (jsonPrimitive.isNumber()) {
-				if (jsonPrimitive.getAsString().indexOf(".") != -1) {
-					where.add(jsonPrimitive.getAsDouble());
-					continue;
-				} else {
-					where.add(jsonPrimitive.getAsLong());
-					continue;
-				}
-			}
-
-			if (jsonPrimitive.isString()) {
-				where.add(jsonPrimitive.getAsString());
-				continue;
-			}
-
-			// TODO timestamp?
+			where.add(getJsonObjectValue(jsonElement));
 		}
 
 		return where.toArray(new Object[where.size()]);
+	}
+
+	private Object getJsonObjectValue(JsonElement jsonElement) {
+		JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
+
+		if (jsonPrimitive.isNumber()) {
+			if (jsonPrimitive.getAsString().indexOf(".") != -1) {
+				return jsonPrimitive.getAsDouble();
+			}
+			return jsonPrimitive.getAsLong();
+		}
+
+		if (jsonPrimitive.isString()) {
+			return jsonPrimitive.getAsString();
+		}
+
+		// TODO timestamp
+		throw new RuntimeException("Invalid json value: " + jsonPrimitive.getAsString());
 	}
 
 	private Condition parseCondition(JsonElement json) {
@@ -109,9 +110,11 @@ public class DatastoreQueryOptions {
 		return parseConditionObject(json.getAsJsonObject());
 	}
 
-	private Condition parseConditionObject(JsonObject asJsonObject) {
-		// TODO Auto-generated method stub
-		return null;
+	private Condition parseConditionObject(JsonObject json) {
+		String field = json.get("p").getAsString();
+		String op = json.get("op").getAsString();
+		Object value = getJsonObjectValue(json.get("v"));
+		return Condition.c(field, op, value);
 	}
 
 	public Object[] getWhere() {

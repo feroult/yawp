@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNull;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.google.appengine.api.datastore.Query.FilterOperator;
+
 import endpoint.query.Condition.SimpleCondition;
 
 public class DatastoreQueryOptionsTest {
@@ -36,18 +38,20 @@ public class DatastoreQueryOptionsTest {
 	}
 
 	@Test
-	@Ignore
 	public void testWhereSimpleCondition() {
-		String q = "{p: 'aLong', op: '=', v: 1}";
+		String q = "{where: {p: 'aLong', op: '=', v: 1}}";
 
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
 
-		assertEquals(SimpleCondition.class, options.getCondition().getClass());
+		assertSimpleCondition(options.getCondition(), "aLong", FilterOperator.EQUAL, 1l);
+	}
 
-		SimpleCondition condition = (SimpleCondition) options.getCondition();
-		assertEquals("aLong", condition.getField());
-		assertEquals("=", condition.getOperator());
-		assertEquals(1l, condition.getValue());
+	private void assertSimpleCondition(Condition c, String p, FilterOperator op, long value) {
+		assertEquals(SimpleCondition.class, c.getClass());
+		SimpleCondition condition = (SimpleCondition) c;
+		assertEquals(p, condition.getField());
+		assertEquals(op, condition.getOperator());
+		assertEquals(value, condition.getValue());
 	}
 
 	@Test

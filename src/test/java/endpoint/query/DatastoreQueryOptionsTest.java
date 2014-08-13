@@ -4,7 +4,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.google.appengine.api.datastore.Query.FilterOperator;
@@ -48,18 +47,26 @@ public class DatastoreQueryOptionsTest {
 	@Test
 	public void testWhereJoinedConditions() {
 		String q = "{where: {op: 'and', c: [{p: 'aLong', op: '=', v: 1}, {p: 'aInt', op: '=', v: 3}]}}";
+
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
 
 		JoinedCondition condition = assertJoinedCondition(options.getCondition(), LogicalOperator.AND, 2);
-		
 		assertSimpleCondition(condition.getConditions()[0], "aLong", FilterOperator.EQUAL, 1l);
 		assertSimpleCondition(condition.getConditions()[1], "aInt", FilterOperator.EQUAL, 3l);
 	}
 
 	@Test
-	@Ignore
 	public void testWhereJoinedConditionsWithPrecedence() {
-		String q = "{where: {op: 'and', c: [{p: 'aLong', op: '=', v: 1}, {op: 'or', c: [{p: 'aInt', op: '=', v: 3}, {p: 'aDouble', op: '=', v: 4.3}]}}}";
+		String q = "{where: {op: 'and', c: [{p: 'aLong', op: '=', v: 1}, {op: 'or', c: [{p: 'aInt', op: '=', v: 3}, {p: 'aDouble', op: '=', v: 4.3}]}]}}";
+		
+		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
+
+		JoinedCondition condition1 = assertJoinedCondition(options.getCondition(), LogicalOperator.AND, 2);
+		assertSimpleCondition(condition1.getConditions()[0], "aLong", FilterOperator.EQUAL, 1l);
+		
+		JoinedCondition condition2 = assertJoinedCondition(condition1.getConditions()[1], LogicalOperator.OR, 2);
+		assertSimpleCondition(condition2.getConditions()[0], "aInt", FilterOperator.EQUAL, 3l);
+		assertSimpleCondition(condition2.getConditions()[1], "aDouble", FilterOperator.EQUAL, 4.3);
 	}
 	
 	private JoinedCondition assertJoinedCondition(Condition c, LogicalOperator operator, int length) {
@@ -70,7 +77,7 @@ public class DatastoreQueryOptionsTest {
 		return condition;
 	}
 
-	private void assertSimpleCondition(Condition c, String p, FilterOperator op, long value) {
+	private void assertSimpleCondition(Condition c, String p, FilterOperator op, Object value) {
 		assertEquals(SimpleCondition.class, c.getClass());
 		SimpleCondition condition = (SimpleCondition) c;
 		assertEquals(p, condition.getField());

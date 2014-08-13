@@ -10,7 +10,7 @@ public abstract class Condition {
 	
 	public abstract Filter getPredicate(Class<?> clazz);
 
-	private static class SimpleCondition extends Condition {
+	protected static class SimpleCondition extends Condition {
 		private String field;
 		private FilterOperator operator;
 		private Object value;
@@ -27,9 +27,21 @@ public abstract class Condition {
 			Object actualValue = EntityUtils.getActualFieldValue(field, clazz, value);
 			return new FilterPredicate(actualFieldName, operator, actualValue);
 		}
+
+		public String getField() {
+			return field;
+		}
+
+		public FilterOperator getOperator() {
+			return operator;
+		}
+
+		public Object getValue() {
+			return value;
+		}
 	}
 
-	private static class JoinedCondition extends Condition {
+	protected static class JoinedCondition extends Condition {
 		private LogicalOperator operator;
 		private Condition[] conditions;
 

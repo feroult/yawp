@@ -1,4 +1,4 @@
-package endpoint;
+package endpoint.query;
 
 import static endpoint.query.Condition.and;
 import static endpoint.query.Condition.c;
@@ -11,6 +11,9 @@ import java.util.List;
 
 import org.junit.Test;
 
+import endpoint.HttpException;
+import endpoint.Id;
+import endpoint.SimpleObject;
 import endpoint.query.DatastoreQuery;
 import endpoint.query.DatastoreQueryOptions;
 import endpoint.utils.DateUtils;

@@ -12,8 +12,13 @@ import com.google.gson.JsonPrimitive;
 public class DatastoreQueryOptions {
 
 	private Object[] where;
+
+	private Condition condition;
+
 	private List<DatastoreQueryOrder> preOrders;
+
 	private List<DatastoreQueryOrder> postOrders;
+
 	private Integer limit;
 
 	public static DatastoreQueryOptions parse(String json) {
@@ -22,7 +27,9 @@ public class DatastoreQueryOptions {
 
 	public DatastoreQueryOptions(String json) {
 		JsonObject jsonObject = (JsonObject) new JsonParser().parse(json);
-		this.where = parseWhere(jsonObject.getAsJsonArray("where"));
+
+		this.where = parseWhere(jsonObject.get("where"));
+		this.condition = parseCondition(jsonObject.get("where"));
 		this.preOrders = parseOrders(jsonObject.getAsJsonArray("order"));
 		this.postOrders = parseOrders(jsonObject.getAsJsonArray("sort"));
 		this.limit = parseLimit(jsonObject.get("limit"));
@@ -61,11 +68,14 @@ public class DatastoreQueryOptions {
 		return jsonObject.get(key).getAsString();
 	}
 
-	private Object[] parseWhere(JsonArray jsonArray) {
-		if (jsonArray == null) {
+	private Object[] parseWhere(JsonElement json) {
+		if (json == null || !json.isJsonArray()) {
 			return null;
 		}
+		return parseWhereArray(json.getAsJsonArray());
+	}
 
+	private Object[] parseWhereArray(JsonArray jsonArray) {
 		List<Object> where = new ArrayList<Object>();
 
 		for (JsonElement jsonElement : jsonArray) {
@@ -92,8 +102,24 @@ public class DatastoreQueryOptions {
 		return where.toArray(new Object[where.size()]);
 	}
 
+	private Condition parseCondition(JsonElement json) {
+		if (json == null || json.isJsonArray()) {
+			return null;
+		}
+		return parseConditionObject(json.getAsJsonObject());
+	}
+
+	private Condition parseConditionObject(JsonObject asJsonObject) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public Object[] getWhere() {
 		return this.where;
+	}
+
+	public Condition getCondition() {
+		return condition;
 	}
 
 	public List<DatastoreQueryOrder> getPreOrders() {

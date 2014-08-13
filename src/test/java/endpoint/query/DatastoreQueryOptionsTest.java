@@ -1,13 +1,13 @@
-package endpoint;
+package endpoint.query;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-import endpoint.query.DatastoreQueryOptions;
-import endpoint.query.DatastoreQueryOrder;
+import endpoint.query.Condition.SimpleCondition;
 
 public class DatastoreQueryOptionsTest {
 
@@ -33,6 +33,33 @@ public class DatastoreQueryOptionsTest {
 		assertOrderEquals("aString", "desc", options.getPreOrders().get(0));
 		assertOrderEquals("aLong", "desc", options.getPostOrders().get(0));
 		assertEquals(new Integer(2), options.getLimit());
+	}
+
+	@Test
+	@Ignore
+	public void testWhereSimpleCondition() {
+		String q = "{p: 'aLong', op: '=', v: 1}";
+
+		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
+
+		assertEquals(SimpleCondition.class, options.getCondition().getClass());
+
+		SimpleCondition condition = (SimpleCondition) options.getCondition();
+		assertEquals("aLong", condition.getField());
+		assertEquals("=", condition.getOperator());
+		assertEquals(1l, condition.getValue());
+	}
+
+	@Test
+	@Ignore
+	public void testWhereTwoConditions() {
+		String q = "{op: 'and', c: [{p: 'aLong', op: '=', v: 1}, {p: 'aInt', op: '=', v: 3}]}";
+	}
+
+	@Test
+	@Ignore
+	public void testWhereThreeConditionsWithPrecedence() {
+		String q = "{op: 'and', c: [{p: 'aLong', op: '=', v: 1}, {op: 'or', c: [{p: 'aInt', op: '=', v: 3}, {p: 'aDouble', op: '=', v: 4.3}]}}";
 	}
 
 	private void assertOrderEquals(String property, String direction, DatastoreQueryOrder order) {

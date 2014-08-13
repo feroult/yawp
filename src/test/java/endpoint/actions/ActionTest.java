@@ -17,7 +17,7 @@ import endpoint.utils.JsonUtils;
 public class ActionTest extends EndpointTestCase {
 
 	@Test
-	public void testSimpleAction() throws HttpException {
+	public void testSimpleAction() {
 		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
 		r.save(object);
 
@@ -31,7 +31,7 @@ public class ActionTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testActionWithParams() throws HttpException {
+	public void testActionWithParams() {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("x", "xpto");
 
@@ -40,7 +40,7 @@ public class ActionTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testActionOverCollection() throws HttpException {
+	public void testActionOverCollection() {
 		HttpResponse response = r.action(SimpleObject.class, "GET", "me", null, null);
 		assertEquals("xpto", response.getText());
 	}

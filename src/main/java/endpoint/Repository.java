@@ -51,7 +51,7 @@ public class Repository {
 		return namespace.getNs();
 	}
 
-	public void save(Object object) throws HttpException {
+	public void save(Object object) {
 		namespace.set(object.getClass());
 		try {
 			RepositoryHooks.beforeSave(this, object);
@@ -66,7 +66,7 @@ public class Repository {
 		}
 	}
 
-	public HttpResponse action(Class<?> clazz, String method, String action, Long id, Map<String, String> params) throws HttpException {
+	public HttpResponse action(Class<?> clazz, String method, String action, Long id, Map<String, String> params) {
 		namespace.set(clazz);
 		try {
 			return RepositoryActions.execute(this, clazz, method, action, id, params);
@@ -75,7 +75,7 @@ public class Repository {
 		}
 	}
 
-	public <T> DatastoreQuery<T> queryWithHooks(Class<T> clazz) throws HttpException {
+	public <T> DatastoreQuery<T> queryWithHooks(Class<T> clazz) {
 		DatastoreQuery<T> q = DatastoreQuery.q(clazz, this);
 		RepositoryHooks.beforeQuery(this, q, clazz);
 		return q;

@@ -64,6 +64,10 @@ public class DatastoreQuery<T> {
 		return this;
 	}
 
+	public DatastoreQuery<T> and(String field, String operator, Object value) {
+		return where(field, operator, value);
+	}
+	
 	public DatastoreQuery<T> where(String field, String operator, Object value) {
 		return where(Condition.c(field, operator, value));
 	}

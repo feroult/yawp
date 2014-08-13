@@ -10,7 +10,7 @@ import endpoint.utils.JsonUtils;
 public class IdRefTest extends EndpointTestCase {
 
 	@Test
-	public void testSave() throws HttpException {
+	public void testSave() {
 		ObjectWithIdRef object = new ObjectWithIdRef("xpto");
 		r.save(object);
 
@@ -20,7 +20,7 @@ public class IdRefTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testWithRelation() throws HttpException {
+	public void testWithRelation() {
 		ObjectWithIdRef object = saveObjectWithRelation();
 
 		object = object.getId().fetch();
@@ -30,7 +30,7 @@ public class IdRefTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testQuery() throws HttpException {
+	public void testQuery() {
 		ObjectWithIdRef object = saveObjectWithRelation();
 
 		object = r.query(ObjectWithIdRef.class).where("id", "=", object.getId().asLong()).only();
@@ -45,7 +45,7 @@ public class IdRefTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testJsonConversion() throws HttpException {
+	public void testJsonConversion() {
 		ObjectWithIdRef object = saveObjectWithRelation();
 
 		String json = JsonUtils.to(object);
@@ -56,7 +56,7 @@ public class IdRefTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testWithJsonListField() throws HttpException {
+	public void testWithJsonListField() {
 		ObjectWithIdRef object = new ObjectWithIdRef("xpto");
 		r.save(object);
 
@@ -76,7 +76,7 @@ public class IdRefTest extends EndpointTestCase {
 		assertEquals("hihi", object.getObjectIds().get(1).fetch().getaString());
 	}
 
-	private ObjectWithIdRef saveObjectWithRelation() throws HttpException {
+	private ObjectWithIdRef saveObjectWithRelation() {
 		AnotherSimpleObject anotherObject = new AnotherSimpleObject("haha");
 		r.save(anotherObject);
 

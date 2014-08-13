@@ -16,7 +16,7 @@ import endpoint.utils.EndpointTestCase;
 public class RepositoryTest extends EndpointTestCase {
 
 	@Test
-	public void testSave() throws HttpException {
+	public void testSave() {
 		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
 
 		r.save(object);
@@ -26,7 +26,7 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testJsonProperty() throws HttpException {
+	public void testJsonProperty() {
 		SimpleObject object = new SimpleObject();
 
 		object.setAString("xpto");
@@ -41,7 +41,7 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testJsonArrayProperty() throws HttpException {
+	public void testJsonArrayProperty() {
 		SimpleObject object = new SimpleObject();
 
 		object.setAString("xpto");
@@ -63,7 +63,7 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testJsonMapWithLongKeyAndObjectValue() throws HttpException {
+	public void testJsonMapWithLongKeyAndObjectValue() {
 		SimpleObject object = new SimpleObject();
 
 		Map<Long, NotADatastoreObject> map = new HashMap<Long, NotADatastoreObject>();
@@ -81,7 +81,7 @@ public class RepositoryTest extends EndpointTestCase {
 	}
 
 	@Test(expected = NoResultException.class)
-	public void testDelete() throws HttpException {
+	public void testDelete() {
 		SimpleObject object = new SimpleObject("xpto");
 
 		List<AnotherSimpleObject> list = new ArrayList<AnotherSimpleObject>();

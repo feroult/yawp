@@ -21,14 +21,14 @@ import endpoint.utils.EndpointTestCase;
 
 public class DatastoreQueryTest extends EndpointTestCase {
 
-	private void saveThreeObjects() throws HttpException {
+	private void saveThreeObjects() {
 		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1"));
 		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
 		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object3"));
 	}
 
 	@Test
-	public void testWhere() throws HttpException {
+	public void testWhere() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object4"));
 
@@ -41,7 +41,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testWhereWithUnicode() throws HttpException {
+	public void testWhereWithUnicode() {
 		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "\u00c1"));
 
 		List<SimpleObject> objects = r.query(SimpleObject.class).where("aString", "=", "\u00c1").list();
@@ -51,7 +51,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testChainedWheres() throws HttpException {
+	public void testChainedWheres() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
 
@@ -63,7 +63,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 	
 	@Test
-	public void testChainedWheresWithNewAPI() throws HttpException {
+	public void testChainedWheresWithNewAPI() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
 
@@ -74,7 +74,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 	
 	@Test
-	public void testWhereWithOr() throws HttpException {
+	public void testWhereWithOr() {
 		saveThreeObjects();
 		List<SimpleObject> objects = r.query(SimpleObject.class).where(or(c("aString", "=", "object1"), c("aString", "=", "object2"))).list();
 
@@ -91,7 +91,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testWhereWithComplexAndOrStructure() throws HttpException {
+	public void testWhereWithComplexAndOrStructure() {
 		saveThreeObjects();
 		List<SimpleObject> objects = r.query(SimpleObject.class).where(or(and(c("aString", "=", "object2"), c("aString", "=", "object1")), and(c("aString", "=", "object2"), c("aString", "=", "object2")))).list();
 
@@ -105,7 +105,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testChainedWheresMultipleStatements() throws HttpException {
+	public void testChainedWheresMultipleStatements() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
 
@@ -116,7 +116,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testOptions() throws HttpException {
+	public void testOptions() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object4"));
 
@@ -131,7 +131,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testOrderWithUnicode() throws HttpException {
+	public void testOrderWithUnicode() {
 		saveThreeObjects();
 		// 'A' with accent
 		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "\u00c1"));
@@ -146,7 +146,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testOrderWithTwoProperties() throws HttpException {
+	public void testOrderWithTwoProperties() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
 		r.save(new SimpleObject(1, 3l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object3"));
@@ -161,7 +161,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testSort() throws HttpException {
+	public void testSort() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
 		r.save(new SimpleObject(1, 3l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object3"));
@@ -176,7 +176,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testLimit() throws HttpException {
+	public void testLimit() {
 		saveThreeObjects();
 
 		List<SimpleObject> objects = r.query(SimpleObject.class).order("aString", "desc").limit(1).list();
@@ -186,7 +186,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testCursor() throws HttpException {
+	public void testCursor() {
 		saveThreeObjects();
 
 		DatastoreQuery<SimpleObject> q = r.query(SimpleObject.class).order("aString", "desc").limit(1);
@@ -205,7 +205,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testFindByIdUsingWhere() throws HttpException {
+	public void testFindByIdUsingWhere() {
 		SimpleObject object = new SimpleObject("xpto");
 
 		r.save(object);
@@ -215,7 +215,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testFindByIdUsingWhereWithLongId() throws HttpException {
+	public void testFindByIdUsingWhereWithLongId() {
 		ObjectWithLongId object = new ObjectWithLongId("xpto");
 
 		r.save(object);
@@ -225,7 +225,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testFindById() throws HttpException {
+	public void testFindById() {
 		SimpleObject object = new SimpleObject("xpto");
 
 		r.save(object);

@@ -1,7 +1,6 @@
 package endpoint;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,12 +27,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 	@Test
 	public void testCreate() {
 		String json;
-		try {
-			json = servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
-		} catch (HttpException e) {
-			assertTrue(false);
-			return;
-		}
+		json = servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
 
 		SimpleObject object = JsonUtils.from(r, json, SimpleObject.class);
 
@@ -43,12 +37,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 	@Test
 	public void testCreateArray() {
 		String json;
-		try {
-			json = servlet.execute("POST", "/simpleobjects", SIMPLE_ARRAY_JSON, null).getText();
-		} catch (HttpException e) {
-			assertTrue(false);
-			return;
-		}
+		json = servlet.execute("POST", "/simpleobjects", SIMPLE_ARRAY_JSON, null).getText();
 
 		List<SimpleObject> objects = JsonUtils.fromList(r, json, SimpleObject.class);
 
@@ -59,15 +48,10 @@ public class DatastoreServletTest extends EndpointTestCase {
 	@Test
 	public void testIndex() {
 		String json;
-		try {
-			servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);
-			servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);
+		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);
+		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);
 
-			json = servlet.execute("GET", "/simpleobjects", null, null).getText();
-		} catch (HttpException e) {
-			assertTrue(false);
-			return;
-		}
+		json = servlet.execute("GET", "/simpleobjects", null, null).getText();
 
 		List<SimpleObject> objects = JsonUtils.fromList(r, json, SimpleObject.class);
 
@@ -80,16 +64,11 @@ public class DatastoreServletTest extends EndpointTestCase {
 	public void testCustomAction() {
 		String json;
 		SimpleObject object;
-		try {
-			json = servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
+		json = servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
 
-			object = JsonUtils.from(r, json, SimpleObject.class);
+		object = JsonUtils.from(r, json, SimpleObject.class);
 
-			json = servlet.execute("PUT", "/simpleobjects/" + object.getId() + "/active", null, null).getText();
-		} catch (HttpException e) {
-			assertTrue(false);
-			return;
-		}
+		json = servlet.execute("PUT", "/simpleobjects/" + object.getId() + "/active", null, null).getText();
 
 		object = JsonUtils.from(r, json, SimpleObject.class);
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "i was changed in action");
@@ -98,15 +77,10 @@ public class DatastoreServletTest extends EndpointTestCase {
 	@Test
 	public void testTransformerInShow() {
 		String json;
-		try {
-			SimpleObject object = JsonUtils.from(r, servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText(),
-					SimpleObject.class);
+		SimpleObject object = JsonUtils.from(r, servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText(),
+				SimpleObject.class);
 
-			json = servlet.execute("GET", "/simpleobjects/" + object.getId(), null, t("simple")).getText();
-		} catch (HttpException e) {
-			assertTrue(false);
-			return;
-		}
+		json = servlet.execute("GET", "/simpleobjects/" + object.getId(), null, t("simple")).getText();
 
 		@SuppressWarnings("rawtypes")
 		Map map = JsonUtils.from(r, json, Map.class);
@@ -117,15 +91,10 @@ public class DatastoreServletTest extends EndpointTestCase {
 	@Test
 	public void testTransformerInIndex() {
 		String json;
-		try {
-			servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);
-			servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);
+		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);
+		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);
 
-			json = servlet.execute("GET", "/simpleobjects", null, t("simple")).getText();
-		} catch (HttpException e) {
-			assertTrue(false);
-			return;
-		}
+		json = servlet.execute("GET", "/simpleobjects", null, t("simple")).getText();
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
 		List<Map> list = JsonUtils.from(r, json, List.class);

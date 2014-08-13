@@ -14,7 +14,7 @@ import endpoint.utils.EndpointTestCase;
 public class HookTest extends EndpointTestCase {
 
 	@Test
-	public void testAfterSave() throws HttpException {
+	public void testAfterSave() {
 		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
 		r.save(object);
 
@@ -22,13 +22,13 @@ public class HookTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testAllTargetsHook() throws HttpException {
+	public void testAllTargetsHook() {
 		Product product = saveProduct("xpto");
 		assertEquals("xpto GenericHook touch", product.getName());
 	}
 
 	@Test
-	public void testBeforeQuery() throws HttpException {
+	public void testBeforeQuery() {
 		saveProduct("xpto");
 		saveProduct("abcd");
 
@@ -37,7 +37,7 @@ public class HookTest extends EndpointTestCase {
 		assertEquals("xpto", products.get(0).getName());
 	}
 
-	private Product saveProduct(String name) throws HttpException {
+	private Product saveProduct(String name) {
 		Product product = new Product();
 		product.setName(name);
 		r.save(product);

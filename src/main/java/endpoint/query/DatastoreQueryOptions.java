@@ -111,6 +111,33 @@ public class DatastoreQueryOptions {
 	}
 
 	private Condition parseConditionObject(JsonObject json) {
+		if (json.has("c")) {
+			return parseJoinedCondition(json);
+		}
+
+		return parseSimpleCondition(json);
+	}
+
+	private Condition parseJoinedCondition(JsonObject json) {
+		String op = json.get("op").getAsString();
+
+		List<Condition> conditions = new ArrayList<Condition>();
+		
+		for (JsonElement jsonElement : json.getAsJsonArray("c")) {			
+			conditions.add(parseConditionObject(jsonElement.getAsJsonObject()));
+		}
+
+		if(op.equalsIgnoreCase("and")) {
+			return Condition.and(conditions.toArray(new Condition[] {}));
+		}
+		if(op.equalsIgnoreCase("or")) {
+			return Condition.or(conditions.toArray(new Condition[] {}));
+		}
+
+		throw new RuntimeException("Invalid joined condition operator");
+	}
+
+	private Condition parseSimpleCondition(JsonObject json) {
 		String field = json.get("p").getAsString();
 		String op = json.get("op").getAsString();
 		Object value = getJsonObjectValue(json.get("v"));

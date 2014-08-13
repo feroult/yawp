@@ -7,7 +7,7 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import endpoint.utils.EntityUtils;
 
 public abstract class Condition {
-	
+
 	public abstract Filter getPredicate(Class<?> clazz);
 
 	protected static class SimpleCondition extends Condition {
@@ -53,6 +53,14 @@ public abstract class Condition {
 		@Override
 		public Filter getPredicate(Class<?> clazz) {
 			return operator.join(clazz, conditions);
+		}
+
+		public LogicalOperator getOperator() {
+			return operator;
+		}
+
+		public Condition[] getConditions() {
+			return conditions;
 		}
 	}
 

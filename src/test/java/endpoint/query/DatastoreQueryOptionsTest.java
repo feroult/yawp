@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import com.google.appengine.api.datastore.Query.FilterOperator;
 
+import endpoint.query.Condition.JoinedCondition;
 import endpoint.query.Condition.SimpleCondition;
 
 public class DatastoreQueryOptionsTest {
@@ -40,10 +41,28 @@ public class DatastoreQueryOptionsTest {
 	@Test
 	public void testWhereSimpleCondition() {
 		String q = "{where: {p: 'aLong', op: '=', v: 1}}";
+		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
+		assertSimpleCondition(options.getCondition(), "aLong", FilterOperator.EQUAL, 1l);
+	}
 
+	@Test
+	public void testWhereJoinedConditions() {
+		String q = "{where: {op: 'and', c: [{p: 'aLong', op: '=', v: 1}, {p: 'aInt', op: '=', v: 3}]}}";
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
 
-		assertSimpleCondition(options.getCondition(), "aLong", FilterOperator.EQUAL, 1l);
+		assertEquals(JoinedCondition.class, options.getCondition().getClass());
+		JoinedCondition condition = (JoinedCondition) options.getCondition();
+
+		assertEquals(LogicalOperator.AND, condition.getOperator());
+		assertEquals(2, condition.getConditions().length);
+		assertSimpleCondition(condition.getConditions()[0], "aLong", FilterOperator.EQUAL, 1l);
+		assertSimpleCondition(condition.getConditions()[1], "aInt", FilterOperator.EQUAL, 3l);
+	}
+
+	@Test
+	@Ignore
+	public void testWhereJoinedConditionsWithPrecedence() {
+		String q = "{op: 'and', c: [{p: 'aLong', op: '=', v: 1}, {op: 'or', c: [{p: 'aInt', op: '=', v: 3}, {p: 'aDouble', op: '=', v: 4.3}]}}";
 	}
 
 	private void assertSimpleCondition(Condition c, String p, FilterOperator op, long value) {
@@ -52,18 +71,6 @@ public class DatastoreQueryOptionsTest {
 		assertEquals(p, condition.getField());
 		assertEquals(op, condition.getOperator());
 		assertEquals(value, condition.getValue());
-	}
-
-	@Test
-	@Ignore
-	public void testWhereTwoConditions() {
-		String q = "{op: 'and', c: [{p: 'aLong', op: '=', v: 1}, {p: 'aInt', op: '=', v: 3}]}";
-	}
-
-	@Test
-	@Ignore
-	public void testWhereThreeConditionsWithPrecedence() {
-		String q = "{op: 'and', c: [{p: 'aLong', op: '=', v: 1}, {op: 'or', c: [{p: 'aInt', op: '=', v: 3}, {p: 'aDouble', op: '=', v: 4.3}]}}";
 	}
 
 	private void assertOrderEquals(String property, String direction, DatastoreQueryOrder order) {

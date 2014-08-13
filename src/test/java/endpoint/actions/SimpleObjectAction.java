@@ -2,7 +2,6 @@ package endpoint.actions;
 
 import java.util.Map;
 
-import endpoint.HttpException;
 import endpoint.SimpleObject;
 import endpoint.Target;
 import endpoint.response.JsonResponse;

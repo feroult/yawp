@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import endpoint.HttpException;
 import endpoint.SimpleObject;
 import endpoint.utils.DateUtils;
 import endpoint.utils.EndpointTestCase;

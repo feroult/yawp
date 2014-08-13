@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import endpoint.HttpException;
 import endpoint.SimpleObject;
 import endpoint.response.HttpResponse;
 import endpoint.utils.DateUtils;

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
-import endpoint.DatastoreRouter;
 import endpoint.actions.ActionType;
 
 public class DatastoreRouterTest {

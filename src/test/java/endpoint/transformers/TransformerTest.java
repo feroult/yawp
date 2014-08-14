@@ -7,14 +7,13 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import endpoint.HttpException;
 import endpoint.SimpleObject;
 import endpoint.utils.EndpointTestCase;
 
 public class TransformerTest extends EndpointTestCase {
 
 	@Test
-	public void testSingleResult() throws HttpException {
+	public void testSingleResult() {
 		SimpleObject object = new SimpleObject("xpto");
 		r.save(object);
 
@@ -25,7 +24,7 @@ public class TransformerTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testListResult() throws HttpException {
+	public void testListResult() {
 		r.save(new SimpleObject("xpto1", 1l));
 		r.save(new SimpleObject("xpto1", 2l));
 		r.save(new SimpleObject("xpto2", 1l));

@@ -63,11 +63,15 @@ public class DatastoreQuery<T> {
 		}
 		return this;
 	}
+
+	public DatastoreQuery<T> and(String field, String operator, Object value) {
+		return where(field, operator, value);
+	}
 	
 	public DatastoreQuery<T> where(String field, String operator, Object value) {
 		return where(Condition.c(field, operator, value));
 	}
-	
+
 	public DatastoreQuery<T> where(Condition c) {
 		if (condition == null) {
 			condition = c;
@@ -138,6 +142,10 @@ public class DatastoreQuery<T> {
 	public DatastoreQuery<T> options(DatastoreQueryOptions options) {
 		if (options.getWhere() != null) {
 			where(options.getWhere());
+		}
+
+		if (options.getCondition() != null) {
+			where(options.getCondition());
 		}
 
 		if (options.getPreOrders() != null) {
@@ -296,5 +304,5 @@ public class DatastoreQuery<T> {
 	public T id(Long id) {
 		return whereById("=", id).only();
 	}
-	
+
 }

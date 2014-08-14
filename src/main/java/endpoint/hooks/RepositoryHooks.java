@@ -10,7 +10,6 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
-import endpoint.HttpException;
 import endpoint.Repository;
 import endpoint.Target;
 import endpoint.query.DatastoreQuery;
@@ -59,19 +58,19 @@ public class RepositoryHooks {
 		objectHooks.add(clazz);
 	}
 
-	public static void beforeSave(Repository r, Object object) throws HttpException {
+	public static void beforeSave(Repository r, Object object) {
 		invokeHooks(r, object.getClass(), object, "beforeSave");
 	}
 
-	public static void afterSave(Repository r, Object object) throws HttpException {
+	public static void afterSave(Repository r, Object object) {
 		invokeHooks(r, object.getClass(), object, "afterSave");
 	}
 
-	public static <T> void beforeQuery(Repository r, DatastoreQuery<T> q, Class<T> clazz) throws HttpException {
+	public static <T> void beforeQuery(Repository r, DatastoreQuery<T> q, Class<T> clazz) {
 		invokeHooks(r, clazz, q, "beforeQuery");
 	}
 
-	private static void invokeHooks(Repository r, Class<?> targetClazz, Object object, String methodName) throws HttpException {
+	private static void invokeHooks(Repository r, Class<?> targetClazz, Object object, String methodName) {
 		List<Class<? extends Hook>> objectHooks = new ArrayList<Class<? extends Hook>>();
 		if (hooks.containsKey(targetClazz.getSimpleName())) {
 			objectHooks.addAll(hooks.get(targetClazz.getSimpleName()));
@@ -86,7 +85,7 @@ public class RepositoryHooks {
 		}
 	}
 
-	private static void invokeHookMethod(Repository r, Object object, String methodName, Class<? extends Hook> hookClazz) throws HttpException {
+	private static void invokeHookMethod(Repository r, Object object, String methodName, Class<? extends Hook> hookClazz) {
 		try {
 			Hook hook = hookClazz.newInstance();
 			hook.setRepository(r);

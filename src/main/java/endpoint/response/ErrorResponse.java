@@ -1,7 +1,8 @@
 package endpoint.response;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
 
 public class ErrorResponse extends HttpResponse {
 

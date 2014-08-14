@@ -7,10 +7,10 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import endpoint.utils.EntityUtils;
 
 public abstract class Condition {
-	
+
 	public abstract Filter getPredicate(Class<?> clazz);
 
-	private static class SimpleCondition extends Condition {
+	protected static class SimpleCondition extends Condition {
 		private String field;
 		private FilterOperator operator;
 		private Object value;
@@ -27,9 +27,21 @@ public abstract class Condition {
 			Object actualValue = EntityUtils.getActualFieldValue(field, clazz, value);
 			return new FilterPredicate(actualFieldName, operator, actualValue);
 		}
+
+		public String getField() {
+			return field;
+		}
+
+		public FilterOperator getOperator() {
+			return operator;
+		}
+
+		public Object getValue() {
+			return value;
+		}
 	}
 
-	private static class JoinedCondition extends Condition {
+	protected static class JoinedCondition extends Condition {
 		private LogicalOperator operator;
 		private Condition[] conditions;
 
@@ -41,6 +53,14 @@ public abstract class Condition {
 		@Override
 		public Filter getPredicate(Class<?> clazz) {
 			return operator.join(clazz, conditions);
+		}
+
+		public LogicalOperator getOperator() {
+			return operator;
+		}
+
+		public Condition[] getConditions() {
+			return conditions;
 		}
 	}
 

@@ -251,6 +251,10 @@ public class EntityUtils {
 			return createKey(id, clazz);
 		}
 
+		if (isEnum(value)) {
+			return value.toString();
+		}
+
 		if (isIndexNormalizable(field)) {
 			return normalizeValue(value);
 		}

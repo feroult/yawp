@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
-import endpoint.HttpException;
 import endpoint.Repository;
 import endpoint.Target;
 import endpoint.response.HttpResponse;
@@ -78,7 +77,7 @@ public class RepositoryActions {
 	}
 
 	public static HttpResponse execute(Repository r, Class<?> objectClazz, String httpMethod, String action, Long id,
-			Map<String, String> params) throws HttpException {
+			Map<String, String> params) {
 
 		try {
 			Method method = actions.get(getActionKey(objectClazz, httpMethod, action));

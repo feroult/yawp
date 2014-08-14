@@ -20,7 +20,7 @@ public class RepositoryNamespaceTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testFindById() throws HttpException {
+	public void testFindById() {
 		SimpleObject object1 = new SimpleObject("xpto1");
 		r1.save(object1);
 
@@ -29,7 +29,7 @@ public class RepositoryNamespaceTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testQuery() throws HttpException {
+	public void testQuery() {
 		r2.save(new SimpleObject("xpto2"));
 
 		assertNotNull(r2.query(SimpleObject.class).where("aString", "=", "xpto2").first());
@@ -37,7 +37,7 @@ public class RepositoryNamespaceTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testSaveAndChange() throws HttpException {
+	public void testSaveAndChange() {
 		SimpleObject object1 = new SimpleObject("xpto");
 		SimpleObject object2 = new SimpleObject("xpto");
 

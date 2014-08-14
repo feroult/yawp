@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.reflections.Reflections;
 
+import endpoint.HttpException;
 import endpoint.Repository;
 import endpoint.Target;
 import endpoint.response.HttpResponse;

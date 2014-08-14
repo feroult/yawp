@@ -77,12 +77,17 @@ public class RepositoryActions {
 		return String.format("%s-%s-%s", objectClazz.getSimpleName(), httpMethod, action);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static HttpResponse execute(Repository r, Class<?> objectClazz, String httpMethod, String action, Long id,
 			Map<String, String> params) throws HttpException {
 
 		try {
 			Method method = actions.get(getActionKey(objectClazz, httpMethod, action));
+
+			if (method == null) {
+				throw new HttpException(404);
+			}
+
+			@SuppressWarnings("unchecked")
 			Class<? extends Action> actionClazz = (Class<? extends Action>) method.getDeclaringClass();
 
 			Action actionInstance = actionClazz.newInstance();

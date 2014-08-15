@@ -9,13 +9,16 @@ import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.QueryResultList;
 
 import endpoint.Repository;
+import endpoint.query.Condition.SimpleCondition;
 import endpoint.utils.EntityUtils;
 
 public class DatastoreQuery<T> {
@@ -67,7 +70,7 @@ public class DatastoreQuery<T> {
 	public DatastoreQuery<T> and(String field, String operator, Object value) {
 		return where(field, operator, value);
 	}
-	
+
 	public DatastoreQuery<T> where(String field, String operator, Object value) {
 		return where(Condition.c(field, operator, value));
 	}
@@ -181,32 +184,55 @@ public class DatastoreQuery<T> {
 	public T first() {
 		r.namespace().set(getClazz());
 		try {
-			limit(1);
-
-			List<T> list = executeQuery();
-			if (list.size() == 0) {
-				return null;
+			if (isQueryById()) {
+				return executeQueryById();
 			}
-			return list.get(0);
+			return executeQueryFirst();
 		} finally {
 			r.namespace().reset();
 		}
 	}
 
+	private T executeQueryFirst() {
+		limit(1);
+
+		List<T> list = executeQuery();
+		if (list.size() == 0) {
+			return null;
+		}
+		return list.get(0);
+	}
+
 	public T only() throws NoResultException, MoreThanOneResultException {
 		r.namespace().set(getClazz());
 		try {
-			List<T> list = executeQuery();
-			if (list.size() == 1) {
-				return list.get(0);
+			T object = null;
+
+			if (isQueryById()) {
+				object = executeQueryById();
+			} else {
+				object = executeQueryOnlyFirst();
 			}
-			if (list.size() == 0) {
+
+			if (object == null) {
 				throw new NoResultException();
 			}
-			throw new MoreThanOneResultException();
+
+			return object;
 		} finally {
 			r.namespace().reset();
 		}
+	}
+
+	private T executeQueryOnlyFirst() throws MoreThanOneResultException {
+		List<T> list = executeQuery();
+		if (list.size() == 0) {
+			return null;
+		}
+		if (list.size() == 1) {
+			return list.get(0);
+		}
+		throw new MoreThanOneResultException();
 	}
 
 	private List<T> executeQuery() {
@@ -226,6 +252,26 @@ public class DatastoreQuery<T> {
 			this.cursor = queryResult.getCursor().toWebSafeString();
 		}
 		return objects;
+	}
+
+	private T executeQueryById() {
+		try {
+			SimpleCondition c = (SimpleCondition) condition;
+			Key key = EntityUtils.createKey((Long) c.getValue(), clazz);
+			Entity entity = DatastoreServiceFactory.getDatastoreService().get(key);
+			return EntityUtils.toObject(r, entity, clazz);
+		} catch (EntityNotFoundException e) {
+			return null;
+		}
+	}
+
+	private boolean isQueryById() {
+		if (condition == null || !(condition instanceof SimpleCondition)) {
+			return false;
+		}
+
+		SimpleCondition c = (SimpleCondition) condition;
+		return c.getField().equals(EntityUtils.getIdFieldName(clazz)) && c.getOperator().equals(FilterOperator.EQUAL);
 	}
 
 	public void sortList(List<?> objects) {

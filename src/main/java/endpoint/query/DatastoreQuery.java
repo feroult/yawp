@@ -17,7 +17,6 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.QueryResultList;
 
-import endpoint.IdRef;
 import endpoint.Repository;
 import endpoint.query.Condition.SimpleCondition;
 import endpoint.utils.EntityUtils;
@@ -350,10 +349,6 @@ public class DatastoreQuery<T> {
 
 	public T id(Long id) {
 		return whereById("=", id).only();
-	}
-
-	public T id(IdRef<?> idRef) {
-		return id(idRef.asLong());
 	}
 
 }

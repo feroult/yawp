@@ -76,6 +76,19 @@ public class IdRefTest extends EndpointTestCase {
 		assertEquals("hihi", object.getObjectIds().get(1).fetch().getaString());
 	}
 
+	@Test
+	public void testObjectWithChild() {
+		ObjectWithIdRef object = new ObjectWithIdRef("xpto");
+		r.save(object);
+
+		ChildWithIdRef child = new ChildWithIdRef("child xpto");
+		child.setObjectWithIdRefId(object.getId());
+		r.save(child);
+
+		ChildWithIdRef retrievedChild = object.getId().fetch(ChildWithIdRef.class);
+		assertEquals("child xpto", retrievedChild.getText());
+	}
+
 	private ObjectWithIdRef saveObjectWithRelation() {
 		AnotherSimpleObject anotherObject = new AnotherSimpleObject("haha");
 		r.save(anotherObject);

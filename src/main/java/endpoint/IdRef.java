@@ -1,5 +1,6 @@
 package endpoint;
 
+
 public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	private Class<T> clazz;
@@ -16,6 +17,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	public T fetch() {
 		return r.query(clazz).id(id);
+	}
+
+	public <TT> TT fetch(Class<TT> childClazz) {
+		return r.query(childClazz).id(id);
 	}
 
 	public Long asLong() {
@@ -67,5 +72,4 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	public String toString() {
 		return id.toString();
 	}
-
 }

@@ -10,6 +10,7 @@ import java.util.Set;
 import org.reflections.Reflections;
 
 import endpoint.HttpException;
+import endpoint.IdRef;
 import endpoint.Repository;
 import endpoint.Target;
 import endpoint.response.HttpResponse;
@@ -96,10 +97,14 @@ public class RepositoryActions {
 			Object ret;
 			if (method.getParameterTypes().length == 0) {
 				ret = method.invoke(actionInstance);
-			} else if (method.getParameterTypes().length == 1) {
-				ret = method.invoke(actionInstance, id);
 			} else {
-				ret = method.invoke(actionInstance, id, params);
+				Object idObject = isIdRefAction(method) ? IdRef.create(r, objectClazz, id) : id;
+
+				if (method.getParameterTypes().length == 1) {
+					ret = method.invoke(actionInstance, idObject);
+				} else {
+					ret = method.invoke(actionInstance, idObject, params);
+				}
 			}
 
 			if (method.getReturnType().equals(Void.TYPE)) {
@@ -115,6 +120,10 @@ public class RepositoryActions {
 		} catch (Exception e) {
 			throw ThrownExceptionsUtils.handle(e);
 		}
+	}
+
+	private static boolean isIdRefAction(Method method) {
+		return IdRef.class.isAssignableFrom(method.getParameterTypes()[0]);
 	}
 
 	private static String getActionValue(Class<? extends Annotation> httpMethodAnnotation, Method method) {

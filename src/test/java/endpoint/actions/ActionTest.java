@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import endpoint.ObjectWithIdRef;
 import endpoint.SimpleObject;
 import endpoint.response.HttpResponse;
 import endpoint.utils.DateUtils;
@@ -42,5 +43,15 @@ public class ActionTest extends EndpointTestCase {
 	public void testActionOverCollection() {
 		HttpResponse response = r.action(SimpleObject.class, "GET", "me", null, null);
 		assertEquals("xpto", response.getText());
+	}
+
+	@Test
+	public void testObjectWithIdRefAction() {
+		ObjectWithIdRef object = new ObjectWithIdRef("xpto");
+		r.save(object);
+		r.action(ObjectWithIdRef.class, "PUT", "upper", object.getId().asLong(), null);
+
+		object = object.getId().fetch();
+		assertEquals("XPTO", object.getText());
 	}
 }

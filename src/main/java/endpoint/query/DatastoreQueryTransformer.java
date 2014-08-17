@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.appengine.api.datastore.Key;
 
+import endpoint.IdRef;
 import endpoint.transformers.RepositoryTransformers;
 
 public class DatastoreQueryTransformer<T> {
@@ -26,12 +27,12 @@ public class DatastoreQueryTransformer<T> {
 		query.where(values);
 		return this;
 	}
-	
+
 	public DatastoreQueryTransformer<T> where(String field, String operator, Object value) {
 		query.where(field, operator, value);
 		return this;
 	}
-	
+
 	public DatastoreQueryTransformer<T> where(Condition c) {
 		query.where(c);
 		return this;
@@ -113,5 +114,9 @@ public class DatastoreQueryTransformer<T> {
 
 	public T id(Long id) {
 		return RepositoryTransformers.execute(query.getRepository(), transformClazz, query.id(id), transformName);
+	}
+
+	public T id(IdRef<?> idRef) {
+		return id(idRef.asLong());
 	}
 }

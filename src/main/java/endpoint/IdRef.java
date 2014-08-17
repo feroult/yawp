@@ -1,6 +1,5 @@
 package endpoint;
 
-
 public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	private Class<T> clazz;

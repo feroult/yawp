@@ -15,6 +15,7 @@ import endpoint.Repository;
 import endpoint.Target;
 import endpoint.response.HttpResponse;
 import endpoint.response.JsonResponse;
+import endpoint.utils.EntityUtils;
 import endpoint.utils.JsonUtils;
 import endpoint.utils.ThrownExceptionsUtils;
 
@@ -98,7 +99,7 @@ public class RepositoryActions {
 			if (method.getParameterTypes().length == 0) {
 				ret = method.invoke(actionInstance);
 			} else {
-				Object idObject = isIdRefAction(method) ? IdRef.create(r, objectClazz, id) : id;
+				Object idObject = isIdRefAction(method) ? createIdRef(r, objectClazz, id) : id;
 
 				if (method.getParameterTypes().length == 1) {
 					ret = method.invoke(actionInstance, idObject);
@@ -120,6 +121,10 @@ public class RepositoryActions {
 		} catch (Exception e) {
 			throw ThrownExceptionsUtils.handle(e);
 		}
+	}
+
+	private static IdRef<?> createIdRef(Repository r, Class<?> objectClazz, Long id) {
+		return IdRef.create(r, EntityUtils.getIdFieldRefClazz(objectClazz), id);
 	}
 
 	private static boolean isIdRefAction(Method method) {

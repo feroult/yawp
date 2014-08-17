@@ -128,6 +128,11 @@ public class EntityUtils {
 		return getIdField(clazz).getName();
 	}
 
+	public static Class<?> getIdFieldRefClazz(Class<?> clazz) {
+		Field idField = getIdField(clazz);
+		return (Class<?>) getParametrizedTypes(idField)[0];
+	}
+
 	private static Field getIdField(Class<?> clazz) {
 		Field field = getAnnotatedIdFromClass(clazz);
 

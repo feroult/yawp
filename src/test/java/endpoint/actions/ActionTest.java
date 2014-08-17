@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import endpoint.ChildWithIdRef;
 import endpoint.ObjectWithIdRef;
 import endpoint.SimpleObject;
 import endpoint.response.HttpResponse;
@@ -51,7 +52,25 @@ public class ActionTest extends EndpointTestCase {
 		r.save(object);
 		r.action(ObjectWithIdRef.class, "PUT", "upper", object.getId().asLong(), null);
 
-		object = object.getId().fetch();
-		assertEquals("XPTO", object.getText());
+		ObjectWithIdRef retrievedObject = object.getId().fetch();
+		assertEquals("XPTO", retrievedObject.getText());
+	}
+
+	@Test
+	public void testChildWithIdRefAction() {
+		ObjectWithIdRef object = new ObjectWithIdRef("XPTO");
+		r.save(object);
+
+		ChildWithIdRef child = new ChildWithIdRef("CHILD XPTO");
+		child.setObjectWithIdRefId(object.getId());
+		r.save(child);
+
+		r.action(ChildWithIdRef.class, "PUT", "lower", object.getId().asLong(), null);
+
+		ObjectWithIdRef retrievedObject = object.getId().fetch();
+		assertEquals("xpto", retrievedObject.getText());
+
+		ChildWithIdRef retrievedChild = object.getId().fetch(ChildWithIdRef.class);
+		assertEquals("child xpto", retrievedChild.getText());
 	}
 }

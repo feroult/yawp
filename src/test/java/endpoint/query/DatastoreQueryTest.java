@@ -5,6 +5,7 @@ import static endpoint.query.Condition.c;
 import static endpoint.query.Condition.or;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -229,6 +230,18 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
 		object = r.query(SimpleObject.class).id(object.getId());
 		assertEquals("xpto", object.getAString());
+	}
+
+	@Test
+	public void testIn() {
+		SimpleObject object1 = new SimpleObject("xpto1");
+		r.save(object1);
+
+		SimpleObject object2 = new SimpleObject("xpto2");
+		r.save(object2);
+
+		List<SimpleObject> objects = r.query(SimpleObject.class).where("id", "in", Arrays.asList(object1.getId())).list();
+		assertEquals(1, objects.size());
 	}
 
 	public static class ObjectWithLongId {

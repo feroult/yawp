@@ -1,11 +1,15 @@
 package endpoint;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class IdRefTest extends EndpointTestCase {
 
@@ -87,6 +91,21 @@ public class IdRefTest extends EndpointTestCase {
 
 		ChildWithIdRef retrievedChild = object.getId().fetch(ChildWithIdRef.class);
 		assertEquals("child xpto", retrievedChild.getText());
+	}
+
+	@Test
+	public void testInOperator() {
+		ObjectWithIdRef object1 = new ObjectWithIdRef("xpto1");
+		r.save(object1);
+
+		ObjectWithIdRef object2 = new ObjectWithIdRef("xpto2");
+		r.save(object2);
+
+		ObjectWithIdRef object3 = new ObjectWithIdRef("xpto3");
+		r.save(object3);
+
+		List<ObjectWithIdRef> objects = r.query(ObjectWithIdRef.class).where("id", "in", Arrays.asList(object1.getId().asLong(), object2.getId().asLong())).list();
+		assertEquals(2, objects.size());
 	}
 
 	private ObjectWithIdRef saveObjectWithRelation() {

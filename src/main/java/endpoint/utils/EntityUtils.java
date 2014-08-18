@@ -7,10 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -88,7 +85,7 @@ public class EntityUtils {
 			if (!isIdRef(field)) {
 				field.set(object, key.getId());
 			} else {
-				field.set(object, IdRef.create(r, object.getClass(), key.getId()));
+				field.set(object, IdRef.create(r, getIdFieldRefClazz(object.getClass()), key.getId()));
 			}
 
 		} catch (IllegalAccessException e) {
@@ -241,19 +238,12 @@ public class EntityUtils {
 	public static <T> Object getActualFieldValue(String fieldName, Class<T> clazz, Object value) {
 		Field field = getFieldFromAnyParent(clazz, fieldName);
 
+		if (isCollection(value)) {
+			return getActualListFieldValue(fieldName, clazz, (Collection<?>) value);
+		}
+
 		if (isKey(field)) {
-			if (value instanceof Key) {
-				return value;
-			}
-
-			Long id;
-			if (value instanceof Long) {
-				id = (Long) value;
-			} else {
-				id = Long.parseLong(value.toString());
-			}
-
-			return createKey(id, clazz);
+			return getActualKeyFieldValue(clazz, value);
 		}
 
 		if (isEnum(value)) {
@@ -273,6 +263,36 @@ public class EntityUtils {
 		}
 
 		return value;
+	}
+
+	private static boolean isCollection(Object value) {
+		return Collection.class.isInstance(value);
+	}
+
+	private static <T> Object getActualListFieldValue(String fieldName, Class<T> clazz, Collection<?> value) {
+		Collection<?> objects = (Collection<?>) value;
+		List<Object> values = new ArrayList<Object>();
+		for (Object obj : objects) {
+			values.add(getActualFieldValue(fieldName, clazz, obj));
+		}
+		return values;
+	}
+
+	private static <T> Object getActualKeyFieldValue(Class<T> clazz, Object value) {
+		if (value instanceof Key) {
+			return value;
+		}
+
+		Long id;
+		if (value instanceof Long) {
+			id = (Long) value;
+		} else if (value instanceof IdRef) {
+			id = ((IdRef<?>) value).asLong();
+		} else {
+			id = Long.parseLong(value.toString());
+		}
+
+		return createKey(id, clazz);
 	}
 
 	public static Key createKey(Long id, Class<?> clazz) {

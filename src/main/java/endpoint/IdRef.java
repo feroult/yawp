@@ -8,7 +8,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	private Repository r;
 
-	protected IdRef(Repository r, Class<T> clazz, long id) {
+	protected IdRef(Repository r, Class<T> clazz, Long id) {
 		this.clazz = clazz;
 		this.id = id;
 		this.r = r;

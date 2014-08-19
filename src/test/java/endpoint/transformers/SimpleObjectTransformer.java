@@ -4,10 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import endpoint.SimpleObject;
-import endpoint.Target;
 
-@Target(SimpleObject.class)
-public class SimpleObjectTransformer extends Transformer {
+public class SimpleObjectTransformer extends Transformer<SimpleObject> {
 
 	public Map<String, Object> simple(SimpleObject object) {
 		Map<String, Object> map = new HashMap<String, Object>();

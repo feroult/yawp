@@ -11,8 +11,9 @@ import java.util.Set;
 import org.reflections.Reflections;
 
 import endpoint.Repository;
-import endpoint.Target;
+import endpoint.utils.ReflectionUtils;
 
+@SuppressWarnings("rawtypes")
 public class RepositoryTransformers {
 
 	private static Map<String, Method> transformers = new HashMap<String, Method>();
@@ -28,8 +29,11 @@ public class RepositoryTransformers {
 		Set<Class<? extends Transformer>> clazzes = reflections.getSubTypesOf(Transformer.class);
 
 		for (Class<? extends Transformer> transformerClazz : clazzes) {
-			Target annotation = transformerClazz.getAnnotation(Target.class);
-			Class<?> objectClazz = annotation.value();
+			Class<?> objectClazz = ReflectionUtils.getGenericParameter(transformerClazz);
+
+			if (objectClazz == null) {
+				objectClazz = Object.class;
+			}
 
 			addTransformerForObject(objectClazz, transformerClazz);
 		}

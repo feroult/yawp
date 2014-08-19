@@ -1,6 +1,8 @@
 package endpoint.hooks;
 
-public class AllTargetsHook extends Hook {
+public class AllTargetsHook extends Hook<Object> {
+
+	@Override
 	public void afterSave(Object o) {
 		if (!Product.class.isInstance(o)) {
 			return;

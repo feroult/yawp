@@ -11,11 +11,13 @@ import java.util.Set;
 import org.reflections.Reflections;
 
 import endpoint.Repository;
-import endpoint.Target;
 import endpoint.query.DatastoreQuery;
+import endpoint.utils.ReflectionUtils;
 import endpoint.utils.ThrownExceptionsUtils;
 
+@SuppressWarnings("rawtypes")
 public class RepositoryHooks {
+
 	private static Map<String, List<Class<? extends Hook>>> hooks = new HashMap<String, List<Class<? extends Hook>>>();
 
 	private static Set<String> packages = new HashSet<String>();
@@ -29,12 +31,9 @@ public class RepositoryHooks {
 		Set<Class<? extends Hook>> clazzes = reflections.getSubTypesOf(Hook.class);
 
 		for (Class<? extends Hook> hookClazz : clazzes) {
-			Class<?> objectClazz = null;
+			Class<?> objectClazz = ReflectionUtils.getGenericParameter(hookClazz);
 
-			Target annotation = hookClazz.getAnnotation(Target.class);
-			if (annotation != null) {
-				objectClazz = annotation.value();
-			} else {
+			if (objectClazz == null) {
 				objectClazz = Object.class;
 			}
 

@@ -1,5 +1,8 @@
 package endpoint;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	private Class<T> clazz;
@@ -28,6 +31,14 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	public static <TT> IdRef<TT> create(Repository r, Class<TT> clazz, Long id) {
 		return new IdRef<TT>(r, clazz, id);
+	}
+
+	public static <TT> List<IdRef<TT>> create(Repository r, Class<TT> clazz, Long... ids) {
+		List<IdRef<TT>> idRefs = new ArrayList<IdRef<TT>>();
+		for (int i = 0; i < ids.length; i++) {
+			idRefs.add(create(r, clazz, ids[i]));
+		}
+		return idRefs;
 	}
 
 	@Override

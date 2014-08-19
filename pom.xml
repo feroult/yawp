@@ -17,6 +17,7 @@
 	</properties>
 
 	<dependencies>
+		
 		<!-- Compile/runtime dependencies -->
 		<dependency>
 			<groupId>com.google.appengine</groupId>

@@ -236,11 +236,15 @@ public class DatastoreQuery<T> {
 	}
 
 	private List<T> executeQuery() {
-		PreparedQuery pq = prepareQuery();
+		PreparedQuery pq;
+		try {
+			pq = prepareQuery();
+		} catch (FalsePredicateException ex) {
+			return Collections.emptyList();
+		}
+
 		FetchOptions fetchOptions = configureFetchOptions();
-
 		QueryResultList<Entity> queryResult = pq.asQueryResultList(fetchOptions);
-
 		List<T> objects = new ArrayList<T>();
 
 		for (Entity entity : queryResult) {
@@ -304,7 +308,7 @@ public class DatastoreQuery<T> {
 		return fetchOptions;
 	}
 
-	private PreparedQuery prepareQuery() {
+	private PreparedQuery prepareQuery() throws FalsePredicateException {
 		Query q = new Query(EntityUtils.getKind(clazz));
 
 		prepareQueryAncestor(q);
@@ -326,7 +330,7 @@ public class DatastoreQuery<T> {
 		}
 	}
 
-	private void prepareQueryWhere(Query q) {
+	private void prepareQueryWhere(Query q) throws FalsePredicateException {
 		if (condition != null) {
 			q.setFilter(condition.getPredicate(clazz));
 		}

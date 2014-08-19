@@ -1,26 +1,48 @@
 package endpoint.query;
 
+import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 
-public enum LogicalOperator {
-	AND {
-		public Filter join(Class<?> clazz, Condition... conditions) {
-			return CompositeFilterOperator.and(convert(clazz, conditions));
-		}
-	}, OR {
-		public Filter join(Class<?> clazz, Condition... conditions) {
-			return CompositeFilterOperator.or(convert(clazz, conditions));
-		}		
-	};
+import java.util.ArrayList;
+import java.util.List;
 
-	public abstract Filter join(Class<?> clazz, Condition... conditions);
+public enum LogicalOperator {
+	AND, OR;
+
+	public Filter join(Class<?> clazz, Condition... conditions) throws FalsePredicateException {
+		return performJoin(this, clazz, conditions);
+	}
 	
-	public static Filter[] convert(Class<?> clazz, Condition... conditions) {
-		Filter[] filters = new Filter[conditions.length];
+	public static Filter performJoin(LogicalOperator operation, Class<?> clazz, Condition... conditions) throws FalsePredicateException {
+		List<Filter> filters = new ArrayList<>();
 		for (int i = 0; i < conditions.length; i++) {
-			filters[i] = conditions[i].getPredicate(clazz);
+			try {
+				filters.add(conditions[i].getPredicate(clazz));
+			} catch (FalsePredicateException ex) {
+				if (operation == AND) {
+					throw ex;
+				}
+			}
 		}
-		return filters;
+
+		if (filters.isEmpty()) {
+			throw new FalsePredicateException();
+		}
+
+		if (filters.size() == 1) {
+			return filters.get(0);
+		}
+
+		Filter[] filtersArray = filters.toArray(new Filter[filters.size()]);
+
+		if (operation == AND) {
+			return CompositeFilterOperator.and(filtersArray);
+		}
+		if (operation == OR) {
+			return CompositeFilterOperator.or(filtersArray);
+		}
+
+		return null;
 	}
 }

@@ -7,6 +7,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.lang.reflect.*;
 import java.util.*;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -399,6 +404,29 @@ public class EntityUtils {
 		}
 
 		field.set(object, value);
+	}
+
+	public static int listSize(Object value) {
+		if (value.getClass().isArray()) {
+			return Array.getLength(value);
+		}
+		if (Collection.class.isAssignableFrom(value.getClass())) {
+			return Collection.class.cast(value).size();
+		}
+		if (Iterable.class.isAssignableFrom(value.getClass())) {
+			return iterableSize(value);
+		}
+		throw new RuntimeException("Value used with operator 'in' is not an array or list.");
+	}
+
+	private static int iterableSize(Object value) {
+		Iterator<?> it = Iterable.class.cast(value).iterator();
+		int i = 0;
+		while (it.hasNext()) {
+			it.next();
+			i++;
+		}
+		return i;
 	}
 
 	private static <T> void setIdRefProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {

@@ -1,7 +1,6 @@
 package endpoint.query;
 
 import com.google.appengine.api.datastore.Query.SortDirection;
-
 import endpoint.utils.EntityUtils;
 
 public class DatastoreQueryOrder {
@@ -58,13 +57,22 @@ public class DatastoreQueryOrder {
 		return direction.equalsIgnoreCase("desc");
 	}
 
-	@SuppressWarnings("rawtypes")
 	int compare(Object o1, Object o2) {
 		Comparable value1 = getComparable(o1);
 		Comparable value2 = getComparable(o2);
 
-		@SuppressWarnings("unchecked")
+		if (value1 == null) {
+			if (value2 == null) {
+				return 0;
+			} else {
+				return isAsc() ? -1 : 1;
+			}
+		} else if (value2 == null) {
+			return isAsc() ? 1 : -1;
+		}
+
 		int compare = value1.compareTo(value2);
+
 		if (isDesc()) {
 			compare *= -1;
 		}

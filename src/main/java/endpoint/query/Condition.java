@@ -4,11 +4,12 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 
+import com.google.apphosting.api.DatastorePb;
 import endpoint.utils.EntityUtils;
 
 public abstract class Condition {
 
-	public abstract Filter getPredicate(Class<?> clazz);
+	public abstract Filter getPredicate(Class<?> clazz) throws FalsePredicateException;
 
 	protected static class SimpleCondition extends Condition {
 		private String field;
@@ -22,9 +23,14 @@ public abstract class Condition {
 		}
 
 		@Override
-		public Filter getPredicate(Class<?> clazz) {
+		public Filter getPredicate(Class<?> clazz) throws FalsePredicateException {
 			String actualFieldName = EntityUtils.getActualFieldName(field, clazz);
 			Object actualValue = EntityUtils.getActualFieldValue(field, clazz, value);
+
+			if (operator == FilterOperator.IN && EntityUtils.listSize(value) == 0) {
+				throw new FalsePredicateException();
+			}
+
 			return new FilterPredicate(actualFieldName, operator, actualValue);
 		}
 
@@ -51,7 +57,7 @@ public abstract class Condition {
 		}
 
 		@Override
-		public Filter getPredicate(Class<?> clazz) {
+		public Filter getPredicate(Class<?> clazz) throws FalsePredicateException {
 			return operator.join(clazz, conditions);
 		}
 

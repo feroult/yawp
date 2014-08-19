@@ -12,13 +12,14 @@ import org.reflections.Reflections;
 import endpoint.HttpException;
 import endpoint.IdRef;
 import endpoint.Repository;
-import endpoint.Target;
 import endpoint.response.HttpResponse;
 import endpoint.response.JsonResponse;
 import endpoint.utils.EntityUtils;
 import endpoint.utils.JsonUtils;
+import endpoint.utils.ReflectionUtils;
 import endpoint.utils.ThrownExceptionsUtils;
 
+@SuppressWarnings("rawtypes")
 public class RepositoryActions {
 
 	private static Map<String, Method> actions = new HashMap<String, Method>();
@@ -45,11 +46,11 @@ public class RepositoryActions {
 		Set<Class<? extends Action>> clazzes = reflections.getSubTypesOf(Action.class);
 
 		for (Class<? extends Action> actionClazz : clazzes) {
-			if (!actionClazz.isAnnotationPresent(Target.class)) {
+			Class<?> objectClazz = ReflectionUtils.getGenericParameter(actionClazz);
+
+			if (objectClazz == null) {
 				continue;
 			}
-			Target annotation = actionClazz.getAnnotation(Target.class);
-			Class<?> objectClazz = annotation.value();
 
 			addActionForObject(objectClazz, actionClazz);
 		}

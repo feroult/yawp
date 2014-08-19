@@ -3,10 +3,8 @@ package endpoint.actions;
 import endpoint.ChildWithIdRef;
 import endpoint.IdRef;
 import endpoint.ObjectWithIdRef;
-import endpoint.Target;
 
-@Target(ChildWithIdRef.class)
-public class ChildWithIdRefAction extends Action {
+public class ChildWithIdRefAction extends Action<ChildWithIdRef> {
 
 	@PUT("lower")
 	public void lower(IdRef<ObjectWithIdRef> id) {

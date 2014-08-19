@@ -2,11 +2,8 @@ package endpoint.actions;
 
 import endpoint.IdRef;
 import endpoint.ObjectWithIdRef;
-import endpoint.Target;
 
-@Target(ObjectWithIdRef.class)
-public class ObjectWithIdRefAction extends Action {
-
+public class ObjectWithIdRefAction extends Action<ObjectWithIdRef> {
 
 	@PUT("upper")
 	public void upper(IdRef<ObjectWithIdRef> id) {

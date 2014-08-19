@@ -32,7 +32,7 @@ public class RepositoryTransformers {
 			Class<?> objectClazz = ReflectionUtils.getGenericParameter(transformerClazz);
 
 			if (objectClazz == null) {
-				objectClazz = Object.class;
+				continue;
 			}
 
 			addTransformerForObject(objectClazz, transformerClazz);

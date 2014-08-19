@@ -3,12 +3,10 @@ package endpoint.actions;
 import java.util.Map;
 
 import endpoint.SimpleObject;
-import endpoint.Target;
 import endpoint.response.JsonResponse;
 import endpoint.utils.JsonUtils;
 
-@Target(SimpleObject.class)
-public class SimpleObjectAction extends Action {
+public class SimpleObjectAction extends Action<SimpleObject> {
 
 	@PUT("active")
 	public JsonResponse activate(Long id) {

@@ -51,19 +51,30 @@ public class Repository {
 		return namespace.getNs();
 	}
 
-	public void save(Object object) {
+	public void saveWithHooks(Object object) {
 		namespace.set(object.getClass());
 		try {
 			RepositoryHooks.beforeSave(this, object);
-
-			Entity entity = createEntity(object);
-			EntityUtils.toEntity(object, entity);
-			saveEntity(object, entity, null);
-
+			saveInternal(object);
 			RepositoryHooks.afterSave(this, object);
 		} finally {
 			namespace.reset();
 		}
+	}
+
+	public void save(Object object) {
+		namespace.set(object.getClass());
+		try {
+			saveInternal(object);
+		} finally {
+			namespace.reset();
+		}
+	}
+
+	private void saveInternal(Object object) {
+		Entity entity = createEntity(object);
+		EntityUtils.toEntity(object, entity);
+		saveEntity(object, entity, null);
 	}
 
 	public HttpResponse action(Class<?> clazz, String method, String action, Long id, Map<String, String> params) {

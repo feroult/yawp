@@ -1,11 +1,10 @@
 package endpoint.query;
 
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
-import com.google.appengine.api.datastore.Query.Filter;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
 
 public enum LogicalOperator {
 	AND, OR;
@@ -13,7 +12,7 @@ public enum LogicalOperator {
 	public Filter join(Class<?> clazz, Condition... conditions) throws FalsePredicateException {
 		return performJoin(this, clazz, conditions);
 	}
-	
+
 	public static Filter performJoin(LogicalOperator operation, Class<?> clazz, Condition... conditions) throws FalsePredicateException {
 		List<Filter> filters = new ArrayList<>();
 		for (int i = 0; i < conditions.length; i++) {

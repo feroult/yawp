@@ -4,7 +4,6 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 
-import com.google.apphosting.api.DatastorePb;
 import endpoint.utils.EntityUtils;
 
 public abstract class Condition {

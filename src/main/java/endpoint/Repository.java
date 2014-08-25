@@ -118,19 +118,18 @@ public class Repository {
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 		Key key = datastoreService.put(entity);
 		EntityUtils.setKey(this, object, key);
+		EntityUtils.setParentOnIdRef(object);
 	}
 
 	private Entity createEntity(Object object) {
-		Entity entity = null;
-
+		Key parentKey = EntityUtils.getParentKey(object);
 		Key currentKey = EntityUtils.getKey(object);
-
+		
 		if (currentKey == null) {
-			entity = new Entity(EntityUtils.getKind(object.getClass()));
-		} else {
-			Key key = KeyFactory.createKey(currentKey.getKind(), currentKey.getId());
-			entity = new Entity(key);
+			return new Entity(EntityUtils.getKind(object.getClass()), parentKey);
 		}
-		return entity;
+
+		Key key = KeyFactory.createKey(parentKey, currentKey.getKind(), currentKey.getId());
+		return new Entity(key);
 	}
 }

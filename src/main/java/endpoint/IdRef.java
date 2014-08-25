@@ -10,23 +10,37 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	private Long id;
 
 	private Repository r;
+	
+	private IdRef<?> parentId;
 
 	protected IdRef(Repository r, Class<T> clazz, Long id) {
 		this.clazz = clazz;
 		this.id = id;
 		this.r = r;
 	}
+	
+	public void setParentId(IdRef<?> parentId) {
+		this.parentId = parentId;
+	}
 
 	public T fetch() {
-		return r.query(clazz).id(id);
+		return fetch(clazz);
 	}
 
 	public <TT> TT fetch(Class<TT> childClazz) {
-		return r.query(childClazz).id(id);
+		return r.query(childClazz).from(parentId).id(this);
 	}
 
 	public Long asLong() {
 		return id;
+	}
+	
+	public Class<T> getClazz() {
+		return clazz;
+	}
+
+	public IdRef<?> getParentId() {
+		return parentId;
 	}
 
 	public static <TT> IdRef<TT> create(Repository r, Class<TT> clazz, Long id) {
@@ -50,7 +64,6 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return result;
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -59,17 +72,21 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		IdRef other = (IdRef) obj;
+		IdRef<?> other = (IdRef<?>) obj;
 		if (clazz == null) {
-			if (other.clazz != null)
+			if (other.clazz != null) {
 				return false;
-		} else if (!clazz.equals(other.clazz))
+			}
+		} else if (!clazz.equals(other.clazz)) {
 			return false;
+		}
 		if (id == null) {
-			if (other.id != null)
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!id.equals(other.id)) {
 			return false;
+		}
 		return true;
 	}
 

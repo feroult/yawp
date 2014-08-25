@@ -17,6 +17,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.QueryResultList;
 
+import endpoint.IdRef;
 import endpoint.Repository;
 import endpoint.query.BaseCondition.SimpleCondition;
 import endpoint.utils.EntityUtils;
@@ -38,6 +39,8 @@ public class DatastoreQuery<T> {
 	private Integer limit;
 
 	private String cursor;
+
+	private IdRef<?> parentIdRef;
 
 	public static <T> DatastoreQuery<T> q(Class<T> clazz, Repository r) {
 		return new DatastoreQuery<T>(clazz, r);
@@ -82,6 +85,14 @@ public class DatastoreQuery<T> {
 			condition = Condition.and(condition, c);
 		}
 		return this;
+	}
+	
+	public DatastoreQuery<T> from(IdRef<?> parentId) {
+		if (parentId == null) {
+			return parent(null);
+		}
+		this.parentIdRef = parentId;
+		return parent(parentId.asLong(), parentId.getClazz());
 	}
 
 	public DatastoreQuery<T> parent(Long parentId, Class<?> parentClazz) {
@@ -248,7 +259,7 @@ public class DatastoreQuery<T> {
 		List<T> objects = new ArrayList<T>();
 
 		for (Entity entity : queryResult) {
-			T object = EntityUtils.toObject(r, entity, clazz);
+			T object = EntityUtils.toObject(r, entity, clazz, parentIdRef);
 			objects.add(object);
 		}
 
@@ -261,9 +272,10 @@ public class DatastoreQuery<T> {
 	private T executeQueryById() {
 		try {
 			SimpleCondition c = (SimpleCondition) condition;
-			Key key = EntityUtils.createKey((Long) c.getValue(), clazz);
+			Long id = (Long) c.getValue();
+			Key key = EntityUtils.createKey(parentKey, id, clazz);
 			Entity entity = DatastoreServiceFactory.getDatastoreService().get(key);
-			return EntityUtils.toObject(r, entity, clazz);
+			return EntityUtils.toObject(r, entity, clazz, parentIdRef);
 		} catch (EntityNotFoundException e) {
 			return null;
 		}
@@ -347,12 +359,21 @@ public class DatastoreQuery<T> {
 		return clazz;
 	}
 
+	@Deprecated
 	public DatastoreQuery<T> whereById(String operator, Long id) {
 		return where(EntityUtils.getIdFieldName(clazz), operator, id);
 	}
 
+	public DatastoreQuery<T> whereById(String operator, IdRef<?> id) {
+		return where(EntityUtils.getIdFieldName(clazz), operator, id);
+	}
+
+	@Deprecated
 	public T id(Long id) {
 		return whereById("=", id).only();
 	}
 
+	public T id(IdRef<?> id) {
+		return whereById("=", id).only();
+	}
 }

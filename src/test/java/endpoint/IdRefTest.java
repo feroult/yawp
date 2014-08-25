@@ -36,7 +36,7 @@ public class IdRefTest extends EndpointTestCase {
 	public void testQuery() {
 		ObjectWithIdRef object = saveObjectWithRelation();
 
-		object = r.query(ObjectWithIdRef.class).where("id", "=", object.getId().asLong()).only();
+		object = r.query(ObjectWithIdRef.class).where("id", "=", object.getId()).only();
 		assertEquals("xpto", object.getText());
 
 		object = r.query(ObjectWithIdRef.class).where("anotherSimpleObjectId", "=", object.getAnotherSimpleObjectId().asLong()).only();

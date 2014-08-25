@@ -18,7 +18,7 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.QueryResultList;
 
 import endpoint.Repository;
-import endpoint.query.Condition.SimpleCondition;
+import endpoint.query.BaseCondition.SimpleCondition;
 import endpoint.utils.EntityUtils;
 
 public class DatastoreQuery<T> {
@@ -29,7 +29,7 @@ public class DatastoreQuery<T> {
 
 	private Key parentKey;
 
-	private Condition condition;
+	private BaseCondition condition;
 
 	private List<DatastoreQueryOrder> preOrders = new ArrayList<DatastoreQueryOrder>();
 
@@ -75,7 +75,7 @@ public class DatastoreQuery<T> {
 		return where(Condition.c(field, operator, value));
 	}
 
-	public DatastoreQuery<T> where(Condition c) {
+	public DatastoreQuery<T> where(BaseCondition c) {
 		if (condition == null) {
 			condition = c;
 		} else {

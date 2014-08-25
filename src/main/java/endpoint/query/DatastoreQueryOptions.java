@@ -13,7 +13,7 @@ public class DatastoreQueryOptions {
 
 	private Object[] where;
 
-	private Condition condition;
+	private BaseCondition condition;
 
 	private List<DatastoreQueryOrder> preOrders;
 
@@ -103,14 +103,14 @@ public class DatastoreQueryOptions {
 		throw new RuntimeException("Invalid json value: " + jsonPrimitive.getAsString());
 	}
 
-	private Condition parseCondition(JsonElement json) {
+	private BaseCondition parseCondition(JsonElement json) {
 		if (json == null || json.isJsonArray()) {
 			return null;
 		}
 		return parseConditionObject(json.getAsJsonObject());
 	}
 
-	private Condition parseConditionObject(JsonObject json) {
+	private BaseCondition parseConditionObject(JsonObject json) {
 		if (json.has("c")) {
 			return parseJoinedCondition(json);
 		}
@@ -118,26 +118,26 @@ public class DatastoreQueryOptions {
 		return parseSimpleCondition(json);
 	}
 
-	private Condition parseJoinedCondition(JsonObject json) {
+	private BaseCondition parseJoinedCondition(JsonObject json) {
 		String op = json.get("op").getAsString();
 
-		List<Condition> conditions = new ArrayList<Condition>();
+		List<BaseCondition> conditions = new ArrayList<BaseCondition>();
 		
 		for (JsonElement jsonElement : json.getAsJsonArray("c")) {			
 			conditions.add(parseConditionObject(jsonElement.getAsJsonObject()));
 		}
 
 		if(op.equalsIgnoreCase("and")) {
-			return Condition.and(conditions.toArray(new Condition[] {}));
+			return Condition.and(conditions.toArray(new BaseCondition[] {}));
 		}
 		if(op.equalsIgnoreCase("or")) {
-			return Condition.or(conditions.toArray(new Condition[] {}));
+			return Condition.or(conditions.toArray(new BaseCondition[] {}));
 		}
 
 		throw new RuntimeException("Invalid joined condition operator");
 	}
 
-	private Condition parseSimpleCondition(JsonObject json) {
+	private BaseCondition parseSimpleCondition(JsonObject json) {
 		String field = json.get("p").getAsString();
 		String op = json.get("op").getAsString();
 		Object value = getJsonObjectValue(json.get("v"));
@@ -148,7 +148,7 @@ public class DatastoreQueryOptions {
 		return this.where;
 	}
 
-	public Condition getCondition() {
+	public BaseCondition getCondition() {
 		return condition;
 	}
 

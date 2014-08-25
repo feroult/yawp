@@ -33,7 +33,7 @@ public class DatastoreQueryTransformer<T> {
 		return this;
 	}
 
-	public DatastoreQueryTransformer<T> where(Condition c) {
+	public DatastoreQueryTransformer<T> where(BaseCondition c) {
 		query.where(c);
 		return this;
 	}

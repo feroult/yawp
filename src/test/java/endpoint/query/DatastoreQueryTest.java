@@ -258,8 +258,8 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testWhereInEmptyListWithinOrWithTrue() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object4"));
-		Condition falseCondition = Condition.c("aLong", "in", Collections.emptyList());
-		Condition condition = Condition.or(falseCondition, c("aLong", "=", 1l));
+		BaseCondition falseCondition = Condition.c("aLong", "in", Collections.emptyList());
+		BaseCondition condition = Condition.or(falseCondition, c("aLong", "=", 1l));
 
 		List<SimpleObject> objects = r.query(SimpleObject.class).where(condition).list();
 		assertEquals(3, objects.size());
@@ -269,8 +269,8 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testWhereInEmptyListWithinOrWithFalse() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object4"));
-		Condition falseCondition = Condition.c("aLong", "in", Collections.emptyList());
-		Condition condition = Condition.or(falseCondition, falseCondition);
+		BaseCondition falseCondition = Condition.c("aLong", "in", Collections.emptyList());
+		BaseCondition condition = Condition.or(falseCondition, falseCondition);
 
 		List<SimpleObject> objects = r.query(SimpleObject.class).where(condition).list();
 		assertEquals(0, objects.size());
@@ -280,8 +280,8 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testWhereInEmptyListWithinAndWithTrue() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object4"));
-		Condition falseCondition = Condition.c("aLong", "in", Collections.emptyList());
-		Condition condition = Condition.and(falseCondition, c("aLong", "=", 1l));
+		BaseCondition falseCondition = Condition.c("aLong", "in", Collections.emptyList());
+		BaseCondition condition = Condition.and(falseCondition, c("aLong", "=", 1l));
 
 		List<SimpleObject> objects = r.query(SimpleObject.class).where(condition).list();
 		assertEquals(0, objects.size());
@@ -291,8 +291,8 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testWhereInEmptyListWithinAndWithFalse() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object4"));
-		Condition falseCondition = Condition.c("aLong", "in", Collections.emptyList());
-		Condition condition = Condition.and(falseCondition, falseCondition);
+		BaseCondition falseCondition = Condition.c("aLong", "in", Collections.emptyList());
+		BaseCondition condition = Condition.and(falseCondition, falseCondition);
 
 		List<SimpleObject> objects = r.query(SimpleObject.class).where(condition).list();
 		assertEquals(0, objects.size());
@@ -302,8 +302,8 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testWhereInEmptyListWithinAndAndOr() {
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object4"));
-		Condition falseCondition = Condition.c("aLong", "in", Collections.emptyList());
-		Condition condition = Condition.or(falseCondition, Condition.and(c("aLong", "=", 1l), falseCondition));
+		BaseCondition falseCondition = Condition.c("aLong", "in", Collections.emptyList());
+		BaseCondition condition = Condition.or(falseCondition, Condition.and(c("aLong", "=", 1l), falseCondition));
 
 		List<SimpleObject> objects = r.query(SimpleObject.class).where(condition).list();
 		assertEquals(0, objects.size());

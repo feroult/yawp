@@ -8,8 +8,8 @@ import org.junit.Test;
 
 import com.google.appengine.api.datastore.Query.FilterOperator;
 
-import endpoint.query.Condition.JoinedCondition;
-import endpoint.query.Condition.SimpleCondition;
+import endpoint.query.BaseCondition.JoinedCondition;
+import endpoint.query.BaseCondition.SimpleCondition;
 
 public class DatastoreQueryOptionsTest {
 
@@ -69,7 +69,7 @@ public class DatastoreQueryOptionsTest {
 		assertSimpleCondition(condition2.getConditions()[1], "aDouble", FilterOperator.EQUAL, 4.3);
 	}
 	
-	private JoinedCondition assertJoinedCondition(Condition c, LogicalOperator operator, int length) {
+	private JoinedCondition assertJoinedCondition(BaseCondition c, LogicalOperator operator, int length) {
 		assertEquals(JoinedCondition.class, c.getClass());
 		JoinedCondition condition = (JoinedCondition) c;
 		assertEquals(operator, condition.getOperator());
@@ -77,7 +77,7 @@ public class DatastoreQueryOptionsTest {
 		return condition;
 	}
 
-	private void assertSimpleCondition(Condition c, String p, FilterOperator op, Object value) {
+	private void assertSimpleCondition(BaseCondition c, String p, FilterOperator op, Object value) {
 		assertEquals(SimpleCondition.class, c.getClass());
 		SimpleCondition condition = (SimpleCondition) c;
 		assertEquals(p, condition.getField());

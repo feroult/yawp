@@ -2,19 +2,20 @@ package endpoint.utils;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.lang.reflect.*;
-import java.util.*;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.appengine.api.datastore.Entity;
@@ -26,6 +27,7 @@ import endpoint.Id;
 import endpoint.IdRef;
 import endpoint.Index;
 import endpoint.Json;
+import endpoint.Parent;
 import endpoint.Repository;
 
 // TODO make it not static and repository aware
@@ -38,15 +40,10 @@ public class EntityUtils {
 	}
 
 	public static void toEntity(Object object, Entity entity) {
-		Field[] fields = getFields(object.getClass());
+		List<Field> fields = ReflectionUtils.getFieldsRecursively(object.getClass());
 
-		for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
-			if (isControl(field)) {
-				continue;
-			}
-
-			if (isSaveAsList(field)) {
+		for (Field field : fields) {
+			if (isControl(field) || isSaveAsList(field)) {
 				continue;
 			}
 
@@ -54,31 +51,74 @@ public class EntityUtils {
 		}
 	}
 
-	public static <T> T toObject(Repository r, Entity entity, Class<T> clazz) {
+	public static void setParentOnIdRef(Object object) {
+		Field parentIdField = getAnnotatedParentFromClass(object.getClass());
+		if (parentIdField != null) {
+			Field idField = getIdField(object.getClass());
+			try {
+				IdRef<?> idRef = (IdRef<?>) idField.get(object);
+				IdRef<?> parentId = (IdRef<?>) parentIdField.get(object);
+				idRef.setParentId(parentId);
+			} catch (ClassCastException e) {
+				throw new RuntimeException("The @Parent annotated field must be of type IdRef.", e);
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new RuntimeException("Unexpected exception", e);
+			}
+		}
+	}
+
+	public static IdRef<?> getParentIdRef(Object object) {
+		Field parentField = EntityUtils.getAnnotatedParentFromClass(object.getClass());
+		if (parentField != null) {
+			try {
+				return (IdRef<?>) parentField.get(object); 
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new RuntimeException("Unexpected error.", e);
+			}
+		}
+		return null;
+	}
+	
+	public static Key getParentKey(Object object) {
+		IdRef<?> parentId = getParentIdRef(object);
+		if (parentId != null) {
+			String kind = EntityUtils.getKind(parentId.getClazz());
+			return KeyFactory.createKey(kind, parentId.asLong());
+		}
+		return null;
+	}
+
+	public static <T> T toObject(Repository r, Entity entity, Class<T> clazz, IdRef<?> parentId) {
 		try {
-			T object = clazz.newInstance();
-
+			Constructor<T> defaultConstructor = clazz.getDeclaredConstructor(new Class<?>[]{});
+			defaultConstructor.setAccessible(true);
+			T object = defaultConstructor.newInstance();
 			setKey(r, object, entity.getKey());
+			List<Field> fields = ReflectionUtils.getFieldsRecursively(clazz);
 
-			Field[] fields = getFields(clazz);
-
-			for (int i = 0; i < fields.length; i++) {
-				Field field = fields[i];
-				if (isControl(field)) {
+			for (Field field : fields) {
+				field.setAccessible(true);
+				if (isControl(field) || isSaveAsList(field)) {
 					continue;
 				}
 
-				if (isSaveAsList(field)) {
-					continue;
+				if (field.getAnnotation(Parent.class) != null) {
+					field.set(object, parentId);
+				} else {
+					setObjectProperty(r, object, entity, field);
 				}
-
-				setObjectProperty(r, object, entity, field);
 			}
 
+			setParentOnIdRef(object);
 			return object;
-
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		} catch (InvocationTargetException e) {
+			throw new RuntimeException("An exception was thrown when calling the default constructor of the class " + clazz.getSimpleName() + ": ", e);
+		} catch (NoSuchMethodException e) {
+			throw new RuntimeException("The class " + clazz.getSimpleName() + " must have a default constructor and cannot be an non-static inner class.", e);
+		} catch (InstantiationException e) {
+			throw new RuntimeException("The class " + clazz.getSimpleName() + " must cannot be abstract.", e);
+		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
+			throw new RuntimeException("Unexpected error: ", e);
 		}
 	}
 
@@ -92,7 +132,6 @@ public class EntityUtils {
 			} else {
 				field.set(object, IdRef.create(r, getIdFieldRefClazz(object.getClass()), key.getId()));
 			}
-
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
@@ -148,12 +187,26 @@ public class EntityUtils {
 	}
 
 	private static Field getAnnotatedIdFromClass(Class<?> clazz) {
+		return getFieldWithAnnotation(clazz, Id.class);
+	}
+
+	public static Field getAnnotatedParentFromClass(Class<?> clazz) {
+		return getFieldWithAnnotation(clazz, Parent.class);
+	}
+
+	private static Field getFieldWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+		Field theField = null;
 		for (Field field : ReflectionUtils.getFieldsRecursively(clazz)) {
-			if (field.isAnnotationPresent(Id.class)) {
-				return field;
+			if (field.isAnnotationPresent(annotationClass)) {
+				if (theField != null) {
+					throw new RuntimeException("You can have at most one field annotated with the " + annotationClass.getSimpleName() + " class."); 
+				}
+				theField = field;
+				theField.setAccessible(true);
 			}
 		}
-		return null;
+
+		return theField;
 	}
 
 	private static Field getKeyFieldFromClass(Class<?> clazz) {
@@ -167,23 +220,6 @@ public class EntityUtils {
 
 	public static Long getId(Object object) {
 		return getKey(object).getId();
-	}
-
-	public static <T> Field[] getFields(Class<T> clazz) {
-		Field[] allFields = ArrayUtils.addAll(Object.class.getDeclaredFields(), clazz.getDeclaredFields());
-
-		List<Field> fields = new ArrayList<Field>();
-
-		for (int i = 0; i < allFields.length; i++) {
-			Field field = allFields[i];
-			if (Modifier.isStatic(field.getModifiers())) {
-				continue;
-			}
-
-			fields.add(field);
-		}
-
-		return fields.toArray(new Field[fields.size()]);
 	}
 
 	public static Class<?> getListType(Field field) {
@@ -276,16 +312,16 @@ public class EntityUtils {
 
 	private static <T> Object getActualListFieldValue(String fieldName, Class<T> clazz, Collection<?> value) {
 		Collection<?> objects = (Collection<?>) value;
-		List<Object> values = new ArrayList<Object>();
+		List<Object> values = new ArrayList<>();
 		for (Object obj : objects) {
 			values.add(getActualFieldValue(fieldName, clazz, obj));
 		}
 		return values;
 	}
 
-	private static <T> Object getActualKeyFieldValue(Class<T> clazz, Object value) {
+	private static <T> Key getActualKeyFieldValue(Class<T> clazz, Object value) {
 		if (value instanceof Key) {
-			return value;
+			return (Key) value;
 		}
 
 		Long id;
@@ -302,6 +338,10 @@ public class EntityUtils {
 
 	public static Key createKey(Long id, Class<?> clazz) {
 		return KeyFactory.createKey(getKind(clazz), id);
+	}
+
+	public static Key createKey(Key parentKey, Long id, Class<?> clazz) {
+		return KeyFactory.createKey(parentKey, getKind(clazz), id);
 	}
 
 	private static void setEntityProperty(Object object, Entity entity, Field field) {
@@ -374,8 +414,6 @@ public class EntityUtils {
 	}
 
 	private static <T> void setObjectProperty(Repository r, T object, Entity entity, Field field) throws IllegalAccessException {
-		field.setAccessible(true);
-
 		Object value = entity.getProperty(field.getName());
 
 		if (value == null) {
@@ -465,7 +503,7 @@ public class EntityUtils {
 	}
 
 	private static boolean isControl(Field field) {
-		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class) || field.isSynthetic();
+		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class);
 	}
 
 	private static boolean isIdRef(Field field) {

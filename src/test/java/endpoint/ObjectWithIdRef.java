@@ -7,6 +7,7 @@ public class ObjectWithIdRef {
 	@Id
 	private IdRef<ObjectWithIdRef> id;
 
+	@Parent
 	@Index
 	private IdRef<AnotherSimpleObject> anotherSimpleObjectId;
 

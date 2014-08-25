@@ -11,13 +11,13 @@
 
 	<properties>
 		<appengine.app.version>1</appengine.app.version>
-		<appengine.target.version>1.8.9</appengine.target.version>
+		<appengine.target.version>1.9.9</appengine.target.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<internal.repo.path>file:///home/fernando/dev/mvn-repo/</internal.repo.path>
 	</properties>
 
 	<dependencies>
-		
+
 		<!-- Compile/runtime dependencies -->
 		<dependency>
 			<groupId>com.google.appengine</groupId>

@@ -1,5 +1,8 @@
 package endpoint;
 
+import endpoint.annotations.Id;
+import endpoint.annotations.Parent;
+
 
 public class GrandChildObjectWithIdRef {
 

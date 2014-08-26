@@ -1,61 +1,14 @@
 package endpoint.hooks;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.reflections.Reflections;
 
 import endpoint.Repository;
 import endpoint.query.DatastoreQuery;
-import endpoint.utils.ReflectionUtils;
+import endpoint.utils.EntityUtils;
 import endpoint.utils.ThrownExceptionsUtils;
 
-@SuppressWarnings("rawtypes")
 public class RepositoryHooks {
-
-	private static Map<String, List<Class<? extends Hook>>> hooks = new HashMap<String, List<Class<? extends Hook>>>();
-
-	private static Set<String> packages = new HashSet<String>();
-
-	public static void scan(String packagePrefix) {
-		if (packages.contains(packagePrefix)) {
-			return;
-		}
-
-		Reflections reflections = new Reflections(packagePrefix);
-		Set<Class<? extends Hook>> clazzes = reflections.getSubTypesOf(Hook.class);
-
-		for (Class<? extends Hook> hookClazz : clazzes) {
-			Class<?> objectClazz = ReflectionUtils.getGenericParameter(hookClazz);
-
-			if (objectClazz == null) {
-				objectClazz = Object.class;
-			}
-
-			addHookForObject(objectClazz, hookClazz);
-		}
-
-		packages.add(packagePrefix);
-	}
-
-	private static void addHookForObject(Class<?> objectClazz, Class<? extends Hook> clazz) {
-		List<Class<? extends Hook>> objectHooks = null;
-
-		String objectName = objectClazz.getSimpleName();
-		if (hooks.containsKey(objectName)) {
-			objectHooks = hooks.get(objectName);
-		} else {
-			objectHooks = new ArrayList<Class<? extends Hook>>();
-			hooks.put(objectName, objectHooks);
-		}
-
-		objectHooks.add(clazz);
-	}
 
 	public static void beforeSave(Repository r, Object object) {
 		invokeHooks(r, object.getClass(), object, "beforeSave");
@@ -70,50 +23,34 @@ public class RepositoryHooks {
 	}
 
 	private static void invokeHooks(Repository r, Class<?> targetClazz, Object object, String methodName) {
-		List<Class<? extends Hook>> objectHooks = new ArrayList<Class<? extends Hook>>();
-		if (hooks.containsKey(targetClazz.getSimpleName())) {
-			objectHooks.addAll(hooks.get(targetClazz.getSimpleName()));
-		}
-
-		if (hooks.containsKey(Object.class.getSimpleName())) {
-			objectHooks.addAll(hooks.get(Object.class.getSimpleName()));
-		}
-
-		for (Class<? extends Hook> hookClazz : objectHooks) {
+		for (Class<? extends Hook<?>> hookClazz : r.getEndpointFeatures(EntityUtils.getEndpointName(targetClazz)).getHooks()) {
 			invokeHookMethod(r, object, methodName, hookClazz);
 		}
 	}
 
-	private static void invokeHookMethod(Repository r, Object object, String methodName, Class<? extends Hook> hookClazz) {
+	private static void invokeHookMethod(Repository r, Object object, String methodName, Class<? extends Hook<?>> hookClazz) {
 		try {
-			Hook hook = hookClazz.newInstance();
+			Hook<?> hook = hookClazz.newInstance();
 			hook.setRepository(r);
 
-			Method method = null;
-
-			method = getMethod(hook, methodName, Object.class);
-
-			if (method == null) {
-				method = getMethod(hook, methodName, object.getClass());
-			}
-
-			if (method == null) {
-				return;
-			}
-
-			method.invoke(hook, object);
-		} catch (Exception e) {
-			throw ThrownExceptionsUtils.handle(e);
+			Method hookMethod = getMethod(hook, methodName, object.getClass());
+			hookMethod.invoke(hook, object);
+		} catch (InstantiationException ex) {
+			throw new RuntimeException("The Hook class " + hookClazz.getSimpleName() + " must have a default constructor, and it must not throw exceptions.", ex);
+		} catch (InvocationTargetException ex) {
+			throw new RuntimeException("An exception has occured when running the " + methodName + " hook for class " + hookClazz.getSimpleName(), ex);
+		} catch (IllegalAccessException | IllegalArgumentException ex) {
+			throw ThrownExceptionsUtils.handle(ex);
 		}
 	}
 
 	private static Method getMethod(Object hook, String methodName, Class<?>... clazz) {
 		try {
-			return hook.getClass().getMethod(methodName, clazz);
+			Method method = hook.getClass().getDeclaredMethod(methodName, clazz);
+			method.setAccessible(true);
+			return method;
 		} catch (NoSuchMethodException e) {
 			return null;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
 		}
 	}
 }

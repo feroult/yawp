@@ -1,7 +1,6 @@
 package endpoint;
 
 import java.util.Map;
-import java.util.logging.Logger;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -17,9 +16,7 @@ import endpoint.utils.EntityUtils;
 
 public class Repository {
 
-	@SuppressWarnings("unused")
-	private static Logger logger = Logger.getLogger(Repository.class.getSimpleName());
-
+	private RepositoryFeatures repositoryFeatures;
 	private Namespace namespace;
 
 	public static Repository r() {
@@ -50,6 +47,11 @@ public class Repository {
 	public String currentNamespace() {
 		return namespace.getNs();
 	}
+	
+	public Repository setRepositoryFeatures(RepositoryFeatures repositoryFeatures) {
+		this.repositoryFeatures = repositoryFeatures;
+		return this;
+	}
 
 	public void saveWithHooks(Object object) {
 		namespace.set(object.getClass());
@@ -77,10 +79,11 @@ public class Repository {
 		saveEntity(object, entity, null);
 	}
 
-	public HttpResponse action(Class<?> clazz, String method, String action, Long id, Map<String, String> params) {
+	public HttpResponse action(Class<?> clazz, String action, Long id, Map<String, String> params) {
+		//TODO ^^
 		namespace.set(clazz);
 		try {
-			return RepositoryActions.execute(this, clazz, method, action, id, params);
+			return RepositoryActions.execute(this, clazz, action, id, params);
 		} finally {
 			namespace.reset();
 		}
@@ -131,5 +134,14 @@ public class Repository {
 
 		Key key = KeyFactory.createKey(parentKey, currentKey.getKind(), currentKey.getId());
 		return new Entity(key);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> EndpointRef<T> getEndpointFeatures(Class<T> endpoint) {
+		return (EndpointRef<T>) repositoryFeatures.getEndpoint(EntityUtils.getEndpointName(endpoint));
+	}
+
+	public EndpointRef<?> getEndpointFeatures(String endpointName) {
+		return repositoryFeatures.getEndpoint(endpointName);
 	}
 }

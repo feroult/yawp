@@ -1,12 +1,9 @@
 package endpoint;
 
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -14,37 +11,30 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.reflections.Reflections;
-
-import endpoint.actions.RepositoryActions;
-import endpoint.hooks.RepositoryHooks;
 import endpoint.query.DatastoreQuery;
 import endpoint.query.DatastoreQueryOptions;
 import endpoint.query.NoResultException;
 import endpoint.response.ErrorResponse;
 import endpoint.response.HttpResponse;
 import endpoint.response.JsonResponse;
-import endpoint.transformers.RepositoryTransformers;
+import endpoint.routing.HttpVerb;
+import endpoint.routing.Route;
 import endpoint.utils.JsonUtils;
 
 public class DatastoreServlet extends HttpServlet {
 
-	private static Logger logger = Logger.getLogger(DatastoreServlet.class.getSimpleName());
-
 	private static final long serialVersionUID = 8155293897299089610L;
 
-	private Map<String, Class<?>> endpoints = new HashMap<String, Class<?>>();
+	private RepositoryFeatures features;
 
 	private boolean enableHooks = true;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		String packagePrefix = config.getInitParameter("packagePrefix");
-		bootEndpoint(packagePrefix);
-		scanEndpoints(packagePrefix);
-
 		setWithHooks(config.getInitParameter("enableHooks"));
+		String packagePrefix = config.getInitParameter("packagePrefix");
+		scanEndpoints(packagePrefix);
 	}
 
 	private void setWithHooks(String enableHooksParameter) {
@@ -58,39 +48,23 @@ public class DatastoreServlet extends HttpServlet {
 		scanEndpoints(packagePrefix);
 	}
 
-	private void bootEndpoint(String packagePrefix) {
-		RepositoryActions.scan(packagePrefix);
-		RepositoryHooks.scan(packagePrefix);
-		RepositoryTransformers.scan(packagePrefix);
-	}
-
 	private void scanEndpoints(String packagePrefix) {
-		Reflections reflections = new Reflections(packagePrefix);
-		Set<Class<?>> clazzes = reflections.getTypesAnnotatedWith(Endpoint.class);
-
-		for (Class<?> endpoint : clazzes) {
-			Endpoint annotation = endpoint.getAnnotation(Endpoint.class);
-			endpoints.put(annotation.path(), (Class<?>) endpoint);
-		}
+		features = new EndpointLoader(packagePrefix).enableHooks(enableHooks).scan();
 	}
 
 	private void response(HttpServletResponse resp, HttpResponse httpResponse) throws IOException {
 		if (httpResponse == null) {
-			JsonResponse jsonResponse = new JsonResponse("{\"status\":\"ok\"}");
-			jsonResponse.execute(resp);
-			return;
+			new JsonResponse("{\"status\":\"ok\"}").execute(resp);
+		} else {
+			httpResponse.execute(resp);
 		}
-		httpResponse.execute(resp);
 	}
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
 		HttpResponse httpResponse;
 		try {
-
 			httpResponse = execute(req.getMethod(), getPath(req), JsonUtils.readJson(req.getReader()), makeParams(req));
-
 		} catch (HttpException e) {
 			httpResponse = new ErrorResponse(e.getHttpStatus(), e.getText());
 		} catch (DatastoreException e) {
@@ -100,17 +74,9 @@ public class DatastoreServlet extends HttpServlet {
 		response(resp, httpResponse);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	private Map<String, String> makeParams(HttpServletRequest req) {
-		Map<String, String> map = new HashMap<String, String>();
-
-		Enumeration e = req.getParameterNames();
-		while (e.hasMoreElements()) {
-			String name = (String) e.nextElement();
-			map.put(name, req.getParameter(name));
-		}
-
-		return map;
+		return req.getParameterMap();
 	}
 
 	private String getPath(HttpServletRequest req) {
@@ -118,37 +84,33 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	protected HttpResponse execute(String method, String path, String requestJson, Map<String, String> params) {
-		DatastoreRouter router = new DatastoreRouter(method, path);
-		Class<?> clazz = endpoints.get(router.getEndpointPath());
-
-		Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
-
+		HttpVerb verb = HttpVerb.getFromString(method);
+		Route route = Route.generateRouteFor(features, verb, path);
 		Repository r = getRepository(params);
 
-		switch (router.getAction()) {
+		EndpointRef<?> lastEndpoint = route.getLastEndpoint(features);
+		IdRef<?> idRef = route.getIdRef(r);
+
+		switch (route.getActionType()) {
 		case INDEX:
-			if (!endpoint.index()) {
-				throw new HttpException(403);
-			}
-			return new JsonResponse(index(r, clazz, q(params), t(params)));
+			return new JsonResponse(index(r, idRef, lastEndpoint, q(params), t(params)));
 		case SHOW:
 			try {
-				return new JsonResponse(get(r, clazz, router.getId(), t(params)));
+				return new JsonResponse(get(r, idRef, t(params)));
 			} catch (NoResultException e) {
 				throw new HttpException(404);
 			}
 		case CREATE:
-			return new JsonResponse(save(r, clazz, requestJson));
+			return new JsonResponse(save(r, idRef, lastEndpoint, requestJson));
 		case UPDATE:
-			if (!endpoint.update()) {
-				throw new HttpException(403);
-			}
-			return new JsonResponse(save(r, clazz, requestJson));
+			return new JsonResponse(save(r, idRef, lastEndpoint, requestJson));
 		case CUSTOM:
-			return action(r, clazz, router.getMethod(), router.getCustomAction(), router.getId(), params);
+			return action(r, idRef, route.getCustomAction(), params);
+		case DELETE:
+			throw new HttpException(501, "DELETE is not implemented yet");
+		default:
+			throw new IllegalArgumentException("Invalid datastore action");
 		}
-
-		throw new IllegalArgumentException("Invalid datastore action");
 	}
 
 	private String q(Map<String, String> params) {
@@ -160,41 +122,43 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	protected Repository getRepository(Map<String, String> params) {
-		return Repository.r();
+		return Repository.r().setRepositoryFeatures(features);
 	}
 
-	private HttpResponse action(Repository r, Class<?> clazz, String method, String customAction, Long id, Map<String, String> params) {
+	private HttpResponse action(Repository r, IdRef<?> idRef, Method method, Map<String, String> params) {
 		return r.action(clazz, method, customAction, id, params);
 	}
 
-	private String save(Repository r, Class<?> clazz, String json) {
-		logger.warning("JSON: " + json);
-
+	private String save(Repository r, IdRef<?> parentId, EndpointRef<?> endpoint, String json) {
 		if (JsonUtils.isJsonArray(json)) {
-			return saveFromArray(r, clazz, json);
+			return saveFromArray(r, parentId, endpoint.getClazz(), json);
 		} else {
-			return saveFromObject(r, clazz, json);
+			return saveFromObject(r, parentId, endpoint.getClazz(), json);
 		}
 	}
 
-	private String saveFromObject(Repository r, Class<?> clazz, String json) {
+	private String saveFromObject(Repository r, IdRef<?> parentId, Class<?> clazz, String json) {
 		Object object = JsonUtils.from(r, json, clazz);
-		saveInRepository(r, object);
+		saveInRepository(r, object, parentId);
 		return JsonUtils.to(object);
 	}
 
-	private String saveFromArray(Repository r, Class<?> clazz, String json) {
+	private String saveFromArray(Repository r, IdRef<?> parentId, Class<?> clazz, String json) {
 		List<?> objects = JsonUtils.fromList(r, json, clazz);
 
 		for (Object object : objects) {
-			saveInRepository(r, object);
+			saveInRepository(r, object, parentId);
 		}
 
 		return JsonUtils.to(objects);
 	}
 
-	private String index(Repository r, Class<?> clazz, String q, String t) {
-		DatastoreQuery<?> query = executeQueryInRepository(r, clazz);
+	private String index(Repository r, IdRef<?> parentId, EndpointRef<?> endpoint, String q, String t) {
+		DatastoreQuery<?> query = executeQueryInRepository(r, endpoint.getClazz());
+
+		if (parentId != null) {
+			query.from(parentId);
+		}
 
 		if (q != null) {
 			query.options(DatastoreQueryOptions.parse(q));
@@ -207,20 +171,21 @@ public class DatastoreServlet extends HttpServlet {
 		return JsonUtils.to(query.list());
 	}
 
-	private String get(Repository r, Class<?> clazz, Long id, String t) {
-		DatastoreQuery<?> query = executeQueryInRepository(r, clazz).whereById("=", id);
+	private <T> String get(Repository r, IdRef<T> idRef, String t) {
+		DatastoreQuery<T> query = executeQueryInRepository(r, idRef.getClazz()).whereById("=", idRef);
 		return JsonUtils.to(t == null ? query.only() : query.transform(t).only());
 	}
 
-	private void saveInRepository(Repository r, Object object) {
+	private void saveInRepository(Repository r, Object object, IdRef<?> parentId) {
+		// TODO set parentId on object
 		if (enableHooks) {
 			r.saveWithHooks(object);
-			return;
+		} else {
+			r.save(object);
 		}
-		r.save(object);
 	}
 
-	private DatastoreQuery<?> executeQueryInRepository(Repository r, Class<?> clazz) {
+	private <T> DatastoreQuery<T> executeQueryInRepository(Repository r, Class<T> clazz) {
 		if (enableHooks) {
 			return r.queryWithHooks(clazz);
 		} else {

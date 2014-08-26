@@ -21,7 +21,7 @@ public class SimpleObjectAction extends Action<SimpleObject> {
 		return new JsonResponse(params.get("x"));
 	}
 
-	@GET("me")
+	@ActionMethod("me")
 	public JsonResponse me() {
 		return new JsonResponse("xpto");
 	}

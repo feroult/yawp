@@ -1,6 +1,8 @@
 package endpoint;
 
 import static org.junit.Assert.assertEquals;
+import endpoint.annotations.Endpoint;
+import endpoint.annotations.Id;
 
 @Endpoint(path = "/anothersimpleobjects", index = false)
 public class AnotherSimpleObject {

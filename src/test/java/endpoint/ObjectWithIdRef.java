@@ -2,6 +2,11 @@ package endpoint;
 
 import java.util.List;
 
+import endpoint.annotations.Id;
+import endpoint.annotations.Index;
+import endpoint.annotations.Json;
+import endpoint.annotations.Parent;
+
 public class ObjectWithIdRef {
 
 	@Id

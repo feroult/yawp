@@ -1,13 +1,8 @@
 package endpoint.actions;
 
-import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
-import org.reflections.Reflections;
 
 import endpoint.HttpException;
 import endpoint.IdRef;
@@ -16,84 +11,27 @@ import endpoint.response.HttpResponse;
 import endpoint.response.JsonResponse;
 import endpoint.utils.EntityUtils;
 import endpoint.utils.JsonUtils;
-import endpoint.utils.ReflectionUtils;
 import endpoint.utils.ThrownExceptionsUtils;
 
-@SuppressWarnings("rawtypes")
 public class RepositoryActions {
 
-	private static Map<String, Method> actions = new HashMap<String, Method>();
-
-	private static Map<String, Class<? extends Annotation>> httpAnnotations = new HashMap<String, Class<? extends Annotation>>();
-
-	private static Set<String> packages = new HashSet<String>();
-
-	public static void initHttpAnnotations() {
-		httpAnnotations.put("GET", GET.class);
-		httpAnnotations.put("PUT", PUT.class);
+	public static HttpResponse execute(Repository r, Method action, IdRef<?> id, Map<String, String> params) {
+		Object ret = null;
+		return new JsonResponse(JsonUtils.to(ret));
 	}
 
-	public static void scan(String packagePrefix) {
-		if (httpAnnotations.isEmpty()) {
-			initHttpAnnotations();
-		}
-
-		if (packages.contains(packagePrefix)) {
-			return;
-		}
-
-		Reflections reflections = new Reflections(packagePrefix);
-		Set<Class<? extends Action>> clazzes = reflections.getSubTypesOf(Action.class);
-
-		for (Class<? extends Action> actionClazz : clazzes) {
-			Class<?> objectClazz = ReflectionUtils.getGenericParameter(actionClazz);
-
-			if (objectClazz == null) {
-				continue;
-			}
-
-			addActionForObject(objectClazz, actionClazz);
-		}
-
-		packages.add(packagePrefix);
-	}
-
-	private static void addActionForObject(Class<?> objectClazz, Class<? extends Action> actionClazz) {
-		for (String httpMethod : httpAnnotations.keySet()) {
-			Class<? extends Annotation> httpMethodAnnotation = httpAnnotations.get(httpMethod);
-
-			for (Method method : actionClazz.getDeclaredMethods()) {
-				if (method.isAnnotationPresent(httpMethodAnnotation)) {
-					String action = getActionValue(httpMethodAnnotation, method);
-					String actionKey = getActionKey(objectClazz, httpMethod, action);
-
-					if (actions.containsKey(actionKey)) {
-						throw new RuntimeException("Duplicated action for object: " + actionKey);
-					}
-					actions.put(actionKey, method);
-				}
-			}
-		}
-	}
-
-	private static String getActionKey(Class<?> objectClazz, String httpMethod, String action) {
-		return String.format("%s-%s-%s", objectClazz.getSimpleName(), httpMethod, action);
-	}
-
-	public static HttpResponse execute(Repository r, Class<?> objectClazz, String httpMethod, String action, Long id,
-			Map<String, String> params) {
-
+	public static HttpResponse execute(Repository r, Class<?> objectClazz, String action, Long id, Map<String, String> params) {
 		try {
-			Method method = actions.get(getActionKey(objectClazz, httpMethod, action));
+			Method method = r.getEndpointFeatures(objectClazz).getAction(action);
 
 			if (method == null) {
 				throw new HttpException(404);
 			}
 
 			@SuppressWarnings("unchecked")
-			Class<? extends Action> actionClazz = (Class<? extends Action>) method.getDeclaringClass();
+			Class<? extends Action<?>> actionClazz = (Class<? extends Action<?>>) method.getDeclaringClass();
 
-			Action actionInstance = actionClazz.newInstance();
+			Action<?> actionInstance = actionClazz.newInstance();
 			actionInstance.setRepository(r);
 
 			Object ret;
@@ -118,8 +56,7 @@ public class RepositoryActions {
 			}
 
 			return new JsonResponse(JsonUtils.to(ret));
-
-		} catch (Exception e) {
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
 			throw ThrownExceptionsUtils.handle(e);
 		}
 	}
@@ -130,18 +67,5 @@ public class RepositoryActions {
 
 	private static boolean isIdRefAction(Method method) {
 		return IdRef.class.isAssignableFrom(method.getParameterTypes()[0]);
-	}
-
-	private static String getActionValue(Class<? extends Annotation> httpMethodAnnotation, Method method) {
-		try {
-			Annotation annotation = method.getAnnotation(httpMethodAnnotation);
-			Class<? extends Annotation> annotationClazz = annotation.annotationType();
-			Method annotationValueMethod = annotationClazz.getMethod("value");
-			String action = (String) annotationValueMethod.invoke(annotation);
-
-			return action;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
 	}
 }

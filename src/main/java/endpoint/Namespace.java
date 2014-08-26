@@ -2,6 +2,8 @@ package endpoint;
 
 import com.google.appengine.api.NamespaceManager;
 
+import endpoint.annotations.Global;
+
 public class Namespace {
 
 	public static String GLOBAL = "";

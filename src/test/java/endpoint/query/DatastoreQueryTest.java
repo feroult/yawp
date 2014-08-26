@@ -12,8 +12,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import endpoint.Id;
 import endpoint.SimpleObject;
+import endpoint.annotations.Id;
 import endpoint.utils.DateUtils;
 import endpoint.utils.EndpointTestCase;
 

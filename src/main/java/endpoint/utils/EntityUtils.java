@@ -23,17 +23,23 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
 
-import endpoint.Id;
 import endpoint.IdRef;
-import endpoint.Index;
-import endpoint.Json;
-import endpoint.Parent;
 import endpoint.Repository;
+import endpoint.annotations.Endpoint;
+import endpoint.annotations.Id;
+import endpoint.annotations.Index;
+import endpoint.annotations.Json;
+import endpoint.annotations.Parent;
+import endpoint.hooks.Hook;
 
 // TODO make it not static and repository aware
 public class EntityUtils {
 
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
+
+	public static <T> Class<T> getHookObject(Class<? extends Hook<T>> hook) {
+		return null;
+	}
 
 	public static String getKind(Class<?> clazz) {
 		return clazz.getSimpleName();
@@ -78,7 +84,19 @@ public class EntityUtils {
 		}
 		return null;
 	}
-	
+
+	public static IdRef<?> getIdRef(Object object) {
+		Field idField = EntityUtils.getAnnotatedIdFromClass(object.getClass());
+		if (idField != null) {
+			try {
+				return (IdRef<?>) idField.get(object); 
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new RuntimeException("Unexpected error.", e);
+			}
+		}
+		return null;
+	}
+
 	public static Key getParentKey(Object object) {
 		IdRef<?> parentId = getParentIdRef(object);
 		if (parentId != null) {
@@ -540,5 +558,13 @@ public class EntityUtils {
 
 	private static boolean isInt(Field field) {
 		return Integer.class.isAssignableFrom(field.getType()) || field.getType().getName().equals("int");
+	}
+
+	public static String getEndpointName(Class<?> targetClazz) {
+		Endpoint endpoint = targetClazz.getAnnotation(Endpoint.class);
+		if (endpoint == null) {
+			throw new RuntimeException("The class " + targetClazz + " was used as an entity but was not annotated with @Endpoint.");
+		}
+		return endpoint.path();
 	}
 }

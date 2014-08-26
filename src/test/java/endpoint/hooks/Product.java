@@ -1,7 +1,7 @@
 package endpoint.hooks;
 
-import endpoint.Id;
-import endpoint.Index;
+import endpoint.annotations.Id;
+import endpoint.annotations.Index;
 
 public class Product {
 

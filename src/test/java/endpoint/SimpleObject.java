@@ -6,6 +6,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import endpoint.annotations.Endpoint;
+import endpoint.annotations.Id;
+import endpoint.annotations.Index;
+import endpoint.annotations.Json;
 import endpoint.utils.DateUtils;
 
 @Endpoint(path = "/simpleobjects")

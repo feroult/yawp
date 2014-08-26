@@ -51,12 +51,8 @@ public class DatastoreQuery<T> {
 		this.r = r;
 	}
 
-	public DatastoreQueryTransformer<?> transform(String transformName) {
-		return new DatastoreQueryTransformer<Object>(this, Object.class, transformName);
-	}
-
-	public <TT> DatastoreQueryTransformer<TT> transform(Class<TT> transformClazz, String transformName) {
-		return new DatastoreQueryTransformer<TT>(this, transformClazz, transformName);
+	public <N> DatastoreQueryTransformer<T, N> transform(String transformName) {
+		return new DatastoreQueryTransformer<T, N>(this, transformName);
 	}
 
 	@Deprecated

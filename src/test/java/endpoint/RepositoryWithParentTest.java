@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import endpoint.annotations.Id;
+import endpoint.annotations.Parent;
 import endpoint.utils.EndpointTestCase;
 
 public class RepositoryWithParentTest extends EndpointTestCase {

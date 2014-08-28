@@ -2,6 +2,7 @@ package endpoint;
 
 import endpoint.actions.ActionType;
 
+// TODO kill me
 public class DatastoreRouter {
 
 	private String method;

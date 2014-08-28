@@ -4,10 +4,10 @@ import endpoint.HttpException;
 import endpoint.IdRef;
 import endpoint.Repository;
 
-
 public class RouteResource {
 
 	private String endpoint;
+
 	private Long id;
 
 	public RouteResource(String endpoint) {
@@ -30,11 +30,11 @@ public class RouteResource {
 		this.endpoint = endpoint;
 		this.id = id;
 	}
-	
+
 	public String getEndpoint() {
 		return endpoint;
 	}
-	
+
 	public Long getId() {
 		return id;
 	}

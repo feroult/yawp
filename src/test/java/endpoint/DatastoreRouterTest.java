@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import endpoint.actions.ActionType;
 
+// TODO kill me
 public class DatastoreRouterTest {
 
 	@Test

@@ -13,24 +13,29 @@ import endpoint.hooks.Hook;
 public class EndpointRef<T> {
 
 	private Class<T> clazz;
+
 	private Map<ActionRef, Method> actions;
+
 	private Map<String, Method> transformers;
+
 	private List<Class<? extends Hook<? super T>>> hooks;
-	
+
 	public EndpointRef(Class<T> clazz) {
 		this.clazz = clazz;
 		this.actions = new HashMap<>();
 		this.transformers = new HashMap<>();
 		this.hooks = new ArrayList<>();
 	}
-	
+
 	public Class<T> getClazz() {
 		return this.clazz;
 	}
 
 	private <V> void assertInexistence(V key, Method method, Map<V, Method> map, String type) {
 		if (map.get(key) != null) {
-			throw new RuntimeException("Trying to add two " + type + " with the same name '" + key + "' to endpoint " + clazz.getSimpleName() + ": one at " + map.get(key).getDeclaringClass().getSimpleName() + " and the other at " + method.getDeclaringClass().getSimpleName());
+			throw new RuntimeException("Trying to add two " + type + " with the same name '" + key + "' to endpoint "
+					+ clazz.getSimpleName() + ": one at " + map.get(key).getDeclaringClass().getSimpleName() + " and the other at "
+					+ method.getDeclaringClass().getSimpleName());
 		}
 	}
 

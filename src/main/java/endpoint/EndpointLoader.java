@@ -26,15 +26,17 @@ import endpoint.utils.ReflectionUtils;
 public final class EndpointLoader {
 
 	private boolean enableHooks;
+
 	private Reflections endpointsPackage;
+
 	private Map<Class<?>, EndpointRef<?>> endpoints;
-	
+
 	public EndpointLoader(String packagePrefix) {
-		endpointsPackage = new Reflections(packagePrefix); 
+		endpointsPackage = new Reflections(packagePrefix);
 		endpoints = new HashMap<>();
 		enableHooks = true;
 	}
-	
+
 	private void scanEndpoints() {
 		Set<Class<?>> clazzes = endpointsPackage.getTypesAnnotatedWith(Endpoint.class);
 
@@ -64,7 +66,7 @@ public final class EndpointLoader {
 			addHook(hookClazz);
 		}
 	}
-	
+
 	private <T, V extends Hook<T>> void addHook(Class<V> hookClazz) {
 		Class<T> objectClazz = EntityUtils.getHookObject(hookClazz);
 		for (EndpointRef<? extends T> endpoint : getEndpoints(objectClazz, hookClazz.getSimpleName())) {
@@ -110,7 +112,8 @@ public final class EndpointLoader {
 			}
 		}
 		if (list.isEmpty()) {
-			throw new RuntimeException("Tryed to create feature '" + featureClazz + "' with entity '" + objectClazz.getSimpleName() + "' that is not an @Endpoint nor do any endpoint inherits from it.");
+			throw new RuntimeException("Tryed to create feature '" + featureClazz + "' with entity '" + objectClazz.getSimpleName()
+					+ "' that is not an @Endpoint nor do any endpoint inherits from it.");
 		}
 		return list;
 	}
@@ -129,10 +132,12 @@ public final class EndpointLoader {
 		if (ars.isEmpty()) {
 			return;
 		}
-		
+
 		boolean overCollection = ars.get(0).isOverCollection();
 		for (int i = 1; i < ars.size(); i++) {
-			validate(ars.get(i).isOverCollection() == overCollection, "If your action " + method.getName() + " for endpoint " + objectClazz.getSimpleName() + " has more than one annotation, they must all share the same overCollection value.");
+			validate(ars.get(i).isOverCollection() == overCollection,
+					"If your action " + method.getName() + " for endpoint " + objectClazz.getSimpleName()
+							+ " has more than one annotation, they must all share the same overCollection value.");
 		}
 
 		assertValidActionMethod(objectClazz, method, overCollection);
@@ -151,19 +156,22 @@ public final class EndpointLoader {
 	}
 
 	private void assertValidActionMethod(Class<?> objectClazz, Method method, boolean overCollection) {
-		String partialActionMessage = "Invalid action " + method.getName() + " for endpoint " + objectClazz.getSimpleName() + ". The annotated action methods must have one of three possible signatures: ";
+		String partialActionMessage = "Invalid action " + method.getName() + " for endpoint " + objectClazz.getSimpleName()
+				+ ". The annotated action methods must have one of three possible signatures: ";
 		String invalidActionMessage;
 		if (overCollection) {
-			invalidActionMessage = partialActionMessage + "It can have no args, when it has no @Parent; it can have one arg only, an IdRef<?> refering the parentId, that will be null if there is none, or it can receive both that id and also a Map<String, String> of params. ";
+			invalidActionMessage = partialActionMessage
+					+ "It can have no args, when it has no @Parent; it can have one arg only, an IdRef<?> refering the parentId, that will be null if there is none, or it can receive both that id and also a Map<String, String> of params. ";
 		} else {
-			invalidActionMessage = partialActionMessage + "It can have one arg only, an IdRef<T> when applied over a single object T, or it can receive both that id and also a Map<String, String> of params. ";
+			invalidActionMessage = partialActionMessage
+					+ "It can have one arg only, an IdRef<T> when applied over a single object T, or it can receive both that id and also a Map<String, String> of params. ";
 		}
 
 		Class<?>[] parameterTypes = method.getParameterTypes();
 		validate(parameterTypes.length <= 2, invalidActionMessage);
 		if (parameterTypes.length == 2) {
 			validate(Map.class.equals(parameterTypes[1]), invalidActionMessage);
-			//TODO fix and re-enable validation!
+			// TODO fix and re-enable validation!
 			if (false) {
 				Type[] types = ReflectionUtils.getGenericParameters(parameterTypes[1]);
 				validate(types.length == 2, invalidActionMessage);
@@ -174,7 +182,7 @@ public final class EndpointLoader {
 		}
 		if (parameterTypes.length >= 1) {
 			validate(IdRef.class.equals(parameterTypes[0]), invalidActionMessage);
-			//TODO fix and re-enable validation!
+			// TODO fix and re-enable validation!
 			if (!overCollection && false) {
 				Type[] types = ReflectionUtils.getGenericParameters(parameterTypes[0]);
 				validate(types.length == 1, invalidActionMessage);

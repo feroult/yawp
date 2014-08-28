@@ -14,6 +14,7 @@ import com.google.gson.JsonSerializer;
 import endpoint.IdRef;
 import endpoint.Repository;
 
+// TODO evaluate if whole tree should be returned or just current id as is
 public class IdRefJsonAdapter implements JsonSerializer<IdRef<?>>, JsonDeserializer<IdRef<?>> {
 
 	private Repository r;

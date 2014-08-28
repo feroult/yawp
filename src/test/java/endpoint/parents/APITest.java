@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import endpoint.DatastoreServlet;
@@ -38,7 +39,14 @@ public class APITest extends EndpointTestCase {
 			return super.getRepository(null);
 		}
 	}
-	
+
+	private static final Map<String, Long> OWNERS = new HashMap<>();
+	static {
+		OWNERS.put("7th Avenue, 200 - NY", 2l);
+		OWNERS.put("Street 2, 11 - Vegas", 2l);
+		OWNERS.put("Advovsk Street, 18 - NY", 1l);
+	};
+
 	private static void assertListEmpty(List<?> list) {
 		assertEquals(0, list.size());
 	}
@@ -115,5 +123,26 @@ public class APITest extends EndpointTestCase {
 		HttpResponse response = servlet.execute("get", "/addresses", null, null);
 		List<Address> addresses = JsonUtils.fromList(r, response.getText(), Address.class);
 		assertListEquals(addresses, "7th Avenue, 200 - NY", "Street 2, 11 - Vegas", "Advovsk Street, 18 - NY");
+
+		for (Address address : addresses) {
+			assertEquals(OWNERS.get(address.toString()), address.getOwner().asLong());
+		}
+	}
+
+	@Test @Ignore
+	public void testGetNestedResourcesFromRootListWithQuery() {
+		final String where = "{where: {op: 'or', c: [{p: 'number', op: '=', v: 200}, {p: 'number', op: '<', v: 12}]}}";
+		final Map<String, String> params = new HashMap<String, String>() {
+			private static final long serialVersionUID = 1L;
+			{
+				put("q", where);
+			}
+		};
+		HttpResponse response = servlet.execute("get", "/addresses", null, params);
+		List<Address> addresses = JsonUtils.fromList(r, response.getText(), Address.class);
+		assertListEquals(addresses, "7th Avenue, 200 - NY", "Street 2, 11 - Vegas");
+		for (Address address : addresses) {
+			assertEquals(OWNERS.get(address.toString()), address.getOwner().asLong());
+		}
 	}
 }

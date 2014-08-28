@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import endpoint.annotations.Id;
-import endpoint.annotations.Parent;
 import endpoint.utils.EndpointTestCase;
 
 public class RepositoryWithParentTest extends EndpointTestCase {
@@ -80,20 +78,6 @@ public class RepositoryWithParentTest extends EndpointTestCase {
 		assertEquals(object1.getText(), loadedGrandChild.getAnotherObjectWithIdRefId().fetch().getObjectWithIdRefId().fetch().getText());
 	}
 
-	private static class GrandGrandChild {
-		@Id IdRef<GrandGrandChild> id;
-		String text;
-		@Parent IdRef<GrandChildObjectWithIdRef> parent;
-		
-		@SuppressWarnings("unused")
-		private GrandGrandChild() {}
-		
-		GrandGrandChild(String text, IdRef<GrandChildObjectWithIdRef> parent) {
-			this.text = text;
-			this.parent = parent;
-		}
-	}
-	
 	@Test
 	public void testSaveWithGrandGrandParentAndInnerClass() {
 		ObjectWithIdRef object1 = new ObjectWithIdRef("xpto1");

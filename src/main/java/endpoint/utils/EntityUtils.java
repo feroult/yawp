@@ -44,8 +44,16 @@ public class EntityUtils {
 		return (Class<T>) ReflectionUtils.getGenericParameter(hook);
 	}
 
-	public static String getKind(Class<?> clazz) {
-		return clazz.getSimpleName();
+	public static String getKindFromClass(Class<?> clazz) {
+		return clazz.getCanonicalName();
+	}
+
+	public static Class<?> getClassFromKind(String kind) {
+		try {
+			return Class.forName(kind);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException("Kind not related to any class: " + kind);
+		}
 	}
 
 	public static void toEntity(Object object, Entity entity) {
@@ -76,22 +84,6 @@ public class EntityUtils {
 		}
 	}
 
-	public static void setParentOnIdRef(Object object) {
-		Field parentIdField = getAnnotatedParentFromClass(object.getClass());
-		if (parentIdField != null) {
-			Field idField = getIdField(object.getClass());
-			try {
-				IdRef<?> idRef = (IdRef<?>) idField.get(object);
-				IdRef<?> parentId = (IdRef<?>) parentIdField.get(object);
-				idRef.setParentId(parentId);
-			} catch (ClassCastException e) {
-				throw new RuntimeException("The @Parent annotated field must be of type IdRef.", e);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				throw new RuntimeException("Unexpected exception", e);
-			}
-		}
-	}
-
 	public static IdRef<?> getParentIdRef(Object object) {
 		Field parentField = EntityUtils.getAnnotatedParentFromClass(object.getClass());
 		if (parentField != null) {
@@ -117,15 +109,10 @@ public class EntityUtils {
 	}
 
 	public static Key getParentKey(Object object) {
-		IdRef<?> parentId = getParentIdRef(object);
-		if (parentId != null) {
-			String kind = EntityUtils.getKind(parentId.getClazz());
-			return KeyFactory.createKey(kind, parentId.asLong());
-		}
-		return null;
+		return createKey(getParentIdRef(object));
 	}
 
-	public static <T> T toObject(Repository r, Entity entity, Class<T> clazz, IdRef<?> parentId) {
+	public static <T> T toObject(Repository r, Entity entity, Class<T> clazz) {
 		try {
 			Constructor<T> defaultConstructor = clazz.getDeclaredConstructor(new Class<?>[]{});
 			defaultConstructor.setAccessible(true);
@@ -139,14 +126,9 @@ public class EntityUtils {
 					continue;
 				}
 
-				if (field.getAnnotation(Parent.class) != null) {
-					field.set(object, parentId);
-				} else {
-					setObjectProperty(r, object, entity, field);
-				}
+				setObjectProperty(r, object, entity, field);
 			}
 
-			setParentOnIdRef(object);
 			return object;
 		} catch (InvocationTargetException e) {
 			throw new RuntimeException("An exception was thrown when calling the default constructor of the class " + clazz.getSimpleName() + ": ", e);
@@ -161,13 +143,17 @@ public class EntityUtils {
 
 	public static <T> void setKey(Repository r, T object, Key key) {
 		try {
-			Field field = getIdField(object.getClass());
-			field.setAccessible(true);
+			Field idField = getIdField(object.getClass());
 
-			if (!isIdRef(field)) {
-				field.set(object, key.getId());
+			if (!isIdRef(idField)) {
+				idField.set(object, key.getId());
 			} else {
-				field.set(object, IdRef.create(r, getIdFieldRefClazz(object.getClass()), key.getId()));
+				idField.set(object, IdRef.fromKey(r, key));
+			}
+
+			Field parentField = getAnnotatedParentFromClass(object.getClass());
+			if (parentField != null) {
+				parentField.set(object, IdRef.fromKey(r, key.getParent()));
 			}
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
@@ -176,14 +162,13 @@ public class EntityUtils {
 
 	public static Key getKey(Object object) {
 		try {
-			Field field = getIdField(object.getClass());
+			Field idField = getIdField(object.getClass());
 
-			field.setAccessible(true);
-			if (field.get(object) == null) {
+			if (idField.get(object) == null) {
 				return null;
 			}
 
-			return createKeyFromIdField(object, field);
+			return createKeyFromIdField(object, idField);
 
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
@@ -365,12 +350,20 @@ public class EntityUtils {
 		return createKey(id, clazz);
 	}
 
+	public static Key createKey(IdRef<?> id) {
+		if (id == null) {
+			return null;
+		}
+		Key parentKey = createKey(id.getParentId());
+		return createKey(parentKey, id.asLong(), id.getClazz());
+	}
+
 	public static Key createKey(Long id, Class<?> clazz) {
-		return KeyFactory.createKey(getKind(clazz), id);
+		return KeyFactory.createKey(getKindFromClass(clazz), id);
 	}
 
 	public static Key createKey(Key parentKey, Long id, Class<?> clazz) {
-		return KeyFactory.createKey(parentKey, getKind(clazz), id);
+		return KeyFactory.createKey(parentKey, getKindFromClass(clazz), id);
 	}
 
 	private static void setEntityProperty(Object object, Entity entity, Field field) {
@@ -532,7 +525,7 @@ public class EntityUtils {
 	}
 
 	private static boolean isControl(Field field) {
-		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class);
+		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(Parent.class);
 	}
 
 	private static boolean isIdRef(Field field) {

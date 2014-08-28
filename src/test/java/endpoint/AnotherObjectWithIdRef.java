@@ -1,9 +1,10 @@
 package endpoint;
 
+import endpoint.annotations.Endpoint;
 import endpoint.annotations.Id;
 import endpoint.annotations.Parent;
 
-
+@Endpoint
 public class AnotherObjectWithIdRef {
 
 	@Id

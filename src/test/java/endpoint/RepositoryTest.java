@@ -15,6 +15,7 @@ import endpoint.utils.EndpointTestCase;
 
 public class RepositoryTest extends EndpointTestCase {
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testSave() {
 		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
@@ -25,6 +26,7 @@ public class RepositoryTest extends EndpointTestCase {
 		object.assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testJsonProperty() {
 		SimpleObject object = new SimpleObject();
@@ -40,6 +42,7 @@ public class RepositoryTest extends EndpointTestCase {
 		assertEquals("xpto", object.getNotADatastoreObject().getName());
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testJsonArrayProperty() {
 		SimpleObject object = new SimpleObject();
@@ -62,6 +65,7 @@ public class RepositoryTest extends EndpointTestCase {
 		assertEquals("xpto2", object.getNotADatastoreObjectList().get(1).getName());
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testJsonMapWithLongKeyAndObjectValue() {
 		SimpleObject object = new SimpleObject();
@@ -80,6 +84,7 @@ public class RepositoryTest extends EndpointTestCase {
 		assertEquals("xpto2", object.getAMap().get(2l).getName());
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test(expected = NoResultException.class)
 	public void testDelete() {
 		SimpleObject object = new SimpleObject("xpto");

@@ -19,6 +19,7 @@ public class RepositoryNamespaceTest extends EndpointTestCase {
 		r2 = Repository.r("ns2");
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testFindById() {
 		SimpleObject object1 = new SimpleObject("xpto1");
@@ -36,6 +37,7 @@ public class RepositoryNamespaceTest extends EndpointTestCase {
 		assertNull(r1.query(SimpleObject.class).where("aString", "=", "xpto2").first());
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testSaveAndChange() {
 		SimpleObject object1 = new SimpleObject("xpto");

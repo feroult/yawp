@@ -18,6 +18,7 @@ import endpoint.utils.EntityUtils;
 public class Repository {
 
 	private RepositoryFeatures repositoryFeatures;
+
 	private Namespace namespace;
 
 	public static Repository r() {
@@ -48,7 +49,7 @@ public class Repository {
 	public String currentNamespace() {
 		return namespace.getNs();
 	}
-	
+
 	public Repository setRepositoryFeatures(RepositoryFeatures repositoryFeatures) {
 		this.repositoryFeatures = repositoryFeatures;
 		return this;
@@ -126,7 +127,7 @@ public class Repository {
 	private Entity createEntity(Object object) {
 		Key parentKey = EntityUtils.getParentKey(object);
 		Key currentKey = EntityUtils.getKey(object);
-		
+
 		if (currentKey == null) {
 			return new Entity(EntityUtils.getKindFromClass(object.getClass()), parentKey);
 		}

@@ -34,8 +34,7 @@ public class DatastoreServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		setWithHooks(config.getInitParameter("enableHooks"));
-		String packagePrefix = config.getInitParameter("packagePrefix");
-		scanEndpoints(packagePrefix);
+		scanEndpoints(config.getInitParameter("packagePrefix"));
 	}
 
 	private void setWithHooks(String enableHooksParameter) {

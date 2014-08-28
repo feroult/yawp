@@ -1,8 +1,10 @@
 package endpoint.hooks;
 
+import endpoint.annotations.Endpoint;
 import endpoint.annotations.Id;
 import endpoint.annotations.Index;
 
+@Endpoint
 public class Product {
 
 	@Id

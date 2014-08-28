@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 
 import endpoint.Repository;
 import endpoint.query.DatastoreQuery;
-import endpoint.utils.EntityUtils;
 import endpoint.utils.ThrownExceptionsUtils;
 
 public class RepositoryHooks {
@@ -23,7 +22,7 @@ public class RepositoryHooks {
 	}
 
 	private static void invokeHooks(Repository r, Class<?> targetClazz, Object object, String methodName) {
-		for (Class<? extends Hook<?>> hookClazz : r.getEndpointFeatures(EntityUtils.getEndpointName(targetClazz)).getHooks()) {
+		for (Class<? extends Hook<?>> hookClazz : r.getEndpointFeatures(targetClazz).getHooks()) {
 			invokeHookMethod(r, object, methodName, hookClazz);
 		}
 	}
@@ -34,7 +33,9 @@ public class RepositoryHooks {
 			hook.setRepository(r);
 
 			Method hookMethod = getMethod(hook, methodName, object.getClass());
-			hookMethod.invoke(hook, object);
+			if (hookMethod != null) {
+				hookMethod.invoke(hook, object);
+			}
 		} catch (InstantiationException ex) {
 			throw new RuntimeException("The Hook class " + hookClazz.getSimpleName() + " must have a default constructor, and it must not throw exceptions.", ex);
 		} catch (InvocationTargetException ex) {
@@ -44,13 +45,18 @@ public class RepositoryHooks {
 		}
 	}
 
-	private static Method getMethod(Object hook, String methodName, Class<?>... clazz) {
-		try {
-			Method method = hook.getClass().getDeclaredMethod(methodName, clazz);
-			method.setAccessible(true);
-			return method;
-		} catch (NoSuchMethodException e) {
-			return null;
-		}
+	private static Method getMethod(Object hook, String methodName, Class<?> clazz) {
+        for (Method method : hook.getClass().getMethods()) {
+            if (method.getName().equals(methodName)) {
+            	if (method.getParameterTypes().length != 1) {
+            		continue;
+            	}
+                if (method.getParameterTypes()[0].isAssignableFrom(clazz)) {
+                    method.setAccessible(true);
+                    return method;
+                }
+            }
+        }
+		return null;
 	}
 }

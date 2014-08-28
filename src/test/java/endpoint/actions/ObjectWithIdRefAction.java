@@ -2,6 +2,7 @@ package endpoint.actions;
 
 import endpoint.IdRef;
 import endpoint.ObjectWithIdRef;
+import endpoint.actions.annotations.PUT;
 
 public class ObjectWithIdRefAction extends Action<ObjectWithIdRef> {
 

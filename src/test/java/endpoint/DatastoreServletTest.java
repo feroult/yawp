@@ -28,6 +28,7 @@ public class DatastoreServletTest extends EndpointTestCase {
 	public void testCreate() {
 		String json;
 		json = servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText();
+		System.out.println(json);
 
 		SimpleObject object = JsonUtils.from(r, json, SimpleObject.class);
 

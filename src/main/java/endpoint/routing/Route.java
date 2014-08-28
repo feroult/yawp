@@ -52,6 +52,7 @@ public class Route {
 		return uri;
 	}
 
+	// TODO validate if the resources chain is a valid structure given the endpoints' parents, and give 404's if invalid
 	public static Route generateRouteFor(RepositoryFeatures features, HttpVerb method, String uri) {
 		String[] parts = normalizeUri(uri).split("/");
 		List<RouteResource> resources = new ArrayList<>();

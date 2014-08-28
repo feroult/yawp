@@ -20,11 +20,16 @@ public enum HttpVerb {
 	}
 
 	public static HttpVerb getFromString(String method) {
+		String methodLowerCase = method.toLowerCase();
 		for (HttpVerb verb : HttpVerb.values()) {
-			if (method.toLowerCase().equals(verb.name)) {
+			if (methodLowerCase.equals(verb.name)) {
 				return verb;
 			}
 		}
 		throw new HttpException(501, "Unsupported http verb " + method);
+	}
+	
+	public String toString() {
+		return this.name;
 	}
 }

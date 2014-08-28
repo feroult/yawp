@@ -9,6 +9,7 @@ import endpoint.HttpException;
 import endpoint.IdRef;
 import endpoint.Repository;
 import endpoint.RepositoryFeatures;
+import endpoint.actions.ActionRef;
 import endpoint.actions.ActionType;
 import endpoint.annotations.Endpoint;
 
@@ -17,23 +18,57 @@ public class Route {
 	private List<RouteResource> resources;
 	private RouteAction action;
 
-	public Route(List<RouteResource> resources, RouteAction action) {
+	private Route(RepositoryFeatures features, List<RouteResource> resources, RouteAction action) {
 		this.resources = resources;
 		this.action = action;
+		validateConstraints(features, resources, action);
+	}
+
+	private void validateConstraints(RepositoryFeatures features, List<RouteResource> resources, RouteAction action) {
+		Endpoint lastEndpoint = features.getEndpoint(getLastEndpoint(resources).getEndpoint()).getEndpointAnnotation();
+		if (!lastEndpoint.index() && action.getActionType() == ActionType.INDEX) {
+			throw new HttpException(403);
+		}
+		if (!lastEndpoint.update() && action.getActionType() == ActionType.UPDATE) {
+			throw new HttpException(403);
+		}
+	}
+
+	public static String normalizeUri(String uri) {
+		return normalizeUriEnd(normalizeUriStart(uri));
+	}
+
+	private static String normalizeUriStart(String uri) {
+		if (uri.charAt(0) == '/') {
+			return uri.substring(1);
+		}
+		return uri;
+	}
+
+	private static String normalizeUriEnd(String uri) {
+		if (uri.charAt(uri.length() - 1) == '/') {
+			return uri.substring(0, uri.length() - 1);
+		}
+		return uri;
 	}
 
 	public static Route generateRouteFor(RepositoryFeatures features, HttpVerb method, String uri) {
-		String[] parts = uri.split("////");
+		String[] parts = normalizeUri(uri).split("/");
 		List<RouteResource> resources = new ArrayList<>();
 		RouteAction action;
 		if (parts.length == 1) {
 			resources.add(new RouteResource(parts[0]));
-			assertGet(method);
-			action = new RouteAction(ActionType.INDEX);
-			return new Route(resources, action);
+			if (method == HttpVerb.GET) {
+				action = new RouteAction(ActionType.INDEX);
+			} else if (method == HttpVerb.POST) {
+				action = new RouteAction(ActionType.CREATE);
+			} else {
+				throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + method);
+			}
+			return new Route(features, resources, action);
 		}
 
-		for (int i = 0; i < parts.length - 1; i += 2) {
+		for (int i = 0; i < parts.length - 2; i += 2) {
 			resources.add(new RouteResource(parts[i], parts[i + 1]));
 		}
 
@@ -45,36 +80,36 @@ public class Route {
 				action = new RouteAction(method.getActionType());
 			} catch (NumberFormatException e) {
 				resources.add(new RouteResource(parts[parts.length - 2]));
-				Method actionMethod = getActionMethod(features, resources, lastToken);
+				ActionRef ref = new ActionRef(method, lastToken, true);
+				Method actionMethod = getActionMethod(features, resources, ref);
 				if (actionMethod == null) {
 					throw new HttpException(404);
 				}
 				action = new RouteAction(actionMethod);
 			}
 		} else {
-			assertGet(method);
-			Method actionMethod = getActionMethod(features, resources, lastToken);
+			ActionRef ref = new ActionRef(method, lastToken, false);
+			Method actionMethod = getActionMethod(features, resources, ref);
 			if (actionMethod != null) {
 				action = new RouteAction(actionMethod);
 			} else {
 				resources.add(new RouteResource(parts[parts.length - 1]));
-				action = new RouteAction(ActionType.INDEX);
+				if (method == HttpVerb.GET) {
+					action = new RouteAction(ActionType.INDEX);
+				} else if (method == HttpVerb.POST) {
+					action = new RouteAction(ActionType.CREATE);
+				} else {
+					throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + method);
+				}
 			}
 		}
 
-		Endpoint lastEndpoint = features.getEndpoint(getLastEndpoint(resources).getEndpoint()).getEndpointAnnotation();
-		if (!lastEndpoint.index() && action.getActionType() == ActionType.INDEX) {
-			throw new HttpException(403);
-		}
-		if (!lastEndpoint.update() && action.getActionType() == ActionType.UPDATE) {
-			throw new HttpException(403);
-		}
-		return new Route(resources, action);
+		return new Route(features, resources, action);
 	}
 
-	private static Method getActionMethod(RepositoryFeatures features, List<RouteResource> resources, String lastToken) {
+	private static Method getActionMethod(RepositoryFeatures features, List<RouteResource> resources, ActionRef action) {
 		EndpointRef<?> endpointRef = features.getEndpoint(getLastEndpoint(resources).getEndpoint());
-		Method actionMethod = endpointRef.getAction(lastToken);
+		Method actionMethod = endpointRef.getAction(action);
 		return actionMethod;
 	}
 
@@ -98,17 +133,20 @@ public class Route {
 		return resources;
 	}
 	
-	private static void assertGet(HttpVerb method) {
-		if (method != HttpVerb.GET) {
-			throw new HttpException(501, "Currently only GET is support for collections");
-		}
-	}
-
 	public EndpointRef<?> getLastEndpoint(RepositoryFeatures rf) {
 		return rf.getEndpoint(getLastEndpoint(resources).getEndpoint());
 	}
 
 	public Method getCustomAction() {
 		return action.getCustomAction();
+	}
+
+	public static boolean isValidResourceName(String endpointName) {
+		for (char c : endpointName.toCharArray()) {
+			if (!Character.isAlphabetic(c)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

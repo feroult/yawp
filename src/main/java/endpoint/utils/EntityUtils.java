@@ -7,6 +7,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import com.google.appengine.api.datastore.Text;
 
 import endpoint.IdRef;
 import endpoint.Repository;
+import endpoint.actions.Action;
 import endpoint.annotations.Endpoint;
 import endpoint.annotations.Id;
 import endpoint.annotations.Index;
@@ -32,13 +34,14 @@ import endpoint.annotations.Json;
 import endpoint.annotations.Parent;
 import endpoint.hooks.Hook;
 
-// TODO make it not static and repository aware
+// TODO make it not static and repository aware and smaller, very, very smaller
 public class EntityUtils {
 
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
 
+	@SuppressWarnings("unchecked")
 	public static <T> Class<T> getHookObject(Class<? extends Hook<T>> hook) {
-		return null;
+		return (Class<T>) ReflectionUtils.getGenericParameter(hook);
 	}
 
 	public static String getKind(Class<?> clazz) {
@@ -54,6 +57,22 @@ public class EntityUtils {
 			}
 
 			setEntityProperty(object, entity, field);
+		}
+	}
+
+	public static void setParentId(Object object, IdRef<?> parentId) {
+		Field parentIdField = getAnnotatedParentFromClass(object.getClass());
+		if (parentIdField == null) {
+			if (parentId != null) {
+				throw new RuntimeException("Trying to set parentId " + parentId + " to class " + object.getClass().getSimpleName() + ", but it doesn't seem to have a @Parent field.");
+			}
+			return;
+		}
+
+		try {
+			parentIdField.set(object, parentId);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			throw new RuntimeException("Unexpected exception", e);
 		}
 	}
 
@@ -342,15 +361,7 @@ public class EntityUtils {
 			return (Key) value;
 		}
 
-		Long id;
-		if (value instanceof Long) {
-			id = (Long) value;
-		} else if (value instanceof IdRef) {
-			id = ((IdRef<?>) value).asLong();
-		} else {
-			id = Long.parseLong(value.toString());
-		}
-
+		Long id = getLongValue(value);
 		return createKey(id, clazz);
 	}
 
@@ -566,5 +577,30 @@ public class EntityUtils {
 			throw new RuntimeException("The class " + targetClazz + " was used as an entity but was not annotated with @Endpoint.");
 		}
 		return endpoint.path();
+	}
+
+	public static Long getLongValue(Object id) {
+		if (id instanceof IdRef) {
+			return ((IdRef<?>) id).asLong();
+		}
+		if (id instanceof Long) {
+			return (Long) id;
+		}
+		if (id instanceof Key) {
+			return ((Key) id).getId();
+		}
+		throw new RuntimeException("Tryed to access @Id property wih a type not allowed (different from IdRef, Long or Key).");
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public static Class<?> getActionEndpoint(Method action) {
+		Class<?> declaringClass = action.getDeclaringClass();
+		assert Action.class.isAssignableFrom(declaringClass);
+		return getActionEndpoint((Class<? extends Action>) declaringClass);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T, V extends Action<T>> Class<T> getActionEndpoint(Class<V> clazz) {
+		return (Class<T>) ReflectionUtils.getGenericParameter(clazz);
 	}
 }

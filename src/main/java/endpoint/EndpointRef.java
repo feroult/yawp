@@ -6,15 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import endpoint.actions.ActionRef;
 import endpoint.annotations.Endpoint;
 import endpoint.hooks.Hook;
 
 public class EndpointRef<T> {
 
 	private Class<T> clazz;
-	private Map<String, Method> actions;
+	private Map<ActionRef, Method> actions;
 	private Map<String, Method> transformers;
-	private List<Class<? extends Hook<T>>> hooks;
+	private List<Class<? extends Hook<? super T>>> hooks;
 	
 	public EndpointRef(Class<T> clazz) {
 		this.clazz = clazz;
@@ -27,15 +28,15 @@ public class EndpointRef<T> {
 		return this.clazz;
 	}
 
-	private void assertInexistence(String name, Method method, Map<String, Method> map, String type) {
-		if (map.get(name) != null) {
-			throw new RuntimeException("Trying to add two " + type + " with the same name '" + name + "' to endpoint " + clazz.getSimpleName() + ": one at " + transformers.get(name).getDeclaringClass().getSimpleName() + " and the other at " + method.getDeclaringClass().getSimpleName());
+	private <V> void assertInexistence(V key, Method method, Map<V, Method> map, String type) {
+		if (map.get(key) != null) {
+			throw new RuntimeException("Trying to add two " + type + " with the same name '" + key + "' to endpoint " + clazz.getSimpleName() + ": one at " + map.get(key).getDeclaringClass().getSimpleName() + " and the other at " + method.getDeclaringClass().getSimpleName());
 		}
 	}
 
-	public void addAction(String name, Method method) {
-		assertInexistence(name, method, actions, "Actions");
-		actions.put(name, method);
+	public void addAction(ActionRef actionRef, Method method) {
+		assertInexistence(actionRef, method, actions, "Actions");
+		actions.put(actionRef, method);
 	}
 
 	public void addTransformer(String name, Method method) {
@@ -43,16 +44,16 @@ public class EndpointRef<T> {
 		transformers.put(name, method);
 	}
 
-	public void addHook(Class<? extends Hook<T>> hook) {
+	public void addHook(Class<? extends Hook<? super T>> hook) {
 		hooks.add(hook);
 	}
 
-	public List<Class<? extends Hook<T>>> getHooks() {
+	public List<Class<? extends Hook<? super T>>> getHooks() {
 		return hooks;
 	}
 
-	public Method getAction(String name) {
-		return actions.get(name);
+	public Method getAction(ActionRef ref) {
+		return actions.get(ref);
 	}
 
 	public Method getTransformer(String name) {

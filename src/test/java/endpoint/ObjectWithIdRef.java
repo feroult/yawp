@@ -2,17 +2,17 @@ package endpoint;
 
 import java.util.List;
 
+import endpoint.annotations.Endpoint;
 import endpoint.annotations.Id;
 import endpoint.annotations.Index;
 import endpoint.annotations.Json;
-import endpoint.annotations.Parent;
 
+@Endpoint(path = "objectWithIdRef")
 public class ObjectWithIdRef {
 
 	@Id
 	private IdRef<ObjectWithIdRef> id;
 
-	@Parent
 	@Index
 	private IdRef<AnotherSimpleObject> anotherSimpleObjectId;
 

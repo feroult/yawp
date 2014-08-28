@@ -19,6 +19,7 @@ import endpoint.response.HttpResponse;
 import endpoint.response.JsonResponse;
 import endpoint.routing.HttpVerb;
 import endpoint.routing.Route;
+import endpoint.utils.EntityUtils;
 import endpoint.utils.JsonUtils;
 
 public class DatastoreServlet extends HttpServlet {
@@ -126,7 +127,7 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	private HttpResponse action(Repository r, IdRef<?> idRef, Method method, Map<String, String> params) {
-		return r.action(clazz, method, customAction, id, params);
+		return r.action(idRef, method, params);
 	}
 
 	private String save(Repository r, IdRef<?> parentId, EndpointRef<?> endpoint, String json) {
@@ -177,7 +178,7 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	private void saveInRepository(Repository r, Object object, IdRef<?> parentId) {
-		// TODO set parentId on object
+		EntityUtils.setParentId(object, parentId);
 		if (enableHooks) {
 			r.saveWithHooks(object);
 		} else {

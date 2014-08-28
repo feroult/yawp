@@ -1,5 +1,6 @@
 package endpoint;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 import com.google.appengine.api.datastore.DatastoreService;
@@ -79,11 +80,10 @@ public class Repository {
 		saveEntity(object, entity, null);
 	}
 
-	public HttpResponse action(Class<?> clazz, String action, Long id, Map<String, String> params) {
-		//TODO ^^
-		namespace.set(clazz);
+	public HttpResponse action(IdRef<?> id, Method action, Map<String, String> params) {
+		namespace.set(EntityUtils.getActionEndpoint(action));
 		try {
-			return RepositoryActions.execute(this, clazz, action, id, params);
+			return RepositoryActions.execute(this, id, action, params);
 		} finally {
 			namespace.reset();
 		}
@@ -138,10 +138,14 @@ public class Repository {
 
 	@SuppressWarnings("unchecked")
 	public <T> EndpointRef<T> getEndpointFeatures(Class<T> endpoint) {
-		return (EndpointRef<T>) repositoryFeatures.getEndpoint(EntityUtils.getEndpointName(endpoint));
+		return (EndpointRef<T>) repositoryFeatures.getEndpoint(endpoint);
 	}
 
 	public EndpointRef<?> getEndpointFeatures(String endpointName) {
 		return repositoryFeatures.getEndpoint(endpointName);
+	}
+
+	public RepositoryFeatures getFeatures() {
+		return repositoryFeatures;
 	}
 }

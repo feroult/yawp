@@ -268,7 +268,7 @@ public class DatastoreQuery<T> {
 	private T executeQueryById() {
 		try {
 			SimpleCondition c = (SimpleCondition) condition;
-			Long id = (Long) c.getValue();
+			Long id = EntityUtils.getLongValue(c.getValue());
 			Key key = EntityUtils.createKey(parentKey, id, clazz);
 			Entity entity = DatastoreServiceFactory.getDatastoreService().get(key);
 			return EntityUtils.toObject(r, entity, clazz, parentIdRef);
@@ -283,7 +283,7 @@ public class DatastoreQuery<T> {
 		}
 
 		SimpleCondition c = (SimpleCondition) condition;
-		return c.getField().equals(EntityUtils.getIdFieldName(clazz)) && c.getOperator().equals(FilterOperator.EQUAL);
+		return c.isByIdFor(clazz) && c.getOperator().equals(FilterOperator.EQUAL);
 	}
 
 	public void sortList(List<?> objects) {
@@ -317,6 +317,11 @@ public class DatastoreQuery<T> {
 	}
 
 	private PreparedQuery prepareQuery() throws FalsePredicateException {
+		Class<?> idClass = condition == null ? null : condition.getIdTypeFor(clazz);
+		boolean isByIdWithoutIdRef = idClass != null && !IdRef.class.isAssignableFrom(idClass);
+		if (isByIdWithoutIdRef && parentKey != null) {
+			throw new RuntimeException("You have to use IdRef in the where when searching by @Id in a query with .from(IdRef<?>) specified.");
+		}
 		Query q = new Query(EntityUtils.getKind(clazz));
 
 		prepareQueryAncestor(q);
@@ -355,7 +360,6 @@ public class DatastoreQuery<T> {
 		return clazz;
 	}
 
-	@Deprecated
 	public DatastoreQuery<T> whereById(String operator, Long id) {
 		return where(EntityUtils.getIdFieldName(clazz), operator, id);
 	}
@@ -364,7 +368,6 @@ public class DatastoreQuery<T> {
 		return where(EntityUtils.getIdFieldName(clazz), operator, id);
 	}
 
-	@Deprecated
 	public T id(Long id) {
 		return whereById("=", id).only();
 	}

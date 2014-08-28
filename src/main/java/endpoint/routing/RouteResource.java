@@ -40,8 +40,9 @@ public class RouteResource {
 	}
 
 	public IdRef<?> getResourceId(Repository r, IdRef<?> parent) {
-		if (id == null)
+		if (id == null) {
 			return parent;
+		}
 		IdRef<?> idRef = IdRef.create(r, r.getEndpointFeatures(endpoint).getClazz(), id);
 		idRef.setParentId(parent);
 		return idRef;

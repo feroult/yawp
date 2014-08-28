@@ -1,7 +1,9 @@
 package endpoint;
 
+import endpoint.annotations.Endpoint;
 import endpoint.annotations.Id;
 
+@Endpoint(path = "child")
 public class ChildWithIdRef {
 
 	@Id

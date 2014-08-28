@@ -32,6 +32,6 @@ public class HttpException extends RuntimeException {
 
 	@Override
 	public String toString() {
-		return "<HttpException status:" + this.httpStatus + " text:'" + text + "'>";
+		return "<HttpException status:" + this.httpStatus + (text == null ? "" : " text:'" + text + "'") + ">";
 	}
 }

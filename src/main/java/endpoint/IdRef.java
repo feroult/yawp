@@ -3,6 +3,10 @@ package endpoint;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.appengine.api.datastore.Key;
+
+import endpoint.utils.EntityUtils;
+
 public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	private Class<T> clazz;
@@ -28,7 +32,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	}
 
 	public <TT> TT fetch(Class<TT> childClazz) {
-		return r.query(childClazz).from(parentId).id(this);
+		return r.query(childClazz).id(this);
 	}
 
 	public Long asLong() {
@@ -41,6 +45,15 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	public IdRef<?> getParentId() {
 		return parentId;
+	}
+
+	public static IdRef<?> fromKey(Repository r, Key key) {
+		if (key == null) {
+			return null;
+		}
+		IdRef<?> ref = IdRef.create(r, EntityUtils.getClassFromKind(key.getKind()), key.getId());
+		ref.parentId = fromKey(r, key.getParent());
+		return ref;
 	}
 
 	public static <TT> IdRef<TT> create(Repository r, Class<TT> clazz, Long id) {

@@ -121,7 +121,6 @@ public class Repository {
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 		Key key = datastoreService.put(entity);
 		EntityUtils.setKey(this, object, key);
-		EntityUtils.setParentOnIdRef(object);
 	}
 
 	private Entity createEntity(Object object) {
@@ -129,7 +128,7 @@ public class Repository {
 		Key currentKey = EntityUtils.getKey(object);
 		
 		if (currentKey == null) {
-			return new Entity(EntityUtils.getKind(object.getClass()), parentKey);
+			return new Entity(EntityUtils.getKindFromClass(object.getClass()), parentKey);
 		}
 
 		Key key = KeyFactory.createKey(parentKey, currentKey.getKind(), currentKey.getId());

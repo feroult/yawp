@@ -17,6 +17,7 @@ public class TransformerTest extends EndpointTestCase {
 		SimpleObject object = new SimpleObject("xpto");
 		r.save(object);
 
+		@SuppressWarnings("deprecation")
 		Map<String, String> map = r.query(SimpleObject.class).<Map<String, String>>transform("simple").id(object.getId());
 
 		assertEquals("xpto", map.get("innerValue"));

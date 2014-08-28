@@ -45,6 +45,7 @@ public class DatastoreServlet extends HttpServlet {
 	public DatastoreServlet() {
 	}
 
+	// TODO why protected? why not public? constructor vs init? tests? inheritance?
 	protected DatastoreServlet(String packagePrefix) {
 		scanEndpoints(packagePrefix);
 	}

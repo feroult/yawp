@@ -22,7 +22,6 @@ import endpoint.Repository;
 import endpoint.query.BaseCondition.SimpleCondition;
 import endpoint.utils.EntityUtils;
 
-//TODO allow for querying a class not by id without specifying from (get from everything)
 public class DatastoreQuery<T> {
 
 	private Class<T> clazz;
@@ -40,8 +39,6 @@ public class DatastoreQuery<T> {
 	private Integer limit;
 
 	private String cursor;
-
-	private IdRef<?> parentIdRef;
 
 	public static <T> DatastoreQuery<T> q(Class<T> clazz, Repository r) {
 		return new DatastoreQuery<T>(clazz, r);
@@ -86,25 +83,17 @@ public class DatastoreQuery<T> {
 	
 	public DatastoreQuery<T> from(IdRef<?> parentId) {
 		if (parentId == null) {
-			return parent(null);
+			parentKey = null;
+			return this;
 		}
-		this.parentIdRef = parentId;
-		return parent(parentId.asLong(), parentId.getClazz());
-	}
 
-	public DatastoreQuery<T> parent(Long parentId, Class<?> parentClazz) {
 		r.namespace().set(getClazz());
 		try {
-			Key createKey = EntityUtils.createKey(parentId, parentClazz);
-			return parent(createKey);
+			parentKey = EntityUtils.createKey(parentId);
+			return this;
 		} finally {
 			r.namespace().reset();
 		}
-	}
-
-	public DatastoreQuery<T> parent(Key parentKey) {
-		this.parentKey = parentKey;
-		return this;
 	}
 
 	public DatastoreQuery<T> order(String property) {
@@ -256,7 +245,7 @@ public class DatastoreQuery<T> {
 		List<T> objects = new ArrayList<T>();
 
 		for (Entity entity : queryResult) {
-			T object = EntityUtils.toObject(r, entity, clazz, parentIdRef);
+			T object = EntityUtils.toObject(r, entity, clazz);
 			objects.add(object);
 		}
 
@@ -272,7 +261,7 @@ public class DatastoreQuery<T> {
 			Long id = EntityUtils.getLongValue(c.getValue());
 			Key key = EntityUtils.createKey(parentKey, id, clazz);
 			Entity entity = DatastoreServiceFactory.getDatastoreService().get(key);
-			return EntityUtils.toObject(r, entity, clazz, parentIdRef);
+			return EntityUtils.toObject(r, entity, clazz);
 		} catch (EntityNotFoundException e) {
 			return null;
 		}
@@ -323,7 +312,7 @@ public class DatastoreQuery<T> {
 		if (isByIdWithoutIdRef && parentKey != null) {
 			throw new RuntimeException("You have to use IdRef in the where when searching by @Id in a query with .from(IdRef<?>) specified.");
 		}
-		Query q = new Query(EntityUtils.getKind(clazz));
+		Query q = new Query(EntityUtils.getKindFromClass(clazz));
 
 		prepareQueryAncestor(q);
 		prepareQueryWhere(q);
@@ -367,7 +356,7 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> whereById(String operator, IdRef<?> id) {
-		return where(EntityUtils.getIdFieldName(clazz), operator, id);
+		return from(id.getParentId()).where(EntityUtils.getIdFieldName(clazz), operator, id);
 	}
 
 	@Deprecated
@@ -376,7 +365,6 @@ public class DatastoreQuery<T> {
 	}
 
 	public T id(IdRef<?> id) {
-		// TODO set parentId if exists
 		return whereById("=", id).only();
 	}
 }

@@ -3,11 +3,10 @@ package endpoint.query;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.appengine.api.datastore.Key;
-
 import endpoint.IdRef;
 import endpoint.transformers.RepositoryTransformers;
 
+// TODO inherits from DatastoreQuery
 public class DatastoreQueryTransformer<F, T> {
 
 	private DatastoreQuery<F> query;
@@ -38,11 +37,6 @@ public class DatastoreQueryTransformer<F, T> {
 	@Deprecated
 	public DatastoreQueryTransformer<F, T> whereById(String operator, Long id) {
 		query.whereById(operator, id);
-		return this;
-	}
-
-	public DatastoreQueryTransformer<F, T> parent(Key parentKey) {
-		query.parent(parentKey);
 		return this;
 	}
 
@@ -110,6 +104,7 @@ public class DatastoreQueryTransformer<F, T> {
 		return RepositoryTransformers.execute(query.getRepository(), query.only(), transformName);
 	}
 
+	@Deprecated
 	public T id(Long id) {
 		return RepositoryTransformers.execute(query.getRepository(), query.id(id), transformName);
 	}

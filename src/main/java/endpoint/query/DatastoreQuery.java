@@ -22,6 +22,7 @@ import endpoint.Repository;
 import endpoint.query.BaseCondition.SimpleCondition;
 import endpoint.utils.EntityUtils;
 
+//TODO allow for querying a class not by id without specifying from (get from everything)
 public class DatastoreQuery<T> {
 
 	private Class<T> clazz;
@@ -360,6 +361,7 @@ public class DatastoreQuery<T> {
 		return clazz;
 	}
 
+	@Deprecated
 	public DatastoreQuery<T> whereById(String operator, Long id) {
 		return where(EntityUtils.getIdFieldName(clazz), operator, id);
 	}
@@ -368,11 +370,13 @@ public class DatastoreQuery<T> {
 		return where(EntityUtils.getIdFieldName(clazz), operator, id);
 	}
 
+	@Deprecated
 	public T id(Long id) {
 		return whereById("=", id).only();
 	}
 
 	public T id(IdRef<?> id) {
+		// TODO set parentId if exists
 		return whereById("=", id).only();
 	}
 }

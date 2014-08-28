@@ -222,6 +222,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		assertEquals("xpto", object.text);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testFindById() {
 		SimpleObject object = new SimpleObject("xpto");

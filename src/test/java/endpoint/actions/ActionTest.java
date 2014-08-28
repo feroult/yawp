@@ -19,6 +19,7 @@ import endpoint.utils.JsonUtils;
 
 public class ActionTest extends EndpointTestCase {
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testSimpleAction() {
 		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");

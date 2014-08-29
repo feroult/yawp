@@ -11,9 +11,9 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 
-import endpoint.EndpointLoader;
-import endpoint.Repository;
-import endpoint.RepositoryFeatures;
+import endpoint.repository.EndpointScanner;
+import endpoint.repository.Repository;
+import endpoint.repository.RepositoryFeatures;
 
 public class EndpointTestCase {
 
@@ -27,7 +27,7 @@ public class EndpointTestCase {
 
 	@BeforeClass
 	public static void bootEndpoint() {
-		features = new EndpointLoader("endpoint").scan();
+		features = new EndpointScanner("endpoint").scan();
 	}
 
 	@Before

@@ -11,8 +11,8 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import endpoint.IdRef;
-import endpoint.Repository;
+import endpoint.repository.IdRef;
+import endpoint.repository.Repository;
 
 // TODO evaluate if whole tree should be returned or just current id as is
 public class IdRefJsonAdapter implements JsonSerializer<IdRef<?>>, JsonDeserializer<IdRef<?>> {

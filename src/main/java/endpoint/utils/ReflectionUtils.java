@@ -13,15 +13,15 @@ public final class ReflectionUtils {
 	private ReflectionUtils() {
 		throw new RuntimeException("Should not be instanciated");
 	}
-	
+
 	public static List<Class<?>> getAllInterfaces(Class<?> clazz) {
-		List<Class<?>> interfaces =  new ArrayList<>();
-		
+		List<Class<?>> interfaces = new ArrayList<>();
+
 		while (clazz != null) {
 			interfaces.addAll(Arrays.asList(clazz.getInterfaces()));
 			clazz = clazz.getSuperclass();
 		}
-		
+
 		return interfaces;
 	}
 

@@ -24,15 +24,15 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
 
-import endpoint.IdRef;
-import endpoint.Repository;
-import endpoint.actions.Action;
-import endpoint.annotations.Endpoint;
-import endpoint.annotations.Id;
-import endpoint.annotations.Index;
-import endpoint.annotations.Json;
-import endpoint.annotations.Parent;
-import endpoint.hooks.Hook;
+import endpoint.repository.IdRef;
+import endpoint.repository.Repository;
+import endpoint.repository.actions.Action;
+import endpoint.repository.annotations.Endpoint;
+import endpoint.repository.annotations.Id;
+import endpoint.repository.annotations.Index;
+import endpoint.repository.annotations.Json;
+import endpoint.repository.annotations.Parent;
+import endpoint.repository.hooks.Hook;
 
 // TODO make it not static and repository aware and smaller, very, very smaller
 public class EntityUtils {
@@ -72,7 +72,8 @@ public class EntityUtils {
 		Field parentIdField = getAnnotatedParentFromClass(object.getClass());
 		if (parentIdField == null) {
 			if (parentId != null) {
-				throw new RuntimeException("Trying to set parentId " + parentId + " to class " + object.getClass().getSimpleName() + ", but it doesn't seem to have a @Parent field.");
+				throw new RuntimeException("Trying to set parentId " + parentId + " to class " + object.getClass().getSimpleName()
+						+ ", but it doesn't seem to have a @Parent field.");
 			}
 			return;
 		}
@@ -88,7 +89,7 @@ public class EntityUtils {
 		Field parentField = EntityUtils.getAnnotatedParentFromClass(object.getClass());
 		if (parentField != null) {
 			try {
-				return (IdRef<?>) parentField.get(object); 
+				return (IdRef<?>) parentField.get(object);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new RuntimeException("Unexpected error.", e);
 			}
@@ -100,7 +101,7 @@ public class EntityUtils {
 		Field idField = EntityUtils.getAnnotatedIdFromClass(object.getClass());
 		if (idField != null) {
 			try {
-				return (IdRef<?>) idField.get(object); 
+				return (IdRef<?>) idField.get(object);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new RuntimeException("Unexpected error.", e);
 			}
@@ -114,7 +115,7 @@ public class EntityUtils {
 
 	public static <T> T toObject(Repository r, Entity entity, Class<T> clazz) {
 		try {
-			Constructor<T> defaultConstructor = clazz.getDeclaredConstructor(new Class<?>[]{});
+			Constructor<T> defaultConstructor = clazz.getDeclaredConstructor(new Class<?>[] {});
 			defaultConstructor.setAccessible(true);
 			T object = defaultConstructor.newInstance();
 			setKey(r, object, entity.getKey());
@@ -131,9 +132,11 @@ public class EntityUtils {
 
 			return object;
 		} catch (InvocationTargetException e) {
-			throw new RuntimeException("An exception was thrown when calling the default constructor of the class " + clazz.getSimpleName() + ": ", e);
+			throw new RuntimeException("An exception was thrown when calling the default constructor of the class " + clazz.getSimpleName()
+					+ ": ", e);
 		} catch (NoSuchMethodException e) {
-			throw new RuntimeException("The class " + clazz.getSimpleName() + " must have a default constructor and cannot be an non-static inner class.", e);
+			throw new RuntimeException("The class " + clazz.getSimpleName()
+					+ " must have a default constructor and cannot be an non-static inner class.", e);
 		} catch (InstantiationException e) {
 			throw new RuntimeException("The class " + clazz.getSimpleName() + " must cannot be abstract.", e);
 		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
@@ -221,7 +224,8 @@ public class EntityUtils {
 		for (Field field : ReflectionUtils.getFieldsRecursively(clazz)) {
 			if (field.isAnnotationPresent(annotationClass)) {
 				if (theField != null) {
-					throw new RuntimeException("You can have at most one field annotated with the " + annotationClass.getSimpleName() + " class."); 
+					throw new RuntimeException("You can have at most one field annotated with the " + annotationClass.getSimpleName()
+							+ " class.");
 				}
 				theField = field;
 				theField.setAccessible(true);
@@ -585,7 +589,7 @@ public class EntityUtils {
 		throw new RuntimeException("Tryed to access @Id property wih a type not allowed (different from IdRef, Long or Key).");
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Class<?> getActionEndpoint(Method action) {
 		Class<?> declaringClass = action.getDeclaringClass();
 		assert Action.class.isAssignableFrom(declaringClass);

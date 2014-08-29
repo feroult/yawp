@@ -16,7 +16,7 @@ import endpoint.repository.EndpointFeatures;
 import endpoint.repository.EndpointScanner;
 import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
-import endpoint.repository.RepositoryFeaturesCache;
+import endpoint.repository.RepositoryFeatures;
 import endpoint.repository.query.DatastoreQuery;
 import endpoint.repository.query.DatastoreQueryOptions;
 import endpoint.repository.query.NoResultException;
@@ -31,7 +31,7 @@ public class DatastoreServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 8155293897299089610L;
 
-	private RepositoryFeaturesCache features;
+	private RepositoryFeatures features;
 
 	private boolean enableHooks = true;
 
@@ -91,9 +91,11 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	protected HttpResponse execute(String method, String path, String requestJson, Map<String, String> params) {
-		HttpVerb verb = HttpVerb.getFromString(method);
-		Route route = Route.generateRouteFor(features, verb, path);
+
 		Repository r = getRepository(params);
+
+		HttpVerb verb = HttpVerb.getFromString(method);
+		EndpointRouter route = EndpointRouter.generateRouteFor(r, verb, path);
 
 		EndpointFeatures<?> lastEndpoint = route.getLastEndpoint();
 		IdRef<?> idRef = route.getIdRef(r);

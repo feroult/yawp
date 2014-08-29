@@ -7,28 +7,29 @@ import java.util.List;
 import endpoint.repository.EndpointFeatures;
 import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
-import endpoint.repository.RepositoryFeaturesCache;
+import endpoint.repository.RepositoryFeatures;
 import endpoint.repository.actions.ActionRef;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.utils.HttpVerb;
 import endpoint.utils.UriUtils;
 
-public class Route {
+public class EndpointRouter {
 
-	private RepositoryFeaturesCache features;
+	private Repository r;
 
 	private List<RouteResource> resources;
 
 	private RouteAction action;
 
-	private Route(RepositoryFeaturesCache features, List<RouteResource> resources, RouteAction action) {
-		this.features = features;
+	private EndpointRouter(Repository r, List<RouteResource> resources, RouteAction action) {
+		this.r = r;
 		this.resources = resources;
 		this.action = action;
 		validateConstraints();
 	}
 
 	private void validateConstraints() {
+		RepositoryFeatures features = r.getFeatures();
 		Endpoint lastEndpoint = features.getEndpoint(getLastEndpoint(resources).getEndpointPath()).getEndpointAnnotation();
 		if (!lastEndpoint.index() && action.getActionType() == RestAction.INDEX) {
 			throw new HttpException(403);
@@ -40,7 +41,9 @@ public class Route {
 
 	// TODO validate if the resources chain is a valid structure given the
 	// endpoints' parents, and give 404's if invalid
-	public static Route generateRouteFor(RepositoryFeaturesCache features, HttpVerb method, String uri) {
+	public static EndpointRouter generateRouteFor(Repository r, HttpVerb method, String uri) {
+		RepositoryFeatures features = r.getFeatures();
+
 		String[] parts = UriUtils.normalizeUri(uri).split("/");
 		List<RouteResource> resources = new ArrayList<>();
 		RouteAction action;
@@ -53,7 +56,7 @@ public class Route {
 			} else {
 				throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + method);
 			}
-			return new Route(features, resources, action);
+			return new EndpointRouter(r, resources, action);
 		}
 
 		for (int i = 0; i < parts.length - 2; i += 2) {
@@ -92,10 +95,10 @@ public class Route {
 			}
 		}
 
-		return new Route(features, resources, action);
+		return new EndpointRouter(r, resources, action);
 	}
 
-	private static Method getActionMethod(RepositoryFeaturesCache features, List<RouteResource> resources, ActionRef action) {
+	private static Method getActionMethod(RepositoryFeatures features, List<RouteResource> resources, ActionRef action) {
 		EndpointFeatures<?> endpointRef = features.getEndpoint(getLastEndpoint(resources).getEndpointPath());
 		Method actionMethod = endpointRef.getAction(action);
 		return actionMethod;
@@ -122,6 +125,7 @@ public class Route {
 	}
 
 	public EndpointFeatures<?> getLastEndpoint() {
+		RepositoryFeatures features = r.getFeatures();
 		return features.getEndpoint(getLastEndpoint(resources).getEndpointPath());
 	}
 

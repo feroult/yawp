@@ -138,11 +138,11 @@ public class Repository {
 
 	@SuppressWarnings("unchecked")
 	public <T> EndpointFeatures<T> getEndpointFeatures(Class<T> endpoint) {
-		return (EndpointFeatures<T>) repositoryFeatures.getEndpoint(endpoint);
+		return (EndpointFeatures<T>) repositoryFeatures.get(endpoint);
 	}
 
 	public EndpointFeatures<?> getEndpointFeatures(String endpointName) {
-		return repositoryFeatures.getEndpoint(endpointName);
+		return repositoryFeatures.get(endpointName);
 	}
 
 	public RepositoryFeatures getFeatures() {

@@ -3,7 +3,7 @@ package endpoint.repository.parents.models;
 import endpoint.repository.IdRef;
 import endpoint.repository.annotations.Endpoint;
 
-@Endpoint(path = "products")
+@Endpoint(path = "/products")
 public class Product {
 
 	private IdRef<Product> id;

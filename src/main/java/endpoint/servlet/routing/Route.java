@@ -9,8 +9,10 @@ import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
 import endpoint.repository.RepositoryFeatures;
 import endpoint.repository.actions.ActionRef;
+import endpoint.repository.actions.HttpVerb;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.servlet.HttpException;
+import endpoint.utils.UriUtils;
 
 public class Route {
 
@@ -33,28 +35,10 @@ public class Route {
 		}
 	}
 
-	public static String normalizeUri(String uri) {
-		return normalizeUriEnd(normalizeUriStart(uri));
-	}
-
-	private static String normalizeUriStart(String uri) {
-		if (uri.charAt(0) == '/') {
-			return uri.substring(1);
-		}
-		return uri;
-	}
-
-	private static String normalizeUriEnd(String uri) {
-		if (uri.charAt(uri.length() - 1) == '/') {
-			return uri.substring(0, uri.length() - 1);
-		}
-		return uri;
-	}
-
 	// TODO validate if the resources chain is a valid structure given the
 	// endpoints' parents, and give 404's if invalid
 	public static Route generateRouteFor(RepositoryFeatures features, HttpVerb method, String uri) {
-		String[] parts = normalizeUri(uri).split("/");
+		String[] parts = UriUtils.normalizeUri(uri).split("/");
 		List<RouteResource> resources = new ArrayList<>();
 		RouteAction action;
 		if (parts.length == 1) {
@@ -142,12 +126,4 @@ public class Route {
 		return action.getCustomAction();
 	}
 
-	public static boolean isValidResourceName(String endpointName) {
-		for (char c : endpointName.toCharArray()) {
-			if (!Character.isAlphabetic(c)) {
-				return false;
-			}
-		}
-		return true;
-	}
 }

@@ -4,9 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import endpoint.servlet.routing.Route;
-import endpoint.utils.EntityUtils;
-
 public class RepositoryFeatures {
 
 	private Map<Class<?>, EndpointFeatures<?>> endpoints;
@@ -18,22 +15,38 @@ public class RepositoryFeatures {
 		this.paths = new HashMap<>();
 		for (EndpointFeatures<?> endpoint : endpoints) {
 			this.endpoints.put(endpoint.getClazz(), endpoint);
-			String path = EntityUtils.getEndpointName(endpoint.getClazz());
-			if (!path.isEmpty()) {
-				String endpointName = Route.normalizeUri(path);
-				if (paths.get(endpointName) != null) {
-					throw new RuntimeException("Repeated endpoint name " + endpointName + " for class "
-							+ endpoint.getClazz().getSimpleName() + " (already found in class " + paths.get(endpointName).getSimpleName()
+			String endpointPath = endpoint.getEndpointPath();
+			if (!endpointPath.isEmpty()) {
+				if (paths.get(endpointPath) != null) {
+					throw new RuntimeException("Repeated endpoint path " + endpointPath + " for class "
+							+ endpoint.getClazz().getSimpleName() + " (already found in class " + paths.get(endpointPath).getSimpleName()
 							+ ")");
 				}
-				if (!Route.isValidResourceName(endpointName)) {
-					throw new RuntimeException("Invalid endpoint name " + endpointName + " for class "
+				if (!isValidEndpointPath(endpointPath)) {
+					throw new RuntimeException("Invalid endpoint path " + endpointPath + " for class "
 							+ endpoint.getClazz().getSimpleName());
 				}
-				paths.put(endpointName, endpoint.getClazz());
+				paths.put(endpointPath, endpoint.getClazz());
 			}
 		}
 
+	}
+
+	private boolean isValidEndpointPath(String endpointName) {
+		char[] charArray = endpointName.toCharArray();
+		for (int i = 0; i < charArray.length; i++) {
+			char c = charArray[i];
+			if (i == 0) {
+				if (c != '/') {
+					return false;
+				}
+				continue;
+			}
+			if (!Character.isAlphabetic(c)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public EndpointFeatures<?> getEndpoint(Class<?> clazz) {

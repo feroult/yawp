@@ -7,7 +7,7 @@ import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
 import endpoint.repository.annotations.Parent;
 
-@Endpoint(path = "orders")
+@Endpoint(path = "/orders")
 public class Order {
 
 	@Id

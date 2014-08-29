@@ -5,7 +5,7 @@ import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
 import endpoint.repository.annotations.Parent;
 
-@Endpoint(path = "addresses")
+@Endpoint(path = "/addresses")
 public class Address {
 
 	@Id

@@ -7,7 +7,7 @@ import endpoint.repository.annotations.Id;
 import endpoint.repository.annotations.Index;
 import endpoint.repository.annotations.Json;
 
-@Endpoint(path = "objectWithIdRef")
+@Endpoint(path = "/objectWithIdRef")
 public class ObjectWithIdRef {
 
 	@Id

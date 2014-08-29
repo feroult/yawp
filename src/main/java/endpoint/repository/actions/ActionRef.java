@@ -2,8 +2,6 @@ package endpoint.repository.actions;
 
 import java.io.Serializable;
 
-import endpoint.servlet.routing.HttpVerb;
-
 public class ActionRef implements Serializable {
 
 	private static final long serialVersionUID = -8103211642342487434L;

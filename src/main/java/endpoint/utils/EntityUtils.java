@@ -568,14 +568,6 @@ public class EntityUtils {
 		return Integer.class.isAssignableFrom(field.getType()) || field.getType().getName().equals("int");
 	}
 
-	public static String getEndpointName(Class<?> targetClazz) {
-		Endpoint endpoint = targetClazz.getAnnotation(Endpoint.class);
-		if (endpoint == null) {
-			throw new RuntimeException("The class " + targetClazz + " was used as an entity but was not annotated with @Endpoint.");
-		}
-		return endpoint.path();
-	}
-
 	public static Long getLongValue(Object id) {
 		if (id instanceof IdRef) {
 			return ((IdRef<?>) id).asLong();

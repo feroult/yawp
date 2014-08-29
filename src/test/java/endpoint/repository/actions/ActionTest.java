@@ -11,7 +11,7 @@ import endpoint.repository.ChildWithIdRef;
 import endpoint.repository.ObjectWithIdRef;
 import endpoint.repository.SimpleObject;
 import endpoint.repository.response.HttpResponse;
-import endpoint.servlet.Route;
+import endpoint.servlet.EndpointRouter;
 import endpoint.utils.DateUtils;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.HttpVerb;
@@ -35,7 +35,7 @@ public class ActionTest extends EndpointTestCase {
 	}
 
 	private HttpResponse callAction(HttpVerb verb, String uri, Map<String, String> params) {
-		Route route = Route.generateRouteFor(r.getFeatures(), verb, uri);
+		EndpointRouter route = EndpointRouter.generateRouteFor(r, verb, uri);
 		HttpResponse response = r.action(route.getIdRef(r), route.getCustomAction(), params);
 		return response;
 	}

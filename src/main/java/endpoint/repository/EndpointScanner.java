@@ -45,8 +45,8 @@ public final class EndpointScanner {
 		}
 	}
 
-	public RepositoryFeaturesCache scan() {
-		return new RepositoryFeaturesCache(generateEndpointsMap());
+	public RepositoryFeatures scan() {
+		return new RepositoryFeatures(generateEndpointsMap());
 	}
 
 	private Collection<EndpointFeatures<?>> generateEndpointsMap() {

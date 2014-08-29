@@ -13,13 +13,13 @@ import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig
 
 import endpoint.repository.EndpointScanner;
 import endpoint.repository.Repository;
-import endpoint.repository.RepositoryFeaturesCache;
+import endpoint.repository.RepositoryFeatures;
 
 public class EndpointTestCase {
 
 	private static final String LOGGED_USER_ID = "10";
 
-	private static RepositoryFeaturesCache features;
+	private static RepositoryFeatures features;
 
 	private LocalServiceTestHelper helper;
 

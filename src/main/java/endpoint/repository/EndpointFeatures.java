@@ -6,16 +6,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import endpoint.repository.actions.ActionRef;
+import endpoint.repository.actions.ActionKey;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.hooks.Hook;
-import endpoint.utils.UriUtils;
 
 public class EndpointFeatures<T> {
 
 	private Class<T> clazz;
 
-	private Map<ActionRef, Method> actions;
+	private Map<ActionKey, Method> actions;
 
 	private Map<String, Method> transformers;
 
@@ -40,7 +39,7 @@ public class EndpointFeatures<T> {
 		}
 	}
 
-	public void addAction(ActionRef actionRef, Method method) {
+	public void addAction(ActionKey actionRef, Method method) {
 		assertInexistence(actionRef, method, actions, "Actions");
 		actions.put(actionRef, method);
 	}
@@ -58,7 +57,7 @@ public class EndpointFeatures<T> {
 		return hooks;
 	}
 
-	public Method getAction(ActionRef ref) {
+	public Method getAction(ActionKey ref) {
 		return actions.get(ref);
 	}
 

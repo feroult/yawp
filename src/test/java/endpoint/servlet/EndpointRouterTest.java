@@ -44,7 +44,7 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 	private void assertRouter(EndpointRouter router, Class<SimpleObject> clazz, RestAction restAction, Long id) {
 		assertEquals(clazz, router.getEndpoint().getClazz());
-		assertEquals(restAction, router.getActionType());
+		assertEquals(restAction, router.getRestAction());
 		if (id != null) {
 			assertEquals(id, router.getIdRef().asLong());
 		} else {

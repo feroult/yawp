@@ -96,7 +96,7 @@ public class DatastoreServlet extends HttpServlet {
 		EndpointFeatures<?> endpoint = router.getEndpoint();
 		IdRef<?> idRef = router.getIdRef();
 
-		switch (router.getActionType()) {
+		switch (router.getRestAction()) {
 		case INDEX:
 			return new JsonResponse(index(r, idRef, endpoint, q(params), t(params)));
 		case SHOW:

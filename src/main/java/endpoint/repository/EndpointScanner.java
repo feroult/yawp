@@ -12,7 +12,7 @@ import java.util.Set;
 import org.reflections.Reflections;
 
 import endpoint.repository.actions.Action;
-import endpoint.repository.actions.ActionRef;
+import endpoint.repository.actions.ActionKey;
 import endpoint.repository.actions.annotations.GET;
 import endpoint.repository.actions.annotations.PUT;
 import endpoint.repository.annotations.Endpoint;
@@ -119,14 +119,14 @@ public final class EndpointScanner {
 	}
 
 	private void addAction(Class<?> objectClazz, Method method) {
-		List<ActionRef> ars = new ArrayList<>(2);
+		List<ActionKey> ars = new ArrayList<>(2);
 		GET get = method.getAnnotation(GET.class);
 		if (get != null) {
-			ars.add(new ActionRef(HttpVerb.GET, get.value(), get.overCollection()));
+			ars.add(new ActionKey(HttpVerb.GET, get.value(), get.overCollection()));
 		}
 		PUT put = method.getAnnotation(PUT.class);
 		if (put != null) {
-			ars.add(new ActionRef(HttpVerb.PUT, put.value(), put.overCollection()));
+			ars.add(new ActionKey(HttpVerb.PUT, put.value(), put.overCollection()));
 		}
 
 		if (ars.isEmpty()) {
@@ -143,7 +143,7 @@ public final class EndpointScanner {
 		assertValidActionMethod(objectClazz, method, overCollection);
 
 		for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, method.getDeclaringClass().getSimpleName())) {
-			for (ActionRef ar : ars) {
+			for (ActionKey ar : ars) {
 				endpoint.addAction(ar, method);
 			}
 		}

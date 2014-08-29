@@ -96,7 +96,7 @@ public class DatastoreServlet extends HttpServlet {
 		Route route = Route.generateRouteFor(features, verb, path);
 		Repository r = getRepository(params);
 
-		EndpointFeatures<?> lastEndpoint = route.getLastEndpoint(features);
+		EndpointFeatures<?> lastEndpoint = route.getLastEndpoint();
 		IdRef<?> idRef = route.getIdRef(r);
 
 		switch (route.getActionType()) {

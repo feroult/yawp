@@ -42,4 +42,8 @@ public class RouteResource {
 		idRef.setParentId(parent);
 		return idRef;
 	}
+
+	public Long getId() {
+		return id;
+	}
 }

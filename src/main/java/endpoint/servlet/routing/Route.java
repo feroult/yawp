@@ -122,8 +122,8 @@ public class Route {
 		return resources;
 	}
 
-	public EndpointFeatures<?> getLastEndpoint(RepositoryFeaturesCache rf) {
-		return rf.getEndpoint(getLastEndpoint(resources).getEndpointPath());
+	public EndpointFeatures<?> getLastEndpoint() {
+		return features.getEndpoint(getLastEndpoint(resources).getEndpointPath());
 	}
 
 	public Method getCustomAction() {

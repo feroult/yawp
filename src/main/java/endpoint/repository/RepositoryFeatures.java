@@ -49,15 +49,15 @@ public class RepositoryFeatures {
 		return true;
 	}
 
-	public EndpointFeatures<?> getEndpoint(Class<?> clazz) {
+	public EndpointFeatures<?> get(Class<?> clazz) {
 		return endpoints.get(clazz);
 	}
 
-	public EndpointFeatures<?> getEndpoint(String path) {
+	public EndpointFeatures<?> get(String path) {
 		Class<?> clazz = paths.get(path);
 		if (clazz == null) {
 			throw new RuntimeException("Invalid endpoint path " + path);
 		}
-		return getEndpoint(clazz);
+		return get(clazz);
 	}
 }

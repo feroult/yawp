@@ -30,7 +30,7 @@ public class EndpointRouter {
 
 	private void validateConstraints() {
 		RepositoryFeatures features = r.getFeatures();
-		Endpoint lastEndpoint = features.getEndpoint(getLastEndpoint(resources).getEndpointPath()).getEndpointAnnotation();
+		Endpoint lastEndpoint = features.get(getLastEndpoint(resources).getEndpointPath()).getEndpointAnnotation();
 		if (!lastEndpoint.index() && action.getActionType() == RestAction.INDEX) {
 			throw new HttpException(403);
 		}
@@ -100,7 +100,7 @@ public class EndpointRouter {
 	}
 
 	private static Method getActionMethod(RepositoryFeatures features, List<RouteResource> resources, ActionRef action) {
-		EndpointFeatures<?> endpointRef = features.getEndpoint(getLastEndpoint(resources).getEndpointPath());
+		EndpointFeatures<?> endpointRef = features.get(getLastEndpoint(resources).getEndpointPath());
 		Method actionMethod = endpointRef.getAction(action);
 		return actionMethod;
 	}
@@ -121,13 +121,9 @@ public class EndpointRouter {
 		return action.getActionType();
 	}
 
-	public List<RouteResource> getResources() {
-		return resources;
-	}
-
 	public EndpointFeatures<?> getEndpoint() {
 		RepositoryFeatures features = r.getFeatures();
-		return features.getEndpoint(getLastEndpoint(resources).getEndpointPath());
+		return features.get(getLastEndpoint(resources).getEndpointPath());
 	}
 
 	public Method getCustomAction() {

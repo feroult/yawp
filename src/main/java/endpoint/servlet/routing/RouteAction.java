@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 public class RouteAction {
 
 	private RestActionType actionType;
+
 	private Method customAction;
 
 	public RouteAction(RestActionType actionType) {

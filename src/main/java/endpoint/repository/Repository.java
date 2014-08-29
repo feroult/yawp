@@ -17,7 +17,7 @@ import endpoint.utils.EntityUtils;
 
 public class Repository {
 
-	private RepositoryFeatures repositoryFeatures;
+	private RepositoryFeaturesCache repositoryFeatures;
 
 	private Namespace namespace;
 
@@ -50,7 +50,7 @@ public class Repository {
 		return namespace.getNs();
 	}
 
-	public Repository setRepositoryFeatures(RepositoryFeatures repositoryFeatures) {
+	public Repository setFeatures(RepositoryFeaturesCache repositoryFeatures) {
 		this.repositoryFeatures = repositoryFeatures;
 		return this;
 	}
@@ -145,7 +145,7 @@ public class Repository {
 		return repositoryFeatures.getEndpoint(endpointName);
 	}
 
-	public RepositoryFeatures getFeatures() {
+	public RepositoryFeaturesCache getFeatures() {
 		return repositoryFeatures;
 	}
 }

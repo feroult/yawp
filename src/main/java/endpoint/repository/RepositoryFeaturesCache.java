@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RepositoryFeatures {
+public class RepositoryFeaturesCache {
 
 	private Map<Class<?>, EndpointFeatures<?>> endpoints;
 
 	private Map<String, Class<?>> paths;
 
-	public RepositoryFeatures(Collection<EndpointFeatures<?>> endpoints) {
+	public RepositoryFeaturesCache(Collection<EndpointFeatures<?>> endpoints) {
 		this.endpoints = new HashMap<>();
 		this.paths = new HashMap<>();
 		for (EndpointFeatures<?> endpoint : endpoints) {

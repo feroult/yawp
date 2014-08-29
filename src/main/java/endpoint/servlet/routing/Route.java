@@ -7,7 +7,7 @@ import java.util.List;
 import endpoint.repository.EndpointFeatures;
 import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
-import endpoint.repository.RepositoryFeatures;
+import endpoint.repository.RepositoryFeaturesCache;
 import endpoint.repository.actions.ActionRef;
 import endpoint.repository.actions.HttpVerb;
 import endpoint.repository.annotations.Endpoint;
@@ -16,16 +16,20 @@ import endpoint.utils.UriUtils;
 
 public class Route {
 
+	private RepositoryFeaturesCache features;
+
 	private List<RouteResource> resources;
+
 	private RouteAction action;
 
-	private Route(RepositoryFeatures features, List<RouteResource> resources, RouteAction action) {
+	private Route(RepositoryFeaturesCache features, List<RouteResource> resources, RouteAction action) {
+		this.features = features;
 		this.resources = resources;
 		this.action = action;
-		validateConstraints(features, resources, action);
+		validateConstraints();
 	}
 
-	private void validateConstraints(RepositoryFeatures features, List<RouteResource> resources, RouteAction action) {
+	private void validateConstraints() {
 		Endpoint lastEndpoint = features.getEndpoint(getLastEndpoint(resources).getEndpointPath()).getEndpointAnnotation();
 		if (!lastEndpoint.index() && action.getActionType() == RestActionType.INDEX) {
 			throw new HttpException(403);
@@ -37,7 +41,7 @@ public class Route {
 
 	// TODO validate if the resources chain is a valid structure given the
 	// endpoints' parents, and give 404's if invalid
-	public static Route generateRouteFor(RepositoryFeatures features, HttpVerb method, String uri) {
+	public static Route generateRouteFor(RepositoryFeaturesCache features, HttpVerb method, String uri) {
 		String[] parts = UriUtils.normalizeUri(uri).split("/");
 		List<RouteResource> resources = new ArrayList<>();
 		RouteAction action;
@@ -92,7 +96,7 @@ public class Route {
 		return new Route(features, resources, action);
 	}
 
-	private static Method getActionMethod(RepositoryFeatures features, List<RouteResource> resources, ActionRef action) {
+	private static Method getActionMethod(RepositoryFeaturesCache features, List<RouteResource> resources, ActionRef action) {
 		EndpointFeatures<?> endpointRef = features.getEndpoint(getLastEndpoint(resources).getEndpointPath());
 		Method actionMethod = endpointRef.getAction(action);
 		return actionMethod;
@@ -118,7 +122,7 @@ public class Route {
 		return resources;
 	}
 
-	public EndpointFeatures<?> getLastEndpoint(RepositoryFeatures rf) {
+	public EndpointFeatures<?> getLastEndpoint(RepositoryFeaturesCache rf) {
 		return rf.getEndpoint(getLastEndpoint(resources).getEndpointPath());
 	}
 

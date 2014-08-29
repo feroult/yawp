@@ -24,7 +24,6 @@ import endpoint.repository.response.ErrorResponse;
 import endpoint.repository.response.HttpResponse;
 import endpoint.repository.response.JsonResponse;
 import endpoint.utils.EntityUtils;
-import endpoint.utils.HttpVerb;
 import endpoint.utils.JsonUtils;
 
 public class DatastoreServlet extends HttpServlet {
@@ -93,16 +92,13 @@ public class DatastoreServlet extends HttpServlet {
 	protected HttpResponse execute(String method, String path, String requestJson, Map<String, String> params) {
 
 		Repository r = getRepository(params);
+		EndpointRouter router = EndpointRouter.generateRouteFor(r, method, path);
+		EndpointFeatures<?> endpoint = router.getEndpoint();
+		IdRef<?> idRef = router.getIdRef();
 
-		HttpVerb verb = HttpVerb.getFromString(method);
-		EndpointRouter route = EndpointRouter.generateRouteFor(r, method, path);
-
-		EndpointFeatures<?> lastEndpoint = route.getLastEndpoint();
-		IdRef<?> idRef = route.getIdRef(r);
-
-		switch (route.getActionType()) {
+		switch (router.getActionType()) {
 		case INDEX:
-			return new JsonResponse(index(r, idRef, lastEndpoint, q(params), t(params)));
+			return new JsonResponse(index(r, idRef, endpoint, q(params), t(params)));
 		case SHOW:
 			try {
 				return new JsonResponse(get(r, idRef, t(params)));
@@ -110,11 +106,11 @@ public class DatastoreServlet extends HttpServlet {
 				throw new HttpException(404);
 			}
 		case CREATE:
-			return new JsonResponse(save(r, idRef, lastEndpoint, requestJson));
+			return new JsonResponse(save(r, idRef, endpoint, requestJson));
 		case UPDATE:
-			return new JsonResponse(save(r, idRef, lastEndpoint, requestJson));
+			return new JsonResponse(save(r, idRef, endpoint, requestJson));
 		case CUSTOM:
-			return action(r, idRef, route.getCustomAction(), params);
+			return action(r, idRef, router.getCustomAction(), params);
 		case DELETE:
 			throw new HttpException(501, "DELETE is not implemented yet");
 		default:

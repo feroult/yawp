@@ -109,7 +109,7 @@ public class EndpointRouter {
 		return resources.get(resources.size() - 1);
 	}
 
-	public IdRef<?> getIdRef(Repository r) {
+	public IdRef<?> getIdRef() {
 		IdRef<?> idRef = null;
 		for (RouteResource resource : resources) {
 			idRef = resource.getIdRef(r, idRef);
@@ -125,7 +125,7 @@ public class EndpointRouter {
 		return resources;
 	}
 
-	public EndpointFeatures<?> getLastEndpoint() {
+	public EndpointFeatures<?> getEndpoint() {
 		RepositoryFeatures features = r.getFeatures();
 		return features.getEndpoint(getLastEndpoint(resources).getEndpointPath());
 	}

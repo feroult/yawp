@@ -29,7 +29,7 @@ public class UriParserTest {
 	}
 
 	private UriParser parse(String uri) {
-		return UriParser.parse(uri, new RepositoryFeaturesMock());
+		return UriParser.parse(null, uri, new RepositoryFeaturesMock());
 	}
 
 	@Test

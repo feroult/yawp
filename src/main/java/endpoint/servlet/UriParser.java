@@ -5,7 +5,7 @@ import java.util.List;
 
 import endpoint.utils.UriUtils;
 
-public class UriInfo {
+public class UriParser {
 
 	private String uri;
 
@@ -13,13 +13,13 @@ public class UriInfo {
 
 	private boolean overCollection;
 
-	public UriInfo(String uri) {
+	public UriParser(String uri) {
 		this.uri = uri;
 		parseUri();
 	}
 
-	public static UriInfo parse(String uri) {
-		return new UriInfo(uri);
+	public static UriParser parse(String uri) {
+		return new UriParser(uri);
 	}
 
 	public List<RouteResource> getResources() {
@@ -36,21 +36,16 @@ public class UriInfo {
 	private ArrayList<RouteResource> parseResources(String[] parts) {
 		ArrayList<RouteResource> resources = new ArrayList<RouteResource>();
 
-		if (parts.length == 1) {
-			resources.add(new RouteResource(parts[0]));
-		} else if (parts.length == 2) {
-			resources.add(new RouteResource(parts[0], parts[1]));
+		for (int i = 0; i < parts.length / 2; i++) {
+			String path = parts[i * 2];
+			String id = parts[i * 2 + 1];
+			resources.add(new RouteResource(path, id));
 		}
 
-		// for (int i = 0; i < parts.length - 2; i += 2) {
-		// resources.add(new RouteResource(parts[i], parts[i + 1]));
-		// }
-		//
-		// // simpleobjects/123/action
-		// if (parts.length % 2 == 1) {
-		// resources.add(new RouteResource(parts[0]));
-		// return;
-		// }
+		if (parts.length % 2 == 1) {
+			resources.add(new RouteResource(parts[parts.length - 1]));
+		}
+
 		return resources;
 	}
 

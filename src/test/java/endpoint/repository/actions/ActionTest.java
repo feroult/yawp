@@ -14,7 +14,6 @@ import endpoint.repository.response.HttpResponse;
 import endpoint.servlet.EndpointRouter;
 import endpoint.utils.DateUtils;
 import endpoint.utils.EndpointTestCase;
-import endpoint.utils.HttpVerb;
 import endpoint.utils.JsonUtils;
 
 public class ActionTest extends EndpointTestCase {
@@ -25,7 +24,7 @@ public class ActionTest extends EndpointTestCase {
 		SimpleObject object = new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1");
 		r.save(object);
 
-		HttpResponse response = callAction(HttpVerb.PUT, "/simpleobjects/" + object.getId() + "/active", null);
+		HttpResponse response = callAction("PUT", "/simpleobjects/" + object.getId() + "/active", null);
 		object = JsonUtils.from(r, response.getText(), SimpleObject.class);
 
 		assertEquals("i was changed in action", object.getAString());
@@ -34,8 +33,8 @@ public class ActionTest extends EndpointTestCase {
 		assertEquals("i was changed in action", object.getAString());
 	}
 
-	private HttpResponse callAction(HttpVerb verb, String uri, Map<String, String> params) {
-		EndpointRouter route = EndpointRouter.generateRouteFor(r, verb, uri);
+	private HttpResponse callAction(String method, String uri, Map<String, String> params) {
+		EndpointRouter route = EndpointRouter.generateRouteFor(r, method, uri);
 		HttpResponse response = r.action(route.getIdRef(r), route.getCustomAction(), params);
 		return response;
 	}
@@ -45,13 +44,13 @@ public class ActionTest extends EndpointTestCase {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("x", "xpto");
 
-		HttpResponse response = callAction(HttpVerb.PUT, "/simpleobjects/1/params_action", params);
+		HttpResponse response = callAction("PUT", "/simpleobjects/1/params_action", params);
 		assertEquals("xpto", response.getText());
 	}
 
 	@Test
 	public void testActionOverCollection() {
-		HttpResponse response = callAction(HttpVerb.GET, "/simpleobjects/me", null);
+		HttpResponse response = callAction("GET", "/simpleobjects/me", null);
 		assertEquals("xpto", response.getText());
 	}
 
@@ -59,7 +58,7 @@ public class ActionTest extends EndpointTestCase {
 	public void testObjectWithIdRefAction() {
 		ObjectWithIdRef object = new ObjectWithIdRef("xpto");
 		r.save(object);
-		callAction(HttpVerb.PUT, "/objectWithIdRef/" + object.getId() + "/upper", null);
+		callAction("PUT", "/objectWithIdRef/" + object.getId() + "/upper", null);
 
 		ObjectWithIdRef retrievedObject = object.getId().fetch();
 		assertEquals("XPTO", retrievedObject.getText());
@@ -74,7 +73,7 @@ public class ActionTest extends EndpointTestCase {
 		child.setObjectWithIdRefId(object.getId());
 		r.save(child);
 
-		callAction(HttpVerb.PUT, "/children/" + child.getObjectWithIdRefId() + "/lower", null);
+		callAction("PUT", "/children/" + child.getObjectWithIdRefId() + "/lower", null);
 
 		ObjectWithIdRef retrievedObject = object.getId().fetch();
 		assertEquals("xpto", retrievedObject.getText());

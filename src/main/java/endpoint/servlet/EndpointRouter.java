@@ -41,20 +41,21 @@ public class EndpointRouter {
 
 	// TODO validate if the resources chain is a valid structure given the
 	// endpoints' parents, and give 404's if invalid
-	public static EndpointRouter generateRouteFor(Repository r, HttpVerb method, String uri) {
+	public static EndpointRouter generateRouteFor(Repository r, String method, String uri) {
 		RepositoryFeatures features = r.getFeatures();
+		HttpVerb httpVerb = HttpVerb.getFromString(method);
 
 		String[] parts = UriUtils.normalizeUri(uri).split("/");
 		List<RouteResource> resources = new ArrayList<>();
 		RouteAction action;
 		if (parts.length == 1) {
 			resources.add(new RouteResource(parts[0]));
-			if (method == HttpVerb.GET) {
+			if (httpVerb == HttpVerb.GET) {
 				action = new RouteAction(RestAction.INDEX);
-			} else if (method == HttpVerb.POST) {
+			} else if (httpVerb == HttpVerb.POST) {
 				action = new RouteAction(RestAction.CREATE);
 			} else {
-				throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + method);
+				throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + httpVerb);
 			}
 			return new EndpointRouter(r, resources, action);
 		}
@@ -68,10 +69,10 @@ public class EndpointRouter {
 			try {
 				Long id = Long.parseLong(lastToken);
 				resources.add(new RouteResource(parts[parts.length - 2], id));
-				action = new RouteAction(RestAction.getDefaultRestAction(method));
+				action = new RouteAction(RestAction.getDefaultRestAction(httpVerb));
 			} catch (NumberFormatException e) {
 				resources.add(new RouteResource(parts[parts.length - 2]));
-				ActionRef ref = new ActionRef(method, lastToken, true);
+				ActionRef ref = new ActionRef(httpVerb, lastToken, true);
 				Method actionMethod = getActionMethod(features, resources, ref);
 				if (actionMethod == null) {
 					throw new HttpException(404);
@@ -79,18 +80,18 @@ public class EndpointRouter {
 				action = new RouteAction(actionMethod);
 			}
 		} else {
-			ActionRef ref = new ActionRef(method, lastToken, false);
+			ActionRef ref = new ActionRef(httpVerb, lastToken, false);
 			Method actionMethod = getActionMethod(features, resources, ref);
 			if (actionMethod != null) {
 				action = new RouteAction(actionMethod);
 			} else {
 				resources.add(new RouteResource(parts[parts.length - 1]));
-				if (method == HttpVerb.GET) {
+				if (httpVerb == HttpVerb.GET) {
 					action = new RouteAction(RestAction.INDEX);
-				} else if (method == HttpVerb.POST) {
+				} else if (httpVerb == HttpVerb.POST) {
 					action = new RouteAction(RestAction.CREATE);
 				} else {
-					throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + method);
+					throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + httpVerb);
 				}
 			}
 		}

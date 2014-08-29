@@ -70,7 +70,7 @@ public class DatastoreServlet extends HttpServlet {
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpResponse httpResponse;
 		try {
-			httpResponse = execute(req.getMethod(), getPath(req), JsonUtils.readJson(req.getReader()), makeParams(req));
+			httpResponse = execute(req.getMethod(), getUri(req), JsonUtils.readJson(req.getReader()), makeParams(req));
 		} catch (HttpException e) {
 			httpResponse = new ErrorResponse(e.getHttpStatus(), e.getText());
 		} catch (DatastoreException e) {
@@ -85,14 +85,14 @@ public class DatastoreServlet extends HttpServlet {
 		return req.getParameterMap();
 	}
 
-	private String getPath(HttpServletRequest req) {
+	private String getUri(HttpServletRequest req) {
 		return req.getRequestURI().substring(req.getServletPath().length());
 	}
 
-	protected HttpResponse execute(String method, String path, String requestJson, Map<String, String> params) {
+	protected HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
 
 		Repository r = getRepository(params);
-		EndpointRouter router = EndpointRouter.generateRouteFor(r, method, path);
+		EndpointRouter router = EndpointRouter.generateRouteFor(r, method, uri);
 		EndpointFeatures<?> endpoint = router.getEndpoint();
 		IdRef<?> idRef = router.getIdRef();
 

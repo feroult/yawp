@@ -4,24 +4,24 @@ import java.lang.reflect.Method;
 
 public class RouteAction {
 
-	private RestActionType actionType;
+	private RestAction actionType;
 
 	private Method customAction;
 
-	public RouteAction(RestActionType actionType) {
+	public RouteAction(RestAction actionType) {
 		this(actionType, null);
 	}
 
 	public RouteAction(Method customAction) {
-		this(RestActionType.CUSTOM, customAction);
+		this(RestAction.CUSTOM, customAction);
 	}
 
-	private RouteAction(RestActionType actionType, Method customAction) {
+	private RouteAction(RestAction actionType, Method customAction) {
 		this.actionType = actionType;
 		this.customAction = customAction;
 	}
 
-	public RestActionType getActionType() {
+	public RestAction getActionType() {
 		return actionType;
 	}
 

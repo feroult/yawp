@@ -2,10 +2,10 @@ package endpoint.servlet;
 
 import endpoint.utils.HttpVerb;
 
-public enum RestActionType {
+public enum RestAction {
 	INDEX, SHOW, CREATE, UPDATE, DELETE, CUSTOM;
 
-	public static RestActionType getRest(HttpVerb verb) {
+	public static RestAction getDefaultRestAction(HttpVerb verb) {
 		switch (verb) {
 		case GET:
 			return SHOW;

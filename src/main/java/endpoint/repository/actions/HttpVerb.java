@@ -1,6 +1,7 @@
-package endpoint.servlet.routing;
+package endpoint.repository.actions;
 
 import endpoint.servlet.HttpException;
+import endpoint.servlet.routing.RestActionType;
 
 public enum HttpVerb {
 

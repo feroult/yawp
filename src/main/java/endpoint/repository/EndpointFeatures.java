@@ -9,6 +9,7 @@ import java.util.Map;
 import endpoint.repository.actions.ActionRef;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.hooks.Hook;
+import endpoint.utils.UriUtils;
 
 public class EndpointFeatures<T> {
 
@@ -66,6 +67,14 @@ public class EndpointFeatures<T> {
 	}
 
 	public Endpoint getEndpointAnnotation() {
-		return this.clazz.getAnnotation(Endpoint.class);
+		return clazz.getAnnotation(Endpoint.class);
+	}
+
+	public String getEndpointPath() {
+		Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
+		if (endpoint == null) {
+			throw new RuntimeException("The class " + clazz + " was used as an entity but was not annotated with @Endpoint.");
+		}
+		return endpoint.path();
 	}
 }

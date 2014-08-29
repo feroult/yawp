@@ -11,7 +11,6 @@ import endpoint.repository.ChildWithIdRef;
 import endpoint.repository.ObjectWithIdRef;
 import endpoint.repository.SimpleObject;
 import endpoint.repository.response.HttpResponse;
-import endpoint.servlet.routing.HttpVerb;
 import endpoint.servlet.routing.Route;
 import endpoint.utils.DateUtils;
 import endpoint.utils.EndpointTestCase;
@@ -74,7 +73,7 @@ public class ActionTest extends EndpointTestCase {
 		child.setObjectWithIdRefId(object.getId());
 		r.save(child);
 
-		callAction(HttpVerb.PUT, "/child/" + child.getObjectWithIdRefId() + "/lower", null);
+		callAction(HttpVerb.PUT, "/children/" + child.getObjectWithIdRefId() + "/lower", null);
 
 		ObjectWithIdRef retrievedObject = object.getId().fetch();
 		assertEquals("xpto", retrievedObject.getText());

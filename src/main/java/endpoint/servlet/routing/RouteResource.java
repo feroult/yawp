@@ -27,7 +27,7 @@ public class RouteResource {
 	}
 
 	public RouteResource(String endpoint, Long id) {
-		this.endpoint = endpoint;
+		this.endpoint = "/" + endpoint;
 		this.id = id;
 	}
 

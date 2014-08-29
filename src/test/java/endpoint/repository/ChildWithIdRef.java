@@ -3,7 +3,7 @@ package endpoint.repository;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
 
-@Endpoint(path = "child")
+@Endpoint(path = "/children")
 public class ChildWithIdRef {
 
 	@Id

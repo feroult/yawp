@@ -4,12 +4,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
-import endpoint.DatastoreException;
-import endpoint.HttpException;
+import endpoint.repository.DatastoreException;
+import endpoint.servlet.HttpException;
 
 public final class ThrownExceptionsUtils {
 
-	private static final List<Class<? extends RuntimeException>> ALLOWED_EXCEPTIONS = Arrays.<Class<? extends RuntimeException>>asList(DatastoreException.class);
+	private static final List<Class<? extends RuntimeException>> ALLOWED_EXCEPTIONS = Arrays
+			.<Class<? extends RuntimeException>> asList(DatastoreException.class);
 
 	private ThrownExceptionsUtils() {
 		throw new RuntimeException("Should never be instanciated.");

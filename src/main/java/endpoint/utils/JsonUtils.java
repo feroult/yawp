@@ -11,12 +11,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import endpoint.IdRef;
-import endpoint.Repository;
+import endpoint.repository.IdRef;
+import endpoint.repository.Repository;
 
 //TODO make it not static and repository aware
 public class JsonUtils {
-	
+
 	private static Gson buildGson(Repository r) {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setDateFormat(DateUtils.TIMESTAMP_FORMAT);
@@ -34,7 +34,7 @@ public class JsonUtils {
 		Gson gson = buildGson(null);
 		return gson.toJson(o);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T> T from(Repository r, String json, Class<T> clazz) {
 		return (T) from(r, json, (Type) clazz);

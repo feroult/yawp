@@ -1,13 +1,13 @@
 package endpoint.repository.actions;
 
-import java.io.Serializable;
+import endpoint.utils.HttpVerb;
 
-public class ActionRef implements Serializable {
-
-	private static final long serialVersionUID = -8103211642342487434L;
+public class ActionRef {
 
 	private HttpVerb verb;
+
 	private String name;
+
 	private boolean overCollection;
 
 	public ActionRef(HttpVerb verb, String name, boolean overCollection) {

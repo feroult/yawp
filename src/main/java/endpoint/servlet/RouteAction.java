@@ -1,4 +1,4 @@
-package endpoint.servlet.routing;
+package endpoint.servlet;
 
 import java.lang.reflect.Method;
 

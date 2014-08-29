@@ -11,9 +11,10 @@ import endpoint.repository.ChildWithIdRef;
 import endpoint.repository.ObjectWithIdRef;
 import endpoint.repository.SimpleObject;
 import endpoint.repository.response.HttpResponse;
-import endpoint.servlet.routing.Route;
+import endpoint.servlet.Route;
 import endpoint.utils.DateUtils;
 import endpoint.utils.EndpointTestCase;
+import endpoint.utils.HttpVerb;
 import endpoint.utils.JsonUtils;
 
 public class ActionTest extends EndpointTestCase {

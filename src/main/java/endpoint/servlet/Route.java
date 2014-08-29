@@ -1,4 +1,4 @@
-package endpoint.servlet.routing;
+package endpoint.servlet;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -9,9 +9,8 @@ import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
 import endpoint.repository.RepositoryFeaturesCache;
 import endpoint.repository.actions.ActionRef;
-import endpoint.repository.actions.HttpVerb;
 import endpoint.repository.annotations.Endpoint;
-import endpoint.servlet.HttpException;
+import endpoint.utils.HttpVerb;
 import endpoint.utils.UriUtils;
 
 public class Route {
@@ -66,7 +65,7 @@ public class Route {
 			try {
 				Long id = Long.parseLong(lastToken);
 				resources.add(new RouteResource(parts[parts.length - 2], id));
-				action = new RouteAction(method.getActionType());
+				action = new RouteAction(RestActionType.getRest(method));
 			} catch (NumberFormatException e) {
 				resources.add(new RouteResource(parts[parts.length - 2]));
 				ActionRef ref = new ActionRef(method, lastToken, true);

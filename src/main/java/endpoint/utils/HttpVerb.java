@@ -1,17 +1,17 @@
-package endpoint.repository.actions;
+package endpoint.utils;
 
 import endpoint.servlet.HttpException;
-import endpoint.servlet.routing.RestActionType;
+import endpoint.servlet.RestActionType;
 
 public enum HttpVerb {
 
-	GET("get", RestActionType.SHOW), POST("post", RestActionType.CREATE), PUT("put", RestActionType.UPDATE), PATCH("patch",
-			RestActionType.UPDATE), DELETE("delete", RestActionType.DELETE);
+	GET("get"), POST("post"), PUT("put"), PATCH("patch"), DELETE("delete");
 
 	private String name;
+
 	private RestActionType defaultType;
 
-	private HttpVerb(String name, RestActionType defaultType) {
+	private HttpVerb(String name) {
 		this.name = name;
 		this.defaultType = defaultType;
 	}

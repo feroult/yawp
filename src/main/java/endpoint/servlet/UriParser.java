@@ -6,6 +6,7 @@ import java.util.List;
 
 import endpoint.repository.RepositoryFeatures;
 import endpoint.repository.actions.ActionKey;
+import endpoint.utils.HttpVerb;
 import endpoint.utils.UriUtils;
 
 public class UriParser {
@@ -20,18 +21,17 @@ public class UriParser {
 
 	private ActionKey customActionKey;
 
-	public UriParser(String uri, RepositoryFeatures features) {
+	private HttpVerb verb;
+
+	public UriParser(HttpVerb verb, String uri, RepositoryFeatures features) {
+		this.verb = verb;
 		this.uri = uri;
 		this.features = features;
 		parseUri();
 	}
 
-	public static UriParser parse(String uri, RepositoryFeatures features) {
-		return new UriParser(uri, features);
-	}
-
-	public static UriParser parse(String uri) {
-		return parse(uri, null);
+	public static UriParser parse(HttpVerb verb, String uri, RepositoryFeatures features) {
+		return new UriParser(verb, uri, features);
 	}
 
 	public List<RouteResource> getResources() {
@@ -70,7 +70,7 @@ public class UriParser {
 
 	private ActionKey parseCustomActionKeyForOddParts(String[] parts, String possibleAction) {
 		String possiblePath = parts[parts.length - 3];
-		ActionKey actionKey = new ActionKey(null, possibleAction, false);
+		ActionKey actionKey = new ActionKey(verb, possibleAction, false);
 		if (features.hasCustomAction(possiblePath, actionKey)) {
 			return actionKey;
 		}
@@ -83,7 +83,7 @@ public class UriParser {
 			return null;
 		}
 
-		ActionKey actionKey = new ActionKey(null, possibleAction, true);
+		ActionKey actionKey = new ActionKey(verb, possibleAction, true);
 		if (features.hasCustomAction(possiblePath, actionKey)) {
 			return actionKey;
 		}

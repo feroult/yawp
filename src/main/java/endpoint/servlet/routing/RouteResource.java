@@ -6,7 +6,7 @@ import endpoint.servlet.HttpException;
 
 public class RouteResource {
 
-	private String endpoint;
+	private String endpointPath;
 
 	private Long id;
 
@@ -27,23 +27,19 @@ public class RouteResource {
 	}
 
 	public RouteResource(String endpoint, Long id) {
-		this.endpoint = "/" + endpoint;
+		this.endpointPath = "/" + endpoint;
 		this.id = id;
 	}
 
-	public String getEndpoint() {
-		return endpoint;
+	public String getEndpointPath() {
+		return endpointPath;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public IdRef<?> getResourceId(Repository r, IdRef<?> parent) {
+	public IdRef<?> getIdRef(Repository r, IdRef<?> parent) {
 		if (id == null) {
 			return parent;
 		}
-		IdRef<?> idRef = IdRef.create(r, r.getEndpointFeatures(endpoint).getClazz(), id);
+		IdRef<?> idRef = IdRef.create(r, r.getEndpointFeatures(endpointPath).getClazz(), id);
 		idRef.setParentId(parent);
 		return idRef;
 	}

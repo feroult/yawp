@@ -16,7 +16,7 @@ import endpoint.repository.EndpointFeatures;
 import endpoint.repository.EndpointScanner;
 import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
-import endpoint.repository.RepositoryFeatures;
+import endpoint.repository.RepositoryFeaturesCache;
 import endpoint.repository.actions.HttpVerb;
 import endpoint.repository.query.DatastoreQuery;
 import endpoint.repository.query.DatastoreQueryOptions;
@@ -32,7 +32,7 @@ public class DatastoreServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 8155293897299089610L;
 
-	private RepositoryFeatures features;
+	private RepositoryFeaturesCache features;
 
 	private boolean enableHooks = true;
 
@@ -130,7 +130,7 @@ public class DatastoreServlet extends HttpServlet {
 	}
 
 	protected Repository getRepository(Map<String, String> params) {
-		return Repository.r().setRepositoryFeatures(features);
+		return Repository.r().setFeatures(features);
 	}
 
 	private HttpResponse action(Repository r, IdRef<?> idRef, Method method, Map<String, String> params) {

@@ -13,13 +13,13 @@ import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig
 
 import endpoint.repository.EndpointScanner;
 import endpoint.repository.Repository;
-import endpoint.repository.RepositoryFeatures;
+import endpoint.repository.RepositoryFeaturesCache;
 
 public class EndpointTestCase {
 
 	private static final String LOGGED_USER_ID = "10";
 
-	private static RepositoryFeatures features;
+	private static RepositoryFeaturesCache features;
 
 	private LocalServiceTestHelper helper;
 
@@ -44,7 +44,7 @@ public class EndpointTestCase {
 
 	@Before
 	public void setupRepository() {
-		r = Repository.r(LOGGED_USER_ID).setRepositoryFeatures(features);
+		r = Repository.r(LOGGED_USER_ID).setFeatures(features);
 	}
 
 	@After

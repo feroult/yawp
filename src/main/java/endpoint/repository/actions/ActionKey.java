@@ -2,7 +2,7 @@ package endpoint.repository.actions;
 
 import endpoint.utils.HttpVerb;
 
-public class ActionRef {
+public class ActionKey {
 
 	private HttpVerb verb;
 
@@ -10,7 +10,7 @@ public class ActionRef {
 
 	private boolean overCollection;
 
-	public ActionRef(HttpVerb verb, String name, boolean overCollection) {
+	public ActionKey(HttpVerb verb, String name, boolean overCollection) {
 		this.verb = verb;
 		this.name = name;
 		this.overCollection = overCollection;
@@ -37,7 +37,7 @@ public class ActionRef {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		ActionRef other = (ActionRef) obj;
+		ActionKey other = (ActionKey) obj;
 		if (name == null) {
 			if (other.name != null) {
 				return false;

@@ -5,7 +5,7 @@ import endpoint.utils.HttpVerb;
 public enum RestAction {
 	INDEX, SHOW, CREATE, UPDATE, DELETE, CUSTOM;
 
-	public static RestAction getDefaultRestAction(HttpVerb verb) {
+	public static RestAction getResourceRestAction(HttpVerb verb) {
 		switch (verb) {
 		case GET:
 			return SHOW;

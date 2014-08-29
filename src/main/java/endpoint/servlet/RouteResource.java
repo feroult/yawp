@@ -1,8 +1,7 @@
-package endpoint.servlet.routing;
+package endpoint.servlet;
 
 import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
-import endpoint.servlet.HttpException;
 
 public class RouteResource {
 

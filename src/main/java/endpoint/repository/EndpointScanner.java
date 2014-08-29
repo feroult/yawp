@@ -13,13 +13,13 @@ import org.reflections.Reflections;
 
 import endpoint.repository.actions.Action;
 import endpoint.repository.actions.ActionRef;
-import endpoint.repository.actions.HttpVerb;
 import endpoint.repository.actions.annotations.GET;
 import endpoint.repository.actions.annotations.PUT;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.hooks.Hook;
 import endpoint.repository.transformers.Transformer;
 import endpoint.utils.EntityUtils;
+import endpoint.utils.HttpVerb;
 import endpoint.utils.ReflectionUtils;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })

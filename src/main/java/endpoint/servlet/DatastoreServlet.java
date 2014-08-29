@@ -17,15 +17,14 @@ import endpoint.repository.EndpointScanner;
 import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
 import endpoint.repository.RepositoryFeaturesCache;
-import endpoint.repository.actions.HttpVerb;
 import endpoint.repository.query.DatastoreQuery;
 import endpoint.repository.query.DatastoreQueryOptions;
 import endpoint.repository.query.NoResultException;
 import endpoint.repository.response.ErrorResponse;
 import endpoint.repository.response.HttpResponse;
 import endpoint.repository.response.JsonResponse;
-import endpoint.servlet.routing.Route;
 import endpoint.utils.EntityUtils;
+import endpoint.utils.HttpVerb;
 import endpoint.utils.JsonUtils;
 
 public class DatastoreServlet extends HttpServlet {

@@ -30,10 +30,10 @@ public class Route {
 
 	private void validateConstraints() {
 		Endpoint lastEndpoint = features.getEndpoint(getLastEndpoint(resources).getEndpointPath()).getEndpointAnnotation();
-		if (!lastEndpoint.index() && action.getActionType() == RestActionType.INDEX) {
+		if (!lastEndpoint.index() && action.getActionType() == RestAction.INDEX) {
 			throw new HttpException(403);
 		}
-		if (!lastEndpoint.update() && action.getActionType() == RestActionType.UPDATE) {
+		if (!lastEndpoint.update() && action.getActionType() == RestAction.UPDATE) {
 			throw new HttpException(403);
 		}
 	}
@@ -47,9 +47,9 @@ public class Route {
 		if (parts.length == 1) {
 			resources.add(new RouteResource(parts[0]));
 			if (method == HttpVerb.GET) {
-				action = new RouteAction(RestActionType.INDEX);
+				action = new RouteAction(RestAction.INDEX);
 			} else if (method == HttpVerb.POST) {
-				action = new RouteAction(RestActionType.CREATE);
+				action = new RouteAction(RestAction.CREATE);
 			} else {
 				throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + method);
 			}
@@ -65,7 +65,7 @@ public class Route {
 			try {
 				Long id = Long.parseLong(lastToken);
 				resources.add(new RouteResource(parts[parts.length - 2], id));
-				action = new RouteAction(RestActionType.getRest(method));
+				action = new RouteAction(RestAction.getDefaultRestAction(method));
 			} catch (NumberFormatException e) {
 				resources.add(new RouteResource(parts[parts.length - 2]));
 				ActionRef ref = new ActionRef(method, lastToken, true);
@@ -83,9 +83,9 @@ public class Route {
 			} else {
 				resources.add(new RouteResource(parts[parts.length - 1]));
 				if (method == HttpVerb.GET) {
-					action = new RouteAction(RestActionType.INDEX);
+					action = new RouteAction(RestAction.INDEX);
 				} else if (method == HttpVerb.POST) {
-					action = new RouteAction(RestActionType.CREATE);
+					action = new RouteAction(RestAction.CREATE);
 				} else {
 					throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + method);
 				}
@@ -113,7 +113,7 @@ public class Route {
 		return idRef;
 	}
 
-	public RestActionType getActionType() {
+	public RestAction getActionType() {
 		return action.getActionType();
 	}
 

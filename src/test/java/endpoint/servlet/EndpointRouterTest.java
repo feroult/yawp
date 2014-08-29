@@ -3,6 +3,8 @@ package endpoint.servlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.List;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -33,6 +35,7 @@ public class EndpointRouterTest extends EndpointTestCase {
 		EndpointRouter router = EndpointRouter.generateRouteFor(r, "POST", "/simpleobjects");
 		assertRouter(router, SimpleObject.class, RestAction.CREATE, null);
 	}
+
 
 	@Test
 	@Ignore

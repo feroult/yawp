@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import endpoint.utils.HttpVerb;
+
 public class RepositoryFeatures {
 
 	private Map<Class<?>, EndpointFeatures<?>> endpoints;
@@ -59,5 +61,10 @@ public class RepositoryFeatures {
 			throw new RuntimeException("Invalid endpoint path " + path);
 		}
 		return get(clazz);
+	}
+
+	public boolean hasCustomAction(String path, HttpVerb verb, String customAction, boolean overCollection) {
+		EndpointFeatures<?> endpointFeatures = get(path);
+		return endpointFeatures.hasCustomAction(verb, customAction, overCollection);
 	}
 }

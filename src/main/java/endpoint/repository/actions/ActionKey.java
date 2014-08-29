@@ -6,21 +6,29 @@ public class ActionKey {
 
 	private HttpVerb verb;
 
-	private String name;
+	private String actionName;
 
 	private boolean overCollection;
 
-	public ActionKey(HttpVerb verb, String name, boolean overCollection) {
+	public ActionKey(HttpVerb verb, String actionName, boolean overCollection) {
 		this.verb = verb;
-		this.name = name;
+		this.actionName = actionName;
 		this.overCollection = overCollection;
+	}
+
+	public boolean isOverCollection() {
+		return this.overCollection;
+	}
+
+	public String getActionName() {
+		return actionName;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((actionName == null) ? 0 : actionName.hashCode());
 		result = prime * result + (overCollection ? 1231 : 1237);
 		result = prime * result + ((verb == null) ? 0 : verb.hashCode());
 		return result;
@@ -38,11 +46,11 @@ public class ActionKey {
 			return false;
 		}
 		ActionKey other = (ActionKey) obj;
-		if (name == null) {
-			if (other.name != null) {
+		if (actionName == null) {
+			if (other.actionName != null) {
 				return false;
 			}
-		} else if (!name.equals(other.name)) {
+		} else if (!actionName.equals(other.actionName)) {
 			return false;
 		}
 		if (overCollection != other.overCollection) {
@@ -56,10 +64,6 @@ public class ActionKey {
 
 	@Override
 	public String toString() {
-		return "<" + this.verb + ">" + this.name + (this.overCollection ? "[]" : "");
-	}
-
-	public boolean isOverCollection() {
-		return this.overCollection;
+		return "<" + this.verb + ">" + this.actionName + (this.overCollection ? "[]" : "");
 	}
 }

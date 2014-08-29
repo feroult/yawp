@@ -8,12 +8,11 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import endpoint.repository.EndpointFeatures;
 import endpoint.repository.RepositoryFeatures;
-import endpoint.utils.HttpVerb;
+import endpoint.repository.actions.ActionKey;
 
 public class UriParserTest {
 
@@ -24,8 +23,8 @@ public class UriParserTest {
 		}
 
 		@Override
-		public boolean hasCustomAction(String path, HttpVerb verb, String customAction, boolean overCollection) {
-			return customAction.equals("action");
+		public boolean hasCustomAction(String path, ActionKey actionKey) {
+			return actionKey.getActionName().equals("action");
 		}
 	}
 
@@ -88,14 +87,59 @@ public class UriParserTest {
 	}
 
 	@Test
-	@Ignore
 	public void testRootCollectionAction() {
 		UriParser uriInfo = parse("/objects/action");
 		assertTrue(uriInfo.isOverCollection());
 		assertTrue(uriInfo.isCustomAction());
-		assertEquals("action", uriInfo.getCustomAction());
-
+		assertEquals("action", uriInfo.getCustomActionName());
 		assertResources(uriInfo, 1, "/objects", null);
+	}
+
+	@Test
+	public void testRootResourceAction() {
+		UriParser uriInfo = parse("/objects/1/action");
+		assertFalse(uriInfo.isOverCollection());
+		assertTrue(uriInfo.isCustomAction());
+		assertEquals("action", uriInfo.getCustomActionName());
+		assertResources(uriInfo, 1, "/objects", 1l);
+	}
+
+	@Test
+	public void testNestedCollectionAction() {
+		UriParser uriInfo = parse("/objects/1/children/action");
+		assertTrue(uriInfo.isOverCollection());
+		assertTrue(uriInfo.isCustomAction());
+		assertEquals("action", uriInfo.getCustomActionName());
+		assertResources(uriInfo, 2, "/objects", 1l, "/children", null);
+	}
+
+	@Test
+	public void testNestedResourceAction() {
+		UriParser uriInfo = parse("/objects/1/children/1/action");
+		assertFalse(uriInfo.isOverCollection());
+		assertTrue(uriInfo.isCustomAction());
+		assertEquals("action", uriInfo.getCustomActionName());
+		assertResources(uriInfo, 2, "/objects", 1l, "/children", 1l);
+	}
+
+	@Test
+	public void testTwoNestedCollectionAction() {
+		UriParser uriInfo = parse("/objects/1/children/1/grandchildren/action");
+
+		assertTrue(uriInfo.isOverCollection());
+		assertTrue(uriInfo.isCustomAction());
+		assertEquals("action", uriInfo.getCustomActionName());
+		assertResources(uriInfo, 3, "/objects", 1l, "/children", 1l, "/grandchildren", null);
+	}
+
+	@Test
+	public void testTwoNestedResourceAction() {
+		UriParser uriInfo = parse("/objects/1/children/1/grandchildren/1/action");
+
+		assertFalse(uriInfo.isOverCollection());
+		assertTrue(uriInfo.isCustomAction());
+		assertEquals("action", uriInfo.getCustomActionName());
+		assertResources(uriInfo, 3, "/objects", 1l, "/children", 1l, "/grandchildren", 1l);
 	}
 
 	private void assertResources(UriParser uriParser, int size, Object... resourcesOptions) {

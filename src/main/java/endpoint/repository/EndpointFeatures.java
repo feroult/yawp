@@ -9,6 +9,7 @@ import java.util.Map;
 import endpoint.repository.actions.ActionKey;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.hooks.Hook;
+import endpoint.utils.HttpVerb;
 
 public class EndpointFeatures<T> {
 
@@ -75,5 +76,9 @@ public class EndpointFeatures<T> {
 			throw new RuntimeException("The class " + clazz + " was used as an entity but was not annotated with @Endpoint.");
 		}
 		return endpoint.path();
+	}
+
+	public boolean hasCustomAction(HttpVerb verb, String customAction, boolean overCollection) {
+		return actions.containsKey(new ActionKey(verb, customAction, overCollection));
 	}
 }

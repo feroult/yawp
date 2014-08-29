@@ -14,15 +14,7 @@ public class RouteResource {
 	}
 
 	public RouteResource(String endpoint, String id) {
-		this(endpoint, getAsLong(id));
-	}
-
-	private static Long getAsLong(String id) {
-		try {
-			return Long.parseLong(id);
-		} catch (NumberFormatException ex) {
-			throw new HttpException(404);
-		}
+		this(endpoint, Long.valueOf(id));
 	}
 
 	public RouteResource(String endpoint, Long id) {

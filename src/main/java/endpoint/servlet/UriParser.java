@@ -1,9 +1,11 @@
 package endpoint.servlet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import endpoint.repository.RepositoryFeatures;
+import endpoint.repository.actions.ActionKey;
 import endpoint.utils.UriUtils;
 
 public class UriParser {
@@ -16,7 +18,7 @@ public class UriParser {
 
 	private boolean overCollection;
 
-	private boolean customAction;
+	private ActionKey customActionKey;
 
 	public UriParser(String uri, RepositoryFeatures features) {
 		this.uri = uri;
@@ -39,58 +41,87 @@ public class UriParser {
 	private void parseUri() {
 		String[] parts = UriUtils.normalizeUri(uri).split("/");
 
-		this.customAction = checkIsCustomAction(parts);
+		this.customActionKey = parseCustomActionKey(parts);
 		this.overCollection = checkIsOverCollection(parts);
 		this.resources = parseResources(parts);
 	}
 
-	private boolean checkIsCustomAction(String[] parts) {
+	private ActionKey parseCustomActionKey(String[] parts) {
+		// /objects
 		if (parts.length < 2) {
-			return false;
+			return null;
 		}
 
-		// /objects/1
 		String possibleAction = parts[parts.length - 1];
+
+		// /objects/1
 		if (!isString(possibleAction)) {
-			return false;
+			return null;
 		}
 
 		// /objects/action
 		if (parts.length % 2 == 0) {
-			String possiblePath = parts[parts.length - 2];
-			if (!isString(possiblePath)) {
-				return false;
-			}
-			return features.hasCustomAction(possiblePath, null, possibleAction, true);
+			return parseCustomActionKeyForEvenParts(parts, possibleAction);
 		}
 
 		// /objects/1/action
+		return parseCustomActionKeyForOddParts(parts, possibleAction);
+	}
+
+	private ActionKey parseCustomActionKeyForOddParts(String[] parts, String possibleAction) {
 		String possiblePath = parts[parts.length - 3];
-		return features.hasCustomAction(possiblePath, null, possibleAction, false);
+		ActionKey actionKey = new ActionKey(null, possibleAction, false);
+		if (features.hasCustomAction(possiblePath, actionKey)) {
+			return actionKey;
+		}
+		return null;
+	}
+
+	private ActionKey parseCustomActionKeyForEvenParts(String[] parts, String possibleAction) {
+		String possiblePath = parts[parts.length - 2];
+		if (!isString(possiblePath)) {
+			return null;
+		}
+
+		ActionKey actionKey = new ActionKey(null, possibleAction, true);
+		if (features.hasCustomAction(possiblePath, actionKey)) {
+			return actionKey;
+		}
+		return null;
 	}
 
 	private ArrayList<RouteResource> parseResources(String[] parts) {
 		ArrayList<RouteResource> resources = new ArrayList<RouteResource>();
 
-		for (int i = 0; i < parts.length / 2; i++) {
-			String path = parts[i * 2];
-			String id = parts[i * 2 + 1];
-
-			if (!customAction) {
-				resources.add(new RouteResource(path, id));
-			}
+		String[] resourceParts = parts;
+		if (isCustomAction()) {
+			resourceParts = Arrays.copyOf(parts, parts.length - 1);
 		}
 
-		if (parts.length % 2 == 1) {
-			resources.add(new RouteResource(parts[parts.length - 1]));
+		for (int i = 0; i < resourceParts.length / 2; i++) {
+			String path = resourceParts[i * 2];
+			String id = resourceParts[i * 2 + 1];
+			resources.add(new RouteResource(path, id));
+		}
+
+		if (resourceParts.length % 2 == 1) {
+			resources.add(new RouteResource(resourceParts[resourceParts.length - 1]));
 		}
 
 		return resources;
 	}
 
 	private boolean checkIsOverCollection(String[] parts) {
-		String lastToken = parts[parts.length - 1];
-		return isString(lastToken);
+		if (parts.length == 1) {
+			return true;
+		}
+		if (!isString(parts[parts.length - 1])) {
+			return false;
+		}
+		if (!isCustomAction()) {
+			return true;
+		}
+		return isString(parts[parts.length - 2]);
 	}
 
 	private boolean isString(String lastToken) {
@@ -107,11 +138,13 @@ public class UriParser {
 	}
 
 	public boolean isCustomAction() {
-		return customAction;
+		return customActionKey != null;
 	}
 
-	public String getCustomAction() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getCustomActionName() {
+		if (!isCustomAction()) {
+			return null;
+		}
+		return customActionKey.getActionName();
 	}
 }

@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import endpoint.utils.HttpVerb;
+import endpoint.repository.actions.ActionKey;
 
 public class RepositoryFeatures {
 
@@ -63,8 +63,8 @@ public class RepositoryFeatures {
 		return get(clazz);
 	}
 
-	public boolean hasCustomAction(String path, HttpVerb verb, String customAction, boolean overCollection) {
+	public boolean hasCustomAction(String path, ActionKey actionKey) {
 		EndpointFeatures<?> endpointFeatures = get(path);
-		return endpointFeatures.hasCustomAction(verb, customAction, overCollection);
+		return endpointFeatures.hasCustomAction(actionKey);
 	}
 }

@@ -15,6 +15,7 @@ import endpoint.repository.EndpointFeatures;
 import endpoint.repository.RepositoryFeatures;
 import endpoint.repository.SimpleObject;
 import endpoint.repository.actions.ActionKey;
+import endpoint.servlet.EndpointRouter.RouteResource;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.HttpVerb;
 

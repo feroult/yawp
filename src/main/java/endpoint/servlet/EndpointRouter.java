@@ -175,7 +175,7 @@ public class EndpointRouter {
 	public IdRef<?> getIdRef() {
 		IdRef<?> idRef = null;
 		for (RouteResource resource : resources) {
-			idRef = resource.getIdRef(r, idRef);
+			idRef = resource.getIdRef(idRef);
 		}
 		return idRef;
 	}
@@ -211,12 +211,12 @@ public class EndpointRouter {
 			return endpointPath;
 		}
 
-		public IdRef<?> getIdRef(Repository r, IdRef<?> parent) {
+		public IdRef<?> getIdRef(IdRef<?> parentId) {
 			if (id == null) {
-				return parent;
+				return parentId;
 			}
-			IdRef<?> idRef = IdRef.create(r, r.getEndpointFeatures(endpointPath).getClazz(), id);
-			idRef.setParentId(parent);
+			IdRef<?> idRef = IdRef.create(r, features.get(endpointPath).getClazz(), id);
+			idRef.setParentId(parentId);
 			return idRef;
 		}
 

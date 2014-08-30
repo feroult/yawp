@@ -183,6 +183,10 @@ public class EndpointServlet extends HttpServlet {
 	}
 
 	private void saveInRepository(Repository r, Object object, IdRef<?> parentId) {
+		// TODO remove dependence to EntityUtils, move EntityUtils inside
+		// repository
+		// TODO create tests to update a nested object, and check its idRef
+		// inside a beforeSave hook
 		EntityUtils.setParentId(object, parentId);
 		if (enableHooks) {
 			r.saveWithHooks(object);

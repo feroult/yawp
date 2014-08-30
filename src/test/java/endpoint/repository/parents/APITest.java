@@ -22,12 +22,12 @@ import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
 
 public class APITest extends EndpointTestCase {
-	private MyDatastoreServlet servlet;
+	private MyEndpointServlet servlet;
 
-	private static class MyDatastoreServlet extends EndpointServlet {
+	private static class MyEndpointServlet extends EndpointServlet {
 		private static final long serialVersionUID = 2770293412557653563L;
 
-		public MyDatastoreServlet(String packagePrefix) {
+		public MyEndpointServlet(String packagePrefix) {
 			super(packagePrefix);
 		}
 
@@ -75,7 +75,7 @@ public class APITest extends EndpointTestCase {
 
 	@Before
 	public void before() {
-		servlet = new MyDatastoreServlet("endpoint.repository.parents.models");
+		servlet = new MyEndpointServlet("endpoint.repository.parents.models");
 		r = servlet.r();
 		FixturesLoader.load(r);
 	}

@@ -1,7 +1,7 @@
 package endpoint.servlet;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import endpoint.repository.EndpointFeatures;
@@ -17,138 +17,159 @@ public class EndpointRouter {
 
 	private Repository r;
 
+	private RepositoryFeatures features;
+
+	private String uri;
+
 	private List<RouteResource> resources;
 
-	private RESTActionType restAction;
+	private boolean overCollection;
 
 	private ActionKey customActionKey;
 
-	private RouteAction action;
+	private HttpVerb verb;
 
-	private EndpointRouter(Repository r, List<RouteResource> resources, RouteAction action) {
+	public EndpointRouter(Repository r, HttpVerb verb, String uri) {
+		this.verb = verb;
+		this.uri = uri;
 		this.r = r;
-		this.resources = resources;
-		this.action = action;
-		validateConstraints();
+		this.features = r.getFeatures();
+		parseUri();
+		validateRestrictions();
 	}
 
-	private void validateConstraints() {
-		RepositoryFeatures features = r.getFeatures();
-		Endpoint lastEndpoint = features.get(getLastEndpoint(resources).getEndpointPath()).getEndpointAnnotation();
-		if (!lastEndpoint.index() && action.getActionType() == RESTActionType.INDEX) {
-			throw new HttpException(403);
-		}
-		if (!lastEndpoint.update() && action.getActionType() == RESTActionType.UPDATE) {
-			throw new HttpException(403);
-		}
+	public static EndpointRouter parse(Repository r, HttpVerb verb, String uri) {
+		return new EndpointRouter(r, verb, uri);
 	}
 
-	// TODO validate if the resources chain is a valid structure given the
-	// endpoints' parents, and give 404's if invalid
-	public static EndpointRouter generateRouteFor(Repository r, String method, String uri) {
-		RepositoryFeatures features = r.getFeatures();
-		HttpVerb httpVerb = HttpVerb.fromString(method);
+	public List<RouteResource> getResources() {
+		return resources;
+	}
 
+	private void parseUri() {
 		String[] parts = UriUtils.normalizeUri(uri).split("/");
 
-		List<RouteResource> resources = new ArrayList<>();
-		RouteAction action = null;
+		this.customActionKey = parseCustomActionKey(parts);
+		this.overCollection = parseOverCollection(parts);
+		this.resources = parseResources(parts);
+	}
 
-		// /simpleobjects
-		if (parts.length == 1) {
-			return generateRouteForRootCollection(r, httpVerb, parts);
+	private ActionKey parseCustomActionKey(String[] parts) {
+		// /objects
+		if (parts.length < 2) {
+			return null;
 		}
 
-		for (int i = 0; i < parts.length - 2; i += 2) {
-			resources.add(new RouteResource(parts[i], parts[i + 1]));
+		String possibleAction = parts[parts.length - 1];
+
+		// /objects/1
+		if (!isString(possibleAction)) {
+			return null;
 		}
 
-		String lastToken = parts[parts.length - 1];
-
+		// /objects/action
 		if (parts.length % 2 == 0) {
-			try {
-				return generateRouteForNestedResource(r, httpVerb, parts, resources, lastToken);
-			} catch (NumberFormatException e) {
-				return generateRouteForCustomActionOverNestedCollection(r, features, httpVerb, parts, resources, lastToken);
-			}
-		} else {
-			return generateRouteForCustomActionOverCollection(r, features, httpVerb, parts, resources, action, lastToken);
+			return parseCustomActionKeyForEvenParts(parts, possibleAction);
+		}
+
+		// /objects/1/action
+		return parseCustomActionKeyForOddParts(parts, possibleAction);
+	}
+
+	private ActionKey parseCustomActionKeyForOddParts(String[] parts, String possibleAction) {
+		String possiblePath = parts[parts.length - 3];
+		ActionKey actionKey = new ActionKey(verb, possibleAction, false);
+		if (features.hasCustomAction("/" + possiblePath, actionKey)) {
+			return actionKey;
+		}
+		return null;
+	}
+
+	private ActionKey parseCustomActionKeyForEvenParts(String[] parts, String possibleAction) {
+		String possiblePath = parts[parts.length - 2];
+		if (!isString(possiblePath)) {
+			return null;
+		}
+
+		ActionKey actionKey = new ActionKey(verb, possibleAction, true);
+		if (features.hasCustomAction("/" + possiblePath, actionKey)) {
+			return actionKey;
+		}
+		return null;
+	}
+
+	private ArrayList<RouteResource> parseResources(String[] parts) {
+		ArrayList<RouteResource> resources = new ArrayList<RouteResource>();
+
+		String[] resourceParts = parts;
+		if (isCustomAction()) {
+			resourceParts = Arrays.copyOf(parts, parts.length - 1);
+		}
+
+		for (int i = 0; i < resourceParts.length / 2; i++) {
+			String path = resourceParts[i * 2];
+			String id = resourceParts[i * 2 + 1];
+			resources.add(new RouteResource(path, id));
+		}
+
+		if (resourceParts.length % 2 == 1) {
+			resources.add(new RouteResource(resourceParts[resourceParts.length - 1]));
+		}
+
+		return resources;
+	}
+
+	private boolean parseOverCollection(String[] parts) {
+		if (parts.length == 1) {
+			return true;
+		}
+		if (!isString(parts[parts.length - 1])) {
+			return false;
+		}
+		if (!isCustomAction()) {
+			return true;
+		}
+		return isString(parts[parts.length - 2]);
+	}
+
+	private boolean isString(String lastToken) {
+		try {
+			Long.valueOf(lastToken);
+			return false;
+		} catch (NumberFormatException e) {
+			return true;
 		}
 	}
 
-	private static EndpointRouter generateRouteForCustomActionOverCollection(Repository r, RepositoryFeatures features, HttpVerb httpVerb,
-			String[] parts, List<RouteResource> resources, RouteAction action, String lastToken) {
-		// custom action over resource
-		ActionKey ref = new ActionKey(httpVerb, lastToken, false);
-		Method actionMethod = getActionMethod(features, resources, ref);
-		if (actionMethod != null) {
-			action = new RouteAction(actionMethod);
-		} else {
-			resources.add(new RouteResource(parts[parts.length - 1]));
-			if (httpVerb == HttpVerb.GET) {
-				action = new RouteAction(RESTActionType.INDEX);
-			} else if (httpVerb == HttpVerb.POST) {
-				action = new RouteAction(RESTActionType.CREATE);
-			} else {
-				throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + httpVerb);
-			}
+	public boolean isOverCollection() {
+		return overCollection;
+	}
+
+	public boolean isCustomAction() {
+		return customActionKey != null;
+	}
+
+	public String getCustomActionName() {
+		if (!isCustomAction()) {
+			return null;
 		}
-		return new EndpointRouter(r, resources, action);
+		return customActionKey.getActionName();
 	}
 
-	private static EndpointRouter generateRouteForCustomActionOverNestedCollection(Repository r, RepositoryFeatures features,
-			HttpVerb httpVerb, String[] parts, List<RouteResource> resources, String lastToken) {
-		RouteAction action;
-		// custom action over collection
-		// /simpleobjects/1/xpto/active
-
-		resources.add(new RouteResource(parts[parts.length - 2]));
-		ActionKey ref = new ActionKey(httpVerb, lastToken, true);
-		Method actionMethod = getActionMethod(features, resources, ref);
-		if (actionMethod == null) {
-			throw new HttpException(404);
-		}
-		action = new RouteAction(actionMethod);
-
-		return new EndpointRouter(r, resources, action);
+	public ActionKey getCustomActionKey() {
+		return customActionKey;
 	}
 
-	private static EndpointRouter generateRouteForNestedResource(Repository r, HttpVerb httpVerb, String[] parts,
-			List<RouteResource> resources, String lastToken) {
-		RouteAction action;
-		// nested resource route
-		// /simpleobjects/1/xpto/10
-
-		Long id = Long.parseLong(lastToken);
-		resources.add(new RouteResource(parts[parts.length - 2], id));
-		action = new RouteAction(RESTActionType.defaultRestAction(httpVerb, false));
-
-		return new EndpointRouter(r, resources, action);
+	private String getEndpointPath() {
+		return resources.get(resources.size() - 1).getEndpointPath();
 	}
 
-	private static EndpointRouter generateRouteForRootCollection(Repository r, HttpVerb httpVerb, String[] parts) {
-		List<RouteResource> resources = new ArrayList<>();
-		RouteAction action;
-
-		resources.add(new RouteResource(parts[0]));
-		if (httpVerb == HttpVerb.GET) {
-			action = new RouteAction(RESTActionType.INDEX);
-		} else if (httpVerb == HttpVerb.POST) {
-			action = new RouteAction(RESTActionType.CREATE);
-		} else {
-			throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + httpVerb);
-		}
-		return new EndpointRouter(r, resources, action);
+	public EndpointFeatures<?> getEndpointFeatures() {
+		return features.get(getEndpointPath());
 	}
 
-	private static Method getActionMethod(RepositoryFeatures features, List<RouteResource> resources, ActionKey action) {
-		EndpointFeatures<?> endpoint = features.get(getLastEndpoint(resources).getEndpointPath());
-		Method actionMethod = endpoint.getAction(action);
-		return actionMethod;
-	}
-
-	private static RouteResource getLastEndpoint(List<RouteResource> resources) {
-		return resources.get(resources.size() - 1);
+	public Class<?> getEndpointClazz() {
+		return getEndpointFeatures().getClazz();
 	}
 
 	public IdRef<?> getIdRef() {
@@ -159,17 +180,16 @@ public class EndpointRouter {
 		return idRef;
 	}
 
-	public RESTActionType getRestAction() {
-		return action.getActionType();
+	public RESTActionType getRESTActionType() {
+		if (isCustomAction()) {
+			return RESTActionType.CUSTOM;
+		}
+		return RESTActionType.defaultRestAction(verb, isOverCollection());
 	}
 
-	public EndpointFeatures<?> getEndpoint() {
-		RepositoryFeatures features = r.getFeatures();
-		return features.get(getLastEndpoint(resources).getEndpointPath());
-	}
-
-	public Method getCustomAction() {
-		return action.getCustomAction();
+	private void validateRestrictions() {
+		Endpoint endpointAnnotation = getEndpointFeatures().getEndpointAnnotation();
+		getRESTActionType().validateRetrictions(endpointAnnotation);
 	}
 
 }

@@ -4,16 +4,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import endpoint.repository.EndpointFeatures;
+import endpoint.repository.IdRef;
+import endpoint.repository.Repository;
 import endpoint.repository.RepositoryFeatures;
 import endpoint.repository.actions.ActionKey;
+import endpoint.repository.annotations.Endpoint;
 import endpoint.utils.HttpVerb;
 import endpoint.utils.UriUtils;
 
 public class UriParser {
 
-	private String uri;
+	private Repository r;
 
 	private RepositoryFeatures features;
+
+	private String uri;
 
 	private List<RouteResource> resources;
 
@@ -23,15 +29,17 @@ public class UriParser {
 
 	private HttpVerb verb;
 
-	public UriParser(HttpVerb verb, String uri, RepositoryFeatures features) {
+	public UriParser(Repository r, HttpVerb verb, String uri) {
 		this.verb = verb;
 		this.uri = uri;
-		this.features = features;
+		this.r = r;
+		this.features = r.getFeatures();
 		parseUri();
+		validateRestrictions();
 	}
 
-	public static UriParser parse(HttpVerb verb, String uri, RepositoryFeatures features) {
-		return new UriParser(verb, uri, features);
+	public static UriParser parse(Repository r, HttpVerb verb, String uri) {
+		return new UriParser(r, verb, uri);
 	}
 
 	public List<RouteResource> getResources() {
@@ -42,7 +50,7 @@ public class UriParser {
 		String[] parts = UriUtils.normalizeUri(uri).split("/");
 
 		this.customActionKey = parseCustomActionKey(parts);
-		this.overCollection = checkIsOverCollection(parts);
+		this.overCollection = parseOverCollection(parts);
 		this.resources = parseResources(parts);
 	}
 
@@ -71,7 +79,7 @@ public class UriParser {
 	private ActionKey parseCustomActionKeyForOddParts(String[] parts, String possibleAction) {
 		String possiblePath = parts[parts.length - 3];
 		ActionKey actionKey = new ActionKey(verb, possibleAction, false);
-		if (features.hasCustomAction(possiblePath, actionKey)) {
+		if (features.hasCustomAction("/" + possiblePath, actionKey)) {
 			return actionKey;
 		}
 		return null;
@@ -84,7 +92,7 @@ public class UriParser {
 		}
 
 		ActionKey actionKey = new ActionKey(verb, possibleAction, true);
-		if (features.hasCustomAction(possiblePath, actionKey)) {
+		if (features.hasCustomAction("/" + possiblePath, actionKey)) {
 			return actionKey;
 		}
 		return null;
@@ -111,7 +119,7 @@ public class UriParser {
 		return resources;
 	}
 
-	private boolean checkIsOverCollection(String[] parts) {
+	private boolean parseOverCollection(String[] parts) {
 		if (parts.length == 1) {
 			return true;
 		}
@@ -147,4 +155,41 @@ public class UriParser {
 		}
 		return customActionKey.getActionName();
 	}
+
+	public ActionKey getCustomActionKey() {
+		return customActionKey;
+	}
+
+	private String getEndpointPath() {
+		return resources.get(resources.size() - 1).getEndpointPath();
+	}
+
+	public EndpointFeatures<?> getEndpointFeatures() {
+		return features.get(getEndpointPath());
+	}
+
+	public Class<?> getEndpointClazz() {
+		return getEndpointFeatures().getClazz();
+	}
+
+	public IdRef<?> getIdRef() {
+		IdRef<?> idRef = null;
+		for (RouteResource resource : resources) {
+			idRef = resource.getIdRef(r, idRef);
+		}
+		return idRef;
+	}
+
+	public RESTActionType getRESTActionType() {
+		if (isCustomAction()) {
+			return RESTActionType.CUSTOM;
+		}
+		return RESTActionType.defaultRestAction(verb, isOverCollection());
+	}
+
+	private void validateRestrictions() {
+		Endpoint endpointAnnotation = getEndpointFeatures().getEndpointAnnotation();
+		getRESTActionType().validateRetrictions(endpointAnnotation);
+	}
+
 }

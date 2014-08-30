@@ -9,6 +9,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
+import endpoint.repository.actions.ActionKey;
 import endpoint.repository.actions.RepositoryActions;
 import endpoint.repository.hooks.RepositoryHooks;
 import endpoint.repository.query.DatastoreQuery;
@@ -81,10 +82,11 @@ public class Repository {
 		saveEntity(object, entity, null);
 	}
 
-	public HttpResponse action(IdRef<?> id, Method action, Map<String, String> params) {
-		namespace.set(EntityUtils.getActionEndpoint(action));
+	public HttpResponse action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
+		namespace.set(clazz);
 		try {
-			return RepositoryActions.execute(this, id, action, params);
+			Method actionMethod = repositoryFeatures.get(clazz).getAction(actionKey);
+			return RepositoryActions.execute(this, id, actionMethod, params);
 		} finally {
 			namespace.reset();
 		}

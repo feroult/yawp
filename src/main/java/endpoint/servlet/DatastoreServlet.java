@@ -94,7 +94,7 @@ public class DatastoreServlet extends HttpServlet {
 	protected HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
 
 		Repository r = getRepository(params);
-		UriParser router = UriParser.parse(r, HttpVerb.fromString(method), uri);
+		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri);
 		EndpointFeatures<?> endpoint = router.getEndpointFeatures();
 		IdRef<?> idRef = router.getIdRef();
 

@@ -11,7 +11,7 @@ import endpoint.repository.ChildWithIdRef;
 import endpoint.repository.ObjectWithIdRef;
 import endpoint.repository.SimpleObject;
 import endpoint.repository.response.HttpResponse;
-import endpoint.servlet.UriParser;
+import endpoint.servlet.EndpointRouter;
 import endpoint.utils.DateUtils;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.HttpVerb;
@@ -35,7 +35,7 @@ public class ActionTest extends EndpointTestCase {
 	}
 
 	private HttpResponse callAction(String method, String uri, Map<String, String> params) {
-		UriParser router = UriParser.parse(r, HttpVerb.fromString(method), uri);
+		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri);
 		HttpResponse response = r.action(router.getIdRef(), router.getEndpointClazz(), router.getCustomActionKey(), params);
 		return response;
 	}

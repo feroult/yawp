@@ -11,7 +11,6 @@ import endpoint.repository.RepositoryFeatures;
 import endpoint.repository.actions.ActionKey;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.utils.HttpVerb;
-import endpoint.utils.UriUtils;
 
 public class EndpointRouter {
 
@@ -47,7 +46,7 @@ public class EndpointRouter {
 	}
 
 	private void parseUri() {
-		String[] parts = UriUtils.normalizeUri(uri).split("/");
+		String[] parts = normalizeUri(uri).split("/");
 
 		this.customActionKey = parseCustomActionKey(parts);
 		this.overCollection = parseOverCollection(parts);
@@ -226,4 +225,21 @@ public class EndpointRouter {
 		}
 	}
 
+	private String normalizeUri(String uri) {
+		return normalizeUriEnd(normalizeUriStart(uri));
+	}
+
+	private String normalizeUriStart(String uri) {
+		if (uri.charAt(0) == '/') {
+			return uri.substring(1);
+		}
+		return uri;
+	}
+
+	private String normalizeUriEnd(String uri) {
+		if (uri.charAt(uri.length() - 1) == '/') {
+			return uri.substring(0, uri.length() - 1);
+		}
+		return uri;
+	}
 }

@@ -14,7 +14,8 @@ import com.google.gson.JsonParser;
 import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
 
-//TODO make it not static and repository aware
+// FIXME cyclic dependece with repository
+// TODO make it not static and repository aware
 public class JsonUtils {
 
 	private static Gson buildGson(Repository r) {

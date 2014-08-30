@@ -33,6 +33,7 @@ import endpoint.repository.annotations.Json;
 import endpoint.repository.annotations.Parent;
 import endpoint.repository.hooks.Hook;
 
+// TODO move to repository package
 // TODO make it not static and repository aware and smaller, very, very smaller
 public class EntityUtils {
 

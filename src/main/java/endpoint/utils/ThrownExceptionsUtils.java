@@ -7,6 +7,7 @@ import java.util.List;
 import endpoint.repository.EndpointException;
 import endpoint.servlet.HttpException;
 
+// TODO think about the whole expcetion model, relating to repository and servlet packages
 public final class ThrownExceptionsUtils {
 
 	private static final List<Class<? extends RuntimeException>> ALLOWED_EXCEPTIONS = Arrays

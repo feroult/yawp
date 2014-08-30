@@ -107,13 +107,14 @@ public class EndpointRouter {
 		}
 
 		for (int i = 0; i < resourceParts.length / 2; i++) {
-			String path = resourceParts[i * 2];
-			String id = resourceParts[i * 2 + 1];
+			String path = "/" + resourceParts[i * 2];
+			Long id = Long.valueOf(resourceParts[i * 2 + 1]);
 			resources.add(new RouteResource(path, id));
 		}
 
 		if (resourceParts.length % 2 == 1) {
-			resources.add(new RouteResource(resourceParts[resourceParts.length - 1]));
+			String endpointPath = "/" + resourceParts[resourceParts.length - 1];
+			resources.add(new RouteResource(endpointPath));
 		}
 
 		return resources;

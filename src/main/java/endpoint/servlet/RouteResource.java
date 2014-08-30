@@ -9,16 +9,12 @@ public class RouteResource {
 
 	private Long id;
 
-	public RouteResource(String endpoint) {
-		this(endpoint, (Long) null);
+	public RouteResource(String endpointPath) {
+		this(endpointPath, (Long) null);
 	}
 
-	public RouteResource(String endpoint, String id) {
-		this(endpoint, Long.valueOf(id));
-	}
-
-	public RouteResource(String endpoint, Long id) {
-		this.endpointPath = "/" + endpoint;
+	public RouteResource(String endpointPath, Long id) {
+		this.endpointPath = endpointPath;
 		this.id = id;
 	}
 

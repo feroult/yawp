@@ -17,6 +17,7 @@ import endpoint.repository.EndpointScanner;
 import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
 import endpoint.repository.RepositoryFeatures;
+import endpoint.repository.actions.ActionKey;
 import endpoint.repository.query.DatastoreQuery;
 import endpoint.repository.query.DatastoreQueryOptions;
 import endpoint.repository.query.NoResultException;
@@ -24,6 +25,7 @@ import endpoint.repository.response.ErrorResponse;
 import endpoint.repository.response.HttpResponse;
 import endpoint.repository.response.JsonResponse;
 import endpoint.utils.EntityUtils;
+import endpoint.utils.HttpVerb;
 import endpoint.utils.JsonUtils;
 
 public class DatastoreServlet extends HttpServlet {
@@ -92,11 +94,11 @@ public class DatastoreServlet extends HttpServlet {
 	protected HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
 
 		Repository r = getRepository(params);
-		EndpointRouter router = EndpointRouter.generateRouteFor(r, method, uri);
-		EndpointFeatures<?> endpoint = router.getEndpoint();
+		UriParser router = UriParser.parse(r, HttpVerb.fromString(method), uri);
+		EndpointFeatures<?> endpoint = router.getEndpointFeatures();
 		IdRef<?> idRef = router.getIdRef();
 
-		switch (router.getRestAction()) {
+		switch (router.getRESTActionType()) {
 		case INDEX:
 			return new JsonResponse(index(r, idRef, endpoint, q(params), t(params)));
 		case SHOW:
@@ -110,7 +112,7 @@ public class DatastoreServlet extends HttpServlet {
 		case UPDATE:
 			return new JsonResponse(save(r, idRef, endpoint, requestJson));
 		case CUSTOM:
-			return action(r, idRef, router.getCustomAction(), params);
+			return action(r, idRef, router.getEndpointClazz(), router.getCustomActionKey(), params);
 		case DELETE:
 			throw new HttpException(501, "DELETE is not implemented yet");
 		default:
@@ -130,8 +132,8 @@ public class DatastoreServlet extends HttpServlet {
 		return Repository.r().setFeatures(features);
 	}
 
-	private HttpResponse action(Repository r, IdRef<?> idRef, Method method, Map<String, String> params) {
-		return r.action(idRef, method, params);
+	private HttpResponse action(Repository r, IdRef<?> idRef, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
+		return r.action(idRef, clazz, actionKey, params);
 	}
 
 	private String save(Repository r, IdRef<?> parentId, EndpointFeatures<?> endpoint, String json) {

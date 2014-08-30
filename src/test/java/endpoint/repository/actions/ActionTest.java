@@ -11,9 +11,10 @@ import endpoint.repository.ChildWithIdRef;
 import endpoint.repository.ObjectWithIdRef;
 import endpoint.repository.SimpleObject;
 import endpoint.repository.response.HttpResponse;
-import endpoint.servlet.EndpointRouter;
+import endpoint.servlet.UriParser;
 import endpoint.utils.DateUtils;
 import endpoint.utils.EndpointTestCase;
+import endpoint.utils.HttpVerb;
 import endpoint.utils.JsonUtils;
 
 public class ActionTest extends EndpointTestCase {
@@ -34,8 +35,8 @@ public class ActionTest extends EndpointTestCase {
 	}
 
 	private HttpResponse callAction(String method, String uri, Map<String, String> params) {
-		EndpointRouter route = EndpointRouter.generateRouteFor(r, method, uri);
-		HttpResponse response = r.action(route.getIdRef(), route.getCustomAction(), params);
+		UriParser router = UriParser.parse(r, HttpVerb.fromString(method), uri);
+		HttpResponse response = r.action(router.getIdRef(), router.getEndpointClazz(), router.getCustomActionKey(), params);
 		return response;
 	}
 

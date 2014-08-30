@@ -8,13 +8,17 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import endpoint.repository.EndpointFeatures;
 import endpoint.repository.RepositoryFeatures;
+import endpoint.repository.SimpleObject;
 import endpoint.repository.actions.ActionKey;
+import endpoint.utils.EndpointTestCase;
+import endpoint.utils.HttpVerb;
 
-public class UriParserTest {
+public class UriParserTest extends EndpointTestCase {
 
 	private class RepositoryFeaturesMock extends RepositoryFeatures {
 
@@ -26,10 +30,20 @@ public class UriParserTest {
 		public boolean hasCustomAction(String path, ActionKey actionKey) {
 			return actionKey.getActionName().equals("action");
 		}
+
+		@Override
+		public EndpointFeatures<?> get(String path) {
+			return new EndpointFeatures<SimpleObject>(SimpleObject.class);
+		}
+	}
+
+	@Before
+	public void before() {
+		r.setFeatures(new RepositoryFeaturesMock());
 	}
 
 	private UriParser parse(String uri) {
-		return UriParser.parse(null, uri, new RepositoryFeaturesMock());
+		return UriParser.parse(r, HttpVerb.GET, uri);
 	}
 
 	@Test

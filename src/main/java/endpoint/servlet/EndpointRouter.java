@@ -19,7 +19,7 @@ public class EndpointRouter {
 
 	private List<RouteResource> resources;
 
-	private RestAction restAction;
+	private RESTActionType restAction;
 
 	private ActionKey customActionKey;
 
@@ -35,10 +35,10 @@ public class EndpointRouter {
 	private void validateConstraints() {
 		RepositoryFeatures features = r.getFeatures();
 		Endpoint lastEndpoint = features.get(getLastEndpoint(resources).getEndpointPath()).getEndpointAnnotation();
-		if (!lastEndpoint.index() && action.getActionType() == RestAction.INDEX) {
+		if (!lastEndpoint.index() && action.getActionType() == RESTActionType.INDEX) {
 			throw new HttpException(403);
 		}
-		if (!lastEndpoint.update() && action.getActionType() == RestAction.UPDATE) {
+		if (!lastEndpoint.update() && action.getActionType() == RESTActionType.UPDATE) {
 			throw new HttpException(403);
 		}
 	}
@@ -47,7 +47,7 @@ public class EndpointRouter {
 	// endpoints' parents, and give 404's if invalid
 	public static EndpointRouter generateRouteFor(Repository r, String method, String uri) {
 		RepositoryFeatures features = r.getFeatures();
-		HttpVerb httpVerb = HttpVerb.getFromString(method);
+		HttpVerb httpVerb = HttpVerb.fromString(method);
 
 		String[] parts = UriUtils.normalizeUri(uri).split("/");
 
@@ -86,9 +86,9 @@ public class EndpointRouter {
 		} else {
 			resources.add(new RouteResource(parts[parts.length - 1]));
 			if (httpVerb == HttpVerb.GET) {
-				action = new RouteAction(RestAction.INDEX);
+				action = new RouteAction(RESTActionType.INDEX);
 			} else if (httpVerb == HttpVerb.POST) {
-				action = new RouteAction(RestAction.CREATE);
+				action = new RouteAction(RESTActionType.CREATE);
 			} else {
 				throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + httpVerb);
 			}
@@ -121,7 +121,7 @@ public class EndpointRouter {
 
 		Long id = Long.parseLong(lastToken);
 		resources.add(new RouteResource(parts[parts.length - 2], id));
-		action = new RouteAction(RestAction.getResourceRestAction(httpVerb));
+		action = new RouteAction(RESTActionType.defaultRestAction(httpVerb, false));
 
 		return new EndpointRouter(r, resources, action);
 	}
@@ -132,9 +132,9 @@ public class EndpointRouter {
 
 		resources.add(new RouteResource(parts[0]));
 		if (httpVerb == HttpVerb.GET) {
-			action = new RouteAction(RestAction.INDEX);
+			action = new RouteAction(RESTActionType.INDEX);
 		} else if (httpVerb == HttpVerb.POST) {
-			action = new RouteAction(RestAction.CREATE);
+			action = new RouteAction(RESTActionType.CREATE);
 		} else {
 			throw new HttpException(501, "Currently only GET and POST are support for collections, tryed to " + httpVerb);
 		}
@@ -159,7 +159,7 @@ public class EndpointRouter {
 		return idRef;
 	}
 
-	public RestAction getRestAction() {
+	public RESTActionType getRestAction() {
 		return action.getActionType();
 	}
 

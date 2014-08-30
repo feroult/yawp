@@ -17,14 +17,14 @@ import endpoint.repository.Repository;
 import endpoint.repository.parents.models.Address;
 import endpoint.repository.parents.models.Person;
 import endpoint.repository.response.HttpResponse;
-import endpoint.servlet.DatastoreServlet;
+import endpoint.servlet.EndpointServlet;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
 
 public class APITest extends EndpointTestCase {
 	private MyDatastoreServlet servlet;
 
-	private static class MyDatastoreServlet extends DatastoreServlet {
+	private static class MyDatastoreServlet extends EndpointServlet {
 		private static final long serialVersionUID = 2770293412557653563L;
 
 		public MyDatastoreServlet(String packagePrefix) {

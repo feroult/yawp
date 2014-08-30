@@ -13,16 +13,16 @@ import endpoint.repository.SimpleObject;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
 
-public class DatastoreServletTest extends EndpointTestCase {
+public class EndpointServletTest extends EndpointTestCase {
 
 	private static final String SIMPLE_OBJECT_JSON = "{aInt : 1, aLong : 1, aDouble : 1.1, aBoolean : true, aDate : '2013/12/26 23:55:01', aString : object1, aList : [{aString : anotherObject1}]}";
 	private static final String SIMPLE_ARRAY_JSON = String.format("[%s, %s]", SIMPLE_OBJECT_JSON, SIMPLE_OBJECT_JSON);
 
-	private DatastoreServlet servlet;
+	private EndpointServlet servlet;
 
 	@Before
 	public void before() {
-		servlet = new DatastoreServlet("endpoint");
+		servlet = new EndpointServlet("endpoint");
 	}
 
 	@Test

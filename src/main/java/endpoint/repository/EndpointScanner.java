@@ -1,7 +1,6 @@
 package endpoint.repository;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -172,22 +171,24 @@ public final class EndpointScanner {
 		if (parameterTypes.length == 2) {
 			validate(Map.class.equals(parameterTypes[1]), invalidActionMessage);
 			// TODO fix and re-enable validation!
-			if (false) {
-				Type[] types = ReflectionUtils.getGenericParameters(parameterTypes[1]);
-				validate(types.length == 2, invalidActionMessage);
-				for (Type type : types) {
-					validate(type.equals(String.class), invalidActionMessage);
-				}
-			}
+			// if (false) {
+			// Type[] types =
+			// ReflectionUtils.getGenericParameters(parameterTypes[1]);
+			// validate(types.length == 2, invalidActionMessage);
+			// for (Type type : types) {
+			// validate(type.equals(String.class), invalidActionMessage);
+			// }
+			// }
 		}
 		if (parameterTypes.length >= 1) {
 			validate(IdRef.class.equals(parameterTypes[0]), invalidActionMessage);
 			// TODO fix and re-enable validation!
-			if (!overCollection && false) {
-				Type[] types = ReflectionUtils.getGenericParameters(parameterTypes[0]);
-				validate(types.length == 1, invalidActionMessage);
-				validate(types[0].equals(objectClazz), invalidActionMessage);
-			}
+			// if (!overCollection && false) {
+			// Type[] types =
+			// ReflectionUtils.getGenericParameters(parameterTypes[0]);
+			// validate(types.length == 1, invalidActionMessage);
+			// validate(types[0].equals(objectClazz), invalidActionMessage);
+			// }
 		} else {
 			validate(overCollection, invalidActionMessage);
 		}

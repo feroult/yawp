@@ -27,7 +27,6 @@ import com.google.appengine.api.datastore.Text;
 import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
 import endpoint.repository.actions.Action;
-import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
 import endpoint.repository.annotations.Index;
 import endpoint.repository.annotations.Json;

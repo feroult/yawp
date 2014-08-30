@@ -1,6 +1,5 @@
 package endpoint.repository.hooks;
 
-
 public class AllTargetsHook extends Hook<Object> {
 
 	@Override

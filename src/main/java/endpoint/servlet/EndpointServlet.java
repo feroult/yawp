@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import endpoint.repository.DatastoreException;
+import endpoint.repository.EndpointException;
 import endpoint.repository.EndpointFeatures;
 import endpoint.repository.EndpointScanner;
 import endpoint.repository.IdRef;
@@ -27,7 +27,7 @@ import endpoint.utils.EntityUtils;
 import endpoint.utils.HttpVerb;
 import endpoint.utils.JsonUtils;
 
-public class DatastoreServlet extends HttpServlet {
+public class EndpointServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 8155293897299089610L;
 
@@ -46,12 +46,12 @@ public class DatastoreServlet extends HttpServlet {
 		this.enableHooks = enableHooksParameter == null || Boolean.valueOf(enableHooksParameter);
 	}
 
-	public DatastoreServlet() {
+	public EndpointServlet() {
 	}
 
 	// TODO why protected? why not public? constructor vs init? tests?
 	// inheritance?
-	protected DatastoreServlet(String packagePrefix) {
+	protected EndpointServlet(String packagePrefix) {
 		scanEndpoints(packagePrefix);
 	}
 
@@ -74,7 +74,7 @@ public class DatastoreServlet extends HttpServlet {
 			httpResponse = execute(req.getMethod(), getUri(req), JsonUtils.readJson(req.getReader()), makeParams(req));
 		} catch (HttpException e) {
 			httpResponse = new ErrorResponse(e.getHttpStatus(), e.getText());
-		} catch (DatastoreException e) {
+		} catch (EndpointException e) {
 			httpResponse = new ErrorResponse(403);
 		}
 

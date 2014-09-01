@@ -33,7 +33,7 @@ public class SharingIdsTest extends EndpointTestCase {
 		HttpResponse response = servlet.execute("get", "/contacts", null, null);
 		List<ContactInfo> contacts = JsonUtils.fromList(r, response.getText(), ContactInfo.class);
 		assertListEquals(contacts, "feroult@gmail.com");
-		System.out.println(contacts.get(0).getPersonId());
+		assertEquals("Fernando", contacts.get(0).getPersonId().fetch().getName());
 	}
 	
 	@Test
@@ -54,5 +54,6 @@ public class SharingIdsTest extends EndpointTestCase {
 		IdRef<Person> luan = FixturesLoader.PEOPLE.get("Luan");
 		IdRef<Address> addressId = r.query(Address.class).from(luan).only().getId();
 		assertEquals(addressId.asLong(), houses.get(0).getAddressId().asLong());
+		assertEquals(Address.class, houses.get(0).getAddressId().getClazz());
 	}
 }

@@ -1,8 +1,5 @@
 package endpoint.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.appengine.api.datastore.Key;
 
 import endpoint.utils.EntityUtils;

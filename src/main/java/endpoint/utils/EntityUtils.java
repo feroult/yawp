@@ -85,6 +85,16 @@ public class EntityUtils {
 		}
 	}
 
+	public static void setId(Object object, IdRef<?> id) {
+		Field idField = getAnnotatedIdFromClass(object.getClass());
+		try {
+			idField.set(object, id);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			throw new RuntimeException("Unexpected exception", e);
+		}
+		setParentId(object, id.getParentId());
+	}
+
 	public static IdRef<?> getParentIdRef(Object object) {
 		Field parentField = EntityUtils.getAnnotatedParentFromClass(object.getClass());
 		if (parentField != null) {

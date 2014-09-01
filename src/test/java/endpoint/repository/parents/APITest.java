@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import endpoint.repository.Repository;
@@ -42,8 +41,8 @@ public class APITest extends EndpointTestCase {
 
 	private static final Map<String, Long> OWNERS = new HashMap<>();
 	static {
-		OWNERS.put("7th Avenue, 200 - NY", 2l);
-		OWNERS.put("Street 2, 11 - Vegas", 2l);
+		OWNERS.put("7th Avenue, 200 - NY", 3l);
+		OWNERS.put("Street 2, 11 - Vegas", 3l);
 		OWNERS.put("Advovsk Street, 18 - NY", 1l);
 	};
 
@@ -82,7 +81,7 @@ public class APITest extends EndpointTestCase {
 
 	@Test
 	public void testGetUnestedResourceCollection() {
-		final String[] names = { "Fernando", "Guilherme", "Luan", "Paulo", "Raoni" };
+		final String[] names = { "Fernando", "Guilherme", "Leonardo", "Luan", "Paulo", "Raoni" };
 		HttpResponse response = servlet.execute("get", "/people", null, null);
 		List<Person> people = JsonUtils.fromList(r, response.getText(), Person.class);
 		assertListEquals(people, names);
@@ -90,17 +89,17 @@ public class APITest extends EndpointTestCase {
 
 	@Test
 	public void testGetUnestedResourceElement() {
-		HttpResponse response = servlet.execute("get", "/people/2", null, null);
+		HttpResponse response = servlet.execute("get", "/people/3", null, null);
 		Person person = JsonUtils.from(r, response.getText(), Person.class);
 		assertEquals("Guilherme", person.getName());
 	}
 
 	@Test
 	public void testGetNestedResourcesListMany() {
-		HttpResponse response = servlet.execute("get", "/people/2/addresses", null, null);
+		HttpResponse response = servlet.execute("get", "/people/3/addresses", null, null);
 		List<Address> addresses = JsonUtils.fromList(r, response.getText(), Address.class);
 		assertListEquals(addresses, "7th Avenue, 200 - NY", "Street 2, 11 - Vegas");
-		assertParentIdEquals(addresses, 2l);
+		assertParentIdEquals(addresses, 3l);
 	}
 
 	@Test
@@ -113,7 +112,7 @@ public class APITest extends EndpointTestCase {
 
 	@Test
 	public void testGetNestedResourcesListNone() {
-		HttpResponse response = servlet.execute("get", "/people/3/addresses", null, null);
+		HttpResponse response = servlet.execute("get", "/people/2/addresses", null, null);
 		List<Address> addresses = JsonUtils.fromList(r, response.getText(), Address.class);
 		assertListEmpty(addresses);
 	}
@@ -130,7 +129,6 @@ public class APITest extends EndpointTestCase {
 	}
 
 	@Test
-	@Ignore
 	public void testGetNestedResourcesFromRootListWithQuery() {
 		final String where = "{where: {op: 'or', c: [{p: 'number', op: '=', v: 200}, {p: 'number', op: '<', v: 12}]}}";
 		final Map<String, String> params = new HashMap<String, String>() {
@@ -145,5 +143,28 @@ public class APITest extends EndpointTestCase {
 		for (Address address : addresses) {
 			assertEquals(OWNERS.get(address.toString()), address.getOwner().asLong());
 		}
+	}
+
+	@Test
+	public void testCreateNestedResources() {
+		HttpResponse response = servlet.execute("post", "/people/3/addresses", "{ street : \"Times Square\", number : 21, city : \"NY\" }", null);
+		Address address = JsonUtils.from(r, response.getText(), Address.class);
+		assertEquals("Times Square, 21 - NY", address.toString());
+		assertEquals((Long) 3l, address.getOwner().asLong());
+		response = servlet.execute("get", "/people/3/addresses/" + address.getId().asLong(), null, null);
+		Address retrievedAddress = JsonUtils.from(r, response.getText(), Address.class);
+		assertEquals(address, retrievedAddress);
+	}
+	
+	@Test
+	public void testUpdateNestedResources() {
+		HttpResponse response = servlet.execute("put", "/people/1/addresses/1", "{ id: 1, street : \"Advovsck Street\", number: 18, city: \"NY\"}", null);
+		Address address = JsonUtils.from(r, response.getText(), Address.class);
+		assertEquals("Advovsck Street, 18 - NY", address.toString());
+		assertEquals((Long) 1l, address.getOwner().asLong());
+		assertEquals((Long) 1l, address.getId().asLong());
+		response = servlet.execute("get", "/people/1/addresses/1", null, null);
+		Address retrievedAddress = JsonUtils.from(r, response.getText(), Address.class);
+		assertEquals(address, retrievedAddress);
 	}
 }

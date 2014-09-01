@@ -11,14 +11,29 @@ public enum RESTActionType {
 		case GET:
 			return overCollection ? INDEX : SHOW;
 		case POST:
-			return overCollection ? UPDATE : CREATE;
+			assertOverCollection(overCollection);
+			return CREATE;
 		case PUT:
 		case PATCH:
+			assertNotOverCollection(overCollection);
 			return UPDATE;
 		case DELETE:
+			assertNotOverCollection(overCollection);
 			return DELETE;
 		}
-		throw new RuntimeException("Invalid HttpVerb: " + verb);
+		throw new HttpException(501, "Unsuported http verb " + verb);
+	}
+
+	private static void assertOverCollection(boolean overCollection) {
+		if (!overCollection) {
+			throw new HttpException(501);
+		}
+	}
+
+	private static void assertNotOverCollection(boolean overCollection) {
+		if (overCollection) {
+			throw new HttpException(501);
+		}
 	}
 
 	public void validateRetrictions(Endpoint endpointAnnotation) {

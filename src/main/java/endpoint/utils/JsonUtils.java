@@ -26,9 +26,9 @@ public class JsonUtils {
 	}
 
 	public static Object from(Repository r, String json, Type type) {
-		JsonElement jsoneElement = (JsonElement) new JsonParser().parse(json);
+		JsonElement jsonElement = (JsonElement) new JsonParser().parse(json);
 		Gson gson = buildGson(r);
-		return gson.fromJson(jsoneElement, type);
+		return gson.fromJson(jsonElement, type);
 	}
 
 	public static String to(Object o) {

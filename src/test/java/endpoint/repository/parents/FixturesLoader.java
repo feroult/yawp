@@ -18,6 +18,7 @@ public final class FixturesLoader {
 
 	public static void loadPeople(Repository r) {
 		r.save(new Person("Luan", 18));
+		r.save(new Person("Leonardo", 18));
 		r.save(new Person("Guilherme", 23));
 		r.save(new Person("Fernando", 45));
 		r.save(new Person("Paulo", 98));

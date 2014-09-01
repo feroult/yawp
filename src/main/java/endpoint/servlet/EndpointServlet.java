@@ -27,6 +27,7 @@ import endpoint.utils.EntityUtils;
 import endpoint.utils.HttpVerb;
 import endpoint.utils.JsonUtils;
 
+//TODO remove dependence to EntityUtils, move EntityUtils inside repository
 public class EndpointServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 8155293897299089610L;
@@ -49,8 +50,6 @@ public class EndpointServlet extends HttpServlet {
 	public EndpointServlet() {
 	}
 
-	// TODO why protected? why not public? constructor vs init? tests?
-	// inheritance?
 	protected EndpointServlet(String packagePrefix) {
 		scanEndpoints(packagePrefix);
 	}
@@ -91,27 +90,25 @@ public class EndpointServlet extends HttpServlet {
 	}
 
 	protected HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
-
 		Repository r = getRepository(params);
 		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri);
 		EndpointFeatures<?> endpoint = router.getEndpointFeatures();
-		IdRef<?> idRef = router.getIdRef();
 
 		switch (router.getRESTActionType()) {
 		case INDEX:
-			return new JsonResponse(index(r, idRef, endpoint, q(params), t(params)));
+			return new JsonResponse(index(r, router.getParentIdRef(), endpoint, q(params), t(params)));
 		case SHOW:
 			try {
-				return new JsonResponse(get(r, idRef, t(params)));
+				return new JsonResponse(get(r, router.getIdRef(), t(params)));
 			} catch (NoResultException e) {
 				throw new HttpException(404);
 			}
 		case CREATE:
-			return new JsonResponse(save(r, idRef, endpoint, requestJson));
+			return new JsonResponse(save(r, router.getParentIdRef(), endpoint, requestJson));
 		case UPDATE:
-			return new JsonResponse(save(r, idRef, endpoint, requestJson));
+			return new JsonResponse(update(r, router.getIdRef(), endpoint, requestJson));
 		case CUSTOM:
-			return action(r, idRef, router.getEndpointClazz(), router.getCustomActionKey(), params);
+			return action(r, router.getActionIdRef(), router.getEndpointClazz(), router.getCustomActionKey(), params);
 		case DELETE:
 			throw new HttpException(501, "DELETE is not implemented yet");
 		default:
@@ -141,6 +138,14 @@ public class EndpointServlet extends HttpServlet {
 		} else {
 			return saveFromObject(r, parentId, endpoint.getClazz(), json);
 		}
+	}
+
+	private String update(Repository r, IdRef<?> id, EndpointFeatures<?> endpoint, String json) {
+		assert !JsonUtils.isJsonArray(json);
+		Object object = JsonUtils.from(r, json, endpoint.getClazz());
+		EntityUtils.setId(object, id);
+		saveProcessedObject(r, object);
+		return JsonUtils.to(object);
 	}
 
 	private String saveFromObject(Repository r, IdRef<?> parentId, Class<?> clazz, String json) {
@@ -183,11 +188,11 @@ public class EndpointServlet extends HttpServlet {
 	}
 
 	private void saveInRepository(Repository r, Object object, IdRef<?> parentId) {
-		// TODO remove dependence to EntityUtils, move EntityUtils inside
-		// repository
-		// TODO create tests to update a nested object, and check its idRef
-		// inside a beforeSave hook
 		EntityUtils.setParentId(object, parentId);
+		saveProcessedObject(r, object);
+	}
+
+	private void saveProcessedObject(Repository r, Object object) {
 		if (enableHooks) {
 			r.saveWithHooks(object);
 		} else {

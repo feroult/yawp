@@ -36,7 +36,7 @@ public class ActionTest extends EndpointTestCase {
 
 	private HttpResponse callAction(String method, String uri, Map<String, String> params) {
 		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri);
-		HttpResponse response = r.action(router.getIdRef(), router.getEndpointClazz(), router.getCustomActionKey(), params);
+		HttpResponse response = r.action(router.getActionIdRef(), router.getEndpointClazz(), router.getCustomActionKey(), params);
 		return response;
 	}
 

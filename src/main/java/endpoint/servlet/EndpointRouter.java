@@ -173,6 +173,31 @@ public class EndpointRouter {
 	}
 
 	public IdRef<?> getIdRef() {
+		if (isOverCollection()) {
+			return null;
+		}
+		return evaluateIdRef();
+	}
+
+	public IdRef<?> getParentIdRef() {
+		IdRef<?> idRef = evaluateIdRef();
+		if (isOverCollection()) {
+			return idRef;
+		}
+		return idRef.getParentId();
+	}
+
+	public IdRef<?> getActionIdRef() {
+		IdRef<?> parentOrIdRef = evaluateIdRef();
+		if (isOverCollection()) {
+			IdRef<?> idRef = IdRef.create(r, getEndpointClazz(), (Long) null);
+			idRef.setParentId(parentOrIdRef);
+			return idRef;
+		}
+		return parentOrIdRef;
+	}
+
+	private IdRef<?> evaluateIdRef() {
 		IdRef<?> idRef = null;
 		for (RouteResource resource : resources) {
 			idRef = resource.getIdRef(idRef);

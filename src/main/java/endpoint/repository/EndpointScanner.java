@@ -111,8 +111,7 @@ public final class EndpointScanner {
 			}
 		}
 		if (list.isEmpty()) {
-			throw new RuntimeException("Tryed to create feature '" + featureClazz + "' with entity '" + objectClazz.getSimpleName()
-					+ "' that is not an @Endpoint nor do any endpoint inherits from it.");
+			throw new RuntimeException("Tryed to create feature '" + featureClazz + "' with entity '" + objectClazz.getSimpleName() + "' that is not an @Endpoint nor do any endpoint inherits from it.");
 		}
 		return list;
 	}
@@ -134,9 +133,7 @@ public final class EndpointScanner {
 
 		boolean overCollection = ars.get(0).isOverCollection();
 		for (int i = 1; i < ars.size(); i++) {
-			validate(ars.get(i).isOverCollection() == overCollection,
-					"If your action " + method.getName() + " for endpoint " + objectClazz.getSimpleName()
-							+ " has more than one annotation, they must all share the same overCollection value.");
+			validate(ars.get(i).isOverCollection() == overCollection, "If your action " + method.getName() + " for endpoint " + objectClazz.getSimpleName() + " has more than one annotation, they must all share the same overCollection value.");
 		}
 
 		assertValidActionMethod(objectClazz, method, overCollection);
@@ -155,15 +152,12 @@ public final class EndpointScanner {
 	}
 
 	private void assertValidActionMethod(Class<?> objectClazz, Method method, boolean overCollection) {
-		String partialActionMessage = "Invalid action " + method.getName() + " for endpoint " + objectClazz.getSimpleName()
-				+ ". The annotated action methods must have one of three possible signatures: ";
+		String partialActionMessage = "Invalid action " + method.getName() + " for endpoint " + objectClazz.getSimpleName() + ". The annotated action methods must have one of three possible signatures: ";
 		String invalidActionMessage;
 		if (overCollection) {
-			invalidActionMessage = partialActionMessage
-					+ "It can have no args, when it has no @Parent; it can have one arg only, an IdRef<?> refering the parentId, that will be null if there is none, or it can receive both that id and also a Map<String, String> of params. ";
+			invalidActionMessage = partialActionMessage + "It can have no args, when it has no @Parent; it can have one arg only, an IdRef<?> refering the parentId, that will be null if there is none, or it can receive both that id and also a Map<String, String> of params. ";
 		} else {
-			invalidActionMessage = partialActionMessage
-					+ "It can have one arg only, an IdRef<T> when applied over a single object T, or it can receive both that id and also a Map<String, String> of params. ";
+			invalidActionMessage = partialActionMessage + "It can have one arg only, an IdRef<T> when applied over a single object T, or it can receive both that id and also a Map<String, String> of params. ";
 		}
 
 		Class<?>[] parameterTypes = method.getParameterTypes();
@@ -197,5 +191,18 @@ public final class EndpointScanner {
 	public EndpointScanner enableHooks(boolean enableHooks) {
 		this.enableHooks = enableHooks;
 		return this;
+	}
+
+	public static boolean isOverCollection(Method action) {
+		GET get = action.getAnnotation(GET.class);
+		if (get != null) {
+			return get.overCollection();
+		}
+		PUT put = action.getAnnotation(PUT.class);
+		if (put != null) {
+			return put.overCollection();
+		}
+		
+		throw new RuntimeException("Action of unknown type.");
 	}
 }

@@ -53,6 +53,18 @@ public class Address {
 		return owner;
 	}
 
+	public void setStreet(String street) {
+		this.street = street;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
 	@Override
 	public String toString() {
 		return this.street + ", " + this.number + " - " + this.city;

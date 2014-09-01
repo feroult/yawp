@@ -2,9 +2,6 @@ package endpoint.repository.parents;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,65 +9,15 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import endpoint.repository.Repository;
 import endpoint.repository.parents.models.Address;
 import endpoint.repository.parents.models.Person;
 import endpoint.repository.response.HttpResponse;
-import endpoint.servlet.EndpointServlet;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
+import static endpoint.repository.parents.Assertions.*;
 
-public class APITest extends EndpointTestCase {
+public class BaseAPITest extends EndpointTestCase {
 	private MyEndpointServlet servlet;
-
-	private static class MyEndpointServlet extends EndpointServlet {
-		private static final long serialVersionUID = 2770293412557653563L;
-
-		public MyEndpointServlet(String packagePrefix) {
-			super(packagePrefix);
-		}
-
-		public HttpResponse execute(String method, String path, String requestJson, Map<String, String> params) {
-			return super.execute(method, path, requestJson, params);
-		}
-
-		public Repository r() {
-			return super.getRepository(null);
-		}
-	}
-
-	private static final Map<String, Long> OWNERS = new HashMap<>();
-	static {
-		OWNERS.put("7th Avenue, 200 - NY", 3l);
-		OWNERS.put("Street 2, 11 - Vegas", 3l);
-		OWNERS.put("Advovsk Street, 18 - NY", 1l);
-	};
-
-	private static void assertListEmpty(List<?> list) {
-		assertEquals(0, list.size());
-	}
-
-	private static void assertListEquals(List<?> list, String... expected) {
-		assertEquals(expected.length, list.size());
-
-		List<String> values = new ArrayList<>(list.size());
-		for (Object o : list) {
-			values.add(o.toString());
-		}
-		Collections.sort(values);
-		List<String> expectedList = Arrays.asList(expected);
-		Collections.sort(expectedList);
-
-		for (int i = 0; i < list.size(); i++) {
-			assertEquals(expectedList.get(i), values.get(i));
-		}
-	}
-
-	private void assertParentIdEquals(List<Address> addresses, Long parentId) {
-		for (Address address : addresses) {
-			assertEquals(parentId, address.getOwner().asLong());
-		}
-	}
 
 	@Before
 	public void before() {
@@ -124,7 +71,7 @@ public class APITest extends EndpointTestCase {
 		assertListEquals(addresses, "7th Avenue, 200 - NY", "Street 2, 11 - Vegas", "Advovsk Street, 18 - NY");
 
 		for (Address address : addresses) {
-			assertEquals(OWNERS.get(address.toString()), address.getOwner().asLong());
+			assertEquals(FixturesLoader.OWNERS.get(address.toString()), address.getOwner().asLong());
 		}
 	}
 
@@ -141,7 +88,7 @@ public class APITest extends EndpointTestCase {
 		List<Address> addresses = JsonUtils.fromList(r, response.getText(), Address.class);
 		assertListEquals(addresses, "7th Avenue, 200 - NY", "Street 2, 11 - Vegas");
 		for (Address address : addresses) {
-			assertEquals(OWNERS.get(address.toString()), address.getOwner().asLong());
+			assertEquals(FixturesLoader.OWNERS.get(address.toString()), address.getOwner().asLong());
 		}
 	}
 

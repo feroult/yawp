@@ -69,11 +69,15 @@ public class EntityUtils {
 	}
 
 	public static Class<?> getIdType(Class<?> clazz) {
-	    Field idField = getFieldWithAnnotation(clazz, Id.class);
-	    ParameterizedType type = (ParameterizedType) idField.getGenericType();
-	    Type[] types = type.getActualTypeArguments();
-	    assert types.length == 1;
-	    return (Class<?>) types[0];
+		Field idField = getFieldWithAnnotation(clazz, Id.class);
+		if (!idField.getType().equals(IdRef.class)) {
+			// TODO remove long id support
+			return clazz;
+		}
+		ParameterizedType type = (ParameterizedType) idField.getGenericType();
+		Type[] types = type.getActualTypeArguments();
+		assert types.length == 1;
+		return (Class<?>) types[0];
 	}
 
 	public static void setParentId(Object object, IdRef<?> parentId) {
@@ -81,7 +85,7 @@ public class EntityUtils {
 		if (parentIdField == null) {
 			if (parentId != null) {
 				throw new RuntimeException("Trying to set parentId " + parentId + " to class " + object.getClass().getSimpleName()
-						+ ", but it doesn't seem to have a @Parent field.");
+				        + ", but it doesn't seem to have a @Parent field.");
 			}
 			return;
 		}
@@ -151,10 +155,10 @@ public class EntityUtils {
 			return object;
 		} catch (InvocationTargetException e) {
 			throw new RuntimeException("An exception was thrown when calling the default constructor of the class " + clazz.getSimpleName()
-					+ ": ", e);
+			        + ": ", e);
 		} catch (NoSuchMethodException e) {
 			throw new RuntimeException("The class " + clazz.getSimpleName()
-					+ " must have a default constructor and cannot be an non-static inner class.", e);
+			        + " must have a default constructor and cannot be an non-static inner class.", e);
 		} catch (InstantiationException e) {
 			throw new RuntimeException("The class " + clazz.getSimpleName() + " must cannot be abstract.", e);
 		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
@@ -243,7 +247,7 @@ public class EntityUtils {
 			if (field.isAnnotationPresent(annotationClass)) {
 				if (theField != null) {
 					throw new RuntimeException("You can have at most one field annotated with the " + annotationClass.getSimpleName()
-							+ " class.");
+					        + " class.");
 				}
 				theField = field;
 				theField.setAccessible(true);
@@ -315,7 +319,7 @@ public class EntityUtils {
 		Index index = field.getAnnotation(Index.class);
 		if (index == null) {
 			throw new RuntimeException("You must add @Index annotation the the field '" + field.getName()
-					+ "' if you want to use it as a index in where statements.");
+			        + "' if you want to use it as a index in where statements.");
 		}
 		return index;
 	}

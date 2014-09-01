@@ -41,8 +41,10 @@ public class EndpointServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
+		System.out.println("----------------------------------------------- booting endpoint");
 		setWithHooks(config.getInitParameter("enableHooks"));
 		scanEndpoints(config.getInitParameter("packagePrefix"));
+		System.out.println("----------------------------------------------- ok");
 	}
 
 	private void setWithHooks(String enableHooksParameter) {

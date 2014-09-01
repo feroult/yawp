@@ -10,6 +10,7 @@ import endpoint.repository.Repository;
 import endpoint.repository.RepositoryFeatures;
 import endpoint.repository.actions.ActionKey;
 import endpoint.repository.annotations.Endpoint;
+import endpoint.utils.EntityUtils;
 import endpoint.utils.HttpVerb;
 
 public class EndpointRouter {
@@ -190,7 +191,7 @@ public class EndpointRouter {
 	public IdRef<?> getActionIdRef() {
 		IdRef<?> parentOrIdRef = evaluateIdRef();
 		if (isOverCollection()) {
-			IdRef<?> idRef = IdRef.create(r, getEndpointClazz(), (Long) null);
+			IdRef<?> idRef = IdRef.create(r, EntityUtils.getIdType(getEndpointClazz()), (Long) null);
 			idRef.setParentId(parentOrIdRef);
 			return idRef;
 		}

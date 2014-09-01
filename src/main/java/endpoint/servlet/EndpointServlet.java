@@ -1,6 +1,8 @@
 package endpoint.servlet;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,7 +84,15 @@ public class EndpointServlet extends HttpServlet {
 
 	@SuppressWarnings("unchecked")
 	private Map<String, String> makeParams(HttpServletRequest req) {
-		return req.getParameterMap();
+		Map<String, String> map = new HashMap<String, String>();
+
+		Enumeration<String> e = req.getParameterNames();
+		while (e.hasMoreElements()) {
+			String name = e.nextElement();
+			map.put(name, req.getParameter(name));
+		}
+
+		return map;
 	}
 
 	private String getUri(HttpServletRequest req) {

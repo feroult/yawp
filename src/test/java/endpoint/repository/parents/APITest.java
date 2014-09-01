@@ -167,4 +167,37 @@ public class APITest extends EndpointTestCase {
 		Address retrievedAddress = JsonUtils.from(r, response.getText(), Address.class);
 		assertEquals(address, retrievedAddress);
 	}
+
+	@Test
+	public void testActionCallNestedResources() {
+		servlet.execute("put", "/people/3/addresses/8/newyorkfy", null, null);
+		HttpResponse response = servlet.execute("get", "/people/3/addresses/8", null, null);
+		Address address = JsonUtils.from(r, response.getText(), Address.class);
+		assertEquals("NY", address.getCity());
+	}
+
+	@Test
+	public void testActionCallNestedUsingParentIdInAction() {
+		HttpResponse response = servlet.execute("get", "/people/3/addresses/8", null, null);
+		Address address = JsonUtils.from(r, response.getText(), Address.class);
+		int preNumber = address.getNumber();
+		servlet.execute("put", "/people/3/addresses/8/addAge", null, null);
+		response = servlet.execute("get", "/people/3/addresses/8", null, null);
+		address = JsonUtils.from(r, response.getText(), Address.class);
+		assertEquals(preNumber + address.getOwner().fetch().getAge(), address.getNumber());
+	}
+
+	@Test
+	public void testActionCallNestedActionOverCollection() {
+		HttpResponse response = servlet.execute("get", "/people/3/addresses/totalNumbers", null, null);
+		long sum = Long.parseLong(response.getText());
+		assertEquals(211l, sum);
+	}
+
+	@Test
+	public void testActionCallNestedActionOverCollectionFromRoot() {
+		HttpResponse response = servlet.execute("get", "/addresses/totalNumbers", null, null);
+		long sum = Long.parseLong(response.getText());
+		assertEquals(229l, sum);
+	}
 }

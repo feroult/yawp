@@ -44,7 +44,7 @@ public class RepositoryFeatures {
 				}
 				continue;
 			}
-			if (!Character.isAlphabetic(c)) {
+			if (!(Character.isAlphabetic(c) || c == '_')) {
 				return false;
 			}
 		}

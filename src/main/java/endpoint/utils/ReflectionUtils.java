@@ -58,7 +58,9 @@ public final class ReflectionUtils {
 
 	public static Class<?> getGenericParameter(Class<?> clazz) {
 		Class<?>[] parameters = getGenericParameters(clazz);
-		assert parameters.length == 1;
+		if (parameters.length == 0) {
+			return null;
+		}
 		return parameters[0];
 	}
 

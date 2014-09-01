@@ -57,6 +57,14 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return new IdRef<TT>(r, clazz, id);
 	}
 
+	public static <TT> List<IdRef<TT>> create(Repository r, Class<TT> clazz, Long... ids) {
+		List<IdRef<TT>> idRefs = new ArrayList<IdRef<TT>>();
+		for (int i = 0; i < ids.length; i++) {
+			idRefs.add(create(r, clazz, ids[i]));
+		}
+		return idRefs;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

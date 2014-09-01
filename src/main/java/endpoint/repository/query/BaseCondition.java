@@ -145,13 +145,17 @@ public abstract class BaseCondition {
 		}
 
 		private static boolean isMoreLimitating(Class<?> current, Class<?> mostLimitating) {
+			if (mostLimitating == null) {
+				return true;
+			}
+
 			if (current == null) {
 				return false;
 			}
-			if (IdRef.class.isAssignableFrom(mostLimitating.getClass())) {
+			if (IdRef.class.isAssignableFrom(mostLimitating)) {
 				return false;
 			}
-			if (IdRef.class.isAssignableFrom(current.getClass())) {
+			if (IdRef.class.isAssignableFrom(current)) {
 				return true;
 			}
 			return false;

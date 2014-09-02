@@ -241,7 +241,8 @@ public class EndpointRouter {
 			if (id == null) {
 				return parentId;
 			}
-			IdRef<?> idRef = IdRef.create(r, features.get(endpointPath).getClazz(), id);
+			Class<?> clazz = features.get(endpointPath).getClazz();
+			IdRef<?> idRef = IdRef.create(r, EntityUtils.getIdType(clazz), id);
 			idRef.setParentId(parentId);
 			return idRef;
 		}

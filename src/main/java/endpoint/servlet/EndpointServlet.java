@@ -41,10 +41,8 @@ public class EndpointServlet extends HttpServlet {
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		System.out.println("----------------------------------------------- booting endpoint");
 		setWithHooks(config.getInitParameter("enableHooks"));
 		scanEndpoints(config.getInitParameter("packagePrefix"));
-		System.out.println("----------------------------------------------- ok");
 	}
 
 	private void setWithHooks(String enableHooksParameter) {
@@ -111,7 +109,7 @@ public class EndpointServlet extends HttpServlet {
 			return new JsonResponse(index(r, router.getParentIdRef(), endpoint, q(params), t(params)));
 		case SHOW:
 			try {
-				return new JsonResponse(get(r, router.getIdRef(), t(params)));
+				return new JsonResponse(get(r, router.getIdRef(), endpoint, t(params)));
 			} catch (NoResultException e) {
 				throw new HttpException(404);
 			}
@@ -194,8 +192,8 @@ public class EndpointServlet extends HttpServlet {
 		return JsonUtils.to(query.list());
 	}
 
-	private <T> String get(Repository r, IdRef<T> idRef, String t) {
-		DatastoreQuery<T> query = executeQueryInRepository(r, idRef.getClazz()).whereById("=", idRef);
+	private <T> String get(Repository r, IdRef<?> idRef, EndpointFeatures<T> features, String t) {
+		DatastoreQuery<T> query = executeQueryInRepository(r, features.getClazz()).whereById("=", idRef);
 		return JsonUtils.to(t == null ? query.only() : query.transform(t).only());
 	}
 

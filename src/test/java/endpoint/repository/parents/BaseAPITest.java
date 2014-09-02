@@ -147,4 +147,8 @@ public class BaseAPITest extends EndpointTestCase {
 		long sum = Long.parseLong(response.getText());
 		assertEquals(229l, sum);
 	}
+	
+	//TODO these tests:
+	@Test public void testDeletedWithChildren() { }
+	@Test public void testDeletedNested() { }
 }

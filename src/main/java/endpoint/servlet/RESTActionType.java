@@ -11,7 +11,6 @@ public enum RESTActionType {
 		case GET:
 			return overCollection ? INDEX : SHOW;
 		case POST:
-			assertOverCollection(overCollection);
 			return CREATE;
 		case PUT:
 		case PATCH:
@@ -22,12 +21,6 @@ public enum RESTActionType {
 			return DELETE;
 		}
 		throw new HttpException(501, "Unsuported http verb " + verb);
-	}
-
-	private static void assertOverCollection(boolean overCollection) {
-		if (!overCollection) {
-			throw new HttpException(501);
-		}
 	}
 
 	private static void assertNotOverCollection(boolean overCollection) {

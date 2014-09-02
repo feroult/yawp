@@ -108,13 +108,14 @@ public class EndpointServlet extends HttpServlet {
 		case INDEX:
 			return new JsonResponse(index(r, router.getParentIdRef(), endpoint, q(params), t(params)));
 		case SHOW:
-			try {
-				return new JsonResponse(get(r, router.getIdRef(), endpoint, t(params)));
-			} catch (NoResultException e) {
-				throw new HttpException(404);
-			}
+			return new JsonResponse(get(r, router.getIdRef(), endpoint, t(params)));
 		case CREATE:
-			return new JsonResponse(save(r, router.getParentIdRef(), endpoint, requestJson));
+			IdRef<?> id = router.getIdRef();
+			if (id == null) {
+				return new JsonResponse(save(r, router.getParentIdRef(), endpoint, requestJson));
+			} else {
+				return new JsonResponse(saveWihtId(r, id, endpoint, requestJson));
+			}
 		case UPDATE:
 			return new JsonResponse(update(r, router.getIdRef(), endpoint, requestJson));
 		case CUSTOM:
@@ -142,6 +143,10 @@ public class EndpointServlet extends HttpServlet {
 		return r.action(idRef, clazz, actionKey, params);
 	}
 
+	private String saveWihtId(Repository r, IdRef<?> id, EndpointFeatures<?> endpoint, String json) {
+		return saveFromObjectWithId(r, id, endpoint.getClazz(), json);
+	}
+
 	private String save(Repository r, IdRef<?> parentId, EndpointFeatures<?> endpoint, String json) {
 		if (JsonUtils.isJsonArray(json)) {
 			return saveFromArray(r, parentId, endpoint.getClazz(), json);
@@ -161,6 +166,12 @@ public class EndpointServlet extends HttpServlet {
 	private String saveFromObject(Repository r, IdRef<?> parentId, Class<?> clazz, String json) {
 		Object object = JsonUtils.from(r, json, clazz);
 		saveInRepository(r, object, parentId);
+		return JsonUtils.to(object);
+	}
+
+	private String saveFromObjectWithId(Repository r, IdRef<?> id, Class<?> clazz, String json) {
+		Object object = JsonUtils.from(r, json, clazz);
+		saveInRepositoryWihtId(r, object, id);
 		return JsonUtils.to(object);
 	}
 
@@ -193,12 +204,21 @@ public class EndpointServlet extends HttpServlet {
 	}
 
 	private <T> String get(Repository r, IdRef<?> idRef, EndpointFeatures<T> features, String t) {
-		DatastoreQuery<T> query = executeQueryInRepository(r, features.getClazz()).whereById("=", idRef);
-		return JsonUtils.to(t == null ? query.only() : query.transform(t).only());
+		try {
+			DatastoreQuery<T> query = executeQueryInRepository(r, features.getClazz()).whereById("=", idRef);
+			return JsonUtils.to(t == null ? query.only() : query.transform(t).only());
+		} catch (NoResultException e) {
+			throw new HttpException(404);
+		}
 	}
 
 	private void saveInRepository(Repository r, Object object, IdRef<?> parentId) {
 		EntityUtils.setParentId(object, parentId);
+		saveProcessedObject(r, object);
+	}
+
+	private void saveInRepositoryWihtId(Repository r, Object object, IdRef<?> id) {
+		EntityUtils.setId(object, id);
 		saveProcessedObject(r, object);
 	}
 

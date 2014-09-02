@@ -311,7 +311,7 @@ public class DatastoreQuery<T> {
 		boolean isByIdWithoutIdRef = idClass != null && !IdRef.class.isAssignableFrom(idClass);
 		if (isByIdWithoutIdRef && parentKey != null) {
 			throw new RuntimeException(
-					"You have to use IdRef in the where when searching by @Id in a query with .from(IdRef<?>) specified.");
+			        "You have to use IdRef in the where when searching by @Id in a query with .from(IdRef<?>) specified.");
 		}
 		Query q = new Query(EntityUtils.getKindFromClass(clazz));
 

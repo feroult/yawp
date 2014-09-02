@@ -39,6 +39,7 @@ public class SharingIdsTest extends EndpointTestCase {
 	@Test
 	public void testGetFromRoot() {
 		HttpResponse response = servlet.execute("get", "/contacts/4", null, null);
+		System.out.println(response.getText());
 		ContactInfo contact = JsonUtils.from(r, response.getText(), ContactInfo.class);
 		assertEquals("feroult@gmail.com", contact.getEmail());
 		Person person = contact.getPersonId().fetch();
@@ -56,4 +57,15 @@ public class SharingIdsTest extends EndpointTestCase {
 		assertEquals(addressId.asLong(), houses.get(0).getAddressId().asLong());
 		assertEquals(Address.class, houses.get(0).getAddressId().getClazz());
 	}
+	
+	//TODO these tests
+	@Test public void testPost() { }
+	@Test public void testPostNested() { }
+	@Test public void testPut() { }
+	@Test public void testPutNested() { }
+	@Test public void testDelete() { }
+	@Test public void testDeletedWithChildren() { }
+	@Test public void testDeletedNested() { }
+	@Test public void testCustomAction() { }
+	@Test public void testCustomActionNested() { }
 }

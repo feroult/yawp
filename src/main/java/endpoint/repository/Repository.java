@@ -127,8 +127,14 @@ public class Repository {
 	}
 
 	private Entity createEntity(Object object) {
-		Key parentKey = EntityUtils.getParentKey(object);
 		Key currentKey = EntityUtils.getKey(object);
+		Key parentKey = EntityUtils.getParentKey(object);
+		if (parentKey == null) {
+			IdRef<?> id = EntityUtils.getIdRef(object);
+			if (id != null) {
+				parentKey = EntityUtils.createKey(id.getParentId());
+			}
+		}
 
 		if (currentKey == null) {
 			return new Entity(EntityUtils.getKindFromClass(object.getClass()), parentKey);

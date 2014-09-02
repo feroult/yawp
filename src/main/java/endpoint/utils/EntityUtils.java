@@ -123,7 +123,12 @@ public class EntityUtils {
 		Field idField = EntityUtils.getAnnotatedIdFromClass(object.getClass());
 		if (idField != null) {
 			try {
-				return (IdRef<?>) idField.get(object);
+				Object potentialIdRef = idField.get(object);
+				if (potentialIdRef instanceof IdRef<?>) {
+					return (IdRef<?>) potentialIdRef;
+				} else {
+					return null;
+				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				throw new RuntimeException("Unexpected error.", e);
 			}

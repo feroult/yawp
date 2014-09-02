@@ -1,5 +1,9 @@
 package endpoint.repository.parents;
 
+import static endpoint.repository.parents.Assertions.assertError;
+import static endpoint.repository.parents.Assertions.assertListEmpty;
+import static endpoint.repository.parents.Assertions.assertListEquals;
+import static endpoint.repository.parents.Assertions.assertParentIdEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
@@ -7,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import endpoint.repository.parents.models.Address;
@@ -14,7 +19,6 @@ import endpoint.repository.parents.models.Person;
 import endpoint.repository.response.HttpResponse;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
-import static endpoint.repository.parents.Assertions.*;
 
 public class BaseAPITest extends EndpointTestCase {
 	private MyEndpointServlet servlet;
@@ -148,7 +152,20 @@ public class BaseAPITest extends EndpointTestCase {
 		assertEquals(229l, sum);
 	}
 	
-	//TODO these tests:
-	@Test public void testDeletedWithChildren() { }
-	@Test public void testDeletedNested() { }
+	@Ignore @Test
+	public void testDeletedNested() {
+		servlet.execute("delete", "/people/3/addresses/8", null, null);
+		assertError(servlet, "get", "/people/3/addresses/8", 404);
+	}
+
+	@Ignore @Test
+	public void testDeletedWithChildren() {
+		servlet.execute("delete", "/people/3", null, null);
+		assertError(servlet, "get", "/people/3", 404);
+		assertError(servlet, "get", "/people/3/addresses/8", 404);
+
+		HttpResponse response = servlet.execute("get", "/addresses", null, null);
+		List<Address> addresses = JsonUtils.fromList(r, response.getText(), Address.class);
+		assertListEquals(addresses, "7th Avenue, 200 - NY", "Street 2, 11 - Vegas", "Advovsk Street, 18 - NY");
+	}
 }

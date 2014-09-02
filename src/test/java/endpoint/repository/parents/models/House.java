@@ -3,6 +3,7 @@ package endpoint.repository.parents.models;
 import endpoint.repository.IdRef;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
+import endpoint.repository.annotations.Parent;
 
 @Endpoint(path = "/houses")
 public class House {
@@ -12,6 +13,9 @@ public class House {
 
 	private int floors;
 	private String color;
+
+	@Parent
+	private IdRef<Person> owner;
 
 	@SuppressWarnings("unused")
 	private House() { }
@@ -45,7 +49,15 @@ public class House {
 	public void setColor(String color) {
 		this.color = color;
 	}
-	
+
+	public IdRef<Person> getOwner() {
+		return owner;
+	}
+
+	public void setOwner(IdRef<Person> owner) {
+		this.owner = owner;
+	}
+
 	@Override
 	public String toString() {
 		return "A " + this.color + " colored " + this.floors + "-store house";

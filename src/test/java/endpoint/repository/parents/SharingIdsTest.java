@@ -39,7 +39,6 @@ public class SharingIdsTest extends EndpointTestCase {
 	@Test
 	public void testGetFromRoot() {
 		HttpResponse response = servlet.execute("get", "/contacts/4", null, null);
-		System.out.println(response.getText());
 		ContactInfo contact = JsonUtils.from(r, response.getText(), ContactInfo.class);
 		assertEquals("feroult@gmail.com", contact.getEmail());
 		Person person = contact.getPersonId().fetch();
@@ -57,15 +56,101 @@ public class SharingIdsTest extends EndpointTestCase {
 		assertEquals(addressId.asLong(), houses.get(0).getAddressId().asLong());
 		assertEquals(Address.class, houses.get(0).getAddressId().getClazz());
 	}
+
+	@Test
+	public void testPost() {
+		IdRef<Person> leo = FixturesLoader.PEOPLE.get("Leonardo");
+		HttpResponse response = servlet.execute("post", "/contacts/" + leo.asLong(), "{ telephone : 1234, facebook : 'leo'  }", null);
+		ContactInfo info = JsonUtils.from(r, response.getText(), ContactInfo.class);
+		assertEquals("1234", info.getTelephone());
+		assertEquals("leo", info.getFacebook());
+		assertEquals("Leonardo", info.getPersonId().fetch().getName());
+		response = servlet.execute("get", "/contacts/" + leo.asLong(), null, null);
+		ContactInfo retrievedInfo = JsonUtils.from(r, response.getText(), ContactInfo.class);
+		assertEquals("1234", retrievedInfo.getTelephone());
+		assertEquals("leo", retrievedInfo.getFacebook());
+		assertEquals("Leonardo", retrievedInfo.getPersonId().fetch().getName());
+	}
+
+	@Test
+	public void testPostNested() {
+		IdRef<Person> luan = FixturesLoader.PEOPLE.get("Luan");
+		HttpResponse response = servlet.execute("post", "/people/" + luan.asLong() + "/houses/100", "{ color : \"Magenta\", floors : 4  }", null);
+		House house = JsonUtils.from(r, response.getText(), House.class);
+		assertEquals("Magenta", house.getColor());
+		assertEquals(4, house.getFloors());
+		assertEquals("Luan", house.getOwner().fetch().getName());
+		response = servlet.execute("get", "/people/" + luan.asLong() + "/houses/100", null, null);
+		House retrievedHouse = JsonUtils.from(r, response.getText(), House.class);
+		assertEquals("Magenta", retrievedHouse.getColor());
+		assertEquals(4, retrievedHouse.getFloors());
+		assertEquals("Luan", retrievedHouse.getOwner().fetch().getName());
+
+		response = servlet.execute("get", "/houses/", null, null);
+		List<House> houses = JsonUtils.fromList(r, response.getText(), House.class);
+		assertEquals(2, houses.size());
+	}
+
+	@Test
+	public void testPut() {
+		IdRef<Person> fer = FixturesLoader.PEOPLE.get("Fernando");
+		HttpResponse response = servlet.execute("put", "/contacts/" + fer.asLong(), "{ telephone : 4321, facebook : 'fernando'  }", null);
+		ContactInfo info = JsonUtils.from(r, response.getText(), ContactInfo.class);
+		assertEquals("4321", info.getTelephone());
+		assertEquals("fernando", info.getFacebook());
+		assertEquals("Fernando", info.getPersonId().fetch().getName());
+		response = servlet.execute("get", "/contacts/" + fer.asLong(), null, null);
+		ContactInfo retrievedInfo = JsonUtils.from(r, response.getText(), ContactInfo.class);
+		assertEquals("4321", retrievedInfo.getTelephone());
+		assertEquals("fernando", retrievedInfo.getFacebook());
+		assertEquals("Fernando", retrievedInfo.getPersonId().fetch().getName());
+	}
+
+	@Test
+	public void testPutNested() {
+		IdRef<Person> luan = FixturesLoader.PEOPLE.get("Luan");
+		HttpResponse response = servlet.execute("put", "/people/" + luan.asLong() + "/houses/7", "{ color : \"Pink\", floors : 1  }", null);
+		House house = JsonUtils.from(r, response.getText(), House.class);
+		assertEquals("Pink", house.getColor());
+		assertEquals(1, house.getFloors());
+		assertEquals("Luan", house.getOwner().fetch().getName());
+		response = servlet.execute("get", "/people/" + luan.asLong() + "/houses/7", null, null);
+		House retrievedHouse = JsonUtils.from(r, response.getText(), House.class);
+		assertEquals("Pink", retrievedHouse.getColor());
+		assertEquals(1, retrievedHouse.getFloors());
+		assertEquals("Luan", retrievedHouse.getOwner().fetch().getName());
+
+		response = servlet.execute("get", "/houses/", null, null);
+		List<House> houses = JsonUtils.fromList(r, response.getText(), House.class);
+		assertListEquals(houses, "A Pink colored 1-store house");
+	}
+
+	@Test
+	public void testCustomAction() {
+		IdRef<Person> fer = FixturesLoader.PEOPLE.get("Fernando");
+		HttpResponse response = servlet.execute("get", "/contacts/" + fer.asLong() + "/facebookUrl", null, null);
+		assertEquals("\"http://www.facebook.com/feroult\"", response.getText());
+	}
+
+	@Test
+	public void testCustomActionNestedUsingParent() {
+		IdRef<Person> luan = FixturesLoader.PEOPLE.get("Luan");
+		servlet.execute("put", "/people/" + luan.asLong() + "/houses/7/buildStorePerYear", null, null);
+		HttpResponse response = servlet.execute("get", "/people/" + luan.asLong() + "/houses/7", null, null);
+		House house = JsonUtils.from(r, response.getText(), House.class);
+		assertEquals(20, house.getFloors());
+	}
 	
-	//TODO these tests
-	@Test public void testPost() { }
-	@Test public void testPostNested() { }
-	@Test public void testPut() { }
-	@Test public void testPutNested() { }
-	@Test public void testDelete() { }
+	@Test
+	public void testCustomActionNestedUsingSibiling() {
+		IdRef<Person> luan = FixturesLoader.PEOPLE.get("Luan");
+		servlet.execute("put", "/people/" + luan.asLong() + "/houses/7/buildStorePerAddressNumber", null, null);
+		HttpResponse response = servlet.execute("get", "/people/" + luan.asLong() + "/houses/7", null, null);
+		House house = JsonUtils.from(r, response.getText(), House.class);
+		assertEquals(20, house.getFloors());
+	}
+
+	// TODO add these tests when delete is ready
 	@Test public void testDeletedWithChildren() { }
 	@Test public void testDeletedNested() { }
-	@Test public void testCustomAction() { }
-	@Test public void testCustomActionNested() { }
 }

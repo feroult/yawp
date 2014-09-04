@@ -5,12 +5,24 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class ReflectionUtils {
 
 	private ReflectionUtils() {
 		throw new RuntimeException("Should not be instanciated");
+	}
+
+	public static List<Class<?>> getAllInterfaces(Class<?> clazz) {
+		List<Class<?>> interfaces = new ArrayList<>();
+
+		while (clazz != null) {
+			interfaces.addAll(Arrays.asList(clazz.getInterfaces()));
+			clazz = clazz.getSuperclass();
+		}
+
+		return interfaces;
 	}
 
 	public static boolean isInnerClass(Class<?> clazz) {
@@ -45,12 +57,24 @@ public final class ReflectionUtils {
 	}
 
 	public static Class<?> getGenericParameter(Class<?> clazz) {
+		Class<?>[] parameters = getGenericParameters(clazz);
+		if (parameters.length == 0) {
+			return null;
+		}
+		return parameters[0];
+	}
+
+	public static Class<?>[] getGenericParameters(Class<?> clazz) {
 		Type genericFieldType = clazz.getGenericSuperclass();
 		if (genericFieldType instanceof ParameterizedType) {
 			ParameterizedType aType = (ParameterizedType) genericFieldType;
 			Type[] fieldArgTypes = aType.getActualTypeArguments();
-			return (Class<?>) fieldArgTypes[0];
+			Class<?>[] clazzes = new Class<?>[fieldArgTypes.length];
+			for (int i = 0; i < clazzes.length; i++) {
+				clazzes[i] = (Class<?>) fieldArgTypes[i];
+			}
+			return clazzes;
 		}
-		return null;
+		return new Class<?>[] {};
 	}
 }

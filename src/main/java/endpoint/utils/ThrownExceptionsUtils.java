@@ -4,12 +4,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
-import endpoint.DatastoreException;
-import endpoint.HttpException;
+import endpoint.repository.EndpointException;
+import endpoint.servlet.HttpException;
 
+// TODO think about the whole expcetion model, relating to repository and servlet packages
 public final class ThrownExceptionsUtils {
 
-	private static final List<Class<? extends RuntimeException>> ALLOWED_EXCEPTIONS = Arrays.<Class<? extends RuntimeException>>asList(DatastoreException.class);
+	private static final List<Class<? extends RuntimeException>> ALLOWED_EXCEPTIONS = Arrays
+			.<Class<? extends RuntimeException>> asList(EndpointException.class);
 
 	private ThrownExceptionsUtils() {
 		throw new RuntimeException("Should never be instanciated.");

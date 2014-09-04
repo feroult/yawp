@@ -11,14 +11,15 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 
-import endpoint.Repository;
-import endpoint.actions.RepositoryActions;
-import endpoint.hooks.RepositoryHooks;
-import endpoint.transformers.RepositoryTransformers;
+import endpoint.repository.EndpointScanner;
+import endpoint.repository.Repository;
+import endpoint.repository.RepositoryFeatures;
 
 public class EndpointTestCase {
 
 	private static final String LOGGED_USER_ID = "10";
+
+	private static RepositoryFeatures features;
 
 	private LocalServiceTestHelper helper;
 
@@ -26,9 +27,7 @@ public class EndpointTestCase {
 
 	@BeforeClass
 	public static void bootEndpoint() {
-		RepositoryActions.scan("endpoint");
-		RepositoryHooks.scan("endpoint");
-		RepositoryTransformers.scan("endpoint");
+		features = new EndpointScanner("endpoint").scan();
 	}
 
 	@Before
@@ -45,7 +44,7 @@ public class EndpointTestCase {
 
 	@Before
 	public void setupRepository() {
-		r = Repository.r(LOGGED_USER_ID);
+		r = Repository.r(LOGGED_USER_ID).setFeatures(features);
 	}
 
 	@After

@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import endpoint.SimpleObject;
+import endpoint.repository.SimpleObject;
 
 public class JsonUtilsTest {
 

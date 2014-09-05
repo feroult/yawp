@@ -35,4 +35,13 @@
 		<servlet-name>FixturesEndpoint</servlet-name>
 		<url-pattern>/fixtures/*</url-pattern>
 	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>DeleteAllServlet</servlet-name>
+		<servlet-class>endpoint.repository.tools.DeleteAllServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteAllServlet</servlet-name>
+		<url-pattern>/_yawp/delete_all</url-pattern>
+	</servlet-mapping>
 </web-app>

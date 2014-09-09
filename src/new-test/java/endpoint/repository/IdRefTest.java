@@ -152,6 +152,7 @@ public class IdRefTest extends EndpointTestCase {
 	public void testToString() {
 		assertEquals("/parents/1", IdRef.parse(r, "/parents/1").toString());
 		assertEquals("/parents/1/children/2", IdRef.parse(r, "/parents/1/children/2").toString());
+		assertEquals("/parents/1/children/2/grandchildren/3", IdRef.parse(r, "/parents/1/children/2/grandchildren/3").toString());
 	}
 
 	private Parent saveParentWithJob() {

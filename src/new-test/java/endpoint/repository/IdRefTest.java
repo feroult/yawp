@@ -146,11 +146,21 @@ public class IdRefTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testParseWithCollections() {
+	public void testParseUriWithCollectionOrAction() {
 		assertNull(IdRef.parse(r, "/parents"));
 
 		assertIdRef(IdRef.parse(r, "/parents/1/children"), Parent.class, 1l);
+		assertIdRef(IdRef.parse(r, "/parents/1/action"), Parent.class, 1l);
 		assertIdRef(IdRef.parse(r, "/parents/1/children/2/grandchildren"), Child.class, 2l);
+		assertIdRef(IdRef.parse(r, "/parents/1/children/2/action"), Child.class, 2l);
+	}
+
+	@Test
+	public void testParseUriWithActionOverCollection() {
+		assertNull(IdRef.parse(r, "/parents"));
+
+		assertIdRef(IdRef.parse(r, "/parents/1/children/action"), Parent.class, 1l);
+		assertIdRef(IdRef.parse(r, "/parents/1/children/2/grandchildren/action"), Child.class, 2l);
 	}
 
 	@Test

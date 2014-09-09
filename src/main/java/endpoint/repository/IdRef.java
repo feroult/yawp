@@ -86,7 +86,11 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 		IdRef<TT> lastIdRef = null;
 
-		for (int i = 1; i < parts.length - 1; i += 2) {
+		for (int i = 1; i < parts.length; i += 2) {
+			if (isActionOrCollection(parts, i)) {
+				break;
+			}
+
 			String endpointPath = "/" + parts[i];
 			Long asLong = Long.valueOf(parts[i + 1]);
 
@@ -96,6 +100,19 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		}
 
 		return lastIdRef;
+	}
+
+	private static boolean isActionOrCollection(String[] parts, int i) {
+		return parts.length == i + 1 || isString(parts[i + 1]);
+	}
+
+	private static boolean isString(String s) {
+		try {
+			Long.valueOf(s);
+			return false;
+		} catch (NumberFormatException e) {
+			return true;
+		}
 	}
 
 	@Override

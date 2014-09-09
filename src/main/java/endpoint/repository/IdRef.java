@@ -138,7 +138,14 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	@Override
 	public String toString() {
-		return id.toString();
+		StringBuilder sb = new StringBuilder();
+		if (parentId != null) {
+			sb.append(parentId.toString());
+		}
+		sb.append(r.getFeatures().get(clazz).getEndpointPath());
+		sb.append("/");
+		sb.append(id);
+		return sb.toString();
 	}
 
 }

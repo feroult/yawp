@@ -53,9 +53,14 @@ public class EndpointRouter {
 
 		String[] parts = normalizeUri(uri).split("/");
 
-		this.customActionKey = parseCustomActionKey(parts);
+		this.customActionKey = parseCustomActionKeyNew(parts);
 		this.overCollection = parseOverCollectionNew(parts);
 		this.resources = parseResources(parts);
+	}
+
+	private ActionKey parseCustomActionKeyNew(String[] parts) {
+		
+		return parseCustomActionKey(parts);
 	}
 
 	private boolean parseOverCollectionNew(String[] parts) {
@@ -67,19 +72,19 @@ public class EndpointRouter {
 			return false;
 		}
 
-//		String lastToken = uri.substring(idRef.getUri().length() + 1);
-//		if (lastToken.indexOf("/") != -1) {
-//			return true;
-//		}
+		String lastToken = uri.substring(idRef.getUri().length() + 1);
+		if (lastToken.indexOf("/") != -1) {
+			return true;
+		}
 
-//		ActionKey actionKey = new ActionKey(verb, lastToken, false);
-//		if (features.hasCustomAction(idRef.getClazz(), actionKey)) {
-//			return false;
-//		}
-//
-//		return true;
+		ActionKey actionKey = new ActionKey(verb, lastToken, false);
+		if (features.hasCustomAction(idRef.getClazz(), actionKey)) {
+			return false;
+		}
 
-		return parseOverCollection(parts);
+		return true;
+
+		//return parseOverCollection(parts);
 	}
 
 	private ActionKey parseCustomActionKey(String[] parts) {

@@ -26,6 +26,7 @@ import endpoint.repository.response.ErrorResponse;
 import endpoint.repository.response.HttpResponse;
 import endpoint.repository.response.JsonResponse;
 import endpoint.utils.EntityUtils;
+import endpoint.utils.Environment;
 import endpoint.utils.HttpVerb;
 import endpoint.utils.JsonUtils;
 
@@ -38,11 +39,18 @@ public class EndpointServlet extends HttpServlet {
 
 	private boolean enableHooks = true;
 
+	private boolean enableProduction = false;
+
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		setWithHooks(config.getInitParameter("enableHooks"));
+		setProduction(config.getInitParameter("enableProduction"));
 		scanEndpoints(config.getInitParameter("packagePrefix"));
+	}
+
+	private void setProduction(String enableProductionParameter) {
+		this.enableProduction = enableProductionParameter != null && Boolean.valueOf(enableProductionParameter);
 	}
 
 	private void setWithHooks(String enableHooksParameter) {
@@ -70,6 +78,13 @@ public class EndpointServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+		// TODO create another servlet to use as fixtures
+		if (!enableProduction && Environment.isProduction()) {
+			response(resp, new ErrorResponse(403));
+			return;
+		}
+
 		HttpResponse httpResponse;
 		try {
 			httpResponse = execute(req.getMethod(), getUri(req), JsonUtils.readJson(req.getReader()), makeParams(req));

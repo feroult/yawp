@@ -80,9 +80,13 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	public static <TT> IdRef<TT> parse(Repository r, String path) {
 		String[] parts = path.split("/");
 
+		if (parts.length < 3) {
+			return null;
+		}
+
 		IdRef<TT> lastIdRef = null;
 
-		for (int i = 1; i < parts.length; i += 2) {
+		for (int i = 1; i < parts.length - 1; i += 2) {
 			String endpointPath = "/" + parts[i];
 			Long asLong = Long.valueOf(parts[i + 1]);
 

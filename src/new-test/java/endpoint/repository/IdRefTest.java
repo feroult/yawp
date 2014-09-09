@@ -1,6 +1,7 @@
 package endpoint.repository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -108,8 +109,7 @@ public class IdRefTest extends EndpointTestCase {
 		r.save(parent3);
 
 		List<Long> inList = Arrays.asList(parent1.getId().asLong(), parent2.getId().asLong());
-		List<Parent> objects = r.query(Parent.class).where("id", "in", inList)
-				.list();
+		List<Parent> objects = r.query(Parent.class).where("id", "in", inList).list();
 		assertEquals(2, objects.size());
 	}
 
@@ -117,8 +117,7 @@ public class IdRefTest extends EndpointTestCase {
 	public void testParseParentId() {
 		IdRef<Parent> parentId = IdRef.parse(r, "/parents/1");
 
-		assertEquals(Parent.class, parentId.getClazz());
-		assertEquals((Long) 1l, parentId.asLong());
+		assertIdRef(parentId, Parent.class, 1l);
 	}
 
 	@Test
@@ -126,11 +125,8 @@ public class IdRefTest extends EndpointTestCase {
 		IdRef<Child> childId = IdRef.parse(r, "/parents/1/children/2");
 		IdRef<Parent> parentId = childId.getParentId();
 
-		assertEquals(Parent.class, parentId.getClazz());
-		assertEquals((Long) 1l, parentId.asLong());
-
-		assertEquals(Child.class, childId.getClazz());
-		assertEquals((Long) 2l, childId.asLong());
+		assertIdRef(parentId, Parent.class, 1l);
+		assertIdRef(childId, Child.class, 2l);
 	}
 
 	@Test
@@ -139,14 +135,22 @@ public class IdRefTest extends EndpointTestCase {
 		IdRef<Child> childId = grandchildId.getParentId();
 		IdRef<Parent> parentId = childId.getParentId();
 
-		assertEquals(Parent.class, parentId.getClazz());
-		assertEquals((Long) 1l, parentId.asLong());
+		assertIdRef(parentId, Parent.class, 1l);
+		assertIdRef(childId, Child.class, 2l);
+		assertIdRef(grandchildId, Grandchild.class, 3l);
+	}
 
-		assertEquals(Child.class, childId.getClazz());
-		assertEquals((Long) 2l, childId.asLong());
+	private void assertIdRef(IdRef<?> id, Class<?> clazz, Long idAsLong) {
+		assertEquals(clazz, id.getClazz());
+		assertEquals(idAsLong, id.asLong());
+	}
 
-		assertEquals(Grandchild.class, grandchildId.getClazz());
-		assertEquals((Long) 3l, grandchildId.asLong());
+	@Test
+	public void testParseWithCollections() {
+		assertNull(IdRef.parse(r, "/parents"));
+
+		assertIdRef(IdRef.parse(r, "/parents/1/children"), Parent.class, 1l);
+		assertIdRef(IdRef.parse(r, "/parents/1/children/2/grandchildren"), Child.class, 2l);
 	}
 
 	@Test

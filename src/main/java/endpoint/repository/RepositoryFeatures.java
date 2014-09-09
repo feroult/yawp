@@ -55,16 +55,16 @@ public class RepositoryFeatures {
 		return endpoints.get(clazz);
 	}
 
-	public EndpointFeatures<?> get(String path) {
-		Class<?> clazz = paths.get(path);
+	public EndpointFeatures<?> get(String endpointPath) {
+		Class<?> clazz = paths.get(endpointPath);
 		if (clazz == null) {
-			throw new RuntimeException("Invalid endpoint path " + path);
+			throw new RuntimeException("Invalid endpoint path " + endpointPath);
 		}
 		return get(clazz);
 	}
 
-	public boolean hasCustomAction(String path, ActionKey actionKey) {
-		EndpointFeatures<?> endpointFeatures = get(path);
+	public boolean hasCustomAction(String endpointPath, ActionKey actionKey) {
+		EndpointFeatures<?> endpointFeatures = get(endpointPath);
 		return endpointFeatures.hasCustomAction(actionKey);
 	}
 }

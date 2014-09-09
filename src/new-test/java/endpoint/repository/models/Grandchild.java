@@ -9,7 +9,7 @@ import endpoint.repository.annotations.ParentId;
 public class Grandchild {
 
 	@Id
-	private IdRef<Child> id;
+	private IdRef<Grandchild> id;
 
 	@ParentId
 	private IdRef<Child> childId;
@@ -24,11 +24,11 @@ public class Grandchild {
 		this.name = name;
 	}
 
-	public IdRef<Child> getId() {
+	public IdRef<Grandchild> getId() {
 		return id;
 	}
 
-	public void setId(IdRef<Child> id) {
+	public void setId(IdRef<Grandchild> id) {
 		this.id = id;
 	}
 

@@ -29,6 +29,8 @@ public class EndpointRouter {
 
 	private HttpVerb verb;
 
+	private IdRef<?> idRef;
+
 	public EndpointRouter(Repository r, HttpVerb verb, String uri) {
 		this.verb = verb;
 		this.uri = uri;
@@ -47,6 +49,23 @@ public class EndpointRouter {
 	}
 
 	private void parseUri() {
+		this.idRef = IdRef.parse(r, uri);
+
+		// String idUri = idRef.getUri();
+		//
+		// if (idUri.length() == uri.length()) {
+		// this.overCollection = false;
+		// this.customActionKey = null;
+		// }
+		//
+		// String lastPartUri = uri.substring(idUri.length());
+		//
+		// String[]
+
+		oldParse();
+	}
+
+	private void oldParse() {
 		String[] parts = normalizeUri(uri).split("/");
 
 		this.customActionKey = parseCustomActionKey(parts);
@@ -177,31 +196,26 @@ public class EndpointRouter {
 		if (isOverCollection()) {
 			return null;
 		}
-		return evaluateIdRef();
+		return idRef;
 	}
 
 	public IdRef<?> getParentIdRef() {
-		IdRef<?> idRef = evaluateIdRef();
+		if (idRef == null) {
+			return null;
+		}
+
 		if (isOverCollection()) {
 			return idRef;
 		}
+
 		return idRef.getParentId();
 	}
 
 	public IdRef<?> getActionIdRef() {
-		IdRef<?> parentOrIdRef = evaluateIdRef();
 		if (isOverCollection()) {
-			IdRef<?> idRef = IdRef.create(r, EntityUtils.getIdType(getEndpointClazz()), (Long) null);
-			idRef.setParentId(parentOrIdRef);
-			return idRef;
-		}
-		return parentOrIdRef;
-	}
-
-	private IdRef<?> evaluateIdRef() {
-		IdRef<?> idRef = null;
-		for (RouteResource resource : resources) {
-			idRef = resource.getIdRef(idRef);
+			IdRef<?> actionIdRef = IdRef.create(r, EntityUtils.getIdType(getEndpointClazz()), (Long) null);
+			actionIdRef.setParentId(idRef);
+			return actionIdRef;
 		}
 		return idRef;
 	}

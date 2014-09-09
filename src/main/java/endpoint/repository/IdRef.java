@@ -94,12 +94,16 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 			String endpointPath = "/" + parts[i];
 			Long asLong = Long.valueOf(parts[i + 1]);
 
-			IdRef<TT> currentIdRef = (IdRef<TT>) create(r, r.getFeatures().get(endpointPath).getClazz(), asLong);
+			IdRef<TT> currentIdRef = (IdRef<TT>) create(r, getIdRefClazz(r, endpointPath), asLong);
 			currentIdRef.setParentId(lastIdRef);
 			lastIdRef = currentIdRef;
 		}
 
 		return lastIdRef;
+	}
+
+	private static Class<?> getIdRefClazz(Repository r, String endpointPath) {
+		return EntityUtils.getIdType(r.getFeatures().get(endpointPath).getClazz());
 	}
 
 	private static boolean isActionOrCollection(String[] parts, int i) {
@@ -159,6 +163,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	@Override
 	public String toString() {
+		return getUri();
+	}
+
+	public String getUri() {
 		StringBuilder sb = new StringBuilder();
 		if (parentId != null) {
 			sb.append(parentId.toString());

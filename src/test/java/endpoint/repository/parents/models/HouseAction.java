@@ -13,7 +13,7 @@ public class HouseAction extends Action<House> {
 		house.setFloors(house.getFloors() + owner.getAge());
 		r.save(house);
 	}
-	
+
 	@PUT("buildStorePerAddressNumber")
 	public void buildStorePerAddressNumber(IdRef<Address> addressId) {
 		House house = addressId.fetch(House.class);

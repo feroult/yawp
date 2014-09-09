@@ -67,4 +67,9 @@ public class RepositoryFeatures {
 		EndpointFeatures<?> endpointFeatures = get(endpointPath);
 		return endpointFeatures.hasCustomAction(actionKey);
 	}
+
+	public boolean hasCustomAction(Class<?> clazz, ActionKey actionKey) {
+		EndpointFeatures<?> endpointFeatures = get(clazz);
+		return endpointFeatures.hasCustomAction(actionKey);
+	}
 }

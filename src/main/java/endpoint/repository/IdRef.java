@@ -103,7 +103,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	}
 
 	private static Class<?> getIdRefClazz(Repository r, String endpointPath) {
-		return EntityUtils.getIdType(r.getFeatures().get(endpointPath).getClazz());
+		return r.getFeatures().get(endpointPath).getClazz();
 	}
 
 	private static boolean isActionOrCollection(String[] parts, int i) {

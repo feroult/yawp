@@ -13,7 +13,6 @@ import org.junit.Test;
 
 import endpoint.repository.EndpointFeatures;
 import endpoint.repository.RepositoryFeatures;
-import endpoint.repository.SimpleObject;
 import endpoint.repository.actions.ActionKey;
 import endpoint.servlet.EndpointRouter.RouteResource;
 import endpoint.utils.EndpointTestCase;
@@ -23,24 +22,44 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 	private class RepositoryFeaturesMock extends RepositoryFeatures {
 
-		public RepositoryFeaturesMock() {
+		private RepositoryFeatures features;
+
+		public RepositoryFeaturesMock(RepositoryFeatures features) {
 			super(new ArrayList<EndpointFeatures<?>>());
+			this.features = features;
 		}
 
 		@Override
-		public boolean hasCustomAction(String path, ActionKey actionKey) {
-			return actionKey.getActionName().equals("action");
+		public boolean hasCustomAction(String endpointPath, ActionKey actionKey) {
+			if (actionKey.getActionName().equals("action")) {
+				return true;
+			}
+			return features.hasCustomAction(endpointPath, actionKey);
 		}
 
 		@Override
-		public EndpointFeatures<?> get(String path) {
-			return new EndpointFeatures<SimpleObject>(SimpleObject.class);
+		public boolean hasCustomAction(Class<?> clazz, ActionKey actionKey) {
+			if (actionKey.getActionName().equals("action")) {
+				return true;
+			}
+			return features.hasCustomAction(clazz, actionKey);
 		}
+
+		@Override
+		public EndpointFeatures<?> get(String endpointPath) {
+			return features.get(endpointPath);
+		}
+
+		@Override
+		public EndpointFeatures<?> get(Class<?> clazz) {
+			return features.get(clazz);
+		}
+
 	}
 
 	@Before
 	public void before() {
-		r.setFeatures(new RepositoryFeaturesMock());
+		r.setFeatures(new RepositoryFeaturesMock(r.getFeatures()));
 	}
 
 	private EndpointRouter parse(String uri) {

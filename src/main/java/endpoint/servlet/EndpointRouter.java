@@ -51,26 +51,35 @@ public class EndpointRouter {
 	private void parseUri() {
 		this.idRef = IdRef.parse(r, uri);
 
-		// String idUri = idRef.getUri();
-		//
-		// if (idUri.length() == uri.length()) {
-		// this.overCollection = false;
-		// this.customActionKey = null;
-		// }
-		//
-		// String lastPartUri = uri.substring(idUri.length());
-		//
-		// String[]
-
-		oldParse();
-	}
-
-	private void oldParse() {
 		String[] parts = normalizeUri(uri).split("/");
 
 		this.customActionKey = parseCustomActionKey(parts);
-		this.overCollection = parseOverCollection(parts);
+		this.overCollection = parseOverCollectionNew(parts);
 		this.resources = parseResources(parts);
+	}
+
+	private boolean parseOverCollectionNew(String[] parts) {
+		if (idRef == null) {
+			return true;
+		}
+
+		if (idRef.getUri().length() == uri.length()) {
+			return false;
+		}
+
+//		String lastToken = uri.substring(idRef.getUri().length() + 1);
+//		if (lastToken.indexOf("/") != -1) {
+//			return true;
+//		}
+
+//		ActionKey actionKey = new ActionKey(verb, lastToken, false);
+//		if (features.hasCustomAction(idRef.getClazz(), actionKey)) {
+//			return false;
+//		}
+//
+//		return true;
+
+		return parseOverCollection(parts);
 	}
 
 	private ActionKey parseCustomActionKey(String[] parts) {

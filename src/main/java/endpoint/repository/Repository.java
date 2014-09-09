@@ -56,7 +56,7 @@ public class Repository {
 		return this;
 	}
 
-	public void saveWithHooks(Object object) {
+	public <T> T saveWithHooks(T object) {
 		namespace.set(object.getClass());
 		try {
 			RepositoryHooks.beforeSave(this, object);
@@ -65,6 +65,7 @@ public class Repository {
 		} finally {
 			namespace.reset();
 		}
+		return object;
 	}
 
 	public <T> T save(T object) {

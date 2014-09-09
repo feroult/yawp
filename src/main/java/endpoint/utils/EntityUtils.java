@@ -30,7 +30,7 @@ import endpoint.repository.actions.Action;
 import endpoint.repository.annotations.Id;
 import endpoint.repository.annotations.Index;
 import endpoint.repository.annotations.Json;
-import endpoint.repository.annotations.Parent;
+import endpoint.repository.annotations.ParentId;
 import endpoint.repository.hooks.Hook;
 
 // TODO move to repository package
@@ -243,7 +243,7 @@ public class EntityUtils {
 	}
 
 	public static Field getAnnotatedParentFromClass(Class<?> clazz) {
-		return getFieldWithAnnotation(clazz, Parent.class);
+		return getFieldWithAnnotation(clazz, ParentId.class);
 	}
 
 	private static Field getFieldWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
@@ -556,7 +556,7 @@ public class EntityUtils {
 	}
 
 	private static boolean isControl(Field field) {
-		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(Parent.class);
+		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(ParentId.class);
 	}
 
 	private static boolean isIdRef(Field field) {

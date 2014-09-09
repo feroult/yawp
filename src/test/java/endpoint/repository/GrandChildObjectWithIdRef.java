@@ -2,7 +2,7 @@ package endpoint.repository;
 
 import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
-import endpoint.repository.annotations.Parent;
+import endpoint.repository.annotations.ParentId;
 
 @Endpoint
 public class GrandChildObjectWithIdRef {
@@ -10,7 +10,7 @@ public class GrandChildObjectWithIdRef {
 	@Id
 	private IdRef<GrandChildObjectWithIdRef> id;
 
-	@Parent
+	@ParentId
 	private IdRef<AnotherObjectWithIdRef> anotherObjectWithIdRefId;
 
 	private String text;

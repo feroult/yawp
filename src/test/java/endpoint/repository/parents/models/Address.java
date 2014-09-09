@@ -4,7 +4,7 @@ import endpoint.repository.IdRef;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
 import endpoint.repository.annotations.Index;
-import endpoint.repository.annotations.Parent;
+import endpoint.repository.annotations.ParentId;
 
 @Endpoint(path = "/addresses")
 public class Address {
@@ -19,7 +19,7 @@ public class Address {
 
 	private String city;
 
-	@Parent
+	@ParentId
 	private IdRef<Person> owner;
 
 	@SuppressWarnings("unused")

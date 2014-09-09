@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.google.appengine.api.datastore.Key;
 
+import endpoint.repository.models.Parent;
+import endpoint.repository.query.DatastoreQuery;
 import endpoint.utils.EntityUtils;
 
 public class IdRef<T> implements Comparable<IdRef<T>> {
@@ -32,7 +34,8 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	}
 
 	public <TT> TT fetch(Class<TT> childClazz) {
-		return r.query(childClazz).id(this);
+		DatastoreQuery<TT> q = r.query(childClazz).from(this);
+		return q.only();
 	}
 
 	public Long asLong() {
@@ -52,7 +55,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 			return null;
 		}
 		Class<?> objectClass = EntityUtils.getClassFromKind(key.getKind());
-        IdRef<?> ref = IdRef.create(r, EntityUtils.getIdType(objectClass), key.getId());
+		IdRef<?> ref = IdRef.create(r, EntityUtils.getIdType(objectClass), key.getId());
 		ref.parentId = fromKey(r, key.getParent());
 		return ref;
 	}
@@ -114,5 +117,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	@Override
 	public String toString() {
 		return id.toString();
+	}
+
+	public static <TT> IdRef<TT> parse(String path) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

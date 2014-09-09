@@ -13,6 +13,7 @@ import com.google.gson.JsonParser;
 
 import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
+import endpoint.servlet.IdRefJsonAdapter;
 
 // FIXME cyclic dependece with repository
 // TODO make it not static and repository aware

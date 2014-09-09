@@ -1,6 +1,5 @@
-package endpoint.utils;
+package endpoint.servlet;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import com.google.gson.JsonDeserializationContext;
@@ -15,7 +14,6 @@ import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
 
 // TODO move to servlet package
-// TODO evaluate if whole tree should be returned or just current id as is
 public class IdRefJsonAdapter implements JsonSerializer<IdRef<?>>, JsonDeserializer<IdRef<?>> {
 
 	private Repository r;
@@ -26,16 +24,13 @@ public class IdRefJsonAdapter implements JsonSerializer<IdRef<?>>, JsonDeseriali
 
 	@Override
 	public JsonElement serialize(IdRef<?> idRef, Type type, JsonSerializationContext ctx) {
-		return new JsonPrimitive(idRef.asLong());
+		return new JsonPrimitive(idRef.toString());
 	}
 
 	@Override
 	public IdRef<?> deserialize(JsonElement json, Type type, JsonDeserializationContext ctx) throws JsonParseException {
-		return IdRef.create(r, getIdRefClazz(type), json.getAsJsonPrimitive().getAsLong());
-	}
-
-	private Class<?> getIdRefClazz(Type type) {
-		return (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0];
+		String path = json.getAsJsonPrimitive().getAsString();
+		return IdRef.parse(r, path);
 	}
 
 }

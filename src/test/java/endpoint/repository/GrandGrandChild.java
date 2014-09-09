@@ -2,14 +2,14 @@ package endpoint.repository;
 
 import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
-import endpoint.repository.annotations.Parent;
+import endpoint.repository.annotations.ParentId;
 
 @Endpoint
 public class GrandGrandChild {
 	@Id
 	IdRef<GrandGrandChild> id;
 	String text;
-	@Parent
+	@ParentId
 	IdRef<GrandChildObjectWithIdRef> parent;
 
 	@SuppressWarnings("unused")

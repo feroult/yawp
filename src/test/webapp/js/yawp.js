@@ -16,13 +16,12 @@
 	}
 
 	function save(endpoint, object) {
-		var type = object.id ? 'PUT' : 'POST';
 		var options = {
 			url : baseUrl + endpoint,
 			data : JSON.stringify(object),
 		};
 
-		return defaultAjax(type, options);
+		return defaultAjax('POST', options);
 	}
 
 	var api = {

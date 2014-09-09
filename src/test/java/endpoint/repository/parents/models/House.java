@@ -3,7 +3,7 @@ package endpoint.repository.parents.models;
 import endpoint.repository.IdRef;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
-import endpoint.repository.annotations.Parent;
+import endpoint.repository.annotations.ParentId;
 
 @Endpoint(path = "/houses")
 public class House {
@@ -14,7 +14,7 @@ public class House {
 	private int floors;
 	private String color;
 
-	@Parent
+	@ParentId
 	private IdRef<Person> owner;
 
 	@SuppressWarnings("unused")

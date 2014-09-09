@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.appengine.api.datastore.Key;
 
+import endpoint.repository.query.DatastoreQuery;
 import endpoint.utils.EntityUtils;
 
 public class IdRef<T> implements Comparable<IdRef<T>> {
@@ -35,6 +36,11 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return r.query(childClazz).id(this);
 	}
 
+	public <TT> TT child(Class<TT> childClazz) {
+		DatastoreQuery<TT> q = r.query(childClazz).from(this);
+		return q.only();
+	}
+
 	public Long asLong() {
 		return id;
 	}
@@ -43,8 +49,9 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return clazz;
 	}
 
-	public IdRef<?> getParentId() {
-		return parentId;
+	@SuppressWarnings("unchecked")
+	public <TT> IdRef<TT> getParentId() {
+		return (IdRef<TT>) parentId;
 	}
 
 	public static IdRef<?> fromKey(Repository r, Key key) {
@@ -52,7 +59,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 			return null;
 		}
 		Class<?> objectClass = EntityUtils.getClassFromKind(key.getKind());
-        IdRef<?> ref = IdRef.create(r, EntityUtils.getIdType(objectClass), key.getId());
+		IdRef<?> ref = IdRef.create(r, EntityUtils.getIdType(objectClass), key.getId());
 		ref.parentId = fromKey(r, key.getParent());
 		return ref;
 	}
@@ -67,6 +74,24 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 			idRefs.add(create(r, clazz, ids[i]));
 		}
 		return idRefs;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <TT> IdRef<TT> parse(Repository r, String path) {
+		String[] parts = path.split("/");
+
+		IdRef<TT> lastIdRef = null;
+
+		for (int i = 1; i < parts.length; i += 2) {
+			String endpointPath = "/" + parts[i];
+			Long asLong = Long.valueOf(parts[i + 1]);
+
+			IdRef<TT> currentIdRef = (IdRef<TT>) create(r, r.getFeatures().get(endpointPath).getClazz(), asLong);
+			currentIdRef.setParentId(lastIdRef);
+			lastIdRef = currentIdRef;
+		}
+
+		return lastIdRef;
 	}
 
 	@Override
@@ -113,6 +138,14 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	@Override
 	public String toString() {
-		return id.toString();
+		StringBuilder sb = new StringBuilder();
+		if (parentId != null) {
+			sb.append(parentId.toString());
+		}
+		sb.append(r.getFeatures().get(clazz).getEndpointPath());
+		sb.append("/");
+		sb.append(id);
+		return sb.toString();
 	}
+
 }

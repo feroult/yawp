@@ -107,7 +107,8 @@ public class IdRefTest extends EndpointTestCase {
 		Parent parent3 = new Parent("xpto3");
 		r.save(parent3);
 
-		List<Parent> objects = r.query(Parent.class).where("id", "in", Arrays.asList(parent1.getId().asLong(), parent2.getId().asLong()))
+		List<Long> inList = Arrays.asList(parent1.getId().asLong(), parent2.getId().asLong());
+		List<Parent> objects = r.query(Parent.class).where("id", "in", inList)
 				.list();
 		assertEquals(2, objects.size());
 	}

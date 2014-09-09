@@ -91,7 +91,7 @@ public class IdRefTest extends EndpointTestCase {
 		child.setParentId(parent.getId());
 		r.save(child);
 
-		Child retrievedChild = parent.getId().fetch(Child.class);
+		Child retrievedChild = parent.getId().child(Child.class);
 		assertEquals("child xpto", retrievedChild.getName());
 	}
 

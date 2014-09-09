@@ -74,7 +74,7 @@ public class ActionTest extends EndpointTestCase {
 		child.setObjectWithIdRefId(object.getId());
 		r.save(child);
 
-		callAction("PUT", "/children/" + child.getObjectWithIdRefId() + "/lower", null);
+		callAction("PUT", "/children_with_idref/" + child.getObjectWithIdRefId() + "/lower", null);
 
 		ObjectWithIdRef retrievedObject = object.getId().fetch();
 		assertEquals("xpto", retrievedObject.getText());

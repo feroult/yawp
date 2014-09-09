@@ -8,8 +8,8 @@ import endpoint.repository.actions.annotations.PUT;
 public class ChildWithIdRefAction extends Action<ChildWithIdRef> {
 
 	@PUT("lower")
-	public void lower(IdRef<ChildWithIdRef> id) {
-		ObjectWithIdRef object = id.fetch(ObjectWithIdRef.class);
+	public void lower(IdRef<ObjectWithIdRef> id) {
+		ObjectWithIdRef object = id.fetch();
 		object.setText(object.getText().toLowerCase());
 		r.save(object);
 

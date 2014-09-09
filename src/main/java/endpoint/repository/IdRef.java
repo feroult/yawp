@@ -34,6 +34,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	}
 
 	public <TT> TT fetch(Class<TT> childClazz) {
+		return r.query(childClazz).id(this);
+	}
+
+	public <TT> TT child(Class<TT> childClazz) {
 		DatastoreQuery<TT> q = r.query(childClazz).from(this);
 		return q.only();
 	}

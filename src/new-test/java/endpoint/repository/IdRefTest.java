@@ -8,6 +8,7 @@ import java.util.List;
 import org.junit.Test;
 
 import endpoint.repository.models.Child;
+import endpoint.repository.models.Grandchild;
 import endpoint.repository.models.Job;
 import endpoint.repository.models.Parent;
 import endpoint.utils.EndpointTestCase;
@@ -118,18 +119,34 @@ public class IdRefTest extends EndpointTestCase {
 		assertEquals(Parent.class, parentId.getClazz());
 		assertEquals((Long) 1l, parentId.asLong());
 	}
-//
-//	@Test
-//	public void testParseChildId() {
-//		IdRef<Child> childId = IdRef.parse(r, "/parents/1/children/2");
-//		IdRef<Parent> parentId = childId.getParentId();
-//
-//		assertEquals(Parent.class, parentId.getClazz());
-//		assertEquals((Long) 1l, parentId.asLong());
-//
-//		assertEquals(Child.class, childId.getClazz());
-//		assertEquals((Long) 2l, childId.asLong());
-//	}
+
+	@Test
+	public void testParseChildId() {
+		IdRef<Child> childId = IdRef.parse(r, "/parents/1/children/2");
+		IdRef<Parent> parentId = childId.getParentId();
+
+		assertEquals(Parent.class, parentId.getClazz());
+		assertEquals((Long) 1l, parentId.asLong());
+
+		assertEquals(Child.class, childId.getClazz());
+		assertEquals((Long) 2l, childId.asLong());
+	}
+
+	@Test
+	public void testParseGrandchildId() {
+		IdRef<Grandchild> grandchildId = IdRef.parse(r, "/parents/1/children/2/grandchildren/3");
+		IdRef<Child> childId = grandchildId.getParentId();
+		IdRef<Parent> parentId = childId.getParentId();
+
+		assertEquals(Parent.class, parentId.getClazz());
+		assertEquals((Long) 1l, parentId.asLong());
+
+		assertEquals(Child.class, childId.getClazz());
+		assertEquals((Long) 2l, childId.asLong());
+
+		assertEquals(Grandchild.class, grandchildId.getClazz());
+		assertEquals((Long) 3l, grandchildId.asLong());
+	}
 
 	private Parent saveParentWithJob() {
 		Job job = new Job("haha");

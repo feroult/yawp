@@ -83,9 +83,12 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		IdRef<TT> lastIdRef = null;
 
 		for (int i = 1; i < parts.length; i += 2) {
-			String endpointPath = "/" + parts[(i - 1) * 2 + 1];
-			Long asLong = Long.valueOf(parts[(i - 1) * 2 + 2]);
-			lastIdRef = (IdRef<TT>) create(r, r.getFeatures().get(endpointPath).getClazz(), asLong);
+			String endpointPath = "/" + parts[i];
+			Long asLong = Long.valueOf(parts[i + 1]);
+
+			IdRef<TT> currentIdRef = (IdRef<TT>) create(r, r.getFeatures().get(endpointPath).getClazz(), asLong);
+			currentIdRef.setParentId(lastIdRef);
+			lastIdRef = currentIdRef;
 		}
 
 		return lastIdRef;

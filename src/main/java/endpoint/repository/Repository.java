@@ -67,13 +67,14 @@ public class Repository {
 		}
 	}
 
-	public void save(Object object) {
+	public <T> T save(T object) {
 		namespace.set(object.getClass());
 		try {
 			saveInternal(object);
 		} finally {
 			namespace.reset();
 		}
+		return object;
 	}
 
 	private void saveInternal(Object object) {

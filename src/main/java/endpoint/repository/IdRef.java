@@ -49,8 +49,9 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return clazz;
 	}
 
-	public IdRef<?> getParentId() {
-		return parentId;
+	@SuppressWarnings("unchecked")
+	public <TT> IdRef<TT> getParentId() {
+		return (IdRef<TT>) parentId;
 	}
 
 	public static IdRef<?> fromKey(Repository r, Key key) {
@@ -73,6 +74,21 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 			idRefs.add(create(r, clazz, ids[i]));
 		}
 		return idRefs;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <TT> IdRef<TT> parse(Repository r, String path) {
+		String[] parts = path.split("/");
+
+		IdRef<TT> lastIdRef = null;
+
+		for (int i = 1; i < parts.length; i += 2) {
+			String endpointPath = "/" + parts[(i - 1) * 2 + 1];
+			Long asLong = Long.valueOf(parts[(i - 1) * 2 + 2]);
+			lastIdRef = (IdRef<TT>) create(r, r.getFeatures().get(endpointPath).getClazz(), asLong);
+		}
+
+		return lastIdRef;
 	}
 
 	@Override
@@ -122,11 +138,4 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return id.toString();
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <TT> IdRef<TT> parse(Repository r, String path) {
-		String[] parts = path.split("/");
-		String endpointPath = "/" + parts[1];
-		Long asLong = Long.valueOf(parts[2]);
-		return (IdRef<TT>) create(r, r.getFeatures().get(endpointPath).getClazz(), asLong);
-	}
 }

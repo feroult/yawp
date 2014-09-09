@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.appengine.api.datastore.Key;
 
-import endpoint.repository.models.Parent;
 import endpoint.repository.query.DatastoreQuery;
 import endpoint.utils.EntityUtils;
 
@@ -123,8 +122,11 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return id.toString();
 	}
 
-	public static <TT> IdRef<TT> parse(String path) {
-		// TODO Auto-generated method stub
-		return null;
+	@SuppressWarnings("unchecked")
+	public static <TT> IdRef<TT> parse(Repository r, String path) {
+		String[] parts = path.split("/");
+		String endpointPath = "/" + parts[1];
+		Long asLong = Long.valueOf(parts[2]);
+		return (IdRef<TT>) create(r, r.getFeatures().get(endpointPath).getClazz(), asLong);
 	}
 }

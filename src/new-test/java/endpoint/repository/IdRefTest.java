@@ -111,8 +111,9 @@ public class IdRefTest extends EndpointTestCase {
 		assertEquals(2, objects.size());
 	}
 
-	public void testParseId() {
-		IdRef<Parent> parentId = IdRef.parse("/parents/1");
+	@Test
+	public void testParseParentId() {
+		IdRef<Parent> parentId = IdRef.parse(r, "/parents/1");
 
 		assertEquals(Parent.class, parentId.getClazz());
 		assertEquals((Long) 1l, parentId.asLong());

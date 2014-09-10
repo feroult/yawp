@@ -14,6 +14,8 @@ public class EndpointFeatures<T> {
 
 	private Class<T> clazz;
 
+	private Class<?> parentClazz;
+
 	private Map<ActionKey, Method> actions;
 
 	private Map<String, Method> transformers;
@@ -27,15 +29,23 @@ public class EndpointFeatures<T> {
 		this.hooks = new ArrayList<>();
 	}
 
+	public void setParent(Class<?> parentClazz) {
+		this.parentClazz = parentClazz;
+	}
+
 	public Class<T> getClazz() {
 		return this.clazz;
+	}
+
+	public Class<?> getParentClass() {
+		return this.parentClazz;
 	}
 
 	private <V> void assertInexistence(V key, Method method, Map<V, Method> map, String type) {
 		if (map.get(key) != null) {
 			throw new RuntimeException("Trying to add two " + type + " with the same name '" + key + "' to endpoint "
-					+ clazz.getSimpleName() + ": one at " + map.get(key).getDeclaringClass().getSimpleName() + " and the other at "
-					+ method.getDeclaringClass().getSimpleName());
+			        + clazz.getSimpleName() + ": one at " + map.get(key).getDeclaringClass().getSimpleName() + " and the other at "
+			        + method.getDeclaringClass().getSimpleName());
 		}
 	}
 

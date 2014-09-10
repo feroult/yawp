@@ -233,15 +233,12 @@ public class DatastoreQuery<T> {
 	}
 
 	private List<T> executeQuery() {
-		PreparedQuery pq;
+		QueryResultList<Entity> queryResult;
 		try {
-			pq = prepareQuery();
+			queryResult = generateResults(false);
 		} catch (FalsePredicateException ex) {
 			return Collections.emptyList();
 		}
-
-		FetchOptions fetchOptions = configureFetchOptions();
-		QueryResultList<Entity> queryResult = pq.asQueryResultList(fetchOptions);
 		List<T> objects = new ArrayList<T>();
 
 		for (Entity entity : queryResult) {
@@ -249,11 +246,15 @@ public class DatastoreQuery<T> {
 			objects.add(object);
 		}
 
-		if (queryResult.getCursor() != null) {
-			this.cursor = queryResult.getCursor().toWebSafeString();
-		}
+		setCursor(queryResult);
 		return objects;
 	}
+
+	private void setCursor(QueryResultList<Entity> queryResult) {
+	    if (queryResult.getCursor() != null) {
+			this.cursor = queryResult.getCursor().toWebSafeString();
+		}
+    }
 
 	private T executeQueryById() {
 		try {
@@ -306,7 +307,7 @@ public class DatastoreQuery<T> {
 		return fetchOptions;
 	}
 
-	private PreparedQuery prepareQuery() throws FalsePredicateException {
+	private PreparedQuery prepareQuery(boolean keysOnly) throws FalsePredicateException {
 		Class<?> idClass = condition == null ? null : condition.getIdTypeFor(clazz);
 		boolean isByIdWithoutIdRef = idClass != null && !IdRef.class.isAssignableFrom(idClass);
 		if (isByIdWithoutIdRef && parentKey != null) {
@@ -314,6 +315,10 @@ public class DatastoreQuery<T> {
 			        "You have to use IdRef in the where when searching by @Id in a query with .from(IdRef<?>) specified.");
 		}
 		Query q = new Query(EntityUtils.getKindFromClass(clazz));
+		
+		if (keysOnly) {
+			q.setKeysOnly();
+		}
 
 		prepareQueryAncestor(q);
 		prepareQueryWhere(q);
@@ -368,4 +373,27 @@ public class DatastoreQuery<T> {
 	public T id(IdRef<?> id) {
 		return whereById("=", id).only();
 	}
+
+	public List<IdRef<T>> ids() {
+		QueryResultList<Entity> queryResult;
+		try {
+			queryResult = generateResults(true);
+		} catch (FalsePredicateException ex) {
+			return Collections.emptyList();
+		}
+		List<IdRef<T>> ids = new ArrayList<>();
+
+		for (Entity entity : queryResult) {
+			@SuppressWarnings("unchecked")
+            IdRef<T> id = (IdRef<T>) IdRef.fromKey(r, entity.getKey());
+			ids.add(id);
+		}
+
+		setCursor(queryResult);
+		return ids;
+    }
+
+	private QueryResultList<Entity> generateResults(boolean keysOnly) throws FalsePredicateException {
+		return prepareQuery(keysOnly).asQueryResultList(configureFetchOptions());
+    }
 }

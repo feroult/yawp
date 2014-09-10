@@ -15,6 +15,17 @@ import endpoint.utils.EndpointTestCase;
 
 public class RepositoryTest extends EndpointTestCase {
 
+	@Test
+	public void testIds() {
+		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object1"));
+		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
+
+		int i = 0;
+		for (IdRef<SimpleObject> id : r.query(SimpleObject.class).ids()) {
+			assertEquals("object" + ++i, id.fetch().getAString());
+		}
+	}
+
 	@SuppressWarnings("deprecation")
 	@Test
 	public void testSave() {
@@ -94,7 +105,7 @@ public class RepositoryTest extends EndpointTestCase {
 		list.add(new AnotherSimpleObject("xpto2"));
 
 		r.save(object);
-		r.delete(object.getId(), SimpleObject.class);
+		r.delete(IdRef.create(r, SimpleObject.class, object.getId()));
 		r.query(SimpleObject.class).id(object.getId());
 	}
 }

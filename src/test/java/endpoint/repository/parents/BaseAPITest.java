@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import endpoint.repository.parents.models.Address;
@@ -152,20 +151,21 @@ public class BaseAPITest extends EndpointTestCase {
 		assertEquals(229l, sum);
 	}
 	
-	@Ignore @Test
+	@Test
 	public void testDeletedNested() {
 		servlet.execute("delete", "/people/3/addresses/8", null, null);
 		assertError(servlet, "get", "/people/3/addresses/8", 404);
 	}
 
-	@Ignore @Test
+	@Test
 	public void testDeletedWithChildren() {
 		servlet.execute("delete", "/people/3", null, null);
 		assertError(servlet, "get", "/people/3", 404);
 		assertError(servlet, "get", "/people/3/addresses/8", 404);
+		assertError(servlet, "get", "/people/3/addresses/9", 404);
 
 		HttpResponse response = servlet.execute("get", "/addresses", null, null);
 		List<Address> addresses = JsonUtils.fromList(r, response.getText(), Address.class);
-		assertListEquals(addresses, "7th Avenue, 200 - NY", "Street 2, 11 - Vegas", "Advovsk Street, 18 - NY");
+		assertListEquals(addresses, "Advovsk Street, 18 - NY");
 	}
 }

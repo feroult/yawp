@@ -149,8 +149,4 @@ public class SharingIdsTest extends EndpointTestCase {
 		House house = JsonUtils.from(r, response.getText(), House.class);
 		assertEquals(20, house.getFloors());
 	}
-
-	// TODO add these tests when delete is ready
-	@Test public void testDeletedWithChildren() { }
-	@Test public void testDeletedNested() { }
 }

@@ -104,22 +104,16 @@ public class Repository {
 		return DatastoreQuery.q(clazz, this);
 	}
 
-	public void delete(Object object) {
-		delete(EntityUtils.getId(object), object.getClass());
-	}
-
-	public void delete(Long id, Class<?> clazz) {
-		namespace.set(clazz);
+	public void delete(IdRef<?> id) {
+		namespace.set(id.getClazz());
 		try {
-			DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
-
-			Key key = EntityUtils.createKey(id, clazz);
-			datastoreService.delete(key);
-
+			for (IdRef<?> child : id.children()) {
+				delete(child);
+			}
+			DatastoreServiceFactory.getDatastoreService().delete(id.asKey());
 		} finally {
 			namespace.reset();
 		}
-
 	}
 
 	private void saveEntity(Object object, Entity entity, String action) {

@@ -40,7 +40,9 @@ public final class EndpointScanner {
 		Set<Class<?>> clazzes = endpointsPackage.getTypesAnnotatedWith(Endpoint.class);
 
 		for (Class<?> endpoint : clazzes) {
-			endpoints.put(endpoint, new EndpointFeatures<>(endpoint));
+			EndpointFeatures<?> features = new EndpointFeatures<>(endpoint);
+			features.setParent(EntityUtils.getParentClass(endpoint));
+			endpoints.put(endpoint, features);
 		}
 	}
 

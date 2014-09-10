@@ -1,7 +1,9 @@
 package endpoint.repository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import endpoint.repository.actions.ActionKey;
@@ -49,6 +51,16 @@ public class RepositoryFeatures {
 			}
 		}
 		return true;
+	}
+
+	public List<EndpointFeatures<?>> getChildren(Class<?> endpoint) {
+		List<EndpointFeatures<?>> results = new ArrayList<>();
+		for (Map.Entry<Class<?>, EndpointFeatures<?>> entry : endpoints.entrySet()) {
+			if (endpoint.equals(entry.getValue().getParentClass())) {
+				results.add(entry.getValue());
+			}
+		}
+		return results;
 	}
 
 	public EndpointFeatures<?> get(Class<?> clazz) {

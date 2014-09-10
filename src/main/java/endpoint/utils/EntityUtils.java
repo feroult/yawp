@@ -208,6 +208,7 @@ public class EntityUtils {
 	private static Key createKeyFromIdField(Object object, Field field) throws IllegalAccessException {
 		Long id = null;
 
+		// TODO ignoring parents!
 		if (!isIdRef(field)) {
 			id = (Long) field.get(object);
 		} else {
@@ -287,7 +288,7 @@ public class EntityUtils {
 			return fieldArgTypes;
 		}
 
-		throw new RuntimeException("can't get generic type");
+		throw new RuntimeException("Can't get generic type");
 	}
 
 	private static Field getFieldFromAnyParent(Class<?> clazz, String fieldName) {
@@ -619,4 +620,12 @@ public class EntityUtils {
 	private static <T, V extends Action<T>> Class<T> getActionEndpoint(Class<V> clazz) {
 		return (Class<T>) ReflectionUtils.getGenericParameter(clazz);
 	}
+
+	public static Class<?> getParentClass(Class<?> endpoint) {
+		Field field = getAnnotatedParentFromClass(endpoint);
+		if (field == null) {
+			return null;
+		}
+	    return (Class<?>) getParametrizedTypes(field)[0];
+    }
 }

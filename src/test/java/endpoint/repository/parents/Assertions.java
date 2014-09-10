@@ -20,6 +20,7 @@ public final class Assertions {
 			servlet.execute(verb, url, null, null);
 		} catch (HttpException ex) {
 			assertEquals(status, ex.getHttpStatus());
+			return;
 		}
 		assertTrue(false);
 	}

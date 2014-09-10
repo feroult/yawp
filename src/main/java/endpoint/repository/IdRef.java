@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 import endpoint.repository.query.DatastoreQuery;
 import endpoint.utils.EntityUtils;
@@ -45,6 +46,12 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return id;
 	}
 
+	public Key asKey() {
+		Key parent = parentId == null ? null : parentId.asKey();
+		String kind = EntityUtils.getKindFromClass(clazz);
+		return KeyFactory.createKey(parent, kind, id);
+	}
+
 	public Class<T> getClazz() {
 		return clazz;
 	}
@@ -76,7 +83,6 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return idRefs;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <TT> IdRef<TT> parse(Repository r, String path) {
 		String[] parts = path.split("/");
 
@@ -94,6 +100,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 			String endpointPath = "/" + parts[i];
 			Long asLong = Long.valueOf(parts[i + 1]);
 
+			@SuppressWarnings("unchecked")
 			IdRef<TT> currentIdRef = (IdRef<TT>) create(r, getIdRefClazz(r, endpointPath), asLong);
 			currentIdRef.setParentId(lastIdRef);
 			lastIdRef = currentIdRef;
@@ -175,6 +182,18 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		sb.append("/");
 		sb.append(id);
 		return sb.toString();
+	}
+
+	public void delete() {
+		r.delete(this);
+	}
+
+	public List<IdRef<?>> children() {
+		List<IdRef<?>> ids = new ArrayList<>();
+		for (EndpointFeatures<?> childEndpoint : r.getFeatures().getChildren(clazz)) {
+			ids.addAll(r.query(childEndpoint.getClazz()).from(this).ids());
+		}
+		return ids;
 	}
 
 }

@@ -6,9 +6,9 @@ Yet Another Web Persistence API
 
 ## Introduction
 
-YAWP! is a Java framework built on top of Google App Engine, whose main purpose is to provide a simple and meaningful API to support simple, REST-full applications.  
-You create your POJOs and YAWP! creates a full REST url schema to create, delete, update, list, etc. your object, automatically.  
-Then change default behavior via Hooks, Actions and Transformers. Never write a controller in your life again!
+YAWP! is a Java framework built on top of Google App Engine, whose main purpose is to provide a simple and meaningful API to support REST based applications.  
+You create your POJOs and YAWP! creates a full REST url schema to insert, delete, update, list, etc. your objects automatically.  
+Then you can change default the behavior via Actions, Transformers and Hooks. Never write a controller in your life again!
 
 ## Features
 
@@ -134,7 +134,7 @@ This example uses two hook methods. For now, there are only 3 of them:
  * beforeSave : called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;
  * afterSave : called after an object is saved. It can be used to trigger actions or log events.
 
-## Querying API
+### Querying API
 The beforeQuery method recieves a DatastoreQuery<T>. This class is part of the core Query API that YAWP! provides, and it allows for very easy access to the GAE database.
 It can be used within any Repository Feature (i.e., Action, Transformer or Hook). In fact, any of those has a private variable r that represents the Repository. With it, you can the query method to get access to que Query API. See some cool examples:
 
@@ -143,8 +143,8 @@ It can be used within any Repository Feature (i.e., Action, Transformer or Hook)
    The methods c, and and or must be imported static or fully qualified on call for this to work.
  * r.query(User.class).where("name", "=", "John").and("company", "=", "github.com").only();
 
-### Frontend
+## Frontend
 A frontend api for Javascript is coming soon. Keep tunned for updates!
 
-### Misc
+## Misc
  * http://stackoverflow.com/questions/7160006/m2e-and-having-maven-generated-source-folders-as-eclipse-source-folders

@@ -59,7 +59,14 @@ public class EndpointRouter {
 	}
 
 	private ActionKey parseCustomActionKeyNew(String[] parts) {
-		
+
+		if (idRef == null) {
+			int indexOfSlash = uri.substring(1).indexOf("/");
+			if (indexOfSlash == -1) {
+				return null;
+			}
+		}
+
 		return parseCustomActionKey(parts);
 	}
 
@@ -84,7 +91,7 @@ public class EndpointRouter {
 
 		return true;
 
-		//return parseOverCollection(parts);
+		// return parseOverCollection(parts);
 	}
 
 	private ActionKey parseCustomActionKey(String[] parts) {

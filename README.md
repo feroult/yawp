@@ -50,7 +50,7 @@ Done. Now User is mapped to "/users", and all these urls will be generated:
  * DELETE /users/:id -> deletes user with given id
 
 ###IdRef
-The IdRef<T> class is a simple wrapper around a long. In YAWP!, every id is a long, and IdRef encapsulates that to make it type safety. That way, you can't assing IdRef<User> to IdRef<Product>.
+The IdRef<T> class is a simple wrapper around a long. In YAWP!, every id is a long, and IdRef encapsulates that to make it type safe - that way, you won't be able to assing IdRef<User> to IdRef<Product>, for example.  
 It also holds information about the parent id, when such feature is used. Therefore, every id in the system (being primary or foreign key) must be of this type.
 
 ### Action
@@ -135,7 +135,7 @@ This example uses two hook methods. For now, there are only 3 of them:
  * afterSave : called after an object is saved. It can be used to trigger actions or log events.
 
 ### Querying API
-The beforeQuery method recieves a DatastoreQuery<T>. This class is part of the core Query API that YAWP! provides, and it allows for very easy access to the GAE database.
+The beforeQuery method recieves a DatastoreQuery<T>. This class is part of the core Query API that YAWP! provides, and it allows for very easy access to the GAE database.  
 It can be used within any Repository Feature (i.e., Action, Transformer or Hook). In fact, any of those has a private variable r that represents the Repository. With it, you can the query method to get access to que Query API. See some cool examples:
 
  * r.query(User.class).where("name", "=", "Mark").and("age", ">=", 21).list();

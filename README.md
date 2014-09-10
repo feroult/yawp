@@ -2,7 +2,7 @@
 
 Yet Another Web Persistence API
 
-[![Build Status](https://api.shippable.com/projects/53f2b789f1b0af2b027bf447/badge/master)](https://www.shippable.com/projects/53f2b789f1b0af2b027bf447)
+[![Build Status](https://api.shippable.com/projects/540e77983479c5ea8f9e8eee/badge?branchName=master)](https://app.shippable.com/projects/540e77983479c5ea8f9e8eee/builds/latest)
 
 --
 

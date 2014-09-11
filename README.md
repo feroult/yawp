@@ -28,7 +28,7 @@ In a very simple example, we can create the class User, with just a few fields:
         private String company;
     }
 
-Now, in order to use YAWP!, just annotate this class with @Endpoint annotation, and add an IdRef<User> field.
+Now, in order to use YAWP!, just annotate this class with @Endpoint annotation, and add an IdRef&lt;User&gt; field.
 
     @Endpoint(path = "/users")
     public class User {
@@ -50,7 +50,7 @@ Done. Now User is mapped to "/users", and all these urls will be generated:
  * DELETE /users/:id -> deletes user with given id
 
 ###IdRef
-The IdRef<T> class is a simple wrapper around a long. In YAWP!, every id is a long, and IdRef encapsulates that to make it type safe - that way, you won't be able to assing IdRef<User> to IdRef<Product>, for example.  
+The IdRef<T> class is a simple wrapper around a long. In YAWP!, every id is a long, and IdRef encapsulates that to make it type safe - that way, you won't be able to assing IdRef&lt;User&gt; to IdRef&lt;Product&gt;, for example.  
 It also holds information about the parent id, when such feature is used. Therefore, every id in the system (being primary or foreign key) must be of this type.
 
 ### Action
@@ -81,7 +81,7 @@ A Transformer can change an object before it is sent on a request. For example, 
 
     public class UserTransformer extends Transformer<User> {
 
-	public Map<String, String> simple(User user) {
+        public Map<String, String> simple(User user) {
             Map<String, String> result = new HashMap<>();
             result.put("name", user.getName());
             result.put("company", user.getCompany());

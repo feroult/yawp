@@ -31,13 +31,13 @@ public class DataObject {
 	private String stringValue;
 
 	@Json
-	private JsonPojo pojoValue;
+	private JsonPojo jsonValue;
 
 	@Json
-	private List<JsonPojo> pojoList;
+	private List<JsonPojo> jsonList;
 
 	@Json
-	private Map<Long, JsonPojo> pojoMap;
+	private Map<Long, JsonPojo> jsonMap;
 
 	public DataObject() {
 
@@ -103,40 +103,31 @@ public class DataObject {
 		this.stringValue = stringValue;
 	}
 
-	public JsonPojo getPojoValue() {
-		return pojoValue;
+	public JsonPojo getJsonValue() {
+		return jsonValue;
 	}
 
-	public void setPojoValue(JsonPojo pojoValue) {
-		this.pojoValue = pojoValue;
+	public void setJsonValue(JsonPojo jsonValue) {
+		this.jsonValue = jsonValue;
 	}
 
-	public List<JsonPojo> getPojoList() {
-		return pojoList;
+	public List<JsonPojo> getJsonList() {
+		return jsonList;
 	}
 
-	public void setPojoList(List<JsonPojo> pojoList) {
-		this.pojoList = pojoList;
+	public void setJsonList(List<JsonPojo> jsonList) {
+		this.jsonList = jsonList;
 	}
 
-	public Map<Long, JsonPojo> getPojoMap() {
-		return pojoMap;
+	public Map<Long, JsonPojo> getJsonMap() {
+		return jsonMap;
 	}
 
-	public void setPojoMap(Map<Long, JsonPojo> pojoMap) {
-		this.pojoMap = pojoMap;
+	public void setJsonMap(Map<Long, JsonPojo> jsonMap) {
+		this.jsonMap = jsonMap;
 	}
 
-	public void assertObject(int intValue, long longValue, double doubleValue, boolean booleanValue, String timestamp, String stringValue) {
-		assertFields(intValue, longValue, doubleValue, booleanValue, timestamp, stringValue);
-	}
-
-	public void assertObjectWithoutKey(int intValue, long longValue, double doubleValue, boolean booleanValue, String timestamp,
-			String stringValue) {
-		assertFields(intValue, longValue, doubleValue, booleanValue, timestamp, stringValue);
-	}
-
-	private void assertFields(int intValue, long longValue, double doubleValue, boolean booleanValue, String timestamp, String stringValue) {
+	public void assertObject(String stringValue, int intValue, long longValue, double doubleValue, boolean booleanValue, String timestamp) {
 		assertEquals(intValue, getIntValue());
 		assertEquals(longValue, getLongValue());
 		assertEquals(doubleValue, getDoubleValue(), 0);

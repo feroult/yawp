@@ -13,25 +13,25 @@ import endpoint.repository.models.basic.DataObject;
 
 public class JsonUtilsTest {
 
-	private static final String SIMPLE_OBJECT_JSON = "{intValue : 1, longValue : 1, doubleValue : 1.1, booleanValue : true, dateValue : '2013/12/26 23:55:01', stringValue : object1}";
+	private static final String DATA_OBJECT_JSON = "{intValue : 1, longValue : 1, doubleValue : 1.1, booleanValue : true, dateValue : '2013/12/26 23:55:01', stringValue : object1}";
 
 	@Test
 	public void testFrom() {
-		DataObject object = JsonUtils.from(null, SIMPLE_OBJECT_JSON, DataObject.class);
-		object.assertObjectWithoutKey(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
+		DataObject object = JsonUtils.from(null, DATA_OBJECT_JSON, DataObject.class);
+		object.assertObject("object1", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
 	}
 
 	@Test
 	public void testFromArray() {
-		String json = String.format("[%s, %s, %s]", SIMPLE_OBJECT_JSON, SIMPLE_OBJECT_JSON, SIMPLE_OBJECT_JSON);
+		String json = String.format("[%s, %s, %s]", DATA_OBJECT_JSON, DATA_OBJECT_JSON, DATA_OBJECT_JSON);
 
 		List<DataObject> objects = JsonUtils.fromList(null, json, DataObject.class);
 
 		assertEquals(3, objects.size());
 
-		objects.get(0).assertObjectWithoutKey(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
-		objects.get(0).assertObjectWithoutKey(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
-		objects.get(0).assertObjectWithoutKey(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
+		objects.get(0).assertObject("object1", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
+		objects.get(0).assertObject("object1", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
+		objects.get(0).assertObject("object1", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
 	}
 
 	@Test

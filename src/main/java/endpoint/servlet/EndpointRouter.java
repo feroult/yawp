@@ -233,12 +233,14 @@ public class EndpointRouter {
 	}
 
 	public IdRef<?> getActionIdRef() {
-		if (isOverCollection()) {
-			IdRef<?> actionIdRef = IdRef.create(r, EntityUtils.getIdType(getEndpointClazz()), (Long) null);
-			actionIdRef.setParentId(idRef);
-			return actionIdRef;
-		}
 		return idRef;
+		// if (isOverCollection()) {
+		// IdRef<?> actionIdRef = IdRef.create(r,
+		// EntityUtils.getIdType(getEndpointClazz()), (Long) null);
+		// actionIdRef.setParentId(idRef);
+		// return actionIdRef;
+		// }
+		// return idRef;
 	}
 
 	public RESTActionType getRESTActionType() {

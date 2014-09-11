@@ -85,7 +85,7 @@ public class EntityUtils {
 		if (parentIdField == null) {
 			if (parentId != null) {
 				throw new RuntimeException("Trying to set parentId " + parentId + " to class " + object.getClass().getSimpleName()
-				        + ", but it doesn't seem to have a @Parent field.");
+						+ ", but it doesn't seem to have a @Parent field.");
 			}
 			return;
 		}
@@ -160,10 +160,10 @@ public class EntityUtils {
 			return object;
 		} catch (InvocationTargetException e) {
 			throw new RuntimeException("An exception was thrown when calling the default constructor of the class " + clazz.getSimpleName()
-			        + ": ", e);
+					+ ": ", e);
 		} catch (NoSuchMethodException e) {
 			throw new RuntimeException("The class " + clazz.getSimpleName()
-			        + " must have a default constructor and cannot be an non-static inner class.", e);
+					+ " must have a default constructor and cannot be an non-static inner class.", e);
 		} catch (InstantiationException e) {
 			throw new RuntimeException("The class " + clazz.getSimpleName() + " must cannot be abstract.", e);
 		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
@@ -179,11 +179,6 @@ public class EntityUtils {
 				idField.set(object, key.getId());
 			} else {
 				idField.set(object, IdRef.fromKey(r, key));
-			}
-
-			Field parentField = getAnnotatedParentFromClass(object.getClass());
-			if (parentField != null) {
-				parentField.set(object, IdRef.fromKey(r, key.getParent()));
 			}
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
@@ -253,7 +248,7 @@ public class EntityUtils {
 			if (field.isAnnotationPresent(annotationClass)) {
 				if (theField != null) {
 					throw new RuntimeException("You can have at most one field annotated with the " + annotationClass.getSimpleName()
-					        + " class.");
+							+ " class.");
 				}
 				theField = field;
 				theField.setAccessible(true);
@@ -318,14 +313,14 @@ public class EntityUtils {
 	}
 
 	private static boolean isKey(Field field) {
-		return field.getAnnotation(Id.class) != null || field.getType().equals(Key.class);
+		return field.getAnnotation(Id.class) != null;
 	}
 
 	private static Index getIndex(Field field) {
 		Index index = field.getAnnotation(Index.class);
 		if (index == null) {
 			throw new RuntimeException("You must add @Index annotation the the field '" + field.getName()
-			        + "' if you want to use it as a index in where statements.");
+					+ "' if you want to use it as a index in where statements.");
 		}
 		return index;
 	}
@@ -350,7 +345,7 @@ public class EntityUtils {
 		}
 
 		if (value instanceof IdRef) {
-			return ((IdRef<?>) value).asLong();
+			return ((IdRef<?>) value).getUri();
 		}
 
 		if (isDate(field) && value instanceof String) {
@@ -376,6 +371,11 @@ public class EntityUtils {
 	private static <T> Key getActualKeyFieldValue(Class<T> clazz, Object value) {
 		if (value instanceof Key) {
 			return (Key) value;
+		}
+
+		if (value instanceof IdRef) {
+			IdRef<?> idRef = (IdRef<?>) value;
+			return idRef.asKey();
 		}
 
 		Long id = getLongValue(value);
@@ -446,7 +446,7 @@ public class EntityUtils {
 
 			if (isIdRef(field)) {
 				IdRef<?> idRef = (IdRef<?>) value;
-				return idRef.asLong();
+				return idRef.getUri();
 			}
 
 			return value;
@@ -522,8 +522,7 @@ public class EntityUtils {
 	}
 
 	private static <T> void setIdRefProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
-		IdRef<?> idRef = IdRef.create(r, getListType(field), (Long) value);
-		field.set(object, idRef);
+		field.set(object, IdRef.parse(r, (String) value));
 	}
 
 	private static <T> void setIntProperty(T object, Field field, Object value) throws IllegalAccessException {
@@ -557,7 +556,7 @@ public class EntityUtils {
 	}
 
 	private static boolean isControl(Field field) {
-		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(ParentId.class);
+		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class);
 	}
 
 	private static boolean isIdRef(Field field) {
@@ -596,6 +595,7 @@ public class EntityUtils {
 		return Integer.class.isAssignableFrom(field.getType()) || field.getType().getName().equals("int");
 	}
 
+	// TODO remove long id support
 	public static Long getLongValue(Object id) {
 		if (id instanceof IdRef) {
 			return ((IdRef<?>) id).asLong();
@@ -626,6 +626,6 @@ public class EntityUtils {
 		if (field == null) {
 			return null;
 		}
-	    return (Class<?>) getParametrizedTypes(field)[0];
-    }
+		return (Class<?>) getParametrizedTypes(field)[0];
+	}
 }

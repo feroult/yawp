@@ -44,12 +44,8 @@ public class IdRefTest extends EndpointTestCase {
 		object = r.query(Parent.class).where("id", "=", object.getId()).only();
 		assertEquals("xpto", object.getName());
 
-		object = r.query(Parent.class).where("jobId", "=", object.getJobId().asLong()).only();
-		assertEquals("xpto", object.getName());
-
 		object = r.query(Parent.class).where("jobId", "=", object.getJobId()).only();
 		assertEquals("xpto", object.getName());
-
 	}
 
 	@Test

@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Endpoint {
 
-	String path() default "";
+	String path();
 
 	boolean index() default true;
 

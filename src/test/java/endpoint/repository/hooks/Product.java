@@ -4,7 +4,7 @@ import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
 import endpoint.repository.annotations.Index;
 
-@Endpoint
+@Endpoint(path = "/products")
 public class Product {
 
 	@Id

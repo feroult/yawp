@@ -4,7 +4,7 @@ import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
 import endpoint.repository.annotations.ParentId;
 
-@Endpoint
+@Endpoint(path = "/another_objects_with_idref")
 public class AnotherObjectWithIdRef {
 
 	@Id

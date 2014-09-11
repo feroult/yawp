@@ -18,49 +18,48 @@ import endpoint.utils.JsonUtils;
 public class IdRefTest extends EndpointTestCase {
 
 	@Test
-	public void testSave() {
+	public void testFetch() {
 		Parent parent = new Parent("xpto");
 		r.save(parent);
 
-		parent = parent.getId().fetch();
-
-		assertEquals("xpto", parent.getName());
+		Parent retrievedParent = parent.getId().fetch();
+		assertEquals("xpto", retrievedParent.getName());
 	}
 
 	@Test
-	public void testWithRelation() {
+	public void testFetchWithinRelation() {
 		Parent parent = saveParentWithJob();
 
-		parent = parent.getId().fetch();
-		Job job = parent.getJobId().fetch();
+		Parent retrievedParent = parent.getId().fetch();
+		Job job = retrievedParent.getJobId().fetch();
 
 		assertEquals("haha", job.getName());
 	}
 
 	@Test
-	public void testQuery() {
-		Parent object = saveParentWithJob();
+	public void testQueryWithIdRef() {
+		Parent parent = saveParentWithJob();
 
-		object = r.query(Parent.class).where("id", "=", object.getId()).only();
-		assertEquals("xpto", object.getName());
+		Parent retrievedParent1 = r.query(Parent.class).where("id", "=", parent.getId()).only();
+		assertEquals("xpto", retrievedParent1.getName());
 
-		object = r.query(Parent.class).where("jobId", "=", object.getJobId()).only();
-		assertEquals("xpto", object.getName());
+		Parent retrievedParent2 = r.query(Parent.class).where("jobId", "=", parent.getJobId()).only();
+		assertEquals("xpto", retrievedParent2.getName());
 	}
 
 	@Test
-	public void testJsonConversion() {
+	public void testFetchAfterJsonConversion() {
 		Parent parent = saveParentWithJob();
 
 		String json = JsonUtils.to(parent);
-		parent = JsonUtils.from(r, json, Parent.class);
+		Parent retrievedParent = JsonUtils.from(r, json, Parent.class);
 
-		Job job = parent.getJobId().fetch();
+		Job job = retrievedParent.getJobId().fetch();
 		assertEquals("haha", job.getName());
 	}
 
 	@Test
-	public void testWithJsonListField() {
+	public void testFetchWithinJsonListField() {
 		Parent parent = new Parent("xpto");
 		r.save(parent);
 
@@ -73,11 +72,11 @@ public class IdRefTest extends EndpointTestCase {
 		String json = String.format("{id: '/parents/%d', name: 'lala', pastJobIds: ['/jobs/%d', '/jobs/%d']}", parent.getId().asLong(),
 				job1.getId().asLong(), job2.getId().asLong());
 
-		parent = JsonUtils.from(r, json, Parent.class);
+		Parent retrievedParent = JsonUtils.from(r, json, Parent.class);
 
-		assertEquals("lala", parent.getName());
-		assertEquals("hehe", parent.getPastJobIds().get(0).fetch().getName());
-		assertEquals("hihi", parent.getPastJobIds().get(1).fetch().getName());
+		assertEquals("lala", retrievedParent.getName());
+		assertEquals("hehe", retrievedParent.getPastJobIds().get(0).fetch().getName());
+		assertEquals("hihi", retrievedParent.getPastJobIds().get(1).fetch().getName());
 	}
 
 	@Test

@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 
-import endpoint.repository.EndpointScanner;
 import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
 import endpoint.repository.response.HttpResponse;

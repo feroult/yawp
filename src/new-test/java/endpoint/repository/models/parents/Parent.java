@@ -1,4 +1,4 @@
-package endpoint.repository.models;
+package endpoint.repository.models.parents;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package endpoint.repository.models;
+package endpoint.repository.models.parents;
 
 import endpoint.repository.IdRef;
 import endpoint.repository.annotations.Endpoint;

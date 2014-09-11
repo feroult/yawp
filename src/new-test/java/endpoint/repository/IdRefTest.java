@@ -8,10 +8,10 @@ import java.util.List;
 
 import org.junit.Test;
 
-import endpoint.repository.models.Child;
-import endpoint.repository.models.Grandchild;
-import endpoint.repository.models.Job;
-import endpoint.repository.models.Parent;
+import endpoint.repository.models.parents.Child;
+import endpoint.repository.models.parents.Grandchild;
+import endpoint.repository.models.parents.Job;
+import endpoint.repository.models.parents.Parent;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
 

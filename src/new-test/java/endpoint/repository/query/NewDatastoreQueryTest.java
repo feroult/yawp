@@ -241,35 +241,14 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testFindByIdUsingWhereWithLongId() {
-		ObjectWithLongId object = new ObjectWithLongId("xpto");
-
-		r.save(object);
-
-		object = r.query(ObjectWithLongId.class).where("key", "=", object.key).first();
-		assertEquals("xpto", object.text);
-	}
-
-	@SuppressWarnings("deprecation")
-	@Test
-	public void testFindById() {
-		SimpleObject object = new SimpleObject("xpto");
-
-		r.save(object);
-
-		object = r.query(SimpleObject.class).id(object.getId());
-		assertEquals("xpto", object.getAString());
-	}
-
-	@Test
-	public void testIn() {
-		SimpleObject object1 = new SimpleObject("xpto1");
+	public void testFindByIdUsingWhereIn() {
+		BasicObject object1 = new BasicObject("xpto1");
 		r.save(object1);
 
-		SimpleObject object2 = new SimpleObject("xpto2");
+		BasicObject object2 = new BasicObject("xpto2");
 		r.save(object2);
 
-		List<SimpleObject> objects = r.query(SimpleObject.class).where("id", "in", Arrays.asList(object1.getId())).list();
+		List<BasicObject> objects = r.query(BasicObject.class).where("id", "in", Arrays.asList(object1.getId())).list();
 		assertEquals(1, objects.size());
 	}
 

@@ -11,6 +11,9 @@ import org.junit.Test;
 
 import endpoint.repository.models.basic.DataObject;
 import endpoint.repository.models.basic.JsonPojo;
+import endpoint.repository.models.parents.Child;
+import endpoint.repository.models.parents.Grandchild;
+import endpoint.repository.models.parents.Parent;
 import endpoint.repository.query.NoResultException;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
@@ -20,7 +23,7 @@ public class RepositoryTest extends EndpointTestCase {
 	private static final String DATA_OBJECT_JSON = "{stringValue: 'xpto', intValue : 1, longValue : 1, doubleValue : 1.1, booleanValue : true, dateValue : '2013/12/26 23:55:01'}";
 
 	@Test
-	public void testSave() {
+	public void testSaveAllDataProperties() {
 		DataObject object = JsonUtils.from(r, DATA_OBJECT_JSON, DataObject.class);
 
 		r.save(object);
@@ -82,6 +85,52 @@ public class RepositoryTest extends EndpointTestCase {
 		r.delete(object.getId());
 
 		r.query(DataObject.class).id(object.getId());
+	}
+
+	@Test
+	public void testSaveParent() {
+		Parent parent = new Parent("xpto");
+
+		r.save(parent);
+
+		Parent retrievedParent = parent.getId().fetch();
+		assertEquals("xpto", retrievedParent.getName());
+	}
+
+	@Test
+	public void testSaveChild() {
+		Parent parent = new Parent();
+		r.save(parent);
+
+		Child child = new Child("xpto");
+		child.setParentId(parent.getId());
+		r.save(child);
+
+		Parent retrievedParent = parent.getId().fetch();
+		Child retrievedChild = child.getId().fetch();
+
+		assertEquals(retrievedChild.getParentId(), retrievedParent.getId());
+		assertEquals("xpto", retrievedChild.getName());
+	}
+
+	@Test
+	public void testSaveGrandchild() {
+		Parent parent = new Parent();
+		r.save(parent);
+
+		Child child = new Child();
+		child.setParentId(parent.getId());
+		r.save(child);
+
+		Grandchild grandchild = new Grandchild("xpto");
+		grandchild.setChildId(child.getId());
+		r.save(grandchild);
+
+		Child retrievedChild = child.getId().fetch();
+		Grandchild retrievedGrandchild = grandchild.getId().fetch();
+
+		assertEquals(retrievedGrandchild.getChildId(), retrievedChild.getId());
+		assertEquals("xpto", retrievedGrandchild.getName());
 	}
 
 }

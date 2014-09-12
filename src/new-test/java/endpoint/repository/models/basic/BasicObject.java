@@ -9,15 +9,20 @@ import java.util.Map;
 import endpoint.repository.IdRef;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
+import endpoint.repository.annotations.Index;
 import endpoint.repository.annotations.Json;
 import endpoint.utils.DateUtils;
 
-@Endpoint(path = "/data_objects")
-public class DataObject {
+@Endpoint(path = "/basic_objects")
+public class BasicObject {
 
 	@Id
-	private IdRef<DataObject> id;
+	private IdRef<BasicObject> id;
 
+	@Index
+	private String stringValue;
+
+	@Index
 	private int intValue;
 
 	private long longValue;
@@ -28,31 +33,37 @@ public class DataObject {
 
 	private Date dateValue;
 
-	private String stringValue;
+	@Json
+	private Pojo jsonValue;
 
 	@Json
-	private JsonPojo jsonValue;
+	private List<Pojo> jsonList;
 
 	@Json
-	private List<JsonPojo> jsonList;
+	private Map<Long, Pojo> jsonMap;
 
-	@Json
-	private Map<Long, JsonPojo> jsonMap;
-
-	public DataObject() {
+	public BasicObject() {
 
 	}
 
-	public DataObject(String stringValue) {
+	public BasicObject(String stringValue) {
 		this.stringValue = stringValue;
 	}
 
-	public IdRef<DataObject> getId() {
+	public IdRef<BasicObject> getId() {
 		return id;
 	}
 
-	public void setId(IdRef<DataObject> id) {
+	public void setId(IdRef<BasicObject> id) {
 		this.id = id;
+	}
+
+	public String getStringValue() {
+		return stringValue;
+	}
+
+	public void setStringValue(String stringValue) {
+		this.stringValue = stringValue;
 	}
 
 	public int getIntValue() {
@@ -95,35 +106,27 @@ public class DataObject {
 		this.dateValue = dateValue;
 	}
 
-	public String getStringValue() {
-		return stringValue;
-	}
-
-	public void setStringValue(String stringValue) {
-		this.stringValue = stringValue;
-	}
-
-	public JsonPojo getJsonValue() {
+	public Pojo getJsonValue() {
 		return jsonValue;
 	}
 
-	public void setJsonValue(JsonPojo jsonValue) {
+	public void setJsonValue(Pojo jsonValue) {
 		this.jsonValue = jsonValue;
 	}
 
-	public List<JsonPojo> getJsonList() {
+	public List<Pojo> getJsonList() {
 		return jsonList;
 	}
 
-	public void setJsonList(List<JsonPojo> jsonList) {
+	public void setJsonList(List<Pojo> jsonList) {
 		this.jsonList = jsonList;
 	}
 
-	public Map<Long, JsonPojo> getJsonMap() {
+	public Map<Long, Pojo> getJsonMap() {
 		return jsonMap;
 	}
 
-	public void setJsonMap(Map<Long, JsonPojo> jsonMap) {
+	public void setJsonMap(Map<Long, Pojo> jsonMap) {
 		this.jsonMap = jsonMap;
 	}
 

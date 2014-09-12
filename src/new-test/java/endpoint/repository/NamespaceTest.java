@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Test;
 
-import endpoint.repository.models.parents.Parent;
+import endpoint.repository.models.basic.BasicObject;
 import endpoint.utils.EndpointTestCase;
 
 public class NamespaceTest extends EndpointTestCase {
@@ -22,36 +22,36 @@ public class NamespaceTest extends EndpointTestCase {
 
 	@Test
 	public void testQueryId() {
-		Parent parent = new Parent();
-		r1.save(parent);
+		BasicObject object = new BasicObject();
+		r1.save(object);
 
-		assertNotNull(r1.query(Parent.class).id(parent.getId()));
-		assertNull(r2.query(Parent.class).whereById("=", parent.getId()).first());
+		assertNotNull(r1.query(BasicObject.class).id(object.getId()));
+		assertNull(r2.query(BasicObject.class).whereById("=", object.getId()).first());
 	}
 
 	@Test
 	public void testQueryProperty() {
-		r2.save(new Parent("xpto2"));
+		r2.save(new BasicObject("xpto2"));
 
-		assertNotNull(r2.query(Parent.class).where("name", "=", "xpto2").first());
-		assertNull(r1.query(Parent.class).where("name", "=", "xpto2").first());
+		assertNotNull(r2.query(BasicObject.class).where("stringValue", "=", "xpto2").first());
+		assertNull(r1.query(BasicObject.class).where("stringValue", "=", "xpto2").first());
 	}
 
 	@Test
 	public void testSaveAndChange() {
-		Parent parent1 = new Parent("xpto");
-		Parent parent2 = new Parent("xpto");
+		BasicObject object1 = new BasicObject("xpto");
+		BasicObject object2 = new BasicObject("xpto");
 
-		r1.save(parent1);
-		r2.save(parent2);
+		r1.save(object1);
+		r2.save(object2);
 
-		assertNotNull(r1.query(Parent.class).id(parent1.getId()));
-		assertNotNull(r2.query(Parent.class).id(parent2.getId()));
+		assertNotNull(r1.query(BasicObject.class).id(object1.getId()));
+		assertNotNull(r2.query(BasicObject.class).id(object2.getId()));
 
-		parent1.setName("lala");
-		r1.save(parent1);
+		object1.setStringValue("lala");
+		r1.save(object1);
 
-		assertNull(r1.query(Parent.class).where("name", "=", "xpto").first());
-		assertNotNull(r2.query(Parent.class).where("name", "=", "xpto").first());
+		assertNull(r1.query(BasicObject.class).where("stringValue", "=", "xpto").first());
+		assertNotNull(r2.query(BasicObject.class).where("stringValue", "=", "xpto").first());
 	}
 }

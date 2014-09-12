@@ -9,8 +9,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import endpoint.repository.models.basic.DataObject;
-import endpoint.repository.models.basic.JsonPojo;
+import endpoint.repository.models.basic.BasicObject;
+import endpoint.repository.models.basic.Pojo;
 import endpoint.repository.models.parents.Child;
 import endpoint.repository.models.parents.Grandchild;
 import endpoint.repository.models.parents.Parent;
@@ -24,67 +24,67 @@ public class RepositoryTest extends EndpointTestCase {
 
 	@Test
 	public void testSaveAllDataProperties() {
-		DataObject object = JsonUtils.from(r, DATA_OBJECT_JSON, DataObject.class);
+		BasicObject object = JsonUtils.from(r, DATA_OBJECT_JSON, BasicObject.class);
 
 		r.save(object);
 
-		DataObject retrievedObject = object.getId().fetch();
+		BasicObject retrievedObject = object.getId().fetch();
 		retrievedObject.assertObject("xpto", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
 	}
 
 	@Test
 	public void testJsonProperty() {
-		DataObject object = new DataObject();
-		object.setJsonValue(new JsonPojo("xpto"));
+		BasicObject object = new BasicObject();
+		object.setJsonValue(new Pojo("xpto"));
 
 		r.save(object);
 
-		DataObject retrievedObject = object.getId().fetch();
+		BasicObject retrievedObject = object.getId().fetch();
 		assertEquals("xpto", retrievedObject.getJsonValue().getStringValue());
 	}
 
 	@Test
 	public void testJsonArrayProperty() {
-		DataObject object = new DataObject();
+		BasicObject object = new BasicObject();
 
-		List<JsonPojo> list = new ArrayList<JsonPojo>();
-		list.add(new JsonPojo("xpto1"));
-		list.add(new JsonPojo("xpto2"));
+		List<Pojo> list = new ArrayList<Pojo>();
+		list.add(new Pojo("xpto1"));
+		list.add(new Pojo("xpto2"));
 		object.setJsonList(list);
 
 		r.save(object);
 
-		DataObject retrievedObject = object.getId().fetch();
+		BasicObject retrievedObject = object.getId().fetch();
 		assertEquals("xpto1", retrievedObject.getJsonList().get(0).getStringValue());
 		assertEquals("xpto2", retrievedObject.getJsonList().get(1).getStringValue());
 	}
 
 	@Test
 	public void testJsonMapWithLongKeyAndObjectValue() {
-		DataObject object = new DataObject();
+		BasicObject object = new BasicObject();
 
-		Map<Long, JsonPojo> map = new HashMap<Long, JsonPojo>();
+		Map<Long, Pojo> map = new HashMap<Long, Pojo>();
 
-		map.put(1l, new JsonPojo("xpto1"));
-		map.put(2l, new JsonPojo("xpto2"));
+		map.put(1l, new Pojo("xpto1"));
+		map.put(2l, new Pojo("xpto2"));
 
 		object.setJsonMap(map);
 
 		r.save(object);
 
-		DataObject retrievedObject = object.getId().fetch();
+		BasicObject retrievedObject = object.getId().fetch();
 		assertEquals("xpto1", retrievedObject.getJsonMap().get(1l).getStringValue());
 		assertEquals("xpto2", retrievedObject.getJsonMap().get(2l).getStringValue());
 	}
 
 	@Test(expected = NoResultException.class)
 	public void testDelete() {
-		DataObject object = new DataObject();
+		BasicObject object = new BasicObject();
 
 		r.save(object);
 		r.delete(object.getId());
 
-		r.query(DataObject.class).id(object.getId());
+		r.query(BasicObject.class).id(object.getId());
 	}
 
 	@Test

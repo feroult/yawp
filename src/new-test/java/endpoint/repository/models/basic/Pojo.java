@@ -1,10 +1,10 @@
 package endpoint.repository.models.basic;
 
-public class JsonPojo {
+public class Pojo {
 
 	private String stringValue;
 
-	public JsonPojo(String stringValue) {
+	public Pojo(String stringValue) {
 		this.stringValue = stringValue;
 	}
 

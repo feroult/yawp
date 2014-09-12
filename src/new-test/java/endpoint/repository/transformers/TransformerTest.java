@@ -8,6 +8,8 @@ import java.util.Map;
 import org.junit.Test;
 
 import endpoint.repository.models.basic.BasicObject;
+import endpoint.repository.models.parents.Child;
+import endpoint.repository.models.parents.Parent;
 import endpoint.utils.EndpointTestCase;
 
 public class TransformerTest extends EndpointTestCase {
@@ -33,6 +35,19 @@ public class TransformerTest extends EndpointTestCase {
 
 		assertEquals("xpto2", list.get(0).get("innerValue"));
 		assertEquals("xpto1", list.get(1).get("innerValue"));
+	}
+
+	@Test
+	public void testTransformWithChild() {
+		Parent parent = new Parent();
+		r.save(parent);
+
+		Child child = new Child();
+		child.setParentId(parent.getId());
+		r.save(child);
+
+		Child retrievedChild = r.query(Child.class).<Child> transform("simple").first();
+		assertEquals("xpto", retrievedChild.getName());
 	}
 
 }

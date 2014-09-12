@@ -80,7 +80,7 @@ public class IdRefTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testParentWithChild() {
+	public void testFetchChild() {
 		Parent parent = new Parent("xpto");
 		r.save(parent);
 
@@ -103,7 +103,7 @@ public class IdRefTest extends EndpointTestCase {
 		Parent parent3 = new Parent("xpto3");
 		r.save(parent3);
 
-		List<Long> inList = Arrays.asList(parent1.getId().asLong(), parent2.getId().asLong());
+		List<IdRef<Parent>> inList = Arrays.asList(parent1.getId(), parent2.getId());
 		List<Parent> objects = r.query(Parent.class).where("id", "in", inList).list();
 		assertEquals(2, objects.size());
 	}

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import endpoint.repository.SimpleObject;
@@ -76,6 +77,7 @@ public class EndpointServletTest extends EndpointTestCase {
 	}
 
 	@Test
+	@Ignore
 	public void testTransformerInShow() {
 		String json;
 		SimpleObject object = JsonUtils.from(r, servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null).getText(),
@@ -90,6 +92,7 @@ public class EndpointServletTest extends EndpointTestCase {
 	}
 
 	@Test
+	@Ignore
 	public void testTransformerInIndex() {
 		String json;
 		servlet.execute("POST", "/simpleobjects", SIMPLE_OBJECT_JSON, null);

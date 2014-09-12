@@ -26,7 +26,7 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object3"));
 	}
 
-	private void saveManyBasicObjects(String stringValue, int n) {
+	private void saveManyBasicObjects(int n, String stringValue) {
 		for (int i = 0; i < n; i++) {
 			BasicObject object = new BasicObject();
 			object.setStringValue(stringValue);
@@ -36,7 +36,7 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 	}
 
 	public void saveManyBasicObjects(int n) {
-		saveManyBasicObjects("xpto", n);
+		saveManyBasicObjects(n, "xpto");
 	}
 
 	@Test
@@ -166,64 +166,68 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 
 	@Test
 	public void testOrderWithTwoProperties() {
-//		saveManyBasicObjects("xpto1", 2);
-//		saveManyBasicObjects("xpto2", 2);
+		saveManyBasicObjects(2, "xpto1");
+		saveManyBasicObjects(2, "xpto2");
 
-		saveThreeObjects();
-		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
-		r.save(new SimpleObject(1, 3l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object3"));
+		List<BasicObject> objects = r.query(BasicObject.class).order("stringValue", "desc").order("intValue", "desc").list();
 
-		List<SimpleObject> objects = r.query(SimpleObject.class).order("aString", "desc").order("aLong", "desc").list();
+		assertEquals(4, objects.size());
 
-		objects.get(0).assertObject(1, 3l, 1.1, true, "2013/12/26 23:55:01", "object3");
-		objects.get(1).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object3");
-		objects.get(2).assertObject(1, 2l, 1.1, true, "2013/12/26 23:55:01", "object2");
-		objects.get(3).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
-		objects.get(4).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
+		assertEquals("xpto2", objects.get(0).getStringValue());
+		assertEquals("xpto2", objects.get(1).getStringValue());
+		assertEquals("xpto1", objects.get(2).getStringValue());
+		assertEquals("xpto1", objects.get(3).getStringValue());
+
+		assertEquals(2, objects.get(0).getIntValue());
+		assertEquals(1, objects.get(1).getIntValue());
+		assertEquals(2, objects.get(2).getIntValue());
+		assertEquals(1, objects.get(3).getIntValue());
 	}
 
 	@Test
-	public void testSort() {
-		saveThreeObjects();
-		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
-		r.save(new SimpleObject(1, 3l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object3"));
+	public void testSortWithTwoProperties() {
+		saveManyBasicObjects(2, "xpto1");
+		saveManyBasicObjects(2, "xpto2");
 
-		List<SimpleObject> objects = r.query(SimpleObject.class).sort("aString", "desc").sort("aLong", "desc").list();
+		List<BasicObject> objects = r.query(BasicObject.class).sort("stringValue", "desc").sort("intValue", "desc").list();
 
-		objects.get(0).assertObject(1, 3l, 1.1, true, "2013/12/26 23:55:01", "object3");
-		objects.get(1).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object3");
-		objects.get(2).assertObject(1, 2l, 1.1, true, "2013/12/26 23:55:01", "object2");
-		objects.get(3).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
-		objects.get(4).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
+		assertEquals(4, objects.size());
+
+		assertEquals("xpto2", objects.get(0).getStringValue());
+		assertEquals("xpto2", objects.get(1).getStringValue());
+		assertEquals("xpto1", objects.get(2).getStringValue());
+		assertEquals("xpto1", objects.get(3).getStringValue());
+
+		assertEquals(2, objects.get(0).getIntValue());
+		assertEquals(1, objects.get(1).getIntValue());
+		assertEquals(2, objects.get(2).getIntValue());
+		assertEquals(1, objects.get(3).getIntValue());
 	}
 
 	@Test
 	public void testLimit() {
-		saveThreeObjects();
+		saveManyBasicObjects(3);
 
-		List<SimpleObject> objects = r.query(SimpleObject.class).order("aString", "desc").limit(1).list();
+		List<BasicObject> objects = r.query(BasicObject.class).order("intValue", "desc").limit(1).list();
 
 		assertEquals(1, objects.size());
-		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object3");
+		assertEquals(3, objects.get(0).getIntValue());
 	}
 
 	@Test
 	public void testCursor() {
-		saveThreeObjects();
+		saveManyBasicObjects(3);
 
-		DatastoreQuery<SimpleObject> q = r.query(SimpleObject.class).order("aString", "desc").limit(1);
+		DatastoreQuery<BasicObject> q = r.query(BasicObject.class).order("intValue", "desc").limit(1);
 
-		List<SimpleObject> objects = q.list();
-		assertEquals(1, objects.size());
-		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object3");
+		List<BasicObject> objects1 = q.list();
+		assertEquals(3, objects1.get(0).getIntValue());
 
-		objects = q.list();
-		assertEquals(1, objects.size());
-		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
+		List<BasicObject> objects2 = q.list();
+		assertEquals(2, objects2.get(0).getIntValue());
 
-		objects = r.query(SimpleObject.class).cursor(q.getCursor()).order("aString", "desc").limit(1).list();
-		assertEquals(1, objects.size());
-		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
+		List<BasicObject> objects3 = r.query(BasicObject.class).cursor(q.getCursor()).order("intValue", "desc").limit(1).list();
+		assertEquals(1, objects3.get(0).getIntValue());
 	}
 
 	@Test

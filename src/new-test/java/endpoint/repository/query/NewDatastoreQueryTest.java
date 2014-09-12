@@ -254,7 +254,7 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 
 	@Test
 	public void testWhereInWithEmptyList() {
-		saveManyBasicObjects(2);
+		saveManyBasicObjects(1);
 
 		List<BasicObject> objects = r.query(BasicObject.class).where("intValue", "in", Collections.emptyList()).list();
 
@@ -262,13 +262,12 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testWhereInEmptyListWithinOrWithTrue() {
-		saveThreeObjects();
-		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object4"));
-		BaseCondition falseCondition = Condition.c("aLong", "in", Collections.emptyList());
-		BaseCondition condition = Condition.or(falseCondition, c("aLong", "=", 1l));
+	public void testWhereInWithEmptyListOrTrueExpression() {
+		saveManyBasicObjects(3);
+		BaseCondition falseCondition = c("intValue", "in", Collections.emptyList());
+		BaseCondition condition = or(falseCondition, c("stringValue", "=", "xpto"));
 
-		List<SimpleObject> objects = r.query(SimpleObject.class).where(condition).list();
+		List<BasicObject> objects = r.query(BasicObject.class).where(condition).list();
 		assertEquals(3, objects.size());
 	}
 

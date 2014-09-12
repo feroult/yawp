@@ -26,13 +26,17 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object3"));
 	}
 
-	private void saveManyBasicObjects(int n) {
+	private void saveManyBasicObjects(String stringValue, int n) {
 		for (int i = 0; i < n; i++) {
 			BasicObject object = new BasicObject();
-			object.setStringValue("xpto");
-			object.setIntValue(i);
+			object.setStringValue(stringValue);
+			object.setIntValue(i + 1);
 			r.save(object);
 		}
+	}
+
+	public void saveManyBasicObjects(int n) {
+		saveManyBasicObjects("xpto", n);
 	}
 
 	@Test
@@ -44,9 +48,9 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 
 		assertEquals(3, objects.size());
 
-		assertEquals(0, objects.get(0).getIntValue());
-		assertEquals(1, objects.get(1).getIntValue());
-		assertEquals(2, objects.get(2).getIntValue());
+		assertEquals(1, objects.get(0).getIntValue());
+		assertEquals(2, objects.get(1).getIntValue());
+		assertEquals(3, objects.get(2).getIntValue());
 	}
 
 	@Test
@@ -63,29 +67,29 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 	public void testChainedWheres() {
 		saveManyBasicObjects(1);
 
-		List<BasicObject> objects = r.query(BasicObject.class).where("intValue", "=", 0).where("stringValue", "=", "xpto").list();
+		List<BasicObject> objects = r.query(BasicObject.class).where("intValue", "=", 1).where("stringValue", "=", "xpto").list();
 
 		assertEquals(1, objects.size());
 		assertEquals("xpto", objects.get(0).getStringValue());
-		assertEquals(0, objects.get(0).getIntValue());
+		assertEquals(1, objects.get(0).getIntValue());
 	}
 
 	@Test
 	public void testChainedWheresWithAnd() {
 		saveManyBasicObjects(1);
 
-		List<BasicObject> objects = r.query(BasicObject.class).where(and(c("intValue", "=", 0), c("stringValue", "=", "xpto"))).list();
+		List<BasicObject> objects = r.query(BasicObject.class).where(and(c("intValue", "=", 1), c("stringValue", "=", "xpto"))).list();
 
 		assertEquals(1, objects.size());
 		assertEquals("xpto", objects.get(0).getStringValue());
-		assertEquals(0, objects.get(0).getIntValue());
+		assertEquals(1, objects.get(0).getIntValue());
 	}
 
 	@Test
 	public void testWhereWithOr() {
 		saveManyBasicObjects(2);
 
-		List<BasicObject> objects = r.query(BasicObject.class).where(or(c("intValue", "=", 0), c("intValue", "=", 1))).list();
+		List<BasicObject> objects = r.query(BasicObject.class).where(or(c("intValue", "=", 1), c("intValue", "=", 2))).list();
 
 		assertEquals(2, objects.size());
 		Collections.sort(objects, new Comparator<BasicObject>() {
@@ -98,10 +102,10 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 		assertEquals(2, objects.size());
 
 		assertEquals("xpto", objects.get(0).getStringValue());
-		assertEquals(0, objects.get(0).getIntValue());
+		assertEquals(1, objects.get(0).getIntValue());
 
 		assertEquals("xpto", objects.get(1).getStringValue());
-		assertEquals(1, objects.get(1).getIntValue());
+		assertEquals(2, objects.get(1).getIntValue());
 	}
 
 	@Test
@@ -109,26 +113,26 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 		saveManyBasicObjects(3);
 
 		List<BasicObject> objects1 = r.query(BasicObject.class)
-				.where(or(and(c("intValue", "=", 0), c("intValue", "=", 1)), and(c("intValue", "=", 2), c("intValue", "=", 2)))).list();
+				.where(or(and(c("intValue", "=", 1), c("intValue", "=", 2)), and(c("intValue", "=", 3), c("intValue", "=", 3)))).list();
 
 		assertEquals(1, objects1.size());
-		assertEquals(2, objects1.get(0).getIntValue());
+		assertEquals(3, objects1.get(0).getIntValue());
 
 		List<BasicObject> objects2 = r.query(BasicObject.class)
-				.where(or(and(c("intValue", "=", 2), c("intValue", "=", 2)), and(c("intValue", "=", 0), c("intValue", "=", 1)))).list();
+				.where(or(and(c("intValue", "=", 3), c("intValue", "=", 3)), and(c("intValue", "=", 1), c("intValue", "=", 2)))).list();
 
 		assertEquals(1, objects2.size());
-		assertEquals(2, objects2.get(0).getIntValue());
+		assertEquals(3, objects2.get(0).getIntValue());
 	}
 
 	@Test
 	public void testChainedWheresMultipleStatements() {
 		saveManyBasicObjects(1);
 
-		List<BasicObject> objects = r.query(BasicObject.class).where("intValue", "=", 0).where("stringValue", "=", "xpto").list();
+		List<BasicObject> objects = r.query(BasicObject.class).where("intValue", "=", 1).where("stringValue", "=", "xpto").list();
 
 		assertEquals(1, objects.size());
-		assertEquals(0, objects.get(0).getIntValue());
+		assertEquals(1, objects.get(0).getIntValue());
 		assertEquals("xpto", objects.get(0).getStringValue());
 	}
 
@@ -142,27 +146,29 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 		List<BasicObject> objects = r.query(BasicObject.class).options(options).list();
 
 		assertEquals(2, objects.size());
-		assertEquals(2, objects.get(0).getIntValue());
-		assertEquals(1, objects.get(1).getIntValue());
+		assertEquals(3, objects.get(0).getIntValue());
+		assertEquals(2, objects.get(1).getIntValue());
 	}
 
 	@Test
 	public void testOrderWithUnicode() {
-		saveThreeObjects();
-		// 'A' with accent
-		r.save(new SimpleObject(1, 1l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "\u00c1"));
+		r.save(new BasicObject("\u00e1"));
+		r.save(new BasicObject("\u00e9"));
+		r.save(new BasicObject("\u00ed"));
 
-		List<SimpleObject> objects = r.query(SimpleObject.class).order("aString", "desc").list();
+		List<BasicObject> objects = r.query(BasicObject.class).order("stringValue", "desc").list();
 
-		assertEquals(4, objects.size());
-		objects.get(0).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object3");
-		objects.get(1).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object2");
-		objects.get(2).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "object1");
-		objects.get(3).assertObject(1, 1l, 1.1, true, "2013/12/26 23:55:01", "\u00c1");
+		assertEquals(3, objects.size());
+		assertEquals("\u00ed", objects.get(0).getStringValue());
+		assertEquals("\u00e9", objects.get(1).getStringValue());
+		assertEquals("\u00e1", objects.get(2).getStringValue());
 	}
 
 	@Test
 	public void testOrderWithTwoProperties() {
+//		saveManyBasicObjects("xpto1", 2);
+//		saveManyBasicObjects("xpto2", 2);
+
 		saveThreeObjects();
 		r.save(new SimpleObject(1, 2l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object2"));
 		r.save(new SimpleObject(1, 3l, 1.1, true, DateUtils.toTimestamp("2013/12/26 23:55:01"), "object3"));

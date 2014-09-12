@@ -232,12 +232,12 @@ public class NewDatastoreQueryTest extends EndpointTestCase {
 
 	@Test
 	public void testFindByIdUsingWhere() {
-		SimpleObject object = new SimpleObject("xpto");
+		BasicObject object = new BasicObject("xpto");
 
 		r.save(object);
 
-		object = r.query(SimpleObject.class).where("id", "=", object.getId()).first();
-		assertEquals("xpto", object.getAString());
+		BasicObject retrievedObject = r.query(BasicObject.class).where("id", "=", object.getId()).first();
+		assertEquals("xpto", retrievedObject.getStringValue());
 	}
 
 	@Test

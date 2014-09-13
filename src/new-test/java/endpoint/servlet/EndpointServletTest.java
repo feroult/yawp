@@ -14,29 +14,41 @@ import endpoint.repository.models.parents.Parent;
 public class EndpointServletTest extends TestCase {
 
 	@Test
-	public void testCreateAndShow() {
-		String createJson = post("/basic_objects", "{ stringValue: 'xpto' } ");
-		BasicObject createObject = from(createJson, BasicObject.class);
-		assertEquals("xpto", createObject.getStringValue());
-
-		String showJson = get(createObject.getId().getUri());
-		BasicObject showObject = from(showJson, BasicObject.class);
-		assertEquals("xpto", showObject.getStringValue());
+	public void testCreate() {
+		String json = post("/basic_objects", "{ stringValue: 'xpto' } ");
+		BasicObject object = from(json, BasicObject.class);
+		assertEquals("xpto", object.getStringValue());
 	}
 
 	@Test
-	public void testCreateFromArrayAndIndex() {
-		String createJson = post("/basic_objects", "[ { stringValue: 'xpto1' }, { stringValue: 'xpto2' } ]");
-		List<BasicObject> createObjects = fromList(createJson, BasicObject.class);
-		assertEquals(2, createObjects.size());
-		assertEquals("xpto1", createObjects.get(0).getStringValue());
-		assertEquals("xpto2", createObjects.get(1).getStringValue());
+	public void testCreateArray() {
+		String json = post("/basic_objects", "[ { stringValue: 'xpto1' }, { stringValue: 'xpto2' } ]");
+		List<BasicObject> objects = fromList(json, BasicObject.class);
+		assertEquals(2, objects.size());
+		assertEquals("xpto1", objects.get(0).getStringValue());
+		assertEquals("xpto2", objects.get(1).getStringValue());
+	}
 
-		String indexJson = get("/basic_objects");
-		List<BasicObject> indexObjects = fromList(indexJson, BasicObject.class);
-		assertEquals(2, indexObjects.size());
-		assertEquals("xpto1", indexObjects.get(0).getStringValue());
-		assertEquals("xpto2", indexObjects.get(1).getStringValue());
+	@Test
+	public void testShow() {
+		BasicObject object = new BasicObject("xpto");
+		r.save(object);
+
+		String json = get(object.getId().getUri());
+		BasicObject retrivedObject = from(json, BasicObject.class);
+		assertEquals("xpto", retrivedObject.getStringValue());
+	}
+
+	@Test
+	public void testIndex() {
+		r.save(new BasicObject("xpto1"));
+		r.save(new BasicObject("xpto2"));
+
+		String json = get("/basic_objects");
+		List<BasicObject> objects = fromList(json, BasicObject.class);
+		assertEquals(2, objects.size());
+		assertEquals("xpto1", objects.get(0).getStringValue());
+		assertEquals("xpto2", objects.get(1).getStringValue());
 	}
 
 	@Test

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.junit.Before;
 
+import endpoint.repository.Repository;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
 
@@ -14,7 +15,16 @@ public class TestCase extends EndpointTestCase {
 
 	@Before
 	public void before() {
-		servlet = new EndpointServlet("endpoint");
+		servlet = new EndpointServlet("endpoint") {
+
+			private static final long serialVersionUID = 3374113392343671861L;
+
+			@Override
+			protected Repository getRepository(Map<String, String> params) {
+				return r;
+			}
+
+		};
 	}
 
 	protected String get(String uri) {

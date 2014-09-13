@@ -7,6 +7,9 @@ import java.util.List;
 import org.junit.Test;
 
 import endpoint.repository.models.basic.BasicObject;
+import endpoint.repository.models.parents.Child;
+import endpoint.repository.models.parents.Grandchild;
+import endpoint.repository.models.parents.Parent;
 import endpoint.utils.EndpointTestCase;
 
 public class HookTest extends EndpointTestCase {
@@ -21,9 +24,21 @@ public class HookTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testAllTargetsHook() {
-		Product product = saveProduct("xpto");
-		assertEquals("xpto GenericHook touch", product.getName());
+	public void testAllObjectsHook() {
+		Parent parent = new Parent("hook_test");
+		r.saveWithHooks(parent);
+
+		Child child = new Child("hook_test");
+		child.setParentId(parent.getId());
+		r.saveWithHooks(child);
+
+		Grandchild grandchild = new Grandchild("hook_test");
+		grandchild.setChildId(child.getId());
+		r.saveWithHooks(grandchild);
+
+		assertEquals("xpto", parent.getName());
+		assertEquals("xpto", child.getName());
+		assertEquals("xpto", grandchild.getName());
 	}
 
 	@Test

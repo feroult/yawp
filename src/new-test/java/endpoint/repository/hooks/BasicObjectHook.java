@@ -9,6 +9,7 @@ public class BasicObjectHook extends Hook<BasicObject> {
 		if (!isHookTest(object)) {
 			return;
 		}
+
 		object.setStringValue("xpto");
 	}
 

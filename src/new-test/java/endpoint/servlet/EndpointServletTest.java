@@ -11,7 +11,7 @@ import endpoint.repository.models.parents.Child;
 import endpoint.repository.models.parents.Grandchild;
 import endpoint.repository.models.parents.Parent;
 
-public class EndpointServletTest extends ServletTestCase {
+public class EndpointServletTest extends TestCase {
 
 	@Test
 	public void testCreateAndShow() {

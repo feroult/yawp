@@ -8,7 +8,7 @@ import org.junit.Before;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
 
-public class ServletTestCase extends EndpointTestCase {
+public class TestCase extends EndpointTestCase {
 
 	private EndpointServlet servlet;
 

@@ -12,6 +12,13 @@ import endpoint.utils.EndpointTestCase;
 public class HookTest extends EndpointTestCase {
 
 	@Test
+	public void testBeforeSave() {
+		HookedObject object = new HookedObject("before_save");
+		r.saveWithHooks(object);
+		assertEquals("xpto before save", object.getStringValue());
+	}
+
+	@Test
 	public void testAfterSave() {
 		HookedObject object = new HookedObject("after_save");
 		r.saveWithHooks(object);

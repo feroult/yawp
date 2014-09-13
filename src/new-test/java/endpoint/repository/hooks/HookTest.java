@@ -14,8 +14,12 @@ public class HookTest extends EndpointTestCase {
 	@Test
 	public void testBeforeSave() {
 		HookedObject object = new HookedObject("before_save");
+
 		r.saveWithHooks(object);
 		assertEquals("xpto before save", object.getStringValue());
+
+		HookedObject retrievedObject = object.getId().fetch();
+		assertEquals("xpto before save", retrievedObject.getStringValue());
 	}
 
 	@Test
@@ -38,6 +42,7 @@ public class HookTest extends EndpointTestCase {
 		r.save(new HookedObject("xpto2"));
 
 		List<HookedObject> objects = r.queryWithHooks(HookedObject.class).list();
+
 		assertEquals(1, objects.size());
 		assertEquals("xpto1", objects.get(0).getStringValue());
 	}

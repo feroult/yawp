@@ -1,10 +1,10 @@
 package endpoint.servlet;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
 
-import endpoint.servlet.EndpointServlet;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.JsonUtils;
 
@@ -39,5 +39,9 @@ public class EndpointServletTestCase extends EndpointTestCase {
 
 	protected <T> T from(String json, Class<T> clazz) {
 		return JsonUtils.from(r, json, clazz);
+	}
+
+	protected <T> List<T> fromList(String json, Class<T> clazz) {
+		return JsonUtils.fromList(r, json, clazz);
 	}
 }

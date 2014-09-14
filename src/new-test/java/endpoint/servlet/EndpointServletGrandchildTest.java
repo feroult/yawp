@@ -29,8 +29,7 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 
 	@Test
 	public void testCreate() {
-		String json = post(uri("/parents/%s/children/%s/grandchildren", parent, child),
-				String.format("{ name: 'xpto', childId: '%s' }", child.getId()));
+		String json = post(uri("/parents/%s/children/%s/grandchildren", parent, child), json("{ name: 'xpto', childId: '%s' }", child));
 
 		Grandchild grandchild = from(json, Grandchild.class);
 		assertEquals("xpto", grandchild.getName());
@@ -40,7 +39,7 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 	@Test
 	public void testCreateArray() {
 		String json = post(uri("/parents/%s/children/%s/grandchildren", parent, child),
-				String.format("[ { name: 'xpto1', childId: '%s' }, { name: 'xpto2', childId: '%s' } ]", child.getId(), child.getId()));
+				json("[ { name: 'xpto1', childId: '%s' }, { name: 'xpto2', childId: '%s' } ]", child, child));
 		List<Grandchild> grandchildren = fromList(json, Grandchild.class);
 
 		assertEquals(2, grandchildren.size());
@@ -51,14 +50,26 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 	}
 
 	@Test
+	public void testUpdate() {
+		Grandchild grandchild = saveGrandchild("xpto", child);
+
+		String json = put(uri("/parents/%s/children/%s/grandchildren/%s", parent, child, grandchild),
+				json("{ name: 'changed xpto', childId: '%s', id: '%s' }", child, grandchild));
+		Grandchild retrievedGrandchild = from(json, Grandchild.class);
+
+		assertEquals("changed xpto", retrievedGrandchild.getName());
+		assertEquals(child.getId(), retrievedGrandchild.getChildId());
+	}
+
+	@Test
 	public void testShow() {
 		Grandchild grandchild = saveGrandchild("xpto", child);
 
-		String json = get(uri("/parents/%s/children/%s/grandchildren/%s", parent, this.child, grandchild));
+		String json = get(uri("/parents/%s/children/%s/grandchildren/%s", parent, child, grandchild));
 		Grandchild retrievedGrandchild = from(json, Grandchild.class);
 
 		assertEquals("xpto", retrievedGrandchild.getName());
-		assertEquals(this.child.getId(), retrievedGrandchild.getChildId());
+		assertEquals(child.getId(), retrievedGrandchild.getChildId());
 	}
 
 	@Test

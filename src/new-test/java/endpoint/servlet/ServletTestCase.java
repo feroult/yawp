@@ -79,7 +79,7 @@ public class ServletTestCase extends EndpointTestCase {
 		return parseIds(uriFormat, objects);
 	}
 
-	protected String jsonIds(String uriFormat, Object... objects) {
+	protected String json(String uriFormat, Object... objects) {
 		return parseIds(uriFormat, objects);
 	}
 

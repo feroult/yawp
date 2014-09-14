@@ -22,7 +22,7 @@ public class EndpointServletChildTest extends ServletTestCase {
 
 	@Test
 	public void testCreate() {
-		String json = post(uri("/parents/%s/children", parent), jsonIds("{ name: 'xpto', parentId: '%s' }", parent));
+		String json = post(uri("/parents/%s/children", parent), json("{ name: 'xpto', parentId: '%s' }", parent));
 
 		Child child = from(json, Child.class);
 		assertEquals("xpto", child.getName());
@@ -32,7 +32,7 @@ public class EndpointServletChildTest extends ServletTestCase {
 	@Test
 	public void testCreateArray() {
 		String json = post(uri("/parents/%s/children", parent),
-				jsonIds("[ { name: 'xpto1', parentId: '%s' }, { name: 'xpto2', parentId: '%s' } ]", parent, parent));
+				json("[ { name: 'xpto1', parentId: '%s' }, { name: 'xpto2', parentId: '%s' } ]", parent, parent));
 		List<Child> children = fromList(json, Child.class);
 
 		assertEquals(2, children.size());
@@ -47,10 +47,11 @@ public class EndpointServletChildTest extends ServletTestCase {
 		Child child = saveChild("xpto", parent);
 
 		String json = put(uri("/parents/%s/children/%s", parent, child),
-				jsonIds("{ name: 'changed xpto', parentId: '%s', id: '%s' }", parent, child));
+				json("{ name: 'changed xpto', parentId: '%s', id: '%s' }", parent, child));
 		Child retrievedChild = from(json, Child.class);
 
 		assertEquals("changed xpto", retrievedChild.getName());
+		assertEquals(parent.getId(), retrievedChild.getParentId());
 	}
 
 	@Test

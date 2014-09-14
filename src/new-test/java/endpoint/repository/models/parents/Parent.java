@@ -14,6 +14,7 @@ public class Parent {
 	@Id
 	private IdRef<Parent> id;
 
+	@Index
 	private String name;
 
 	@Index

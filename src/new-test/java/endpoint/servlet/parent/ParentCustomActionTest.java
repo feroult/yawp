@@ -37,7 +37,7 @@ public class ParentCustomActionTest extends ParentServletTestCase {
 	public void testOverObjectWithParams() {
 		Parent parent = saveParent("xpto");
 
-		String json = put(uri("/parents/%s/touched_with_params", parent), null, params("x", "y"));
+		String json = put(uri("/parents/%s/touched_with_params", parent), params("x", "y"));
 		Parent retrievedParent = from(json, Parent.class);
 
 		assertEquals("touched xpto y", retrievedParent.getName());
@@ -48,7 +48,7 @@ public class ParentCustomActionTest extends ParentServletTestCase {
 		saveParent("xpto1");
 		saveParent("xpto2");
 
-		String json = put(uri("/parents/touched_with_params"), null, params("x", "y"));
+		String json = put(uri("/parents/touched_with_params"), params("x", "y"));
 		List<Parent> parents = fromList(json, Parent.class);
 
 		assertEquals(2, parents.size());

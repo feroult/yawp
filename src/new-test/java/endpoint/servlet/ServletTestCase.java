@@ -35,7 +35,7 @@ public class ServletTestCase extends EndpointTestCase {
 	}
 
 	protected String get(String uri, Map<String, String> params) {
-		return servlet.execute("GET", uri, null, null).getText();
+		return servlet.execute("GET", uri, null, params).getText();
 	}
 
 	protected String post(String uri, String json) {
@@ -52,6 +52,10 @@ public class ServletTestCase extends EndpointTestCase {
 
 	protected String put(String uri, String json) {
 		return put(uri, json, null);
+	}
+
+	protected String put(String uri, Map<String, String> params) {
+		return servlet.execute("PUT", uri, null, params).getText();
 	}
 
 	protected String put(String uri, String json, Map<String, String> params) {

@@ -7,12 +7,19 @@ import java.util.List;
 import org.junit.Test;
 
 import endpoint.repository.models.parents.Parent;
-import endpoint.servlet.ServletTestCase;
 
-public class ParentQueryTest extends ServletTestCase {
+public class ParentQueryTest extends ParentServletTestCase {
 
 	@Test
 	public void testQuery() {
+		saveParent("xpto1");
+		saveParent("xpto2");
+
+		String json = get("/parents", params("q", "{ where: ['name', '=', 'xpto1' ] }"));
+		List<Parent> parents = fromList(json, Parent.class);
+
+		assertEquals(1, parents.size());
+		assertEquals("xpto1", parents.get(0).getName());
 	}
 
 }

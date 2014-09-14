@@ -29,14 +29,25 @@ public class EndpointServletParentTest extends ServletTestCase {
 	}
 
 	@Test
+	public void testUpdate() {
+		Parent parent = new Parent("xpto");
+		r.save(parent);
+
+		String json = put(uri("/parents/%s", parent), "{ name: 'changed xpto' } ");
+		Parent retrievedParent = from(json, Parent.class);
+
+		assertEquals("changed xpto", retrievedParent.getName());
+	}
+
+	@Test
 	public void testShow() {
-		Parent object = new Parent("xpto");
-		r.save(object);
+		Parent parent = new Parent("xpto");
+		r.save(parent);
 
-		String json = get(uri("/parents/%s", object));
-		Parent retrivedObject = from(json, Parent.class);
+		String json = get(uri("/parents/%s", parent));
+		Parent retrievedParent = from(json, Parent.class);
 
-		assertEquals("xpto", retrivedObject.getName());
+		assertEquals("xpto", retrievedParent.getName());
 	}
 
 	@Test

@@ -3,6 +3,7 @@ package endpoint.repository.models.parents;
 import endpoint.repository.IdRef;
 import endpoint.repository.annotations.Endpoint;
 import endpoint.repository.annotations.Id;
+import endpoint.repository.annotations.Index;
 import endpoint.repository.annotations.ParentId;
 
 @Endpoint(path = "/grandchildren")
@@ -14,6 +15,7 @@ public class Grandchild {
 	@ParentId
 	private IdRef<Child> childId;
 
+	@Index
 	private String name;
 
 	public Grandchild() {

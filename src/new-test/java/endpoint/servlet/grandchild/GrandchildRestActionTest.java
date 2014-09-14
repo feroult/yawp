@@ -4,29 +4,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import endpoint.repository.models.parents.Child;
 import endpoint.repository.models.parents.Grandchild;
 import endpoint.repository.models.parents.Parent;
-import endpoint.servlet.ServletTestCase;
 
-public class GrandchildRestActionTest extends ServletTestCase {
-
-	private Parent parent;
-
-	private Child child;
-
-	@Before
-	public void before() {
-		parent = new Parent();
-		r.save(parent);
-
-		child = new Child();
-		child.setParentId(parent.getId());
-		r.save(child);
-	}
+public class GrandchildRestActionTest extends GrandchildServletTestCase {
 
 	@Test
 	public void testCreate() {
@@ -134,19 +118,5 @@ public class GrandchildRestActionTest extends ServletTestCase {
 		Parent parentX = new Parent();
 		r.save(parentX);
 		return parentX;
-	}
-
-	private Child saveChild() {
-		Child child = new Child();
-		child.setParentId(parent.getId());
-		r.save(child);
-		return child;
-	}
-
-	private Grandchild saveGrandchild(String name, Child child) {
-		Grandchild grandchild = new Grandchild(name);
-		grandchild.setChildId(child.getId());
-		r.save(grandchild);
-		return grandchild;
 	}
 }

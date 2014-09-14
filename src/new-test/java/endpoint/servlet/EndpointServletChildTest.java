@@ -43,14 +43,25 @@ public class EndpointServletChildTest extends ServletTestCase {
 	}
 
 	@Test
+	public void testUpdate() {
+		Child child = saveChild("xpto", parent);
+
+		String json = put(uri("/parents/%s/children/%s", parent, child),
+				jsonIds("{ name: 'changed xpto', parentId: '%s', id: '%s' }", parent, child));
+		Child retrievedChild = from(json, Child.class);
+
+		assertEquals("changed xpto", retrievedChild.getName());
+	}
+
+	@Test
 	public void testShow() {
 		Child child = saveChild("xpto", parent);
 
-		String json = get(uri("/parents/%s/children/%s", this.parent, child));
+		String json = get(uri("/parents/%s/children/%s", parent, child));
 		Child retrievedChild = from(json, Child.class);
 
 		assertEquals("xpto", retrievedChild.getName());
-		assertEquals(this.parent.getId(), retrievedChild.getParentId());
+		assertEquals(parent.getId(), retrievedChild.getParentId());
 	}
 
 	@Test

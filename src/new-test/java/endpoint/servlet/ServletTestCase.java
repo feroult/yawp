@@ -65,13 +65,22 @@ public class ServletTestCase extends EndpointTestCase {
 		return JsonUtils.fromList(r, json, clazz);
 	}
 
-	protected String uri(String uriFormat, Object... objects) {
+	protected String parseIds(String format, Object... objects) {
 		List<String> longIds = new ArrayList<String>();
 
 		for (Object object : objects) {
 			longIds.add(String.valueOf(EntityUtils.getLongId(object)));
 		}
 
-		return String.format(uriFormat, longIds.toArray());
+		return String.format(format, longIds.toArray());
 	}
+
+	protected String uri(String uriFormat, Object... objects) {
+		return parseIds(uriFormat, objects);
+	}
+
+	protected String jsonIds(String uriFormat, Object... objects) {
+		return parseIds(uriFormat, objects);
+	}
+
 }

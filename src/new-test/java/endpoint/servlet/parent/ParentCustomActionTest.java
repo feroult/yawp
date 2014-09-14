@@ -7,9 +7,8 @@ import java.util.List;
 import org.junit.Test;
 
 import endpoint.repository.models.parents.Parent;
-import endpoint.servlet.ServletTestCase;
 
-public class ParentCustomActionTest extends ServletTestCase {
+public class ParentCustomActionTest extends ParentServletTestCase {
 
 	@Test
 	public void testOverObject() {
@@ -34,9 +33,4 @@ public class ParentCustomActionTest extends ServletTestCase {
 		assertEquals("touched xpto2", parents.get(1).getName());
 	}
 
-	private Parent saveParent(String name) {
-		Parent parent = new Parent(name);
-		r.save(parent);
-		return parent;
-	}
 }

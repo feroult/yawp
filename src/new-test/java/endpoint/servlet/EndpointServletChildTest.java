@@ -22,7 +22,7 @@ public class EndpointServletChildTest extends ServletTestCase {
 
 	@Test
 	public void testCreate() {
-		String json = post(uri("/parents/%d/children", parent), String.format("{ name: 'xpto', parentId: '%s' }", parent.getId()));
+		String json = post(uri("/parents/%s/children", parent), String.format("{ name: 'xpto', parentId: '%s' }", parent.getId()));
 
 		Child child = from(json, Child.class);
 		assertEquals("xpto", child.getName());
@@ -31,7 +31,7 @@ public class EndpointServletChildTest extends ServletTestCase {
 
 	@Test
 	public void testCreateArray() {
-		String json = post(uri("/parents/%d/children", parent),
+		String json = post(uri("/parents/%s/children", parent),
 				String.format("[ { name: 'xpto1', parentId: '%s' }, { name: 'xpto2', parentId: '%s' } ]", parent.getId(), parent.getId()));
 		List<Child> children = fromList(json, Child.class);
 
@@ -46,7 +46,7 @@ public class EndpointServletChildTest extends ServletTestCase {
 	public void testShow() {
 		Child child = saveChild("xpto", parent);
 
-		String json = get(uri("/parents/%d/children/%d", this.parent, child));
+		String json = get(uri("/parents/%s/children/%s", this.parent, child));
 		Child retrievedChild = from(json, Child.class);
 
 		assertEquals("xpto", retrievedChild.getName());
@@ -58,7 +58,7 @@ public class EndpointServletChildTest extends ServletTestCase {
 		saveChild("xpto1", parent);
 		saveChild("xpto2", parent);
 
-		String json = get(uri("/parents/%d/children", parent));
+		String json = get(uri("/parents/%s/children", parent));
 		List<Child> children = fromList(json, Child.class);
 
 		assertEquals(2, children.size());
@@ -76,13 +76,13 @@ public class EndpointServletChildTest extends ServletTestCase {
 		saveChild("xpto1", parent1);
 		saveChild("xpto2", parent2);
 
-		String json1 = get(uri("/parents/%d/children", parent1));
+		String json1 = get(uri("/parents/%s/children", parent1));
 		List<Child> children1 = fromList(json1, Child.class);
 		assertEquals(1, children1.size());
 		assertEquals("xpto1", children1.get(0).getName());
 		assertEquals(parent1.getId(), children1.get(0).getParentId());
 
-		String json2 = get(uri("/parents/%d/children", parent2));
+		String json2 = get(uri("/parents/%s/children", parent2));
 		List<Child> children2 = fromList(json2, Child.class);
 		assertEquals(1, children2.size());
 		assertEquals("xpto2", children2.get(0).getName());

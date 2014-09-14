@@ -29,7 +29,7 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 
 	@Test
 	public void testCreate() {
-		String json = post(uri("/parents/%d/children/%d/grandchildren", parent, child),
+		String json = post(uri("/parents/%s/children/%s/grandchildren", parent, child),
 				String.format("{ name: 'xpto', childId: '%s' }", child.getId()));
 
 		Grandchild grandchild = from(json, Grandchild.class);
@@ -39,7 +39,7 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 
 	@Test
 	public void testCreateArray() {
-		String json = post(uri("/parents/%d/children/%d/grandchildren", parent, child),
+		String json = post(uri("/parents/%s/children/%s/grandchildren", parent, child),
 				String.format("[ { name: 'xpto1', childId: '%s' }, { name: 'xpto2', childId: '%s' } ]", child.getId(), child.getId()));
 		List<Grandchild> grandchildren = fromList(json, Grandchild.class);
 
@@ -54,7 +54,7 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 	public void testShow() {
 		Grandchild grandchild = saveGrandchild("xpto", child);
 
-		String json = get(uri("/parents/%d/children/%d/grandchildren/%d", parent, this.child, grandchild));
+		String json = get(uri("/parents/%s/children/%s/grandchildren/%s", parent, this.child, grandchild));
 		Grandchild retrievedGrandchild = from(json, Grandchild.class);
 
 		assertEquals("xpto", retrievedGrandchild.getName());
@@ -66,7 +66,7 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 		saveGrandchild("xpto1", child);
 		saveGrandchild("xpto2", child);
 
-		String json = get(uri("/parents/%d/children/%d/grandchildren", parent, child));
+		String json = get(uri("/parents/%s/children/%s/grandchildren", parent, child));
 		List<Grandchild> grandchildren = fromList(json, Grandchild.class);
 
 		assertEquals(2, grandchildren.size());
@@ -78,30 +78,31 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 
 	@Test
 	public void testGlobalIndex() {
-		Child child1 = new Child();
-		child1.setParentId(parent.getId());
-		r.save(child1);
-		Child child2 = new Child();
-		child2.setParentId(parent.getId());
-		r.save(child2);
+		Parent parentX = saveParent();
+
+		Child child1 = saveChild();
+		Child child2 = saveChild();
 
 		saveGrandchild("xpto1", child1);
 		saveGrandchild("xpto2", child2);
 
-		String json1 = get(uri("/parents/%d/children/%d/grandchildren", parent, child1));
+		String json1 = get(uri("/parents/%s/children/%s/grandchildren", parent, child1));
 		List<Grandchild> grandchildren1 = fromList(json1, Grandchild.class);
 		assertEquals(1, grandchildren1.size());
 		assertEquals("xpto1", grandchildren1.get(0).getName());
 		assertEquals(child1.getId(), grandchildren1.get(0).getChildId());
 
-		String json2 = get(uri("/parents/%d/children/%d/grandchildren", parent, child2));
+		String json2 = get(uri("/parents/%s/children/%s/grandchildren", parent, child2));
 		List<Grandchild> grandchildren2 = fromList(json2, Grandchild.class);
 		assertEquals(1, grandchildren2.size());
 		assertEquals("xpto2", grandchildren2.get(0).getName());
 		assertEquals(child2.getId(), grandchildren2.get(0).getChildId());
 
-		String jsonParentGlobal = get(uri("/parents/%d/grandchildren", parent));
-		assertAllGrandchildren(jsonParentGlobal, child1, child2);
+		String jsonParentX = get(uri("/parents/%s/grandchildren", parentX));
+		assertEquals("[]", jsonParentX);
+
+		String jsonParent = get(uri("/parents/%s/grandchildren", parent));
+		assertAllGrandchildren(jsonParent, child1, child2);
 
 		String jsonGlobal = get("/grandchildren");
 		assertAllGrandchildren(jsonGlobal, child1, child2);
@@ -115,6 +116,19 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 		assertEquals("xpto2", grandchildrenGlobal.get(1).getName());
 		assertEquals(child1.getId(), grandchildrenGlobal.get(0).getChildId());
 		assertEquals(child2.getId(), grandchildrenGlobal.get(1).getChildId());
+	}
+
+	private Parent saveParent() {
+		Parent parentX = new Parent();
+		r.save(parentX);
+		return parentX;
+	}
+
+	private Child saveChild() {
+		Child child = new Child();
+		child.setParentId(parent.getId());
+		r.save(child);
+		return child;
 	}
 
 	private Grandchild saveGrandchild(String name, Child child) {

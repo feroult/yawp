@@ -33,7 +33,7 @@ public class EndpointServletParentTest extends ServletTestCase {
 		Parent object = new Parent("xpto");
 		r.save(object);
 
-		String json = get(uri("/parents/%d", object));
+		String json = get(uri("/parents/%s", object));
 		Parent retrivedObject = from(json, Parent.class);
 
 		assertEquals("xpto", retrivedObject.getName());

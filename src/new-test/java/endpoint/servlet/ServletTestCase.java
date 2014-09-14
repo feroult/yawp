@@ -58,10 +58,10 @@ public class ServletTestCase extends EndpointTestCase {
 	}
 
 	protected String uri(String uriFormat, Object... objects) {
-		List<Long> longIds = new ArrayList<Long>();
+		List<String> longIds = new ArrayList<String>();
 
 		for (Object object : objects) {
-			longIds.add(EntityUtils.getLongId(object));
+			longIds.add(String.valueOf(EntityUtils.getLongId(object)));
 		}
 
 		return String.format(uriFormat, longIds.toArray());

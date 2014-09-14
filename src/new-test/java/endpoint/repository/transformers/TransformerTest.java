@@ -43,11 +43,12 @@ public class TransformerTest extends EndpointTestCase {
 		r.save(parent);
 
 		Child child = new Child();
+		child.setName("xpto");
 		child.setParentId(parent.getId());
 		r.save(child);
 
 		Child retrievedChild = r.query(Child.class).<Child> transform("simple").first();
-		assertEquals("xpto", retrievedChild.getName());
+		assertEquals("transformed xpto", retrievedChild.getName());
 	}
 
 }

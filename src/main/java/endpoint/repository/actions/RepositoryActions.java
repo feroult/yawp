@@ -2,7 +2,6 @@ package endpoint.repository.actions;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Map;
 
 import endpoint.repository.IdRef;
@@ -22,17 +21,15 @@ public class RepositoryActions {
 			Action<?> actionInstance = actionClazz.newInstance();
 			actionInstance.setRepository(r);
 
-
 			IdRef<?> id = actionId;
-//			if (actionId.asLong() == null) {
-//				assert EndpointScanner.isOverCollection(action);
-//				id = actionId.getParentId();
-//			} else {
-//				assert !EndpointScanner.isOverCollection(action);
-//				id = actionId;
-//			}
-			Object[] allArguments = new Object[] { id, params };
-			Object[] arguments = Arrays.copyOf(allArguments, action.getParameterTypes().length);
+			// if (actionId.asLong() == null) {
+			// assert EndpointScanner.isOverCollection(action);
+			// id = actionId.getParentId();
+			// } else {
+			// assert !EndpointScanner.isOverCollection(action);
+			// id = actionId;
+			// }
+			Object[] arguments = getActionArguments(action, params, id);
 
 			Object ret = action.invoke(actionInstance, arguments);
 			if (action.getReturnType().equals(Void.TYPE)) {
@@ -48,4 +45,18 @@ public class RepositoryActions {
 		}
 	}
 
+	private static Object[] getActionArguments(Method action, Map<String, String> params, IdRef<?> id) {
+		if (action.getParameterTypes().length == 0) {
+			return new Object[] {};
+		}
+		if (action.getParameterTypes().length == 2) {
+			return new Object[] { id, params };
+		}
+
+		if (IdRef.class.equals(action.getParameterTypes()[0])) {
+			return new Object[] { id };
+		}
+
+		return new Object[] { params };
+	}
 }

@@ -1,6 +1,7 @@
 package endpoint.servlet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class ServletTestCase extends EndpointTestCase {
 	}
 
 	protected String put(String uri, String json, Map<String, String> params) {
-		return servlet.execute("PUT", uri, json, null).getText();
+		return servlet.execute("PUT", uri, json, params).getText();
 	}
 
 	protected String delete(String uri) {
@@ -85,6 +86,12 @@ public class ServletTestCase extends EndpointTestCase {
 
 	protected String json(String uriFormat, Object... objects) {
 		return parseIds(uriFormat, objects);
+	}
+
+	protected Map<String, String> params(String key, String value) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put(key, value);
+		return map;
 	}
 
 }

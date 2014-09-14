@@ -187,7 +187,7 @@ public final class EndpointScanner {
 			// }
 		}
 		if (parameterTypes.length >= 1) {
-			validate(IdRef.class.equals(parameterTypes[0]), invalidActionMessage);
+			validate(IdRef.class.equals(parameterTypes[0]) || Map.class.equals(parameterTypes[0]), invalidActionMessage);
 			// TODO fix and re-enable validation!
 			// if (!overCollection && false) {
 			// Type[] types =

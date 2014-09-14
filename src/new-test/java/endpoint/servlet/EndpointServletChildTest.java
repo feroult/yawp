@@ -44,26 +44,19 @@ public class EndpointServletChildTest extends ServletTestCase {
 
 	@Test
 	public void testShow() {
-		Child child = new Child("xpto");
-		child.setParentId(parent.getId());
-		r.save(child);
+		Child child = saveChild("xpto", parent);
 
-		String json = get(uri("/parents/%d/children/%d", parent, child));
+		String json = get(uri("/parents/%d/children/%d", this.parent, child));
 		Child retrievedChild = from(json, Child.class);
 
 		assertEquals("xpto", retrievedChild.getName());
-		assertEquals(parent.getId(), retrievedChild.getParentId());
+		assertEquals(this.parent.getId(), retrievedChild.getParentId());
 	}
 
 	@Test
 	public void testIndex() {
-		Child child1 = new Child("xpto1");
-		child1.setParentId(parent.getId());
-		r.save(child1);
-
-		Child child2 = new Child("xpto2");
-		child2.setParentId(parent.getId());
-		r.save(child2);
+		saveChild("xpto1", parent);
+		saveChild("xpto2", parent);
 
 		String json = get(uri("/parents/%d/children", parent));
 		List<Child> children = fromList(json, Child.class);
@@ -77,19 +70,11 @@ public class EndpointServletChildTest extends ServletTestCase {
 
 	@Test
 	public void testGlobalIndex() {
-		Parent parent1 = new Parent();
-		r.save(parent1);
+		Parent parent1 = saveParent();
+		Parent parent2 = saveParent();
 
-		Child child1 = new Child("xpto1");
-		child1.setParentId(parent1.getId());
-		r.save(child1);
-
-		Parent parent2 = new Parent();
-		r.save(parent2);
-
-		Child child2 = new Child("xpto2");
-		child2.setParentId(parent2.getId());
-		r.save(child2);
+		saveChild("xpto1", parent1);
+		saveChild("xpto2", parent2);
 
 		String json1 = get(uri("/parents/%d/children", parent1));
 		List<Child> children1 = fromList(json1, Child.class);
@@ -111,6 +96,19 @@ public class EndpointServletChildTest extends ServletTestCase {
 		assertEquals("xpto2", childrenGlobal.get(1).getName());
 		assertEquals(parent1.getId(), childrenGlobal.get(0).getParentId());
 		assertEquals(parent2.getId(), childrenGlobal.get(1).getParentId());
+	}
+
+	private Parent saveParent() {
+		Parent parent = new Parent();
+		r.save(parent);
+		return parent;
+	}
+
+	private Child saveChild(String name, Parent parent) {
+		Child child = new Child(name);
+		child.setParentId(parent.getId());
+		r.save(child);
+		return child;
 	}
 
 }

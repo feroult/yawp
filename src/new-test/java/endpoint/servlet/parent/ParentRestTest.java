@@ -1,4 +1,4 @@
-package endpoint.servlet;
+package endpoint.servlet.parent;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,8 +7,9 @@ import java.util.List;
 import org.junit.Test;
 
 import endpoint.repository.models.parents.Parent;
+import endpoint.servlet.ServletTestCase;
 
-public class EndpointServletParentTest extends ServletTestCase {
+public class ParentRestTest extends ServletTestCase {
 
 	@Test
 	public void testCreate() {
@@ -30,8 +31,7 @@ public class EndpointServletParentTest extends ServletTestCase {
 
 	@Test
 	public void testUpdate() {
-		Parent parent = new Parent("xpto");
-		r.save(parent);
+		Parent parent = saveParent("xpto");
 
 		String json = put(uri("/parents/%s", parent), "{ name: 'changed xpto' } ");
 		Parent retrievedParent = from(json, Parent.class);
@@ -41,8 +41,7 @@ public class EndpointServletParentTest extends ServletTestCase {
 
 	@Test
 	public void testShow() {
-		Parent parent = new Parent("xpto");
-		r.save(parent);
+		Parent parent = saveParent("xpto");
 
 		String json = get(uri("/parents/%s", parent));
 		Parent retrievedParent = from(json, Parent.class);
@@ -52,8 +51,8 @@ public class EndpointServletParentTest extends ServletTestCase {
 
 	@Test
 	public void testIndex() {
-		r.save(new Parent("xpto1"));
-		r.save(new Parent("xpto2"));
+		saveParent("xpto1");
+		saveParent("xpto2");
 
 		String json = get("/parents");
 		List<Parent> parents = fromList(json, Parent.class);
@@ -61,5 +60,11 @@ public class EndpointServletParentTest extends ServletTestCase {
 		assertEquals(2, parents.size());
 		assertEquals("xpto1", parents.get(0).getName());
 		assertEquals("xpto2", parents.get(1).getName());
+	}
+
+	private Parent saveParent(String name) {
+		Parent parent = new Parent(name);
+		r.save(parent);
+		return parent;
 	}
 }

@@ -45,8 +45,12 @@ public class ServletTestCase extends EndpointTestCase {
 		return servlet.execute("POST", uri, json, null).getText();
 	}
 
+	protected String put(String uri) {
+		return put(uri, null, null);
+	}
+
 	protected String put(String uri, String json) {
-		return post(uri, json, null);
+		return put(uri, json, null);
 	}
 
 	protected String put(String uri, String json, Map<String, String> params) {

@@ -1,4 +1,4 @@
-package endpoint.servlet;
+package endpoint.servlet.child;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,8 +9,9 @@ import org.junit.Test;
 
 import endpoint.repository.models.parents.Child;
 import endpoint.repository.models.parents.Parent;
+import endpoint.servlet.ServletTestCase;
 
-public class EndpointServletChildTest extends ServletTestCase {
+public class ChildRestTest extends ServletTestCase {
 
 	private Parent parent;
 

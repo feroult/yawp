@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import endpoint.repository.models.basic.BasicObject;
 import endpoint.repository.models.parents.Child;
 import endpoint.repository.models.parents.Grandchild;
 import endpoint.repository.models.parents.Parent;
@@ -15,44 +14,44 @@ public class EndpointServletTest extends TestCase {
 
 	@Test
 	public void testCreate() {
-		String json = post("/basic_objects", "{ stringValue: 'xpto' } ");
-		BasicObject object = from(json, BasicObject.class);
+		String json = post("/parents", "{ name: 'xpto' } ");
+		Parent object = from(json, Parent.class);
 
-		assertEquals("xpto", object.getStringValue());
+		assertEquals("xpto", object.getName());
 	}
 
 	@Test
 	public void testCreateArray() {
-		String json = post("/basic_objects", "[ { stringValue: 'xpto1' }, { stringValue: 'xpto2' } ]");
-		List<BasicObject> objects = fromList(json, BasicObject.class);
+		String json = post("/parents", "[ { name: 'xpto1' }, { name: 'xpto2' } ]");
+		List<Parent> parents = fromList(json, Parent.class);
 
-		assertEquals(2, objects.size());
-		assertEquals("xpto1", objects.get(0).getStringValue());
-		assertEquals("xpto2", objects.get(1).getStringValue());
+		assertEquals(2, parents.size());
+		assertEquals("xpto1", parents.get(0).getName());
+		assertEquals("xpto2", parents.get(1).getName());
 	}
 
 	@Test
 	public void testShow() {
-		BasicObject object = new BasicObject("xpto");
+		Parent object = new Parent("xpto");
 		r.save(object);
 
-		String json = get(uri("/basic_objects/%d", object));
-		BasicObject retrivedObject = from(json, BasicObject.class);
+		String json = get(uri("/parents/%d", object));
+		Parent retrivedObject = from(json, Parent.class);
 
-		assertEquals("xpto", retrivedObject.getStringValue());
+		assertEquals("xpto", retrivedObject.getName());
 	}
 
 	@Test
 	public void testIndex() {
-		r.save(new BasicObject("xpto1"));
-		r.save(new BasicObject("xpto2"));
+		r.save(new Parent("xpto1"));
+		r.save(new Parent("xpto2"));
 
-		String json = get("/basic_objects");
-		List<BasicObject> objects = fromList(json, BasicObject.class);
+		String json = get("/parents");
+		List<Parent> parents = fromList(json, Parent.class);
 
-		assertEquals(2, objects.size());
-		assertEquals("xpto1", objects.get(0).getStringValue());
-		assertEquals("xpto2", objects.get(1).getStringValue());
+		assertEquals(2, parents.size());
+		assertEquals("xpto1", parents.get(0).getName());
+		assertEquals("xpto2", parents.get(1).getName());
 	}
 
 	@Test
@@ -159,6 +158,7 @@ public class EndpointServletTest extends TestCase {
 		assertEquals(parent1.getId(), childrenGlobal.get(0).getParentId());
 		assertEquals(parent2.getId(), childrenGlobal.get(1).getParentId());
 	}
+
 
 	@Test
 	public void testCreateAndShowGrandchild() {

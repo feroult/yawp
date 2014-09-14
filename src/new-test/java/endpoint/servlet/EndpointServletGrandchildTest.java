@@ -52,26 +52,19 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 
 	@Test
 	public void testShow() {
-		Grandchild grandchild = new Grandchild("xpto");
-		grandchild.setChildId(child.getId());
-		r.save(grandchild);
+		Grandchild grandchild = saveGrandchild("xpto", child);
 
-		String json = get(uri("/parents/%d/children/%d/grandchildren/%d", parent, child, grandchild));
+		String json = get(uri("/parents/%d/children/%d/grandchildren/%d", parent, this.child, grandchild));
 		Grandchild retrievedGrandchild = from(json, Grandchild.class);
 
 		assertEquals("xpto", retrievedGrandchild.getName());
-		assertEquals(child.getId(), retrievedGrandchild.getChildId());
+		assertEquals(this.child.getId(), retrievedGrandchild.getChildId());
 	}
 
 	@Test
 	public void testIndex() {
-		Grandchild grandchild1 = new Grandchild("xpto1");
-		grandchild1.setChildId(child.getId());
-		r.save(grandchild1);
-
-		Grandchild grandchild2 = new Grandchild("xpto2");
-		grandchild2.setChildId(child.getId());
-		r.save(grandchild2);
+		saveGrandchild("xpto1", child);
+		saveGrandchild("xpto2", child);
 
 		String json = get(uri("/parents/%d/children/%d/grandchildren", parent, child));
 		List<Grandchild> grandchildren = fromList(json, Grandchild.class);
@@ -88,18 +81,12 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 		Child child1 = new Child();
 		child1.setParentId(parent.getId());
 		r.save(child1);
-
-		Grandchild grandchild1 = new Grandchild("xpto1");
-		grandchild1.setChildId(child1.getId());
-		r.save(grandchild1);
-
 		Child child2 = new Child();
 		child2.setParentId(parent.getId());
 		r.save(child2);
 
-		Grandchild grandchild2 = new Grandchild("xpto2");
-		grandchild2.setChildId(child2.getId());
-		r.save(grandchild2);
+		saveGrandchild("xpto1", child1);
+		saveGrandchild("xpto2", child2);
 
 		String json1 = get(uri("/parents/%d/children/%d/grandchildren", parent, child1));
 		List<Grandchild> grandchildren1 = fromList(json1, Grandchild.class);
@@ -130,4 +117,10 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 		assertEquals(child2.getId(), grandchildrenGlobal.get(1).getChildId());
 	}
 
+	private Grandchild saveGrandchild(String name, Child child) {
+		Grandchild grandchild = new Grandchild(name);
+		grandchild.setChildId(child.getId());
+		r.save(grandchild);
+		return grandchild;
+	}
 }

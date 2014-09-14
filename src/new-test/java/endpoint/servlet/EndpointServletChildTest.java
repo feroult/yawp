@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import endpoint.repository.models.parents.Child;
-import endpoint.repository.models.parents.Grandchild;
 import endpoint.repository.models.parents.Parent;
 
 public class EndpointServletChildTest extends ServletTestCase {
@@ -112,26 +111,6 @@ public class EndpointServletChildTest extends ServletTestCase {
 		assertEquals("xpto2", childrenGlobal.get(1).getName());
 		assertEquals(parent1.getId(), childrenGlobal.get(0).getParentId());
 		assertEquals(parent2.getId(), childrenGlobal.get(1).getParentId());
-	}
-
-
-	@Test
-	public void testCreateAndShowGrandchild() {
-		Parent parent = new Parent();
-		r.save(parent);
-
-		Child child = new Child();
-		r.save(child);
-
-		String createJson = post(child.getId() + "/grandchildren", String.format("{ name: 'xpto', childId: '%s' }", child.getId()));
-		Grandchild createGrandchild = from(createJson, Grandchild.class);
-		assertEquals("xpto", createGrandchild.getName());
-		assertEquals(child.getId(), createGrandchild.getChildId());
-
-		String showJson = get(createGrandchild.getId().getUri());
-		Grandchild showGrandchild = from(showJson, Grandchild.class);
-		assertEquals("xpto", showGrandchild.getName());
-		assertEquals(child.getId(), showGrandchild.getChildId());
 	}
 
 }

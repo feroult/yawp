@@ -22,7 +22,7 @@ public class EndpointServletChildTest extends ServletTestCase {
 
 	@Test
 	public void testCreate() {
-		String json = post(uri("/parents/%s/children", parent), String.format("{ name: 'xpto', parentId: '%s' }", parent.getId()));
+		String json = post(uri("/parents/%s/children", parent), jsonIds("{ name: 'xpto', parentId: '%s' }", parent));
 
 		Child child = from(json, Child.class);
 		assertEquals("xpto", child.getName());
@@ -32,7 +32,7 @@ public class EndpointServletChildTest extends ServletTestCase {
 	@Test
 	public void testCreateArray() {
 		String json = post(uri("/parents/%s/children", parent),
-				String.format("[ { name: 'xpto1', parentId: '%s' }, { name: 'xpto2', parentId: '%s' } ]", parent.getId(), parent.getId()));
+				jsonIds("[ { name: 'xpto1', parentId: '%s' }, { name: 'xpto2', parentId: '%s' } ]", parent, parent));
 		List<Child> children = fromList(json, Child.class);
 
 		assertEquals(2, children.size());

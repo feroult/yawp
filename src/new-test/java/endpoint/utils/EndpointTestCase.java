@@ -23,7 +23,7 @@ public class EndpointTestCase {
 
 	private LocalServiceTestHelper helper;
 
-	protected Repository r;
+	public Repository r;
 
 	@BeforeClass
 	public static void bootEndpoint() {

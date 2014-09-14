@@ -267,7 +267,7 @@ public class EntityUtils {
 		return null;
 	}
 
-	public static Long getId(Object object) {
+	public static Long getLongId(Object object) {
 		return getKey(object).getId();
 	}
 

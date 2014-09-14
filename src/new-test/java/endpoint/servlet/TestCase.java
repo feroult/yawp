@@ -1,5 +1,6 @@
 package endpoint.servlet;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import org.junit.Before;
 
 import endpoint.repository.Repository;
 import endpoint.utils.EndpointTestCase;
+import endpoint.utils.EntityUtils;
 import endpoint.utils.JsonUtils;
 
 public class TestCase extends EndpointTestCase {
@@ -53,5 +55,15 @@ public class TestCase extends EndpointTestCase {
 
 	protected <T> List<T> fromList(String json, Class<T> clazz) {
 		return JsonUtils.fromList(r, json, clazz);
+	}
+
+	protected String uri(String uriFormat, Object... objects) {
+		List<Long> longIds = new ArrayList<Long>();
+
+		for (Object object : objects) {
+			longIds.add(EntityUtils.getLongId(object));
+		}
+
+		return String.format(uriFormat, longIds.toArray());
 	}
 }

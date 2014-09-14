@@ -25,6 +25,7 @@ public class ChildCustomActionTest extends ChildServletTestCase {
 	public void testOverCollection() {
 		saveChild("xpto1", parent);
 		saveChild("xpto2", parent);
+		saveChild("xpto3", saveParent());
 
 		String json = put(uri("/parents/%s/children/touched", parent));
 		List<Child> children = fromList(json, Child.class);

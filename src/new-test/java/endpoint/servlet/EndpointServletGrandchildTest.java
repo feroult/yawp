@@ -49,39 +49,39 @@ public class EndpointServletGrandchildTest extends ServletTestCase {
 		assertEquals(child.getId(), grandchildren.get(0).getChildId());
 		assertEquals(child.getId(), grandchildren.get(1).getChildId());
 	}
-	//
-	// @Test
-	// public void testShow() {
-	// Child child = new Child("xpto");
-	// child.setParentId(child.getId());
-	// r.save(child);
-	//
-	// String json = get(uri("/parents/%d/children/%d", parent, child));
-	// Child retrievedChild = from(json, Child.class);
-	//
-	// assertEquals("xpto", retrievedChild.getName());
-	// assertEquals(child.getId(), retrievedChild.getChildId());
-	// }
-	//
-	// @Test
-	// public void testIndex() {
-	// Child child1 = new Child("xpto1");
-	// child1.setParentId(child.getId());
-	// r.save(child1);
-	//
-	// Child child2 = new Child("xpto2");
-	// child2.setParentId(child.getId());
-	// r.save(child2);
-	//
-	// String json = get(uri("/parents/%d/children", parent));
-	// List<Child> children = fromList(json, Child.class);
-	//
-	// assertEquals(2, children.size());
-	// assertEquals("xpto1", children.get(0).getName());
-	// assertEquals("xpto2", children.get(1).getName());
-	// assertEquals(child.getId(), children.get(0).getChildId());
-	// assertEquals(child.getId(), children.get(1).getChildId());
-	// }
+
+	@Test
+	public void testShow() {
+		Grandchild grandchild = new Grandchild("xpto");
+		grandchild.setChildId(child.getId());
+		r.save(grandchild);
+
+		String json = get(uri("/parents/%d/children/%d/grandchildren/%d", parent, child, grandchild));
+		Grandchild retrievedGrandchild = from(json, Grandchild.class);
+
+		assertEquals("xpto", retrievedGrandchild.getName());
+		assertEquals(child.getId(), retrievedGrandchild.getChildId());
+	}
+
+	@Test
+	public void testIndex() {
+		Grandchild grandchild1 = new Grandchild("xpto1");
+		grandchild1.setChildId(child.getId());
+		r.save(grandchild1);
+
+		Grandchild grandchild2 = new Grandchild("xpto2");
+		grandchild2.setChildId(child.getId());
+		r.save(grandchild2);
+
+		String json = get(uri("/parents/%d/children/%d/grandchildren", parent, child));
+		List<Grandchild> grandchildren = fromList(json, Grandchild.class);
+
+		assertEquals(2, grandchildren.size());
+		assertEquals("xpto1", grandchildren.get(0).getName());
+		assertEquals("xpto2", grandchildren.get(1).getName());
+		assertEquals(child.getId(), grandchildren.get(0).getChildId());
+		assertEquals(child.getId(), grandchildren.get(1).getChildId());
+	}
 	//
 	// @Test
 	// public void testGlobalIndex() {

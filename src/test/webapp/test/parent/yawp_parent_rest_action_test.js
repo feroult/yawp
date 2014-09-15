@@ -36,19 +36,4 @@
 		});
 	});
 
-	// t.asyncTest("update", function(assert) {
-	// expect(1);
-	//
-	// var kurt = fx.parent('kurt', {
-	// name : 'kurt'
-	// });
-	//
-	// kurt.name = 'changed kurt';
-	//
-	// yawp.save(kurt.id, kurt).done(function(retrievedKurt) {
-	// assert.equal(retrievedKurt.name, 'changed kurt');
-	// t.stop();
-	// });
-	// });
-
 })(QUnit, yawp, yawp.fixtures);

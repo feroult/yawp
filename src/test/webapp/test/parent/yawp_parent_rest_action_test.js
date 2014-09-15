@@ -20,7 +20,7 @@
 	});
 
 	t.asyncTest("create array", function(assert) {
-		expect(1);
+		expect(3);
 
 		var parents = [ {
 			name : 'xpto1'
@@ -29,7 +29,9 @@
 		} ];
 
 		yawp.save('/parents', parents).done(function(retrievedParents) {
-			assert.equal(retrievedKurt.name, 'xpto');
+			assert.equal(retrievedParents.length, 2)
+			assert.equal(retrievedParents[0].name, 'xpto1');
+			assert.equal(retrievedParents[1].name, 'xpto2');
 			t.start();
 		});
 	});

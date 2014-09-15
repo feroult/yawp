@@ -65,24 +65,25 @@
 
 	});
 
-	// t.asyncTest("index", function(assert) {
-	// expect(1);
-	//
-	// fx.parent('parent1', {
-	// name : 'xpto1'
-	// });
-	//
-	// fx.parent('parent2', {
-	// name : 'xpto2'
-	// });
-	//
-	// yawp.query('/parents').where().list(function(retrievedParents) {
-	// assert.equal(retrievedParents.length, 2)
-	// assert.equal(retrievedParents[0].name, 'xpto1');
-	// assert.equal(retrievedParents[1].name, 'xpto2');
-	// });
-	//
-	// });
+	t.asyncTest("index", function(assert) {
+		expect(3);
+
+		fx.parent('parent1', {
+			name : 'xpto1'
+		});
+
+		fx.parent('parent2', {
+			name : 'xpto2'
+		});
+
+		yawp.query('/parents').list().done(function(retrievedParents) {
+			assert.equal(retrievedParents.length, 2)
+			assert.equal(retrievedParents[0].name, 'xpto1');
+			assert.equal(retrievedParents[1].name, 'xpto2');
+			t.start();
+		});
+
+	});
 
 	t.asyncTest("delete", function(assert) {
 		expect(2);

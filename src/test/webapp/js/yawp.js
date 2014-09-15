@@ -15,10 +15,27 @@
 		return request;
 	}
 
-	function save(endpoint, object) {
+	function parseArgs(args) {
+		if (args.length == 1) {
+			var object = args[0];
+			return {
+				endpoint : object.id,
+				object : object
+			};
+		}
+
+		return {
+			endpoint : args[0],
+			object : args[1]
+		};
+	}
+
+	function save() {
+		var args = parseArgs(arguments);
+
 		var options = {
-			url : baseUrl + endpoint,
-			data : JSON.stringify(object),
+			url : baseUrl + args.endpoint,
+			data : JSON.stringify(args.object),
 		};
 
 		return defaultAjax('POST', options);

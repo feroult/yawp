@@ -36,4 +36,19 @@
 		});
 	});
 
+	t.asyncTest("update", function(assert) {
+		expect(1);
+
+		var parent = fx.parent('parent', {
+			name : 'xpto'
+		});
+
+		parent.name = 'changed xpto';
+
+		yawp.save(parent).done(function(retrievedParent) {
+			assert.equal(retrievedParent.name, 'changed xpto');
+			t.start();
+		});
+	});
+
 })(QUnit, yawp, yawp.fixtures);

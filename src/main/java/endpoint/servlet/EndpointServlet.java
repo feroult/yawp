@@ -162,10 +162,6 @@ public class EndpointServlet extends HttpServlet {
 		return r.action(idRef, clazz, actionKey, params);
 	}
 
-	private String saveWihtId(Repository r, IdRef<?> id, EndpointFeatures<?> endpoint, String json) {
-		return saveFromObjectWithId(r, id, endpoint.getClazz(), json);
-	}
-
 	private String save(Repository r, IdRef<?> parentId, EndpointFeatures<?> endpoint, String json) {
 		if (JsonUtils.isJsonArray(json)) {
 			return saveFromArray(r, parentId, endpoint.getClazz(), json);

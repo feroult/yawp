@@ -65,4 +65,23 @@
 
 	});
 
+	t.asyncTest("index", function(assert) {
+		expect(1);
+
+		fx.parent('parent1', {
+			name : 'xpto1'
+		});
+
+		fx.parent('parent2', {
+			name : 'xpto2'
+		});
+
+		yawp.query('/parents').where().list(function(retrievedParents) {
+			assert.equal(retrievedParents.length, 2)
+			assert.equal(retrievedParents[0].name, 'xpto1');
+			assert.equal(retrievedParents[1].name, 'xpto2');
+		});
+
+	});
+
 })(QUnit, yawp, yawp.fixtures);

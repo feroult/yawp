@@ -54,9 +54,34 @@
 		}
 	}
 
+	function where(endpoint, condition) {
+		var options = {
+			url : baseUrl + endpoint,
+			data : {
+				q: JSON.stringify(condition)
+			}
+		};
+
+		return defaultAjax('GET', options);
+	}
+
+	function query(endpoint) {
+		var condition = {};
+
+		function where(value) {
+			condition.where = value;
+		}
+
+		return {
+			list : list
+		}
+	}
+
 	var api = {
 		save : save,
 		idRef : idRef
+		where : where
+		query : query
 	};
 
 	window.yawp = api;

@@ -30,7 +30,7 @@
 
 		yawp.save(kurt.id, kurt).done(function(retrievedKurt) {
 			assert.equal(retrievedKurt.name, 'changed kurt');
-			t.start();
+			t.stop();
 		});
 	});
 

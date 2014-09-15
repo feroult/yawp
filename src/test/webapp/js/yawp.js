@@ -41,8 +41,22 @@
 		return defaultAjax('POST', options);
 	}
 
+	function idRef(id) {
+		function fetch(callback) {
+			var options = {
+				url : baseUrl + id
+			};
+			defaultAjax('GET', options).done(callback);
+		}
+
+		return {
+			fetch : fetch
+		}
+	}
+
 	var api = {
-		save : save
+		save : save,
+		idRef : idRef
 	};
 
 	window.yawp = api;

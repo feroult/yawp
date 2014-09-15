@@ -51,4 +51,18 @@
 		});
 	});
 
+	t.asyncTest("show", function(assert) {
+		expect(1);
+
+		var parent = fx.parent('parent', {
+			name : 'xpto'
+		});
+
+		yawp.idRef(parent.id).fetch(function(retrievedParent) {
+			assert.equal(retrievedParent.name, 'xpto');
+			t.start();
+		});
+
+	});
+
 })(QUnit, yawp, yawp.fixtures);

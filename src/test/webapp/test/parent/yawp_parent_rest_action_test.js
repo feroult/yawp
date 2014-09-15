@@ -19,18 +19,20 @@
 		});
 	});
 
-//	t.asyncTest("create array", function(assert) {
-//		expect(1);
-//
-//		yawp.save('/parents', [ {
-//			name : 'xpto1'
-//		}, {
-//			name : 'xpto2'
-//		} ]).done(function(retrievedKurt) {
-//			assert.equal(retrievedKurt.name, 'xpto');
-//			t.start();
-//		});
-//	});
+	t.asyncTest("create array", function(assert) {
+		expect(1);
+
+		var parents = [ {
+			name : 'xpto1'
+		}, {
+			name : 'xpto2'
+		} ];
+
+		yawp.save('/parents', parents).done(function(retrievedParents) {
+			assert.equal(retrievedKurt.name, 'xpto');
+			t.start();
+		});
+	});
 
 	// t.asyncTest("update", function(assert) {
 	// expect(1);

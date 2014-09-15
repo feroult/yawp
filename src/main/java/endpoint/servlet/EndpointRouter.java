@@ -75,6 +75,10 @@ public class EndpointRouter {
 			return null;
 		}
 
+		if (idRef.getUri().length() == uri.length()) {
+			return null;
+		}
+
 		return parseCustomActionKey(parts);
 	}
 

@@ -101,4 +101,21 @@ public class ChildRestActionTest extends ChildServletTestCase {
 		assertEquals(parent2.getId(), childrenGlobal.get(1).getParentId());
 	}
 
+	@Test
+	public void testDelete() {
+		Child child = saveChild("xpto1", parent);
+
+		delete(uri("/parents/%s/children/%s", parent, child));
+		assertGetWithStatus(uri("/parents/%s/children/%s", parent, child), 404);
+	}
+
+	@Test
+	public void testDeleteParent() {
+		Child child = saveChild("xpto1", parent);
+
+		delete(uri("/parents/%s", parent));
+		assertGetWithStatus(uri("/parents/%s/children/%s", parent, child), 404);
+
+		assertEquals("[]", get("/children"));
+	}
 }

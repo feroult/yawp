@@ -114,4 +114,32 @@ public class GrandchildRestActionTest extends GrandchildServletTestCase {
 		assertEquals(child2.getId(), grandchildrenGlobal.get(1).getChildId());
 	}
 
+	@Test
+	public void testDelete() {
+		Grandchild grandchild = saveGrandchild("xpto1", child);
+
+		delete(uri("/parents/%s/children/%s/grandchildren/%s", parent, child, grandchild));
+		assertGetWithStatus(uri("/parents/%s/children/%s/grandchildren/%s", parent, child, grandchild), 404);
+	}
+
+	@Test
+	public void testDeleteChild() {
+		Grandchild grandchild = saveGrandchild("xpto1", child);
+
+		delete(uri("/parents/%s/children/%s", parent, child));
+		assertGetWithStatus(uri("/parents/%s/children/%s/grandchildren/%s", parent, child, grandchild), 404);
+
+		assertEquals("[]", get("/grandchildren"));
+	}
+
+	@Test
+	public void testDeleteParent() {
+		Grandchild grandchild = saveGrandchild("xpto1", child);
+
+		delete(uri("/parents/%s", parent));
+		assertGetWithStatus(uri("/parents/%s/children/%s/grandchildren/%s", parent, child, grandchild), 404);
+
+		assertEquals("[]", get("/grandchildren"));
+	}
+
 }

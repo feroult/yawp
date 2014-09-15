@@ -1,5 +1,8 @@
 package endpoint.servlet;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +39,16 @@ public class ServletTestCase extends EndpointTestCase {
 
 	protected String get(String uri, Map<String, String> params) {
 		return servlet.execute("GET", uri, null, params).getText();
+	}
+
+	protected void assertGetWithStatus(String uri, int status) {
+		try {
+			get(uri);
+		} catch (HttpException e) {
+			assertEquals(status, e.getHttpStatus());
+			return;
+		}
+		assertTrue(status == 200);
 	}
 
 	protected String post(String uri, String json) {

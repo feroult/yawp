@@ -60,4 +60,12 @@ public class ParentRestActionTest extends ParentServletTestCase {
 		assertEquals("xpto1", parents.get(0).getName());
 		assertEquals("xpto2", parents.get(1).getName());
 	}
+
+	@Test
+	public void testDelete() {
+		Parent parent = saveParent("xpto1");
+
+		delete(uri("/parents/%s", parent));
+		assertGetWithStatus(uri("/parents/%s", parent), 404);
+	}
 }

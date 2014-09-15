@@ -80,7 +80,6 @@
 	var api = {
 		save : save,
 		idRef : idRef
-		where : where
 		query : query
 	};
 

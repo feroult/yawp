@@ -27,7 +27,9 @@
 	function where(endpoint, condition) {
 		var options = {
 			url : baseUrl + endpoint,
-			data : { q: JSON.stringify(condition) }
+			data : {
+				q: JSON.stringify(condition)
+			}
 		};
 
 		return defaultAjax('GET', options);

@@ -23,5 +23,4 @@
 		});
 	});
 
-
 })(QUnit, yawp, yawp.fixtures);

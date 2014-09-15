@@ -2,11 +2,9 @@ package endpoint.servlet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +12,6 @@ import org.junit.Test;
 import endpoint.repository.EndpointFeatures;
 import endpoint.repository.RepositoryFeatures;
 import endpoint.repository.actions.ActionKey;
-import endpoint.servlet.EndpointRouter.RouteResource;
 import endpoint.utils.EndpointTestCase;
 import endpoint.utils.HttpVerb;
 
@@ -72,7 +69,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 		assertTrue(router.isOverCollection());
 		assertFalse(router.isCustomAction());
-		assertResources(router, 1, "/parents", null);
 	}
 
 	@Test
@@ -81,7 +77,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 		assertFalse(router.isOverCollection());
 		assertFalse(router.isCustomAction());
-		assertResources(router, 1, "/parents", 1l);
 	}
 
 	@Test
@@ -90,7 +85,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 		assertTrue(router.isOverCollection());
 		assertFalse(router.isCustomAction());
-		assertResources(router, 2, "/parents", 1l, "/children", null);
 	}
 
 	@Test
@@ -99,7 +93,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 		assertFalse(router.isOverCollection());
 		assertFalse(router.isCustomAction());
-		assertResources(router, 2, "/parents", 1l, "/children", 1l);
 	}
 
 	@Test
@@ -108,7 +101,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 		assertTrue(router.isOverCollection());
 		assertFalse(router.isCustomAction());
-		assertResources(router, 3, "/parents", 1l, "/children", 1l, "/grandchildren", null);
 	}
 
 	@Test
@@ -117,7 +109,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 		assertFalse(router.isOverCollection());
 		assertFalse(router.isCustomAction());
-		assertResources(router, 3, "/parents", 1l, "/children", 1l, "/grandchildren", 1l);
 	}
 
 	@Test
@@ -126,7 +117,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 		assertTrue(router.isOverCollection());
 		assertTrue(router.isCustomAction());
 		assertEquals("action", router.getCustomActionName());
-		assertResources(router, 1, "/parents", null);
 	}
 
 	@Test
@@ -135,7 +125,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 		assertFalse(router.isOverCollection());
 		assertTrue(router.isCustomAction());
 		assertEquals("action", router.getCustomActionName());
-		assertResources(router, 1, "/parents", 1l);
 	}
 
 	@Test
@@ -144,7 +133,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 		assertTrue(router.isOverCollection());
 		assertTrue(router.isCustomAction());
 		assertEquals("action", router.getCustomActionName());
-		assertResources(router, 2, "/parents", 1l, "/children", null);
 	}
 
 	@Test
@@ -153,7 +141,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 		assertFalse(router.isOverCollection());
 		assertTrue(router.isCustomAction());
 		assertEquals("action", router.getCustomActionName());
-		assertResources(router, 2, "/parents", 1l, "/children", 1l);
 	}
 
 	@Test
@@ -163,7 +150,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 		assertTrue(router.isOverCollection());
 		assertTrue(router.isCustomAction());
 		assertEquals("action", router.getCustomActionName());
-		assertResources(router, 3, "/parents", 1l, "/children", 1l, "/grandchildren", null);
 	}
 
 	@Test
@@ -173,25 +159,5 @@ public class EndpointRouterTest extends EndpointTestCase {
 		assertFalse(router.isOverCollection());
 		assertTrue(router.isCustomAction());
 		assertEquals("action", router.getCustomActionName());
-		assertResources(router, 3, "/parents", 1l, "/children", 1l, "/grandchildren", 1l);
 	}
-
-	private void assertResources(EndpointRouter uriParser, int size, Object... resourcesOptions) {
-		List<RouteResource> resources = uriParser.getResources();
-
-		assertEquals(size, resources.size());
-
-		for (int i = 0; i < size; i++) {
-			String endpointPath = (String) resourcesOptions[i * 2];
-			Long id = (Long) resourcesOptions[i * 2 + 1];
-
-			assertEquals(endpointPath, resources.get(i).getEndpointPath());
-			if (id == null) {
-				assertNull(resources.get(i).getId());
-			} else {
-				assertEquals(id, resources.get(i).getId());
-			}
-		}
-	}
-
 }

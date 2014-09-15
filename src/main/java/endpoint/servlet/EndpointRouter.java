@@ -1,16 +1,11 @@
 package endpoint.servlet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import endpoint.repository.EndpointFeatures;
 import endpoint.repository.IdRef;
 import endpoint.repository.Repository;
 import endpoint.repository.RepositoryFeatures;
 import endpoint.repository.actions.ActionKey;
 import endpoint.repository.annotations.Endpoint;
-import endpoint.utils.EntityUtils;
 import endpoint.utils.HttpVerb;
 
 public class EndpointRouter {
@@ -21,8 +16,6 @@ public class EndpointRouter {
 
 	private String uri;
 
-	private List<RouteResource> resources;
-
 	private boolean overCollection;
 
 	private ActionKey customActionKey;
@@ -30,6 +23,8 @@ public class EndpointRouter {
 	private HttpVerb verb;
 
 	private IdRef<?> idRef;
+
+	private Class<?> clazz;
 
 	public EndpointRouter(Repository r, HttpVerb verb, String uri) {
 		this.verb = verb;
@@ -44,45 +39,80 @@ public class EndpointRouter {
 		return new EndpointRouter(r, verb, uri);
 	}
 
-	public List<RouteResource> getResources() {
-		return resources;
-	}
-
 	private void parseUri() {
 		this.idRef = IdRef.parse(r, uri);
 
-		String[] parts = normalizeUri(uri).split("/");
-
-		this.customActionKey = parseCustomActionKeyNew(parts);
-		this.overCollection = parseOverCollectionNew(parts);
-		this.resources = parseResources(parts);
+		this.customActionKey = parseCustomActionKey();
+		this.overCollection = parseOverCollection();
+		this.clazz = parseEndpointClazz();
 	}
 
-	private ActionKey parseCustomActionKeyNew(String[] parts) {
+	private Class<?> parseEndpointClazz() {
+		String[] parts = uri.substring(1).split("/");
+
+		if (isOverCollection()) {
+			if (isCustomAction()) {
+				return features.get("/" + parts[parts.length - 2]).getClazz();
+			}
+			return features.get("/" + parts[parts.length - 1]).getClazz();
+		}
+
+		return idRef.getClazz();
+	}
+
+	private ActionKey parseCustomActionKey() {
 
 		if (idRef == null) {
-			String[] tokens = uri.substring(1).split("/");
-
-			if (tokens.length == 1) {
-				return null;
-			}
-
-			ActionKey actionKey = new ActionKey(verb, tokens[1], true);
-			if (features.hasCustomAction("/" + tokens[0], actionKey)) {
-				return actionKey;
-			}
-
-			return null;
+			return rootCollectionCustomActionKey();
 		}
 
 		if (idRef.getUri().length() == uri.length()) {
 			return null;
 		}
 
-		return parseCustomActionKey(parts);
+		String lastToken = uri.substring(idRef.getUri().length() + 1);
+		if (hasTwoParts(lastToken)) {
+			return nestedCollectionCustomActionKey(lastToken);
+		}
+
+		return singleObjectCustomActionKey(lastToken);
 	}
 
-	private boolean parseOverCollectionNew(String[] parts) {
+	private ActionKey singleObjectCustomActionKey(String lastToken) {
+		ActionKey actionKey = new ActionKey(verb, lastToken, false);
+		if (features.hasCustomAction(idRef.getClazz(), actionKey)) {
+			return actionKey;
+		}
+
+		return null;
+	}
+
+	private ActionKey nestedCollectionCustomActionKey(String lastToken) {
+		String[] tokens = lastToken.split("/");
+
+		ActionKey actionKey = new ActionKey(verb, tokens[1], true);
+		if (features.hasCustomAction("/" + tokens[0], actionKey)) {
+			return actionKey;
+		}
+		return null;
+	}
+
+	private ActionKey rootCollectionCustomActionKey() {
+		String[] tokens = uri.substring(1).split("/");
+
+		if (tokens.length == 1) {
+			return null;
+		}
+
+		ActionKey actionKey = new ActionKey(verb, tokens[1], true);
+		if (features.hasCustomAction("/" + tokens[0], actionKey)) {
+			return actionKey;
+		}
+
+		return null;
+	}
+
+	private boolean parseOverCollection() {
 		if (idRef == null) {
 			return true;
 		}
@@ -92,7 +122,7 @@ public class EndpointRouter {
 		}
 
 		String lastToken = uri.substring(idRef.getUri().length() + 1);
-		if (lastToken.indexOf("/") != -1) {
+		if (hasTwoParts(lastToken)) {
 			return true;
 		}
 
@@ -102,96 +132,10 @@ public class EndpointRouter {
 		}
 
 		return true;
-
-		// return parseOverCollection(parts);
 	}
 
-	private ActionKey parseCustomActionKey(String[] parts) {
-		// /objects
-		if (parts.length < 2) {
-			return null;
-		}
-
-		String possibleAction = parts[parts.length - 1];
-
-		// /objects/1
-		if (!isString(possibleAction)) {
-			return null;
-		}
-
-		// /objects/action
-		if (parts.length % 2 == 0) {
-			return parseCustomActionKeyForEvenParts(parts, possibleAction);
-		}
-
-		// /objects/1/action
-		return parseCustomActionKeyForOddParts(parts, possibleAction);
-	}
-
-	private ActionKey parseCustomActionKeyForOddParts(String[] parts, String possibleAction) {
-		String possiblePath = parts[parts.length - 3];
-		ActionKey actionKey = new ActionKey(verb, possibleAction, false);
-		if (features.hasCustomAction("/" + possiblePath, actionKey)) {
-			return actionKey;
-		}
-		return null;
-	}
-
-	private ActionKey parseCustomActionKeyForEvenParts(String[] parts, String possibleAction) {
-		String possiblePath = parts[parts.length - 2];
-		if (!isString(possiblePath)) {
-			return null;
-		}
-
-		ActionKey actionKey = new ActionKey(verb, possibleAction, true);
-		if (features.hasCustomAction("/" + possiblePath, actionKey)) {
-			return actionKey;
-		}
-		return null;
-	}
-
-	private ArrayList<RouteResource> parseResources(String[] parts) {
-		ArrayList<RouteResource> resources = new ArrayList<RouteResource>();
-
-		String[] resourceParts = parts;
-		if (isCustomAction()) {
-			resourceParts = Arrays.copyOf(parts, parts.length - 1);
-		}
-
-		for (int i = 0; i < resourceParts.length / 2; i++) {
-			String path = "/" + resourceParts[i * 2];
-			Long id = Long.valueOf(resourceParts[i * 2 + 1]);
-			resources.add(new RouteResource(path, id));
-		}
-
-		if (resourceParts.length % 2 == 1) {
-			String endpointPath = "/" + resourceParts[resourceParts.length - 1];
-			resources.add(new RouteResource(endpointPath));
-		}
-
-		return resources;
-	}
-
-	private boolean parseOverCollection(String[] parts) {
-		if (parts.length == 1) {
-			return true;
-		}
-		if (!isString(parts[parts.length - 1])) {
-			return false;
-		}
-		if (!isCustomAction()) {
-			return true;
-		}
-		return isString(parts[parts.length - 2]);
-	}
-
-	private boolean isString(String lastToken) {
-		try {
-			Long.valueOf(lastToken);
-			return false;
-		} catch (NumberFormatException e) {
-			return true;
-		}
+	private boolean hasTwoParts(String lastToken) {
+		return lastToken.indexOf("/") != -1;
 	}
 
 	public boolean isOverCollection() {
@@ -213,12 +157,8 @@ public class EndpointRouter {
 		return customActionKey;
 	}
 
-	private String getEndpointPath() {
-		return resources.get(resources.size() - 1).getEndpointPath();
-	}
-
 	public EndpointFeatures<?> getEndpointFeatures() {
-		return features.get(getEndpointPath());
+		return features.get(clazz);
 	}
 
 	public Class<?> getEndpointClazz() {
@@ -246,13 +186,6 @@ public class EndpointRouter {
 
 	public IdRef<?> getActionIdRef() {
 		return idRef;
-		// if (isOverCollection()) {
-		// IdRef<?> actionIdRef = IdRef.create(r,
-		// EntityUtils.getIdType(getEndpointClazz()), (Long) null);
-		// actionIdRef.setParentId(idRef);
-		// return actionIdRef;
-		// }
-		// return idRef;
 	}
 
 	public RESTActionType getRESTActionType() {
@@ -267,55 +200,4 @@ public class EndpointRouter {
 		getRESTActionType().validateRetrictions(endpointAnnotation);
 	}
 
-	protected class RouteResource {
-
-		private String endpointPath;
-
-		private Long id;
-
-		public RouteResource(String endpointPath) {
-			this(endpointPath, null);
-		}
-
-		public RouteResource(String endpointPath, Long id) {
-			this.endpointPath = endpointPath;
-			this.id = id;
-		}
-
-		public String getEndpointPath() {
-			return endpointPath;
-		}
-
-		public IdRef<?> getIdRef(IdRef<?> parentId) {
-			if (id == null) {
-				return parentId;
-			}
-			Class<?> clazz = features.get(endpointPath).getClazz();
-			IdRef<?> idRef = IdRef.create(r, EntityUtils.getIdType(clazz), id);
-			idRef.setParentId(parentId);
-			return idRef;
-		}
-
-		protected Long getId() {
-			return id;
-		}
-	}
-
-	private String normalizeUri(String uri) {
-		return normalizeUriEnd(normalizeUriStart(uri));
-	}
-
-	private String normalizeUriStart(String uri) {
-		if (uri.charAt(0) == '/') {
-			return uri.substring(1);
-		}
-		return uri;
-	}
-
-	private String normalizeUriEnd(String uri) {
-		if (uri.charAt(uri.length() - 1) == '/') {
-			return uri.substring(0, uri.length() - 1);
-		}
-		return uri;
-	}
 }

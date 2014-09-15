@@ -65,37 +65,39 @@
 
 	});
 
-//	t.asyncTest("index", function(assert) {
-//		expect(1);
-//
-//		fx.parent('parent1', {
-//			name : 'xpto1'
-//		});
-//
-//		fx.parent('parent2', {
-//			name : 'xpto2'
-//		});
-//
-//		yawp.query('/parents').where().list(function(retrievedParents) {
-//			assert.equal(retrievedParents.length, 2)
-//			assert.equal(retrievedParents[0].name, 'xpto1');
-//			assert.equal(retrievedParents[1].name, 'xpto2');
-//		});
-//
-//	});
+	// t.asyncTest("index", function(assert) {
+	// expect(1);
+	//
+	// fx.parent('parent1', {
+	// name : 'xpto1'
+	// });
+	//
+	// fx.parent('parent2', {
+	// name : 'xpto2'
+	// });
+	//
+	// yawp.query('/parents').where().list(function(retrievedParents) {
+	// assert.equal(retrievedParents.length, 2)
+	// assert.equal(retrievedParents[0].name, 'xpto1');
+	// assert.equal(retrievedParents[1].name, 'xpto2');
+	// });
+	//
+	// });
 
 	t.asyncTest("delete", function(assert) {
-		expect(1);
+		expect(2);
 
 		var parent = fx.parent('parent', {
 			name : 'xpto'
 		});
 
-		yawp.idRef(parent.id).remove();
-		
-		yawp.idRef(parent.id).fetch(function(retrievedParent) {
-			assert.equal(retrievedParent.name, 'xpto');
-			t.start();
+		yawp.idRef(parent.id).destroy(function(retrievedParent) {
+			t.equal(parent.id, retrievedParent.id);
+
+			yawp.idRef(parent.id).fetch().fail(function(error) {
+				assert.equal(error.status, 404);
+				t.start();
+			});
 		});
 
 	});

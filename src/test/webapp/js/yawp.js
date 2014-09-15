@@ -42,15 +42,21 @@
 	}
 
 	function idRef(id) {
+		var options = {
+			url : baseUrl + id
+		};
+
 		function fetch(callback) {
-			var options = {
-				url : baseUrl + id
-			};
-			defaultAjax('GET', options).done(callback);
+			return defaultAjax('GET', options).done(callback);
+		}
+
+		function destroy(callback) {
+			return defaultAjax('DELETE', options).done(callback);
 		}
 
 		return {
-			fetch : fetch
+			fetch : fetch,
+			destroy : destroy
 		}
 	}
 

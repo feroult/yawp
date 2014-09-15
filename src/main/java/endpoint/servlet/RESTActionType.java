@@ -4,7 +4,7 @@ import endpoint.repository.annotations.Endpoint;
 import endpoint.utils.HttpVerb;
 
 public enum RESTActionType {
-	INDEX, SHOW, CREATE, UPDATE, DELETE, CUSTOM;
+	INDEX, SHOW, CREATE, UPDATE, DESTROY, CUSTOM;
 
 	public static RESTActionType defaultRestAction(HttpVerb verb, boolean overCollection) {
 		switch (verb) {
@@ -18,7 +18,7 @@ public enum RESTActionType {
 			return UPDATE;
 		case DELETE:
 			assertNotOverCollection(overCollection);
-			return DELETE;
+			return DESTROY;
 		}
 		throw new HttpException(501, "Unsuported http verb " + verb);
 	}

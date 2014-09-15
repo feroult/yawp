@@ -82,7 +82,7 @@ public class RepositoryTest extends EndpointTestCase {
 		BasicObject object = new BasicObject();
 
 		r.save(object);
-		r.delete(object.getId());
+		r.destroy(object.getId());
 
 		r.query(BasicObject.class).id(object.getId());
 	}

@@ -135,7 +135,7 @@ public class EndpointServlet extends HttpServlet {
 			return new JsonResponse(update(r, router.getIdRef(), endpoint, requestJson));
 		case CUSTOM:
 			return action(r, router.getActionIdRef(), router.getEndpointClazz(), router.getCustomActionKey(), params);
-		case DELETE:
+		case DESTROY:
 			if (router.getIdRef() == null) {
 				throw new HttpException(501, "DELETE is not implemented for collections");
 			}

@@ -102,7 +102,7 @@ public class ChildRestActionTest extends ChildServletTestCase {
 	}
 
 	@Test
-	public void testDelete() {
+	public void testDestroy() {
 		Child child = saveChild("xpto1", parent);
 
 		delete(uri("/parents/%s/children/%s", parent, child));
@@ -110,7 +110,7 @@ public class ChildRestActionTest extends ChildServletTestCase {
 	}
 
 	@Test
-	public void testDeleteParent() {
+	public void testDestroyParent() {
 		Child child = saveChild("xpto1", parent);
 
 		delete(uri("/parents/%s", parent));

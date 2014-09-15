@@ -185,7 +185,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	}
 
 	public void delete() {
-		r.delete(this);
+		r.destroy(this);
 	}
 
 	public List<IdRef<?>> children() {

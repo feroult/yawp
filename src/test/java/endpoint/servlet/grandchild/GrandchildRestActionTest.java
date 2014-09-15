@@ -115,7 +115,7 @@ public class GrandchildRestActionTest extends GrandchildServletTestCase {
 	}
 
 	@Test
-	public void testDelete() {
+	public void testDestroy() {
 		Grandchild grandchild = saveGrandchild("xpto1", child);
 
 		delete(uri("/parents/%s/children/%s/grandchildren/%s", parent, child, grandchild));
@@ -123,7 +123,7 @@ public class GrandchildRestActionTest extends GrandchildServletTestCase {
 	}
 
 	@Test
-	public void testDeleteChild() {
+	public void testDestroyChild() {
 		Grandchild grandchild = saveGrandchild("xpto1", child);
 
 		delete(uri("/parents/%s/children/%s", parent, child));
@@ -133,7 +133,7 @@ public class GrandchildRestActionTest extends GrandchildServletTestCase {
 	}
 
 	@Test
-	public void testDeleteParent() {
+	public void testDestroyParent() {
 		Grandchild grandchild = saveGrandchild("xpto1", child);
 
 		delete(uri("/parents/%s", parent));

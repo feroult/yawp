@@ -58,7 +58,7 @@
 		var options = {
 			url : baseUrl + endpoint,
 			data : {
-				q: JSON.stringify(condition)
+				q : JSON.stringify(condition)
 			}
 		};
 
@@ -79,7 +79,7 @@
 
 	var api = {
 		save : save,
-		idRef : idRef
+		idRef : idRef,
 		query : query
 	};
 

@@ -104,11 +104,11 @@ public class Repository {
 		return DatastoreQuery.q(clazz, this);
 	}
 
-	public void delete(IdRef<?> id) {
+	public void destroy(IdRef<?> id) {
 		namespace.set(id.getClazz());
 		try {
 			for (IdRef<?> child : id.children()) {
-				delete(child);
+				destroy(child);
 			}
 			DatastoreServiceFactory.getDatastoreService().delete(id.asKey());
 		} finally {

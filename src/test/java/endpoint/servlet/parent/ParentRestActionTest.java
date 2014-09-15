@@ -62,7 +62,7 @@ public class ParentRestActionTest extends ParentServletTestCase {
 	}
 
 	@Test
-	public void testDelete() {
+	public void testDestroy() {
 		Parent parent = saveParent("xpto1");
 
 		delete(uri("/parents/%s", parent));

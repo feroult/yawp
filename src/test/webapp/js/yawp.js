@@ -60,27 +60,27 @@
 		}
 	}
 
-	function where(endpoint, condition) {
-		var options = {
-			url : baseUrl + endpoint,
-			data : {
-				q : JSON.stringify(condition)
-			}
-		};
-
-		return defaultAjax('GET', options);
-	}
-
 	function query(endpoint) {
-		var condition = {};
+	  var	condition = {};
 
-		function where(value) {
-			condition.where = value;
+		function where(data) {
+			condition.q = JSON.stringify({ where : data });
+			return this;
+		}
+
+		function list() {
+			var options = {
+				url : baseUrl + endpoint,
+				data : condition
+			};
+
+			return defaultAjax('GET', options);
 		}
 
 		return {
-			list : list
-		}
+			where: where,
+			list: list
+		};
 	}
 
 	var api = {

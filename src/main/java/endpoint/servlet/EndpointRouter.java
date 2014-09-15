@@ -166,25 +166,6 @@ public class EndpointRouter {
 	}
 
 	public IdRef<?> getIdRef() {
-		if (isOverCollection()) {
-			return null;
-		}
-		return idRef;
-	}
-
-	public IdRef<?> getParentIdRef() {
-		if (idRef == null) {
-			return null;
-		}
-
-		if (isOverCollection()) {
-			return idRef;
-		}
-
-		return idRef.getParentId();
-	}
-
-	public IdRef<?> getActionIdRef() {
 		return idRef;
 	}
 

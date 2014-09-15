@@ -121,20 +121,15 @@ public class EndpointServlet extends HttpServlet {
 
 		switch (router.getRESTActionType()) {
 		case INDEX:
-			return new JsonResponse(index(r, router.getParentIdRef(), endpoint, q(params), t(params)));
+			return new JsonResponse(index(r, router.getIdRef(), endpoint, q(params), t(params)));
 		case SHOW:
 			return new JsonResponse(get(r, router.getIdRef(), endpoint, t(params)));
 		case CREATE:
-			IdRef<?> id = router.getIdRef();
-			if (id == null) {
-				return new JsonResponse(save(r, router.getParentIdRef(), endpoint, requestJson));
-			} else {
-				return new JsonResponse(saveWihtId(r, id, endpoint, requestJson));
-			}
+			return new JsonResponse(save(r, router.getIdRef(), endpoint, requestJson));
 		case UPDATE:
 			return new JsonResponse(update(r, router.getIdRef(), endpoint, requestJson));
 		case CUSTOM:
-			return action(r, router.getActionIdRef(), router.getEndpointClazz(), router.getCustomActionKey(), params);
+			return action(r, router.getIdRef(), router.getEndpointClazz(), router.getCustomActionKey(), params);
 		case DESTROY:
 			if (router.getIdRef() == null) {
 				throw new HttpException(501, "DELETE is not implemented for collections");
@@ -146,10 +141,10 @@ public class EndpointServlet extends HttpServlet {
 	}
 
 	private String delete(IdRef<?> idRef, EndpointFeatures<?> endpoint) {
-	    Object o = idRef.fetch(endpoint.getClazz());
-	    idRef.delete();
-	    return JsonUtils.to(o);
-    }
+		Object o = idRef.fetch(endpoint.getClazz());
+		idRef.delete();
+		return JsonUtils.to(o);
+	}
 
 	private String q(Map<String, String> params) {
 		return params == null ? null : params.get("q");

@@ -184,12 +184,6 @@ public class EndpointServlet extends HttpServlet {
 		return JsonUtils.to(object);
 	}
 
-	private String saveFromObjectWithId(Repository r, IdRef<?> id, Class<?> clazz, String json) {
-		Object object = JsonUtils.from(r, json, clazz);
-		saveInRepositoryWihtId(r, object, id);
-		return JsonUtils.to(object);
-	}
-
 	private String saveFromArray(Repository r, IdRef<?> parentId, Class<?> clazz, String json) {
 		List<?> objects = JsonUtils.fromList(r, json, clazz);
 
@@ -229,11 +223,6 @@ public class EndpointServlet extends HttpServlet {
 
 	private void saveInRepository(Repository r, Object object, IdRef<?> parentId) {
 		EntityUtils.setParentId(object, parentId);
-		saveProcessedObject(r, object);
-	}
-
-	private void saveInRepositoryWihtId(Repository r, Object object, IdRef<?> id) {
-		EntityUtils.setId(object, id);
 		saveProcessedObject(r, object);
 	}
 

@@ -61,10 +61,18 @@ public class EndpointRouter {
 	private ActionKey parseCustomActionKeyNew(String[] parts) {
 
 		if (idRef == null) {
-			int indexOfSlash = uri.substring(1).indexOf("/");
-			if (indexOfSlash == -1) {
+			String[] tokens = uri.substring(1).split("/");
+
+			if (tokens.length == 1) {
 				return null;
 			}
+
+			ActionKey actionKey = new ActionKey(verb, tokens[1], true);
+			if (features.hasCustomAction("/" + tokens[0], actionKey)) {
+				return actionKey;
+			}
+
+			return null;
 		}
 
 		return parseCustomActionKey(parts);

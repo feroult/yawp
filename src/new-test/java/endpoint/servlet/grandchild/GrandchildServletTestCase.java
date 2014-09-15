@@ -22,7 +22,17 @@ public class GrandchildServletTestCase extends ServletTestCase {
 		r.save(child);
 	}
 
+	protected Parent saveParent() {
+		Parent parent = new Parent();
+		r.save(parent);
+		return parent;
+	}
+
 	protected Child saveChild() {
+		return saveChild(parent);
+	}
+
+	protected Child saveChild(Parent parent) {
 		Child child = new Child();
 		child.setParentId(parent.getId());
 		r.save(child);

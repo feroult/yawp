@@ -114,9 +114,4 @@ public class GrandchildRestActionTest extends GrandchildServletTestCase {
 		assertEquals(child2.getId(), grandchildrenGlobal.get(1).getChildId());
 	}
 
-	private Parent saveParent() {
-		Parent parentX = new Parent();
-		r.save(parentX);
-		return parentX;
-	}
 }

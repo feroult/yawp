@@ -18,14 +18,24 @@
 	function save(endpoint, object) {
 		var options = {
 			url : baseUrl + endpoint,
-			data : JSON.stringify(object),
+			data : JSON.stringify(object)
 		};
 
 		return defaultAjax('POST', options);
 	}
 
+	function where(endpoint, condition) {
+		var options = {
+			url : baseUrl + endpoint,
+			data : { q: JSON.stringify(condition) }
+		};
+
+		return defaultAjax('GET', options);
+	}
+
 	var api = {
-		save : save
+		save : save,
+		where : where
 	};
 
 	window.yawp = api;

@@ -129,6 +129,7 @@
 		yawp.idRef(parent.id).destroy(function(retrievedParent) {
 			t.equal(parent.id, retrievedParent.id);
 
+		}).then(function() {
 			yawp.idRef(parent.id).fetch().fail(function(error) {
 				assert.equal(error.status, 404);
 				t.start();

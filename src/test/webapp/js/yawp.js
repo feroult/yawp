@@ -116,11 +116,14 @@
 
 		function list(callback) {
 			var options = {
-				url : (parentId ? parentId : '') + endpoint,
-				data : {
+				url : (parentId ? parentId : '') + endpoint
+			}
+
+			if (Object.keys(q).length > 0) {
+				options.data = {
 					q : JSON.stringify(q)
-				}
-			};
+				};
+			}
 
 			return defaultAjax('GET', options).done(callback);
 		}

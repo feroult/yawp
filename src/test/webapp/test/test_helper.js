@@ -5,6 +5,8 @@
 	});
 
 	yawp.fixtures.config(function(c) {
+		c.baseUrl('/fixtures');
+
 		c.bind('parent', '/parents');
 		c.bind('child', '/children', 'parentId');
 	});

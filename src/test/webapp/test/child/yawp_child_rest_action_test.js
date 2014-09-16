@@ -112,23 +112,47 @@
 			t.start();
 		});
 	});
-	//
-	// t.asyncTest("delete", function(assert) {
-	// expect(2);
-	//
-	// var child = fx.child('child', {
-	// name : 'xpto'
-	// });
-	//
-	// yawp.idRef(child.id).destroy(function(retrievedChild) {
-	// t.equal(child.id, retrievedChild.id);
-	//
-	// yawp.idRef(child.id).fetch().fail(function(error) {
-	// assert.equal(error.status, 404);
-	// t.start();
-	// });
-	// });
-	//
-	// });
+
+	t.asyncTest("destroy", function(assert) {
+		expect(2);
+
+		var parent = fx.parent("parent");
+
+		var child = fx.child('child', {
+			name : 'xpto',
+			parentId : parent.id
+		});
+
+		yawp.destroy(child).done(function(retrievedChild) {
+			t.equal(child.id, retrievedChild.id);
+
+			yawp.idRef(child.id).fetch().fail(function(error) {
+				assert.equal(error.status, 404);
+				t.start();
+			});
+		});
+
+	});
+
+	t.asyncTest("destroy from idRef", function(assert) {
+		expect(2);
+
+		var parent = fx.parent("parent");
+
+		var child = fx.child('child', {
+			name : 'xpto',
+			parentId : parent.id
+		});
+
+		yawp.idRef(child.id).destroy(function(retrievedChild) {
+			t.equal(child.id, retrievedChild.id);
+
+			yawp.idRef(child.id).fetch().fail(function(error) {
+				assert.equal(error.status, 404);
+				t.start();
+			});
+		});
+
+	});
 
 })(QUnit, yawp, yawp.fixtures);

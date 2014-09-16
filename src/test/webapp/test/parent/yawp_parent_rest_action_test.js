@@ -1,9 +1,9 @@
 (function(t, yawp, fx) {
 
-	t.module('parent rest action');
-
-	t.testStart(function() {
-		fx.reset();
+	t.moduledef('parent rest action', {
+		testStart : function(details) {
+			fx.reset();
+		}
 	});
 
 	t.asyncTest("create", function(assert) {
@@ -76,13 +76,29 @@
 			name : 'xpto2'
 		});
 
-		yawp.query('/parents').list().done(function(retrievedParents) {
-			assert.equal(retrievedParents.length, 2)
-			assert.equal(retrievedParents[0].name, 'xpto1');
-			assert.equal(retrievedParents[1].name, 'xpto2');
-			t.start();
-		});
+		var order = [ {
+			p : 'name'
+		} ];
 
+		function eventually(parents) {
+			return parents.length == 2 && parents[0].name == 'xpto1' && parents[1].name == 'xpto2';
+		}
+
+		function retry() {
+			yawp.query('/parents').order(order).list(function(parents) {
+				if (!eventually(parents)) {
+					retry();
+					return;
+				}
+
+				assert.equal(parents.length, 2);
+				assert.equal(parents[0].name, 'xpto1');
+				assert.equal(parents[1].name, 'xpto2');
+				t.start();
+			});
+		}
+
+		retry();
 	});
 
 	t.asyncTest("delete", function(assert) {

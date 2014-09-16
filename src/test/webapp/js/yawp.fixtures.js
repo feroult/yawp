@@ -2,12 +2,29 @@
 
 	// settings
 
-	var baseUrl = '/fixtures/';
+	var baseUrl = '/fixtures';
 	var resetUrl = '/_yawp/delete_all';
 	var lazyPropertyKeys = [ 'id' ]; // needed till harmony proxies
 
-	var api = {
-		parent : bind(fixture, 'parents'),
+	var api = {}
+
+	function config(callback) {
+		var c = {
+			baseUrl : function(url) {
+				baseUrl = url;
+			},
+			resetUrl : function(url) {
+				resetUrl = url;
+			},
+			lazyPropertyKeys : function(array) {
+				lazyPropertyKeys = array;
+			},
+			bind : function(key, endpoint) {
+				api[key] = bind(fixture, endpoint)
+			}
+		};
+
+		callback(c);
 	}
 
 	// lib
@@ -202,6 +219,7 @@
 	api.lazy = computeLazyApi();
 	api.reset = reset;
 	api.map = map;
+	api.config = config;
 
 	window.yawp.fixtures = api;
 

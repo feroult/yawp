@@ -4,8 +4,8 @@
 
 	function config(callback) {
 		var c = {
-			baseUrl : function(uri) {
-				baseUrl = uri;
+			baseUrl : function(url) {
+				baseUrl = url;
 			}
 		};
 

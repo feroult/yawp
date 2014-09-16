@@ -4,6 +4,10 @@
 		c.baseUrl('/api');
 	});
 
+	yawp.fixtures.config(function(c) {
+		c.bind('parent', '/parents');
+	});
+
 	function moduledef(module, options) {
 		t.module(module);
 		if (options.testStart) {

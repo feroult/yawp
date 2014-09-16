@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>YAWP! by feroult</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>YAWP!</h1>
+        <h2>Yet Another Web API for Google App Engine</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/feroult/yawp/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/feroult/yawp/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/feroult/yawp" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a name="yawp" class="anchor" href="#yawp"><span class="octicon octicon-link"></span></a>YAWP!</h1>
+
+<p>Yet Another Web Persistence API</p>
+
+<p><a href="https://app.shippable.com/projects/540e77983479c5ea8f9e8eee/builds/latest"><img src="https://api.shippable.com/projects/540e77983479c5ea8f9e8eee/badge?branchName=master" alt="Build Status"></a></p>
+
+<h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>YAWP! is a Java framework built on top of Google App Engine, whose main purpose is to provide a simple and meaningful API to support REST based applications.<br>
+You create your POJOs and YAWP! creates a full REST url schema to insert, delete, update, list, etc. your objects automatically.<br>
+Then you can change default the behavior via Actions, Transformers and Hooks. Never write a controller in your life again!</p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Amazingly simple</li>
+<li>Nice querying syntax encapsulating GAE's Query classes.</li>
+<li>Nested resources using GAE Parent/Child functionality</li>
+<li>Hook, Action and Transformers API</li>
+</ul><h2>
+<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h2>
+
+<p>In a very simple example, we can create the class User, with just a few fields:</p>
+
+<pre><code>public class User {
+
+    private String name;
+    private int age;
+    private String company;
+}
+</code></pre>
+
+<p>Now, in order to use YAWP!, just annotate this class with <a href="https://github.com/Endpoint" class="user-mention">@Endpoint</a> annotation, and add an IdRef&lt;User&gt; field.</p>
+
+<pre><code>@Endpoint(path = "/users")
+public class User {
+
+    @Id
+    private IdRef&lt;User&gt; id;
+
+    /* ... */
+
+}
+</code></pre>
+
+<p>Done. Now User is mapped to "/users", and all these urls will be generated:</p>
+
+<ul>
+<li>GET /users -&gt; list all users</li>
+<li>GET /users/:id -&gt; get a user by id</li>
+<li>POST /users -&gt; create new user with random id</li>
+<li>POST /users/:id -&gt; create a new user with given id</li>
+<li>PUT /users/:id -&gt; update user with given id</li>
+<li>DELETE /users/:id -&gt; deletes user with given id</li>
+</ul><h3>
+<a name="idref" class="anchor" href="#idref"><span class="octicon octicon-link"></span></a>IdRef</h3>
+
+<p>The IdRef class is a simple wrapper around a long. In YAWP!, every id is a long, and IdRef encapsulates that to make it type safe - that way, you won't be able to assing IdRef&lt;User&gt; to IdRef&lt;Product&gt;, for example.<br>
+It also holds information about the parent id, when such feature is used. Therefore, every id in the system (being primary or foreign key) must be of this type.</p>
+
+<h3>
+<a name="action" class="anchor" href="#action"><span class="octicon octicon-link"></span></a>Action</h3>
+
+<p>An action is a custom action that can be called over an element or a collection. The default actions already include every REST action, but some entities have business actions associated with then; for example, activate a user, or return the current logged user.</p>
+
+<pre><code>public class UserActions extends Action&lt;User&gt; {
+
+    @PUT("activate")
+    public User activate(IdRef&lt;User&gt; user) {
+        return r.save(user.fetch().activate());
+    }
+
+    @GET("me", overCollection = true)
+    public User me() {
+        return Session.getLoggedUser();
+    }
+}
+</code></pre>
+
+<p>Now, the following routes will be created and mapped to your methods:</p>
+
+<ul>
+<li>GET /users/me -&gt; call the action me()</li>
+<li>PUT /users/id/activate -&gt; activate the user on id</li>
+</ul><p>Note that, since all ids are long, actions name must start with a letter.</p>
+
+<h3>
+<a name="transformer" class="anchor" href="#transformer"><span class="octicon octicon-link"></span></a>Transformer</h3>
+
+<p>A Transformer can change an object before it is sent on a request. For example, imagine that in some scenarios we don't want to return the User's age in some requests and, in others, we want to calculate he's birth year.</p>
+
+<pre><code>public class UserTransformer extends Transformer&lt;User&gt; {
+
+    public Map&lt;String, String&gt; simple(User user) {
+        Map&lt;String, String&gt; result = new HashMap&lt;&gt;();
+        result.put("name", user.getName());
+        result.put("company", user.getCompany());
+        return result;
+    }
+
+    public static class UserView {
+        private String name;
+        private String company;
+        private int birthYear;
+
+        public UserView(User user) {
+            this.name = user.getName();
+            this.company = user.getCompany();
+            this.birthYear = Calendar.getInstance().get(Calendar.YEAR) - user.getAge();
+        }
+    }
+
+    public UserView withYear(User user) {
+        return new UserView(user);
+    }
+}
+</code></pre>
+
+<p>To use the transformer, just add a query param to the request:</p>
+
+<ul>
+<li>GET /users/id?t=simple -&gt; Returns the user with id applying the transformer simple()</li>
+<li>GET /users?t=withYear -&gt; Returns the list of all users applying the transformer withYear()</li>
+</ul><h3>
+<a name="hooks" class="anchor" href="#hooks"><span class="octicon octicon-link"></span></a>Hooks</h3>
+
+<p>Hooks are codes that are executed before or after a particular action in the system. They can be used to set pre-calculated information in the models to be saved in the database, or to deny access to some users on certain actions, for example. Take a look at this Hook:</p>
+
+<pre><code>public class UserHook extends Hook&lt;User&gt; {
+
+    @Override
+public void beforeQuery(DatastoreQuery&lt;User&gt; q) {
+        q.where("company", "=", Session.getLoggedUser().getCompany());
+    }
+
+    @Override
+    public void beforeSave(User user) {
+        if (user.getAge() &lt; 18) {
+            throw new HttpException(422, "You must be 18 or more to sign up.");
+        }
+    }
+}
+</code></pre>
+
+<p>This example uses two hook methods. For now, there are only 3 of them:</p>
+
+<ul>
+<li>beforeQuery : called before any query made via a URL. It can be used to add security or default validations;</li>
+<li>beforeSave : called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;</li>
+<li>afterSave : called after an object is saved. It can be used to trigger actions or log events.</li>
+</ul><h3>
+<a name="querying-api" class="anchor" href="#querying-api"><span class="octicon octicon-link"></span></a>Querying API</h3>
+
+<p>The beforeQuery method recieves a DatastoreQuery. This class is part of the core Query API that YAWP! provides, and it allows for very easy access to the GAE database.<br>
+It can be used within any Repository Feature (i.e., Action, Transformer or Hook). In fact, any of those has a private variable r that represents the Repository. With it, you can the query method to get access to que Query API. See some cool examples:</p>
+
+<ul>
+<li>r.query(User.class).where("name", "=", "Mark").and("age", "&gt;=", 21).list();</li>
+<li>r.query(User.class).where(or(and(c("company", "=", "github.com"), c("age", "&gt;=", 21)), and(c("company", "=", "YAWP!"), c("age", "&gt;=", 18)))).ids();
+The methods c, and and or must be imported static or fully qualified on call for this to work.</li>
+<li>r.query(User.class).where("name", "=", "John").and("company", "=", "github.com").only();</li>
+</ul><h2>
+<a name="frontend" class="anchor" href="#frontend"><span class="octicon octicon-link"></span></a>Frontend</h2>
+
+<p>A frontend api for Javascript is coming soon. Keep tunned for updates!</p>
+
+<h2>
+<a name="misc" class="anchor" href="#misc"><span class="octicon octicon-link"></span></a>Misc</h2>
+
+<ul>
+<li><a href="http://stackoverflow.com/questions/7160006/m2e-and-having-maven-generated-source-folders-as-eclipse-source-folders">http://stackoverflow.com/questions/7160006/m2e-and-having-maven-generated-source-folders-as-eclipse-source-folders</a></li>
+</ul>
+      </section>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-54832827-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>

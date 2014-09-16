@@ -25,12 +25,22 @@
 		return request;
 	}
 
+	function extractId(object) {
+		if (object.id) {
+			return object.id;
+		}
+		var key;
+		for (key in object) {
+			return object[key];
+		}
+	}
+
 	function save() {
 		function parseArgs(args) {
 			if (args.length == 1) {
 				var object = args[0];
 				return {
-					endpoint : object.id,
+					endpoint : extractId(object),
 					object : object,
 					verb : 'PUT'
 				};
@@ -55,7 +65,7 @@
 
 	function destroy(object) {
 		var options = {
-			url : object.id
+			url : extractId(object)
 		};
 		return defaultAjax('DELETE', options);
 	}

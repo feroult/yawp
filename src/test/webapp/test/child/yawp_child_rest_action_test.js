@@ -140,7 +140,7 @@
 				assert.equal(children.length, 1);
 				assert.equal(children[0].name, 'xpto2');
 				assert.equal(children[0].parentId, parent2.id);
-			})
+			});
 
 		}).then(function() {
 

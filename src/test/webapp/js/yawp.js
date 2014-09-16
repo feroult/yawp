@@ -25,24 +25,24 @@
 		return request;
 	}
 
-	function parseArgs(args) {
-		if (args.length == 1) {
-			var object = args[0];
+	function save() {
+		function parseArgs(args) {
+			if (args.length == 1) {
+				var object = args[0];
+				return {
+					endpoint : object.id,
+					object : object,
+					verb : 'PUT'
+				};
+			}
+
 			return {
-				endpoint : object.id,
-				object : object,
-				verb : 'PUT'
+				endpoint : args[0],
+				object : args[1],
+				verb : 'POST'
 			};
 		}
 
-		return {
-			endpoint : args[0],
-			object : args[1],
-			verb : 'POST'
-		};
-	}
-
-	function save() {
 		var args = parseArgs(arguments);
 
 		var options = {
@@ -51,6 +51,13 @@
 		};
 
 		return defaultAjax(args.verb, options);
+	}
+
+	function destroy(object) {
+		var options = {
+			url : object.id
+		};
+		return defaultAjax('DELETE', options);
 	}
 
 	function idRef(id) {
@@ -112,6 +119,7 @@
 	var api = {
 		config : config,
 		save : save,
+		destroy : destroy,
 		idRef : idRef,
 		query : query
 	};

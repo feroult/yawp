@@ -101,7 +101,25 @@
 		retry();
 	});
 
-	t.asyncTest("delete", function(assert) {
+	t.asyncTest("destroy", function(assert) {
+		expect(2);
+
+		var parent = fx.parent('parent', {
+			name : 'xpto'
+		});
+
+		yawp.destroy(parent).done(function(retrievedParent) {
+			t.equal(parent.id, retrievedParent.id);
+
+			yawp.idRef(parent.id).fetch().fail(function(error) {
+				assert.equal(error.status, 404);
+				t.start();
+			});
+		});
+
+	});
+
+	t.asyncTest("destroy from idRef", function(assert) {
 		expect(2);
 
 		var parent = fx.parent('parent', {

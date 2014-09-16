@@ -185,6 +185,7 @@
 		yawp.destroy(child).done(function(retrievedChild) {
 			t.equal(child.id, retrievedChild.id);
 
+		}).then(function() {
 			yawp.idRef(child.id).fetch().fail(function(error) {
 				assert.equal(error.status, 404);
 				t.start();
@@ -206,6 +207,7 @@
 		yawp.idRef(child.id).destroy(function(retrievedChild) {
 			t.equal(child.id, retrievedChild.id);
 
+		}).then(function() {
 			yawp.idRef(child.id).fetch().fail(function(error) {
 				assert.equal(error.status, 404);
 				t.start();

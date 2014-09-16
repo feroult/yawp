@@ -5,11 +5,11 @@
 
 	<servlet>
 		<servlet-name>EndpointServlet</servlet-name>
-		<servlet-class>endpoint.servlet.EndpointServlet</servlet-class>
+		<servlet-class>io.yawp.servlet.EndpointServlet</servlet-class>
 
 		<init-param>
 			<param-name>packagePrefix</param-name>
-			<param-value>endpoint</param-value>
+			<param-value>io.yawp</param-value>
 		</init-param>
 	</servlet>
 	<servlet-mapping>
@@ -19,11 +19,11 @@
 
 	<servlet>
 		<servlet-name>FixturesEndpoint</servlet-name>
-		<servlet-class>endpoint.servlet.EndpointServlet</servlet-class>
+		<servlet-class>io.yawp.servlet.EndpointServlet</servlet-class>
 
 		<init-param>
 			<param-name>packagePrefix</param-name>
-			<param-value>endpoint</param-value>
+			<param-value>io.yawp</param-value>
 		</init-param>
 
 		<init-param>
@@ -38,7 +38,7 @@
 
 	<servlet>
 		<servlet-name>DeleteAllServlet</servlet-name>
-		<servlet-class>endpoint.repository.tools.DeleteAllServlet</servlet-class>
+		<servlet-class>io.yawp.repository.tools.DeleteAllServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>DeleteAllServlet</servlet-name>

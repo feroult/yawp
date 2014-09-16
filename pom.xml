@@ -6,8 +6,8 @@
 	<packaging>jar</packaging>
 	<version>1.0-SNAPSHOT</version>
 
-	<groupId>endpoint</groupId>
-	<artifactId>endpoint</artifactId>
+	<groupId>io.yawp</groupId>
+	<artifactId>yawp</artifactId>
 
 	<properties>
 		<appengine.app.version>1</appengine.app.version>

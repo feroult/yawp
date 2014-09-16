@@ -19,8 +19,8 @@
 			lazyPropertyKeys : function(array) {
 				lazyPropertyKeys = array;
 			},
-			bind : function(key, endpoint) {
-				api[key] = bind(fixture, endpoint)
+			bind : function(key, endpoint, parentId) {
+				api[key] = bind(fixture, endpoint, parentId)
 			}
 		};
 
@@ -34,9 +34,10 @@
 
 	var load = {};
 
-	function bind(fn, endpoint) {
+	function bind(fn, endpoint, parentId) {
 		var bindFn = function() {
 			args = Array.prototype.slice.call(arguments, 0);
+			args.unshift(parentId);
 			args.unshift(endpoint);
 			return fn.apply(this, args);
 		}
@@ -84,7 +85,7 @@
 		return JSON.stringify(newData);
 	}
 
-	function save(endpoint, data) {
+	function save(endpoint, parentId, data) {
 		var retrievedObject;
 
 		if (!endpoint) {
@@ -93,7 +94,7 @@
 
 		var request = $.ajax({
 			type : 'POST',
-			url : baseUrl + endpoint,
+			url : baseUrl + (parentId ? data[parentId] : '') + endpoint,
 			data : prepareDataJSON(data),
 			async : false,
 			contentType : 'application/json;charset=UTF-8',
@@ -127,7 +128,7 @@
 		return true;
 	}
 
-	function fixture(endpoint, key, data) {
+	function fixture(endpoint, parentId, key, data) {
 		var object = loadFixture(endpoint, key);
 		if (object) {
 			return object;
@@ -141,7 +142,7 @@
 			}
 		}
 
-		object = save(endpoint, data);
+		object = save(endpoint, parentId, data);
 		load[endpoint][key] = object;
 		return object;
 	}

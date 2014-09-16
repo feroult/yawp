@@ -6,6 +6,7 @@
 
 	yawp.fixtures.config(function(c) {
 		c.bind('parent', '/parents');
+		c.bind('child', '/children', 'parentId');
 	});
 
 	function moduledef(module, options) {

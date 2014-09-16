@@ -66,20 +66,23 @@
 			t.start();
 		});
 	});
-	//
-	// t.asyncTest("show", function(assert) {
-	// expect(1);
-	//
-	// var child = fx.child('child', {
-	// name : 'xpto'
-	// });
-	//
-	// yawp.idRef(child.id).fetch(function(retrievedChild) {
-	// assert.equal(retrievedChild.name, 'xpto');
-	// t.start();
-	// });
-	//
-	// });
+
+	t.asyncTest("show", function(assert) {
+		expect(1);
+
+		var parent = fx.parent('parent');
+
+		var child = fx.child('child', {
+			name : 'xpto',
+			parentId : parent.id
+		});
+
+		yawp.idRef(child.id).fetch(function(retrievedChild) {
+			assert.equal(retrievedChild.name, 'xpto');
+			t.start();
+		});
+
+	});
 	//
 	// t.asyncTest("index", function(assert) {
 	// expect(3);

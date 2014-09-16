@@ -83,9 +83,18 @@
 			return defaultAjax('DELETE', options).done(callback);
 		}
 
+		function put(action) {
+			var putOptions = $.extend({}, options, {
+				url : options.url + '/' + action
+			});
+
+			return defaultAjax('PUT', putOptions);
+		}
+
 		return {
 			fetch : fetch,
-			destroy : destroy
+			destroy : destroy,
+			put : put
 		}
 	}
 

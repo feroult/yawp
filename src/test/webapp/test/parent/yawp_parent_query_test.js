@@ -1,7 +1,7 @@
 (function(t, yawp, fx) {
 
 	t.moduledef('parent query', {
-		testStart : function(details) {
+		testStart : function() {
 			fx.reset();
 
 			fx.parent('xpto1', {

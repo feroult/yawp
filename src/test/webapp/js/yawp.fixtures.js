@@ -1,6 +1,6 @@
 (function($) {
 
-	// settings
+	// config
 
 	var baseUrl = '/fixtures';
 	var resetUrl = '/_yawp/delete_all';

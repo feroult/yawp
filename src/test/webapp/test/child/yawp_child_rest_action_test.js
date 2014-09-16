@@ -25,6 +25,8 @@
 		// t.start();
 		// });
 
+		// yawp.save(parent, '/children', child);
+
 		yawp.save(parent.id + '/children', child).done(function(retrievedChild) {
 			assert.equal(retrievedChild.name, 'xpto');
 			assert.equal(retrievedChild.parentId, parent.id);

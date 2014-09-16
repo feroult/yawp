@@ -1,5 +1,9 @@
 (function(t) {
 
+	yawp.config(function(c) {
+		c.baseUrl('/api');
+	});
+
 	function moduledef(module, options) {
 		t.module(module);
 		if (options.testStart) {
@@ -14,4 +18,4 @@
 
 	t.moduledef = moduledef;
 
-})(QUnit);
+})(QUnit, yawp, yawp.fixtures);

@@ -2,10 +2,20 @@
 
 	var baseUrl = '/api';
 
+	function config(callback) {
+		var c = {
+			baseUrl : function(uri) {
+				baseUrl = uri;
+			}
+		};
+
+		callback(c);
+	}
+
 	function defaultAjax(type, options) {
 		var request = $.ajax({
 			type : type,
-			url : options.url,
+			url : baseUrl + options.url,
 			data : options.data,
 			async : options.async,
 			contentType : 'application/json;charset=UTF-8',
@@ -36,7 +46,7 @@
 		var args = parseArgs(arguments);
 
 		var options = {
-			url : baseUrl + args.endpoint,
+			url : args.endpoint,
 			data : JSON.stringify(args.object),
 		};
 
@@ -45,7 +55,7 @@
 
 	function idRef(id) {
 		var options = {
-			url : baseUrl + id
+			url : id
 		};
 
 		function fetch(callback) {
@@ -82,7 +92,7 @@
 
 		function list(callback) {
 			var options = {
-				url : baseUrl + endpoint,
+				url : endpoint,
 				data : {
 					q : JSON.stringify(q)
 				}
@@ -100,6 +110,7 @@
 	}
 
 	var api = {
+		config : config,
 		save : save,
 		idRef : idRef,
 		query : query

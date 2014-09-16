@@ -92,6 +92,13 @@
 	function query(endpoint) {
 		var q = {};
 
+		var parentId;
+
+		function from(id) {
+			parentId = id;
+			return this;
+		}
+
 		function where(data) {
 			q.where = data;
 			return this;
@@ -109,7 +116,7 @@
 
 		function list(callback) {
 			var options = {
-				url : endpoint,
+				url : (parentId ? parentId : '') + endpoint,
 				data : {
 					q : JSON.stringify(q)
 				}
@@ -119,6 +126,7 @@
 		}
 
 		return {
+			from : from,
 			where : where,
 			order : order,
 			sort : sort,

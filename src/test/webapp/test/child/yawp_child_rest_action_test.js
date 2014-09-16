@@ -83,44 +83,35 @@
 		});
 
 	});
-	//
-	// t.asyncTest("index", function(assert) {
-	// expect(3);
-	//
-	// fx.child('child1', {
-	// name : 'xpto1'
-	// });
-	//
-	// fx.child('child2', {
-	// name : 'xpto2'
-	// });
-	//
-	// var order = [ {
-	// p : 'name'
-	// } ];
-	//
-	// function eventually(children) {
-	// return children.length == 2 && children[0].name == 'xpto1' &&
-	// children[1].name
-	// == 'xpto2';
-	// }
-	//
-	// function retry() {
-	// yawp.query('/children').order(order).list(function(children) {
-	// if (!eventually(children)) {
-	// retry();
-	// return;
-	// }
-	//
-	// assert.equal(children.length, 2);
-	// assert.equal(children[0].name, 'xpto1');
-	// assert.equal(children[1].name, 'xpto2');
-	// t.start();
-	// });
-	// }
-	//
-	// retry();
-	// });
+
+	t.asyncTest("index", function(assert) {
+		expect(5);
+
+		var parent = fx.parent('parent');
+
+		fx.child('child1', {
+			name : 'xpto1',
+			parentId : parent.id
+		});
+
+		fx.child('child2', {
+			name : 'xpto2',
+			parentId : parent.id
+		});
+
+		var order = [ {
+			p : 'name'
+		} ];
+
+		yawp.query('/children').from(parent.id).order(order).list(function(children) {
+			assert.equal(children.length, 2);
+			assert.equal(children[0].name, 'xpto1');
+			assert.equal(children[1].name, 'xpto2');
+			assert.equal(children[0].parentId, parent.id);
+			assert.equal(children[1].parentId, parent.id);
+			t.start();
+		});
+	});
 	//
 	// t.asyncTest("delete", function(assert) {
 	// expect(2);

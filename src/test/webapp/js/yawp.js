@@ -111,12 +111,27 @@
 			};
 		}
 
+		function get(action) {
+			return defaultAjax('GET', options(action));
+		}
+
 		function put(action) {
 			return defaultAjax('PUT', options(action));
 		}
 
+		function post(action) {
+			return defaultAjax('POST', options(action));
+		}
+
+		function _delete(action) {
+			return defaultAjax('DELETE', options(action));
+		}
+
 		return {
-			put : put
+			get : get,
+			put : put,
+			post : post,
+			_delete : _delete
 		};
 	}
 

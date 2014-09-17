@@ -98,15 +98,8 @@
 		}
 	}
 
-	function query(endpoint) {
+	function query(base) {
 		var q = {};
-
-		var parentId;
-
-		function from(id) {
-			parentId = id;
-			return this;
-		}
 
 		function where(data) {
 			q.where = data;
@@ -125,7 +118,7 @@
 
 		function list(callback) {
 			var options = {
-				url : (parentId ? parentId : '') + endpoint
+				url : base
 			}
 
 			if (Object.keys(q).length > 0) {
@@ -138,7 +131,6 @@
 		}
 
 		return {
-			from : from,
 			where : where,
 			order : order,
 			sort : sort,
@@ -166,16 +158,24 @@
 		}
 	}
 
-	function yawp(arg) {
-		function normalizeBase() {
+	function yawp(baseArg) {
+		function normalize(arg) {
 			if (arg instanceof Object) {
 				return extractId(arg);
 			}
 			return arg;
 		}
 
-		var base = normalizeBase();
-		return $.extend({}, repository(base), query(base));
+		var base = normalize(baseArg);
+
+		function from(parentBaseArg) {
+			var parentBase = normalize(parentBaseArg);
+			return yawp(parentBase + base);
+		}
+
+		return $.extend({
+			from : from
+		}, repository(base), query(base));
 	}
 
 	function saveX(object) {

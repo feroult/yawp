@@ -35,69 +35,6 @@
 		}
 	}
 
-	function save() {
-		function parseArgs(args) {
-			if (args.length == 1) {
-				var object = args[0];
-				return {
-					endpoint : extractId(object),
-					object : object,
-					verb : 'PUT'
-				};
-			}
-
-			return {
-				endpoint : args[0],
-				object : args[1],
-				verb : 'POST'
-			};
-		}
-
-		var args = parseArgs(arguments);
-
-		var options = {
-			url : args.endpoint,
-			data : JSON.stringify(args.object),
-		};
-
-		return defaultAjax(args.verb, options);
-	}
-
-	function destroy(object) {
-		var options = {
-			url : extractId(object)
-		};
-		return defaultAjax('DELETE', options);
-	}
-
-	function idRef(id) {
-		var options = {
-			url : id
-		};
-
-		function fetch(callback) {
-			return defaultAjax('GET', options).done(callback);
-		}
-
-		function destroy(callback) {
-			return defaultAjax('DELETE', options).done(callback);
-		}
-
-		function put(action) {
-			var putOptions = $.extend({}, options, {
-				url : options.url + '/' + action
-			});
-
-			return defaultAjax('PUT', putOptions);
-		}
-
-		return {
-			fetch : fetch,
-			destroy : destroy,
-			put : put
-		}
-	}
-
 	function query(base) {
 		var q = {};
 
@@ -191,7 +128,7 @@
 
 		return $.extend({
 			from : from
-		}, repository(base), query(base), actions(base));
+		}, query(base), repository(base), actions(base));
 	}
 
 	function saveX(object) {
@@ -211,14 +148,9 @@
 	}
 
 	var api = {
-		saveX : saveX,
-		destroyX : destroyX,
-
 		config : config,
-		save : save,
-		destroy : destroy,
-		idRef : idRef,
-		query : query
+		saveX : saveX,
+		destroyX : destroyX
 	};
 
 	$.extend(yawp, api);

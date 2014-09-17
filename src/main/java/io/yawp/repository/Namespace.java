@@ -13,18 +13,19 @@ public class Namespace {
 	protected String previousNs;
 
 	public Namespace() {
-		this(GLOBAL);
 	}
 
 	public Namespace(String ns) {
-		this.ns = normalizeNs(ns);
+		this.ns = ns;
 	}
 
 	public void set(Class<?> clazz) {
 		previousNs = NamespaceManager.get();
-		if (clazz.isAnnotationPresent(Global.class)) {
-			NamespaceManager.set(GLOBAL);
-		} else {
+		configureNs(clazz.isAnnotationPresent(Global.class) ? GLOBAL : ns);
+	}
+
+	private void configureNs(String ns) {
+		if (ns != null) {
 			NamespaceManager.set(ns);
 		}
 	}
@@ -34,14 +35,11 @@ public class Namespace {
 	}
 
 	public void setNs(String ns) {
-		this.ns = normalizeNs(ns);
+		this.ns = ns;
 	}
 
 	public String getNs() {
 		return ns;
 	}
 
-	private String normalizeNs(String ns) {
-		return ns == null ? GLOBAL : ns;
-	}
 }

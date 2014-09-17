@@ -108,34 +108,15 @@
 			name : 'xpto'
 		});
 
-		yawp.destroy(parent).done(function(retrievedParent) {
+		yawp.destroyX(parent).done(function(retrievedParent) {
 			t.equal(parent.id, retrievedParent.id);
 
 		}).then(function() {
-			yawp.idRef(parent.id).fetch().fail(function(error) {
+			yawp(parent).fetch().fail(function(error) {
 				assert.equal(error.status, 404);
 				t.start();
 			});
 		});
-	});
-
-	t.asyncTest("destroy from idRef", function(assert) {
-		expect(2);
-
-		var parent = fx.parent('parent', {
-			name : 'xpto'
-		});
-
-		yawp.idRef(parent.id).destroy(function(retrievedParent) {
-			t.equal(parent.id, retrievedParent.id);
-
-		}).then(function() {
-			yawp.idRef(parent.id).fetch().fail(function(error) {
-				assert.equal(error.status, 404);
-				t.start();
-			});
-		});
-
 	});
 
 })(QUnit, yawp, yawp.fixtures);

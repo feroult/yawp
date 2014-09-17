@@ -187,8 +187,16 @@
 		return defaultAjax('PUT', options);
 	}
 
+	function destroyX(object) {
+		var options = {
+			url : extractId(object)
+		};
+		return defaultAjax('DELETE', options);
+	}
+
 	var api = {
 		saveX : saveX,
+		destroyX : destroyX,
 
 		config : config,
 		save : save,

@@ -52,7 +52,7 @@
 		}
 
 		function retry() {
-			yawp.query('/parents').order(order).list(function(parents) {
+			yawp('/parents').order(order).list(function(parents) {
 				if (!eventually(parents)) {
 					retry();
 					return;
@@ -81,7 +81,7 @@
 		}
 
 		function retry() {
-			yawp.query('/parents').sort(sort).list(function(parents) {
+			yawp('/parents').sort(sort).list(function(parents) {
 				if (!eventually(parents)) {
 					retry();
 					return;

@@ -146,17 +146,10 @@
 		};
 	}
 
-	function yawp(arg) {
-		function base() {
-			if (arg instanceof Object) {
-				return extractId(arg);
-			}
-			return arg;
-		}
-
+	function repository(base) {
 		var options = {
-			url : base()
-		}
+			url : base
+		};
 
 		function save(object) {
 			options.data = JSON.stringify(object);
@@ -171,6 +164,18 @@
 			save : save,
 			fetch : fetch
 		}
+	}
+
+	function yawp(arg) {
+		function normalizeBase() {
+			if (arg instanceof Object) {
+				return extractId(arg);
+			}
+			return arg;
+		}
+
+		var base = normalizeBase();
+		return $.extend({}, repository(base), query(base));
 	}
 
 	function saveX(object) {

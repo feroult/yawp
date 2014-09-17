@@ -1,5 +1,6 @@
 package io.yawp.repository;
 
+import com.google.appengine.api.datastore.*;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
@@ -9,12 +10,6 @@ import io.yawp.utils.EntityUtils;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 
 public class Repository {
 

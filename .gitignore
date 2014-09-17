@@ -8,9 +8,9 @@ target
 test-output
 bin
 
-endpoint.iml
-endpoint.ipr
-endpoint.iws
+yawp.iml
+yawp.iws
+yawp.ipr
 
 # Package Files #
 *.jar

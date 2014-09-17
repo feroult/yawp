@@ -31,10 +31,10 @@
 		});
 
 		waitParentsThen(function() {
-			yawp('/parents').put('touched').done(function(retrievedParents) {
-				assert.equal(retrievedParents.length, 2);
-				assert.equal(retrievedParents[0].name, 'touched xpto1');
-				assert.equal(retrievedParents[1].name, 'touched xpto2');
+			yawp('/parents').put('touched').done(function(parents) {
+				assert.equal(parents.length, 2);
+				assert.equal(parents[0].name, 'touched xpto1');
+				assert.equal(parents[1].name, 'touched xpto2');
 				t.start();
 			});
 		});

@@ -45,7 +45,7 @@
 
 		parent.name = 'changed xpto';
 
-		yawp.saveX(parent).done(function(retrievedParent) {
+		yawp.update(parent).done(function(retrievedParent) {
 			assert.equal(retrievedParent.name, 'changed xpto');
 			t.start();
 		});
@@ -108,7 +108,7 @@
 			name : 'xpto'
 		});
 
-		yawp.destroyX(parent).done(function(retrievedParent) {
+		yawp.destroy(parent).done(function(retrievedParent) {
 			t.equal(parent.id, retrievedParent.id);
 
 		}).then(function() {

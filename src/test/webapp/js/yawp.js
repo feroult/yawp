@@ -29,10 +29,7 @@
 		if (object.id) {
 			return object.id;
 		}
-		var key;
-		for (key in object) {
-			return object[key];
-		}
+		return '';
 	}
 
 	function query(base) {
@@ -85,12 +82,24 @@
 			return defaultAjax('POST', options);
 		}
 
+		function update(object) {
+			options.data = JSON.stringify(object);
+			return defaultAjax('PUT', options);
+		}
+
+		function destroy(object) {
+			options.data = JSON.stringify(object);
+			return defaultAjax('DELETE', options);
+		}
+
 		function fetch(callback) {
 			return defaultAjax('GET', options).done(callback);
 		}
 
 		return {
 			save : save,
+			update : update,
+			destroy : destroy,
 			fetch : fetch
 		};
 	}
@@ -113,6 +122,9 @@
 
 	function yawp(baseArg) {
 		function normalize(arg) {
+			if (!arg) {
+				return '';
+			}
 			if (arg instanceof Object) {
 				return extractId(arg);
 			}
@@ -131,26 +143,20 @@
 		}, query(base), repository(base), actions(base));
 	}
 
-	function saveX(object) {
-		var options = {
-			url : extractId(object),
-			data : JSON.stringify(object),
-		};
-
-		return defaultAjax('PUT', options);
+	function update(object) {
+		var id = extractId(object);
+		return yawp(id).update(object);
 	}
 
-	function destroyX(object) {
-		var options = {
-			url : extractId(object)
-		};
-		return defaultAjax('DELETE', options);
+	function destroy(object) {
+		var id = extractId(object);
+		return yawp(id).destroy(object);
 	}
 
 	var api = {
 		config : config,
-		saveX : saveX,
-		destroyX : destroyX
+		update : update,
+		destroy : destroy
 	};
 
 	window.yawp = $.extend(yawp, api);

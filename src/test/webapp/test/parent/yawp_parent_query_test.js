@@ -24,7 +24,7 @@
 		}
 
 		function retry() {
-			yawp.query('/parents').where(where).list(function(parents) {
+			yawp('/parents').where(where).list(function(parents) {
 				if (!eventually(parents)) {
 					retry();
 					return;

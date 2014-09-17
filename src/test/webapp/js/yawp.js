@@ -105,14 +105,14 @@
 	}
 
 	function actions(base) {
-		var options = {
-			url : base
-		};
+		function options(action) {
+			return {
+				url : base + '/' + action
+			};
+		}
 
 		function put(action) {
-			var putOptions = $.extend({}, options);
-			putOptions.url = options.url + '/' + action;
-			return defaultAjax('PUT', putOptions);
+			return defaultAjax('PUT', options(action));
 		}
 
 		return {

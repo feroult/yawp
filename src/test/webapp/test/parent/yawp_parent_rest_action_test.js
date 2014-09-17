@@ -13,7 +13,7 @@
 			name : 'xpto'
 		};
 
-		yawp('/parents').save(parent).done(function(retrievedParent) {
+		yawp('/parents').create(parent).done(function(retrievedParent) {
 			assert.equal(retrievedParent.name, 'xpto');
 			t.start();
 		});
@@ -28,7 +28,7 @@
 			name : 'xpto2'
 		} ];
 
-		yawp('/parents').save(parents).done(function(retrievedParents) {
+		yawp('/parents').create(parents).done(function(retrievedParents) {
 			assert.equal(retrievedParents.length, 2)
 			assert.equal(retrievedParents[0].name, 'xpto1');
 			assert.equal(retrievedParents[1].name, 'xpto2');

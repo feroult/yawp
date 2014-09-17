@@ -18,7 +18,7 @@
 			parentId : parent.id
 		};
 
-		yawp('/children').from(parent).save(child).done(function(retrievedChild) {
+		yawp('/children').from(parent).create(child).done(function(retrievedChild) {
 			assert.equal(retrievedChild.name, 'xpto');
 			assert.equal(retrievedChild.parentId, parent.id);
 			t.start();
@@ -38,7 +38,7 @@
 			parentId : parent.id
 		} ];
 
-		yawp('/children').from(parent).save(children).done(function(retrievedChidren) {
+		yawp('/children').from(parent).create(children).done(function(retrievedChidren) {
 			assert.equal(retrievedChidren.length, 2)
 			assert.equal(retrievedChidren[0].name, 'xpto1');
 			assert.equal(retrievedChidren[1].name, 'xpto2');

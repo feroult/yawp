@@ -29,7 +29,7 @@
 		if (object.id) {
 			return object.id;
 		}
-		return '';
+		throw 'use yawp(id) if your endpoint does not have a @Id field called id';
 	}
 
 	function query(base) {
@@ -77,7 +77,7 @@
 			url : base
 		};
 
-		function save(object) {
+		function create(object) {
 			options.data = JSON.stringify(object);
 			return defaultAjax('POST', options);
 		}
@@ -97,7 +97,7 @@
 		}
 
 		return {
-			save : save,
+			create : create,
 			update : update,
 			destroy : destroy,
 			fetch : fetch

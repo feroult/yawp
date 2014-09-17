@@ -19,7 +19,7 @@ public class ParentAction extends Action<Parent> {
 
 	@PUT(value = "touched", overCollection = true)
 	public List<Parent> touch() {
-		List<Parent> parents = r.query(Parent.class).list();
+		List<Parent> parents = r.query(Parent.class).order("name").list();
 		for (Parent parent : parents) {
 			parent.setName("touched " + parent.getName());
 		}

@@ -153,8 +153,6 @@
 		destroyX : destroyX
 	};
 
-	$.extend(yawp, api);
-
-	window.yawp = yawp;
+	window.yawp = $.extend(yawp, api);
 
 })(jQuery);

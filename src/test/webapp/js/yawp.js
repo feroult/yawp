@@ -146,7 +146,45 @@
 		};
 	}
 
+	function yawp(arg) {
+		function base() {
+			if (arg instanceof Object) {
+				return extractId(arg);
+			}
+			return arg;
+		}
+
+		var options = {
+			url : base()
+		}
+
+		function save(object) {
+			options.data = JSON.stringify(object);
+			return defaultAjax('POST', options);
+		}
+
+		function fetch(callback) {
+			return defaultAjax('GET', options).done(callback);
+		}
+
+		return {
+			save : save,
+			fetch : fetch
+		}
+	}
+
+	function saveX(object) {
+		var options = {
+			url : extractId(object),
+			data : JSON.stringify(object),
+		};
+
+		return defaultAjax('PUT', options);
+	}
+
 	var api = {
+		saveX : saveX,
+
 		config : config,
 		save : save,
 		destroy : destroy,
@@ -154,6 +192,8 @@
 		query : query
 	};
 
-	window.yawp = api;
+	$.extend(yawp, api);
+
+	window.yawp = yawp;
 
 })(jQuery);

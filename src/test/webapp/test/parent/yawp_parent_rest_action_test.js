@@ -13,7 +13,7 @@
 			name : 'xpto'
 		};
 
-		yawp.save('/parents', parent).done(function(retrievedParent) {
+		yawp('/parents').save(parent).done(function(retrievedParent) {
 			assert.equal(retrievedParent.name, 'xpto');
 			t.start();
 		});
@@ -28,7 +28,7 @@
 			name : 'xpto2'
 		} ];
 
-		yawp.save('/parents', parents).done(function(retrievedParents) {
+		yawp('/parents').save(parents).done(function(retrievedParents) {
 			assert.equal(retrievedParents.length, 2)
 			assert.equal(retrievedParents[0].name, 'xpto1');
 			assert.equal(retrievedParents[1].name, 'xpto2');
@@ -45,7 +45,7 @@
 
 		parent.name = 'changed xpto';
 
-		yawp.save(parent).done(function(retrievedParent) {
+		yawp.saveX(parent).done(function(retrievedParent) {
 			assert.equal(retrievedParent.name, 'changed xpto');
 			t.start();
 		});
@@ -58,7 +58,7 @@
 			name : 'xpto'
 		});
 
-		yawp.idRef(parent.id).fetch(function(retrievedParent) {
+		yawp(parent).fetch(function(retrievedParent) {
 			assert.equal(retrievedParent.name, 'xpto');
 			t.start();
 		});

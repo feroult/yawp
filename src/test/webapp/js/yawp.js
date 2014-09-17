@@ -155,7 +155,23 @@
 		return {
 			save : save,
 			fetch : fetch
+		};
+	}
+
+	function actions(base) {
+		var options = {
+			url : base
+		};
+
+		function put(action) {
+			var putOptions = $.extend({}, options);
+			putOptions.url = options.url + '/' + action;
+			return defaultAjax('PUT', putOptions);
 		}
+
+		return {
+			put : put
+		};
 	}
 
 	function yawp(baseArg) {
@@ -175,7 +191,7 @@
 
 		return $.extend({
 			from : from
-		}, repository(base), query(base));
+		}, repository(base), query(base), actions(base));
 	}
 
 	function saveX(object) {

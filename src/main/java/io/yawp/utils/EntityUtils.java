@@ -93,7 +93,7 @@ public class EntityUtils {
 		try {
 			parentIdField.set(object, parentId);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new RuntimeException("Unexpected exception", e);
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -102,7 +102,7 @@ public class EntityUtils {
 		try {
 			idField.set(object, id);
 		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new RuntimeException("Unexpected exception", e);
+			throw new RuntimeException(e);
 		}
 		setParentId(object, id.getParentId());
 	}

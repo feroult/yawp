@@ -204,12 +204,8 @@ public class EntityUtils {
 
 	private static Field getIdField(Class<?> clazz) {
 		Field field = getAnnotatedIdFromClass(clazz);
-
 		if (field == null) {
-			field = getKeyFieldFromClass(clazz);
-			if (field == null) {
-				throw new RuntimeException("No @Id annotated field found in class " + clazz.getSimpleName());
-			}
+			throw new RuntimeException("No @Id annotated field found in class " + clazz.getSimpleName());
 		}
 		return field;
 	}
@@ -236,15 +232,6 @@ public class EntityUtils {
 		}
 
 		return theField;
-	}
-
-	private static Field getKeyFieldFromClass(Class<?> clazz) {
-		for (Field field : ReflectionUtils.getFieldsRecursively(clazz)) {
-			if (Key.class.isAssignableFrom(field.getType())) {
-				return field;
-			}
-		}
-		return null;
 	}
 
 	public static Object getIdSimpleValue(Object object) {

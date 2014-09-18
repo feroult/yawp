@@ -119,23 +119,6 @@ public class EntityUtils {
 		return null;
 	}
 
-	public static IdRef<?> getIdRef(Object object) {
-		Field idField = EntityUtils.getAnnotatedIdFromClass(object.getClass());
-		if (idField != null) {
-			try {
-				Object potentialIdRef = idField.get(object);
-				if (potentialIdRef instanceof IdRef<?>) {
-					return (IdRef<?>) potentialIdRef;
-				} else {
-					return null;
-				}
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				throw new RuntimeException("Unexpected error.", e);
-			}
-		}
-		return null;
-	}
-
 	public static Key getParentKey(Object object) {
 		IdRef<?> parentIdRef = getParentIdRef(object);
 		if (parentIdRef == null) {

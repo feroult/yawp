@@ -89,7 +89,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return new IdRef<TT>(r, clazz, id);
 	}
 
-	private static <TT> IdRef<TT> create(Repository r, Class<TT> clazz, String name) {
+	public static <TT> IdRef<TT> create(Repository r, Class<TT> clazz, String name) {
 		return new IdRef<TT>(r, clazz, name);
 	}
 

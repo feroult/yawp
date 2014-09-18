@@ -9,12 +9,12 @@ import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Job;
 import io.yawp.repository.models.parents.Parent;
 import io.yawp.utils.EndpointTestCase;
-import io.yawp.utils.HttpVerb;
 import io.yawp.utils.JsonUtils;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class IdRefTest extends EndpointTestCase {
@@ -22,6 +22,17 @@ public class IdRefTest extends EndpointTestCase {
 	@Test
 	public void testFetch() {
 		Parent parent = new Parent("xpto");
+		r.save(parent);
+
+		Parent retrievedParent = parent.getId().fetch();
+		assertEquals("xpto", retrievedParent.getName());
+	}
+
+	@Test
+	@Ignore
+	public void testFetchWithName() {
+		Parent parent = new Parent("xpto");
+		parent.setId(IdRef.create(r, Parent.class, "x"));
 		r.save(parent);
 
 		Parent retrievedParent = parent.getId().fetch();

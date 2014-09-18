@@ -198,6 +198,9 @@ public class IdRefTest extends EndpointTestCase {
 
 	@Test
 	public void testParseEndingWithActionOverObject() {
+		assertNull(IdRef.parse(r, PUT, "/parents/touched"));
+		assertNull(IdRef.parse(r, GET, "/parents/something"));
+
 		assertIdRef(IdRef.parse(r, PUT, "/parents/1/touched"), Parent.class, 1l);
 		assertIdRef(IdRef.parse(r, PUT, "/parents/1/children/2/touched"), Child.class, 2l);
 

@@ -1,7 +1,7 @@
 package io.yawp.repository.actions;
 
 import io.yawp.repository.IdRef;
-import io.yawp.repository.actions.Action;
+import io.yawp.repository.actions.annotations.GET;
 import io.yawp.repository.actions.annotations.PUT;
 import io.yawp.repository.models.parents.Parent;
 
@@ -24,6 +24,11 @@ public class ParentAction extends Action<Parent> {
 			parent.setName("touched " + parent.getName());
 		}
 		return parents;
+	}
+
+	@GET(value = "something", overCollection = true)
+	public String something() {
+		return "touched";
 	}
 
 	@PUT("touched_with_params")

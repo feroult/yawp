@@ -155,7 +155,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		String endpointPath = "/" + parts[parts.length - 2];
 		String possibleAction = parts[parts.length - 1];
 
-		ActionKey actionKey = new ActionKey(verb, possibleAction, false);
+		ActionKey actionKey = new ActionKey(verb, possibleAction, true);
 		return r.getFeatures().hasCustomAction(endpointPath, actionKey);
 	}
 

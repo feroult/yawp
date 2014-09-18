@@ -94,6 +94,18 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return ref;
 	}
 
+	public <TT> IdRef<TT> createChildId(Class<TT> clazz, Long id) {
+		IdRef<TT> idRef = new IdRef<TT>(r, clazz, id);
+		idRef.setParentId(this);
+		return idRef;
+	}
+
+	public <TT> IdRef<TT> createChildId(Class<TT> clazz, String name) {
+		IdRef<TT> idRef = new IdRef<TT>(r, clazz, name);
+		idRef.setParentId(this);
+		return idRef;
+	}
+
 	public static <TT> IdRef<TT> create(Repository r, Class<TT> clazz, Long id) {
 		return new IdRef<TT>(r, clazz, id);
 	}

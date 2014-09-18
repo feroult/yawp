@@ -14,7 +14,6 @@ import io.yawp.utils.JsonUtils;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class IdRefAsStringTest extends EndpointTestCase {
@@ -77,11 +76,10 @@ public class IdRefAsStringTest extends EndpointTestCase {
 	}
 
 	@Test
-	@Ignore
 	public void testFetchChild() {
 		Parent parent = saveParent("xpto");
 
-		saveChild(parent, "child xpto");
+		saveChild("child xpto", parent);
 
 		Child retrievedChild = parent.getId().child(Child.class);
 		assertEquals("child xpto", retrievedChild.getName());
@@ -172,9 +170,9 @@ public class IdRefAsStringTest extends EndpointTestCase {
 		return parent;
 	}
 
-	private void saveChild(Parent parent, String name) {
+	private void saveChild(String name, Parent parent) {
 		Child child = new Child(name);
-		child.setId(IdRef.create(r, Child.class, name));
+		child.setId(parent.getId().createChildId(Child.class, name));
 		child.setParentId(parent.getId());
 		r.save(child);
 	}

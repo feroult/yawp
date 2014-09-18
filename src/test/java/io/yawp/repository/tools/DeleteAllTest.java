@@ -2,7 +2,6 @@ package io.yawp.repository.tools;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import io.yawp.repository.tools.DeleteAll;
 import io.yawp.utils.EndpointTestCase;
 
 import org.junit.Before;

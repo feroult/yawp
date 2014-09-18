@@ -3,8 +3,6 @@ package io.yawp.servlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import io.yawp.repository.Repository;
-import io.yawp.servlet.EndpointServlet;
-import io.yawp.servlet.HttpException;
 import io.yawp.utils.EndpointTestCase;
 import io.yawp.utils.EntityUtils;
 import io.yawp.utils.JsonUtils;

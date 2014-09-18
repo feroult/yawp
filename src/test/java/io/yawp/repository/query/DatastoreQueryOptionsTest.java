@@ -3,10 +3,6 @@ package io.yawp.repository.query;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import io.yawp.repository.query.BaseCondition;
-import io.yawp.repository.query.DatastoreQueryOptions;
-import io.yawp.repository.query.DatastoreQueryOrder;
-import io.yawp.repository.query.LogicalOperator;
 import io.yawp.repository.query.BaseCondition.JoinedCondition;
 import io.yawp.repository.query.BaseCondition.SimpleCondition;
 

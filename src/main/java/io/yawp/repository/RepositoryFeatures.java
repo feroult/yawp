@@ -27,8 +27,7 @@ public class RepositoryFeatures {
 							+ ")");
 				}
 				if (!isValidEndpointPath(endpointPath)) {
-					throw new RuntimeException("Invalid io.yawp path " + endpointPath + " for class "
-							+ endpoint.getClazz().getSimpleName());
+					throw new RuntimeException("Invalid io.yawp path " + endpointPath + " for class " + endpoint.getClazz().getSimpleName());
 				}
 				paths.put(endpointPath, endpoint.getClazz());
 			}

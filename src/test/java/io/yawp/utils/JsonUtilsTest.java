@@ -2,7 +2,6 @@ package io.yawp.utils;
 
 import static org.junit.Assert.assertEquals;
 import io.yawp.repository.models.basic.BasicObject;
-import io.yawp.utils.JsonUtils;
 
 import java.util.Arrays;
 import java.util.HashMap;

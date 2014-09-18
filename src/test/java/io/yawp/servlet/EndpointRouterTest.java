@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
-import io.yawp.servlet.EndpointRouter;
 import io.yawp.utils.EndpointTestCase;
 import io.yawp.utils.HttpVerb;
 

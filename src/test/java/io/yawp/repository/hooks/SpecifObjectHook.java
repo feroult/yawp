@@ -1,6 +1,5 @@
 package io.yawp.repository.hooks;
 
-import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.models.basic.HookedObject;
 import io.yawp.repository.query.DatastoreQuery;
 

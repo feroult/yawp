@@ -38,7 +38,7 @@ public class RepositoryHooks {
 			}
 		} catch (InstantiationException ex) {
 			throw new RuntimeException("The Hook class " + hookClazz.getSimpleName()
-			        + " must have a default constructor, and it must not throw exceptions.", ex);
+					+ " must have a default constructor, and it must not throw exceptions.", ex);
 		} catch (InvocationTargetException | IllegalAccessException | IllegalArgumentException ex) {
 			throw ThrownExceptionsUtils.handle(ex);
 		}

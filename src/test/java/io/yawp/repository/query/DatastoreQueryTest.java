@@ -5,9 +5,6 @@ import static io.yawp.repository.query.Condition.c;
 import static io.yawp.repository.query.Condition.or;
 import static org.junit.Assert.assertEquals;
 import io.yawp.repository.models.basic.BasicObject;
-import io.yawp.repository.query.BaseCondition;
-import io.yawp.repository.query.DatastoreQuery;
-import io.yawp.repository.query.DatastoreQueryOptions;
 import io.yawp.utils.EndpointTestCase;
 
 import java.util.Arrays;

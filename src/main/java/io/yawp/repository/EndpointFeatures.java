@@ -44,8 +44,8 @@ public class EndpointFeatures<T> {
 	private <V> void assertInexistence(V key, Method method, Map<V, Method> map, String type) {
 		if (map.get(key) != null) {
 			throw new RuntimeException("Trying to add two " + type + " with the same name '" + key + "' to io.yawp "
-			        + clazz.getSimpleName() + ": one at " + map.get(key).getDeclaringClass().getSimpleName() + " and the other at "
-			        + method.getDeclaringClass().getSimpleName());
+					+ clazz.getSimpleName() + ": one at " + map.get(key).getDeclaringClass().getSimpleName() + " and the other at "
+					+ method.getDeclaringClass().getSimpleName());
 		}
 	}
 

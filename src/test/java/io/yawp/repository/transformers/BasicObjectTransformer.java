@@ -1,7 +1,6 @@
 package io.yawp.repository.transformers;
 
 import io.yawp.repository.models.basic.BasicObject;
-import io.yawp.repository.transformers.Transformer;
 
 import java.util.HashMap;
 import java.util.Map;

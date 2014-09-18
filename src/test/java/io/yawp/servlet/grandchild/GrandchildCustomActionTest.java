@@ -2,7 +2,6 @@ package io.yawp.servlet.grandchild;
 
 import static org.junit.Assert.assertEquals;
 import io.yawp.repository.models.parents.Grandchild;
-import io.yawp.servlet.grandchild.GrandchildServletTestCase;
 
 import java.util.List;
 

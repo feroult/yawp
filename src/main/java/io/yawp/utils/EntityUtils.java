@@ -339,22 +339,6 @@ public class EntityUtils {
 		return idRef.asKey();
 	}
 
-	public static Key createKey(IdRef<?> id) {
-		if (id == null) {
-			return null;
-		}
-		Key parentKey = createKey(id.getParentId());
-		return createKey(parentKey, id.asLong(), id.getClazz());
-	}
-
-	public static Key createKey(Long id, Class<?> clazz) {
-		return KeyFactory.createKey(getKindFromClass(clazz), id);
-	}
-
-	public static Key createKey(Key parentKey, Long id, Class<?> clazz) {
-		return KeyFactory.createKey(parentKey, getKindFromClass(clazz), id);
-	}
-
 	private static void setEntityProperty(Object object, Entity entity, Field field) {
 		Object value = getFieldValue(field, object);
 

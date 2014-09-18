@@ -89,7 +89,7 @@ public class DatastoreQuery<T> {
 
 		r.namespace().set(getClazz());
 		try {
-			parentKey = EntityUtils.createKey(parentId);
+			parentKey = parentId.asKey();
 			return this;
 		} finally {
 			r.namespace().reset();

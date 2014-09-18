@@ -168,27 +168,29 @@ public class EntityUtils {
 	}
 
 	public static Key getKey(Object object) {
-		try {
-			Field idField = getIdField(object.getClass());
-
-			if (idField.get(object) == null) {
-				return null;
-			}
-
-			return createKeyFromIdField(object, idField);
-
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
+		IdRef<?> idRef = getIdRef(object);
+		if (idRef == null) {
+			return null;
 		}
+		return idRef.asKey();
+
 	}
 
-	private static Key createKeyFromIdField(Object object, Field field) throws IllegalAccessException {
+	private static IdRef<?> getIdRef(Object object) {
+		Field field = getIdField(object.getClass());
+
 		if (!isIdRef(field)) {
 			throw new RuntimeException("@Id must be " + IdRef.class.getSimpleName());
 		}
 
-		IdRef<?> id = (IdRef<?>) field.get(object);
-		return id.asKey();
+		try {
+
+			IdRef<?> id = (IdRef<?>) field.get(object);
+			return id;
+
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static String getIdFieldName(Class<?> clazz) {

@@ -308,12 +308,6 @@ public class DatastoreQuery<T> {
 	}
 
 	private PreparedQuery prepareQuery(boolean keysOnly) throws FalsePredicateException {
-		Class<?> idClass = condition == null ? null : condition.getIdTypeFor(clazz);
-		boolean isByIdWithoutIdRef = idClass != null && !IdRef.class.isAssignableFrom(idClass);
-		if (isByIdWithoutIdRef && parentKey != null) {
-			throw new RuntimeException(
-					"You have to use IdRef in the where when searching by @Id in a query with .from(IdRef<?>) specified.");
-		}
 		Query q = new Query(EntityUtils.getKindFromClass(clazz));
 
 		if (keysOnly) {

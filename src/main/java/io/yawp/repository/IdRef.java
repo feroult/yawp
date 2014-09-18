@@ -82,7 +82,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		if (key == null) {
 			return null;
 		}
-		Class<?> objectClass = EntityUtils.getClassFromKind(key.getKind());
+		Class<?> objectClass = EntityUtils.getClassFromKind(r, key.getKind());
 
 		IdRef<?> ref = null;
 		if (key.getName() != null) {

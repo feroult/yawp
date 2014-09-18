@@ -3,6 +3,7 @@ package io.yawp.utils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.actions.Action;
+import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
@@ -30,7 +31,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.Text;
 
 // TODO move to repository package
@@ -45,15 +45,12 @@ public class EntityUtils {
 	}
 
 	public static String getKindFromClass(Class<?> clazz) {
-		return clazz.getCanonicalName();
+		Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
+		return endpoint.path();
 	}
 
-	public static Class<?> getClassFromKind(String kind) {
-		try {
-			return Class.forName(kind);
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException("Kind not related to any class: " + kind);
-		}
+	public static Class<?> getClassFromKind(Repository r, String kind) {
+		return r.getFeatures().get(kind).getClazz();
 	}
 
 	public static void toEntity(Object object, Entity entity) {

@@ -166,15 +166,16 @@ public class IdRefTest extends EndpointTestCase {
 	public void testParseUriWithActionOverCollection() {
 		assertNull(IdRef.parse(r, HttpVerb.GET, "/parents"));
 
-		assertIdRef(IdRef.parse(r, HttpVerb.GET, "/parents/1/children/action"), Parent.class, 1l);
-		assertIdRef(IdRef.parse(r, HttpVerb.GET, "/parents/1/children/2/grandchildren/action"), Child.class, 2l);
+		assertIdRef(IdRef.parse(r, HttpVerb.PUT, "/parents/1/children/touched"), Parent.class, 1l);
+		assertIdRef(IdRef.parse(r, HttpVerb.PUT, "/parents/1/children/2/grandchildren/touched"), Child.class, 2l);
 	}
 
 	@Test
 	public void testToString() {
 		assertEquals("/parents/1", IdRef.parse(r, HttpVerb.GET, "/parents/1").toString());
 		assertEquals("/parents/1/children/2", IdRef.parse(r, HttpVerb.GET, "/parents/1/children/2").toString());
-		assertEquals("/parents/1/children/2/grandchildren/3", IdRef.parse(r, HttpVerb.GET, "/parents/1/children/2/grandchildren/3").toString());
+		assertEquals("/parents/1/children/2/grandchildren/3", IdRef.parse(r, HttpVerb.GET, "/parents/1/children/2/grandchildren/3")
+				.toString());
 	}
 
 	private Parent saveParentWithJob() {

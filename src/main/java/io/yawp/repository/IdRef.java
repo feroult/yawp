@@ -1,5 +1,6 @@
 package io.yawp.repository;
 
+import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.DatastoreQuery;
 import io.yawp.utils.EntityUtils;
 import io.yawp.utils.HttpVerb;
@@ -111,7 +112,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		IdRef<TT> lastIdRef = null;
 
 		for (int i = 0; i < parts.length; i += 2) {
-			if (isActionOrCollection(parts, i)) {
+			if (isActionOrCollection(r, verb, parts, i)) {
 				break;
 			}
 
@@ -119,14 +120,13 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 			IdRef<TT> currentIdRef = null;
 
-			// if (!isString(parts[i + 1])) {
-			Long asLong = Long.valueOf(parts[i + 1]);
-			currentIdRef = (IdRef<TT>) create(r, getIdRefClazz(r, endpointPath), asLong);
-			// } else {
-			// String asString = parts[i + 1];
-			// currentIdRef = (IdRef<TT>) create(r, getIdRefClazz(r,
-			// endpointPath), asString);
-			// }
+			if (!isString(parts[i + 1])) {
+				Long asLong = Long.valueOf(parts[i + 1]);
+				currentIdRef = (IdRef<TT>) create(r, getIdRefClazz(r, endpointPath), asLong);
+			} else {
+				String asString = parts[i + 1];
+				currentIdRef = (IdRef<TT>) create(r, getIdRefClazz(r, endpointPath), asString);
+			}
 
 			currentIdRef.setParentId(lastIdRef);
 			lastIdRef = currentIdRef;
@@ -139,7 +139,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return r.getFeatures().get(endpointPath).getClazz();
 	}
 
-	private static boolean isActionOrCollection(String[] parts, int i) {
+	private static boolean isActionOrCollection(Repository r, HttpVerb verb, String[] parts, int i) {
 		if (i < parts.length - 2) {
 			return false;
 		}
@@ -152,14 +152,11 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 			return false;
 		}
 
-		return true;
-		// String endpointPath = "/" + parts[parts.length - 2];
-		// String possibleAction = parts[parts.length - 1];
-		//
-		// ActionKey actionKey = new ActionKey(null, possibleAction, false);
-		// return
+		String endpointPath = "/" + parts[parts.length - 2];
+		String possibleAction = parts[parts.length - 1];
 
-		// return parts.length == i + 1 || isString(parts[i + 1]);
+		ActionKey actionKey = new ActionKey(verb, possibleAction, false);
+		return r.getFeatures().hasCustomAction(endpointPath, actionKey);
 	}
 
 	private static boolean isString(String s) {

@@ -177,6 +177,25 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		}
 	}
 
+	public void delete() {
+		r.destroy(this);
+	}
+
+	public List<IdRef<?>> children() {
+		List<IdRef<?>> ids = new ArrayList<>();
+		for (EndpointFeatures<?> childEndpoint : r.getFeatures().getChildren(clazz)) {
+			ids.addAll(r.query(childEndpoint.getClazz()).from(this).ids());
+		}
+		return ids;
+	}
+
+	public Object getSimpleValue() {
+		if (id != null) {
+			return id;
+		}
+		return name;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -234,17 +253,4 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		sb.append(id != null ? id : name);
 		return sb.toString();
 	}
-
-	public void delete() {
-		r.destroy(this);
-	}
-
-	public List<IdRef<?>> children() {
-		List<IdRef<?>> ids = new ArrayList<>();
-		for (EndpointFeatures<?> childEndpoint : r.getFeatures().getChildren(clazz)) {
-			ids.addAll(r.query(childEndpoint.getClazz()).from(this).ids());
-		}
-		return ids;
-	}
-
 }

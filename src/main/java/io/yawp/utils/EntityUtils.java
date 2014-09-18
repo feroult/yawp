@@ -247,8 +247,9 @@ public class EntityUtils {
 		return null;
 	}
 
-	public static Long getKeySimpleValue(Object object) {
-		return getKey(object).getId();
+	public static Object getKeySimpleValue(Object object) {
+		IdRef<?> idRef = getIdRef(object);
+		return idRef.getSimpleValue();
 	}
 
 	public static Class<?> getListType(Field field) {

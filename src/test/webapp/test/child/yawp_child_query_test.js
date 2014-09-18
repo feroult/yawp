@@ -48,7 +48,7 @@
 		});
 	});
 
-	t.asyncTest('global', function(assert) {
+	t.asyncTest('global query', function(assert) {
 		expect(9);
 
 		var parent1 = fx.parent('parent1');
@@ -70,6 +70,23 @@
 			assert.ok(children[1].parentId == parent1.id || children[1].parentId == parent2.id);
 			assert.equal(children[2].parentId, parent1.id);
 			assert.equal(children[3].parentId, parent1.id);
+			t.start();
+		});
+	});
+
+	t.asyncTest('limit', function(assert) {
+		expect(3);
+
+		var parent1 = fx.parent('parent1');
+
+		var order = [ {
+			p : 'name'
+		} ];
+
+		yawp('/children').from(parent1).order(order).limit(2).list(function(children) {
+			assert.equal(children.length, 2);
+			assert.equal(children[0].name, 'xpto1');
+			assert.equal(children[1].name, 'xpto2');
 			t.start();
 		});
 	});

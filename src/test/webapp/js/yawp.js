@@ -50,6 +50,11 @@
 			return this;
 		}
 
+		function limit(data) {
+			q.limit = data;
+			return this;
+		}
+
 		function list(callback) {
 			var options = {
 				url : base
@@ -68,6 +73,7 @@
 			where : where,
 			order : order,
 			sort : sort,
+			limit : limit,
 			list : list
 		};
 	}

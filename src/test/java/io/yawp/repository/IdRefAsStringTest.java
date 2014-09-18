@@ -14,13 +14,11 @@ import io.yawp.utils.JsonUtils;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class IdRefAsStringTest extends EndpointTestCase {
 
 	@Test
-	@Ignore
 	public void testFetch() {
 		Parent parent = saveParentWithStringId("xpto");
 
@@ -62,17 +60,13 @@ public class IdRefAsStringTest extends EndpointTestCase {
 
 	@Test
 	public void testFetchWithinJsonListField() {
-		Parent parent = new Parent("xpto");
-		r.save(parent);
+		Parent parent = saveParentWithStringId("xpto");
 
-		Job job1 = new Job("hehe");
-		r.save(job1);
+		Job job1 = saveJobWithStringId("hehe");
+		Job job2 = saveJobWithStringId("hihi");
 
-		Job job2 = new Job("hihi");
-		r.save(job2);
-
-		String json = String.format("{id: '/parents/%d', name: 'lala', pastJobIds: ['/jobs/%d', '/jobs/%d']}", parent.getId().asLong(),
-				job1.getId().asLong(), job2.getId().asLong());
+		String json = String.format("{id: '/parents/%s', name: 'lala', pastJobIds: ['/jobs/%s', '/jobs/%s']}", parent.getId()
+				.getSimpleValue(), job1.getId().getSimpleValue(), job2.getId().getSimpleValue());
 
 		Parent retrievedParent = JsonUtils.from(r, json, Parent.class);
 
@@ -174,21 +168,27 @@ public class IdRefAsStringTest extends EndpointTestCase {
 
 	private Parent saveParentWithStringId(String name) {
 		Parent parent = new Parent(name);
-		parent.setId(IdRef.create(r, Parent.class, "x"));
+		parent.setId(IdRef.create(r, Parent.class, name));
 		r.save(parent);
 		return parent;
 	}
 
 	private Parent saveParentWithJob() {
-		Job job = new Job("haha");
-		r.save(job);
+		Job job = saveJobWithStringId("haha");
 
-		Parent parent = new Parent("xpto");
-		parent.setJobId(IdRef.create(r, Job.class, job.getId().asLong()));
+		Parent parent = saveParentWithStringId("xpto");
+		parent.setJobId(job.getId());
 
 		r.save(parent);
 
 		return parent;
+	}
+
+	private Job saveJobWithStringId(String name) {
+		Job job = new Job(name);
+		job.setId(IdRef.create(r, Job.class, name));
+		r.save(job);
+		return job;
 	}
 
 }

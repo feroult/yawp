@@ -176,7 +176,7 @@ public class IdRefAsLongTest extends EndpointTestCase {
 		r.save(job);
 
 		Parent parent = new Parent("xpto");
-		parent.setJobId(IdRef.create(r, Job.class, job.getId().asLong()));
+		parent.setJobId(job.getId());
 
 		r.save(parent);
 

@@ -87,14 +87,9 @@ public class IdRefAsStringTest extends EndpointTestCase {
 
 	@Test
 	public void testInOperator() {
-		Parent parent1 = new Parent("xpto1");
-		r.save(parent1);
-
-		Parent parent2 = new Parent("xpto2");
-		r.save(parent2);
-
-		Parent parent3 = new Parent("xpto3");
-		r.save(parent3);
+		Parent parent1 = saveParent("xpto1");
+		Parent parent2 = saveParent("xpto2");
+		saveParent("xpto3");
 
 		List<IdRef<Parent>> inList = Arrays.asList(parent1.getId(), parent2.getId());
 		List<Parent> objects = r.query(Parent.class).where("id", "in", inList).list();

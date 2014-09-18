@@ -92,7 +92,7 @@ public class ServletTestCase extends EndpointTestCase {
 		List<String> longIds = new ArrayList<String>();
 
 		for (Object object : objects) {
-			longIds.add(String.valueOf(EntityUtils.getLongId(object)));
+			longIds.add(String.valueOf(EntityUtils.getKeySimpleValue(object)));
 		}
 
 		return String.format(format, longIds.toArray());

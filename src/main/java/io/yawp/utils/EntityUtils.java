@@ -262,7 +262,7 @@ public class EntityUtils {
 		return null;
 	}
 
-	public static Long getLongId(Object object) {
+	public static Long getKeySimpleValue(Object object) {
 		return getKey(object).getId();
 	}
 
@@ -364,17 +364,8 @@ public class EntityUtils {
 	}
 
 	private static <T> Key getActualKeyFieldValue(Class<T> clazz, Object value) {
-		if (value instanceof Key) {
-			return (Key) value;
-		}
-
-		if (value instanceof IdRef) {
-			IdRef<?> idRef = (IdRef<?>) value;
-			return idRef.asKey();
-		}
-
-		Long id = getLongValue(value);
-		return createKey(id, clazz);
+		IdRef<?> idRef = (IdRef<?>) value;
+		return idRef.asKey();
 	}
 
 	public static Key createKey(IdRef<?> id) {
@@ -588,20 +579,6 @@ public class EntityUtils {
 
 	private static boolean isInt(Field field) {
 		return Integer.class.isAssignableFrom(field.getType()) || field.getType().getName().equals("int");
-	}
-
-	// TODO remove long id support
-	public static Long getLongValue(Object id) {
-		if (id instanceof IdRef) {
-			return ((IdRef<?>) id).asLong();
-		}
-//		if (id instanceof Long) {
-//			return (Long) id;
-//		}
-//		if (id instanceof Key) {
-//			return ((Key) id).getId();
-//		}
-		throw new RuntimeException("Tryed to access @Id property wih a type not allowed (different from IdRef, Long or Key).");
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

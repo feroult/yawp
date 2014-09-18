@@ -14,25 +14,13 @@ import io.yawp.utils.JsonUtils;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-public class IdRefTest extends EndpointTestCase {
+public class IdRefAsLongTest extends EndpointTestCase {
 
 	@Test
 	public void testFetch() {
 		Parent parent = new Parent("xpto");
-		r.save(parent);
-
-		Parent retrievedParent = parent.getId().fetch();
-		assertEquals("xpto", retrievedParent.getName());
-	}
-
-	@Test
-	@Ignore
-	public void testFetchWithName() {
-		Parent parent = new Parent("xpto");
-		parent.setId(IdRef.create(r, Parent.class, "x"));
 		r.save(parent);
 
 		Parent retrievedParent = parent.getId().fetch();
@@ -122,19 +110,13 @@ public class IdRefTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testParseParentIdAsLong() {
+	public void testParseParentId() {
 		IdRef<Parent> parentId = IdRef.parse(r, GET, "/parents/1");
 		assertIdRef(parentId, Parent.class, 1l);
 	}
 
 	@Test
-	public void testParseParentIdAsString() {
-		IdRef<Parent> parentId = IdRef.parse(r, GET, "/parents/a");
-		assertIdRef(parentId, Parent.class, "a");
-	}
-
-	@Test
-	public void testParseChildIdAsLong() {
+	public void testParseChildId() {
 		IdRef<Child> childId = IdRef.parse(r, GET, "/parents/1/children/2");
 		IdRef<Parent> parentId = childId.getParentId();
 
@@ -143,16 +125,7 @@ public class IdRefTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testParseChildIdAsString() {
-		IdRef<Child> childId = IdRef.parse(r, GET, "/parents/a/children/b");
-		IdRef<Parent> parentId = childId.getParentId();
-
-		assertIdRef(parentId, Parent.class, "a");
-		assertIdRef(childId, Child.class, "b");
-	}
-
-	@Test
-	public void testParseGrandchildIdAsLong() {
+	public void testParseGrandchildId() {
 		IdRef<Grandchild> grandchildId = IdRef.parse(r, GET, "/parents/1/children/2/grandchildren/3");
 		IdRef<Child> childId = grandchildId.getParentId();
 		IdRef<Parent> parentId = childId.getParentId();
@@ -162,27 +135,10 @@ public class IdRefTest extends EndpointTestCase {
 		assertIdRef(grandchildId, Grandchild.class, 3l);
 	}
 
-	@Test
-	public void testParseGrandchildIdAsString() {
-		IdRef<Grandchild> grandchildId = IdRef.parse(r, GET, "/parents/a/children/b/grandchildren/c");
-		IdRef<Child> childId = grandchildId.getParentId();
-		IdRef<Parent> parentId = childId.getParentId();
-
-		assertIdRef(parentId, Parent.class, "a");
-		assertIdRef(childId, Child.class, "b");
-		assertIdRef(grandchildId, Grandchild.class, "c");
-	}
-
 	private void assertIdRef(IdRef<?> id, Class<?> clazz, Long idAsLong) {
 		assertEquals(clazz, id.getClazz());
 		assertEquals(idAsLong, id.asLong());
 		assertNull(id.asString());
-	}
-
-	private void assertIdRef(IdRef<?> id, Class<?> clazz, String idAsString) {
-		assertEquals(clazz, id.getClazz());
-		assertEquals(idAsString, id.asString());
-		assertNull(id.asLong());
 	}
 
 	@Test
@@ -191,9 +147,6 @@ public class IdRefTest extends EndpointTestCase {
 
 		assertIdRef(IdRef.parse(r, GET, "/parents/1/children"), Parent.class, 1l);
 		assertIdRef(IdRef.parse(r, GET, "/parents/1/children/2/grandchildren"), Child.class, 2l);
-
-		assertIdRef(IdRef.parse(r, GET, "/parents/a/children"), Parent.class, "a");
-		assertIdRef(IdRef.parse(r, GET, "/parents/a/children/b/grandchildren"), Child.class, "b");
 	}
 
 	@Test
@@ -203,32 +156,19 @@ public class IdRefTest extends EndpointTestCase {
 
 		assertIdRef(IdRef.parse(r, PUT, "/parents/1/touched"), Parent.class, 1l);
 		assertIdRef(IdRef.parse(r, PUT, "/parents/1/children/2/touched"), Child.class, 2l);
-
-		assertIdRef(IdRef.parse(r, PUT, "/parents/a/touched"), Parent.class, "a");
-		assertIdRef(IdRef.parse(r, PUT, "/parents/a/children/b/touched"), Child.class, "b");
 	}
 
 	@Test
 	public void testParseEndingWithActionOverCollection() {
 		assertIdRef(IdRef.parse(r, PUT, "/parents/1/children/touched"), Parent.class, 1l);
 		assertIdRef(IdRef.parse(r, PUT, "/parents/1/children/2/grandchildren/touched"), Child.class, 2l);
-
-		assertIdRef(IdRef.parse(r, PUT, "/parents/a/children/touched"), Parent.class, "a");
-		assertIdRef(IdRef.parse(r, PUT, "/parents/a/children/b/grandchildren/touched"), Child.class, "b");
 	}
 
 	@Test
-	public void testGetStringAsLong() {
+	public void testGetString() {
 		assertEquals("/parents/1", IdRef.parse(r, GET, "/parents/1").toString());
 		assertEquals("/parents/1/children/2", IdRef.parse(r, GET, "/parents/1/children/2").toString());
 		assertEquals("/parents/1/children/2/grandchildren/3", IdRef.parse(r, GET, "/parents/1/children/2/grandchildren/3").toString());
-	}
-
-	@Test
-	public void testToStringAsString() {
-		assertEquals("/parents/a", IdRef.parse(r, GET, "/parents/a").toString());
-		assertEquals("/parents/a/children/b", IdRef.parse(r, GET, "/parents/a/children/b").toString());
-		assertEquals("/parents/a/children/b/grandchildren/c", IdRef.parse(r, GET, "/parents/a/children/b/grandchildren/c").toString());
 	}
 
 	private Parent saveParentWithJob() {

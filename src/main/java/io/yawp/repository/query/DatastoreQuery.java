@@ -251,16 +251,16 @@ public class DatastoreQuery<T> {
 	}
 
 	private void setCursor(QueryResultList<Entity> queryResult) {
-	    if (queryResult.getCursor() != null) {
+		if (queryResult.getCursor() != null) {
 			this.cursor = queryResult.getCursor().toWebSafeString();
 		}
-    }
+	}
 
 	private T executeQueryById() {
 		try {
 			SimpleCondition c = (SimpleCondition) condition;
-			Long id = EntityUtils.getLongValue(c.getValue());
-			Key key = EntityUtils.createKey(parentKey, id, clazz);
+			IdRef<?> idRef = (IdRef<?>) c.getValue();
+			Key key = idRef.asKey();
 			Entity entity = DatastoreServiceFactory.getDatastoreService().get(key);
 			return EntityUtils.toObject(r, entity, clazz);
 		} catch (EntityNotFoundException e) {
@@ -312,10 +312,10 @@ public class DatastoreQuery<T> {
 		boolean isByIdWithoutIdRef = idClass != null && !IdRef.class.isAssignableFrom(idClass);
 		if (isByIdWithoutIdRef && parentKey != null) {
 			throw new RuntimeException(
-			        "You have to use IdRef in the where when searching by @Id in a query with .from(IdRef<?>) specified.");
+					"You have to use IdRef in the where when searching by @Id in a query with .from(IdRef<?>) specified.");
 		}
 		Query q = new Query(EntityUtils.getKindFromClass(clazz));
-		
+
 		if (keysOnly) {
 			q.setKeysOnly();
 		}
@@ -385,15 +385,15 @@ public class DatastoreQuery<T> {
 
 		for (Entity entity : queryResult) {
 			@SuppressWarnings("unchecked")
-            IdRef<T> id = (IdRef<T>) IdRef.fromKey(r, entity.getKey());
+			IdRef<T> id = (IdRef<T>) IdRef.fromKey(r, entity.getKey());
 			ids.add(id);
 		}
 
 		setCursor(queryResult);
 		return ids;
-    }
+	}
 
 	private QueryResultList<Entity> generateResults(boolean keysOnly) throws FalsePredicateException {
 		return prepareQuery(keysOnly).asQueryResultList(configureFetchOptions());
-    }
+	}
 }

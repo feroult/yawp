@@ -104,12 +104,7 @@ public class DatastoreQueryTransformer<F, T> {
 		return RepositoryTransformers.execute(query.getRepository(), query.only(), transformName);
 	}
 
-	@Deprecated
-	public T id(Long id) {
-		return RepositoryTransformers.execute(query.getRepository(), query.id(id), transformName);
-	}
-
 	public T id(IdRef<?> idRef) {
-		return id(idRef.asLong());
+		return RepositoryTransformers.execute(query.getRepository(), query.id(idRef), transformName);
 	}
 }

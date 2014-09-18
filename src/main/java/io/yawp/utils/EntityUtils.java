@@ -178,12 +178,7 @@ public class EntityUtils {
 	public static <T> void setKey(Repository r, T object, Key key) {
 		try {
 			Field idField = getIdField(object.getClass());
-
-			if (!isIdRef(idField)) {
-				idField.set(object, key.getId());
-			} else {
-				idField.set(object, IdRef.fromKey(r, key));
-			}
+			idField.set(object, IdRef.fromKey(r, key));
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
@@ -600,12 +595,12 @@ public class EntityUtils {
 		if (id instanceof IdRef) {
 			return ((IdRef<?>) id).asLong();
 		}
-		if (id instanceof Long) {
-			return (Long) id;
-		}
-		if (id instanceof Key) {
-			return ((Key) id).getId();
-		}
+//		if (id instanceof Long) {
+//			return (Long) id;
+//		}
+//		if (id instanceof Key) {
+//			return ((Key) id).getId();
+//		}
 		throw new RuntimeException("Tryed to access @Id property wih a type not allowed (different from IdRef, Long or Key).");
 	}
 

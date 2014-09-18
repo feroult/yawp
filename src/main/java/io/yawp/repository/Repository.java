@@ -80,7 +80,7 @@ public class Repository {
 	private void saveInternal(Object object) {
 		Entity entity = createEntity(object);
 		EntityUtils.toEntity(object, entity);
-		saveEntity(object, entity, null);
+		saveEntity(object, entity);
 	}
 
 	public HttpResponse action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
@@ -115,7 +115,7 @@ public class Repository {
 		}
 	}
 
-	private void saveEntity(Object object, Entity entity, String action) {
+	private void saveEntity(Object object, Entity entity) {
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 		Key key = datastoreService.put(entity);
 		EntityUtils.setKey(this, object, key);

@@ -109,14 +109,16 @@ public class EntityUtils {
 
 	public static IdRef<?> getParentIdRef(Object object) {
 		Field parentField = EntityUtils.getAnnotatedParentFromClass(object.getClass());
-		if (parentField != null) {
-			try {
-				return (IdRef<?>) parentField.get(object);
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				throw new RuntimeException("Unexpected error.", e);
-			}
+		if (parentField == null) {
+			return null;
 		}
-		return null;
+
+		try {
+			return (IdRef<?>) parentField.get(object);
+
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static Key getParentKey(Object object) {

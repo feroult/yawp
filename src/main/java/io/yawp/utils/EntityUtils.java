@@ -201,16 +201,12 @@ public class EntityUtils {
 	}
 
 	private static Key createKeyFromIdField(Object object, Field field) throws IllegalAccessException {
-		Long id = null;
-
-		// TODO ignoring parents!
 		if (!isIdRef(field)) {
-			id = (Long) field.get(object);
-		} else {
-			id = ((IdRef<?>) field.get(object)).asLong();
+			throw new RuntimeException("@Id must be " + IdRef.class.getSimpleName());
 		}
 
-		return createKey(id, object.getClass());
+		IdRef<?> id = (IdRef<?>) field.get(object);
+		return id.asKey();
 	}
 
 	public static String getIdFieldName(Class<?> clazz) {

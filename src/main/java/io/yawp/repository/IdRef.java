@@ -63,6 +63,9 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	public Key asKey() {
 		Key parent = parentId == null ? null : parentId.asKey();
 		String kind = EntityUtils.getKindFromClass(clazz);
+		if (id == null) {
+			return KeyFactory.createKey(parent, kind, name);
+		}
 		return KeyFactory.createKey(parent, kind, id);
 	}
 

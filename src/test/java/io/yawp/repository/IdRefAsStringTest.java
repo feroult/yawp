@@ -22,9 +22,7 @@ public class IdRefAsStringTest extends EndpointTestCase {
 	@Test
 	@Ignore
 	public void testFetch() {
-		Parent parent = new Parent("xpto");
-		parent.setId(IdRef.create(r, Parent.class, "x"));
-		r.save(parent);
+		Parent parent = saveParentWithStringId("xpto");
 
 		Parent retrievedParent = parent.getId().fetch();
 		assertEquals("xpto", retrievedParent.getName());
@@ -172,6 +170,13 @@ public class IdRefAsStringTest extends EndpointTestCase {
 		assertEquals("/parents/a", IdRef.parse(r, GET, "/parents/a").toString());
 		assertEquals("/parents/a/children/b", IdRef.parse(r, GET, "/parents/a/children/b").toString());
 		assertEquals("/parents/a/children/b/grandchildren/c", IdRef.parse(r, GET, "/parents/a/children/b/grandchildren/c").toString());
+	}
+
+	private Parent saveParentWithStringId(String name) {
+		Parent parent = new Parent(name);
+		parent.setId(IdRef.create(r, Parent.class, "x"));
+		r.save(parent);
+		return parent;
 	}
 
 	private Parent saveParentWithJob() {

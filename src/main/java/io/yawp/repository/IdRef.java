@@ -11,18 +11,26 @@ import com.google.appengine.api.datastore.KeyFactory;
 
 public class IdRef<T> implements Comparable<IdRef<T>> {
 
+	private Repository r;
+
 	private Class<T> clazz;
 
 	private Long id;
 
-	private Repository r;
+	private String name;
 
 	private IdRef<?> parentId;
 
 	protected IdRef(Repository r, Class<T> clazz, Long id) {
+		this.r = r;
 		this.clazz = clazz;
 		this.id = id;
+	}
+
+	public IdRef(Repository r, Class<T> clazz, String name) {
 		this.r = r;
+		this.clazz = clazz;
+		this.name = name;
 	}
 
 	public void setParentId(IdRef<?> parentId) {
@@ -44,6 +52,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	public Long asLong() {
 		return id;
+	}
+
+	public String asString() {
+		return name;
 	}
 
 	public Key asKey() {
@@ -75,6 +87,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return new IdRef<TT>(r, clazz, id);
 	}
 
+	private static <TT> IdRef<TT> create(Repository r, Class<TT> clazz, String name) {
+		return new IdRef<TT>(r, clazz, name);
+	}
+
 	public static <TT> List<IdRef<TT>> create(Repository r, Class<TT> clazz, Long... ids) {
 		List<IdRef<TT>> idRefs = new ArrayList<IdRef<TT>>();
 		for (int i = 0; i < ids.length; i++) {
@@ -83,25 +99,34 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return idRefs;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <TT> IdRef<TT> parse(Repository r, String path) {
-		String[] parts = path.split("/");
+		String[] parts = path.substring(1).split("/");
 
-		if (parts.length < 3) {
+		if (parts.length < 2) {
 			return null;
 		}
 
 		IdRef<TT> lastIdRef = null;
 
-		for (int i = 1; i < parts.length; i += 2) {
+		for (int i = 0; i < parts.length; i += 2) {
 			if (isActionOrCollection(parts, i)) {
 				break;
 			}
 
 			String endpointPath = "/" + parts[i];
-			Long asLong = Long.valueOf(parts[i + 1]);
 
-			@SuppressWarnings("unchecked")
-			IdRef<TT> currentIdRef = (IdRef<TT>) create(r, getIdRefClazz(r, endpointPath), asLong);
+			IdRef<TT> currentIdRef = null;
+
+			// if (!isString(parts[i + 1])) {
+			Long asLong = Long.valueOf(parts[i + 1]);
+			currentIdRef = (IdRef<TT>) create(r, getIdRefClazz(r, endpointPath), asLong);
+			// } else {
+			// String asString = parts[i + 1];
+			// currentIdRef = (IdRef<TT>) create(r, getIdRefClazz(r,
+			// endpointPath), asString);
+			// }
+
 			currentIdRef.setParentId(lastIdRef);
 			lastIdRef = currentIdRef;
 		}
@@ -114,7 +139,26 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	}
 
 	private static boolean isActionOrCollection(String[] parts, int i) {
-		return parts.length == i + 1 || isString(parts[i + 1]);
+		if (i < parts.length - 2) {
+			return false;
+		}
+
+		if (i == parts.length - 1) {
+			return true;
+		}
+
+		if (!isString(parts[parts.length - 1])) {
+			return false;
+		}
+
+		return true;
+		// String endpointPath = "/" + parts[parts.length - 2];
+		// String possibleAction = parts[parts.length - 1];
+		//
+		// ActionKey actionKey = new ActionKey(null, possibleAction, false);
+		// return
+
+		// return parts.length == i + 1 || isString(parts[i + 1]);
 	}
 
 	private static boolean isString(String s) {
@@ -195,4 +239,5 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		}
 		return ids;
 	}
+
 }

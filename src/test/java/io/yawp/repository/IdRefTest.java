@@ -2,7 +2,6 @@ package io.yawp.repository;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import io.yawp.repository.IdRef;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Job;
@@ -13,6 +12,7 @@ import io.yawp.utils.JsonUtils;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class IdRefTest extends EndpointTestCase {
@@ -111,8 +111,14 @@ public class IdRefTest extends EndpointTestCase {
 	@Test
 	public void testParseParentId() {
 		IdRef<Parent> parentId = IdRef.parse(r, "/parents/1");
-
 		assertIdRef(parentId, Parent.class, 1l);
+	}
+
+	@Test
+	@Ignore
+	public void testParseParentIdAsString() {
+		IdRef<Parent> parentId = IdRef.parse(r, "/parents/a");
+		assertIdRef(parentId, Parent.class, "a");
 	}
 
 	@Test
@@ -138,6 +144,11 @@ public class IdRefTest extends EndpointTestCase {
 	private void assertIdRef(IdRef<?> id, Class<?> clazz, Long idAsLong) {
 		assertEquals(clazz, id.getClazz());
 		assertEquals(idAsLong, id.asLong());
+	}
+
+	private void assertIdRef(IdRef<?> id, Class<?> clazz, String idAsString) {
+		assertEquals(clazz, id.getClazz());
+		assertEquals(idAsString, id.asString());
 	}
 
 	@Test

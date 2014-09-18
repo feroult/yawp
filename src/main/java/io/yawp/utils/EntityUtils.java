@@ -247,7 +247,7 @@ public class EntityUtils {
 		return null;
 	}
 
-	public static Object getKeySimpleValue(Object object) {
+	public static Object getIdSimpleValue(Object object) {
 		IdRef<?> idRef = getIdRef(object);
 		return idRef.getSimpleValue();
 	}

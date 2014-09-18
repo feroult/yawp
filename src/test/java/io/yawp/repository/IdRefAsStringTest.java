@@ -20,7 +20,7 @@ public class IdRefAsStringTest extends EndpointTestCase {
 
 	@Test
 	public void testFetch() {
-		Parent parent = saveParentWithStringId("xpto");
+		Parent parent = saveParent("xpto");
 
 		Parent retrievedParent = parent.getId().fetch();
 		assertEquals("xpto", retrievedParent.getName());
@@ -60,10 +60,10 @@ public class IdRefAsStringTest extends EndpointTestCase {
 
 	@Test
 	public void testFetchWithinJsonListField() {
-		Parent parent = saveParentWithStringId("xpto");
+		Parent parent = saveParent("xpto");
 
-		Job job1 = saveJobWithStringId("hehe");
-		Job job2 = saveJobWithStringId("hihi");
+		Job job1 = saveJob("hehe");
+		Job job2 = saveJob("hihi");
 
 		String json = String.format("{id: '/parents/%s', name: 'lala', pastJobIds: ['/jobs/%s', '/jobs/%s']}", parent.getId()
 				.getSimpleValue(), job1.getId().getSimpleValue(), job2.getId().getSimpleValue());
@@ -77,12 +77,9 @@ public class IdRefAsStringTest extends EndpointTestCase {
 
 	@Test
 	public void testFetchChild() {
-		Parent parent = new Parent("xpto");
-		r.save(parent);
+		Parent parent = saveParent("xpto");
 
-		Child child = new Child("child xpto");
-		child.setParentId(parent.getId());
-		r.save(child);
+		saveChild(parent, "child xpto");
 
 		Child retrievedChild = parent.getId().child(Child.class);
 		assertEquals("child xpto", retrievedChild.getName());
@@ -166,17 +163,24 @@ public class IdRefAsStringTest extends EndpointTestCase {
 		assertEquals("/parents/a/children/b/grandchildren/c", IdRef.parse(r, GET, "/parents/a/children/b/grandchildren/c").toString());
 	}
 
-	private Parent saveParentWithStringId(String name) {
+	private Parent saveParent(String name) {
 		Parent parent = new Parent(name);
 		parent.setId(IdRef.create(r, Parent.class, name));
 		r.save(parent);
 		return parent;
 	}
 
-	private Parent saveParentWithJob() {
-		Job job = saveJobWithStringId("haha");
+	private void saveChild(Parent parent, String name) {
+		Child child = new Child(name);
+		child.setId(IdRef.create(r, Child.class, name));
+		child.setParentId(parent.getId());
+		r.save(child);
+	}
 
-		Parent parent = saveParentWithStringId("xpto");
+	private Parent saveParentWithJob() {
+		Job job = saveJob("haha");
+
+		Parent parent = saveParent("xpto");
 		parent.setJobId(job.getId());
 
 		r.save(parent);
@@ -184,7 +188,7 @@ public class IdRefAsStringTest extends EndpointTestCase {
 		return parent;
 	}
 
-	private Job saveJobWithStringId(String name) {
+	private Job saveJob(String name) {
 		Job job = new Job(name);
 		job.setId(IdRef.create(r, Job.class, name));
 		r.save(job);

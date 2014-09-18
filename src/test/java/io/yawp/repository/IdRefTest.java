@@ -13,7 +13,6 @@ import io.yawp.utils.JsonUtils;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class IdRefTest extends EndpointTestCase {
@@ -110,25 +109,33 @@ public class IdRefTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testParseParentId() {
+	public void testParseParentIdAsLong() {
 		IdRef<Parent> parentId = IdRef.parse(r, HttpVerb.GET, "/parents/1");
 		assertIdRef(parentId, Parent.class, 1l);
 	}
 
 	@Test
-	@Ignore
 	public void testParseParentIdAsString() {
 		IdRef<Parent> parentId = IdRef.parse(r, HttpVerb.GET, "/parents/a");
 		assertIdRef(parentId, Parent.class, "a");
 	}
 
 	@Test
-	public void testParseChildId() {
+	public void testParseChildIdAsLong() {
 		IdRef<Child> childId = IdRef.parse(r, HttpVerb.GET, "/parents/1/children/2");
 		IdRef<Parent> parentId = childId.getParentId();
 
 		assertIdRef(parentId, Parent.class, 1l);
 		assertIdRef(childId, Child.class, 2l);
+	}
+
+	@Test
+	public void testParseChildIdAsString() {
+		IdRef<Child> childId = IdRef.parse(r, HttpVerb.GET, "/parents/a/children/b");
+		IdRef<Parent> parentId = childId.getParentId();
+
+		assertIdRef(parentId, Parent.class, "a");
+		assertIdRef(childId, Child.class, "b");
 	}
 
 	@Test

@@ -7,6 +7,7 @@ import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Job;
 import io.yawp.repository.models.parents.Parent;
 import io.yawp.utils.EndpointTestCase;
+import io.yawp.utils.HttpVerb;
 import io.yawp.utils.JsonUtils;
 
 import java.util.Arrays;
@@ -110,20 +111,20 @@ public class IdRefTest extends EndpointTestCase {
 
 	@Test
 	public void testParseParentId() {
-		IdRef<Parent> parentId = IdRef.parse(r, "/parents/1");
+		IdRef<Parent> parentId = IdRef.parse(r, HttpVerb.GET, "/parents/1");
 		assertIdRef(parentId, Parent.class, 1l);
 	}
 
 	@Test
 	@Ignore
 	public void testParseParentIdAsString() {
-		IdRef<Parent> parentId = IdRef.parse(r, "/parents/a");
+		IdRef<Parent> parentId = IdRef.parse(r, HttpVerb.GET, "/parents/a");
 		assertIdRef(parentId, Parent.class, "a");
 	}
 
 	@Test
 	public void testParseChildId() {
-		IdRef<Child> childId = IdRef.parse(r, "/parents/1/children/2");
+		IdRef<Child> childId = IdRef.parse(r, HttpVerb.GET, "/parents/1/children/2");
 		IdRef<Parent> parentId = childId.getParentId();
 
 		assertIdRef(parentId, Parent.class, 1l);
@@ -132,7 +133,7 @@ public class IdRefTest extends EndpointTestCase {
 
 	@Test
 	public void testParseGrandchildId() {
-		IdRef<Grandchild> grandchildId = IdRef.parse(r, "/parents/1/children/2/grandchildren/3");
+		IdRef<Grandchild> grandchildId = IdRef.parse(r, HttpVerb.GET, "/parents/1/children/2/grandchildren/3");
 		IdRef<Child> childId = grandchildId.getParentId();
 		IdRef<Parent> parentId = childId.getParentId();
 
@@ -153,27 +154,27 @@ public class IdRefTest extends EndpointTestCase {
 
 	@Test
 	public void testParseUriWithCollectionOrAction() {
-		assertNull(IdRef.parse(r, "/parents"));
+		assertNull(IdRef.parse(r, HttpVerb.GET, "/parents"));
 
-		assertIdRef(IdRef.parse(r, "/parents/1/children"), Parent.class, 1l);
-		assertIdRef(IdRef.parse(r, "/parents/1/action"), Parent.class, 1l);
-		assertIdRef(IdRef.parse(r, "/parents/1/children/2/grandchildren"), Child.class, 2l);
-		assertIdRef(IdRef.parse(r, "/parents/1/children/2/action"), Child.class, 2l);
+		assertIdRef(IdRef.parse(r, HttpVerb.GET, "/parents/1/children"), Parent.class, 1l);
+		assertIdRef(IdRef.parse(r, HttpVerb.GET, "/parents/1/action"), Parent.class, 1l);
+		assertIdRef(IdRef.parse(r, HttpVerb.GET, "/parents/1/children/2/grandchildren"), Child.class, 2l);
+		assertIdRef(IdRef.parse(r, HttpVerb.GET, "/parents/1/children/2/action"), Child.class, 2l);
 	}
 
 	@Test
 	public void testParseUriWithActionOverCollection() {
-		assertNull(IdRef.parse(r, "/parents"));
+		assertNull(IdRef.parse(r, HttpVerb.GET, "/parents"));
 
-		assertIdRef(IdRef.parse(r, "/parents/1/children/action"), Parent.class, 1l);
-		assertIdRef(IdRef.parse(r, "/parents/1/children/2/grandchildren/action"), Child.class, 2l);
+		assertIdRef(IdRef.parse(r, HttpVerb.GET, "/parents/1/children/action"), Parent.class, 1l);
+		assertIdRef(IdRef.parse(r, HttpVerb.GET, "/parents/1/children/2/grandchildren/action"), Child.class, 2l);
 	}
 
 	@Test
 	public void testToString() {
-		assertEquals("/parents/1", IdRef.parse(r, "/parents/1").toString());
-		assertEquals("/parents/1/children/2", IdRef.parse(r, "/parents/1/children/2").toString());
-		assertEquals("/parents/1/children/2/grandchildren/3", IdRef.parse(r, "/parents/1/children/2/grandchildren/3").toString());
+		assertEquals("/parents/1", IdRef.parse(r, HttpVerb.GET, "/parents/1").toString());
+		assertEquals("/parents/1/children/2", IdRef.parse(r, HttpVerb.GET, "/parents/1/children/2").toString());
+		assertEquals("/parents/1/children/2/grandchildren/3", IdRef.parse(r, HttpVerb.GET, "/parents/1/children/2/grandchildren/3").toString());
 	}
 
 	private Parent saveParentWithJob() {

@@ -40,7 +40,7 @@ public class EndpointRouter {
 	}
 
 	private void parseUri() {
-		this.idRef = IdRef.parse(r, uri);
+		this.idRef = IdRef.parse(r, HttpVerb.GET, uri);
 
 		this.customActionKey = parseCustomActionKey();
 		this.overCollection = parseOverCollection();

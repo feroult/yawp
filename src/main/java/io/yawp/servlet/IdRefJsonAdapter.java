@@ -30,7 +30,7 @@ public class IdRefJsonAdapter implements JsonSerializer<IdRef<?>>, JsonDeseriali
 	@Override
 	public IdRef<?> deserialize(JsonElement json, Type type, JsonDeserializationContext ctx) throws JsonParseException {
 		String path = json.getAsJsonPrimitive().getAsString();
-		return IdRef.parse(r, path);
+		return IdRef.parse(r, null, path);
 	}
 
 }

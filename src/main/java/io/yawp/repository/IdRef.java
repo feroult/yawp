@@ -2,6 +2,7 @@ package io.yawp.repository;
 
 import io.yawp.repository.query.DatastoreQuery;
 import io.yawp.utils.EntityUtils;
+import io.yawp.utils.HttpVerb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +101,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <TT> IdRef<TT> parse(Repository r, String path) {
+	public static <TT> IdRef<TT> parse(Repository r, HttpVerb verb, String path) {
 		String[] parts = path.substring(1).split("/");
 
 		if (parts.length < 2) {

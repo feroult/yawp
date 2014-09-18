@@ -522,7 +522,7 @@ public class EntityUtils {
 	}
 
 	private static <T> void setIdRefProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
-		field.set(object, IdRef.parse(r, (String) value));
+		field.set(object, IdRef.parse(r, HttpVerb.GET, (String) value));
 	}
 
 	private static <T> void setIntProperty(T object, Field field, Object value) throws IllegalAccessException {

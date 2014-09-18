@@ -117,4 +117,28 @@ public class ChildRestActionTest extends ChildServletTestCase {
 
 		assertEquals("[]", get("/children"));
 	}
+
+	@Test
+	public void testCreateAndShowWithIdAsLong() {
+		String uri = uri("/parents/%s/children/1", parent);
+
+		put(uri, "{ name: 'xpto' } ");
+		String json = get(uri);
+
+		Child child = from(json, Child.class);
+		assertEquals("xpto", child.getName());
+		assertEquals(parent.getId(), child.getParentId());
+	}
+
+	@Test
+	public void testCreateAndShowWithIdAsString() {
+		String uri = uri("/parents/%s/children/a", parent);
+
+		put(uri, "{ name: 'xpto' } ");
+		String json = get(uri);
+
+		Child child = from(json, Child.class);
+		assertEquals("xpto", child.getName());
+		assertEquals(parent.getId(), child.getParentId());
+	}
 }

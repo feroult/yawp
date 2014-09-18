@@ -67,4 +67,22 @@ public class ParentRestActionTest extends ParentServletTestCase {
 		delete(uri("/parents/%s", parent));
 		assertGetWithStatus(uri("/parents/%s", parent), 404);
 	}
+
+	@Test
+	public void testCreateAndShowWithIdAsLong() {
+		put("/parents/1", "{ name: 'xpto' } ");
+		String json = get("/parents/1");
+
+		Parent object = from(json, Parent.class);
+		assertEquals("xpto", object.getName());
+	}
+
+	@Test
+	public void testCreateAndShowWithIdAsString() {
+		put("/parents/a", "{ name: 'xpto' } ");
+		String json = get("/parents/a");
+
+		Parent object = from(json, Parent.class);
+		assertEquals("xpto", object.getName());
+	}
 }

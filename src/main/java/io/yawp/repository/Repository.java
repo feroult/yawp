@@ -1,6 +1,5 @@
 package io.yawp.repository;
 
-import com.google.appengine.api.datastore.*;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
@@ -10,6 +9,11 @@ import io.yawp.utils.EntityUtils;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Key;
 
 public class Repository {
 
@@ -118,21 +122,21 @@ public class Repository {
 	}
 
 	private Entity createEntity(Object object) {
-		Key currentKey = EntityUtils.getKey(object);
+		Key key = EntityUtils.getKey(object);
+
+		if (key == null) {
+			return createEntityWithNewKey(object);
+		}
+
+		return new Entity(key);
+	}
+
+	private Entity createEntityWithNewKey(Object object) {
 		Key parentKey = EntityUtils.getParentKey(object);
 		if (parentKey == null) {
-			IdRef<?> id = EntityUtils.getIdRef(object);
-			if (id != null) {
-				parentKey = EntityUtils.createKey(id.getParentId());
-			}
+			return new Entity(EntityUtils.getKindFromClass(object.getClass()));
 		}
-
-		if (currentKey == null) {
-			return new Entity(EntityUtils.getKindFromClass(object.getClass()), parentKey);
-		}
-
-		Key key = KeyFactory.createKey(parentKey, currentKey.getKind(), currentKey.getId());
-		return new Entity(key);
+		return new Entity(EntityUtils.getKindFromClass(object.getClass()), parentKey);
 	}
 
 	@SuppressWarnings("unchecked")

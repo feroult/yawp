@@ -70,10 +70,6 @@ public class EntityUtils {
 
 	public static Class<?> getIdType(Class<?> clazz) {
 		Field idField = getFieldWithAnnotation(clazz, Id.class);
-		if (!idField.getType().equals(IdRef.class)) {
-			// TODO remove long id support
-			return clazz;
-		}
 		ParameterizedType type = (ParameterizedType) idField.getGenericType();
 		Type[] types = type.getActualTypeArguments();
 		assert types.length == 1;

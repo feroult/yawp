@@ -58,20 +58,34 @@
 			p : 'name'
 		} ];
 
-		yawp('/children').order(order).list(function(children) {
-			assert.equal(children.length, 4);
+		function eventually(children) {
+			return children.length == 4 && children[0].name == 'xpto1' && children[1].name == 'xpto1' && children[2].name == 'xpto2'
+					&& children[3].name == 'xpto3';
+		}
 
-			assert.equal(children[0].name, 'xpto1');
-			assert.equal(children[1].name, 'xpto1');
-			assert.equal(children[2].name, 'xpto2');
-			assert.equal(children[3].name, 'xpto3');
+		function retry() {
+			yawp('/children').order(order).list(function(children) {
+				if (!eventually(children)) {
+					retry();
+					return;
+				}
 
-			assert.ok(children[0].parentId == parent1.id || children[0].parentId == parent2.id);
-			assert.ok(children[1].parentId == parent1.id || children[1].parentId == parent2.id);
-			assert.equal(children[2].parentId, parent1.id);
-			assert.equal(children[3].parentId, parent1.id);
-			t.start();
-		});
+				assert.equal(children.length, 4);
+
+				assert.equal(children[0].name, 'xpto1');
+				assert.equal(children[1].name, 'xpto1');
+				assert.equal(children[2].name, 'xpto2');
+				assert.equal(children[3].name, 'xpto3');
+
+				assert.ok(children[0].parentId == parent1.id || children[0].parentId == parent2.id);
+				assert.ok(children[1].parentId == parent1.id || children[1].parentId == parent2.id);
+				assert.equal(children[2].parentId, parent1.id);
+				assert.equal(children[3].parentId, parent1.id);
+				t.start();
+			});
+		}
+
+		retry();
 	});
 
 	t.asyncTest('limit', function(assert) {
@@ -87,6 +101,34 @@
 			assert.equal(children.length, 2);
 			assert.equal(children[0].name, 'xpto1');
 			assert.equal(children[1].name, 'xpto2');
+			t.start();
+		});
+	});
+
+	t.asyncTest('first', function(assert) {
+		expect(1);
+
+		var parent1 = fx.parent('parent1');
+
+		var order = [ {
+			p : 'name'
+		} ];
+
+		yawp('/children').from(parent1).order(order).first(function(child) {
+			assert.equal(child.name, 'xpto1');
+			t.start();
+		});
+	});
+
+	t.asyncTest('only', function(assert) {
+		expect(1);
+
+		var parent1 = fx.parent('parent1');
+
+		var where = [ 'name', '=', 'xpto1' ];
+
+		yawp('/children').from(parent1).where(where).only(function(child) {
+			assert.equal(child.name, 'xpto1');
 			t.start();
 		});
 	});

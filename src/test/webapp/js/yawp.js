@@ -69,12 +69,36 @@
 			return defaultAjax('GET', options).done(callback);
 		}
 
+		function first(callback) {
+			limit(1);
+
+			return list(function(objects) {
+				var object = objects.length == 0 ? null : objects[0];
+				if (callback) {
+					callback(object);
+				}
+			});
+		}
+
+		function only(callback) {
+			return list(function(objects) {
+				if (objects.length != 1) {
+					throw 'called only but got ' + objects.length + ' results';
+				}
+				if (callback) {
+					callback(objects[0]);
+				}
+			});
+		}
+
 		return {
 			where : where,
 			order : order,
 			sort : sort,
 			limit : limit,
-			list : list
+			list : list,
+			first : first,
+			only : only
 		};
 	}
 

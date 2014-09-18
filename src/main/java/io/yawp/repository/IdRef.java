@@ -222,7 +222,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		}
 		sb.append(r.getFeatures().get(clazz).getEndpointPath());
 		sb.append("/");
-		sb.append(id);
+		sb.append(id != null ? id : name);
 		return sb.toString();
 	}
 

@@ -137,7 +137,11 @@ public class EntityUtils {
 	}
 
 	public static Key getParentKey(Object object) {
-		return createKey(getParentIdRef(object));
+		IdRef<?> parentIdRef = getParentIdRef(object);
+		if (parentIdRef == null) {
+			return null;
+		}
+		return parentIdRef.asKey();
 	}
 
 	public static <T> T toObject(Repository r, Entity entity, Class<T> clazz) {

@@ -128,13 +128,13 @@ public class EndpointServlet extends HttpServlet {
 			return new JsonResponse(save(r, router.getIdRef(), endpoint, requestJson));
 		case UPDATE:
 			return new JsonResponse(update(r, router.getIdRef(), endpoint, requestJson));
-		case CUSTOM:
-			return action(r, router.getIdRef(), router.getEndpointClazz(), router.getCustomActionKey(), params);
 		case DESTROY:
 			if (router.getIdRef() == null) {
 				throw new HttpException(501, "DELETE is not implemented for collections");
 			}
 			return new JsonResponse(delete(router.getIdRef(), endpoint));
+		case CUSTOM:
+			return action(r, router.getIdRef(), router.getEndpointClazz(), router.getCustomActionKey(), params);
 		default:
 			throw new IllegalArgumentException("Invalid datastore action");
 		}

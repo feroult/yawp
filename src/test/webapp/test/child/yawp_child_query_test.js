@@ -133,4 +133,16 @@
 		});
 	});
 
+	t.asyncTest("show transformer", function(assert) {
+		expect(1);
+
+		var child = fx.child('child1');
+
+		yawp(child).transform('simple').fetch(function(retrievedChild) {
+			assert.equal(retrievedChild.name, 'transformed xpto1');
+			t.start();
+		});
+
+	});
+
 })(QUnit, yawp, yawp.fixtures);

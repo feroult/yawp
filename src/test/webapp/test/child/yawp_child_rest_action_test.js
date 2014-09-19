@@ -84,23 +84,6 @@
 
 	});
 
-	t.asyncTest("show transformer", function(assert) {
-		expect(1);
-
-		var parent = fx.parent('parent');
-
-		var child = fx.child('child', {
-			name : 'xpto',
-			parentId : parent.id
-		});
-
-		yawp(child).transform('simple').fetch(function(retrievedChild) {
-			assert.equal(retrievedChild.name, 'transformed xpto');
-			t.start();
-		});
-
-	});
-
 	t.asyncTest("index", function(assert) {
 		expect(5);
 

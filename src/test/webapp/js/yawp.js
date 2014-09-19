@@ -35,8 +35,6 @@
 	function query(base) {
 		var q = {};
 
-		var t;
-
 		var options = {
 			url : base
 		};
@@ -61,25 +59,25 @@
 			return this;
 		}
 
-		function transform(data) {
-			t = data;
+		function addQueryParameter(key, value) {
+			if (!options.data) {
+				options.data = {};
+			}
+			options.data[key] = value;
+		}
+
+		function transform(t) {
+			addQueryParameter('t', t);
 			return this;
 		}
 
 		function fetch(callback) {
-			if (t) {
-				options.data = {
-					t : t
-				}
-			}
 			return defaultAjax('GET', options).done(callback);
 		}
 
 		function list(callback) {
 			if (Object.keys(q).length > 0) {
-				options.data = {
-					q : JSON.stringify(q)
-				};
+				addQueryParameter('q', JSON.stringify(q));
 			}
 
 			return defaultAjax('GET', options).done(callback);

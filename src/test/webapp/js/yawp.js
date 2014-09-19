@@ -61,7 +61,17 @@
 			return this;
 		}
 
+		function transform(data) {
+			t = data;
+			return this;
+		}
+
 		function fetch(callback) {
+			if (t) {
+				options.data = {
+					t : t
+				}
+			}
 			return defaultAjax('GET', options).done(callback);
 		}
 
@@ -98,11 +108,12 @@
 		}
 
 		return {
+			transform : transform,
 			where : where,
 			order : order,
 			sort : sort,
 			limit : limit,
-			fetch: fetch,
+			fetch : fetch,
 			list : list,
 			first : first,
 			only : only

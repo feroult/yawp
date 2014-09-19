@@ -35,6 +35,12 @@
 	function query(base) {
 		var q = {};
 
+		var t;
+
+		var options = {
+			url : base
+		};
+
 		function where(data) {
 			q.where = data;
 			return this;
@@ -55,11 +61,11 @@
 			return this;
 		}
 
-		function list(callback) {
-			var options = {
-				url : base
-			}
+		function fetch(callback) {
+			return defaultAjax('GET', options).done(callback);
+		}
 
+		function list(callback) {
 			if (Object.keys(q).length > 0) {
 				options.data = {
 					q : JSON.stringify(q)
@@ -96,6 +102,7 @@
 			order : order,
 			sort : sort,
 			limit : limit,
+			fetch: fetch,
 			list : list,
 			first : first,
 			only : only
@@ -122,15 +129,10 @@
 			return defaultAjax('DELETE', options);
 		}
 
-		function fetch(callback) {
-			return defaultAjax('GET', options).done(callback);
-		}
-
 		return {
 			create : create,
 			update : update,
-			destroy : destroy,
-			fetch : fetch
+			destroy : destroy
 		};
 	}
 

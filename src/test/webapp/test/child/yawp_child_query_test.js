@@ -164,4 +164,23 @@
 
 	});
 
+	t.asyncTest("sort", function(assert) {
+		expect(4);
+
+		var parent1 = fx.parent('parent1');
+
+		var sort = [ {
+			p : 'name'
+		} ];
+
+		yawp('/children').from(parent1).sort(sort).transform('simple').list(function(children) {
+			assert.equal(children.length, 3);
+			assert.equal(children[0].name, 'transformed xpto1');
+			assert.equal(children[1].name, 'transformed xpto2');
+			assert.equal(children[2].name, 'transformed xpto3');
+			t.start();
+		});
+
+	});
+
 })(QUnit, yawp, yawp.fixtures);

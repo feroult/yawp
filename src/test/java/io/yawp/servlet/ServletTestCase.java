@@ -33,7 +33,7 @@ public class ServletTestCase extends EndpointTestCase {
 	}
 
 	protected String get(String uri) {
-		return get(uri, null);
+		return get(uri, new HashMap<String, String>());
 	}
 
 	protected String get(String uri, Map<String, String> params) {
@@ -55,7 +55,7 @@ public class ServletTestCase extends EndpointTestCase {
 	}
 
 	protected String post(String uri, String json, Map<String, String> params) {
-		return servlet.execute("POST", uri, json, null).getText();
+		return servlet.execute("POST", uri, json, params).getText();
 	}
 
 	protected String put(String uri) {
@@ -75,7 +75,7 @@ public class ServletTestCase extends EndpointTestCase {
 	}
 
 	protected String delete(String uri) {
-		return servlet.execute("DELETE", uri, null, null).getText();
+		return servlet.execute("DELETE", uri, null, new HashMap<String, String>()).getText();
 	}
 
 	protected <T> T from(String json, Class<T> clazz) {

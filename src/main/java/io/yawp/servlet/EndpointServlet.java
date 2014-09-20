@@ -13,6 +13,7 @@ import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.response.ErrorResponse;
 import io.yawp.repository.response.HttpResponse;
 import io.yawp.repository.response.JsonResponse;
+import io.yawp.servlet.rest.RestAction;
 import io.yawp.utils.EntityUtils;
 import io.yawp.utils.Environment;
 import io.yawp.utils.HttpVerb;
@@ -119,11 +120,13 @@ public class EndpointServlet extends HttpServlet {
 		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri);
 		EndpointFeatures<?> endpoint = router.getEndpointFeatures();
 
-		switch (router.getRESTActionType()) {
-		case INDEX:
-			return new JsonResponse(index(r, router.getIdRef(), endpoint, q(params), t(params)));
-		case SHOW:
-			return new JsonResponse(get(r, router.getIdRef(), endpoint, t(params)));
+		RestAction restAction = router.getRestAction(enableHooks, params);
+
+		if (restAction != null) {
+			return restAction.execute();
+		}
+
+		switch (router.getRestActionType()) {
 		case CREATE:
 			return new JsonResponse(save(r, router.getIdRef(), endpoint, requestJson));
 		case UPDATE:

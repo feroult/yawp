@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class RepositoryActions {
 
-	public static HttpResponse execute(Repository r, IdRef<?> actionId, Method action, Map<String, String> params) {
+	public static HttpResponse execute(Repository r, IdRef<?> id, Method action, Map<String, String> params) {
 		try {
 			@SuppressWarnings("unchecked")
 			Class<? extends Action<?>> actionClazz = (Class<? extends Action<?>>) action.getDeclaringClass();
@@ -21,7 +21,7 @@ public class RepositoryActions {
 			Action<?> actionInstance = actionClazz.newInstance();
 			actionInstance.setRepository(r);
 
-			Object[] arguments = getActionArguments(action, params, actionId);
+			Object[] arguments = getActionArguments(action, params, id);
 
 			Object ret = action.invoke(actionInstance, arguments);
 			if (action.getReturnType().equals(Void.TYPE)) {

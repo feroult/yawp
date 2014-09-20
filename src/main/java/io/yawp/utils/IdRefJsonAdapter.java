@@ -1,4 +1,4 @@
-package io.yawp.servlet;
+package io.yawp.utils;
 
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;

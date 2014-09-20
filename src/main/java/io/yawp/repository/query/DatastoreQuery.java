@@ -359,11 +359,6 @@ public class DatastoreQuery<T> {
 		return from(id.getParentId()).where(EntityUtils.getIdFieldName(clazz), operator, id);
 	}
 
-	@Deprecated
-	public T id(Long id) {
-		return whereById("=", id).only();
-	}
-
 	public T id(IdRef<?> id) {
 		return whereById("=", id).only();
 	}

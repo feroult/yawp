@@ -2,7 +2,6 @@ package io.yawp.utils;
 
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
-import io.yawp.servlet.IdRefJsonAdapter;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -6,7 +6,11 @@ import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.annotations.Endpoint;
+import io.yawp.servlet.rest.RestAction;
+import io.yawp.servlet.rest.RestActionType;
 import io.yawp.utils.HttpVerb;
+
+import java.util.Map;
 
 public class EndpointRouter {
 
@@ -24,7 +28,7 @@ public class EndpointRouter {
 
 	private IdRef<?> idRef;
 
-	private Class<?> clazz;
+	private Class<?> endpointClazz;
 
 	public EndpointRouter(Repository r, HttpVerb verb, String uri) {
 		this.verb = verb;
@@ -44,7 +48,7 @@ public class EndpointRouter {
 
 		this.customActionKey = parseCustomActionKey();
 		this.overCollection = parseOverCollection();
-		this.clazz = parseEndpointClazz();
+		this.endpointClazz = parseEndpointClazz();
 	}
 
 	private Class<?> parseEndpointClazz() {
@@ -158,7 +162,7 @@ public class EndpointRouter {
 	}
 
 	public EndpointFeatures<?> getEndpointFeatures() {
-		return features.get(clazz);
+		return features.get(endpointClazz);
 	}
 
 	public Class<?> getEndpointClazz() {
@@ -169,16 +173,39 @@ public class EndpointRouter {
 		return idRef;
 	}
 
-	public RESTActionType getRESTActionType() {
+	public RestActionType getRestActionType() {
 		if (isCustomAction()) {
-			return RESTActionType.CUSTOM;
+			return RestActionType.CUSTOM;
 		}
-		return RESTActionType.defaultRestAction(verb, isOverCollection());
+		return RestActionType.defaultRestActionType(verb, isOverCollection());
 	}
 
 	private void validateRestrictions() {
 		Endpoint endpointAnnotation = getEndpointFeatures().getEndpointAnnotation();
-		getRESTActionType().validateRetrictions(endpointAnnotation);
+		getRestActionType().validateRetrictions(endpointAnnotation);
+	}
+
+	public RestAction getRestAction(boolean enableHooks, Map<String, String> params) {
+		try {
+			Class<? extends RestAction> restActionClazz = getRestActionType().getRestActionClazz();
+
+			if (restActionClazz == null) {
+				return null;
+			}
+
+			RestAction action = restActionClazz.newInstance();
+
+			action.setRepository(r);
+			action.setEnableHooks(enableHooks);
+			action.setClazz(endpointClazz);
+			action.setId(idRef);
+			action.setParams(params);
+
+			return action;
+
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

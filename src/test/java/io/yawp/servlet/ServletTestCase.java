@@ -51,7 +51,7 @@ public class ServletTestCase extends EndpointTestCase {
 	}
 
 	protected String post(String uri, String json) {
-		return post(uri, json, null);
+		return post(uri, json, new HashMap<String, String>());
 	}
 
 	protected String post(String uri, String json, Map<String, String> params) {
@@ -59,11 +59,11 @@ public class ServletTestCase extends EndpointTestCase {
 	}
 
 	protected String put(String uri) {
-		return put(uri, null, null);
+		return put(uri, null, new HashMap<String, String>());
 	}
 
 	protected String put(String uri, String json) {
-		return put(uri, json, null);
+		return put(uri, json, new HashMap<String, String>());
 	}
 
 	protected String put(String uri, Map<String, String> params) {

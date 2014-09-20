@@ -7,6 +7,7 @@ import io.yawp.repository.query.DatastoreQuery;
 import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.response.HttpResponse;
 import io.yawp.repository.response.JsonResponse;
+import io.yawp.repository.transformers.RepositoryTransformers;
 import io.yawp.servlet.HttpException;
 import io.yawp.utils.JsonUtils;
 
@@ -90,6 +91,13 @@ public abstract class RestAction {
 		} else {
 			r.save(object);
 		}
+	}
+
+	protected Object transformIfNecessary(Object object) {
+		if (!params.containsKey(TRANSFORMER)) {
+			return object;
+		}
+		return RepositoryTransformers.execute(r, object, params.get(TRANSFORMER));
 	}
 
 }

@@ -4,6 +4,7 @@ import io.yawp.repository.IdRef;
 import io.yawp.utils.EntityUtils;
 import io.yawp.utils.JsonUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CreateRestAction extends RestAction {
@@ -19,24 +20,28 @@ public class CreateRestAction extends RestAction {
 
 	private Object createFromObject() {
 		Object object = JsonUtils.from(r, requestJson, endpointClazz);
-		saveObject(object);
-		return object;
+		return saveObject(object);
 	}
 
 	private Object createFromArray() {
 		List<?> objects = JsonUtils.fromList(r, requestJson, endpointClazz);
+
+		List<Object> resultObjects = new ArrayList<Object>();
+
 		for (Object object : objects) {
-			saveObject(object);
+			resultObjects.add(saveObject(object));
 		}
-		return objects;
+		return resultObjects;
 	}
 
-	protected void saveObject(Object object) {
+	protected Object saveObject(Object object) {
 		if (id != null) {
 			saveWithParentId(object, id);
 		} else {
 			save(object);
 		}
+
+		return transformIfNecessary(object);
 	}
 
 	protected void saveWithParentId(Object object, IdRef<?> parentId) {

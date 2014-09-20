@@ -31,4 +31,27 @@ public class ChildTransformerTest extends ChildServletTestCase {
 		assertEquals("transformed xpto1", children.get(0).getName());
 		assertEquals("transformed xpto2", children.get(1).getName());
 	}
+
+	@Test
+	public void testCreateTransformer() {
+		String json = post(uri("/parents/%s/children", parent), json("{ name: 'xpto', parentId: '%s' }", parent), params("t", "simple"));
+
+		Child child = from(json, Child.class);
+		assertEquals("transformed xpto", child.getName());
+		assertEquals(parent.getId(), child.getParentId());
+	}
+
+	@Test
+	public void testCreateArrayTransformer() {
+		String json = post(uri("/parents/%s/children", parent),
+				json("[ { name: 'xpto1', parentId: '%s' }, { name: 'xpto2', parentId: '%s' } ]", parent, parent), params("t", "simple"));
+		List<Child> children = fromList(json, Child.class);
+
+		assertEquals(2, children.size());
+		assertEquals("transformed xpto1", children.get(0).getName());
+		assertEquals("transformed xpto2", children.get(1).getName());
+		assertEquals(parent.getId(), children.get(0).getParentId());
+		assertEquals(parent.getId(), children.get(1).getParentId());
+	}
+
 }

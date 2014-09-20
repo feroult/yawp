@@ -50,13 +50,4 @@ public class TransformerTest extends EndpointTestCase {
 		assertEquals("transformed xpto", retrievedChild.getName());
 	}
 
-//	@Test
-//	public void testTransformAfterSave() {
-//
-//		RepositoryTransformers.execute(r, null, "simple");
-//
-//		r.save(null);
-//
-//	}
-
 }

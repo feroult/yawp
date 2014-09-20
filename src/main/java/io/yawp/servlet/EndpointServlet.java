@@ -1,17 +1,12 @@
 package io.yawp.servlet;
 
 import io.yawp.repository.EndpointException;
-import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.EndpointScanner;
-import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
-import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.response.ErrorResponse;
 import io.yawp.repository.response.HttpResponse;
 import io.yawp.repository.response.JsonResponse;
-import io.yawp.servlet.rest.RestAction;
-import io.yawp.utils.EntityUtils;
 import io.yawp.utils.Environment;
 import io.yawp.utils.HttpVerb;
 import io.yawp.utils.JsonUtils;
@@ -27,7 +22,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//TODO remove dependence to EntityUtils, move EntityUtils inside repository
 public class EndpointServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 8155293897299089610L;
@@ -37,6 +31,9 @@ public class EndpointServlet extends HttpServlet {
 	private boolean enableHooks = true;
 
 	private boolean enableProduction = false;
+
+	public EndpointServlet() {
+	}
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -52,9 +49,6 @@ public class EndpointServlet extends HttpServlet {
 
 	private void setWithHooks(String enableHooksParameter) {
 		this.enableHooks = enableHooksParameter == null || Boolean.valueOf(enableHooksParameter);
-	}
-
-	public EndpointServlet() {
 	}
 
 	protected EndpointServlet(String packagePrefix) {
@@ -114,38 +108,10 @@ public class EndpointServlet extends HttpServlet {
 	protected HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
 		Repository r = getRepository(params);
 		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri);
-		EndpointFeatures<?> endpoint = router.getEndpointFeatures();
-
-		RestAction restAction = router.getRestAction(enableHooks, requestJson, params);
-
-		if (restAction != null) {
-			return restAction.execute();
-		}
-
-		switch (router.getRestActionType()) {
-		case DESTROY:
-			if (router.getIdRef() == null) {
-				throw new HttpException(501, "DELETE is not implemented for collections");
-			}
-			return new JsonResponse(delete(router.getIdRef(), endpoint));
-		case CUSTOM:
-			return action(r, router.getIdRef(), router.getEndpointClazz(), router.getCustomActionKey(), params);
-		default:
-			throw new IllegalArgumentException("Invalid datastore action");
-		}
-	}
-
-	private String delete(IdRef<?> idRef, EndpointFeatures<?> endpoint) {
-		Object o = idRef.fetch(endpoint.getClazz());
-		idRef.delete();
-		return JsonUtils.to(o);
+		return router.executeRestAction(enableHooks, requestJson, params);
 	}
 
 	protected Repository getRepository(Map<String, String> params) {
 		return Repository.r().setFeatures(features);
-	}
-
-	private HttpResponse action(Repository r, IdRef<?> idRef, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
-		return r.action(idRef, clazz, actionKey, params);
 	}
 }

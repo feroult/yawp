@@ -2,6 +2,7 @@ package io.yawp.servlet.rest;
 
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
+import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.DatastoreQuery;
 import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.response.HttpResponse;
@@ -29,6 +30,8 @@ public abstract class RestAction {
 
 	protected Map<String, String> params;
 
+	protected ActionKey customActionKey;
+
 	public void setRepository(Repository r) {
 		this.r = r;
 	}
@@ -51,6 +54,10 @@ public abstract class RestAction {
 
 	public void setParams(Map<String, String> params) {
 		this.params = params;
+	}
+
+	public void setCustomActionKey(ActionKey customActionKey) {
+		this.customActionKey = customActionKey;
 	}
 
 	public abstract Object action();
@@ -84,6 +91,5 @@ public abstract class RestAction {
 			r.save(object);
 		}
 	}
-
 
 }

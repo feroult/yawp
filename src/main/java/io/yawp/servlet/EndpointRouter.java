@@ -6,6 +6,7 @@ import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.annotations.Endpoint;
+import io.yawp.repository.response.HttpResponse;
 import io.yawp.servlet.rest.RestAction;
 import io.yawp.servlet.rest.RestActionType;
 import io.yawp.utils.HttpVerb;
@@ -185,7 +186,7 @@ public class EndpointRouter {
 		getRestActionType().validateRetrictions(endpointAnnotation);
 	}
 
-	public RestAction getRestAction(boolean enableHooks, String requestJson, Map<String, String> params) {
+	private RestAction getRestAction(boolean enableHooks, String requestJson, Map<String, String> params) {
 		try {
 			Class<? extends RestAction> restActionClazz = getRestActionType().getRestActionClazz();
 
@@ -201,12 +202,18 @@ public class EndpointRouter {
 			action.setId(idRef);
 			action.setRequestJson(requestJson);
 			action.setParams(params);
+			action.setCustomActionKey(customActionKey);
 
 			return action;
 
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public HttpResponse executeRestAction(boolean enableHooks, String requestJson, Map<String, String> params) {
+		RestAction restAction = getRestAction(enableHooks, requestJson, params);
+		return restAction.execute();
 	}
 
 }

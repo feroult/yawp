@@ -22,7 +22,15 @@ public enum RestActionType {
 		}
 
 	},
-	CREATE, UPDATE, DESTROY, CUSTOM;
+	CREATE {
+
+		@Override
+		public Class<? extends RestAction> getRestActionClazz() {
+			return CreateRestAction.class;
+		}
+
+	},
+	UPDATE, DESTROY, CUSTOM;
 
 	public static RestActionType defaultRestActionType(HttpVerb verb, boolean overCollection) {
 		switch (verb) {

@@ -185,7 +185,7 @@ public class EndpointRouter {
 		getRestActionType().validateRetrictions(endpointAnnotation);
 	}
 
-	public RestAction getRestAction(boolean enableHooks, Map<String, String> params) {
+	public RestAction getRestAction(boolean enableHooks, String requestJson, Map<String, String> params) {
 		try {
 			Class<? extends RestAction> restActionClazz = getRestActionType().getRestActionClazz();
 
@@ -197,8 +197,9 @@ public class EndpointRouter {
 
 			action.setRepository(r);
 			action.setEnableHooks(enableHooks);
-			action.setClazz(endpointClazz);
+			action.setEndpointClazz(endpointClazz);
 			action.setId(idRef);
+			action.setRequestJson(requestJson);
 			action.setParams(params);
 
 			return action;

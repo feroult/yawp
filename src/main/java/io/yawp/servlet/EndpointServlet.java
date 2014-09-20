@@ -7,9 +7,6 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
-import io.yawp.repository.query.DatastoreQuery;
-import io.yawp.repository.query.DatastoreQueryOptions;
-import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.response.ErrorResponse;
 import io.yawp.repository.response.HttpResponse;
 import io.yawp.repository.response.JsonResponse;
@@ -22,7 +19,6 @@ import io.yawp.utils.JsonUtils;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
@@ -120,15 +116,13 @@ public class EndpointServlet extends HttpServlet {
 		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri);
 		EndpointFeatures<?> endpoint = router.getEndpointFeatures();
 
-		RestAction restAction = router.getRestAction(enableHooks, params);
+		RestAction restAction = router.getRestAction(enableHooks, requestJson, params);
 
 		if (restAction != null) {
 			return restAction.execute();
 		}
 
 		switch (router.getRestActionType()) {
-		case CREATE:
-			return new JsonResponse(save(r, router.getIdRef(), endpoint, requestJson));
 		case UPDATE:
 			return new JsonResponse(update(r, router.getIdRef(), endpoint, requestJson));
 		case DESTROY:
@@ -149,28 +143,12 @@ public class EndpointServlet extends HttpServlet {
 		return JsonUtils.to(o);
 	}
 
-	private String q(Map<String, String> params) {
-		return params == null ? null : params.get("q");
-	}
-
-	private String t(Map<String, String> params) {
-		return params == null ? null : params.get("t");
-	}
-
 	protected Repository getRepository(Map<String, String> params) {
 		return Repository.r().setFeatures(features);
 	}
 
 	private HttpResponse action(Repository r, IdRef<?> idRef, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
 		return r.action(idRef, clazz, actionKey, params);
-	}
-
-	private String save(Repository r, IdRef<?> parentId, EndpointFeatures<?> endpoint, String json) {
-		if (JsonUtils.isJsonArray(json)) {
-			return saveFromArray(r, parentId, endpoint.getClazz(), json);
-		} else {
-			return saveFromObject(r, parentId, endpoint.getClazz(), json);
-		}
 	}
 
 	private String update(Repository r, IdRef<?> id, EndpointFeatures<?> endpoint, String json) {
@@ -181,67 +159,11 @@ public class EndpointServlet extends HttpServlet {
 		return JsonUtils.to(object);
 	}
 
-	private String saveFromObject(Repository r, IdRef<?> parentId, Class<?> clazz, String json) {
-		Object object = JsonUtils.from(r, json, clazz);
-		saveInRepository(r, object, parentId);
-		return JsonUtils.to(object);
-	}
-
-	private String saveFromArray(Repository r, IdRef<?> parentId, Class<?> clazz, String json) {
-		List<?> objects = JsonUtils.fromList(r, json, clazz);
-
-		for (Object object : objects) {
-			saveInRepository(r, object, parentId);
-		}
-
-		return JsonUtils.to(objects);
-	}
-
-	private String index(Repository r, IdRef<?> parentId, EndpointFeatures<?> endpoint, String q, String t) {
-		DatastoreQuery<?> query = executeQueryInRepository(r, endpoint.getClazz());
-
-		if (parentId != null) {
-			query.from(parentId);
-		}
-
-		if (q != null) {
-			query.options(DatastoreQueryOptions.parse(q));
-		}
-
-		if (t != null) {
-			return JsonUtils.to(query.transform(t).list());
-		}
-
-		return JsonUtils.to(query.list());
-	}
-
-	private <T> String get(Repository r, IdRef<?> idRef, EndpointFeatures<T> features, String t) {
-		try {
-			DatastoreQuery<T> query = executeQueryInRepository(r, features.getClazz()).whereById("=", idRef);
-			return JsonUtils.to(t == null ? query.only() : query.transform(t).only());
-		} catch (NoResultException e) {
-			throw new HttpException(404);
-		}
-	}
-
-	private void saveInRepository(Repository r, Object object, IdRef<?> parentId) {
-		EntityUtils.setParentId(object, parentId);
-		saveProcessedObject(r, object);
-	}
-
 	private void saveProcessedObject(Repository r, Object object) {
 		if (enableHooks) {
 			r.saveWithHooks(object);
 		} else {
 			r.save(object);
-		}
-	}
-
-	private <T> DatastoreQuery<T> executeQueryInRepository(Repository r, Class<T> clazz) {
-		if (enableHooks) {
-			return r.queryWithHooks(clazz);
-		} else {
-			return r.query(clazz);
 		}
 	}
 }

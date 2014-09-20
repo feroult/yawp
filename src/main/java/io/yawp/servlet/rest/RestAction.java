@@ -7,6 +7,7 @@ import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.response.HttpResponse;
 import io.yawp.repository.response.JsonResponse;
 import io.yawp.servlet.HttpException;
+import io.yawp.utils.EntityUtils;
 import io.yawp.utils.JsonUtils;
 
 import java.util.Map;
@@ -21,9 +22,11 @@ public abstract class RestAction {
 
 	protected boolean enableHooks;
 
-	protected Class<?> clazz;
+	protected Class<?> endpointClazz;
 
 	protected IdRef<?> id;
+
+	protected String requestJson;
 
 	protected Map<String, String> params;
 
@@ -35,12 +38,16 @@ public abstract class RestAction {
 		this.enableHooks = enableHooks;
 	}
 
-	public void setClazz(Class<?> clazz) {
-		this.clazz = clazz;
+	public void setEndpointClazz(Class<?> clazz) {
+		this.endpointClazz = clazz;
 	}
 
 	public void setId(IdRef<?> id) {
 		this.id = id;
+	}
+
+	public void setRequestJson(String requestJson) {
+		this.requestJson = requestJson;
 	}
 
 	public void setParams(Map<String, String> params) {
@@ -66,9 +73,30 @@ public abstract class RestAction {
 
 	protected DatastoreQuery<?> query() {
 		if (enableHooks) {
-			return r.queryWithHooks(clazz);
+			return r.queryWithHooks(endpointClazz);
 		}
-		return r.query(clazz);
+		return r.query(endpointClazz);
+	}
+
+	protected void saveRootObject(Object object) {
+		if (enableHooks) {
+			r.saveWithHooks(object);
+		} else {
+			r.save(object);
+		}
+	}
+
+	protected void saveNestedObject(Object object, IdRef<?> parentId) {
+		EntityUtils.setParentId(object, parentId);
+		saveRootObject(object);
+	}
+
+	protected void save(Object object) {
+		if (id != null) {
+			saveNestedObject(object, id);
+		} else {
+			saveRootObject(object);
+		}
 	}
 
 }

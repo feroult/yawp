@@ -7,7 +7,6 @@ import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.response.HttpResponse;
 import io.yawp.repository.response.JsonResponse;
 import io.yawp.servlet.HttpException;
-import io.yawp.utils.EntityUtils;
 import io.yawp.utils.JsonUtils;
 
 import java.util.Map;

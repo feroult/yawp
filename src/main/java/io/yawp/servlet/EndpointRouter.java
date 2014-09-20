@@ -174,7 +174,7 @@ public class EndpointRouter {
 		return idRef;
 	}
 
-	public RestActionType getRestActionType() {
+	private RestActionType getRestActionType() {
 		if (isCustomAction()) {
 			return RestActionType.CUSTOM;
 		}

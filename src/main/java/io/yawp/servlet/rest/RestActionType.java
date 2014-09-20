@@ -38,7 +38,14 @@ public enum RestActionType {
 		}
 
 	},
-	DESTROY, CUSTOM;
+	DESTROY {
+
+		@Override
+		public Class<? extends RestAction> getRestActionClazz() {
+			return DestroyRestAction.class;
+		}
+		
+	}, CUSTOM;
 
 	public static RestActionType defaultRestActionType(HttpVerb verb, boolean overCollection) {
 		switch (verb) {

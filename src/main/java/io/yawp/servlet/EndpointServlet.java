@@ -123,8 +123,6 @@ public class EndpointServlet extends HttpServlet {
 		}
 
 		switch (router.getRestActionType()) {
-		case UPDATE:
-			return new JsonResponse(update(r, router.getIdRef(), endpoint, requestJson));
 		case DESTROY:
 			if (router.getIdRef() == null) {
 				throw new HttpException(501, "DELETE is not implemented for collections");
@@ -149,21 +147,5 @@ public class EndpointServlet extends HttpServlet {
 
 	private HttpResponse action(Repository r, IdRef<?> idRef, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
 		return r.action(idRef, clazz, actionKey, params);
-	}
-
-	private String update(Repository r, IdRef<?> id, EndpointFeatures<?> endpoint, String json) {
-		assert !JsonUtils.isJsonArray(json);
-		Object object = JsonUtils.from(r, json, endpoint.getClazz());
-		EntityUtils.setId(object, id);
-		saveProcessedObject(r, object);
-		return JsonUtils.to(object);
-	}
-
-	private void saveProcessedObject(Repository r, Object object) {
-		if (enableHooks) {
-			r.saveWithHooks(object);
-		} else {
-			r.save(object);
-		}
 	}
 }

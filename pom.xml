@@ -9,12 +9,15 @@
 	<artifactId>yawp</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
+	<name>YAWP!</name>
+	<description>Yet Another Web API for Google APP Engine</description>
+	<url>http://yawp.io</url>
+
 	<properties>
 		<appengine.app.version>1</appengine.app.version>
 		<appengine.target.version>1.9.9</appengine.target.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<test.output.directory>test-classes</test.output.directory>
-		<internal.repo.path>file:///home/fernando/dev/mvn-repo/</internal.repo.path>
 	</properties>
 
 	<dependencies>
@@ -162,12 +165,31 @@
 		</profile>
 	</profiles>
 
-	<distributionManagement>
-		<repository>
-			<id>internal.repo</id>
-			<name>Internal Repository</name>
-			<url>${internal.repo.path}</url>
-		</repository>
-	</distributionManagement>
+	<scm>
+		<connection>scm:git:ssh://git@github.com/feroult/yawp.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com/feroult/yawp.git</developerConnection>
+		<url>https://github.com/feroult/yawp</url>
+	</scm>
+
+	<issueManagement>
+		<url>https://github.com/feroult/yawp/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
+
+	<licenses>
+		<license>
+			<name>Apache Software License 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>feroult</id>
+			<name>Fernando Ultremare</name>
+			<email>feroult@gmail.com</email>
+			<url>https://github.com/feroult</url>
+		</developer>
+	</developers>
 
 </project>

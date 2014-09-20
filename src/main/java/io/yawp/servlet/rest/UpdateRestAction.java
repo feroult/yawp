@@ -13,7 +13,7 @@ public class UpdateRestAction extends RestAction {
 		forceObjectIdFromRequest(object);
 		save(object);
 
-		return object;
+		return transform(object);
 	}
 
 	private void forceObjectIdFromRequest(Object object) {

@@ -54,4 +54,16 @@ public class ChildTransformerTest extends ChildServletTestCase {
 		assertEquals(parent.getId(), children.get(1).getParentId());
 	}
 
+	@Test
+	public void testUpdateTransformer() {
+		Child child = saveChild("xpto", parent);
+
+		String json = put(uri("/parents/%s/children/%s", parent, child),
+				json("{ name: 'changed xpto', parentId: '%s', id: '%s' }", parent, child), params("t", "simple"));
+		Child retrievedChild = from(json, Child.class);
+
+		assertEquals("transformed changed xpto", retrievedChild.getName());
+		assertEquals(parent.getId(), retrievedChild.getParentId());
+	}
+
 }

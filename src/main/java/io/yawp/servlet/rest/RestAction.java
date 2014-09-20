@@ -93,7 +93,7 @@ public abstract class RestAction {
 		}
 	}
 
-	protected Object transformIfNecessary(Object object) {
+	protected Object transform(Object object) {
 		if (!params.containsKey(TRANSFORMER)) {
 			return object;
 		}

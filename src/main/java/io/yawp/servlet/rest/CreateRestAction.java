@@ -41,7 +41,7 @@ public class CreateRestAction extends RestAction {
 			save(object);
 		}
 
-		return transformIfNecessary(object);
+		return transform(object);
 	}
 
 	protected void saveWithParentId(Object object, IdRef<?> parentId) {

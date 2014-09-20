@@ -10,9 +10,8 @@ public class DestroyRestAction extends RestAction {
 			throw new HttpException(501, "DESTROY is not implemented for collections");
 		}
 
-		Object object = id.fetch();
 		id.delete();
-		return object;
+		return id;
 	}
 
 	private boolean overCollection() {

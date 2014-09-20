@@ -21,15 +21,7 @@ public class RepositoryActions {
 			Action<?> actionInstance = actionClazz.newInstance();
 			actionInstance.setRepository(r);
 
-			IdRef<?> id = actionId;
-			// if (actionId.asLong() == null) {
-			// assert EndpointScanner.isOverCollection(action);
-			// id = actionId.getParentId();
-			// } else {
-			// assert !EndpointScanner.isOverCollection(action);
-			// id = actionId;
-			// }
-			Object[] arguments = getActionArguments(action, params, id);
+			Object[] arguments = getActionArguments(action, params, actionId);
 
 			Object ret = action.invoke(actionInstance, arguments);
 			if (action.getReturnType().equals(Void.TYPE)) {

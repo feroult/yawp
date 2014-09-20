@@ -16,7 +16,7 @@ public class GrandchildAction extends Action<Grandchild> {
 		return grandchild;
 	}
 
-	@PUT(value = "touched", overCollection = true)
+	@PUT("touched")
 	public List<Grandchild> touchCollection(IdRef<Child> childId) {
 		List<Grandchild> grandchilds = r.query(Grandchild.class).from(childId).list();
 		for (Grandchild grandchild : grandchilds) {

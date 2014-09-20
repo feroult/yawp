@@ -9,6 +9,4 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface PUT {
 	String value();
-
-	boolean overCollection() default false;
 }

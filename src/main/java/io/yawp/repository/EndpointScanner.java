@@ -12,6 +12,8 @@ import io.yawp.utils.HttpVerb;
 import io.yawp.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -124,34 +126,50 @@ public final class EndpointScanner {
 	}
 
 	private void addAction(Class<?> objectClazz, Method method) {
-		List<ActionKey> ars = new ArrayList<>(2);
+		List<ActionKey> actionKeys = new ArrayList<>(2);
+
 		GET get = method.getAnnotation(GET.class);
 		if (get != null) {
-			ars.add(new ActionKey(HttpVerb.GET, get.value(), get.overCollection()));
-		}
-		PUT put = method.getAnnotation(PUT.class);
-		if (put != null) {
-			ars.add(new ActionKey(HttpVerb.PUT, put.value(), put.overCollection()));
+			actionKeys.add(new ActionKey(HttpVerb.GET, get.value(), overCollection(objectClazz, method)));
 		}
 
-		if (ars.isEmpty()) {
+		PUT put = method.getAnnotation(PUT.class);
+		if (put != null) {
+			actionKeys.add(new ActionKey(HttpVerb.PUT, put.value(), overCollection(objectClazz, method)));
+		}
+
+		if (actionKeys.isEmpty()) {
 			return;
 		}
 
-		boolean overCollection = ars.get(0).isOverCollection();
-		for (int i = 1; i < ars.size(); i++) {
-			validate(ars.get(i).isOverCollection() == overCollection,
-					"If your action " + method.getName() + " for io.yawp " + objectClazz.getSimpleName()
-							+ " has more than one annotation, they must all share the same overCollection value.");
+		boolean overCollection = actionKeys.get(0).isOverCollection();
+		for (int i = 1; i < actionKeys.size(); i++) {
+			validate(actionKeys.get(i).isOverCollection() == overCollection, "If your action " + method.getName() + " for yawp "
+					+ objectClazz.getSimpleName() + " has more than one annotation, they must all share the same overCollection value.");
 		}
 
 		assertValidActionMethod(objectClazz, method, overCollection);
 
 		for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, method.getDeclaringClass().getSimpleName())) {
-			for (ActionKey ar : ars) {
+			for (ActionKey ar : actionKeys) {
 				endpoint.addAction(ar, method);
 			}
 		}
+	}
+
+	private boolean overCollection(Class<?> objectClazz, Method method) {
+		Type[] parameters = method.getGenericParameterTypes();
+
+		if (parameters.length == 0) {
+			return true;
+		}
+
+		if (parameters[0].equals(Map.class)) {
+			return true;
+		}
+
+		ParameterizedType pType = (ParameterizedType) parameters[0];
+		return !pType.getActualTypeArguments()[0].equals(objectClazz);
 	}
 
 	private void validate(boolean b, String message) {
@@ -205,16 +223,4 @@ public final class EndpointScanner {
 		return this;
 	}
 
-	public static boolean isOverCollection(Method action) {
-		GET get = action.getAnnotation(GET.class);
-		if (get != null) {
-			return get.overCollection();
-		}
-		PUT put = action.getAnnotation(PUT.class);
-		if (put != null) {
-			return put.overCollection();
-		}
-
-		throw new RuntimeException("Action of unknown type.");
-	}
 }

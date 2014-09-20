@@ -17,7 +17,7 @@ public class ParentAction extends Action<Parent> {
 		return parent;
 	}
 
-	@PUT(value = "touched", overCollection = true)
+	@PUT("touched")
 	public List<Parent> touch() {
 		List<Parent> parents = r.query(Parent.class).order("name").list();
 		for (Parent parent : parents) {
@@ -26,7 +26,7 @@ public class ParentAction extends Action<Parent> {
 		return parents;
 	}
 
-	@GET(value = "something", overCollection = true)
+	@GET("something")
 	public String something() {
 		return "touched";
 	}
@@ -38,7 +38,7 @@ public class ParentAction extends Action<Parent> {
 		return parent;
 	}
 
-	@PUT(value = "touched_with_params", overCollection = true)
+	@PUT("touched_with_params")
 	public List<Parent> touchWithParams(Map<String, String> params) {
 		List<Parent> parents = r.query(Parent.class).list();
 		for (Parent parent : parents) {

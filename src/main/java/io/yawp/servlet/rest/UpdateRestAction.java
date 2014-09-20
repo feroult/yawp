@@ -10,10 +10,14 @@ public class UpdateRestAction extends RestAction {
 		assert !JsonUtils.isJsonArray(requestJson);
 
 		Object object = JsonUtils.from(r, requestJson, endpointClazz);
-		EntityUtils.setId(object, id);
+		forceObjectIdFromRequest(object);
 		save(object);
 
 		return object;
+	}
+
+	private void forceObjectIdFromRequest(Object object) {
+		EntityUtils.setId(object, id);
 	}
 
 }

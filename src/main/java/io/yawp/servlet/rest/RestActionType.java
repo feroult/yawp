@@ -30,7 +30,15 @@ public enum RestActionType {
 		}
 
 	},
-	UPDATE, DESTROY, CUSTOM;
+	UPDATE {
+
+		@Override
+		public Class<? extends RestAction> getRestActionClazz() {
+			return UpdateRestAction.class;
+		}
+
+	},
+	DESTROY, CUSTOM;
 
 	public static RestActionType defaultRestActionType(HttpVerb verb, boolean overCollection) {
 		switch (verb) {

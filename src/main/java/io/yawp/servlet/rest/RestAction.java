@@ -78,7 +78,7 @@ public abstract class RestAction {
 		return r.query(endpointClazz);
 	}
 
-	protected void saveRootObject(Object object) {
+	protected void save(Object object) {
 		if (enableHooks) {
 			r.saveWithHooks(object);
 		} else {
@@ -86,17 +86,5 @@ public abstract class RestAction {
 		}
 	}
 
-	protected void saveNestedObject(Object object, IdRef<?> parentId) {
-		EntityUtils.setParentId(object, parentId);
-		saveRootObject(object);
-	}
-
-	protected void save(Object object) {
-		if (id != null) {
-			saveNestedObject(object, id);
-		} else {
-			saveRootObject(object);
-		}
-	}
 
 }

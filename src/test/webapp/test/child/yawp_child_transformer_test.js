@@ -1,35 +1,26 @@
 (function(t, yawp, fx) {
 
-	t.moduledef('child query', {
+	t.moduledef('child transformer', {
 		testStart : function() {
 			fx.reset();
 
-			fx.parent('parent1', {
-				name : 'xpto1'
+			fx.parent('parent', {
+				name : 'xpto'
 			});
 
 			fx.child('child1', {
 				name : 'xpto1',
-				parentId : fx.parent('parent1').id
+				parentId : fx.parent('parent').id
 			});
 
 			fx.child('child2', {
 				name : 'xpto2',
-				parentId : fx.parent('parent1').id
+				parentId : fx.parent('parent').id
 			});
 
 			fx.child('child3', {
 				name : 'xpto3',
-				parentId : fx.parent('parent1').id
-			});
-
-			fx.parent('parent2', {
-				name : 'xpto2'
-			});
-
-			fx.child('child4', {
-				name : 'xpto1',
-				parentId : fx.parent('parent2').id
+				parentId : fx.parent('parent').id
 			});
 		}
 	});
@@ -64,5 +55,23 @@
 		});
 
 	});
+
+	// t.asyncTest("create transformer", function(assert) {
+	// expect(2);
+	//
+	// var parent = fx.parent('parent1');
+	//
+	// var child = {
+	// name : 'xpto',
+	// parentId : parent.id
+	// };
+	//
+	// yawp('/children').from(parent).transform('simple').create(child).done(function(retrievedChild)
+	// {
+	// assert.equal(retrievedChild.name, 'transformed xpto');
+	// assert.equal(retrievedChild.parentId, parent.id);
+	// t.start();
+	// });
+	// });
 
 })(QUnit, yawp, yawp.fixtures);

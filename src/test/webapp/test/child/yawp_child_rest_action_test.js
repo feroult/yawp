@@ -182,8 +182,8 @@
 			parentId : parent.id
 		});
 
-		yawp.destroy(child).done(function(retrievedChild) {
-			t.equal(child.id, retrievedChild.id);
+		yawp.destroy(child).done(function(retrievedId) {
+			t.equal(child.id, retrievedId);
 
 		}).then(function() {
 			yawp(child).fetch().fail(function(error) {

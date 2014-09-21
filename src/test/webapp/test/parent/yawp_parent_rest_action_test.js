@@ -108,8 +108,8 @@
 			name : 'xpto'
 		});
 
-		yawp.destroy(parent).done(function(retrievedParent) {
-			t.equal(parent.id, retrievedParent.id);
+		yawp.destroy(parent).done(function(retrievedId) {
+			t.equal(parent.id, retrievedId);
 
 		}).then(function() {
 			yawp(parent).fetch().fail(function(error) {

@@ -133,37 +133,6 @@
 		});
 	});
 
-	t.asyncTest("show transformer", function(assert) {
-		expect(1);
-
-		var child = fx.child('child1');
-
-		yawp(child).transform('simple').fetch(function(retrievedChild) {
-			assert.equal(retrievedChild.name, 'transformed xpto1');
-			t.start();
-		});
-
-	});
-
-	t.asyncTest("index transformer", function(assert) {
-		expect(4);
-
-		var parent1 = fx.parent('parent1');
-
-		var order = [ {
-			p : 'name'
-		} ];
-
-		yawp('/children').from(parent1).order(order).transform('simple').list(function(children) {
-			assert.equal(children.length, 3);
-			assert.equal(children[0].name, 'transformed xpto1');
-			assert.equal(children[1].name, 'transformed xpto2');
-			assert.equal(children[2].name, 'transformed xpto3');
-			t.start();
-		});
-
-	});
-
 	t.asyncTest("sort", function(assert) {
 		expect(4);
 

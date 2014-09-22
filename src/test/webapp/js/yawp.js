@@ -15,7 +15,7 @@
 	function defaultAjax(type, options) {
 		var request = $.ajax({
 			type : type,
-			url : baseUrl + options.url,
+			url : baseUrl + options.url + (options.query ? '?' + $.param(options.query) : ''),
 			data : options.data,
 			async : options.async,
 			contentType : 'application/json;charset=UTF-8',
@@ -55,26 +55,13 @@
 			return this;
 		}
 
-		function addQueryParameter(key, value) {
-			var _options = options();
-			if (!_options.data) {
-				_options.data = {};
-			}
-			_options.data[key] = value;
-		}
-
-		function transform(t) {
-			addQueryParameter('t', t);
-			return this;
-		}
-
 		function fetch(callback) {
 			return defaultAjax('GET', options()).done(callback);
 		}
 
 		function list(callback) {
 			if (Object.keys(q).length > 0) {
-				addQueryParameter('q', JSON.stringify(q));
+				options.addQueryParameter('q', JSON.stringify(q));
 			}
 
 			return defaultAjax('GET', options()).done(callback);
@@ -103,7 +90,6 @@
 		}
 
 		return {
-			transform : transform,
 			where : where,
 			order : order,
 			sort : sort,
@@ -179,19 +165,20 @@
 			return arg;
 		}
 
-		var globalOptions = {
+		var ajaxOptions = {
 			url : normalize(baseArg)
-		// query : {}
 		}
 
 		function options() {
-			return globalOptions;
+			return ajaxOptions;
 		}
 
-		function addQueryParameter(key, value) {
-			if (!globalOptions[key]) {
-				globalOptions[key] = value;
+		options.addQueryParameter = function(key, value) {
+			var ajaxOptions = options();
+			if (!ajaxOptions.query) {
+				ajaxOptions.query = {};
 			}
+			ajaxOptions.query[key] = value;
 		}
 
 		function from(parentBaseArg) {
@@ -200,8 +187,14 @@
 			return this;
 		}
 
+		function transform(t) {
+			options.addQueryParameter('t', t);
+			return this;
+		}
+
 		return $.extend({
-			from : from
+			from : from,
+			transform : transform,
 		}, query(options), repository(options), actions(options));
 	}
 

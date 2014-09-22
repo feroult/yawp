@@ -40,13 +40,13 @@
 	t.asyncTest("index transformer", function(assert) {
 		expect(4);
 
-		var parent1 = fx.parent('parent1');
+		var parent = fx.parent('parent');
 
 		var order = [ {
 			p : 'name'
 		} ];
 
-		yawp('/children').from(parent1).order(order).transform('simple').list(function(children) {
+		yawp('/children').from(parent).order(order).transform('simple').list(function(children) {
 			assert.equal(children.length, 3);
 			assert.equal(children[0].name, 'transformed xpto1');
 			assert.equal(children[1].name, 'transformed xpto2');

@@ -34,12 +34,6 @@ public class DatastoreQueryTransformer<F, T> {
 		return this;
 	}
 
-	@Deprecated
-	public DatastoreQueryTransformer<F, T> whereById(String operator, Long id) {
-		query.whereById(operator, id);
-		return this;
-	}
-
 	public DatastoreQueryTransformer<F, T> order(String property) {
 		order(property, null);
 		return this;
@@ -107,4 +101,5 @@ public class DatastoreQueryTransformer<F, T> {
 	public T id(IdRef<?> idRef) {
 		return RepositoryTransformers.execute(query.getRepository(), query.id(idRef), transformName);
 	}
+
 }

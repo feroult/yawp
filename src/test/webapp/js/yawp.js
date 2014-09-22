@@ -179,19 +179,25 @@
 			return arg;
 		}
 
-		var base = normalize(baseArg);
-
 		var globalOptions = {
-			url : base
+			url : normalize(baseArg)
+		// query : {}
 		}
 
 		function options() {
 			return globalOptions;
 		}
 
+		function addQueryParameter(key, value) {
+			if (!globalOptions[key]) {
+				globalOptions[key] = value;
+			}
+		}
+
 		function from(parentBaseArg) {
 			var parentBase = normalize(parentBaseArg);
-			return yawp(parentBase + base);
+			options().url = parentBase + options().url;
+			return this;
 		}
 
 		return $.extend({

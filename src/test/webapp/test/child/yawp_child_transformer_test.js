@@ -73,4 +73,46 @@
 		});
 	});
 
+	t.asyncTest("create array transformer", function(assert) {
+		expect(5);
+
+		var parent = fx.parent('parent');
+
+		var children = [ {
+			name : 'xpto1',
+			parentId : parent.id
+		}, {
+			name : 'xpto2',
+			parentId : parent.id
+		} ];
+
+		yawp('/children').from(parent).transform('simple').create(children).done(function(retrievedChidren) {
+			assert.equal(retrievedChidren.length, 2)
+			assert.equal(retrievedChidren[0].name, 'transformed xpto1');
+			assert.equal(retrievedChidren[1].name, 'transformed xpto2');
+			assert.equal(retrievedChidren[0].parentId, parent.id);
+			assert.equal(retrievedChidren[1].parentId, parent.id);
+			t.start();
+		});
+	});
+
+	t.asyncTest("update transformer", function(assert) {
+		expect(2);
+
+		var parent = fx.parent('parent');
+
+		var child = fx.child('child', {
+			name : 'xpto',
+			parentId : parent.id
+		});
+
+		child.name = 'changed xpto';
+
+		yawp(child.id).transform('simple').update(child).done(function(retrievedChild) {
+			assert.equal(retrievedChild.name, 'transformed changed xpto');
+			assert.equal(retrievedChild.parentId, parent.id);
+			t.start();
+		});
+	});
+
 })(QUnit, yawp, yawp.fixtures);

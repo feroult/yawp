@@ -32,12 +32,8 @@
 		throw 'use yawp(id) if your endpoint does not have a @Id field called id';
 	}
 
-	function query(base) {
+	function query(options) {
 		var q = {};
-
-		var options = {
-			url : base
-		};
 
 		function where(data) {
 			q.where = data;
@@ -60,10 +56,11 @@
 		}
 
 		function addQueryParameter(key, value) {
-			if (!options.data) {
-				options.data = {};
+			var _options = options();
+			if (!_options.data) {
+				_options.data = {};
 			}
-			options.data[key] = value;
+			_options.data[key] = value;
 		}
 
 		function transform(t) {
@@ -72,7 +69,7 @@
 		}
 
 		function fetch(callback) {
-			return defaultAjax('GET', options).done(callback);
+			return defaultAjax('GET', options()).done(callback);
 		}
 
 		function list(callback) {
@@ -80,7 +77,7 @@
 				addQueryParameter('q', JSON.stringify(q));
 			}
 
-			return defaultAjax('GET', options).done(callback);
+			return defaultAjax('GET', options()).done(callback);
 		}
 
 		function first(callback) {
@@ -118,24 +115,20 @@
 		};
 	}
 
-	function repository(base) {
-		var options = {
-			url : base
-		};
-
+	function repository(options) {
 		function create(object) {
-			options.data = JSON.stringify(object);
-			return defaultAjax('POST', options);
+			options().data = JSON.stringify(object);
+			return defaultAjax('POST', options());
 		}
 
 		function update(object) {
-			options.data = JSON.stringify(object);
-			return defaultAjax('PUT', options);
+			options().data = JSON.stringify(object);
+			return defaultAjax('PUT', options());
 		}
 
 		function destroy(object) {
-			options.data = JSON.stringify(object);
-			return defaultAjax('DELETE', options);
+			options().data = JSON.stringify(object);
+			return defaultAjax('DELETE', options());
 		}
 
 		return {
@@ -145,27 +138,26 @@
 		};
 	}
 
-	function actions(base) {
-		function options(action) {
-			return {
-				url : base + '/' + action
-			};
+	function actions(options) {
+		function actionOptions(action) {
+			options().url += '/' + action;
+			return options();
 		}
 
 		function get(action) {
-			return defaultAjax('GET', options(action));
+			return defaultAjax('GET', actionOptions(action));
 		}
 
 		function put(action) {
-			return defaultAjax('PUT', options(action));
+			return defaultAjax('PUT', actionOptions(action));
 		}
 
 		function post(action) {
-			return defaultAjax('POST', options(action));
+			return defaultAjax('POST', actionOptions(action));
 		}
 
 		function _delete(action) {
-			return defaultAjax('DELETE', options(action));
+			return defaultAjax('DELETE', actionOptions(action));
 		}
 
 		return {
@@ -189,6 +181,14 @@
 
 		var base = normalize(baseArg);
 
+		var globalOptions = {
+			url : base
+		}
+
+		function options() {
+			return globalOptions;
+		}
+
 		function from(parentBaseArg) {
 			var parentBase = normalize(parentBaseArg);
 			return yawp(parentBase + base);
@@ -196,7 +196,7 @@
 
 		return $.extend({
 			from : from
-		}, query(base), repository(base), actions(base));
+		}, query(options), repository(options), actions(options));
 	}
 
 	function update(object) {

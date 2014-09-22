@@ -56,22 +56,21 @@
 
 	});
 
-	// t.asyncTest("create transformer", function(assert) {
-	// expect(2);
-	//
-	// var parent = fx.parent('parent1');
-	//
-	// var child = {
-	// name : 'xpto',
-	// parentId : parent.id
-	// };
-	//
-	// yawp('/children').from(parent).transform('simple').create(child).done(function(retrievedChild)
-	// {
-	// assert.equal(retrievedChild.name, 'transformed xpto');
-	// assert.equal(retrievedChild.parentId, parent.id);
-	// t.start();
-	// });
-	// });
+//	 t.asyncTest("create transformer", function(assert) {
+//		expect(2);
+//
+//		var parent = fx.parent('parent');
+//
+//		var child = {
+//			name : 'xpto',
+//			parentId : parent.id
+//		};
+//
+//		yawp('/children').from(parent).transform('simple').create(child).done(function(retrievedChild) {
+//			assert.equal(retrievedChild.name, 'transformed xpto');
+//			assert.equal(retrievedChild.parentId, parent.id);
+//			t.start();
+//		});
+//	});
 
 })(QUnit, yawp, yawp.fixtures);

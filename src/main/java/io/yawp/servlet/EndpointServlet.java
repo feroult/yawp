@@ -42,7 +42,12 @@ public class EndpointServlet extends HttpServlet {
 	}
 
 	private void setWithHooks(String enableHooksParameter) {
-		this.enableHooks = enableHooksParameter == null || Boolean.valueOf(enableHooksParameter);
+		boolean enableHooks = enableHooksParameter == null || Boolean.valueOf(enableHooksParameter);
+		setWithHooks(enableHooks);
+	}
+
+	protected void setWithHooks(boolean enableHooks) {
+		this.enableHooks = enableHooks;
 	}
 
 	protected EndpointServlet(String packagePrefix) {

@@ -7,7 +7,6 @@ import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.response.ErrorResponse;
 import io.yawp.repository.response.HttpResponse;
 import io.yawp.repository.response.JsonResponse;
-import io.yawp.utils.Environment;
 import io.yawp.utils.HttpVerb;
 import io.yawp.utils.JsonUtils;
 
@@ -32,8 +31,6 @@ public class EndpointServlet extends HttpServlet {
 
 	private boolean enableHooks = true;
 
-	private boolean enableProduction = false;
-
 	public EndpointServlet() {
 	}
 
@@ -41,12 +38,7 @@ public class EndpointServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		setWithHooks(config.getInitParameter("enableHooks"));
-		setProduction(config.getInitParameter("enableProduction"));
 		scanEndpoints(config.getInitParameter("packagePrefix"));
-	}
-
-	private void setProduction(String enableProductionParameter) {
-		this.enableProduction = enableProductionParameter != null && Boolean.valueOf(enableProductionParameter);
 	}
 
 	private void setWithHooks(String enableHooksParameter) {
@@ -61,7 +53,7 @@ public class EndpointServlet extends HttpServlet {
 		features = new EndpointScanner(packagePrefix).enableHooks(enableHooks).scan();
 	}
 
-	private void response(HttpServletResponse resp, HttpResponse httpResponse) throws IOException {
+	protected void response(HttpServletResponse resp, HttpResponse httpResponse) throws IOException {
 		if (httpResponse == null) {
 			new JsonResponse("{\"status\":\"ok\"}").execute(resp);
 		} else {
@@ -71,13 +63,6 @@ public class EndpointServlet extends HttpServlet {
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-		// TODO create another servlet to use as fixtures
-		if (!enableProduction && Environment.isProduction()) {
-			response(resp, new ErrorResponse(403));
-			return;
-		}
-
 		HttpResponse httpResponse;
 		try {
 			httpResponse = execute(req.getMethod(), getUri(req), JsonUtils.readJson(req.getReader()), makeParams(req));

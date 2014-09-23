@@ -20,6 +20,16 @@ public class ParentCustomActionTest extends ParentServletTestCase {
 	}
 
 	@Test
+	public void testOverObjectAsTask() {
+		Parent parent = saveParent("xpto");
+
+		String json = put(uri("/_tasks/parents/%s/touched", parent));
+		Parent retrievedParent = from(json, Parent.class);
+
+		assertEquals("touched xpto", retrievedParent.getName());
+	}
+
+	@Test
 	public void testOverCollection() {
 		saveParent("xpto1");
 		saveParent("xpto2");

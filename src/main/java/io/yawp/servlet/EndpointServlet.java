@@ -105,9 +105,6 @@ public class EndpointServlet extends HttpServlet {
 	}
 
 	private String normalizeUri(String uri) {
-		if (uri.startsWith(TASKS_PREFIX)) {
-			return uri.substring(TASKS_PREFIX.length());
-		}
 		return uri;
 	}
 

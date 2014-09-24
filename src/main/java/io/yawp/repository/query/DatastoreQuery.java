@@ -350,11 +350,6 @@ public class DatastoreQuery<T> {
 		return clazz;
 	}
 
-	@Deprecated
-	public DatastoreQuery<T> whereById(String operator, Long id) {
-		return where(EntityUtils.getIdFieldName(clazz), operator, id);
-	}
-
 	public DatastoreQuery<T> whereById(String operator, IdRef<?> id) {
 		return from(id.getParentId()).where(EntityUtils.getIdFieldName(clazz), operator, id);
 	}

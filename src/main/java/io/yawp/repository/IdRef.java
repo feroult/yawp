@@ -214,6 +214,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		int result = 1;
 		result = prime * result + ((clazz == null) ? 0 : clazz.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((parentId == null) ? 0 : parentId.hashCode());
 		return result;
 	}
@@ -236,6 +237,11 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 			if (other.id != null)
 				return false;
 		} else if (!id.equals(other.id))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
 			return false;
 		if (parentId == null) {
 			if (other.parentId != null)

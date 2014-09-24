@@ -25,6 +25,8 @@
 		};
 
 		callback(c);
+
+		api.lazy = computeLazyApi();
 	}
 
 	// lib

@@ -23,8 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 
 public class EndpointServlet extends HttpServlet {
 
-	private static final String TASKS_PREFIX = "/_tasks";
-
 	private static final long serialVersionUID = 8155293897299089610L;
 
 	private RepositoryFeatures features;
@@ -100,12 +98,8 @@ public class EndpointServlet extends HttpServlet {
 	protected HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
 
 		Repository r = getRepository(params);
-		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), normalizeUri(uri));
+		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri);
 		return router.executeRestAction(enableHooks, requestJson, params);
-	}
-
-	private String normalizeUri(String uri) {
-		return uri;
 	}
 
 	protected Repository getRepository(Map<String, String> params) {

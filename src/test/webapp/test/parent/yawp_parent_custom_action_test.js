@@ -30,35 +30,12 @@
 			name : 'xpto2'
 		});
 
-		waitParentsThen(function() {
-			yawp('/parents').put('touched').done(function(parents) {
-				assert.equal(parents.length, 2);
-				assert.equal(parents[0].name, 'touched xpto1');
-				assert.equal(parents[1].name, 'touched xpto2');
-				t.start();
-			});
+		yawp('/parents').put('touched').done(function(parents) {
+			assert.equal(parents.length, 2);
+			assert.equal(parents[0].name, 'touched xpto1');
+			assert.equal(parents[1].name, 'touched xpto2');
+			t.start();
 		});
 	});
-
-	function waitParentsThen(callback) {
-		function eventually(parents) {
-			return parents.length == 2 && parents[0].name == 'xpto1' && parents[1].name == 'xpto2';
-		}
-
-		var order = [ {
-			p : 'name'
-		} ];
-
-		function retry() {
-			yawp('/parents').order(order).list(function(parents) {
-				if (!eventually(parents)) {
-					retry();
-					return;
-				}
-				callback();
-			});
-		}
-		retry();
-	}
 
 })(QUnit, yawp, yawp.fixtures);

@@ -19,24 +19,11 @@
 
 		var where = [ 'name', '=', 'xpto1' ];
 
-		function eventually(parents) {
-			return parents.length == 1 && parents[0].name == 'xpto1';
-		}
-
-		function retry() {
-			yawp('/parents').where(where).list(function(parents) {
-				if (!eventually(parents)) {
-					retry();
-					return;
-				}
-
-				assert.equal(parents.length, 1);
-				assert.equal(parents[0].name, 'xpto1');
-				t.start();
-			});
-		}
-
-		retry();
+		yawp('/parents').where(where).list(function(parents) {
+			assert.equal(parents.length, 1);
+			assert.equal(parents[0].name, 'xpto1');
+			t.start();
+		});
 	});
 
 	t.asyncTest('order', function(assert) {
@@ -47,25 +34,12 @@
 			d : 'desc'
 		} ];
 
-		function eventually(parents) {
-			return parents.length == 2 && parents[0].name == 'xpto2' && parents[1].name == 'xpto1';
-		}
-
-		function retry() {
-			yawp('/parents').order(order).list(function(parents) {
-				if (!eventually(parents)) {
-					retry();
-					return;
-				}
-
-				assert.equal(parents.length, 2);
-				assert.equal(parents[0].name, 'xpto2');
-				assert.equal(parents[1].name, 'xpto1');
-				t.start();
-			});
-		}
-
-		retry();
+		yawp('/parents').order(order).list(function(parents) {
+			assert.equal(parents.length, 2);
+			assert.equal(parents[0].name, 'xpto2');
+			assert.equal(parents[1].name, 'xpto1');
+			t.start();
+		});
 	});
 
 	t.asyncTest('sort', function(assert) {
@@ -76,25 +50,12 @@
 			d : 'desc'
 		} ];
 
-		function eventually(parents) {
-			return parents.length == 2 && parents[0].name == 'xpto2' && parents[1].name == 'xpto1';
-		}
-
-		function retry() {
-			yawp('/parents').sort(sort).list(function(parents) {
-				if (!eventually(parents)) {
-					retry();
-					return;
-				}
-
-				assert.equal(parents.length, 2);
-				assert.equal(parents[0].name, 'xpto2');
-				assert.equal(parents[1].name, 'xpto1');
-				t.start();
-			});
-		}
-
-		retry();
+		yawp('/parents').sort(sort).list(function(parents) {
+			assert.equal(parents.length, 2);
+			assert.equal(parents[0].name, 'xpto2');
+			assert.equal(parents[1].name, 'xpto1');
+			t.start();
+		});
 	});
 
 })(QUnit, yawp, yawp.fixtures);

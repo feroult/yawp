@@ -223,76 +223,10 @@
 		return lazyApi;
 	}
 
-	function wait() {
-		var endpoint;
-		for (endpoint in load) {
-			waitEndpoint(endpoint, load[endpoint]);
-		}
-	}
-
-	function waitEndpoint(endpoint, objects) {
-		var retries = 0;
-
-		function retry() {
-			var retrievedObjects = listAll(endpoint);
-
-			var a1 = stringifyArray(valuesToArray(objects)).sort();
-			var a2 = stringifyArray(retrievedObjects).sort();
-
-			if (!equalsArray(a1, a2)) {
-				console.log('xx', retries);
-				console.log('yy', a1, a2);
-				retries++;
-				if (retries > MAX_FIXTURES_WAIT_RETRIES) {
-					throw 'max (' + MAX_FIXTURES_WAIT_RETRIES + ') fixtures wait retries exceeded for: ' + endpoint;
-				}
-				retry();
-			}
-		}
-		retry();
-	}
-
-	function equalsArray(a1, a2) {
-		var i, l;
-		if (a1.length != a2.length) {
-			return false;
-		}
-		for (i = 0, l < a1.length; i < l; i++) {
-			if (a1[i] === a2[i]) {
-				continue;
-			}
-			return false;
-		}
-		return true;
-	}
-
-	function valuesToArray(object) {
-		return Object.keys(object).map(function(key) {
-			return object[key];
-		});
-	}
-
-	function stringifyArray(a) {
-		var i, l;
-		for (i = 0, l = a.length; i < l; i++) {
-			a[i] = JSON.stringify(a[i]);
-		}
-		return a;
-	}
-
-	function listAll(endpoint) {
-		return JSON.parse($.ajax({
-			type : 'GET',
-			url : baseUrl + endpoint,
-			async : false,
-		}).responseText);
-	}
-
 	api.lazy = computeLazyApi();
 	api.reset = reset;
 	api.map = map;
 	api.config = config;
-	api.wait = wait;
 
 	window.yawp.fixtures = api;
 

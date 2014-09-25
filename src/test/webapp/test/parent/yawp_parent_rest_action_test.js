@@ -80,25 +80,13 @@
 			p : 'name'
 		} ];
 
-		function eventually(parents) {
-			return parents.length == 2 && parents[0].name == 'xpto1' && parents[1].name == 'xpto2';
-		}
+		yawp('/parents').order(order).list(function(parents) {
 
-		function retry() {
-			yawp('/parents').order(order).list(function(parents) {
-				if (!eventually(parents)) {
-					retry();
-					return;
-				}
-
-				assert.equal(parents.length, 2);
-				assert.equal(parents[0].name, 'xpto1');
-				assert.equal(parents[1].name, 'xpto2');
-				t.start();
-			});
-		}
-
-		retry();
+			assert.equal(parents.length, 2);
+			assert.equal(parents[0].name, 'xpto1');
+			assert.equal(parents[1].name, 'xpto2');
+			t.start();
+		});
 	});
 
 	t.asyncTest("destroy", function(assert) {

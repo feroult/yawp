@@ -148,27 +148,15 @@
 				p : 'name'
 			} ];
 
-			function eventually(children) {
-				return children.length == 2 && children[0].name == 'xpto1' && children[1].name == 'xpto2';
-			}
+			yawp('/children').order(order).list(function(children) {
 
-			function retry() {
-				yawp('/children').order(order).list(function(children) {
-					if (!eventually(children)) {
-						retry();
-						return;
-					}
-
-					assert.equal(children.length, 2);
-					assert.equal(children[0].name, 'xpto1');
-					assert.equal(children[1].name, 'xpto2');
-					assert.equal(children[0].parentId, parent1.id);
-					assert.equal(children[1].parentId, parent2.id);
-					t.start();
-				});
-			}
-
-			retry();
+				assert.equal(children.length, 2);
+				assert.equal(children[0].name, 'xpto1');
+				assert.equal(children[1].name, 'xpto2');
+				assert.equal(children[0].parentId, parent1.id);
+				assert.equal(children[1].parentId, parent2.id);
+				t.start();
+			});
 		});
 	});
 

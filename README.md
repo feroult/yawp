@@ -1,14 +1,23 @@
 # YAWP!
 
-Yet Another Web API for Google App Engine
+Yet Another Web API for GAE
 
 [![Build Status](https://api.shippable.com/projects/5418400b50f3833e055ab249/badge?branchName=master)](https://app.shippable.com/projects/5418400b50f3833e055ab249/builds/latest)
 
 ## Introduction
 
-YAWP! is a Java framework built on top of Google App Engine, whose main purpose is to provide a simple and meaningful API to support REST based applications.  
-You create your POJOs and YAWP! creates a full REST url schema to insert, delete, update, list, etc. your objects automatically.  
-Then you can change default the behavior via Actions, Transformers and Hooks. Never write a controller in your life again!
+YAWP! is a Java Framework built on top of Google App Engine, whose main purpose is to provide a simple and meaningful API to support REST based applications. You create your POJOs and YAWP! 
+
+From a single annotation, the framework automatically creates a full REST url schema for data persistence and querying:
+
+```java
+@Endpoint(path = "/products")
+public class Product {
+    ...
+}
+```
+
+Then you can add business logic and behavior to your API with Actions, Transformers and Hooks. You'll never need to write a traditional controller in your life again.
 
 ## Features
 

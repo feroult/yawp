@@ -4,7 +4,6 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.query.DatastoreQuery;
-import io.yawp.repository.response.HttpResponse;
 import io.yawp.utils.EntityUtils;
 
 import java.lang.reflect.Method;
@@ -83,7 +82,7 @@ public class Repository {
 		saveEntity(object, entity);
 	}
 
-	public HttpResponse action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
+	public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
 		namespace.set(clazz);
 		try {
 			Method actionMethod = repositoryFeatures.get(clazz).getAction(actionKey);

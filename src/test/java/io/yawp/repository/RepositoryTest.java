@@ -83,7 +83,7 @@ public class RepositoryTest extends EndpointTestCase {
 		yawp.save(object);
 		yawp.destroy(object.getId());
 
-		yawp.query(BasicObject.class).id(object.getId());
+		yawp(BasicObject.class).id(object.getId());
 	}
 
 	@Test

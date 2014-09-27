@@ -40,7 +40,7 @@ public class HookTest extends EndpointTestCase {
 		yawp.save(new HookedObject("xpto1"));
 		yawp.save(new HookedObject("xpto2"));
 
-		List<HookedObject> objects = yawp.queryWithHooks(HookedObject.class).list();
+		List<HookedObject> objects = yawpWithHooks(HookedObject.class).list();
 
 		assertEquals(1, objects.size());
 		assertEquals("xpto1", objects.get(0).getStringValue());

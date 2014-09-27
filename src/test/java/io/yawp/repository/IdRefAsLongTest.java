@@ -41,10 +41,10 @@ public class IdRefAsLongTest extends EndpointTestCase {
 	public void testQueryWithIdRef() {
 		Parent parent = saveParentWithJob();
 
-		Parent retrievedParent1 = yawp.query(Parent.class).where("id", "=", parent.getId()).only();
+		Parent retrievedParent1 = yawp(Parent.class).where("id", "=", parent.getId()).only();
 		assertEquals("xpto", retrievedParent1.getName());
 
-		Parent retrievedParent2 = yawp.query(Parent.class).where("jobId", "=", parent.getJobId()).only();
+		Parent retrievedParent2 = yawp(Parent.class).where("jobId", "=", parent.getJobId()).only();
 		assertEquals("xpto", retrievedParent2.getName());
 	}
 
@@ -105,7 +105,7 @@ public class IdRefAsLongTest extends EndpointTestCase {
 		yawp.save(parent3);
 
 		List<IdRef<Parent>> inList = Arrays.asList(parent1.getId(), parent2.getId());
-		List<Parent> objects = yawp.query(Parent.class).where("id", "in", inList).list();
+		List<Parent> objects = yawp(Parent.class).where("id", "in", inList).list();
 		assertEquals(2, objects.size());
 	}
 

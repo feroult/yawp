@@ -14,6 +14,10 @@ public class Feature {
 		return yawp.query(clazz);
 	}
 
+	public <T> DatastoreQuery<T> yawpWithHooks(Class<T> clazz) {
+		return yawp.queryWithHooks(clazz);
+	}
+
 	public <T extends Feature> T feature(Class<T> clazz) {
 		try {
 			T feature = clazz.newInstance();

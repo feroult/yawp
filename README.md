@@ -23,6 +23,18 @@ public class Person {
 
 cURL:
 
+| Verb        | Path         | Action          | Javascript                                  | Java         |
+| ----------- | ------------ | --------------- | ------------------------------------------- | ------------ |
+| GET         | /people      | List all people | ```javascript yawp('/people').list() ```    | ```java yawp(Person.class).list() ``` | 
+
+| POST        | /people      | Create person   |  
+| GET         | /people/:id  | Show person     |
+| PUT/PATCH   | /people/:id  | Update person   |
+| DELETE      | /people/:id  | Destroy person  |
+
+
+cURL:
+
 | Verb        | Path         | REST Action     |
 | ----------- |------------- | ----------------|
 | GET         | /people      | List all people |

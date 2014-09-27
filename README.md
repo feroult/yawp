@@ -50,7 +50,7 @@ List<Person> people = yawp(Person.class).list();
 
 yawp.save(new Person());
 
-Person person = yawp(Person.class).id(personId);
+Person person = yawp(Person.class).fetch(personId);
 
 yawp.save(person);
 

@@ -21,7 +21,7 @@ public class Person {
 }
 ```
 
-*cURL*:
+**cURL**:
 
 | Verb        | Path         | Action                |
 | ----------- |------------- | --------------------- |
@@ -31,7 +31,7 @@ public class Person {
 | PUT/PATCH   | /people/:id  | Update a person       |
 | DELETE      | /people/:id  | Destroy a person      |
 
-*Javascript*:
+**Javascript**:
 ```javascript
 yawp('/people').list( function(people) {} );
 
@@ -44,7 +44,7 @@ yawp(personId).update(person).done( function(person) {} );
 yawp(personId).destroy().done( function(person) {} );
 ```
 
-*Java*:
+**Java**:
 ```java
 List<Person> people = yawp(Person.class).list();
 

@@ -14,7 +14,7 @@ YAWP! also provides a convenient way to organize your custom server side busines
 
 **Time to see it in action =)**
 
-## Basic Persistence API
+### Basic Persistence API
 
 ```java
 @Endpoint(path = "/people")

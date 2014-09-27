@@ -21,28 +21,17 @@ public class Person {
 }
 ```
 
-cURL:
+*cURl*:
 
-| Verb        | Path         | Action          | Javascript                                  | Java         |
-| ----------- | ------------ | --------------- | ------------------------------------------- | ------------ |
-| GET         | /people      | List all people | ```javascript yawp('/people').list()```    | ```java yawp(Person.class).list()``` | 
-| POST        | /people      | Create person   |  
-| GET         | /people/:id  | Show person     |
-| PUT/PATCH   | /people/:id  | Update person   |
-| DELETE      | /people/:id  | Destroy person  |
+| Verb        | Path         |  Actio                |
+| ----------- |------------- | --------------------- |
+| GET         | /people      | List/query all people |
+| POST        | /people      | Create person         |
+| GET         | /people/:id  | Show person           |
+| PUT/PATCH   | /people/:id  | Update person         |
+| DELETE      | /people/:id  | Destroy person        |
 
-
-cURL:
-
-| Verb        | Path         | REST Action     |
-| ----------- |------------- | ----------------|
-| GET         | /people      | List all people |
-| POST        | /people      | Create person   |
-| GET         | /people/:id  | Show person     |
-| PUT/PATCH   | /people/:id  | Update person   |
-| DELETE      | /people/:id  | Destroy person  |
-
-Javascript:
+*Javascript*:
 ```javascript
 yawp('/people').list( function(people) {} );
 
@@ -55,7 +44,7 @@ yawp(person.id).update(person).done( function(person) {} );
 yawp(person.id).destroy().done( function(person) {} );
 ```
 
-Java:
+*Java*:
 ```java
 List<Person> people = yawp(Person.class).list();
 

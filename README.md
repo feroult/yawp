@@ -10,9 +10,9 @@ YAWP! is a Java framework built on top of Google App Engine, whose main purpose 
 
 From a single class annotation, YAWP! provides a full REST url schema with a fluent progamatic client API for Java and Javascript, so you write your client side code the same way you write your server side code.
 
-YAWP! also provides a convenient way to organize your custom server side business logic through Actions, Hooks and Transformers.
+YAWP! also provides a convenient way to organize your custom server side business logic through Actions, Hooks and Transformers. 
 
-**Time to see it in action =)**
+Time to see it in action =)
 
 ### Basic Persistence API
 

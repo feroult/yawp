@@ -21,10 +21,19 @@ public class Person {
 }
 ```
 
-Now you can:
+cURL:
+
+| Verb        | Path           | Rest Action  |
+| ------------- |-------------| -----|
+| GET     | /people | List all people |
+| POST      | /people      |   Create person |
+| GET | /people/:id      |  Show person |
+| PUT/PATCH | /people/:id      |  Update person |
 
 ```
-curl -H "Content-type: application/json" -X POST -d "{ name: 'janes' }"  http://localhost:8080/api/people
+GET /api/people
+POST /api/people
+
 ```
 
 Javascript:

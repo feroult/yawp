@@ -1,14 +1,60 @@
 # YAWP!
 
-Yet Another Web API for Google App Engine
+Yet Another Web API for GAE
 
 [![Build Status](https://api.shippable.com/projects/5418400b50f3833e055ab249/badge?branchName=master)](https://app.shippable.com/projects/5418400b50f3833e055ab249/builds/latest)
 
 ## Introduction
 
-YAWP! is a Java framework built on top of Google App Engine, whose main purpose is to provide a simple and meaningful API to support REST based applications.  
-You create your POJOs and YAWP! creates a full REST url schema to insert, delete, update, list, etc. your objects automatically.  
-Then you can change default the behavior via Actions, Transformers and Hooks. Never write a controller in your life again!
+YAWP! is a Java framework built on top of Google App Engine, whose main purpose is to provide a simple and meaningful API to support REST based applications.  You create your POJOs and **YAWP!** 
+
+From a single class annotation, YAWP! provides a full REST url schema with a fluent progamatic client API for Java and Javascript, so you write your client side code the same way you write your server side code.
+
+YAWP! also provides a convenient way to organize your custom server side business logic through Actions, Hooks and Transformers.
+
+**Time to see it in action:**
+```java
+@Endpoint(path = "/people")
+public class Person {
+    ...
+}
+```
+
+**cURL**:
+
+| Verb        | Path         | Action                |
+| ----------- |------------- | --------------------- |
+| GET         | /people      | List/query all people |
+| POST        | /people      | Create a person       |
+| GET         | /people/:id  | Show a person         |
+| PUT/PATCH   | /people/:id  | Update a person       |
+| DELETE      | /people/:id  | Destroy a person      |
+
+**Javascript**:
+```javascript
+yawp('/people').list( function(people) {} );
+
+yawp('/people').create({ }).done( function(person) {} );
+
+yawp(personId).fetch( function(person) {} );
+
+yawp.update(person).done( function(person) {} );
+
+yawp.destroy(personId).done( function(personId) {} );
+```
+
+**Java**:
+```java
+List<Person> people = yawp(Person.class).list();
+
+yawp.create(new Person());
+
+Person person = yawp(Person.class).id(personId);
+
+yawp.update(person);
+
+yawp.destroy(person.getId());
+```
 
 ## Features
 

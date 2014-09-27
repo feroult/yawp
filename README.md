@@ -23,29 +23,31 @@ public class Person {
 
 cURL:
 
-| Verb        | Path           | Rest Action  |
-| ------------- |-------------| -----|
-| GET     | /people | List all people |
-| POST      | /people      |   Create person |
-| GET | /people/:id      |  Show person |
-| PUT/PATCH | /people/:id      |  Update person |
-
-```
-GET /api/people
-POST /api/people
-
-```
+| Verb        | Path         | REST Action     |
+| ----------- |------------- | ----------------|
+| GET         | /people      | List all people |
+| POST        | /people      | Create person   |
+| GET         | /people/:id  | Show person     |
+| PUT/PATCH   | /people/:id  | Update person   |
+| DELETE      | /people/:id  | Destroy person  |
 
 Javascript:
 ```javascript
 yawp('/people').list( function(people) {} );
+yawp('/people').create({ }).done( function(person) {} );
+yawp(person.id).fetch( function(person) {} );
+yawp(person.id).update(person).done( function(person) {} );
+yawp(person.id).destroy().done( function(person) {} );
 ```
 
 Java:
 ```java
-List<Person> people = r.query(Person.class).list();
+List<Person> people = yawp(Person.class).list();
+yawp.save(new Person());
+Person person = yawp(Person.class).id(person.getId());
+yawp.save(person);
+yawp.destroy(person.getId());
 ```
-
 
 
 ## Features

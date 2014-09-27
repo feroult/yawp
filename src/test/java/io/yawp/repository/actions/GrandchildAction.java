@@ -18,7 +18,7 @@ public class GrandchildAction extends Action<Grandchild> {
 
 	@PUT("touched")
 	public List<Grandchild> touchCollection(IdRef<Child> childId) {
-		List<Grandchild> grandchilds = r.query(Grandchild.class).from(childId).list();
+		List<Grandchild> grandchilds = yawp.query(Grandchild.class).from(childId).list();
 		for (Grandchild grandchild : grandchilds) {
 			grandchild.setName("touched " + grandchild.getName());
 		}

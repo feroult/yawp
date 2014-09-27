@@ -15,8 +15,8 @@ public class NamespaceTest extends EndpointTestCase {
 
 	@Before
 	public void before() {
-		r1 = Repository.r("ns1").setFeatures(r.getFeatures());
-		r2 = Repository.r("ns2").setFeatures(r.getFeatures());
+		r1 = Repository.r("ns1").setFeatures(yawp.getFeatures());
+		r2 = Repository.r("ns2").setFeatures(yawp.getFeatures());
 	}
 
 	@Test

@@ -16,9 +16,9 @@ public class TransformerTest extends EndpointTestCase {
 	@Test
 	public void testSingleResult() {
 		BasicObject object = new BasicObject("xpto");
-		r.save(object);
+		yawp.save(object);
 
-		Map<String, Object> map = r.query(BasicObject.class).<Map<String, Object>> transform("simple").id(object.getId());
+		Map<String, Object> map = yawp.query(BasicObject.class).<Map<String, Object>> transform("simple").id(object.getId());
 
 		assertEquals("xpto", map.get("innerValue"));
 		assertEquals("xpto", ((BasicObject) map.get("innerObject")).getStringValue());
@@ -26,10 +26,10 @@ public class TransformerTest extends EndpointTestCase {
 
 	@Test
 	public void testListResultWithSort() {
-		r.save(new BasicObject("xpto1"));
-		r.save(new BasicObject("xpto2"));
+		yawp.save(new BasicObject("xpto1"));
+		yawp.save(new BasicObject("xpto2"));
 
-		List<Map<String, Object>> list = r.query(BasicObject.class).<Map<String, Object>> transform("simple").sort("innerValue", "desc")
+		List<Map<String, Object>> list = yawp.query(BasicObject.class).<Map<String, Object>> transform("simple").sort("innerValue", "desc")
 				.list();
 
 		assertEquals("xpto2", list.get(0).get("innerValue"));
@@ -39,14 +39,14 @@ public class TransformerTest extends EndpointTestCase {
 	@Test
 	public void testTransformWithChild() {
 		Parent parent = new Parent();
-		r.save(parent);
+		yawp.save(parent);
 
 		Child child = new Child();
 		child.setName("xpto");
 		child.setParentId(parent.getId());
-		r.save(child);
+		yawp.save(child);
 
-		Child retrievedChild = r.query(Child.class).<Child> transform("simple").first();
+		Child retrievedChild = yawp.query(Child.class).<Child> transform("simple").first();
 		assertEquals("transformed xpto", retrievedChild.getName());
 	}
 

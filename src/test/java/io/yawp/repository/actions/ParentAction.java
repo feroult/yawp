@@ -19,7 +19,7 @@ public class ParentAction extends Action<Parent> {
 
 	@PUT("touched")
 	public List<Parent> touch() {
-		List<Parent> parents = r.query(Parent.class).order("name").list();
+		List<Parent> parents = yawp.query(Parent.class).order("name").list();
 		for (Parent parent : parents) {
 			parent.setName("touched " + parent.getName());
 		}
@@ -40,7 +40,7 @@ public class ParentAction extends Action<Parent> {
 
 	@PUT("touched_with_params")
 	public List<Parent> touchWithParams(Map<String, String> params) {
-		List<Parent> parents = r.query(Parent.class).list();
+		List<Parent> parents = yawp.query(Parent.class).list();
 		for (Parent parent : parents) {
 			parent.setName("touched " + parent.getName() + " " + params.get("x"));
 		}

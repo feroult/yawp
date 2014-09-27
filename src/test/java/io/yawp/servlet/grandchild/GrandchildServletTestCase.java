@@ -15,16 +15,16 @@ public class GrandchildServletTestCase extends ServletTestCase {
 	@Before
 	public void before() {
 		parent = new Parent();
-		r.save(parent);
+		yawp.save(parent);
 
 		child = new Child();
 		child.setParentId(parent.getId());
-		r.save(child);
+		yawp.save(child);
 	}
 
 	protected Parent saveParent() {
 		Parent parent = new Parent();
-		r.save(parent);
+		yawp.save(parent);
 		return parent;
 	}
 
@@ -35,14 +35,14 @@ public class GrandchildServletTestCase extends ServletTestCase {
 	protected Child saveChild(Parent parent) {
 		Child child = new Child();
 		child.setParentId(parent.getId());
-		r.save(child);
+		yawp.save(child);
 		return child;
 	}
 
 	protected Grandchild saveGrandchild(String name, Child child) {
 		Grandchild grandchild = new Grandchild(name);
 		grandchild.setChildId(child.getId());
-		r.save(grandchild);
+		yawp.save(grandchild);
 		return grandchild;
 	}
 

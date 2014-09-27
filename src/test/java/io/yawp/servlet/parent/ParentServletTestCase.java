@@ -7,7 +7,7 @@ public class ParentServletTestCase extends ServletTestCase {
 
 	protected Parent saveParent(String name) {
 		Parent parent = new Parent(name);
-		r.save(parent);
+		yawp.save(parent);
 		return parent;
 	}
 

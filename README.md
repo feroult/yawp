@@ -23,7 +23,7 @@ public class Person {
 
 *cURl*:
 
-| Verb        | Path         |  Actio                |
+| Verb        | Path         | Action                |
 | ----------- |------------- | --------------------- |
 | GET         | /people      | List/query all people |
 | POST        | /people      | Create person         |
@@ -37,20 +37,22 @@ yawp('/people').list( function(people) {} );
 
 yawp('/people').create({ }).done( function(person) {} );
 
-yawp(person.id).fetch( function(person) {} );
+yawp(personId).fetch( function(person) {} );
 
-yawp(person.id).update(person).done( function(person) {} );
+yawp(personId).update(person).done( function(person) {} );
 
-yawp(person.id).destroy().done( function(person) {} );
+yawp(personId).destroy().done( function(person) {} );
 ```
 
 *Java*:
 ```java
 List<Person> people = yawp(Person.class).list();
 
-yawp.save(new Person());
+yawp.create(new Person());
 
-Person person = yawp(Person.class).id(person.getId());
+Person person = yawp(Person.class).id(personId);
+
+yawp.update(new Person());
 
 yawp.destroy(person.getId());
 ```

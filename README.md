@@ -47,11 +47,11 @@ yawp.destroy(personId).done( function(personId) {} );
 ```java
 List<Person> people = yawp(Person.class).list();
 
-yawp.create(new Person());
+yawp.save(new Person());
 
 Person person = yawp(Person.class).id(personId);
 
-yawp.update(person);
+yawp.save(person);
 
 yawp.destroy(person.getId());
 ```

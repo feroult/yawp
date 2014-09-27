@@ -12,7 +12,10 @@ From a single class annotation, YAWP! provides a full REST url schema with a flu
 
 YAWP! also provides a convenient way to organize your custom server side business logic through Actions, Hooks and Transformers.
 
-**Time to see it in action:**
+**Time to see it in action =)**
+
+## Basic Persistence API
+
 ```java
 @Endpoint(path = "/people")
 public class Person {

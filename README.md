@@ -26,10 +26,10 @@ public class Person {
 | Verb        | Path         | Action                |
 | ----------- |------------- | --------------------- |
 | GET         | /people      | List/query all people |
-| POST        | /people      | Create person         |
-| GET         | /people/:id  | Show person           |
-| PUT/PATCH   | /people/:id  | Update person         |
-| DELETE      | /people/:id  | Destroy person        |
+| POST        | /people      | Create a person       |
+| GET         | /people/:id  | Show a person         |
+| PUT/PATCH   | /people/:id  | Update a person       |
+| DELETE      | /people/:id  | Destroy a person      |
 
 *Javascript*:
 ```javascript
@@ -52,11 +52,10 @@ yawp.create(new Person());
 
 Person person = yawp(Person.class).id(personId);
 
-yawp.update(new Person());
+yawp.update(person);
 
 yawp.destroy(person.getId());
 ```
-
 
 ## Features
 

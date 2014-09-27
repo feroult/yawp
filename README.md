@@ -38,9 +38,9 @@ yawp('/people').create({ }).done( function(person) {} );
 
 yawp(personId).fetch( function(person) {} );
 
-yawp(personId).update(person).done( function(person) {} );
+yawp.update(person).done( function(person) {} );
 
-yawp(personId).destroy().done( function(person) {} );
+yawp.destroy(personId).done( function(personId) {} );
 ```
 
 **Java**:

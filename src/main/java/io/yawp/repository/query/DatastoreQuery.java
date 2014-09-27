@@ -354,18 +354,18 @@ public class DatastoreQuery<T> {
 		return from(id.getParentId()).where(EntityUtils.getIdFieldName(clazz), operator, id);
 	}
 
-	public T id(IdRef<?> idRef) {
+	public T fetch(IdRef<?> idRef) {
 		return whereById("=", idRef).only();
 	}
 
-	public T id(Long id) {
+	public T fetch(Long id) {
 		IdRef<?> idRef = IdRef.create(r, clazz, id);
-		return id(idRef);
+		return fetch(idRef);
 	}
 
-	public T id(String name) {
+	public T fetch(String name) {
 		IdRef<?> idRef = IdRef.create(r, clazz, name);
-		return id(idRef);
+		return fetch(idRef);
 	}
 
 	public List<IdRef<T>> ids() {

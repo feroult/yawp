@@ -18,7 +18,7 @@ public class TransformerTest extends EndpointTestCase {
 		BasicObject object = new BasicObject("xpto");
 		yawp.save(object);
 
-		Map<String, Object> map = yawp(BasicObject.class).<Map<String, Object>> transform("simple").id(object.getId());
+		Map<String, Object> map = yawp(BasicObject.class).<Map<String, Object>> transform("simple").fetch(object.getId());
 
 		assertEquals("xpto", map.get("innerValue"));
 		assertEquals("xpto", ((BasicObject) map.get("innerObject")).getStringValue());

@@ -10,9 +10,9 @@ YAWP! is a Java Framework built on top of Google App Engine, whose main purpose 
 
 You create your POJOs and **YAWP!** 
 
-From a single class annotation, you have a REST API for persistence and query it's data. YAWP! provides a fluent API both in Java and Javascript, so you write your client side code in the same way that you write your server side code.
+From a single class annotation, YAWP! provides a full REST url schema with fluent progamatic client APIs in Java and Javascript, so you write your client side code the same way you write your server side code.
 
-YAWP! also provides a convenient way to write your server side business logic through Actions, and Hooks Transformers. Time to see it in action:
+YAWP! also provides a convenient way to write your custom server side business logic through Actions, and Hooks Transformers. Time to see it in action:
 
 ```java
 @Endpoint(path = "/products")

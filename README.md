@@ -34,18 +34,24 @@ cURL:
 Javascript:
 ```javascript
 yawp('/people').list( function(people) {} );
+
 yawp('/people').create({ }).done( function(person) {} );
+
 yawp(person.id).fetch( function(person) {} );
+
 yawp(person.id).update(person).done( function(person) {} );
+
 yawp(person.id).destroy().done( function(person) {} );
 ```
 
 Java:
 ```java
 List<Person> people = yawp(Person.class).list();
+
 yawp.save(new Person());
+
 Person person = yawp(Person.class).id(person.getId());
-yawp.save(person);
+
 yawp.destroy(person.getId());
 ```
 

@@ -21,7 +21,6 @@ public class Person {
 
     private String name;
     
-    ...
 }
 ```
 
@@ -79,10 +78,9 @@ public class Person {
     
     private String name;
     
-    ...
 }
 ```
-*Note that all **YAWP!** must have one and only one IdRef annotated with @Id.*
+Note: All **YAWP!** POJOs must have one and only one IdRef attribute annotated with @Id
 
 ## Features
 

@@ -21,6 +21,7 @@ public class Person {
 
     private String name;
     
+    ...
 }
 ```
 
@@ -32,9 +33,9 @@ Then use one of HTTP, Java or Javascript APIs to access your resources:
 | ----------- |------------- | --------------------- |
 | GET         | /people      | List people           |
 | POST        | /people      | Create a person       |
-| GET         | /people/:id  | Show a person         |
-| PUT/PATCH   | /people/:id  | Update a person       |
-| DELETE      | /people/:id  | Destroy a person      |
+| GET         | /people/id   | Show a person         |
+| PUT/PATCH   | /people/id   | Update a person       |
+| DELETE      | /people/id   | Destroy a person      |
 
 **Javascript**:
 ```javascript

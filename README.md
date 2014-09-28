@@ -1,6 +1,6 @@
 # YAWP!
 
-Yet Another Web API for GAE
+Yet Another Web API for Google App Engine
 
 [![Build Status](https://api.shippable.com/projects/5418400b50f3833e055ab249/badge?branchName=master)](https://app.shippable.com/projects/5418400b50f3833e055ab249/builds/latest)
 
@@ -12,13 +12,15 @@ From a single class annotation, it provides a full REST url schema with a fluent
 
 You create your POJOs and **YAWP!** 
 
-### Basic Usage
+### REST API
 
 Annotate your POJO:
 ```java
 @Endpoint(path = "/people")
 public class Person {
-    ...
+
+    private String name;
+    
 }
 ```
 
@@ -38,7 +40,7 @@ Then use one of HTTP, Java or Javascript APIs to access your resources:
 ```javascript
 yawp('/people').list( function(people) {} );
 
-yawp('/people').create({ }).done( function(person) {} );
+yawp('/people').create({ name : 'Janes' }).done( function(person) {} );
 
 yawp(personId).fetch( function(person) {} );
 
@@ -51,7 +53,7 @@ yawp.destroy(personId).done( function(personId) {} );
 ```java
 List<Person> people = yawp(Person.class).list();
 
-yawp.save(new Person());
+yawp.save(new Person("Janes"));
 
 Person person = yawp(Person.class).fetch(personId);
 
@@ -59,6 +61,27 @@ yawp.save(person);
 
 yawp.destroy(person.getId());
 ```
+
+## IdRef
+
+The IdRef<T> brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of DataStore Key mechanism and creates a type safe link beetween all your model objects. 
+
+For instance, to define your POJO id you use an IdRef<T> attribute with annotated with @Id. In the case your reffering to another object's id, you don't need to annotate it:
+```java
+@Endpoint(path = "/people")
+public class Person {
+
+    @Id
+    private IdRef<Person> id;
+    
+    private IdRef<Address> addressId;
+    
+    private String name;
+    
+    ...
+}
+```
+*Note that all **YAWP!** must have one and only one IdRef annotated with @Id.*
 
 ## Features
 

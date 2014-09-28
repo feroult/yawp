@@ -14,12 +14,15 @@ You create your POJOs and **YAWP!**
 
 ### Basic Usage
 
+Annotate your POJO:
 ```java
 @Endpoint(path = "/people")
 public class Person {
     ...
 }
 ```
+
+Then use one of HTTP, Java or Javascript APIs to access your resources:
 
 **HTTP**:
 

@@ -64,7 +64,7 @@ yawp.destroy(person.getId());
 
 ## IdRef
 
-The IdRef<T> brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of DataStore Key mechanism and creates a type safe link beetween all your model objects. 
+The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of DataStore Key mechanism and creates a type safe link beetween all your model objects. 
 
 For instance, to define your POJO id you use an IdRef<T> attribute with annotated with @Id. In the case your reffering to another object's id, you don't need to annotate it:
 ```java

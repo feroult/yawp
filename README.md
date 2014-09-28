@@ -25,7 +25,7 @@ public class Person {
 
 | Verb        | Path         | Action                |
 | ----------- |------------- | --------------------- |
-| GET         | /people      | List/query all people |
+| GET         | /people      | List people           |
 | POST        | /people      | Create a person       |
 | GET         | /people/:id  | Show a person         |
 | PUT/PATCH   | /people/:id  | Update a person       |

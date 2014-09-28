@@ -21,7 +21,7 @@ public class Person {
 }
 ```
 
-**cURL**:
+**HTTP**:
 
 | Verb        | Path         | Action                |
 | ----------- |------------- | --------------------- |

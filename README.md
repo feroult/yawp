@@ -89,6 +89,24 @@ Note: All **YAWP!** POJOs must have one and only one IdRef attribute annotated w
 
 From a HTTP call, a Java or Javascript method you can query your objects using a fluent API that nicely exposes the  Datastore Query class.
 
+```javascript
+yawp('/people').where([ 'name', '=', 'Janes']).first( function(person) {} );
+
+yawp('/people').order([ { p: 'name', d: 'desc' } ]).list( function(people) {} ); 
+
+yawp('/people').from(parentId).list( function(people) {} ); 
+````
+
+```java
+Person person = yawp(Person.class).where("name", "=", "Janes").first();
+
+List<Person> people = yawp(Person.class).order("name", "desc").list(); 
+
+List<Person> people = yawp(Person.class).from(parentId).list(); 
+```
+
+You can look at this [Java test suite](..blob/master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java) to see examples of more complex queries.
+
 ## Features
 
  * Amazingly simple

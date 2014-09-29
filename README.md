@@ -109,11 +109,11 @@ List<Person> people = yawp(Person.class).from(parentId).list();
 
 You can look at this [Java test suite](../master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java) to see examples of more complex queries.
 
-### Features
+### Endpoint Features
 
 So far, we've seen all functionality that you get by just annotating your POJO with @Endpoint. Now it's time to see how to add custom server side business logic to your model, so we can create real world application with specific needs.
 
-The way **YAWP!** deal with this is by allowing we to extend the default REST schema through what we call **Features**. You can create three kind of features, namely  **Actions**, **Transformers** and **Hooks**. 
+The way **YAWP!** deal with this is by allowing we to extend the default REST schema through **Features**. You can create three kind of features for your objects: **Actions**, **Transformers** and **Hooks**. 
 
 ### Benefits
 

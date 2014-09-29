@@ -98,7 +98,7 @@ yawp('/people').order([ { p: 'name', d: 'desc' } ]).list( function(people) {} );
 yawp('/people').from(parentId).list( function(people) {} ); 
 ````
 
-**Java**
+**Java**:
 ```java
 Person person = yawp(Person.class).where("name", "=", "Janes").first();
 
@@ -109,7 +109,13 @@ List<Person> people = yawp(Person.class).from(parentId).list();
 
 You can look at this [Java test suite](../master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java) to see examples of more complex queries.
 
-## Features
+### Features
+
+So far, we've seen all functionality that you get by just annotating your POJO with @Endpoint. Now it's time to see how to add custom server side business logic to your model, so we can create real world application with specific needs.
+
+The way **YAWP!** deal with this is by allowing we to extend the default REST schema through what we call **Features**. You can create three kind of features, namely  **Actions**, **Transformers** and **Hooks**. 
+
+### Benefits
 
  * Amazingly simple
  * Nice querying syntax encapsulating GAE's Query classes.

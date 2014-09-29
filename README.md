@@ -66,7 +66,10 @@ yawp.destroy(person.getId());
 
 The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of Datastore Key mechanism and creates a type safe link beetween all your domain objects. 
 
-To define the identity field of a domain object you need to declare an IdRef&lt;T&gt; annotated with @Id. Then you can use this identity as a reference from another domain object: 
+To define the identity field of a domain object you need to declare an IdRef&lt;T&gt; annotated with @Id. Then you can use this identity as a reference from another domain object.
+
+Also, through the @ParentId annotation, IdRef exposes the Ancestor mechanism of the Datastore Key architecuture, leveraging it's strong consistency model when necessary:
+
 ```java
 @Endpoint(path = "/people")
 public class Person {
@@ -82,21 +85,9 @@ public class Person {
 ```
 Note: All **YAWP!** POJOs must have one and only one IdRef attribute annotated with @Id
 
-Through the @ParentId annotation IdRef also exposes the Ancestor attribute of the Datastore Key architecuture, leveraging it's strong consistency model when necessary:
-```java
-@Endpoint(path = "/people")
-public class Person {
+### Query API
 
-    @Id
-    private IdRef<Person> id;
-
-    @ParentId
-    private IdRef<Company> companyId;
-    
-    ...
-}
-```
-
+From a HTTP call, a Java or Javascript method you can query your objects using a fluent API that nicely exposes the  Datastore Query class.
 
 ## Features
 

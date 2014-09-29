@@ -145,7 +145,7 @@ yawp('/people/123').put('active').done( function(status) {} );
 
 ### Transformers
 
-The Transformer API is used to create different views of the same domain object. If you wan't to add or hide information returned to the client, the way to go is to use a Transfomer. For instance:
+The Transformer API is used to create different views of the same domain object. If you wan't to add or hide information to be returned to the client, the way to go is to use a Transfomer. For instance:
 
 
 

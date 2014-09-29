@@ -12,7 +12,7 @@ From a single class annotation, it provides a full REST url schema with a fluent
 
 You create your POJOs and **YAWP!** 
 
-## REST API
+### Basic REST Schema
 
 Annotate your POJO:
 ```java
@@ -62,7 +62,7 @@ yawp.save(person);
 yawp.destroy(person.getId());
 ```
 
-## IdRef
+### IdRef
 
 The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of DataStore Key mechanism and creates a type safe link beetween all your domain objects. 
 

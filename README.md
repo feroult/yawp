@@ -111,9 +111,9 @@ You can look at this [Java test suite](../master/src/test/java/io/yawp/repositor
 
 ### Endpoint Features
 
-So far, we've seen all functionality that you get by just annotating your POJO with @Endpoint. Now it's time to see how to add custom server side business logic to your model, so we can create real world application with specific needs.
+So far, you've seen all functionality that you get by just annotating your POJO with @Endpoint. Now it's time to see how to add custom server side business logic to your model, so you can create real world applications with specific needs.
 
-The way **YAWP!** deal with this is by allowing we to extend the default REST schema through **Features**. You can create three kind of features for your objects: **Actions**, **Transformers** and **Hooks**. 
+The way **YAWP!** deal with this is by allowing you to extend the default REST schema through **Features**. You can create three kind of features for your objects: **Actions**, **Transformers** and **Hooks**. 
 
 ### Benefits
 

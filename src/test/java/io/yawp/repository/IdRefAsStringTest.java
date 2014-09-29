@@ -40,10 +40,10 @@ public class IdRefAsStringTest extends EndpointTestCase {
 	public void testQueryWithIdRef() {
 		Parent parent = saveParentWithJob();
 
-		Parent retrievedParent1 = r.query(Parent.class).where("id", "=", parent.getId()).only();
+		Parent retrievedParent1 = yawp(Parent.class).where("id", "=", parent.getId()).only();
 		assertEquals("xpto", retrievedParent1.getName());
 
-		Parent retrievedParent2 = r.query(Parent.class).where("jobId", "=", parent.getJobId()).only();
+		Parent retrievedParent2 = yawp(Parent.class).where("jobId", "=", parent.getJobId()).only();
 		assertEquals("xpto", retrievedParent2.getName());
 	}
 
@@ -52,7 +52,7 @@ public class IdRefAsStringTest extends EndpointTestCase {
 		Parent parent = saveParentWithJob();
 
 		String json = JsonUtils.to(parent);
-		Parent retrievedParent = JsonUtils.from(r, json, Parent.class);
+		Parent retrievedParent = JsonUtils.from(yawp, json, Parent.class);
 
 		Job job = retrievedParent.getJobId().fetch();
 		assertEquals("haha", job.getName());
@@ -68,7 +68,7 @@ public class IdRefAsStringTest extends EndpointTestCase {
 		String json = String.format("{id: '/parents/%s', name: 'lala', pastJobIds: ['/jobs/%s', '/jobs/%s']}", parent.getId()
 				.getSimpleValue(), job1.getId().getSimpleValue(), job2.getId().getSimpleValue());
 
-		Parent retrievedParent = JsonUtils.from(r, json, Parent.class);
+		Parent retrievedParent = JsonUtils.from(yawp, json, Parent.class);
 
 		assertEquals("lala", retrievedParent.getName());
 		assertEquals("hehe", retrievedParent.getPastJobIds().get(0).fetch().getName());
@@ -92,19 +92,19 @@ public class IdRefAsStringTest extends EndpointTestCase {
 		saveParent("xpto3");
 
 		List<IdRef<Parent>> inList = Arrays.asList(parent1.getId(), parent2.getId());
-		List<Parent> objects = r.query(Parent.class).where("id", "in", inList).list();
+		List<Parent> objects = yawp(Parent.class).where("id", "in", inList).list();
 		assertEquals(2, objects.size());
 	}
 
 	@Test
 	public void testParseParentId() {
-		IdRef<Parent> parentId = IdRef.parse(r, GET, "/parents/a");
+		IdRef<Parent> parentId = IdRef.parse(yawp, GET, "/parents/a");
 		assertIdRef(parentId, Parent.class, "a");
 	}
 
 	@Test
 	public void testParseChildId() {
-		IdRef<Child> childId = IdRef.parse(r, GET, "/parents/a/children/b");
+		IdRef<Child> childId = IdRef.parse(yawp, GET, "/parents/a/children/b");
 		IdRef<Parent> parentId = childId.getParentId();
 
 		assertIdRef(parentId, Parent.class, "a");
@@ -113,7 +113,7 @@ public class IdRefAsStringTest extends EndpointTestCase {
 
 	@Test
 	public void testParseGrandchildId() {
-		IdRef<Grandchild> grandchildId = IdRef.parse(r, GET, "/parents/a/children/b/grandchildren/c");
+		IdRef<Grandchild> grandchildId = IdRef.parse(yawp, GET, "/parents/a/children/b/grandchildren/c");
 		IdRef<Child> childId = grandchildId.getParentId();
 		IdRef<Parent> parentId = childId.getParentId();
 
@@ -130,38 +130,38 @@ public class IdRefAsStringTest extends EndpointTestCase {
 
 	@Test
 	public void testParseEndingWithCollection() {
-		assertNull(IdRef.parse(r, GET, "/parents"));
+		assertNull(IdRef.parse(yawp, GET, "/parents"));
 
-		assertIdRef(IdRef.parse(r, GET, "/parents/a/children"), Parent.class, "a");
-		assertIdRef(IdRef.parse(r, GET, "/parents/a/children/b/grandchildren"), Child.class, "b");
+		assertIdRef(IdRef.parse(yawp, GET, "/parents/a/children"), Parent.class, "a");
+		assertIdRef(IdRef.parse(yawp, GET, "/parents/a/children/b/grandchildren"), Child.class, "b");
 	}
 
 	@Test
 	public void testParseEndingWithActionOverObject() {
-		assertNull(IdRef.parse(r, PUT, "/parents/touched"));
-		assertNull(IdRef.parse(r, GET, "/parents/something"));
+		assertNull(IdRef.parse(yawp, PUT, "/parents/touched"));
+		assertNull(IdRef.parse(yawp, GET, "/parents/something"));
 
-		assertIdRef(IdRef.parse(r, PUT, "/parents/a/touched"), Parent.class, "a");
-		assertIdRef(IdRef.parse(r, PUT, "/parents/a/children/b/touched"), Child.class, "b");
+		assertIdRef(IdRef.parse(yawp, PUT, "/parents/a/touched"), Parent.class, "a");
+		assertIdRef(IdRef.parse(yawp, PUT, "/parents/a/children/b/touched"), Child.class, "b");
 	}
 
 	@Test
 	public void testParseEndingWithActionOverCollection() {
-		assertIdRef(IdRef.parse(r, PUT, "/parents/a/children/touched"), Parent.class, "a");
-		assertIdRef(IdRef.parse(r, PUT, "/parents/a/children/b/grandchildren/touched"), Child.class, "b");
+		assertIdRef(IdRef.parse(yawp, PUT, "/parents/a/children/touched"), Parent.class, "a");
+		assertIdRef(IdRef.parse(yawp, PUT, "/parents/a/children/b/grandchildren/touched"), Child.class, "b");
 	}
 
 	@Test
 	public void testToString() {
-		assertEquals("/parents/a", IdRef.parse(r, GET, "/parents/a").toString());
-		assertEquals("/parents/a/children/b", IdRef.parse(r, GET, "/parents/a/children/b").toString());
-		assertEquals("/parents/a/children/b/grandchildren/c", IdRef.parse(r, GET, "/parents/a/children/b/grandchildren/c").toString());
+		assertEquals("/parents/a", IdRef.parse(yawp, GET, "/parents/a").toString());
+		assertEquals("/parents/a/children/b", IdRef.parse(yawp, GET, "/parents/a/children/b").toString());
+		assertEquals("/parents/a/children/b/grandchildren/c", IdRef.parse(yawp, GET, "/parents/a/children/b/grandchildren/c").toString());
 	}
 
 	private Parent saveParent(String name) {
 		Parent parent = new Parent(name);
-		parent.setId(IdRef.create(r, Parent.class, name));
-		r.save(parent);
+		parent.setId(IdRef.create(yawp, Parent.class, name));
+		yawp.save(parent);
 		return parent;
 	}
 
@@ -169,7 +169,7 @@ public class IdRefAsStringTest extends EndpointTestCase {
 		Child child = new Child(name);
 		child.setId(parent.getId().createChildId(Child.class, name));
 		child.setParentId(parent.getId());
-		r.save(child);
+		yawp.save(child);
 	}
 
 	private Parent saveParentWithJob() {
@@ -178,15 +178,15 @@ public class IdRefAsStringTest extends EndpointTestCase {
 		Parent parent = saveParent("xpto");
 		parent.setJobId(job.getId());
 
-		r.save(parent);
+		yawp.save(parent);
 
 		return parent;
 	}
 
 	private Job saveJob(String name) {
 		Job job = new Job(name);
-		job.setId(IdRef.create(r, Job.class, name));
-		r.save(job);
+		job.setId(IdRef.create(yawp, Job.class, name));
+		yawp.save(job);
 		return job;
 	}
 

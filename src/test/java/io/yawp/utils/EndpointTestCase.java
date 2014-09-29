@@ -1,6 +1,7 @@
 package io.yawp.utils;
 
 import io.yawp.repository.EndpointScanner;
+import io.yawp.repository.Feature;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 
@@ -15,15 +16,13 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 
-public class EndpointTestCase {
+public class EndpointTestCase extends Feature {
 
 	private static final String LOGGED_USER_ID = "10";
 
 	private static RepositoryFeatures features;
 
 	private LocalServiceTestHelper helper;
-
-	public Repository r;
 
 	@BeforeClass
 	public static void bootEndpoint() {
@@ -44,7 +43,7 @@ public class EndpointTestCase {
 
 	@Before
 	public void setupRepository() {
-		r = Repository.r(LOGGED_USER_ID).setFeatures(features);
+		yawp = Repository.r(LOGGED_USER_ID).setFeatures(features);
 	}
 
 	@After

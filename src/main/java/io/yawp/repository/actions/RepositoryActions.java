@@ -2,9 +2,6 @@ package io.yawp.repository.actions;
 
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
-import io.yawp.repository.response.HttpResponse;
-import io.yawp.repository.response.JsonResponse;
-import io.yawp.utils.JsonUtils;
 import io.yawp.utils.ThrownExceptionsUtils;
 
 import java.lang.reflect.InvocationTargetException;
@@ -13,8 +10,9 @@ import java.util.Map;
 
 public class RepositoryActions {
 
-	public static HttpResponse execute(Repository r, IdRef<?> id, Method action, Map<String, String> params) {
+	public static Object execute(Repository r, IdRef<?> id, Method action, Map<String, String> params) {
 		try {
+
 			@SuppressWarnings("unchecked")
 			Class<? extends Action<?>> actionClazz = (Class<? extends Action<?>>) action.getDeclaringClass();
 
@@ -22,16 +20,8 @@ public class RepositoryActions {
 			actionInstance.setRepository(r);
 
 			Object[] arguments = getActionArguments(action, params, id);
+			return action.invoke(actionInstance, arguments);
 
-			Object ret = action.invoke(actionInstance, arguments);
-			if (action.getReturnType().equals(Void.TYPE)) {
-				return null;
-			}
-			if (HttpResponse.class.isInstance(ret)) {
-				return (HttpResponse) ret;
-			}
-
-			return new JsonResponse(JsonUtils.to(ret));
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
 			throw ThrownExceptionsUtils.handle(e);
 		}

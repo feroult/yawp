@@ -13,19 +13,19 @@ public class ChildServletTestCase extends ServletTestCase {
 	@Before
 	public void before() {
 		parent = new Parent();
-		r.save(parent);
+		yawp.save(parent);
 	}
 
 	protected Parent saveParent() {
 		Parent parent = new Parent();
-		r.save(parent);
+		yawp.save(parent);
 		return parent;
 	}
 
 	protected Child saveChild(String name, Parent parent) {
 		Child child = new Child(name);
 		child.setParentId(parent.getId());
-		r.save(child);
+		yawp.save(child);
 		return child;
 	}
 

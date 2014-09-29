@@ -23,9 +23,9 @@ public class RepositoryTest extends EndpointTestCase {
 
 	@Test
 	public void testSaveAllDataProperties() {
-		BasicObject object = JsonUtils.from(r, DATA_OBJECT_JSON, BasicObject.class);
+		BasicObject object = JsonUtils.from(yawp, DATA_OBJECT_JSON, BasicObject.class);
 
-		r.save(object);
+		yawp.save(object);
 
 		BasicObject retrievedObject = object.getId().fetch();
 		retrievedObject.assertObject("xpto", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
@@ -36,7 +36,7 @@ public class RepositoryTest extends EndpointTestCase {
 		BasicObject object = new BasicObject();
 		object.setJsonValue(new Pojo("xpto"));
 
-		r.save(object);
+		yawp.save(object);
 
 		BasicObject retrievedObject = object.getId().fetch();
 		assertEquals("xpto", retrievedObject.getJsonValue().getStringValue());
@@ -51,7 +51,7 @@ public class RepositoryTest extends EndpointTestCase {
 		list.add(new Pojo("xpto2"));
 		object.setJsonList(list);
 
-		r.save(object);
+		yawp.save(object);
 
 		BasicObject retrievedObject = object.getId().fetch();
 		assertEquals("xpto1", retrievedObject.getJsonList().get(0).getStringValue());
@@ -69,7 +69,7 @@ public class RepositoryTest extends EndpointTestCase {
 
 		object.setJsonMap(map);
 
-		r.save(object);
+		yawp.save(object);
 
 		BasicObject retrievedObject = object.getId().fetch();
 		assertEquals("xpto1", retrievedObject.getJsonMap().get(1l).getStringValue());
@@ -80,17 +80,17 @@ public class RepositoryTest extends EndpointTestCase {
 	public void testDelete() {
 		BasicObject object = new BasicObject();
 
-		r.save(object);
-		r.destroy(object.getId());
+		yawp.save(object);
+		yawp.destroy(object.getId());
 
-		r.query(BasicObject.class).id(object.getId());
+		yawp(BasicObject.class).fetch(object.getId());
 	}
 
 	@Test
 	public void testSaveParent() {
 		Parent parent = new Parent("xpto");
 
-		r.save(parent);
+		yawp.save(parent);
 
 		Parent retrievedParent = parent.getId().fetch();
 		assertEquals("xpto", retrievedParent.getName());
@@ -99,11 +99,11 @@ public class RepositoryTest extends EndpointTestCase {
 	@Test
 	public void testSaveChild() {
 		Parent parent = new Parent();
-		r.save(parent);
+		yawp.save(parent);
 
 		Child child = new Child("xpto");
 		child.setParentId(parent.getId());
-		r.save(child);
+		yawp.save(child);
 
 		Parent retrievedParent = parent.getId().fetch();
 		Child retrievedChild = child.getId().fetch();
@@ -115,15 +115,15 @@ public class RepositoryTest extends EndpointTestCase {
 	@Test
 	public void testSaveGrandchild() {
 		Parent parent = new Parent();
-		r.save(parent);
+		yawp.save(parent);
 
 		Child child = new Child();
 		child.setParentId(parent.getId());
-		r.save(child);
+		yawp.save(child);
 
 		Grandchild grandchild = new Grandchild("xpto");
 		grandchild.setChildId(child.getId());
-		r.save(grandchild);
+		yawp.save(grandchild);
 
 		Child retrievedChild = child.getId().fetch();
 		Grandchild retrievedGrandchild = grandchild.getId().fetch();

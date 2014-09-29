@@ -21,7 +21,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 			BasicObject object = new BasicObject();
 			object.setStringValue(stringValue);
 			object.setIntValue(i + 1);
-			r.save(object);
+			yawp.save(object);
 		}
 	}
 
@@ -32,9 +32,9 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	@Test
 	public void testWhere() {
 		saveManyBasicObjects(3);
-		r.save(new BasicObject("different"));
+		yawp.save(new BasicObject("different"));
 
-		List<BasicObject> objects = r.query(BasicObject.class).where("stringValue", "=", "xpto").list();
+		List<BasicObject> objects = yawp(BasicObject.class).where("stringValue", "=", "xpto").list();
 
 		assertEquals(3, objects.size());
 
@@ -45,9 +45,9 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
 	@Test
 	public void testWhereWithUnicode() {
-		r.save(new BasicObject("\u00c1"));
+		yawp.save(new BasicObject("\u00c1"));
 
-		List<BasicObject> objects = r.query(BasicObject.class).where("stringValue", "=", "\u00c1").list();
+		List<BasicObject> objects = yawp(BasicObject.class).where("stringValue", "=", "\u00c1").list();
 
 		assertEquals(1, objects.size());
 		assertEquals("\u00c1", objects.get(0).getStringValue());
@@ -57,7 +57,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testChainedWheres() {
 		saveManyBasicObjects(1);
 
-		List<BasicObject> objects = r.query(BasicObject.class).where("intValue", "=", 1).where("stringValue", "=", "xpto").list();
+		List<BasicObject> objects = yawp(BasicObject.class).where("intValue", "=", 1).where("stringValue", "=", "xpto").list();
 
 		assertEquals(1, objects.size());
 		assertEquals("xpto", objects.get(0).getStringValue());
@@ -68,7 +68,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testChainedWheresWithAnd() {
 		saveManyBasicObjects(1);
 
-		List<BasicObject> objects = r.query(BasicObject.class).where(and(c("intValue", "=", 1), c("stringValue", "=", "xpto"))).list();
+		List<BasicObject> objects = yawp(BasicObject.class).where(and(c("intValue", "=", 1), c("stringValue", "=", "xpto"))).list();
 
 		assertEquals(1, objects.size());
 		assertEquals("xpto", objects.get(0).getStringValue());
@@ -79,7 +79,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testWhereWithOr() {
 		saveManyBasicObjects(2);
 
-		List<BasicObject> objects = r.query(BasicObject.class).where(or(c("intValue", "=", 1), c("intValue", "=", 2))).list();
+		List<BasicObject> objects = yawp(BasicObject.class).where(or(c("intValue", "=", 1), c("intValue", "=", 2))).list();
 
 		assertEquals(2, objects.size());
 		Collections.sort(objects, new Comparator<BasicObject>() {
@@ -102,13 +102,13 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testWhereWithComplexAndOrStructure() {
 		saveManyBasicObjects(3);
 
-		List<BasicObject> objects1 = r.query(BasicObject.class)
+		List<BasicObject> objects1 = yawp(BasicObject.class)
 				.where(or(and(c("intValue", "=", 1), c("intValue", "=", 2)), and(c("intValue", "=", 3), c("intValue", "=", 3)))).list();
 
 		assertEquals(1, objects1.size());
 		assertEquals(3, objects1.get(0).getIntValue());
 
-		List<BasicObject> objects2 = r.query(BasicObject.class)
+		List<BasicObject> objects2 = yawp(BasicObject.class)
 				.where(or(and(c("intValue", "=", 3), c("intValue", "=", 3)), and(c("intValue", "=", 1), c("intValue", "=", 2)))).list();
 
 		assertEquals(1, objects2.size());
@@ -119,7 +119,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testChainedWheresMultipleStatements() {
 		saveManyBasicObjects(1);
 
-		List<BasicObject> objects = r.query(BasicObject.class).where("intValue", "=", 1).where("stringValue", "=", "xpto").list();
+		List<BasicObject> objects = yawp(BasicObject.class).where("intValue", "=", 1).where("stringValue", "=", "xpto").list();
 
 		assertEquals(1, objects.size());
 		assertEquals(1, objects.get(0).getIntValue());
@@ -133,7 +133,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		DatastoreQueryOptions options = DatastoreQueryOptions
 				.parse("{where: ['stringValue', '=', 'xpto'], order: [{p: 'intValue', d: 'desc'}], limit: 2}");
 
-		List<BasicObject> objects = r.query(BasicObject.class).options(options).list();
+		List<BasicObject> objects = yawp(BasicObject.class).options(options).list();
 
 		assertEquals(2, objects.size());
 		assertEquals(3, objects.get(0).getIntValue());
@@ -142,11 +142,11 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
 	@Test
 	public void testOrderWithUnicode() {
-		r.save(new BasicObject("\u00e1"));
-		r.save(new BasicObject("\u00e9"));
-		r.save(new BasicObject("\u00ed"));
+		yawp.save(new BasicObject("\u00e1"));
+		yawp.save(new BasicObject("\u00e9"));
+		yawp.save(new BasicObject("\u00ed"));
 
-		List<BasicObject> objects = r.query(BasicObject.class).order("stringValue", "desc").list();
+		List<BasicObject> objects = yawp(BasicObject.class).order("stringValue", "desc").list();
 
 		assertEquals(3, objects.size());
 		assertEquals("\u00ed", objects.get(0).getStringValue());
@@ -159,7 +159,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		saveManyBasicObjects(2, "xpto1");
 		saveManyBasicObjects(2, "xpto2");
 
-		List<BasicObject> objects = r.query(BasicObject.class).order("stringValue", "desc").order("intValue", "desc").list();
+		List<BasicObject> objects = yawp(BasicObject.class).order("stringValue", "desc").order("intValue", "desc").list();
 
 		assertEquals(4, objects.size());
 
@@ -179,7 +179,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		saveManyBasicObjects(2, "xpto1");
 		saveManyBasicObjects(2, "xpto2");
 
-		List<BasicObject> objects = r.query(BasicObject.class).sort("stringValue", "desc").sort("intValue", "desc").list();
+		List<BasicObject> objects = yawp(BasicObject.class).sort("stringValue", "desc").sort("intValue", "desc").list();
 
 		assertEquals(4, objects.size());
 
@@ -198,7 +198,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testLimit() {
 		saveManyBasicObjects(3);
 
-		List<BasicObject> objects = r.query(BasicObject.class).order("intValue", "desc").limit(1).list();
+		List<BasicObject> objects = yawp(BasicObject.class).order("intValue", "desc").limit(1).list();
 
 		assertEquals(1, objects.size());
 		assertEquals(3, objects.get(0).getIntValue());
@@ -208,7 +208,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testCursor() {
 		saveManyBasicObjects(3);
 
-		DatastoreQuery<BasicObject> q = r.query(BasicObject.class).order("intValue", "desc").limit(1);
+		DatastoreQuery<BasicObject> q = yawp(BasicObject.class).order("intValue", "desc").limit(1);
 
 		List<BasicObject> objects1 = q.list();
 		assertEquals(3, objects1.get(0).getIntValue());
@@ -216,7 +216,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		List<BasicObject> objects2 = q.list();
 		assertEquals(2, objects2.get(0).getIntValue());
 
-		List<BasicObject> objects3 = r.query(BasicObject.class).cursor(q.getCursor()).order("intValue", "desc").limit(1).list();
+		List<BasicObject> objects3 = yawp(BasicObject.class).cursor(q.getCursor()).order("intValue", "desc").limit(1).list();
 		assertEquals(1, objects3.get(0).getIntValue());
 	}
 
@@ -224,21 +224,21 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testFindByIdUsingWhere() {
 		BasicObject object = new BasicObject("xpto");
 
-		r.save(object);
+		yawp.save(object);
 
-		BasicObject retrievedObject = r.query(BasicObject.class).where("id", "=", object.getId()).first();
+		BasicObject retrievedObject = yawp(BasicObject.class).where("id", "=", object.getId()).first();
 		assertEquals("xpto", retrievedObject.getStringValue());
 	}
 
 	@Test
 	public void testFindByIdUsingWhereIn() {
 		BasicObject object1 = new BasicObject("xpto1");
-		r.save(object1);
+		yawp.save(object1);
 
 		BasicObject object2 = new BasicObject("xpto2");
-		r.save(object2);
+		yawp.save(object2);
 
-		List<BasicObject> objects = r.query(BasicObject.class).where("id", "in", Arrays.asList(object1.getId())).list();
+		List<BasicObject> objects = yawp(BasicObject.class).where("id", "in", Arrays.asList(object1.getId())).list();
 		assertEquals(1, objects.size());
 	}
 
@@ -246,7 +246,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testWhereInWithEmptyList() {
 		saveManyBasicObjects(1);
 
-		List<BasicObject> objects = r.query(BasicObject.class).where("intValue", "in", Collections.emptyList()).list();
+		List<BasicObject> objects = yawp(BasicObject.class).where("intValue", "in", Collections.emptyList()).list();
 
 		assertEquals(0, objects.size());
 	}
@@ -257,7 +257,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		BaseCondition emptyListCondition = c("intValue", "in", Collections.emptyList());
 		BaseCondition condition = or(emptyListCondition, c("stringValue", "=", "xpto"));
 
-		List<BasicObject> objects = r.query(BasicObject.class).where(condition).list();
+		List<BasicObject> objects = yawp(BasicObject.class).where(condition).list();
 		assertEquals(3, objects.size());
 	}
 
@@ -267,7 +267,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		BaseCondition emptyListCondition = c("intValue", "in", Collections.emptyList());
 		BaseCondition condition = or(emptyListCondition, c("stringValue", "=", "otpx"));
 
-		List<BasicObject> objects = r.query(BasicObject.class).where(condition).list();
+		List<BasicObject> objects = yawp(BasicObject.class).where(condition).list();
 		assertEquals(0, objects.size());
 	}
 
@@ -277,7 +277,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		BaseCondition emptyListCondition = c("intValue", "in", Collections.emptyList());
 		BaseCondition condition = and(emptyListCondition, c("stringValue", "=", "xpto"));
 
-		List<BasicObject> objects = r.query(BasicObject.class).where(condition).list();
+		List<BasicObject> objects = yawp(BasicObject.class).where(condition).list();
 		assertEquals(0, objects.size());
 	}
 
@@ -287,7 +287,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		BaseCondition emptyListCondition = c("intValue", "in", Collections.emptyList());
 		BaseCondition condition = and(emptyListCondition, c("stringValue", "=", "otpx"));
 
-		List<BasicObject> objects = r.query(BasicObject.class).where(condition).list();
+		List<BasicObject> objects = yawp(BasicObject.class).where(condition).list();
 		assertEquals(0, objects.size());
 	}
 
@@ -297,7 +297,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		BaseCondition emptyListCondition = c("intValue", "in", Collections.emptyList());
 		BaseCondition condition = and(emptyListCondition, and(c("stringValue", "=", "otpx"), emptyListCondition));
 
-		List<BasicObject> objects = r.query(BasicObject.class).where(condition).list();
+		List<BasicObject> objects = yawp(BasicObject.class).where(condition).list();
 		assertEquals(0, objects.size());
 	}
 }

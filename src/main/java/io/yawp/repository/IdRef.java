@@ -44,7 +44,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	}
 
 	public <TT> TT fetch(Class<TT> childClazz) {
-		return r.query(childClazz).id(this);
+		return r.query(childClazz).fetch(this);
 	}
 
 	public <TT> TT child(Class<TT> childClazz) {
@@ -205,6 +205,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		if (id != null) {
 			return id;
 		}
+		return name;
+	}
+
+	public String getName() {
 		return name;
 	}
 

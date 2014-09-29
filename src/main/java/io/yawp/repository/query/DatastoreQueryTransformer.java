@@ -98,8 +98,16 @@ public class DatastoreQueryTransformer<F, T> {
 		return RepositoryTransformers.execute(query.getRepository(), query.only(), transformName);
 	}
 
-	public T id(IdRef<?> idRef) {
-		return RepositoryTransformers.execute(query.getRepository(), query.id(idRef), transformName);
+	public T fetch(IdRef<?> idRef) {
+		return RepositoryTransformers.execute(query.getRepository(), query.fetch(idRef), transformName);
+	}
+
+	public T fetch(Long id) {
+		return RepositoryTransformers.execute(query.getRepository(), query.fetch(id), transformName);
+	}
+
+	public T fetch(String name) {
+		return RepositoryTransformers.execute(query.getRepository(), query.fetch(name), transformName);
 	}
 
 }

@@ -55,11 +55,11 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 	@Before
 	public void before() {
-		r.setFeatures(new RepositoryFeaturesMock(r.getFeatures()));
+		yawp.setFeatures(new RepositoryFeaturesMock(yawp.getFeatures()));
 	}
 
 	private EndpointRouter parse(String uri) {
-		return EndpointRouter.parse(r, HttpVerb.GET, uri);
+		return EndpointRouter.parse(yawp, HttpVerb.GET, uri);
 	}
 
 	@Test

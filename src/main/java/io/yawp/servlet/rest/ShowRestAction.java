@@ -9,10 +9,10 @@ public class ShowRestAction extends RestAction {
 		DatastoreQuery<?> query = query();
 
 		if (params.containsKey(TRANSFORMER)) {
-			return query.transform(params.get(TRANSFORMER)).id(id);
+			return query.transform(params.get(TRANSFORMER)).fetch(id);
 		}
 
-		return query.id(id);
+		return query.fetch(id);
 	}
 
 }

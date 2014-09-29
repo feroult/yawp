@@ -6,9 +6,81 @@ Yet Another Web API for Google App Engine
 
 ## Introduction
 
-YAWP! is a Java framework built on top of Google App Engine, whose main purpose is to provide a simple and meaningful API to support REST based applications.  
-You create your POJOs and YAWP! creates a full REST url schema to insert, delete, update, list, etc. your objects automatically.  
-Then you can change default the behavior via Actions, Transformers and Hooks. Never write a controller in your life again!
+**YAWP!** is a Java framework built on top of Google App Engine, whose main purpose is to provide a simple and meaningful API to support REST based applications.
+
+From a single class annotation, it provides a full REST url schema with a fluent progamatic API for Java and Javascript. You write your client side code the same way you do for your server side. It also creates a convenient way to organize your server side business logic through Actions, Hooks and Transformers. 
+
+You create your POJOs and **YAWP!** 
+
+### Basic REST Schema
+
+Annotate your POJO:
+```java
+@Endpoint(path = "/people")
+public class Person {
+
+    private String name;
+    
+}
+```
+
+Then use one of HTTP, Java or Javascript APIs to access your resources:
+
+**HTTP**:
+
+| Verb        | Path         | Action                |
+| ----------- |------------- | --------------------- |
+| GET         | /people      | List people           |
+| POST        | /people      | Create a person       |
+| GET         | /people/id   | Show a person         |
+| PUT/PATCH   | /people/id   | Update a person       |
+| DELETE      | /people/id   | Destroy a person      |
+
+**Javascript**:
+```javascript
+yawp('/people').list( function(people) {} );
+
+yawp('/people').create({ name : 'Janes' }).done( function(person) {} );
+
+yawp(personId).fetch( function(person) {} );
+
+yawp.update(person).done( function(person) {} );
+
+yawp.destroy(personId).done( function(personId) {} );
+```
+
+**Java**:
+```java
+List<Person> people = yawp(Person.class).list();
+
+yawp.save(new Person("Janes"));
+
+Person person = yawp(Person.class).fetch(personId);
+
+yawp.save(person);
+
+yawp.destroy(person.getId());
+```
+
+### IdRef
+
+The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of DataStore Key mechanism and creates a type safe link beetween all your domain objects. 
+
+To define the identity field of a domain object you need to declare an IdRef&lt;T&gt; annotated with @Id. Then you can use this identity as a reference from another domain object: 
+```java
+@Endpoint(path = "/people")
+public class Person {
+
+    @Id
+    private IdRef<Person> id;
+    
+    private IdRef<Address> addressId;
+    
+    private String name;
+    
+}
+```
+Note: All **YAWP!** POJOs must have one and only one IdRef attribute annotated with @Id
 
 ## Features
 

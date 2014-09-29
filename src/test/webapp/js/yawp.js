@@ -197,8 +197,20 @@
 		}, query(options), repository(options), actions(options));
 	}
 
+	function update(object) {
+		var id = extractId(object);
+		return yawp(id).update(object);
+	}
+
+	function destroy(object) {
+		var id = extractId(object);
+		return yawp(id).destroy(object);
+	}
+
 	var api = {
-		config : config
+		config : config,
+		update : update,
+		destroy : destroy
 	};
 
 	window.yawp = $.extend(yawp, api);

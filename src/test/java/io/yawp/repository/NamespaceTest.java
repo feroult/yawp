@@ -15,8 +15,8 @@ public class NamespaceTest extends EndpointTestCase {
 
 	@Before
 	public void before() {
-		r1 = Repository.r("ns1").setFeatures(r.getFeatures());
-		r2 = Repository.r("ns2").setFeatures(r.getFeatures());
+		r1 = Repository.r("ns1").setFeatures(yawp.getFeatures());
+		r2 = Repository.r("ns2").setFeatures(yawp.getFeatures());
 	}
 
 	@Test
@@ -24,7 +24,7 @@ public class NamespaceTest extends EndpointTestCase {
 		BasicObject object = new BasicObject();
 		r1.save(object);
 
-		assertNotNull(r1.query(BasicObject.class).id(object.getId()));
+		assertNotNull(r1.query(BasicObject.class).fetch(object.getId()));
 		assertNull(r2.query(BasicObject.class).whereById("=", object.getId()).first());
 	}
 
@@ -44,8 +44,8 @@ public class NamespaceTest extends EndpointTestCase {
 		r1.save(object1);
 		r2.save(object2);
 
-		assertNotNull(r1.query(BasicObject.class).id(object1.getId()));
-		assertNotNull(r2.query(BasicObject.class).id(object2.getId()));
+		assertNotNull(r1.query(BasicObject.class).fetch(object1.getId()));
+		assertNotNull(r2.query(BasicObject.class).fetch(object2.getId()));
 
 		object1.setStringValue("lala");
 		r1.save(object1);

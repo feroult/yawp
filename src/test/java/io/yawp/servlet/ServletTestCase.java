@@ -26,7 +26,7 @@ public class ServletTestCase extends EndpointTestCase {
 
 			@Override
 			protected Repository getRepository(Map<String, String> params) {
-				return r;
+				return yawp;
 			}
 
 		};
@@ -79,11 +79,11 @@ public class ServletTestCase extends EndpointTestCase {
 	}
 
 	protected <T> T from(String json, Class<T> clazz) {
-		return JsonUtils.from(r, json, clazz);
+		return JsonUtils.from(yawp, json, clazz);
 	}
 
 	protected <T> List<T> fromList(String json, Class<T> clazz) {
-		return JsonUtils.fromList(r, json, clazz);
+		return JsonUtils.fromList(yawp, json, clazz);
 	}
 
 	protected String parseIds(String format, Object... objects) {

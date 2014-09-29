@@ -64,7 +64,7 @@ yawp.destroy(person.getId());
 
 ## IdRef
 
-The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of DataStore Key mechanism and creates a type safe link beetween all your model objects. 
+The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of DataStore Key mechanism and creates a type safe link beetween all your domain objects. 
 
 To define the identity field of a domain object you need to declare an IdRef&lt;T&gt; annotated with @Id. Then you can use this identity as a reference from another domain object: 
 ```java

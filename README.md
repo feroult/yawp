@@ -12,7 +12,7 @@ From a single class annotation, it provides a full REST url schema with a fluent
 
 You create your POJOs and **YAWP!** 
 
-### REST API
+## REST API
 
 Annotate your POJO:
 ```java

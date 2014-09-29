@@ -107,7 +107,7 @@ List<Person> people = yawp(Person.class).order("name", "desc").list();
 List<Person> people = yawp(Person.class).from(parentId).list(); 
 ```
 
-You can look at this [Java test suite](../blob/master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java) to see examples of more complex queries.
+You can look at this [Java test suite](../master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java) to see examples of more complex queries.
 
 ## Features
 

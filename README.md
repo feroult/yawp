@@ -134,11 +134,9 @@ public class ActivatePersonAction extends Action<Person> {
 
 Now, to activate a given person, let's say, with id 123, you can:
 
-```
 <pre>
-curl -X PUT http://localhost:8080/people/123/active</b>
+curl -X <b>PUT http://localhost:8080/people/123/active</b>
 </pre>
-```
 
 The **Javascript** equivalent is:
 ```javascript

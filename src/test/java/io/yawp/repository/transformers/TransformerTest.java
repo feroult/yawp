@@ -37,6 +37,13 @@ public class TransformerTest extends EndpointTestCase {
 	}
 
 	@Test
+	public void testAddAttribute() {
+		yawp.save(new BasicObject("xpto1"));
+		Map<String, Object> map = yawp(BasicObject.class).<Map<String, Object>> transform("addAttribute").first();
+		assertEquals("xpto", map.get("attr"));
+	}
+
+	@Test
 	public void testTransformWithChild() {
 		Parent parent = new Parent();
 		yawp.save(parent);

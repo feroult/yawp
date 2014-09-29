@@ -16,4 +16,10 @@ public class BasicObjectTransformer extends Transformer<BasicObject> {
 		return map;
 	}
 
+	public Map<String, Object> addAttribute(BasicObject object) {
+		Map<String, Object> map = asMap(object);
+		map.put("attr", "xpto");
+		return map;
+	}
+
 }

@@ -107,13 +107,42 @@ List<Person> people = yawp(Person.class).order("name", "desc").list();
 List<Person> people = yawp(Person.class).from(parentId).list(); 
 ```
 
-You can look at this [Java test suite](../master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java) to see examples of more complex queries.
+You can look at this [Java test suite](../master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java) to see examples of more complex constructions.
 
 ### Endpoint Features
 
 So far, you've seen all functionality that you get by just annotating your POJO with @Endpoint. Now it's time to see how to add custom server side business logic to your model, so you can create real world applications with specific needs.
 
 The way **YAWP!** deal with this is by allowing you to extend the default REST schema through **Features**. You can create three kind of features for your objects: **Actions**, **Transformers** and **Hooks**. 
+
+### Actions
+
+To add custom behavior to your domain object you can use the Action API. Imagine you need to activate a given person. To do this you can create an Action class:
+
+```java
+public class ActivatePersonAction extends Action<Person> {
+
+    @PUT("active")
+    public void activate(IdRef<Person> id) {
+        Person person = id.fetch();
+        person.setActive(true);
+        yawp.save(person);
+    }
+    
+}
+```
+
+Now, to activate a given person, let's say, with id 123 you can:
+
+```
+curl -X PUT http://localhost:8080/people/123/active
+```
+
+From Javascript:
+
+```javascript
+```
+
 
 ### Benefits
 

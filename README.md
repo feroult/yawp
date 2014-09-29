@@ -12,7 +12,7 @@ From a single class annotation, it provides a full REST url schema with a fluent
 
 You create your POJOs and **YAWP!** 
 
-### Basic REST Schema
+### REST Schema
 
 Annotate your POJO:
 ```java
@@ -64,9 +64,12 @@ yawp.destroy(person.getId());
 
 ### IdRef
 
-The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of DataStore Key mechanism and creates a type safe link beetween all your domain objects. 
+The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of Datastore Key mechanism and creates a type safe link beetween all your domain objects. 
 
-To define the identity field of a domain object you need to declare an IdRef&lt;T&gt; annotated with @Id. Then you can use this identity as a reference from another domain object: 
+To define the identity field of a domain object you need to declare an IdRef&lt;T&gt; annotated with @Id. Then you can use this identity as a reference from another domain object.
+
+Also, through the @ParentId annotation, IdRef exposes the Ancestor mechanism of the Datastore Key architecuture, leveraging it's strong consistency model when necessary:
+
 ```java
 @Endpoint(path = "/people")
 public class Person {
@@ -82,7 +85,37 @@ public class Person {
 ```
 Note: All **YAWP!** POJOs must have one and only one IdRef attribute annotated with @Id
 
-## Features
+### Query API
+
+From a HTTP call, a Java or Javascript method you can query your objects using a fluent API that nicely exposes the  Datastore Query class.
+
+**Javascript**:
+```javascript
+yawp('/people').where([ 'name', '=', 'Janes']).first( function(person) {} );
+
+yawp('/people').order([ { p: 'name', d: 'desc' } ]).list( function(people) {} ); 
+
+yawp('/people').from(parentId).list( function(people) {} ); 
+````
+
+**Java**:
+```java
+Person person = yawp(Person.class).where("name", "=", "Janes").first();
+
+List<Person> people = yawp(Person.class).order("name", "desc").list(); 
+
+List<Person> people = yawp(Person.class).from(parentId).list(); 
+```
+
+You can look at this [Java test suite](../master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java) to see examples of more complex queries.
+
+### Endpoint Features
+
+So far, you've seen all functionality that you get by just annotating your POJO with @Endpoint. Now it's time to see how to add custom server side business logic to your model, so you can create real world applications with specific needs.
+
+The way **YAWP!** deal with this is by allowing you to extend the default REST schema through **Features**. You can create three kind of features for your objects: **Actions**, **Transformers** and **Hooks**. 
+
+### Benefits
 
  * Amazingly simple
  * Nice querying syntax encapsulating GAE's Query classes.
@@ -149,7 +182,7 @@ Now, the following routes will be created and mapped to your methods:
 Note that, since all ids are long, actions name must start with a letter.
 
 ### Transformer
-A Transformer can change an object before it is sent on a request. For example, imagine that in some scenarios we don't want to return the User's age in some requests and, in others, we want to calculate he's birth year.
+A Transformer can change an object before it is sent on a request. For example, imagine that in some scenarios we don't want to return the User's age in some requests and, in others, we want to calculate his birth year.
 
     public class UserTransformer extends Transformer<User> {
 

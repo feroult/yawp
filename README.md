@@ -132,14 +132,13 @@ public class ActivatePersonAction extends Action<Person> {
 }
 ```
 
-Now, to activate a given person, let's say, with id 123 you can:
+Now, to activate a given person, let's say, with id 123, you can:
 
 ```
 curl -X PUT http://localhost:8080/people/123/active
 ```
 
-From Javascript:
-
+The **Javascript** equivalent is:
 ```javascript
 yawp('/people/123').put('active').done( function(status) {} );
 ```

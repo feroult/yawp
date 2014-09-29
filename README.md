@@ -77,7 +77,7 @@ Now, the following routes will be created and mapped to your methods:
 Note that, since all ids are long, actions name must start with a letter.
 
 ### Transformer
-A Transformer can change an object before it is sent on a request. For example, imagine that in some scenarios we don't want to return the User's age in some requests and, in others, we want to calculate he's birth year.
+A Transformer can change an object before it is sent on a request. For example, imagine that in some scenarios we don't want to return the User's age in some requests and, in others, we want to calculate his birth year.
 
     public class UserTransformer extends Transformer<User> {
 

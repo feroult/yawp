@@ -66,7 +66,7 @@ yawp.destroy(person.getId());
 
 The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of DataStore Key mechanism and creates a type safe link beetween all your model objects. 
 
-For instance, to define your POJO id you use an IdRef<T> attribute with annotated with @Id. In the case your reffering to another object's id, you don't need to annotate it:
+To define your POJO's identity you need to declare an IdRef&lt;T&gt; attribute annotated with @Id. Then you can use this identity as a reference from another object of your domain model, like this:
 ```java
 @Endpoint(path = "/people")
 public class Person {

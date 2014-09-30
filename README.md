@@ -6,9 +6,9 @@ Yet Another Web API for Google App Engine
 
 ## Introduction
 
-**YAWP!** is a Java framework built on top of Google App Engine, whose main purpose is to provide a simple and meaningful API to support REST based applications.
+**YAWP!** is a Java framework built on top of Google App Engine whose main purpose is help developers to create a simple and meaningful API to support their REST based applications.
 
-From a single class annotation, it provides a full REST url schema with a fluent progamatic API for Java and Javascript. You write your client side code the same way you do for your server side. It also creates a convenient way to organize your server side business logic through Actions, Hooks and Transformers. 
+From a single class annotation, it provides a full REST url schema with a fluent progamatic API for Java and Javascript. You write your client side code the same way you do for your server side. It also creates a convenient way to organize your server side business logic.
 
 You create your POJOs and **YAWP!** 
 
@@ -153,8 +153,8 @@ public class BasicObjectTransformer extends Transformer<Person> {
     public Map<String, Object> upperCase(Person person) {
     
         Map<String, Object> map = asMap(person);
-	map.put("name", person.getName().toUpperCase());
-	return map;
+        map.put("name", person.getName().toUpperCase());
+        return map;
 	
     }
 

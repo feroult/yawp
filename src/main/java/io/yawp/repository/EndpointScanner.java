@@ -88,10 +88,18 @@ public final class EndpointScanner {
 
 	private void addTransformerForObject(Class<?> objectClazz, Class<? extends Transformer> transformerClazz) {
 		for (Method method : transformerClazz.getDeclaredMethods()) {
+			if (!isValidTransformerMethod(method)) {
+				continue;
+			}
+
 			for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, transformerClazz.getSimpleName())) {
 				endpoint.addTransformer(method.getName(), method);
 			}
 		}
+	}
+
+	private boolean isValidTransformerMethod(Method method) {
+		return !method.isSynthetic();
 	}
 
 	private void scanActions() {

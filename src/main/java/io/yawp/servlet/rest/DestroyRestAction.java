@@ -4,6 +4,10 @@ import io.yawp.servlet.HttpException;
 
 public class DestroyRestAction extends RestAction {
 
+	public DestroyRestAction() {
+		super("destroy");
+	}
+
 	@Override
 	public Object action() {
 		if (overCollection()) {

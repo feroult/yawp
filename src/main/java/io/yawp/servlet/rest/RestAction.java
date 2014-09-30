@@ -15,6 +15,8 @@ import java.util.Map;
 
 public abstract class RestAction {
 
+	private static final String DEFAULT_TRANSFORMER_NAME = "defaults";
+
 	protected static final String QUERY_OPTIONS = "q";
 
 	protected static final String TRANSFORMER = "t";
@@ -32,6 +34,14 @@ public abstract class RestAction {
 	protected Map<String, String> params;
 
 	protected ActionKey customActionKey;
+
+	protected String actionName;
+
+	protected String transformerName;
+
+	public RestAction(String actionName) {
+		this.actionName = actionName;
+	}
 
 	public void setRepository(Repository r) {
 		this.r = r;
@@ -94,10 +104,33 @@ public abstract class RestAction {
 	}
 
 	protected Object transform(Object object) {
-		if (!params.containsKey(TRANSFORMER)) {
+		if (!hasTransformer()) {
 			return object;
 		}
-		return RepositoryTransformers.execute(r, object, params.get(TRANSFORMER));
+		return RepositoryTransformers.execute(r, object, getTransformerName());
+	}
+
+	protected String getTransformerName() {
+		return transformerName;
+	}
+
+	protected boolean hasTransformer() {
+		return transformerName != null;
+	}
+
+	public void defineTrasnformer() {
+		if (params.containsKey(TRANSFORMER)) {
+			transformerName = params.get(TRANSFORMER);
+			return;
+		}
+		if (r.getEndpointFeatures(endpointClazz).hasTranformer(actionName)) {
+			transformerName = actionName;
+			return;
+		}
+		if (r.getEndpointFeatures(endpointClazz).hasTranformer(DEFAULT_TRANSFORMER_NAME)) {
+			transformerName = DEFAULT_TRANSFORMER_NAME;
+			return;
+		}
 	}
 
 }

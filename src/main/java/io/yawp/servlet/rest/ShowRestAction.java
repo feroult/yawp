@@ -4,12 +4,16 @@ import io.yawp.repository.query.DatastoreQuery;
 
 public class ShowRestAction extends RestAction {
 
+	public ShowRestAction() {
+		super("show");
+	}
+
 	@Override
 	public Object action() {
 		DatastoreQuery<?> query = query();
 
-		if (params.containsKey(TRANSFORMER)) {
-			return query.transform(params.get(TRANSFORMER)).fetch(id);
+		if (hasTransformer()) {
+			return query.transform(getTransformerName()).fetch(id);
 		}
 
 		return query.fetch(id);

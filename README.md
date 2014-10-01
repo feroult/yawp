@@ -107,6 +107,16 @@ List<Person> people = yawp(Person.class).order("name", "desc").list();
 List<Person> people = yawp(Person.class).from(parentId).list(); 
 ```
 
+Other Java examples, also avaibale from HTTP or Javascript:
+
+```java
+yawp(User.class).where("name", "=", "Mark").and("age", ">=", 21).list();
+yawp(User.class).where(or(and(c("company", "=", "github.com"), c("age", ">=", 21)), and(c("company", "=", "YAWP!"), c("age", ">=", 18)))).ids();
+yawp(User.class).where("name", "=", "John").and("company", "=", "github.com").only();
+```
+Note: The methods **c**, **and** and **or** must be imported static or fully qualified for this to work.
+
+
 You can look at this [Java test suite](../master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java) to see examples of more complex constructions.
 
 ### Endpoint Features
@@ -143,6 +153,30 @@ The **Javascript** equivalent would be:
 yawp('/people/123').put('active').done( function(status) {} );
 ```
 
+Also, an action be called over a single domain object or over a collection. For an action over a collection, don't specify it's IdRef or specify it's parent IdRef as the first argument:
+
+```java
+    public class UserActions extends Action<User> {
+
+ 	// over collection without IdRef
+        @GET("me")
+        public User me() {
+            return Session.getLoggedUser();
+        }
+        
+        // over collection with parent IdRef
+        @GET("first")
+        public User firstUser(IdRef<Company> companyId) {
+            return yawp(User.class).where("companyId", "=", companyId).first();
+        }
+    }
+```
+
+The following routes will be created and mapped to your methods:
+
+  * GET /users/me -> call the action me()
+  * GET /company/{companyId}/users/firstChild -> call the action firstUser()
+
 ### Transformers
 
 The Transformer API is used to create different views of the same domain object. If you wan't to add or hide information to be returned to the client, the way to go is to use a Transfomer. For instance:
@@ -174,6 +208,32 @@ yawp('/people/123').transform('upperCase').first( function(person) {} );
 Note: All transformers can be applied for collections queries or feching single objects.
 
 ### Hooks
+
+Hooks are portions of business logic that are executed before or after a particular action in the system. They can be used to set pre-calculated information on a domain object or to deny access to some users on certain actions. For example, take a look at this Hook:
+
+```java
+    public class UserHook extends Hook<User> {
+
+        @Override
+	public void beforeQuery(DatastoreQuery<User> q) {
+            q.where("company", "=", Session.getLoggedUser().getCompany());
+        }
+
+        @Override
+        public void beforeSave(User user) {
+            if (user.getAge() < 18) {
+                throw new HttpException(422, "You must be 18 or more to sign up.");
+            }
+        }
+    }
+```java
+
+You can define 3 Hook types for your application:
+
+ * beforeQuery : called before any query made via a URL. It can be used to add security or default validations;
+ * beforeSave : called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;
+ * afterSave : called after an object is saved. It can be used to trigger actions or log events.
+
 
 ### Benefits
 
@@ -218,26 +278,6 @@ Done. Now User is mapped to "/users", and all these urls will be generated:
 The IdRef<T> class is a simple wrapper around a long. In YAWP!, every id is a long, and IdRef encapsulates that to make it type safe - that way, you won't be able to assing IdRef&lt;User&gt; to IdRef&lt;Product&gt;, for example.  
 It also holds information about the parent id, when such feature is used. Therefore, every id in the system (being primary or foreign key) must be of this type.
 
-### Action
-An action is a custom action that can be called over an element or a collection. The default actions already include every REST action, but some entities have business actions associated with then; for example, activate a user, or return the current logged user.
-
-    public class UserActions extends Action<User> {
-
-        @PUT("activate")
-        public User activate(IdRef<User> user) {
-            return r.save(user.fetch().activate());
-        }
-
-        @GET("me", overCollection = true)
-        public User me() {
-            return Session.getLoggedUser();
-        }
-    }
-
-Now, the following routes will be created and mapped to your methods:
-
-  * GET /users/me -> call the action me()
-  * PUT /users/id/activate -> activate the user on id
 
 Note that, since all ids are long, actions name must start with a letter.
 
@@ -275,38 +315,6 @@ To use the transformer, just add a query param to the request:
  * GET /users/id?t=simple -> Returns the user with id applying the transformer simple()
  * GET /users?t=withYear -> Returns the list of all users applying the transformer withYear()
 
-### Hooks
-Hooks are codes that are executed before or after a particular action in the system. They can be used to set pre-calculated information in the models to be saved in the database, or to deny access to some users on certain actions, for example. Take a look at this Hook:
-
-    public class UserHook extends Hook<User> {
-
-        @Override
-	public void beforeQuery(DatastoreQuery<User> q) {
-            q.where("company", "=", Session.getLoggedUser().getCompany());
-        }
-
-        @Override
-        public void beforeSave(User user) {
-            if (user.getAge() < 18) {
-                throw new HttpException(422, "You must be 18 or more to sign up.");
-            }
-        }
-    }
-
-This example uses two hook methods. For now, there are only 3 of them:
-
- * beforeQuery : called before any query made via a URL. It can be used to add security or default validations;
- * beforeSave : called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;
- * afterSave : called after an object is saved. It can be used to trigger actions or log events.
-
-### Querying API
-The beforeQuery method recieves a DatastoreQuery<T>. This class is part of the core Query API that YAWP! provides, and it allows for very easy access to the GAE database.  
-It can be used within any Repository Feature (i.e., Action, Transformer or Hook). In fact, any of those has a private variable r that represents the Repository. With it, you can the query method to get access to que Query API. See some cool examples:
-
- * r.query(User.class).where("name", "=", "Mark").and("age", ">=", 21).list();
- * r.query(User.class).where(or(and(c("company", "=", "github.com"), c("age", ">=", 21)), and(c("company", "=", "YAWP!"), c("age", ">=", 18)))).ids();
-   The methods c, and and or must be imported static or fully qualified on call for this to work.
- * r.query(User.class).where("name", "=", "John").and("company", "=", "github.com").only();
 
 ## Frontend
 A frontend api for Javascript is coming soon. Keep tunned for updates!

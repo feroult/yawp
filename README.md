@@ -208,6 +208,29 @@ yawp('/people/123').transform('upperCase').first( function(person) {} );
 ```
 Note: All transformers can be applied for collections queries or feching single objects.
 
+You can also create more sofisticated transformers using the presenter pattern, like this:
+
+```java
+public class UserTransformer extends Transformer<User> {
+
+   public static class UserView {
+        private String name;
+        private String company;
+        private int birthYear;
+
+        public UserView(User user) {
+            this.name = user.getName();
+            this.company = user.getCompany();
+            this.birthYear = Calendar.getInstance().get(Calendar.YEAR) - user.getAge();
+        }
+    }
+
+    public UserView withYear(User user) {
+        return new UserView(user);
+    }
+}
+```
+
 ### Hooks
 
 Hooks are portions of business logic that are executed before or after a particular action in the system. They can be used to set pre-calculated information on a domain object or to deny access to some users on certain actions. For example, take a look at this Hook:
@@ -234,7 +257,6 @@ You can define 3 Hook types for your application:
  * beforeQuery : called before any query made via a URL. It can be used to add security or default validations;
  * beforeSave : called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;
  * afterSave : called after an object is saved. It can be used to trigger actions or log events.
-
 
 ### Benefits
 

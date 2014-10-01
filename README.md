@@ -227,7 +227,7 @@ public class UserHook extends Hook<User> {
         }
     }
 }
-```java
+```
 
 You can define 3 Hook types for your application:
 

@@ -28,13 +28,13 @@ Then use one of HTTP, Java or Javascript APIs to access your resources:
 
 **HTTP**:
 
-| Verb        | Path         | Action                |
-| ----------- |------------- | --------------------- |
-| GET         | /people      | List people           |
-| POST        | /people      | Create a person       |
-| GET         | /people/id   | Show a person         |
-| PUT/PATCH   | /people/id   | Update a person       |
-| DELETE      | /people/id   | Destroy a person      |
+| Verb        | Path           | Action                |
+| ----------- |--------------- | --------------------- |
+| GET         | /people        | List people           |
+| POST        | /people        | Create a person       |
+| GET         | /people/{id}   | Show a person         |
+| PUT/PATCH   | /people/{id}   | Update a person       |
+| DELETE      | /people/{id}   | Destroy a person      |
 
 **Javascript**:
 ```javascript
@@ -111,7 +111,9 @@ Other Java examples, also avaibale from HTTP or Javascript:
 
 ```java
 yawp(User.class).where("name", "=", "Mark").and("age", ">=", 21).list();
+
 yawp(User.class).where(or(and(c("company", "=", "github.com"), c("age", ">=", 21)), and(c("company", "=", "YAWP!"), c("age", ">=", 18)))).ids();
+
 yawp(User.class).where("name", "=", "John").and("company", "=", "github.com").only();
 ```
 Note: The methods **c**, **and** and **or** must be imported static or fully qualified for this to work.
@@ -156,20 +158,19 @@ yawp('/people/123').put('active').done( function(status) {} );
 Also, an action be called over a single domain object or over a collection. For an action over a collection, don't specify it's IdRef or specify it's parent IdRef as the first argument:
 
 ```java
-    public class UserActions extends Action<User> {
-
- 	// over collection without IdRef
-        @GET("me")
-        public User me() {
-            return Session.getLoggedUser();
-        }
-        
-        // over collection with parent IdRef
-        @GET("first")
-        public User firstUser(IdRef<Company> companyId) {
-            return yawp(User.class).where("companyId", "=", companyId).first();
-        }
+public class UserActions extends Action<User> {
+    // over collection without IdRef
+    @GET("me")
+    public User me() {
+        return Session.getLoggedUser();
     }
+  
+    // over collection with parent IdRef
+    @GET("first")
+    public User firstUser(IdRef<Company> companyId) {
+      return yawp(User.class).where("companyId", "=", companyId).first();
+    }
+}
 ```
 
 The following routes will be created and mapped to your methods:
@@ -212,20 +213,20 @@ Note: All transformers can be applied for collections queries or feching single 
 Hooks are portions of business logic that are executed before or after a particular action in the system. They can be used to set pre-calculated information on a domain object or to deny access to some users on certain actions. For example, take a look at this Hook:
 
 ```java
-    public class UserHook extends Hook<User> {
+public class UserHook extends Hook<User> {
 
-        @Override
-	public void beforeQuery(DatastoreQuery<User> q) {
-            q.where("company", "=", Session.getLoggedUser().getCompany());
-        }
+    @Override
+    public void beforeQuery(DatastoreQuery<User> q) {
+        q.where("company", "=", Session.getLoggedUser().getCompany());
+    }
 
-        @Override
-        public void beforeSave(User user) {
-            if (user.getAge() < 18) {
-                throw new HttpException(422, "You must be 18 or more to sign up.");
-            }
+    @Override
+    public void beforeSave(User user) {
+        if (user.getAge() < 18) {
+            throw new HttpException(422, "You must be 18 or more to sign up.");
         }
     }
+}
 ```java
 
 You can define 3 Hook types for your application:

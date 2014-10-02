@@ -9,6 +9,10 @@ import java.util.List;
 
 public class CreateRestAction extends RestAction {
 
+	public CreateRestAction() {
+		super("create");
+	}
+
 	@Override
 	public Object action() {
 		if (JsonUtils.isJsonArray(requestJson)) {

@@ -5,6 +5,10 @@ import io.yawp.utils.JsonUtils;
 
 public class UpdateRestAction extends RestAction {
 
+	public UpdateRestAction() {
+		super("update");
+	}
+
 	@Override
 	public Object action() {
 		assert !JsonUtils.isJsonArray(requestJson);

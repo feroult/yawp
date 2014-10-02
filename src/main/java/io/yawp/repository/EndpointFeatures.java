@@ -90,4 +90,8 @@ public class EndpointFeatures<T> {
 	public boolean hasCustomAction(ActionKey actionKey) {
 		return actions.containsKey(actionKey);
 	}
+
+	public boolean hasTranformer(String transformerName) {
+		return transformers.containsKey(transformerName);
+	}
 }

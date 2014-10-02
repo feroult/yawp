@@ -7,6 +7,10 @@ import java.util.List;
 
 public class IndexRestAction extends RestAction {
 
+	public IndexRestAction() {
+		super("index");
+	}
+
 	@Override
 	public List<?> action() {
 		DatastoreQuery<?> query = query();
@@ -19,8 +23,8 @@ public class IndexRestAction extends RestAction {
 			query.options(DatastoreQueryOptions.parse(params.get(QUERY_OPTIONS)));
 		}
 
-		if (params.containsKey(TRANSFORMER)) {
-			return query.transform(params.get(TRANSFORMER)).list();
+		if (hasTransformer()) {
+			return query.transform(getTransformerName()).list();
 		}
 
 		return query.list();

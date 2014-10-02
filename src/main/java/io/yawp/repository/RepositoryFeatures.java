@@ -1,6 +1,7 @@
 package io.yawp.repository;
 
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.servlet.HttpException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,7 +70,7 @@ public class RepositoryFeatures {
 	public EndpointFeatures<?> get(String endpointPath) {
 		Class<?> clazz = paths.get(endpointPath);
 		if (clazz == null) {
-			throw new RuntimeException("Invalid io.yawp path " + endpointPath);
+			throw new HttpException(404); //TODO [luan] review, but should be right
 		}
 		return get(clazz);
 	}

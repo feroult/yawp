@@ -27,7 +27,7 @@
 
 		<init-param>
 			<param-name>packagePrefix</param-name>
-			<param-value>{package}</param-value>
+			<param-value>${package}</param-value>
 		</init-param>
 	</servlet>
 	<servlet-mapping>
@@ -35,9 +35,18 @@
 		<url-pattern>/fixtures/*</url-pattern>
 	</servlet-mapping>
 
+	<servlet>
+		<servlet-name>DeleteAllServlet</servlet-name>
+		<servlet-class>io.yawp.repository.tools.DeleteAllServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DeleteAllServlet</servlet-name>
+		<url-pattern>/fixtures/delete_all</url-pattern>
+	</servlet-mapping>
+
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>{artifactId}-all</web-resource-name>
+			<web-resource-name>${artifactId}-all</web-resource-name>
 			<url-pattern>/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
@@ -47,7 +56,7 @@
 
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>{artifactId}-tasks</web-resource-name>
+			<web-resource-name>${artifactId}-tasks</web-resource-name>
 			<url-pattern>/api/_tasks/*</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
@@ -57,8 +66,16 @@
 
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>{artifactId}-fixtures</web-resource-name>
+			<web-resource-name>${artifactId}-fixtures</web-resource-name>
 			<url-pattern>/fixtures/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+
+	<!-- if you want, remove this in production -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>${artifactId}-tests</web-resource-name>
+			<url-pattern>/test/*</url-pattern>
 		</web-resource-collection>
 	</security-constraint>
 </web-app>

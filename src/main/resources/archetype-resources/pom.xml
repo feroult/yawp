@@ -11,6 +11,8 @@
 	<properties>
 		<appengine.app.version>1</appengine.app.version>
 		<appengine.target.version>1.9.9</appengine.target.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.outputEncoding>UTF-8</project.build.outputEncoding>
 	</properties>
 
 	<dependencies>
@@ -44,14 +46,10 @@
 						<jvmFlag>-Xnoagent</jvmFlag>
 						<jvmFlag>-Xrunjdwp:transport=dt_socket,address=4001,suspend=n,server=y
 						</jvmFlag>
-						<!-- <jvmFlag>-Ddatastore.default_high_rep_job_policy_unapplied_job_pct=0</jvmFlag> -->
+						<!-- change this if you want hdr to simulate eventual consistency -->
+						<jvmFlag>-Ddatastore.default_high_rep_job_policy_unapplied_job_pct=0</jvmFlag>
 					</jvmFlags>
 				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
 			</plugin>
 		</plugins>
 	</build>

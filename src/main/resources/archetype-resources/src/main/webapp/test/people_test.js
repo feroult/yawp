@@ -7,7 +7,7 @@
 	});
 
 	t.asyncTest("query", function(assert) {
-		expect(1);
+		expect(2);
 
 		fx.person('amy');
 		fx.person('janes');

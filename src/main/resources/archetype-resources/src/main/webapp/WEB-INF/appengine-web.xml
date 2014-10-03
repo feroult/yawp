@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
+	<application>wavezapp</application>
+	<version>${appengine.app.version}</version>
+	<threadsafe>true</threadsafe>
+
+	<system-properties>
+		<property name="java.util.logging.config.file" value="WEB-INF/logging.properties" />
+		<property name="file.encoding" value="UTF-8" />
+		<property name="DEFAULT_ENCODING" value="UTF-8" />
+
+		<property name="gapi.service.account.email" value="${gapi.service.account.email}" />
+		<property name="gapi.service.account.key" value="/${gapi.service.account.key.file}" />
+	</system-properties>
+
+	<admin-console>
+		<page name="Appstats" url="/appstats" />
+	</admin-console>
+</appengine-web-app>

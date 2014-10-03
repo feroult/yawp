@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+	<servlet>
+		<servlet-name>EndpointServlet</servlet-name>
+		<servlet-class>io.yawp.servlet.EndpointServlet</servlet-class>
+
+		<init-param>
+			<param-name>packagePrefix</param-name>
+			<param-value>${package}</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>EndpointServlet</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>EndpointServlet</servlet-name>
+		<url-pattern>/api/_tasks/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>EndpointFixturesServlet</servlet-name>
+		<servlet-class>io.yawp.servlet.FixturesServlet</servlet-class>
+
+		<init-param>
+			<param-name>packagePrefix</param-name>
+			<param-value>{package}</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>EndpointFixturesServlet</servlet-name>
+		<url-pattern>/fixtures/*</url-pattern>
+	</servlet-mapping>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>{artifactId}-all</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>{artifactId}-tasks</web-resource-name>
+			<url-pattern>/api/_tasks/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>{artifactId}-fixtures</web-resource-name>
+			<url-pattern>/fixtures/*</url-pattern>
+		</web-resource-collection>
+	</security-constraint>
+</web-app>

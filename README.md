@@ -12,6 +12,32 @@ From a single class annotation, it provides a full REST url schema with a fluent
 
 You create your POJOs and **YAWP!** 
 
+## Installation
+
+Simply use our maven archetype to create an skeleton app:
+
+```bash
+mvn archetype:generate \
+  -DarchetypeGroupId=io.yawp \
+  -DarchetypeArtifactId=yawp \
+  -DarchetypeVersion=1.0 \
+  -DgroupId=<your groupId> \
+  -DartifactId=<your artifactId> \
+  -Dversion=<your version>
+```
+
+**Or** create a war project from scratch with the following dependency:
+
+```xml
+<dependency>
+   <groupId>io.yawp</groupId>
+   <artifactId>yawp</artifactId>
+   <version>1.0</version>
+</dependency>
+```
+Then configure the other App Engine's stuff. You can get inspiration from this [guide](https://cloud.google.com/appengine/docs/java/gettingstarted/creating).
+
+
 ### REST Schema
 
 Annotate your POJO:
@@ -257,6 +283,3 @@ You can define 3 Hook types for your application:
  * beforeQuery : called before any query made via a URL. It can be used to add security or default validations;
  * beforeSave : called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;
  * afterSave : called after an object is saved. It can be used to trigger actions or log events.
-
-
-## Installation

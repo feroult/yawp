@@ -1,0 +1,11 @@
+target
+appengine-generated
+
+.project
+.classpath
+.settings
+
+*.class
+*.jar
+*.war
+*.ear

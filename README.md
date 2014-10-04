@@ -12,6 +12,34 @@ From a single class annotation, it provides a full REST url schema with a fluent
 
 You create your POJOs and **YAWP!** 
 
+## Installation
+
+Simply use our maven archetype to create an skeleton app, wich has a simple qUnit test for an endpoint domain object example:
+
+```bash
+mvn archetype:generate \
+  -DarchetypeGroupId=io.yawp \
+  -DarchetypeArtifactId=yawp \
+  -DarchetypeVersion=1.0 \
+  -DgroupId=<your groupId> \
+  -DartifactId=<your artifactId> \
+  -Dversion=<your version>
+
+```
+
+Or, if you prefer, create a war project from scratch with the following dependency:
+
+```xml
+<dependency>
+   <groupId>io.yawp</groupId>
+   <artifactId>yawp</artifactId>
+   <version>1.0</version>
+</dependency>
+```
+
+Then you'll need to setup the other App Engine's stuff. You can get inspiration from this [guide](https://cloud.google.com/appengine/docs/java/gettingstarted/creating).
+
+
 ### REST Schema
 
 Annotate your POJO:

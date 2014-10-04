@@ -14,7 +14,7 @@ You create your POJOs and **YAWP!**
 
 ## Installation
 
-Simply use our maven archetype to create an skeleton app, wich has a simple qUnit test for an endpoint domain object example:
+Simply use our maven archetype to create an skeleton app:
 
 ```bash
 mvn archetype:generate \
@@ -24,10 +24,9 @@ mvn archetype:generate \
   -DgroupId=<your groupId> \
   -DartifactId=<your artifactId> \
   -Dversion=<your version>
-
 ```
 
-Or, if you prefer, create a war project from scratch with the following dependency:
+**Or** create a war project from scratch with the following dependency:
 
 ```xml
 <dependency>
@@ -36,8 +35,7 @@ Or, if you prefer, create a war project from scratch with the following dependen
    <version>1.0</version>
 </dependency>
 ```
-
-Then you'll need to setup the other App Engine's stuff. You can get inspiration from this [guide](https://cloud.google.com/appengine/docs/java/gettingstarted/creating).
+Then configure the other App Engine's stuff. You can get inspiration from this [guide](https://cloud.google.com/appengine/docs/java/gettingstarted/creating).
 
 
 ### REST Schema

@@ -103,6 +103,9 @@ public class Person {
     @Id
     private IdRef<Person> id;
     
+    @ParentId
+    private IdRef<Company> companyId;
+    
     private IdRef<Address> addressId;
     
     private String name;

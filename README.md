@@ -34,6 +34,8 @@ Point your browser to [http://localhost:8080/test/all.html](http://localhost:808
 
 #### Maven Dependency
 
+If you prefer to configure it manually, use this maven dependency: 
+
 ```xml
 <dependency>
    <groupId>io.yawp</groupId>

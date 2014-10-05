@@ -32,7 +32,7 @@ Then inside the generated app folder:
 mvn appengine:devserver
 ```
 
-Point your browser to (http://localhost:8080/test/all.html) to run the default test suite.
+Point your browser to [](http://localhost:8080/test/all.html) to run the default test suite.
 
 **Or** create a war project from scratch with the following dependency:
 

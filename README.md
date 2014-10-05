@@ -6,7 +6,7 @@ Yet Another Web API for Google App Engine
 
 ## Introduction
 
-**YAWP!** is a Java framework built on top of Google App Engine whose main purpose is to help developers to create meaningful APIs to support their REST based applications.
+**YAWP!** is a Java framework built on top of Google App Engine whose main purpose is to help developers create meaningful APIs to support their REST based applications.
 
 You create your POJOs and **YAWP!** 
 

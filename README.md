@@ -6,9 +6,7 @@ Yet Another Web API for Google App Engine
 
 ## Introduction
 
-**YAWP!** is a Java framework built on top of Google App Engine whose main purpose is help developers to create a simple and meaningful API to support their REST based applications.
-
-From a single class annotation, it provides a full REST url schema with a fluent progamatic API for Java and Javascript. You write your client side code the same way you do for your server side. It also provides a convenient way to organize your server side business logic.
+**YAWP!** is a Java framework built on top of Google App Engine whose main purpose is help developers to create meaningful APIs to support their REST based applications.
 
 You create your POJOs and **YAWP!** 
 
@@ -26,6 +24,14 @@ mvn archetype:generate \
   -Dversion=<your version>
 ```
 
+Then inside the generated app folder:
+
+```
+mvn appengine:devserver
+```
+
+Point your browser to [http://localhost:8080/test/all.html](http://localhost:8080/test/all.html) to run the default test suite.
+
 **Or** create a war project from scratch with the following dependency:
 
 ```xml
@@ -37,6 +43,9 @@ mvn archetype:generate \
 ```
 Then configure the other App Engine's stuff. You can get inspiration from this [guide](https://cloud.google.com/appengine/docs/java/gettingstarted/creating).
 
+### How it works
+
+From a single class annotation, it provides a full REST url schema with a fluent progamatic API for Java and Javascript. You write your client side code the same way you do for your server side. It also provides a convenient way to organize your server side business logic.
 
 ### REST Schema
 
@@ -102,6 +111,9 @@ public class Person {
 
     @Id
     private IdRef<Person> id;
+    
+    @ParentId
+    private IdRef<Company> companyId;
     
     private IdRef<Address> addressId;
     

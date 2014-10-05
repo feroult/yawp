@@ -12,9 +12,7 @@ You create your POJOs and **YAWP!**
 
 ## Installation
 
-### Archetype
-
-Simply use our maven archetype to create an skeleton app:
+#### Maven Archetype
 
 ```bash
 mvn archetype:generate \
@@ -26,7 +24,7 @@ mvn archetype:generate \
   -Dversion=<your version>
 ```
 
-Then inside the generated app folder:
+From the generated app folder run:
 
 ```
 mvn appengine:devserver
@@ -34,7 +32,7 @@ mvn appengine:devserver
 
 Point your browser to [http://localhost:8080/test/all.html](http://localhost:8080/test/all.html) to run the default test suite.
 
-### Maven Dependency
+#### Maven Dependency
 
 ```xml
 <dependency>

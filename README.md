@@ -12,6 +12,8 @@ You create your POJOs and **YAWP!**
 
 ## Installation
 
+### Archetype
+
 Simply use our maven archetype to create an skeleton app:
 
 ```bash
@@ -32,7 +34,7 @@ mvn appengine:devserver
 
 Point your browser to [http://localhost:8080/test/all.html](http://localhost:8080/test/all.html) to run the default test suite.
 
-**Or** create a war project from scratch with the following dependency:
+### Maven Dependency
 
 ```xml
 <dependency>
@@ -43,7 +45,7 @@ Point your browser to [http://localhost:8080/test/all.html](http://localhost:808
 ```
 Then configure the other App Engine's stuff. You can get inspiration from this [guide](https://cloud.google.com/appengine/docs/java/gettingstarted/creating).
 
-### How it works
+## How it Works
 
 From a single class annotation, it provides a full REST url schema with a fluent progamatic API for Java and Javascript. You write your client side code the same way you do for your server side. It also provides a convenient way to organize your server side business logic.
 

@@ -28,181 +28,328 @@
 
     <div class="container">
       <section id="main_content">
-        <h1>
-<a name="yawp" class="anchor" href="#yawp"><span class="octicon octicon-link"></span></a>YAWP!</h1>
-
-<p>Yet Another Web Persistence API</p>
-
-
-<p><a href="https://app.shippable.com/projects/5418400b50f3833e055ab249/builds/latest"><img src="https://api.shippable.com/projects/5418400b50f3833e055ab249/badge?branchName=master" alt="Build Status"></a></p>
-
-<h2>
+        <h2>
 <a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
-<p>YAWP! is a Java framework built on top of Google App Engine, whose main purpose is to provide a simple and meaningful API to support REST based applications.<br>
-You create your POJOs and YAWP! creates a full REST url schema to insert, delete, update, list, etc. your objects automatically.<br>
-Then you can change default the behavior via Actions, Transformers and Hooks. Never write a controller in your life again!</p>
+<p><strong>YAWP!</strong> is a Java framework built on top of Google App Engine whose main purpose is to help developers to create meaningful APIs to support their REST based applications.</p>
+
+<p>You create your POJOs and <strong>YAWP!</strong> </p>
 
 <h2>
-<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
-<ul>
-<li>Amazingly simple</li>
-<li>Nice querying syntax encapsulating GAE's Query classes.</li>
-<li>Nested resources using GAE Parent/Child functionality</li>
-<li>Hook, Action and Transformers API</li>
-</ul><h2>
-<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h2>
+<h4>
+<a name="maven-archetype" class="anchor" href="#maven-archetype"><span class="octicon octicon-link"></span></a>Maven Archetype</h4>
 
-<p>In a very simple example, we can create the class User, with just a few fields:</p>
+<div class="highlight highlight-bash"><pre>mvn archetype:generate <span class="se">\</span>
+  -DarchetypeGroupId<span class="o">=</span>io.yawp <span class="se">\</span>
+  -DarchetypeArtifactId<span class="o">=</span>yawp <span class="se">\</span>
+  -DarchetypeVersion<span class="o">=</span>1.0 <span class="se">\</span>
+  -DgroupId<span class="o">=</span>&lt;your groupId&gt; <span class="se">\</span>
+  -DartifactId<span class="o">=</span>&lt;your artifactId&gt; <span class="se">\</span>
+  -Dversion<span class="o">=</span>&lt;your version&gt;
+</pre></div>
 
-<pre><code>public class User {
+<p>From the generated app folder run:</p>
 
-    private String name;
-    private int age;
-    private String company;
-}
+<pre><code>mvn appengine:devserver
 </code></pre>
 
-<p>Now, in order to use YAWP!, just annotate this class with <a href="https://github.com/Endpoint" class="user-mention">@Endpoint</a> annotation, and add an IdRef&lt;User&gt; field.</p>
+<p>Point your browser to <a href="http://localhost:8080/test/all.html">http://localhost:8080/test/all.html</a> to run the default test suite.</p>
 
-<pre><code>@Endpoint(path = "/users")
-public class User {
+<h4>
+<a name="maven-dependency" class="anchor" href="#maven-dependency"><span class="octicon octicon-link"></span></a>Maven Dependency</h4>
 
-    @Id
-    private IdRef&lt;User&gt; id;
+<div class="highlight highlight-xml"><pre><span class="nt">&lt;dependency&gt;</span>
+   <span class="nt">&lt;groupId&gt;</span>io.yawp<span class="nt">&lt;/groupId&gt;</span>
+   <span class="nt">&lt;artifactId&gt;</span>yawp<span class="nt">&lt;/artifactId&gt;</span>
+   <span class="nt">&lt;version&gt;</span>1.0<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
 
-    /* ... */
+<p>Then configure the other App Engine's stuff. You can get inspiration from this <a href="https://cloud.google.com/appengine/docs/java/gettingstarted/creating">guide</a>.</p>
 
-}
-</code></pre>
+<h2>
+<a name="how-it-works" class="anchor" href="#how-it-works"><span class="octicon octicon-link"></span></a>How it Works</h2>
 
-<p>Done. Now User is mapped to "/users", and all these urls will be generated:</p>
-
-<ul>
-<li>GET /users -&gt; list all users</li>
-<li>GET /users/:id -&gt; get a user by id</li>
-<li>POST /users -&gt; create new user with random id</li>
-<li>POST /users/:id -&gt; create a new user with given id</li>
-<li>PUT /users/:id -&gt; update user with given id</li>
-<li>DELETE /users/:id -&gt; deletes user with given id</li>
-</ul><h3>
-<a name="idref" class="anchor" href="#idref"><span class="octicon octicon-link"></span></a>IdRef</h3>
-
-<p>The IdRef class is a simple wrapper around a long. In YAWP!, every id is a long, and IdRef encapsulates that to make it type safe - that way, you won't be able to assing IdRef&lt;User&gt; to IdRef&lt;Product&gt;, for example.<br>
-It also holds information about the parent id, when such feature is used. Therefore, every id in the system (being primary or foreign key) must be of this type.</p>
+<p>From a single class annotation, it provides a full REST url schema with a fluent progamatic API for Java and Javascript. You write your client side code the same way you do for your server side. It also provides a convenient way to organize your server side business logic.</p>
 
 <h3>
-<a name="action" class="anchor" href="#action"><span class="octicon octicon-link"></span></a>Action</h3>
+<a name="rest-schema" class="anchor" href="#rest-schema"><span class="octicon octicon-link"></span></a>REST Schema</h3>
 
-<p>An action is a custom action that can be called over an element or a collection. The default actions already include every REST action, but some entities have business actions associated with then; for example, activate a user, or return the current logged user.</p>
+<p>Annotate your POJO:</p>
 
-<pre><code>public class UserActions extends Action&lt;User&gt; {
+<div class="highlight highlight-java"><pre><span class="nd">@Endpoint</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/people"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
 
-    @PUT("activate")
-    public User activate(IdRef&lt;User&gt; user) {
-        return r.save(user.fetch().activate());
-    }
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
 
-    @GET("me", overCollection = true)
-    public User me() {
-        return Session.getLoggedUser();
-    }
-}
-</code></pre>
+<span class="o">}</span>
+</pre></div>
 
-<p>Now, the following routes will be created and mapped to your methods:</p>
+<p>Then use one of HTTP, Java or Javascript APIs to access your resources:</p>
+
+<p><strong>HTTP</strong>:</p>
+
+<table>
+<thead><tr>
+<th>Verb</th>
+<th>Path</th>
+<th>Action</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>/people</td>
+<td>List people</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/people</td>
+<td>Create a person</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/people/{id}</td>
+<td>Show a person</td>
+</tr>
+<tr>
+<td>PUT/PATCH</td>
+<td>/people/{id}</td>
+<td>Update a person</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/people/{id}</td>
+<td>Destroy a person</td>
+</tr>
+</tbody>
+</table><p><strong>Javascript</strong>:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">yawp</span><span class="p">(</span><span class="s1">'/people'</span><span class="p">).</span><span class="nx">list</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">people</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span>
+
+<span class="nx">yawp</span><span class="p">(</span><span class="s1">'/people'</span><span class="p">).</span><span class="nx">create</span><span class="p">({</span> <span class="nx">name</span> <span class="o">:</span> <span class="s1">'Janes'</span> <span class="p">}).</span><span class="nx">done</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span>
+
+<span class="nx">yawp</span><span class="p">(</span><span class="nx">personId</span><span class="p">).</span><span class="nx">fetch</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span>
+
+<span class="nx">yawp</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">person</span><span class="p">).</span><span class="nx">done</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span>
+
+<span class="nx">yawp</span><span class="p">.</span><span class="nx">destroy</span><span class="p">(</span><span class="nx">personId</span><span class="p">).</span><span class="nx">done</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">personId</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span>
+</pre></div>
+
+<p><strong>Java</strong>:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">people</span> <span class="o">=</span> <span class="n">yawp</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">list</span><span class="o">();</span>
+
+<span class="n">yawp</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="k">new</span> <span class="nf">Person</span><span class="o">(</span><span class="s">"Janes"</span><span class="o">));</span>
+
+<span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="n">yawp</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">fetch</span><span class="o">(</span><span class="n">personId</span><span class="o">);</span>
+
+<span class="n">yawp</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">person</span><span class="o">);</span>
+
+<span class="n">yawp</span><span class="o">.</span><span class="na">destroy</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+</pre></div>
+
+<h3>
+<a name="idref" class="anchor" href="#idref"><span class="octicon octicon-link"></span></a>IdRef</h3>
+
+<p>The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of Datastore Key mechanism and creates a type safe link beetween all your domain objects. </p>
+
+<p>To define the identity field of a domain object you need to declare an IdRef&lt;T&gt; annotated with <a href="https://github.com/Id" class="user-mention">@Id</a>. Then you can use this identity as a reference from another domain object.</p>
+
+<p>Also, through the @ParentId annotation, IdRef exposes the Ancestor mechanism of the Datastore Key architecuture, leveraging it's strong consistency model when necessary:</p>
+
+<div class="highlight highlight-java"><pre><span class="nd">@Endpoint</span><span class="o">(</span><span class="n">path</span> <span class="o">=</span> <span class="s">"/people"</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+
+    <span class="nd">@Id</span>
+    <span class="kd">private</span> <span class="n">IdRef</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="nd">@ParentId</span>
+    <span class="kd">private</span> <span class="n">IdRef</span><span class="o">&lt;</span><span class="n">Company</span><span class="o">&gt;</span> <span class="n">companyId</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="n">IdRef</span><span class="o">&lt;</span><span class="n">Address</span><span class="o">&gt;</span> <span class="n">addressId</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+
+<span class="o">}</span>
+</pre></div>
+
+<p>Note: All <strong>YAWP!</strong> POJOs must have one and only one IdRef attribute annotated with <a href="https://github.com/Id" class="user-mention">@Id</a></p>
+
+<h3>
+<a name="query-api" class="anchor" href="#query-api"><span class="octicon octicon-link"></span></a>Query API</h3>
+
+<p>From a HTTP call, a Java or Javascript method you can query your objects using a fluent API that nicely exposes the  Datastore Query class.</p>
+
+<p><strong>Javascript</strong>:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">yawp</span><span class="p">(</span><span class="s1">'/people'</span><span class="p">).</span><span class="nx">where</span><span class="p">([</span> <span class="s1">'name'</span><span class="p">,</span> <span class="s1">'='</span><span class="p">,</span> <span class="s1">'Janes'</span><span class="p">]).</span><span class="nx">first</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span>
+
+<span class="nx">yawp</span><span class="p">(</span><span class="s1">'/people'</span><span class="p">).</span><span class="nx">order</span><span class="p">([</span> <span class="p">{</span> <span class="nx">p</span><span class="o">:</span> <span class="s1">'name'</span><span class="p">,</span> <span class="nx">d</span><span class="o">:</span> <span class="s1">'desc'</span> <span class="p">}</span> <span class="p">]).</span><span class="nx">list</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">people</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span> 
+
+<span class="nx">yawp</span><span class="p">(</span><span class="s1">'/people'</span><span class="p">).</span><span class="nx">from</span><span class="p">(</span><span class="nx">parentId</span><span class="p">).</span><span class="nx">list</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">people</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span> 
+</pre></div>
+
+<p><strong>Java</strong>:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="n">yawp</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">where</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"="</span><span class="o">,</span> <span class="s">"Janes"</span><span class="o">).</span><span class="na">first</span><span class="o">();</span>
+
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">people</span> <span class="o">=</span> <span class="n">yawp</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">order</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"desc"</span><span class="o">).</span><span class="na">list</span><span class="o">();</span> 
+
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">people</span> <span class="o">=</span> <span class="n">yawp</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">from</span><span class="o">(</span><span class="n">parentId</span><span class="o">).</span><span class="na">list</span><span class="o">();</span> 
+</pre></div>
+
+<p>Other Java examples, also avaibale from HTTP or Javascript:</p>
+
+<div class="highlight highlight-java"><pre><span class="n">yawp</span><span class="o">(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">where</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"="</span><span class="o">,</span> <span class="s">"Mark"</span><span class="o">).</span><span class="na">and</span><span class="o">(</span><span class="s">"age"</span><span class="o">,</span> <span class="s">"&gt;="</span><span class="o">,</span> <span class="mi">21</span><span class="o">).</span><span class="na">list</span><span class="o">();</span>
+
+<span class="n">yawp</span><span class="o">(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">where</span><span class="o">(</span><span class="n">or</span><span class="o">(</span><span class="n">and</span><span class="o">(</span><span class="n">c</span><span class="o">(</span><span class="s">"company"</span><span class="o">,</span> <span class="s">"="</span><span class="o">,</span> <span class="s">"github.com"</span><span class="o">),</span> <span class="n">c</span><span class="o">(</span><span class="s">"age"</span><span class="o">,</span> <span class="s">"&gt;="</span><span class="o">,</span> <span class="mi">21</span><span class="o">)),</span> <span class="n">and</span><span class="o">(</span><span class="n">c</span><span class="o">(</span><span class="s">"company"</span><span class="o">,</span> <span class="s">"="</span><span class="o">,</span> <span class="s">"YAWP!"</span><span class="o">),</span> <span class="n">c</span><span class="o">(</span><span class="s">"age"</span><span class="o">,</span> <span class="s">"&gt;="</span><span class="o">,</span> <span class="mi">18</span><span class="o">)))).</span><span class="na">ids</span><span class="o">();</span>
+
+<span class="n">yawp</span><span class="o">(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">where</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"="</span><span class="o">,</span> <span class="s">"John"</span><span class="o">).</span><span class="na">and</span><span class="o">(</span><span class="s">"company"</span><span class="o">,</span> <span class="s">"="</span><span class="o">,</span> <span class="s">"github.com"</span><span class="o">).</span><span class="na">only</span><span class="o">();</span>
+</pre></div>
+
+<p>Note: The methods <strong>c</strong>, <strong>and</strong> and <strong>or</strong> must be imported static or fully qualified for this to work.</p>
+
+<p>You can look at this <a href="../master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java">Java test suite</a> to see examples of more complex constructions.</p>
+
+<h3>
+<a name="endpoint-features" class="anchor" href="#endpoint-features"><span class="octicon octicon-link"></span></a>Endpoint Features</h3>
+
+<p>So far, you've seen all functionality that you get by just annotating your POJO with <a href="https://github.com/Endpoint" class="user-mention">@Endpoint</a>. Now it's time to see how to add custom server side business logic to your model, so you can create real world applications with specific needs.</p>
+
+<p>The way <strong>YAWP!</strong> deal with this is by allowing you to extend the default REST schema through <strong>Features</strong>. You can create three kind of features for your objects: <strong>Actions</strong>, <strong>Transformers</strong> and <strong>Hooks</strong>. </p>
+
+<h3>
+<a name="actions" class="anchor" href="#actions"><span class="octicon octicon-link"></span></a>Actions</h3>
+
+<p>To add custom behavior to your domain object you can use the Action API. Imagine you need to activate a given person. To do this you can create an Action class:</p>
+
+<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ActivatePersonAction</span> <span class="kd">extends</span> <span class="n">Action</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="nd">@PUT</span><span class="o">(</span><span class="s">"active"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">activate</span><span class="o">(</span><span class="n">IdRef</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="n">id</span><span class="o">.</span><span class="na">fetch</span><span class="o">();</span>
+        <span class="n">person</span><span class="o">.</span><span class="na">setActive</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="n">yawp</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">person</span><span class="o">);</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+
+<p>Now, to activate a given person, let's say, with id 123, you can:</p>
+
+<pre>
+curl -X <b>PUT</b> http://localhost:8080/api<b>/people/123/active</b>
+</pre>
+
+<p>The <strong>Javascript</strong> equivalent would be:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">yawp</span><span class="p">(</span><span class="s1">'/people/123'</span><span class="p">).</span><span class="nx">put</span><span class="p">(</span><span class="s1">'active'</span><span class="p">).</span><span class="nx">done</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">status</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span>
+</pre></div>
+
+<p>Also, an action be called over a single domain object or over a collection. For an action over a collection, don't specify it's IdRef or specify it's parent IdRef as the first argument:</p>
+
+<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserActions</span> <span class="kd">extends</span> <span class="n">Action</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="c1">// over collection without IdRef</span>
+    <span class="nd">@GET</span><span class="o">(</span><span class="s">"me"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="n">User</span> <span class="nf">me</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">Session</span><span class="o">.</span><span class="na">getLoggedUser</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="c1">// over collection with parent IdRef</span>
+    <span class="nd">@GET</span><span class="o">(</span><span class="s">"first"</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="n">User</span> <span class="nf">firstUser</span><span class="o">(</span><span class="n">IdRef</span><span class="o">&lt;</span><span class="n">Company</span><span class="o">&gt;</span> <span class="n">companyId</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="nf">yawp</span><span class="o">(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">where</span><span class="o">(</span><span class="s">"companyId"</span><span class="o">,</span> <span class="s">"="</span><span class="o">,</span> <span class="n">companyId</span><span class="o">).</span><span class="na">first</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+
+<p>The following routes will be created and mapped to your methods:</p>
 
 <ul>
 <li>GET /users/me -&gt; call the action me()</li>
-<li>PUT /users/id/activate -&gt; activate the user on id</li>
-</ul><p>Note that, since all ids are long, actions name must start with a letter.</p>
+<li>GET /company/{companyId}/users/firstChild -&gt; call the action firstUser()</li>
+</ul><h3>
+<a name="transformers" class="anchor" href="#transformers"><span class="octicon octicon-link"></span></a>Transformers</h3>
+
+<p>The Transformer API is used to create different views of the same domain object. If you wan't to add or hide information to be returned to the client, the way to go is to use a Transfomer. For instance:</p>
+
+<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BasicObjectTransformer</span> <span class="kd">extends</span> <span class="n">Transformer</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="nf">upperCase</span><span class="o">(</span><span class="n">Person</span> <span class="n">person</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">map</span> <span class="o">=</span> <span class="n">asMap</span><span class="o">(</span><span class="n">person</span><span class="o">);</span>
+        <span class="n">map</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="n">person</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">toUpperCase</span><span class="o">());</span>
+        <span class="k">return</span> <span class="n">map</span><span class="o">;</span>
+
+    <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+
+<p>Now, to transform a given person, let's say, with id 123, you can:</p>
+
+<pre>
+curl -X <b>GET</b> http://localhost:8080/api<b>/people/123?t=upperCase</b>
+</pre>
+
+<p>The <strong>Javascript</strong> equivalent would be:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="nx">yawp</span><span class="p">(</span><span class="s1">'/people/123'</span><span class="p">).</span><span class="nx">transform</span><span class="p">(</span><span class="s1">'upperCase'</span><span class="p">).</span><span class="nx">first</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span>
+</pre></div>
+
+<p>Note: All transformers can be applied for collections queries or feching single objects.</p>
+
+<p>You can also create more sofisticated transformers using the presenter pattern, like this:</p>
+
+<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserTransformer</span> <span class="kd">extends</span> <span class="n">Transformer</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="o">{</span>
+
+   <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">UserView</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="n">String</span> <span class="n">company</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kt">int</span> <span class="n">birthYear</span><span class="o">;</span>
+
+        <span class="kd">public</span> <span class="nf">UserView</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="na">getName</span><span class="o">();</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">company</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="na">getCompany</span><span class="o">();</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">birthYear</span> <span class="o">=</span> <span class="n">Calendar</span><span class="o">.</span><span class="na">getInstance</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">Calendar</span><span class="o">.</span><span class="na">YEAR</span><span class="o">)</span> <span class="o">-</span> <span class="n">user</span><span class="o">.</span><span class="na">getAge</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">UserView</span> <span class="nf">withYear</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">UserView</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
 
 <h3>
-<a name="transformer" class="anchor" href="#transformer"><span class="octicon octicon-link"></span></a>Transformer</h3>
-
-<p>A Transformer can change an object before it is sent on a request. For example, imagine that in some scenarios we don't want to return the User's age in some requests and, in others, we want to calculate he's birth year.</p>
-
-<pre><code>public class UserTransformer extends Transformer&lt;User&gt; {
-
-    public Map&lt;String, String&gt; simple(User user) {
-        Map&lt;String, String&gt; result = new HashMap&lt;&gt;();
-        result.put("name", user.getName());
-        result.put("company", user.getCompany());
-        return result;
-    }
-
-    public static class UserView {
-        private String name;
-        private String company;
-        private int birthYear;
-
-        public UserView(User user) {
-            this.name = user.getName();
-            this.company = user.getCompany();
-            this.birthYear = Calendar.getInstance().get(Calendar.YEAR) - user.getAge();
-        }
-    }
-
-    public UserView withYear(User user) {
-        return new UserView(user);
-    }
-}
-</code></pre>
-
-<p>To use the transformer, just add a query param to the request:</p>
-
-<ul>
-<li>GET /users/id?t=simple -&gt; Returns the user with id applying the transformer simple()</li>
-<li>GET /users?t=withYear -&gt; Returns the list of all users applying the transformer withYear()</li>
-</ul><h3>
 <a name="hooks" class="anchor" href="#hooks"><span class="octicon octicon-link"></span></a>Hooks</h3>
 
-<p>Hooks are codes that are executed before or after a particular action in the system. They can be used to set pre-calculated information in the models to be saved in the database, or to deny access to some users on certain actions, for example. Take a look at this Hook:</p>
+<p>Hooks are portions of business logic that are executed before or after a particular action in the system. They can be used to set pre-calculated information on a domain object or to deny access to some users on certain actions. For example, take a look at this Hook:</p>
 
-<pre><code>public class UserHook extends Hook&lt;User&gt; {
+<div class="highlight highlight-java"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserHook</span> <span class="kd">extends</span> <span class="n">Hook</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="o">{</span>
 
-    @Override
-public void beforeQuery(DatastoreQuery&lt;User&gt; q) {
-        q.where("company", "=", Session.getLoggedUser().getCompany());
-    }
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">beforeQuery</span><span class="o">(</span><span class="n">DatastoreQuery</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="n">q</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">q</span><span class="o">.</span><span class="na">where</span><span class="o">(</span><span class="s">"company"</span><span class="o">,</span> <span class="s">"="</span><span class="o">,</span> <span class="n">Session</span><span class="o">.</span><span class="na">getLoggedUser</span><span class="o">().</span><span class="na">getCompany</span><span class="o">());</span>
+    <span class="o">}</span>
 
-    @Override
-    public void beforeSave(User user) {
-        if (user.getAge() &lt; 18) {
-            throw new HttpException(422, "You must be 18 or more to sign up.");
-        }
-    }
-}
-</code></pre>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">beforeSave</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">user</span><span class="o">.</span><span class="na">getAge</span><span class="o">()</span> <span class="o">&lt;</span> <span class="mi">18</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">HttpException</span><span class="o">(</span><span class="mi">422</span><span class="o">,</span> <span class="s">"You must be 18 or more to sign up."</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
 
-<p>This example uses two hook methods. For now, there are only 3 of them:</p>
+<p>You can define 3 Hook types for your application:</p>
 
 <ul>
 <li>beforeQuery : called before any query made via a URL. It can be used to add security or default validations;</li>
 <li>beforeSave : called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;</li>
 <li>afterSave : called after an object is saved. It can be used to trigger actions or log events.</li>
-</ul><h3>
-<a name="querying-api" class="anchor" href="#querying-api"><span class="octicon octicon-link"></span></a>Querying API</h3>
-
-<p>The beforeQuery method recieves a DatastoreQuery. This class is part of the core Query API that YAWP! provides, and it allows for very easy access to the GAE database.<br>
-It can be used within any Repository Feature (i.e., Action, Transformer or Hook). In fact, any of those has a private variable r that represents the Repository. With it, you can the query method to get access to que Query API. See some cool examples:</p>
-
-<ul>
-<li>r.query(User.class).where("name", "=", "Mark").and("age", "&gt;=", 21).list();</li>
-<li>r.query(User.class).where(or(and(c("company", "=", "github.com"), c("age", "&gt;=", 21)), and(c("company", "=", "YAWP!"), c("age", "&gt;=", 18)))).ids();
-The methods c, and and or must be imported static or fully qualified on call for this to work.</li>
-<li>r.query(User.class).where("name", "=", "John").and("company", "=", "github.com").only();</li>
-</ul><h2>
-<a name="frontend" class="anchor" href="#frontend"><span class="octicon octicon-link"></span></a>Frontend</h2>
-
-<p>A frontend api for Javascript is coming soon. Keep tunned for updates!</p>
-
-<h2>
-<a name="misc" class="anchor" href="#misc"><span class="octicon octicon-link"></span></a>Misc</h2>
-
-<ul>
-<li><a href="http://stackoverflow.com/questions/7160006/m2e-and-having-maven-generated-source-folders-as-eclipse-source-folders">http://stackoverflow.com/questions/7160006/m2e-and-having-maven-generated-source-folders-as-eclipse-source-folders</a></li>
 </ul>
       </section>
     </div>

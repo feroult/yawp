@@ -305,5 +305,4 @@ You can define 3 Hook types for your application:
 * Fernando Ultremare - feroult@gmail.com
 * Guilherme Carreiro - karreiro@gmail.com
 * Luan Nico - luan.nico@live.com
-* aulo Victor Martins - paulovmr@gmail.com
-* 
+* Paulo Victor Martins - paulovmr@gmail.com

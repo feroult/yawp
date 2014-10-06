@@ -294,13 +294,11 @@ public class UserHook extends Hook<User> {
 
 You can define 3 Hook types for your application:
 
- * beforeQuery : called before any query made via a URL. It can be used to add security or default validations;
- * beforeSave : called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;
- * afterSave : called after an object is saved. It can be used to trigger actions or log events.
+ * **beforeQuery**: called before any query made via a URL. It can be used to add security or default validations;
+ * **beforeSave**: called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;
+ * **afterSave**: called after an object is saved. It can be used to trigger actions or log events.
 
 ## Credits
-
-**Developers**:
 
 * Fernando Ultremare - feroult@gmail.com
 * Guilherme Carreiro - karreiro@gmail.com

@@ -6,7 +6,7 @@ Yet Another Web API for Google App Engine
 
 ## Introduction
 
-**YAWP!** is a Java framework built on top of Google App Engine whose main purpose is to help developers to create meaningful APIs to support their REST based applications.
+**YAWP!** is a Java framework built on top of Google App Engine whose main purpose is to help developers create meaningful APIs to support their REST based applications.
 
 You create your POJOs and **YAWP!** 
 
@@ -33,6 +33,8 @@ mvn appengine:devserver
 Point your browser to [http://localhost:8080/test/all.html](http://localhost:8080/test/all.html) to run the default test suite.
 
 #### Maven Dependency
+
+If you prefer to configure it manually, use this maven dependency: 
 
 ```xml
 <dependency>
@@ -292,6 +294,13 @@ public class UserHook extends Hook<User> {
 
 You can define 3 Hook types for your application:
 
- * beforeQuery : called before any query made via a URL. It can be used to add security or default validations;
- * beforeSave : called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;
- * afterSave : called after an object is saved. It can be used to trigger actions or log events.
+ * **beforeQuery**: called before any query made via a URL. It can be used to add security or default validations;
+ * **beforeSave**: called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;
+ * **afterSave**: called after an object is saved. It can be used to trigger actions or log events.
+
+## Credits
+
+* Fernando Ultremare - feroult@gmail.com
+* Guilherme Carreiro - karreiro@gmail.com
+* Luan Nico - luan.nico@live.com
+* Paulo Victor Martins - paulovmr@gmail.com

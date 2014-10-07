@@ -8,13 +8,14 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
 
-    <title>YAWP! by feroult</title>
+    <title>YAWP!</title>
   </head>
 
   <body>
 
     <header>
       <div class="container">
+        <img src="images/yeti.png" />
         <h1>YAWP!</h1>
         <h2>Yet Another Web API for Google App Engine</h2>
 
@@ -188,18 +189,18 @@
 
 <div class="highlight highlight-javascript"><pre><span class="nx">yawp</span><span class="p">(</span><span class="s1">'/people'</span><span class="p">).</span><span class="nx">where</span><span class="p">([</span> <span class="s1">'name'</span><span class="p">,</span> <span class="s1">'='</span><span class="p">,</span> <span class="s1">'Janes'</span><span class="p">]).</span><span class="nx">first</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">person</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span>
 
-<span class="nx">yawp</span><span class="p">(</span><span class="s1">'/people'</span><span class="p">).</span><span class="nx">order</span><span class="p">([</span> <span class="p">{</span> <span class="nx">p</span><span class="o">:</span> <span class="s1">'name'</span><span class="p">,</span> <span class="nx">d</span><span class="o">:</span> <span class="s1">'desc'</span> <span class="p">}</span> <span class="p">]).</span><span class="nx">list</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">people</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span> 
+<span class="nx">yawp</span><span class="p">(</span><span class="s1">'/people'</span><span class="p">).</span><span class="nx">order</span><span class="p">([</span> <span class="p">{</span> <span class="nx">p</span><span class="o">:</span> <span class="s1">'name'</span><span class="p">,</span> <span class="nx">d</span><span class="o">:</span> <span class="s1">'desc'</span> <span class="p">}</span> <span class="p">]).</span><span class="nx">list</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">people</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span>
 
-<span class="nx">yawp</span><span class="p">(</span><span class="s1">'/people'</span><span class="p">).</span><span class="nx">from</span><span class="p">(</span><span class="nx">parentId</span><span class="p">).</span><span class="nx">list</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">people</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span> 
+<span class="nx">yawp</span><span class="p">(</span><span class="s1">'/people'</span><span class="p">).</span><span class="nx">from</span><span class="p">(</span><span class="nx">parentId</span><span class="p">).</span><span class="nx">list</span><span class="p">(</span> <span class="kd">function</span><span class="p">(</span><span class="nx">people</span><span class="p">)</span> <span class="p">{}</span> <span class="p">);</span>
 </pre></div>
 
 <p><strong>Java</strong>:</p>
 
 <div class="highlight highlight-java"><pre><span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="n">yawp</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">where</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"="</span><span class="o">,</span> <span class="s">"Janes"</span><span class="o">).</span><span class="na">first</span><span class="o">();</span>
 
-<span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">people</span> <span class="o">=</span> <span class="n">yawp</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">order</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"desc"</span><span class="o">).</span><span class="na">list</span><span class="o">();</span> 
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">people</span> <span class="o">=</span> <span class="n">yawp</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">order</span><span class="o">(</span><span class="s">"name"</span><span class="o">,</span> <span class="s">"desc"</span><span class="o">).</span><span class="na">list</span><span class="o">();</span>
 
-<span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">people</span> <span class="o">=</span> <span class="n">yawp</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">from</span><span class="o">(</span><span class="n">parentId</span><span class="o">).</span><span class="na">list</span><span class="o">();</span> 
+<span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">people</span> <span class="o">=</span> <span class="n">yawp</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">from</span><span class="o">(</span><span class="n">parentId</span><span class="o">).</span><span class="na">list</span><span class="o">();</span>
 </pre></div>
 
 <p>Other Java examples, also avaibale from HTTP or Javascript:</p>

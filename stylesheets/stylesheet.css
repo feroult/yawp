@@ -16,6 +16,14 @@ body {
   margin: 0 auto;
 }
 
+.yeti {
+  width:142px; /* you can use % */
+  height: auto;
+  margin-left: 40px;
+  margin-right: -80px;
+  float: left;
+}
+
 section {
   display: block;
   margin: 0 0 20px 0;
@@ -44,7 +52,7 @@ header {
 }
 
 header h1 {
-  font-size: 30px;
+  font-size: 110px;
   line-height: 1.5;
   margin: 0 0 0 -40px;
   font-weight: bold;
@@ -55,17 +63,20 @@ header h1 {
                0 0 10px rgba(181, 232, 83, 0.1);
   letter-spacing: -1px;
   -webkit-font-smoothing: antialiased;
+  text-align: center;
 }
 
-header h1:before {
+/*header h1:before {
   content: "./ ";
   font-size: 24px;
-}
+}*/
 
 header h2 {
-  font-size: 18px;
+  margin-top: -23px;
+  font-size: 22px;
   font-weight: 300;
   color: #666;
+  text-align: center;
 }
 
 #downloads .btn {

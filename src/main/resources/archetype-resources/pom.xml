@@ -35,56 +35,20 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<artifactId>exec-maven-plugin</artifactId>
-				<groupId>org.codehaus.mojo</groupId>
-				<version>1.3.2</version>
-				<executions>
-					<execution>
-						<id>Hot Deploy Classes Link</id>
-						<phase>package</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<workingDirectory>${basedir}/src/main/webapp/WEB-INF</workingDirectory>
-							<executable>ln</executable>
-							<commandlineArgs>-sf ../../../../target/classes</commandlineArgs>
-						</configuration>
-					</execution>
-					<execution>
-						<id>Hot Deploy Lib Link</id>
-						<phase>package</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<workingDirectory>${basedir}/src/main/webapp/WEB-INF</workingDirectory>
-							<executable>ln</executable>
-							<commandlineArgs>-sf ../../../../target/lib</commandlineArgs>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.8</version>
-				<executions>
-					<execution>
-						<id>copy-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-							<includeScope>runtime</includeScope>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+			<!-- plugin> <artifactId>exec-maven-plugin</artifactId> <groupId>org.codehaus.mojo</groupId>
+				<version>1.3.2</version> <executions> <execution> <id>Hot Deploy Classes
+				Link</id> <phase>package</phase> <goals> <goal>exec</goal> </goals> <configuration>
+				<workingDirectory>${basedir}/src/main/webapp/WEB-INF</workingDirectory> <executable>ln</executable>
+				<commandlineArgs>-sf ../../../../target/classes</commandlineArgs> </configuration>
+				</execution> <execution> <id>Hot Deploy Lib Link</id> <phase>package</phase>
+				<goals> <goal>exec</goal> </goals> <configuration> <workingDirectory>${basedir}/src/main/webapp/WEB-INF</workingDirectory>
+				<executable>ln</executable> <commandlineArgs>-sf ../../../../target/lib</commandlineArgs>
+				</configuration> </execution> </executions> </plugin> <plugin> <groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId> <version>2.8</version> <executions>
+				<execution> <id>copy-dependencies</id> <phase>package</phase> <goals> <goal>copy-dependencies</goal>
+				</goals> <configuration> <outputDirectory>${project.build.directory}/lib</outputDirectory>
+				<includeScope>runtime</includeScope> </configuration> </execution> </executions>
+				</plugin -->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -96,9 +60,7 @@
 						<!-- in order to interpolate version from pom into appengine-web.xml -->
 						<resource>
 							<directory>${basedir}/src/main/webapp/WEB-INF</directory>
-							<excludes>
-								<exclude>classes</exclude>
-							</excludes>
+							<!-- excludes> <exclude>classes</exclude> </excludes -->
 							<filtering>true</filtering>
 							<targetPath>WEB-INF</targetPath>
 						</resource>
@@ -120,7 +82,7 @@
 						<!-- change this if you want hdr to simulate eventual consistency -->
 						<jvmFlag>-Ddatastore.default_high_rep_job_policy_unapplied_job_pct=0</jvmFlag>
 					</jvmFlags>
-					<appDir>${basedir}/src/main/webapp/</appDir>
+					<!-- appDir>${basedir}/src/main/webapp/</appDir -->
 				</configuration>
 			</plugin>
 		</plugins>

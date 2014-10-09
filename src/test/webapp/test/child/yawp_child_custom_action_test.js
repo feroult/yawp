@@ -24,6 +24,22 @@
 		});
 	});
 
+	t.asyncTest("over object with params", function(assert) {
+		expect(1);
+
+		var parent = fx.parent('parent');
+
+		var child = fx.child('child', {
+			name : 'xpto',
+			parentId : parent.id
+		});
+
+		yawp(child).params({ 'arg' : 'myArg' }).put('touchedParams').done(function(retrievedChild) {
+			assert.equal(retrievedChild.name, 'touched xpto by myArg');
+			t.start();
+		});
+	});
+
 	t.asyncTest("over collection", function(assert) {
 		expect(3);
 

@@ -17,6 +17,13 @@ public class ParentAction extends Action<Parent> {
 		return parent;
 	}
 
+	@PUT("touchedParams")
+	public Parent touchedParams(IdRef<Parent> id, Map<String, String> params) {
+		Parent parent = id.fetch();
+		parent.setName("touched " + parent.getName() + " by " + params.get("arg"));
+		return parent;
+	}
+
 	@PUT("touched")
 	public List<Parent> touch() {
 		List<Parent> parents = yawp(Parent.class).order("name").list();

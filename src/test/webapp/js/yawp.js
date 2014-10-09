@@ -63,7 +63,6 @@
 			if (Object.keys(q).length > 0) {
 				options.addQueryParameter('q', JSON.stringify(q));
 			}
-
 			return defaultAjax('GET', options()).done(callback);
 		}
 
@@ -129,6 +128,11 @@
 			return options();
 		}
 
+		function params(params) {
+			options.addQueryParameters(params);
+			return this;
+		}
+
 		function get(action) {
 			return defaultAjax('GET', actionOptions(action));
 		}
@@ -146,6 +150,7 @@
 		}
 
 		return {
+			params : params,
 			get : get,
 			put : put,
 			post : post,
@@ -172,13 +177,16 @@
 			return ajaxOptions;
 		}
 
+		options.addQueryParameters = function(params) {
+			ajaxOptions.query = $.extend(ajaxOptions.query, params);
+		};
+
 		options.addQueryParameter = function(key, value) {
-			var ajaxOptions = options();
 			if (!ajaxOptions.query) {
 				ajaxOptions.query = {};
 			}
 			ajaxOptions.query[key] = value;
-		}
+		};
 
 		function from(parentBaseArg) {
 			var parentBase = normalize(parentBaseArg);

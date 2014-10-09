@@ -6,6 +6,7 @@ import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Parent;
 
 import java.util.List;
+import java.util.Map;
 
 public class ChildAction extends Action<Child> {
 
@@ -13,6 +14,13 @@ public class ChildAction extends Action<Child> {
 	public Child touchObject(IdRef<Child> id) {
 		Child child = id.fetch();
 		child.setName("touched " + child.getName());
+		return child;
+	}
+
+	@PUT("touchedParams")
+	public Child touchParams(IdRef<Child> id, Map<String, String> params) {
+		Child child = id.fetch();
+		child.setName("touched " + child.getName() + " by " + params.get("arg"));
 		return child;
 	}
 

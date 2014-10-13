@@ -302,21 +302,32 @@ You can define 3 Hook types for your application:
 
 ### Fixtures
 
+```javascript
+(function(fx) {
 
+	fx.person('janes', {
+		id : '/people/janes',
+		user : 'janes',
+		name : 'Janes Joplin',
+		orgId : fx.organization('dextra').id,
+	});
+
+})(yawp.fixtures.lazy);
+```
 
 ### Using QUint
 
 ```javascript
-	t.asyncTest("transformer", function(assert) {
-		expect(1);
+t.asyncTest("transformer", function(assert) {
+	expect(1);
 
-		fx.person('janes');
+	fx.person('janes');
 
-		yawp('/people').transform('upperCase').first(function(person) {
-			assert.equal(person.name, 'JANES JOPLIN');
-			t.start();
-		});
+	yawp('/people').transform('upperCase').first(function(person) {
+		assert.equal(person.name, 'JANES JOPLIN');
+		t.start();
 	});
+});
 ```
 
 ## Credits

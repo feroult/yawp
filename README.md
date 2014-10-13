@@ -150,11 +150,11 @@ List<Person> people = yawp(Person.class).from(parentId).list();
 Other Java examples, also avaibale from HTTP or Javascript:
 
 ```java
-yawp(User.class).where("name", "=", "Mark").and("age", ">=", 21).list();
+yawp(Person.class).where("name", "=", "Mark").and("age", ">=", 21).list();
 
-yawp(User.class).where(or(and(c("company", "=", "github.com"), c("age", ">=", 21)), and(c("company", "=", "YAWP!"), c("age", ">=", 18)))).ids();
+yawp(Person.class).where(or(and(c("company", "=", "github.com"), c("age", ">=", 21)), and(c("company", "=", "YAWP!"), c("age", ">=", 18)))).ids();
 
-yawp(User.class).where("name", "=", "John").and("company", "=", "github.com").only();
+yawp(Person.class).where("name", "=", "John").and("company", "=", "github.com").only();
 ```
 Note: The methods **c**, **and** and **or** must be imported static or fully qualified for this to work.
 

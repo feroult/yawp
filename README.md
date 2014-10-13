@@ -298,6 +298,27 @@ You can define 3 Hook types for your application:
  * **beforeSave**: called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;
  * **afterSave**: called after an object is saved. It can be used to trigger actions or log events.
 
+## Testing
+
+### Fixtures
+
+
+
+### Using QUint
+
+```javascript
+	t.asyncTest("transformer", function(assert) {
+		expect(1);
+
+		fx.person('janes');
+
+		yawp('/people').transform('upperCase').first(function(person) {
+			assert.equal(person.name, 'JANES JOPLIN');
+			t.start();
+		});
+	});
+```
+
 ## Credits
 
 * Fernando Ultremare - feroult@gmail.com

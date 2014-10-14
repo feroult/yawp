@@ -39,7 +39,7 @@ If you prefer to configure it manually, use this maven dependency:
 ```xml
 <dependency>
    <groupId>io.yawp</groupId>
-   <artifactId>yawp</artifactId>U
+   <artifactId>yawp</artifactId>
 </dependency>
 ```
 Then configure the other App Engine's stuff. You can get inspiration from this [guide](https://cloud.google.com/appengine/docs/java/gettingstarted/creating).

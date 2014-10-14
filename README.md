@@ -158,7 +158,7 @@ yawp(Person.class).where("name", "=", "John").and("company", "=", "github.com").
 Note: The methods **c**, **and** and **or** must be imported static or fully qualified for this to work.
 
 
-You can look at this [Java test suite](../master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java) to see examples of more complex constructions.
+You can look at this [Java test suite](github.com/feroult/yawp/tree/master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java) to see examples of more complex constructions.
 
 ### Endpoint Features
 
@@ -333,5 +333,5 @@ t.asyncTest("transformer", function(assert) {
 
 * Fernando Ultremare - feroult@gmail.com
 * Guilherme Carreiro - karreiro@gmail.com
-* Luan Nico - luan.nico@live.com
+* Luan Nico - luannico27@gmail.com
 * Paulo Victor Martins - paulovmr@gmail.com

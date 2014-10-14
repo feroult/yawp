@@ -39,8 +39,7 @@ If you prefer to configure it manually, use this maven dependency:
 ```xml
 <dependency>
    <groupId>io.yawp</groupId>
-   <artifactId>yawp</artifactId>
-   <version>1.0</version>
+   <artifactId>yawp</artifactId>U
 </dependency>
 ```
 Then configure the other App Engine's stuff. You can get inspiration from this [guide](https://cloud.google.com/appengine/docs/java/gettingstarted/creating).
@@ -198,17 +197,17 @@ yawp('/people/123').put('active').done( function(status) {} );
 Also, an action be called over a single domain object or over a collection. For an action over a collection, don't specify it's IdRef or specify it's parent IdRef as the first argument:
 
 ```java
-public class UserActions extends Action<User> {
+public class PersonActions extends Action<Person> {
     // over collection without IdRef
     @GET("me")
-    public User me() {
-        return Session.getLoggedUser();
+    public Person me() {
+        return SessionManager.getLoggedPerson(yawp);
     }
   
     // over collection with parent IdRef
     @GET("first")
-    public User firstUser(IdRef<Company> companyId) {
-      return yawp(User.class).where("companyId", "=", companyId).first();
+    public Person first(IdRef<Company> companyId) {
+      return yawp(Person.class).from(companyId).first();
     }
 }
 ```

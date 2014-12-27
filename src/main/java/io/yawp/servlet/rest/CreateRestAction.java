@@ -1,6 +1,6 @@
 package io.yawp.servlet.rest;
 
-import io.yawp.repository.IdRef;
+import io.yawp.repository.FutureObject;
 import io.yawp.utils.EntityUtils;
 import io.yawp.utils.JsonUtils;
 
@@ -30,26 +30,34 @@ public class CreateRestAction extends RestAction {
 	private Object createFromArray() {
 		List<?> objects = JsonUtils.fromList(r, requestJson, endpointClazz);
 
+		List<FutureObject<Object>> futures = new ArrayList<FutureObject<Object>>();
 		List<Object> resultObjects = new ArrayList<Object>();
 
 		for (Object object : objects) {
-			resultObjects.add(saveObject(object));
+			futures.add(saveObjectAsync(object));
 		}
+
+		for (FutureObject<Object> future : futures) {
+			resultObjects.add(transform(future.get()));
+		}
+
 		return resultObjects;
 	}
 
 	protected Object saveObject(Object object) {
 		if (id != null) {
-			saveWithParentId(object, id);
-		} else {
-			save(object);
+			EntityUtils.setParentId(object, id);
 		}
-
+		save(object);
 		return transform(object);
 	}
 
-	protected void saveWithParentId(Object object, IdRef<?> parentId) {
-		EntityUtils.setParentId(object, parentId);
-		save(object);
+	protected FutureObject<Object> saveObjectAsync(Object object) {
+		if (id != null) {
+			EntityUtils.setParentId(object, id);
+		}
+		return saveAsync(object);
+		// return transform(object);
 	}
+
 }

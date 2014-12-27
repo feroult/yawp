@@ -9,6 +9,7 @@ import io.yawp.utils.EntityUtils;
 import java.lang.reflect.Method;
 import java.util.Map;
 
+import com.google.appengine.api.datastore.AsyncDatastoreService;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -54,6 +55,10 @@ public class Repository {
 		return this;
 	}
 
+	public AsyncRepository async() {
+		return new AsyncRepository(this);
+	}
+
 	public <T> T saveWithHooks(T object) {
 		namespace.set(object.getClass());
 		try {
@@ -76,10 +81,37 @@ public class Repository {
 		return object;
 	}
 
+	protected <T> FutureObject<T> saveAsyncWithHooks(T object) {
+		namespace.set(object.getClass());
+		try {
+			RepositoryHooks.beforeSave(this, object);
+			FutureObject<T> future = saveInternalAsync(object, true);
+			return future;
+		} finally {
+			namespace.reset();
+		}
+	}
+
+	protected <T> FutureObject<T> saveAsync(T object) {
+		namespace.set(object.getClass());
+		try {
+			FutureObject<T> future = saveInternalAsync(object, false);
+			return future;
+		} finally {
+			namespace.reset();
+		}
+	}
+
 	private void saveInternal(Object object) {
 		Entity entity = createEntity(object);
 		EntityUtils.toEntity(object, entity);
 		saveEntity(object, entity);
+	}
+
+	private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
+		Entity entity = createEntity(object);
+		EntityUtils.toEntity(object, entity);
+		return saveEntityAsync(object, entity, enableHooks);
 	}
 
 	public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
@@ -118,6 +150,11 @@ public class Repository {
 		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 		Key key = datastoreService.put(entity);
 		EntityUtils.setKey(this, object, key);
+	}
+
+	private <T> FutureObject<T> saveEntityAsync(T object, Entity entity, boolean enableHooks) {
+		AsyncDatastoreService datastoreService = DatastoreServiceFactory.getAsyncDatastoreService();
+		return new FutureObject<T>(this, datastoreService.put(entity), object, enableHooks);
 	}
 
 	private Entity createEntity(Object object) {

@@ -44,7 +44,6 @@
 		});
 
 		parent.name = 'changed xpto';
-
 		yawp.update(parent).done(function(retrievedParent) {
 			assert.equal(retrievedParent.name, 'changed xpto');
 			t.start();
@@ -101,7 +100,11 @@
 
 		}).then(function() {
 			yawp(parent).fetch().fail(function(error) {
-				assert.equal(error.status, 404);
+				if (t.isPhantomJS()) {
+					assert.equal(error.status, 0);
+				} else {
+					assert.equal(error.status, 404);
+				}
 				t.start();
 			});
 		});

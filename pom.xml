@@ -110,11 +110,9 @@
 
 	<profiles>
 		<profile>
-			<id>test</id>
+			<id>js-tests</id>
 			<activation>
-				<property>
-					<name>m2e.version</name>
-				</property>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<test.output.directory>classes</test.output.directory>
@@ -160,6 +158,25 @@
 					<plugin>
 						<artifactId>maven-resources-plugin</artifactId>
 						<version>2.6</version>
+					</plugin>
+
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<phase>integration-test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<exec dir="${project.basedir}/scripts" executable="./integration-tests.sh" failonerror="true"></exec>
+									</tasks>
+									<skip>${maven.test.skip}</skip>
+								</configuration>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

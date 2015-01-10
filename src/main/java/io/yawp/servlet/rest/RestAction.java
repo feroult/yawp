@@ -1,5 +1,6 @@
 package io.yawp.servlet.rest;
 
+import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.actions.ActionKey;
@@ -100,6 +101,14 @@ public abstract class RestAction {
 			r.saveWithHooks(object);
 		} else {
 			r.save(object);
+		}
+	}
+
+	protected FutureObject<Object> saveAsync(Object object) {
+		if (enableHooks) {
+			return r.async().saveWithHooks(object);
+		} else {
+			return r.async().save(object);
 		}
 	}
 

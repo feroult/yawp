@@ -35,6 +35,36 @@
 				</configuration>
 			</plugin>
 
+                        <plugin>
+                                <groupId>com.github.eirslett</groupId>
+                                <artifactId>frontend-maven-plugin</artifactId>
+                                <version>0.0.20</version>
+                                <executions>
+                                        <execution>
+                                                <id>install node and npm</id>
+                                                <goals>
+                                                        <goal>install-node-and-npm</goal>
+                                                </goals>
+                                                <configuration>
+                                                        <nodeVersion>v0.10.30</nodeVersion>
+                                                        <npmVersion>1.4.21</npmVersion>
+                                                </configuration>
+                                        </execution>
+                                        <execution>
+                                                <id>npm</id>
+                                                <goals>
+                                                        <goal>npm</goal>
+                                                </goals>
+                                        </execution>
+                                        <execution>
+                                                <id>grunt</id>
+                                                <goals>
+                                                        <goal>grunt</goal>
+                                                </goals>
+                                        </execution>
+                                </executions>
+                        </plugin>
+
 			<plugin>
 				<artifactId>exec-maven-plugin</artifactId>
 				<groupId>org.codehaus.mojo</groupId>
@@ -64,6 +94,19 @@
 							<commandlineArgs>-sf ../../../../target/lib</commandlineArgs>
 						</configuration>
 					</execution>
+                                        <execution>
+                                                <id>Copy Bower Dependencies</id>
+                                                <phase>package</phase>
+                                                <goals>
+                                                        <goal>exec</goal>
+                                                </goals>
+                                                <configuration>
+                                                        <workingDirectory>${basedir}/src/main/webapp</workingDirectory>
+                                                        <executable>ln</executable>
+                                                        <commandlineArgs>-sf ../../../lib/_bower.js libs.js</commandlineArgs>
+                                                </configuration>
+                                        </execution>
+
 				</executions>
 			</plugin>
 			<plugin>

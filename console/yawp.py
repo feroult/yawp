@@ -1,5 +1,8 @@
 from google.appengine.ext import ndb
 
+# import yawp from yawp
+# yawp('/people').query().fetch()
+
 def yawp(path):
     def _get_kind(cls):
         return path

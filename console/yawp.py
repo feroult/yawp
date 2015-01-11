@@ -9,6 +9,9 @@ def yawp(path):
     def _get_kind(cls):
         return path
 
-    Model = type(path, (ndb.Expando,), {})
+    def change_type(self, key, new_type):
+        self._properties[key] = new_type(key)
+
+    Model = type(path, (ndb.Expando,), {'change_type':change_type})
     Model._get_kind = classmethod(_get_kind)
     return Model

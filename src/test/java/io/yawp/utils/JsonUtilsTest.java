@@ -12,12 +12,12 @@ import org.junit.Test;
 
 public class JsonUtilsTest {
 
-	private static final String DATA_OBJECT_JSON = "{intValue : 1, longValue : 1, doubleValue : 1.1, booleanValue : true, dateValue : '2013/12/26 23:55:01', stringValue : object1}";
+	private static final String DATA_OBJECT_JSON = "{intValue : 1, longValue : 1, doubleValue : 1.1, booleanValue : true, dateValue : '2013/12/26 23:55:01', stringValue : object1, textValue: 'text'}";
 
 	@Test
 	public void testFrom() {
 		BasicObject object = JsonUtils.from(null, DATA_OBJECT_JSON, BasicObject.class);
-		object.assertObject("object1", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
+		object.assertObject("object1", "text", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
 	}
 
 	@Test
@@ -28,9 +28,9 @@ public class JsonUtilsTest {
 
 		assertEquals(3, objects.size());
 
-		objects.get(0).assertObject("object1", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
-		objects.get(0).assertObject("object1", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
-		objects.get(0).assertObject("object1", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
+		objects.get(0).assertObject("object1", "text", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
+		objects.get(0).assertObject("object1", "text", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
+		objects.get(0).assertObject("object1", "text", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
 	}
 
 	@Test

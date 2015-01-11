@@ -175,7 +175,11 @@
 
 		}).then(function() {
 			yawp(child).fetch().fail(function(error) {
-				assert.equal(error.status, 404);
+				if (t.isPhantomJS()) {
+					assert.equal(error.status, 0);
+				} else {
+					assert.equal(error.status, 404);
+				}
 				t.start();
 			});
 		});

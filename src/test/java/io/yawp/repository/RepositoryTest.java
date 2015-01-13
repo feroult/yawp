@@ -19,7 +19,7 @@ import org.junit.Test;
 
 public class RepositoryTest extends EndpointTestCase {
 
-	private static final String DATA_OBJECT_JSON = "{stringValue: 'xpto', intValue : 1, longValue : 1, doubleValue : 1.1, booleanValue : true, dateValue : '2013/12/26 23:55:01'}";
+	private static final String DATA_OBJECT_JSON = "{stringValue: 'xpto', textValue: 'text xpto', intValue : 1, longValue : 1, doubleValue : 1.1, booleanValue : true, dateValue : '2013/12/26 23:55:01'}";
 
 	@Test
 	public void testSaveAllDataProperties() {
@@ -28,7 +28,7 @@ public class RepositoryTest extends EndpointTestCase {
 		yawp.save(object);
 
 		BasicObject retrievedObject = object.getId().fetch();
-		retrievedObject.assertObject("xpto", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
+		retrievedObject.assertObject("xpto", "text xpto", 1, 1l, 1.1, true, "2013/12/26 23:55:01");
 	}
 
 	@Test

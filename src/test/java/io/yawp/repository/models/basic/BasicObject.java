@@ -6,6 +6,7 @@ import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
+import io.yawp.repository.annotations.Text;
 import io.yawp.utils.DateUtils;
 
 import java.util.Date;
@@ -20,6 +21,9 @@ public class BasicObject {
 
 	@Index
 	private String stringValue;
+
+	@Text
+	private String textValue;
 
 	@Index
 	private int intValue;
@@ -63,6 +67,14 @@ public class BasicObject {
 
 	public void setStringValue(String stringValue) {
 		this.stringValue = stringValue;
+	}
+
+	public String getTextValue() {
+		return textValue;
+	}
+
+	public void setTextValue(String textValue) {
+		this.textValue = textValue;
 	}
 
 	public int getIntValue() {
@@ -129,12 +141,14 @@ public class BasicObject {
 		this.jsonMap = jsonMap;
 	}
 
-	public void assertObject(String stringValue, int intValue, long longValue, double doubleValue, boolean booleanValue, String timestamp) {
+	public void assertObject(String stringValue, String textValue, int intValue, long longValue, double doubleValue, boolean booleanValue,
+			String timestamp) {
 		assertEquals(intValue, getIntValue());
 		assertEquals(longValue, getLongValue());
 		assertEquals(doubleValue, getDoubleValue(), 0);
 		assertEquals(booleanValue, isBooleanValue());
 		assertEquals(DateUtils.toTimestamp(timestamp), getDateValue());
+		assertEquals(textValue, getTextValue());
 		assertEquals(stringValue, getStringValue());
 	}
 

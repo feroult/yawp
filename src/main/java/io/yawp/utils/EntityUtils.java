@@ -387,6 +387,10 @@ public class EntityUtils {
 				return idRef.getUri();
 			}
 
+			if (isSaveAsText(field)) {
+				return new Text(value.toString());
+			}
+
 			return value;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -433,6 +437,11 @@ public class EntityUtils {
 			return;
 		}
 
+		if (isSaveAsText(field)) {
+			setTextProperty(object, field, value);
+			return;
+		}
+
 		field.set(object, value);
 	}
 
@@ -467,21 +476,17 @@ public class EntityUtils {
 		field.set(object, ((Long) value).intValue());
 	}
 
-	private static <T> void setJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
-		if (value == null) {
-			return;
-		}
+	private static <T> void setTextProperty(T object, Field field, Object value) throws IllegalAccessException {
+		field.set(object, ((Text) value).getValue());
+	}
 
+	private static <T> void setJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
 		String json = ((Text) value).getValue();
 		field.set(object, JsonUtils.from(r, json, field.getGenericType()));
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static <T> void setEnumProperty(T object, Field field, Object value) throws IllegalAccessException {
-		if (value == null) {
-			return;
-		}
-
 		field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
 	}
 
@@ -503,6 +508,10 @@ public class EntityUtils {
 
 	private static boolean isSaveAsJson(Field field) {
 		return field.getAnnotation(Json.class) != null;
+	}
+
+	private static boolean isSaveAsText(Field field) {
+		return field.getAnnotation(io.yawp.repository.annotations.Text.class) != null;
 	}
 
 	public static boolean isSaveAsList(Field field) {

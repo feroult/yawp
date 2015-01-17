@@ -121,6 +121,13 @@
 
 	<profiles>
 		<profile>
+			<id>no-yawp-tests</id>
+			<properties>
+				<skipTests>true</skipTests>
+				<maven.test.skip>true</maven.test.skip>
+			</properties>
+		</profile>
+		<profile>
 			<id>js-tests</id>
 			<activation>
 				<property>

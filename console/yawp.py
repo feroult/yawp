@@ -50,9 +50,8 @@ def yawp(path):
             if not more:
                 break
 
-    def migrate(self, page_size, fn_str, *args, **keywords):
-        fn = get_fn(fn_str, *args, **keywords)
-
+    def migrate(self, page_size, fn):
+        #fn = get_fn(fn_str, *args, **keywords)
         q = self.query()
         cursor = None
         while True:
@@ -68,6 +67,7 @@ def yawp(path):
         possibles = globals().copy()
         possibles.update(locals())
         fn = possibles.get(fn_str)
+        print('fn', fn)
         return partial(fn, *args, **keywords)
 
 

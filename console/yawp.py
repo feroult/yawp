@@ -9,6 +9,16 @@ from functools import partial
 # http://stackoverflow.com/questions/10709893/ndb-expando-model-with-dynamic-textproperty
 # http://stackoverflow.com/questions/19842671/migrating-data-when-changing-an-ndb-fields-property-type/19848970#19848970
 
+def get_key(yawpId):
+    split = yawpId.split('/')
+    kind = '/' + split[1]
+    id = long(split[2])
+    return ndb.Key(kind, id)
+
+def get_id(ndbKey):
+    return ndbKey.kind() + '/' + str(ndbKey.id())
+
+
 def change_property_to_text(key, entity):
     print('.')
     entity[key] = datastore_types.Text(entity[key])

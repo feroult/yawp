@@ -28,6 +28,7 @@ public class EndpointServlet extends HttpServlet {
 	private RepositoryFeatures features;
 
 	private boolean enableHooks = true;
+	private boolean enableCrossDomain = false;
 
 	public EndpointServlet() {
 	}
@@ -36,12 +37,19 @@ public class EndpointServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		setWithHooks(config.getInitParameter("enableHooks"));
+		setCrossDomain(config.getInitParameter("enableCrossDomain"));
 		scanEndpoints(config.getInitParameter("packagePrefix"));
 	}
 
 	private void setWithHooks(String enableHooksParameter) {
 		boolean enableHooks = enableHooksParameter == null || Boolean.valueOf(enableHooksParameter);
 		setWithHooks(enableHooks);
+	}
+
+	private void setCrossDomain(String enableCrossDomainParameter) {
+		if (enableCrossDomainParameter != null) {
+			this.enableCrossDomain = Boolean.valueOf(enableCrossDomainParameter);
+		}
 	}
 
 	protected void setWithHooks(boolean enableHooks) {
@@ -75,6 +83,9 @@ public class EndpointServlet extends HttpServlet {
 			httpResponse = new ErrorResponse(403);
 		}
 
+		if (enableCrossDomain) {
+			resp.setHeader("Access-Control-Allow-Origin", "*");
+		}
 		response(resp, httpResponse);
 	}
 

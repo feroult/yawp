@@ -140,10 +140,6 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> options(DatastoreQueryOptions options) {
-		if (options.getWhere() != null) {
-			where(options.getWhere());
-		}
-
 		if (options.getCondition() != null) {
 			where(options.getCondition());
 		}

@@ -1,10 +1,12 @@
 package io.yawp.repository.query;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import io.yawp.repository.query.BaseCondition.JoinedCondition;
 import io.yawp.repository.query.BaseCondition.SimpleCondition;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -18,7 +20,6 @@ public class DatastoreQueryOptionsTest {
 
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
 
-		assertNull(options.getWhere());
 		assertNull(options.getPreOrders());
 		assertNull(options.getPostOrders());
 		assertNull(options.getLimit());
@@ -30,9 +31,19 @@ public class DatastoreQueryOptionsTest {
 
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
 
-		assertArrayEquals(new Object[] { "longValue", "=", 1l, "intValue", "=", 3l, "doubleValue", "=", 4.3 }, options.getWhere());
-		assertOrderEquals("stringValue", "desc", options.getPreOrders().get(0));
-		assertOrderEquals("longValue", "desc", options.getPostOrders().get(0));
+		JoinedCondition conditions = assertJoinedCondition(options.getCondition(), LogicalOperator.AND, 3);
+		assertSimpleCondition(conditions.getConditions()[0], "longValue", FilterOperator.EQUAL, 1l);
+		assertSimpleCondition(conditions.getConditions()[1], "intValue", FilterOperator.EQUAL, 3l);
+		assertSimpleCondition(conditions.getConditions()[2], "doubleValue", FilterOperator.EQUAL, 4.3);
+
+		List<DatastoreQueryOrder> order = options.getPreOrders();
+		assertEquals(1, order.size());
+		assertOrderEquals("stringValue", "desc", order.get(0));
+
+		List<DatastoreQueryOrder> sort = options.getPostOrders();
+		assertEquals(1, sort.size());
+		assertOrderEquals("longValue", "desc", sort.get(0));
+
 		assertEquals(new Integer(2), options.getLimit());
 	}
 
@@ -41,6 +52,13 @@ public class DatastoreQueryOptionsTest {
 		String q = "{where: {p: 'longValue', op: '=', v: 1}}";
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
 		assertSimpleCondition(options.getCondition(), "longValue", FilterOperator.EQUAL, 1l);
+	}
+
+	@Test
+	public void testWhereWithIn() {
+		String q = "{ where: [ 'id', 'in', ['1', '3', '5'] ] }";
+		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
+		assertSimpleCondition(options.getCondition(), "id", FilterOperator.IN, Arrays.asList("1", "3", "5"));
 	}
 
 	@Test

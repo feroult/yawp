@@ -36,7 +36,11 @@
 		var q = {};
 
 		function where(data) {
-			q.where = data;
+			if (arguments.length === 1) {
+				q.where = data;
+			} else {
+				q.where = $.makeArray(arguments);
+			}
 			return this;
 		}
 

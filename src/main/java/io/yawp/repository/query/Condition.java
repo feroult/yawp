@@ -17,6 +17,9 @@ public final class Condition {
 	}
 
 	public static BaseCondition and(BaseCondition... conditions) {
+		if (conditions.length == 1) {
+			return conditions[0];
+		}
 		return new BaseCondition.JoinedCondition(LogicalOperator.AND, conditions);
 	}
 

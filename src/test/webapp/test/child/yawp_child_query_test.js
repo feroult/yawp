@@ -48,6 +48,37 @@
 		});
 	});
 
+	t.asyncTest('complex where', function(assert) {
+		expect(3);
+
+		var parent1 = fx.parent('parent1');
+		var where = { op: 'or', c: [ {p: 'name', op: '=', v: 'xpto1' }, { p: 'name', op: '=', v: 'xpto2' } ] };
+
+		yawp('/children').from(parent1).where(where).list(function(children) {
+			assert.equal(children.length, 2);
+			var names = [children[0].name, children[1].name].sort();
+			assert.equal(names[0], 'xpto1');
+			assert.equal(names[1], 'xpto2');
+			t.start();
+		});
+	});
+
+	t.asyncTest('where in', function(assert) {
+		expect(3);
+
+		var parent1 = fx.parent('parent1');
+
+		var where = [ 'name', 'in', ['xpto1', 'xpto2'] ];
+
+		yawp('/children').from(parent1).where(where).list(function(children) {
+			assert.equal(children.length, 2);
+			var names = [children[0].name, children[1].name].sort();
+			assert.equal(names[0], 'xpto1');
+			assert.equal(names[1], 'xpto2');
+			t.start();
+		});
+	});
+
 	t.asyncTest('global query', function(assert) {
 		expect(9);
 

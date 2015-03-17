@@ -254,6 +254,7 @@ public class DatastoreQuery<T> {
 
 	private T executeQueryById() {
 		try {
+			condition.normalizeIdRefs(clazz, r);
 			SimpleCondition c = (SimpleCondition) condition;
 			IdRef<?> idRef = (IdRef<?>) c.getValue();
 			Key key = idRef.asKey();
@@ -331,6 +332,7 @@ public class DatastoreQuery<T> {
 
 	private void prepareQueryWhere(Query q) throws FalsePredicateException {
 		if (condition != null) {
+			condition.normalizeIdRefs(clazz, r);
 			q.setFilter(condition.getPredicate(clazz));
 		}
 	}

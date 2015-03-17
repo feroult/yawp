@@ -1,10 +1,12 @@
 package io.yawp.repository.query;
 
 import io.yawp.repository.IdRef;
+import io.yawp.repository.Repository;
 import io.yawp.utils.EntityUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Query.Filter;
@@ -13,9 +15,11 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 public abstract class BaseCondition {
 
-	protected static final Class<?>[] VALID_ID_CLASSES = new Class<?>[] { IdRef.class, Long.class, Key.class };
+	protected static final Class<?>[] VALID_ID_CLASSES = new Class<?>[] { IdRef.class, Long.class, String.class, Key.class };
 
 	public abstract Filter getPredicate(Class<?> clazz) throws FalsePredicateException;
+
+	public abstract void normalizeIdRefs(Class<?> clazz, Repository r);
 
 	public abstract Class<?> getIdTypeFor(Class<?> clazz);
 
@@ -86,16 +90,20 @@ public abstract class BaseCondition {
 
 		@Override
 		public Class<?> getIdTypeFor(Class<?> clazz) {
-			if (this.field.equals(EntityUtils.getIdFieldName(clazz))) {
+			if (isFieldIdType(clazz)) {
 				boolean isList = operator == FilterOperator.IN;
 				if (isValidIdClass(value, isList)) {
 					return value.getClass();
 				} else {
 					throw new RuntimeException("If you are searching by @Id, you can only use the valid @Id types classes: "
-							+ Arrays.toString(VALID_ID_CLASSES) + ". Found " + value.getClass().getSimpleName());
+					        + Arrays.toString(VALID_ID_CLASSES) + ". Found " + value.getClass().getSimpleName());
 				}
 			}
 			return null;
+		}
+
+		private boolean isFieldIdType(Class<?> clazz) {
+			return this.field.equals(EntityUtils.getIdFieldName(clazz));
 		}
 
 		@Override
@@ -120,6 +128,17 @@ public abstract class BaseCondition {
 
 		public Object getValue() {
 			return value;
+		}
+
+		@Override
+		public void normalizeIdRefs(Class<?> clazz, Repository r) {
+			if (isFieldIdType(clazz)) {
+				if (value instanceof String) {
+					value = EntityUtils.convertToIdRef(r, (String) value);
+				} else if (value instanceof List) {
+					value = EntityUtils.convertToIdRefs(r, (List<?>) value);
+				}
+			}
 		}
 	}
 
@@ -172,6 +191,13 @@ public abstract class BaseCondition {
 
 		public BaseCondition[] getConditions() {
 			return conditions;
+		}
+
+		@Override
+		public void normalizeIdRefs(Class<?> clazz, Repository r) {
+			for (BaseCondition c : conditions) {
+				c.normalizeIdRefs(clazz, r);
+			}
 		}
 	}
 }

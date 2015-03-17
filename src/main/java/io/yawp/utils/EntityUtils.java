@@ -78,7 +78,7 @@ public class EntityUtils {
 		if (parentIdField == null) {
 			if (parentId != null) {
 				throw new RuntimeException("Trying to set parentId " + parentId + " to class " + object.getClass().getSimpleName()
-						+ ", but it doesn't seem to have a @Parent field.");
+				        + ", but it doesn't seem to have a @Parent field.");
 			}
 			return;
 		}
@@ -141,11 +141,9 @@ public class EntityUtils {
 
 			return object;
 		} catch (InvocationTargetException e) {
-			throw new RuntimeException("An exception was thrown when calling the default constructor of the class " + clazz.getSimpleName()
-					+ ": ", e);
+			throw new RuntimeException("An exception was thrown when calling the default constructor of the class " + clazz.getSimpleName() + ": ", e);
 		} catch (NoSuchMethodException e) {
-			throw new RuntimeException("The class " + clazz.getSimpleName()
-					+ " must have a default constructor and cannot be an non-static inner class.", e);
+			throw new RuntimeException("The class " + clazz.getSimpleName() + " must have a default constructor and cannot be an non-static inner class.", e);
 		} catch (InstantiationException e) {
 			throw new RuntimeException("The class " + clazz.getSimpleName() + " must cannot be abstract.", e);
 		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
@@ -218,8 +216,7 @@ public class EntityUtils {
 		for (Field field : ReflectionUtils.getFieldsRecursively(clazz)) {
 			if (field.isAnnotationPresent(annotationClass)) {
 				if (theField != null) {
-					throw new RuntimeException("You can have at most one field annotated with the " + annotationClass.getSimpleName()
-							+ " class.");
+					throw new RuntimeException("You can have at most one field annotated with the " + annotationClass.getSimpleName() + " class.");
 				}
 				theField = field;
 				theField.setAccessible(true);
@@ -261,6 +258,22 @@ public class EntityUtils {
 		throw new RuntimeException("Field '" + fieldName + "'not found in entity " + clazz, new NoSuchFieldException(fieldName));
 	}
 
+	public static IdRef<?> convertToIdRef(Repository r, String id) {
+		return IdRef.parse(r, HttpVerb.GET, id);
+	}
+
+	public static List<IdRef<?>> convertToIdRefs(Repository r, List<?> rawIds) {
+		List<IdRef<?>> ids = new ArrayList<>();
+		for (Object rawId : rawIds) {
+			if (rawId instanceof String) {
+				ids.add(convertToIdRef(r, (String) rawId));
+			} else {
+				ids.add((IdRef<?>) rawId);
+			}
+		}
+		return ids;
+	}
+
 	public static <T> String getActualFieldName(String fieldName, Class<T> clazz) {
 		Field field = getFieldFromAnyParent(clazz, fieldName);
 
@@ -283,7 +296,7 @@ public class EntityUtils {
 		Index index = field.getAnnotation(Index.class);
 		if (index == null) {
 			throw new RuntimeException("You must add @Index annotation the the field '" + field.getName()
-					+ "' if you want to use it as a index in where statements.");
+			        + "' if you want to use it as a index in where statements.");
 		}
 		return index;
 	}

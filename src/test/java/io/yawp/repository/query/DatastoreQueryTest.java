@@ -4,6 +4,7 @@ import static io.yawp.repository.query.Condition.and;
 import static io.yawp.repository.query.Condition.c;
 import static io.yawp.repository.query.Condition.or;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.utils.EndpointTestCase;
@@ -19,11 +20,16 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
 	private void saveManyBasicObjects(int n, String stringValue) {
 		for (int i = 0; i < n; i++) {
-			BasicObject object = new BasicObject();
-			object.setStringValue(stringValue);
-			object.setIntValue(i + 1);
-			yawp.save(object);
+			saveOneObject(stringValue, i);
 		}
+	}
+
+	private IdRef<BasicObject> saveOneObject(String stringValue, int i) {
+		BasicObject object = new BasicObject();
+		object.setStringValue(stringValue);
+		object.setIntValue(i + 1);
+		yawp.save(object);
+		return object.getId();
 	}
 
 	public void saveManyBasicObjects(int n) {
@@ -327,5 +333,43 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
 		List<BasicObject> objects = yawp(BasicObject.class).where(condition).list();
 		assertEquals(0, objects.size());
+	}
+
+	@Test
+	public void testIds() {
+		saveManyBasicObjects(3);
+		yawp.save(new BasicObject("different"));
+
+		List<IdRef<BasicObject>> objects = yawp(BasicObject.class).where("stringValue", "=", "xpto").ids();
+		assertEquals(3, objects.size());
+	}
+
+	@Test
+	public void testIdsOnly() {
+		Long firstId = saveOneObject("xpto", 10).asLong();
+
+		IdRef<BasicObject> id = yawp(BasicObject.class).where("stringValue", "=", "xpto").onlyId();
+		assertEquals(firstId, id.asLong());
+	}
+
+	@Test
+	public void testIdsOnlyNoResult() {
+		try {
+			yawp(BasicObject.class).where("stringValue", "=", "xpto").onlyId();
+		} catch (NoResultException ex) {
+			return;
+		}
+		assertTrue(false);
+	}
+
+	@Test
+	public void testIdsOnlyMoreThanOneResult() {
+		saveManyBasicObjects(2);
+		try {
+			yawp(BasicObject.class).where("stringValue", "=", "xpto").onlyId();
+		} catch (MoreThanOneResultException ex) {
+			return;
+		}
+		assertTrue(false);
 	}
 }

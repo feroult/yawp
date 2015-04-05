@@ -1,16 +1,10 @@
 language: java
 
-jdk:
-  - oraclejdk8
-
 branches:
   only:
     - master
 
 script: "mvn install -B"
-
-before-script:
- - export JAVA_HOME="/usr/lib/jvm/java-8-oracle" ; export PATH="/usr/lib/jvm/java-8-oracle/bin/;$PATH"
 
 notifications:
   email:

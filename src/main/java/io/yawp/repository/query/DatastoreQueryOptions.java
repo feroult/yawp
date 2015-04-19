@@ -71,6 +71,10 @@ public class DatastoreQueryOptions {
 		if (jsonElement.isJsonArray()) {
 			return getJsonObjectValueForArrays(jsonElement);
 		}
+		if (jsonElement.isJsonNull()) {
+			return null;
+		}
+
 		JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
 
 		if (jsonPrimitive.isNumber()) {

@@ -31,6 +31,8 @@
 				name : 'xpto1',
 				parentId : fx.parent('parent2').id
 			});
+
+			fx.parent('nameless', {});
 		}
 	});
 
@@ -52,13 +54,33 @@
 		expect(3);
 
 		var parent1 = fx.parent('parent1');
-		var where = { op: 'or', c: [ {p: 'name', op: '=', v: 'xpto1' }, { p: 'name', op: '=', v: 'xpto2' } ] };
+		var where = {
+			op : 'or',
+			c : [ {
+				p : 'name',
+				op : '=',
+				v : 'xpto1'
+			}, {
+				p : 'name',
+				op : '=',
+				v : 'xpto2'
+			} ]
+		};
 
 		yawp('/children').from(parent1).where(where).list(function(children) {
 			assert.equal(children.length, 2);
-			var names = [children[0].name, children[1].name].sort();
+			var names = [ children[0].name, children[1].name ].sort();
 			assert.equal(names[0], 'xpto1');
 			assert.equal(names[1], 'xpto2');
+			t.start();
+		});
+	});
+
+	t.asyncTest('where with null', function(assert) {
+		expect(1);
+
+		yawp('/parents').where([ 'name', '=', null ]).list(function(parents) {
+			assert.equal(parents.length, 1);
 			t.start();
 		});
 	});
@@ -68,11 +90,11 @@
 
 		var parent1 = fx.parent('parent1');
 
-		var where = [ 'name', 'in', ['xpto1', 'xpto2'] ];
+		var where = [ 'name', 'in', [ 'xpto1', 'xpto2' ] ];
 
 		yawp('/children').from(parent1).where(where).list(function(children) {
 			assert.equal(children.length, 2);
-			var names = [children[0].name, children[1].name].sort();
+			var names = [ children[0].name, children[1].name ].sort();
 			assert.equal(names[0], 'xpto1');
 			assert.equal(names[1], 'xpto2');
 			t.start();

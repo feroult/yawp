@@ -113,7 +113,7 @@ public abstract class RestAction {
 	}
 
 	protected Object transform(Object object) {
-		if (!hasTransformer() || !object.getClass().equals(endpointClazz)) {
+		if (!hasTransformer()) {
 			return object;
 		}
 

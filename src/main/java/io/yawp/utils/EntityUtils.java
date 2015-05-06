@@ -247,6 +247,7 @@ public class EntityUtils {
 	}
 
 	private static Field getFieldFromAnyParent(Class<?> clazz, String fieldName) {
+		Class<?> baseClazz = clazz;
 		while (clazz != null) {
 			try {
 				return clazz.getDeclaredField(fieldName);
@@ -255,7 +256,7 @@ public class EntityUtils {
 			}
 		}
 
-		throw new RuntimeException("Field '" + fieldName + "'not found in entity " + clazz, new NoSuchFieldException(fieldName));
+		throw new RuntimeException("Field '" + fieldName + "'not found in entity " + baseClazz, new NoSuchFieldException(fieldName));
 	}
 
 	public static IdRef<?> convertToIdRef(Repository r, String id) {

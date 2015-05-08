@@ -116,6 +116,7 @@ public abstract class RestAction {
 		if (!hasTransformer()) {
 			return object;
 		}
+
 		return RepositoryTransformers.execute(r, object, getTransformerName());
 	}
 

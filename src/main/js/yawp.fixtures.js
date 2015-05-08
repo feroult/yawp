@@ -10,7 +10,7 @@
 	var resetUrl = '/_yawp/delete_all';
 	var lazyPropertyKeys = [ 'id' ]; // needed till harmony proxies
 
-	var api = {}
+	var api = {};
 
 	function config(callback) {
 		var c = {

@@ -67,9 +67,11 @@ def yawp(path):
         while True:
             keys, cursor, more = q.fetch_page(page_size, keys_only=True, start_cursor=cursor)
             entities = get_entities(keys)
+            changed_entities = []
             for entity in entities:
-                fn(entity)
-            put_entities(entities)
+                if fn(entity) != True:
+                    changed_entities.append(entity)
+            put_entities(changed_entities)
             if not more:
                 break
     # private

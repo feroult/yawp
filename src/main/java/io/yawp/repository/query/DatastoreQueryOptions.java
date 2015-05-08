@@ -1,5 +1,7 @@
 package io.yawp.repository.query;
 
+import io.yawp.servlet.HttpException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +12,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
 public class DatastoreQueryOptions {
-
-	private Object[] where;
 
 	private BaseCondition condition;
 
@@ -28,7 +28,6 @@ public class DatastoreQueryOptions {
 	public DatastoreQueryOptions(String json) {
 		JsonObject jsonObject = (JsonObject) new JsonParser().parse(json);
 
-		this.where = parseWhere(jsonObject.get("where"));
 		this.condition = parseCondition(jsonObject.get("where"));
 		this.preOrders = parseOrders(jsonObject.getAsJsonArray("order"));
 		this.postOrders = parseOrders(jsonObject.getAsJsonArray("sort"));
@@ -68,24 +67,14 @@ public class DatastoreQueryOptions {
 		return jsonObject.get(key).getAsString();
 	}
 
-	private Object[] parseWhere(JsonElement json) {
-		if (json == null || !json.isJsonArray()) {
+	private Object getJsonObjectValue(JsonElement jsonElement) {
+		if (jsonElement.isJsonArray()) {
+			return getJsonObjectValueForArrays(jsonElement);
+		}
+		if (jsonElement.isJsonNull()) {
 			return null;
 		}
-		return parseWhereArray(json.getAsJsonArray());
-	}
 
-	private Object[] parseWhereArray(JsonArray jsonArray) {
-		List<Object> where = new ArrayList<Object>();
-
-		for (JsonElement jsonElement : jsonArray) {
-			where.add(getJsonObjectValue(jsonElement));
-		}
-
-		return where.toArray(new Object[where.size()]);
-	}
-
-	private Object getJsonObjectValue(JsonElement jsonElement) {
 		JsonPrimitive jsonPrimitive = jsonElement.getAsJsonPrimitive();
 
 		if (jsonPrimitive.isNumber()) {
@@ -103,11 +92,38 @@ public class DatastoreQueryOptions {
 		throw new RuntimeException("Invalid json value: " + jsonPrimitive.getAsString());
 	}
 
+	private Object getJsonObjectValueForArrays(JsonElement jsonElement) {
+		JsonArray array = jsonElement.getAsJsonArray();
+		List<String> els = new ArrayList<>();
+		for (JsonElement e : array) {
+			els.add(e.getAsJsonPrimitive().getAsString());
+		}
+		return els;
+	}
+
 	private BaseCondition parseCondition(JsonElement json) {
-		if (json == null || json.isJsonArray()) {
+		if (json == null) {
 			return null;
 		}
+		if (json.isJsonArray()) {
+			return parseSimpleCondition(json.getAsJsonArray());
+		}
 		return parseConditionObject(json.getAsJsonObject());
+	}
+
+	private BaseCondition parseSimpleCondition(JsonArray jsonArray) {
+		if (jsonArray.size() % 3 != 0) {
+			throw new HttpException(422,
+			        "Array condition in where must have size multiple of three ([<field1>, <op1>, <value1>, <field2>, <op2>, <value2>, ...])");
+		}
+		BaseCondition[] conditions = new BaseCondition[jsonArray.size() / 3];
+		for (int i = 0; i < jsonArray.size(); i += 3) {
+			String field = jsonArray.get(i).getAsString();
+			String op = jsonArray.get(i + 1).getAsString();
+			Object value = getJsonObjectValue(jsonArray.get(i + 2));
+			conditions[i / 3] = Condition.c(field, op, value);
+		}
+		return Condition.and(conditions);
 	}
 
 	private BaseCondition parseConditionObject(JsonObject json) {
@@ -142,10 +158,6 @@ public class DatastoreQueryOptions {
 		String op = json.get("op").getAsString();
 		Object value = getJsonObjectValue(json.get("v"));
 		return Condition.c(field, op, value);
-	}
-
-	public Object[] getWhere() {
-		return this.where;
 	}
 
 	public BaseCondition getCondition() {

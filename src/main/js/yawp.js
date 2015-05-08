@@ -36,7 +36,11 @@
 		var q = {};
 
 		function where(data) {
-			q.where = data;
+			if (arguments.length === 1) {
+				q.where = data;
+			} else {
+				q.where = $.makeArray(arguments);
+			}
 			return this;
 		}
 
@@ -59,10 +63,23 @@
 			return defaultAjax('GET', options()).done(callback);
 		}
 
-		function list(callback) {
+		function setupQuery() {
 			if (Object.keys(q).length > 0) {
 				options.addQueryParameter('q', JSON.stringify(q));
 			}
+		}
+
+		function url(decode) {
+			setupQuery();
+			var url = baseUrl + options().url + (options().query ? '?' + $.param(options().query) : '');
+			if (decode) {
+				return decodeURIComponent(url);
+			}
+			return url;
+		}
+
+		function list(callback) {
+			setupQuery();
 			return defaultAjax('GET', options()).done(callback);
 		}
 
@@ -96,7 +113,8 @@
 			fetch : fetch,
 			list : list,
 			first : first,
-			only : only
+			only : only,
+			url : url
 		};
 	}
 

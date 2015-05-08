@@ -12,6 +12,7 @@ import io.yawp.utils.EndpointTestCase;
 import io.yawp.utils.JsonUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -35,6 +36,33 @@ public class IdRefAsLongTest extends EndpointTestCase {
 		Job job = retrievedParent.getJobId().fetch();
 
 		assertEquals("haha", job.getName());
+	}
+
+	@Test
+	public void testQueryWithIdAsString() {
+		Parent parent = new Parent("xpto");
+		yawp.save(parent);
+
+		Parent retrievedParent1 = yawp(Parent.class).where("id", "=", parent.getId().toString()).only();
+		assertEquals("xpto", retrievedParent1.getName());
+	}
+
+	@Test
+	public void testQueryWithIdAsStringIn() {
+		Parent parent1 = new Parent("xpto1");
+		yawp.save(parent1);
+
+		Parent parent2 = new Parent("xpto2");
+		yawp.save(parent2);
+
+		final List<String> idAsStringList = Arrays.asList(parent1.getId().toString(), parent2.getId().toString());
+		List<Parent> retrievedParents = yawp(Parent.class).where("id", "IN", idAsStringList).list();
+
+		List<String> nomes = Arrays.asList(retrievedParents.get(0).getName(), retrievedParents.get(1).getName());
+		Collections.sort(nomes);
+		assertEquals(2, nomes.size());
+		assertEquals("xpto1", nomes.get(0));
+		assertEquals("xpto2", nomes.get(1));
 	}
 
 	@Test
@@ -70,8 +98,8 @@ public class IdRefAsLongTest extends EndpointTestCase {
 		Job job2 = new Job("hihi");
 		yawp.save(job2);
 
-		String json = String.format("{id: '/parents/%d', name: 'lala', pastJobIds: ['/jobs/%d', '/jobs/%d']}", parent.getId().asLong(),
-				job1.getId().asLong(), job2.getId().asLong());
+		String json = String.format("{id: '/parents/%d', name: 'lala', pastJobIds: ['/jobs/%d', '/jobs/%d']}", parent.getId().asLong(), job1.getId().asLong(),
+		        job2.getId().asLong());
 
 		Parent retrievedParent = JsonUtils.from(yawp, json, Parent.class);
 

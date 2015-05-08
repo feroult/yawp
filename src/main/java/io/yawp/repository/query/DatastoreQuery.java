@@ -140,10 +140,6 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> options(DatastoreQueryOptions options) {
-		if (options.getWhere() != null) {
-			where(options.getWhere());
-		}
-
 		if (options.getCondition() != null) {
 			where(options.getCondition());
 		}
@@ -258,6 +254,7 @@ public class DatastoreQuery<T> {
 
 	private T executeQueryById() {
 		try {
+			condition.normalizeIdRefs(clazz, r);
 			SimpleCondition c = (SimpleCondition) condition;
 			IdRef<?> idRef = (IdRef<?>) c.getValue();
 			Key key = idRef.asKey();
@@ -335,6 +332,7 @@ public class DatastoreQuery<T> {
 
 	private void prepareQueryWhere(Query q) throws FalsePredicateException {
 		if (condition != null) {
+			condition.normalizeIdRefs(clazz, r);
 			q.setFilter(condition.getPredicate(clazz));
 		}
 	}
@@ -369,25 +367,48 @@ public class DatastoreQuery<T> {
 	}
 
 	public List<IdRef<T>> ids() {
-		QueryResultList<Entity> queryResult;
+		r.namespace().set(getClazz());
 		try {
-			queryResult = generateResults(true);
+			QueryResultList<Entity> queryResult = generateResults(true);
+			List<IdRef<T>> ids = new ArrayList<>();
+
+			for (Entity entity : queryResult) {
+				ids.add(extractIdRef(entity));
+			}
+
+			setCursor(queryResult);
+			return ids;
 		} catch (FalsePredicateException ex) {
 			return Collections.emptyList();
+		} finally {
+			r.namespace().reset();
 		}
-		List<IdRef<T>> ids = new ArrayList<>();
-
-		for (Entity entity : queryResult) {
-			@SuppressWarnings("unchecked")
-			IdRef<T> id = (IdRef<T>) IdRef.fromKey(r, entity.getKey());
-			ids.add(id);
-		}
-
-		setCursor(queryResult);
-		return ids;
 	}
 
 	private QueryResultList<Entity> generateResults(boolean keysOnly) throws FalsePredicateException {
 		return prepareQuery(keysOnly).asQueryResultList(configureFetchOptions());
 	}
+
+	@SuppressWarnings("unchecked")
+	private IdRef<T> extractIdRef(Entity entity) {
+		return (IdRef<T>) IdRef.fromKey(r, entity.getKey());
+	}
+
+	public IdRef<T> onlyId() throws NoResultException, MoreThanOneResultException {
+		r.namespace().set(getClazz());
+		try {
+			Entity e = prepareQuery(true).asSingleEntity();
+			if (e == null) {
+				throw new NoResultException();
+			}
+			return extractIdRef(e);
+		} catch (FalsePredicateException ex) {
+			throw new NoResultException();
+		} catch (PreparedQuery.TooManyResultsException ex) {
+			throw new MoreThanOneResultException();
+		} finally {
+			r.namespace().reset();
+		}
+	}
+
 }

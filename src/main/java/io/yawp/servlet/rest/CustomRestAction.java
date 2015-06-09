@@ -1,5 +1,7 @@
 package io.yawp.servlet.rest;
 
+import io.yawp.servlet.HttpException;
+
 public class CustomRestAction extends RestAction {
 
 	public CustomRestAction() {
@@ -8,7 +10,20 @@ public class CustomRestAction extends RestAction {
 
 	@Override
 	public Object action() {
-		return r.action(id, endpointClazz, customActionKey, params);
+		Object object = r.action(id, endpointClazz, customActionKey, params);
+
+		if (object == null) {
+			return null;
+		}
+
+		if (hasTransformer()) {
+			if (!object.getClass().equals(endpointClazz)) {
+				throw new HttpException(406);
+			}
+			return transform(object);
+		}
+
+		return object;
 	}
 
 }

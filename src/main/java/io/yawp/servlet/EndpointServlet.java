@@ -85,6 +85,7 @@ public class EndpointServlet extends HttpServlet {
 
 		if (enableCrossDomain) {
 			resp.setHeader("Access-Control-Allow-Origin", "*");
+			resp.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 		}
 		response(resp, httpResponse);
 	}

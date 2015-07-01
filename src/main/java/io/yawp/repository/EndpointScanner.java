@@ -6,12 +6,14 @@ import io.yawp.repository.actions.annotations.GET;
 import io.yawp.repository.actions.annotations.PUT;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
+import io.yawp.repository.shields.Shield;
 import io.yawp.repository.transformers.Transformer;
 import io.yawp.utils.EntityUtils;
 import io.yawp.utils.HttpVerb;
 import io.yawp.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -59,7 +61,26 @@ public final class EndpointScanner {
 		if (enableHooks) {
 			scanHooks();
 		}
+		scanShields();
 		return endpoints.values();
+	}
+
+	private void scanShields() {
+		Set<Class<? extends Shield>> clazzes = endpointsPackage.getSubTypesOf(Shield.class);
+
+		for (Class<? extends Shield> shieldClazz : clazzes) {
+			if (Modifier.isAbstract(shieldClazz.getModifiers())) {
+				continue;
+			}
+			setShield(shieldClazz);
+		}
+	}
+
+	private <T, V extends Shield<T>> void setShield(Class<V> shieldClazz) {
+		Class<T> objectClazz = EntityUtils.getShieldObject(shieldClazz);
+		for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, shieldClazz.getSimpleName())) {
+			endpoint.setShield(shieldClazz);
+		}
 	}
 
 	private void scanHooks() {
@@ -119,6 +140,7 @@ public final class EndpointScanner {
 	}
 
 	// TODO refactor use Java 8 receive io.yawp consumer
+	// TODO should we think that an objectClazz has more than one endpoint?
 	private <T> List<EndpointFeatures<? extends T>> getEndpoints(Class<T> objectClazz, String featureClazz) {
 		List<EndpointFeatures<? extends T>> list = new ArrayList<>();
 		for (Class<?> endpoint : endpoints.keySet()) {

@@ -3,6 +3,7 @@ package io.yawp.repository;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
+import io.yawp.repository.shields.Shield;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ public class EndpointFeatures<T> {
 	private Map<String, Method> transformers;
 
 	private List<Class<? extends Hook<? super T>>> hooks;
+
+	private Class<? extends Shield<? super T>> shield;
 
 	public EndpointFeatures(Class<T> clazz) {
 		this.clazz = clazz;
@@ -63,6 +66,10 @@ public class EndpointFeatures<T> {
 		hooks.add(hook);
 	}
 
+	public void setShield(Class<? extends Shield<? super T>> shield) {
+		this.shield = shield;
+	}
+
 	public List<Class<? extends Hook<? super T>>> getHooks() {
 		return hooks;
 	}
@@ -94,4 +101,13 @@ public class EndpointFeatures<T> {
 	public boolean hasTranformer(String transformerName) {
 		return transformers.containsKey(transformerName);
 	}
+
+	public boolean hasShield() {
+		return shield != null;
+	}
+
+	public Class<? extends Shield<? super T>> getShield() {
+		return shield;
+	}
+
 }

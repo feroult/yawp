@@ -106,7 +106,7 @@ public class EndpointServlet extends HttpServlet {
 		return req.getRequestURI().substring(req.getServletPath().length());
 	}
 
-	protected HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
+	public HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
 
 		Repository r = getRepository(params);
 		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri);

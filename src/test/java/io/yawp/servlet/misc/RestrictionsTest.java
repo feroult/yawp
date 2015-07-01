@@ -3,7 +3,7 @@ package io.yawp.servlet.misc;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.servlet.HttpException;
-import io.yawp.servlet.ServletTestCase;
+import io.yawp.utils.ServletTestCase;
 
 import org.junit.Test;
 

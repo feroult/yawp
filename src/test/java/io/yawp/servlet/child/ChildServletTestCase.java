@@ -2,7 +2,7 @@ package io.yawp.servlet.child;
 
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Parent;
-import io.yawp.servlet.ServletTestCase;
+import io.yawp.utils.ServletTestCase;
 
 import org.junit.Before;
 

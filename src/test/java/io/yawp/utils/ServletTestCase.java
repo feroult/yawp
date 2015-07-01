@@ -1,9 +1,10 @@
-package io.yawp.servlet;
+package io.yawp.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import io.yawp.repository.Repository;
-import io.yawp.utils.EndpointTestCase;
+import io.yawp.servlet.EndpointServlet;
+import io.yawp.servlet.HttpException;
 import io.yawp.utils.EntityUtils;
 import io.yawp.utils.JsonUtils;
 

@@ -1,5 +1,6 @@
 package io.yawp.servlet.rest;
 
+import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
@@ -8,6 +9,7 @@ import io.yawp.repository.query.DatastoreQuery;
 import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.response.HttpResponse;
 import io.yawp.repository.response.JsonResponse;
+import io.yawp.repository.shields.Shield;
 import io.yawp.repository.transformers.RepositoryTransformers;
 import io.yawp.servlet.HttpException;
 import io.yawp.utils.JsonUtils;
@@ -39,6 +41,8 @@ public abstract class RestAction {
 	protected String actionName;
 
 	protected String transformerName;
+
+	protected Shield<?> shield;
 
 	public RestAction(String actionName) {
 		this.actionName = actionName;
@@ -140,6 +144,21 @@ public abstract class RestAction {
 		if (r.getEndpointFeatures(endpointClazz).hasTranformer(DEFAULT_TRANSFORMER_NAME)) {
 			transformerName = DEFAULT_TRANSFORMER_NAME;
 			return;
+		}
+	}
+
+	protected boolean hasShield() {
+		return shield != null;
+	}
+
+	public void defineShield() {
+		EndpointFeatures<?> endpointFeatures = r.getEndpointFeatures(endpointClazz);
+		if (endpointFeatures.hasShield()) {
+			try {
+				shield = endpointFeatures.getShield().newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 

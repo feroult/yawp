@@ -9,6 +9,7 @@ import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
 import io.yawp.repository.annotations.ParentId;
 import io.yawp.repository.hooks.Hook;
+import io.yawp.repository.shields.Shield;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -41,6 +42,11 @@ public class EntityUtils {
 
 	@SuppressWarnings("unchecked")
 	public static <T> Class<T> getHookObject(Class<? extends Hook<T>> hook) {
+		return (Class<T>) ReflectionUtils.getGenericParameter(hook);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> Class<T> getShieldObject(Class<? extends Shield<T>> hook) {
 		return (Class<T>) ReflectionUtils.getGenericParameter(hook);
 	}
 

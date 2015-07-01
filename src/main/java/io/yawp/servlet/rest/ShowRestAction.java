@@ -10,6 +10,11 @@ public class ShowRestAction extends RestAction {
 
 	@Override
 	public Object action() {
+		if(hasShield()) {
+			shield.protectShow();
+		}
+
+
 		DatastoreQuery<?> query = query();
 
 		if (hasTransformer()) {

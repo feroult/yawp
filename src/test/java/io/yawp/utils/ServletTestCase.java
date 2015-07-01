@@ -67,6 +67,16 @@ public class ServletTestCase extends EndpointTestCase {
 		return put(uri, json, new HashMap<String, String>());
 	}
 
+	protected void assertPutWithStatus(String uri, String json, int status) {
+		try {
+			put(uri, json);
+		} catch (HttpException e) {
+			assertEquals(status, e.getHttpStatus());
+			return;
+		}
+		assertTrue(status == 200);
+	}
+
 	protected String put(String uri, Map<String, String> params) {
 		return servlet.execute("PUT", uri, null, params).getText();
 	}

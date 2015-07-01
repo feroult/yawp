@@ -7,7 +7,20 @@ import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 
 public enum LogicalOperator {
-	AND, OR;
+	AND {
+		@Override
+		public LogicalOperator not() {
+			return OR;
+		}
+	},
+	OR {
+		@Override
+		public LogicalOperator not() {
+			return AND;
+		}
+	};
+
+	public abstract LogicalOperator not();
 
 	public Filter join(Class<?> clazz, BaseCondition... conditions) throws FalsePredicateException {
 		return performJoin(this, clazz, conditions);

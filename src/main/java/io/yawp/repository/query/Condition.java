@@ -30,6 +30,10 @@ public final class Condition {
 		return new BaseCondition.JoinedCondition(LogicalOperator.OR, conditions);
 	}
 
+	public static BaseCondition not(BaseCondition c) {
+		return c.not();
+	}
+
 	public static BaseCondition equals(String field, Object comparison) {
 		return c(field, FilterOperator.EQUAL, comparison);
 	}

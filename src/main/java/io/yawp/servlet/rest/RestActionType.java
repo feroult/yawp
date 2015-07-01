@@ -12,7 +12,6 @@ public enum RestActionType {
 		public Class<? extends RestAction> getRestActionClazz() {
 			return IndexRestAction.class;
 		}
-
 	},
 	SHOW {
 
@@ -20,7 +19,6 @@ public enum RestActionType {
 		public Class<? extends RestAction> getRestActionClazz() {
 			return ShowRestAction.class;
 		}
-
 	},
 	CREATE {
 
@@ -28,7 +26,6 @@ public enum RestActionType {
 		public Class<? extends RestAction> getRestActionClazz() {
 			return CreateRestAction.class;
 		}
-
 	},
 	UPDATE {
 
@@ -36,7 +33,6 @@ public enum RestActionType {
 		public Class<? extends RestAction> getRestActionClazz() {
 			return UpdateRestAction.class;
 		}
-
 	},
 	DESTROY {
 
@@ -44,7 +40,13 @@ public enum RestActionType {
 		public Class<? extends RestAction> getRestActionClazz() {
 			return DestroyRestAction.class;
 		}
+	},
+	ROUTES {
 
+		@Override
+		public Class<? extends RestAction> getRestActionClazz() {
+			return RoutesRestAction.class;
+		}
 	},
 	CUSTOM {
 
@@ -52,7 +54,6 @@ public enum RestActionType {
 		public Class<? extends RestAction> getRestActionClazz() {
 			return CustomRestAction.class;
 		}
-
 	};
 
 	public static RestActionType defaultRestActionType(HttpVerb verb, boolean overCollection) {
@@ -68,6 +69,8 @@ public enum RestActionType {
 		case DELETE:
 			assertNotOverCollection(overCollection);
 			return DESTROY;
+		case OPTIONS:
+			return RestActionType.ROUTES;
 		}
 		throw new HttpException(501, "Unsuported http verb " + verb);
 	}

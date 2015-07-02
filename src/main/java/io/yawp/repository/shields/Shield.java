@@ -50,6 +50,10 @@ public class Shield<T> extends Feature {
 		throw new HttpException(404);
 	}
 
+	public void protectCustom() {
+		throw new HttpException(404);
+	}
+
 	// TODO
 
 	protected void deny() {
@@ -76,5 +80,4 @@ public class Shield<T> extends Feature {
 		// TODO Auto-generated method stub
 
 	}
-
 }

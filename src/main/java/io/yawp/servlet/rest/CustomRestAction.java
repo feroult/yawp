@@ -11,8 +11,7 @@ public class CustomRestAction extends RestAction {
 
 	@Override
 	public void shield() {
-		// TODO Auto-generated method stub
-
+		shield.protectCustom();
 	}
 
 	@Override

@@ -9,7 +9,6 @@ public class Shield<T> extends Feature {
 	private boolean allow = false;
 
 	protected void defaults() {
-		deny();
 	}
 
 	protected void index(IdRef<?> parentId) {
@@ -28,36 +27,42 @@ public class Shield<T> extends Feature {
 		defaults();
 	}
 
-	protected void delete(IdRef<T> id) {
+	protected void destroy(IdRef<T> id) {
+		defaults();
+	}
+
+	protected void custom() {
 		defaults();
 	}
 
 	public final void protectIndex() {
 		index(null);
-
-		if (!allow) {
-			throw new HttpException(404);
-		}
+		throwIfNotAllowed();
 	}
 
-	public void protectShow() {
-		throw new HttpException(404);
+	public final void protectShow() {
+		show(null);
+		throwIfNotAllowed();
 	}
 
-	public void protectCreate() {
-		throw new HttpException(404);
+	public final void protectCreate() {
+		create(null);
+		throwIfNotAllowed();
 	}
 
-	public void protectUpdate() {
-		throw new HttpException(404);
+	public final void protectUpdate() {
+		update(null);
+		throwIfNotAllowed();
 	}
 
-	public void protectDestroy() {
-		throw new HttpException(404);
+	public final void protectDestroy() {
+		destroy(null);
+		throwIfNotAllowed();
 	}
 
-	public void protectCustom() {
-		throw new HttpException(404);
+	public final void protectCustom() {
+		custom();
+		throwIfNotAllowed();
 	}
 
 	protected final Shield<T> allow(boolean condition) {
@@ -65,12 +70,13 @@ public class Shield<T> extends Feature {
 		return this;
 	}
 
-	// TODO
-
-	protected void deny() {
-		// TODO Auto-generated method stub
-
+	private void throwIfNotAllowed() {
+		if (!allow) {
+			throw new HttpException(404);
+		}
 	}
+
+	// TODO
 
 	protected Shield<T> allow() {
 		// TODO Auto-generated method stub

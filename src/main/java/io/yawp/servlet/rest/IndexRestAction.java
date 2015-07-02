@@ -12,12 +12,12 @@ public class IndexRestAction extends RestAction {
 	}
 
 	@Override
+	public void shield() {
+		shield.protectIndex();
+	}
+
+	@Override
 	public List<?> action() {
-
-		if(hasShield()) {
-			shield.protectIndex();
-		}
-
 		DatastoreQuery<?> query = query();
 
 		if (id != null) {

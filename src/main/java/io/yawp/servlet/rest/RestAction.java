@@ -76,10 +76,16 @@ public abstract class RestAction {
 		this.customActionKey = customActionKey;
 	}
 
+	public abstract void shield();
+
 	public abstract Object action();
 
 	public HttpResponse execute() {
 		try {
+			if(hasShield()) {
+				shield();
+			}
+
 			Object object = action();
 
 			if (HttpResponse.class.isInstance(object)) {

@@ -8,6 +8,13 @@ public class CustomRestAction extends RestAction {
 		super("custom");
 	}
 
+
+	@Override
+	public void shield() {
+		// TODO Auto-generated method stub
+
+	}
+
 	@Override
 	public Object action() {
 		Object object = r.action(id, endpointClazz, customActionKey, params);

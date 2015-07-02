@@ -10,6 +10,12 @@ public class UpdateRestAction extends RestAction {
 	}
 
 	@Override
+	public void shield() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public Object action() {
 		assert !JsonUtils.isJsonArray(requestJson);
 

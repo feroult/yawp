@@ -14,6 +14,11 @@ public class CreateRestAction extends RestAction {
 	}
 
 	@Override
+	public void shield() {
+		shield.protectCreate();
+	}
+
+	@Override
 	public Object action() {
 		if (JsonUtils.isJsonArray(requestJson)) {
 			return createFromArray();

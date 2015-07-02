@@ -14,6 +14,7 @@ public class ShieldTest extends ServletTestCase {
 
 		assertGetWithStatus("/shielded_objects", 404);
 		assertGetWithStatus("/shielded_objects/1", 404);
+		assertPostWithStatus("/shielded_objects", "{stringValue: 'xpto'}", 404);
 	}
 
 	private void createObject() {

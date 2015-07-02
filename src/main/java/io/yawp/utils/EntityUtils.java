@@ -51,6 +51,7 @@ public class EntityUtils {
 	}
 
 	public static String getKindFromClass(Class<?> clazz) {
+		// TODO remove / from path, create option for backward compatibility
 		Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
 		return endpoint.path();
 	}

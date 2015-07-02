@@ -38,6 +38,10 @@ public class Shield<T> extends Feature {
 		throw new HttpException(404);
 	}
 
+	public void protectCreate() {
+		throw new HttpException(404);
+	}
+
 	// TODO
 
 	protected void deny() {

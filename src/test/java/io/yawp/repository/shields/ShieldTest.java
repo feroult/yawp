@@ -20,6 +20,13 @@ public class ShieldTest extends ServletTestCase {
 		assertPutWithStatus("/shielded_objects/1/something", 404);
 	}
 
+	@Test
+	public void testEverythingIsAllowed() {
+		login("jim", "rock.com");
+
+		assertGetWithStatus("/shielded_objects", 200);
+	}
+
 	private void createObject() {
 		ShieldedObject object = new ShieldedObject();
 		object.setId(IdRef.create(yawp, ShieldedObject.class, 1l));

@@ -41,6 +41,11 @@ public class EndpointTestCase extends Feature {
 		helper.setUp();
 	}
 
+	protected void login(String username, String domain) {
+		helper.setEnvAuthDomain(domain);
+		helper.setEnvEmail(username + "@" + domain);
+	}
+
 	@Before
 	public void setupRepository() {
 		yawp = Repository.r(LOGGED_USER_ID).setFeatures(features);

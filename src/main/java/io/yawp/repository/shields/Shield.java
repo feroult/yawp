@@ -6,6 +6,8 @@ import io.yawp.servlet.HttpException;
 
 public class Shield<T> extends Feature {
 
+	private boolean allow = false;
+
 	protected void defaults() {
 		deny();
 	}
@@ -31,7 +33,11 @@ public class Shield<T> extends Feature {
 	}
 
 	public final void protectIndex() {
-		throw new HttpException(404);
+		index(null);
+
+		if (!allow) {
+			throw new HttpException(404);
+		}
 	}
 
 	public void protectShow() {
@@ -54,6 +60,11 @@ public class Shield<T> extends Feature {
 		throw new HttpException(404);
 	}
 
+	protected final Shield<T> allow(boolean condition) {
+		this.allow = condition;
+		return this;
+	}
+
 	// TODO
 
 	protected void deny() {
@@ -62,11 +73,6 @@ public class Shield<T> extends Feature {
 	}
 
 	protected Shield<T> allow() {
-		// TODO Auto-generated method stub
-		return this;
-	}
-
-	protected Shield<T> allow(boolean rh) {
 		// TODO Auto-generated method stub
 		return this;
 	}

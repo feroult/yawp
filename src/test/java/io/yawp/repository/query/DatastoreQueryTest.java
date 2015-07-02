@@ -97,6 +97,40 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
+	public void testSimpleWhereWithNot() {
+		saveManyBasicObjects(2);
+
+		List<BasicObject> objects = yawp(BasicObject.class).where(c("intValue", "=", 1).not()).list();
+
+		assertEquals(1, objects.size());
+		assertEquals("xpto", objects.get(0).getStringValue());
+		assertEquals(2, objects.get(0).getIntValue());
+	}
+
+	@Test
+	public void testWhereWithOrNot() {
+		saveManyBasicObjects(3);
+
+		List<BasicObject> objects = yawp(BasicObject.class).where(or(c("intValue", "=", 1), c("intValue", "=", 2)).not()).list();
+
+		assertEquals(1, objects.size());
+		assertEquals("xpto", objects.get(0).getStringValue());
+		assertEquals(3, objects.get(0).getIntValue());
+	}
+
+	@Test
+	public void testWhereWithAndNot() {
+		saveManyBasicObjects(5);
+
+		List<BasicObject> objects = yawp(BasicObject.class).where(and(c("intValue", ">", 1), c("intValue", "<", 5)).not()).list();
+
+		assertEquals(2, objects.size());
+		sort(objects);
+		assertEquals(1, objects.get(0).getIntValue());
+		assertEquals(5, objects.get(1).getIntValue());
+	}
+
+	@Test
 	public void testChainedWheresWithAnd() {
 		saveManyBasicObjects(1);
 
@@ -114,12 +148,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		List<BasicObject> objects = yawp(BasicObject.class).where(or(c("intValue", "=", 1), c("intValue", "=", 2))).list();
 
 		assertEquals(2, objects.size());
-		Collections.sort(objects, new Comparator<BasicObject>() {
-			@Override
-			public int compare(BasicObject o1, BasicObject o2) {
-				return o1.getIntValue() - o2.getIntValue();
-			}
-		});
+		sort(objects);
 
 		assertEquals(2, objects.size());
 
@@ -128,6 +157,15 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
 		assertEquals("xpto", objects.get(1).getStringValue());
 		assertEquals(2, objects.get(1).getIntValue());
+	}
+
+	private void sort(List<BasicObject> objects) {
+		Collections.sort(objects, new Comparator<BasicObject>() {
+			@Override
+			public int compare(BasicObject o1, BasicObject o2) {
+				return o1.getIntValue() - o2.getIntValue();
+			}
+		});
 	}
 
 	@Test
@@ -140,8 +178,8 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		assertEquals(1, objects1.size());
 		assertEquals(3, objects1.get(0).getIntValue());
 
-		List<BasicObject> objects2 = yawp(BasicObject.class).where(
-		        or(and(c("intValue", "=", 3), c("intValue", "=", 3)), and(c("intValue", "=", 1), c("intValue", "=", 2)))).list();
+		BaseCondition condition = or(and(c("intValue", "=", 3), c("intValue", "=", 3)), and(c("intValue", "=", 1), c("intValue", "=", 2)));
+		List<BasicObject> objects2 = yawp(BasicObject.class).where(condition).list();
 
 		assertEquals(1, objects2.size());
 		assertEquals(3, objects2.get(0).getIntValue());

@@ -19,6 +19,8 @@ public abstract class BaseCondition {
 
 	public abstract Filter getPredicate(Class<?> clazz) throws FalsePredicateException;
 
+	public abstract BaseCondition not();
+
 	public abstract void normalizeIdRefs(Class<?> clazz, Repository r);
 
 	public abstract Class<?> getIdTypeFor(Class<?> clazz);
@@ -140,6 +142,32 @@ public abstract class BaseCondition {
 				}
 			}
 		}
+
+		public FilterOperator reverseOperator(FilterOperator op) {
+			switch (op) {
+			case EQUAL:
+				return FilterOperator.NOT_EQUAL;
+			case GREATER_THAN:
+				return FilterOperator.LESS_THAN_OR_EQUAL;
+			case GREATER_THAN_OR_EQUAL:
+				return FilterOperator.LESS_THAN;
+			case IN:
+				throw new RuntimeException("Cannot invert (call not) on IN operators.");
+			case LESS_THAN:
+				return FilterOperator.GREATER_THAN_OR_EQUAL;
+			case LESS_THAN_OR_EQUAL:
+				return FilterOperator.GREATER_THAN;
+			case NOT_EQUAL:
+				return FilterOperator.EQUAL;
+			default:
+				throw new RuntimeException("Unexpected enum constant.");
+			}
+		}
+
+		@Override
+		public BaseCondition not() {
+			return new SimpleCondition(field, reverseOperator(operator), value);
+		}
 	}
 
 	static class JoinedCondition extends BaseCondition {
@@ -198,6 +226,15 @@ public abstract class BaseCondition {
 			for (BaseCondition c : conditions) {
 				c.normalizeIdRefs(clazz, r);
 			}
+		}
+
+		@Override
+		public BaseCondition not() {
+			BaseCondition[] reversedConditions = new BaseCondition[conditions.length];
+			for (int i = 0; i < conditions.length; i++) {
+				reversedConditions[i] = conditions[i].not();
+			}
+			return new JoinedCondition(operator.not(), reversedConditions);
 		}
 	}
 }

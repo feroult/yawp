@@ -10,8 +10,7 @@ public class DestroyRestAction extends RestAction {
 
 	@Override
 	public void shield() {
-		// TODO Auto-generated method stub
-
+		shield.protectDestroy();
 	}
 
 	@Override

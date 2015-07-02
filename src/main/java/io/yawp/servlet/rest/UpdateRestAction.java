@@ -11,8 +11,7 @@ public class UpdateRestAction extends RestAction {
 
 	@Override
 	public void shield() {
-		// TODO Auto-generated method stub
-
+		shield.protectUpdate();
 	}
 
 	@Override

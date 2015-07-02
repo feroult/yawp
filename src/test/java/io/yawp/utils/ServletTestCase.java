@@ -5,8 +5,6 @@ import static org.junit.Assert.assertTrue;
 import io.yawp.repository.Repository;
 import io.yawp.servlet.EndpointServlet;
 import io.yawp.servlet.HttpException;
-import io.yawp.utils.EntityUtils;
-import io.yawp.utils.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,6 +95,16 @@ public class ServletTestCase extends EndpointTestCase {
 
 	protected String delete(String uri) {
 		return servlet.execute("DELETE", uri, null, new HashMap<String, String>()).getText();
+	}
+
+	protected void assertDeleteWithStatus(String uri, int status) {
+		try {
+			delete(uri);
+		} catch (HttpException e) {
+			assertEquals(status, e.getHttpStatus());
+			return;
+		}
+		assertTrue(status == 200);
 	}
 
 	protected <T> T from(String json, Class<T> clazz) {

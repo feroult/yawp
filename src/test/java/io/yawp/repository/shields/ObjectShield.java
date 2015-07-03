@@ -20,7 +20,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	@Override
 	protected void create() {
-		allow(isRouteWithValidObject());
+		allow(isRequestWithValidObject());
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		return id.asLong().equals(100l);
 	}
 
-	private boolean isRouteWithValidObject() {
+	private boolean isRequestWithValidObject() {
 		if (!requestHasObject()) {
 			return false;
 		}

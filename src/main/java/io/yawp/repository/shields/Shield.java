@@ -28,10 +28,6 @@ public class Shield<T> extends Feature {
 	protected void create(T object) {
 	}
 
-	// TODO: use two methods or loop?
-	protected void create(List<T> objects) {
-	}
-
 	protected void update(IdRef<T> id, T object) {
 	}
 
@@ -55,9 +51,24 @@ public class Shield<T> extends Feature {
 
 	public final void protectCreate() {
 		always();
-		create(object);
-		create(objects);
+
+		if(isArray()) {
+			protectCreateWithArray();
+		} else {
+			protectCreateWithObject();
+		}
+
 		throwIfNotAllowed();
+	}
+
+	private void protectCreateWithObject() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void protectCreateWithArray() {
+		// TODO Auto-generated method stub
+
 	}
 
 	public final void protectUpdate() {
@@ -102,6 +113,10 @@ public class Shield<T> extends Feature {
 	@SuppressWarnings("unchecked")
 	public void setObjects(List<?> objects) {
 		this.objects = (List<T>) objects;
+	}
+
+	protected boolean isArray() {
+		return objects != null;
 	}
 
 	// TODO

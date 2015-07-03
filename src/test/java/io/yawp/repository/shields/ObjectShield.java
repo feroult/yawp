@@ -1,5 +1,7 @@
 package io.yawp.repository.shields;
 
+import java.util.List;
+
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.ShieldedObject;
 
@@ -21,8 +23,20 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	@Override
 	protected void create(ShieldedObject object) {
-		allow(isRouteWithValidObject(object));
+		allow(isJane());
+
+
+		if (!isArray()) {
+			allow(isRouteWithValidObject(object));
+		}
 	}
+
+	protected void create(List<ShieldedObject> objects) {
+		//allow(isJane());
+
+		// loop
+	}
+
 
 	@Override
 	protected void update(IdRef<ShieldedObject> id, ShieldedObject object) {

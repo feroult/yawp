@@ -42,7 +42,7 @@ public class ShieldTest extends ServletTestCase {
 
 		assertGetWithStatus("/shielded_objects/100", 200);
 		assertPutWithStatus("/shielded_objects/100", "{id:'/shielded_objects/100', stringValue: 'xpto'}", 200);
-//		assertDeleteWithStatus("/shielded_objects/100", 200);
+		assertDeleteWithStatus("/shielded_objects/100", 200);
 	}
 
 	private void assertRestActionsStatus(int status) {

@@ -26,6 +26,11 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	}
 
 	@Override
+	protected void destroy(IdRef<ShieldedObject> id) {
+		allow(isId100(id));
+	}
+
+	@Override
 	protected void custom() {
 		allow(isJane());
 	}

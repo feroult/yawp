@@ -57,7 +57,7 @@ public class Shield<T> extends Feature {
 
 	public final void protectDestroy() {
 		always();
-		destroy(null);
+		destroy(id);
 		throwIfNotAllowed();
 	}
 

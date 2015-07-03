@@ -20,8 +20,9 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	}
 
 	@Override
-	protected void update(ShieldedObject object) {
+	protected void update(IdRef<ShieldedObject> id, ShieldedObject object) {
 		allow(isJane());
+		allow(isId100(id));
 	}
 
 	@Override
@@ -43,6 +44,9 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	}
 
 	private boolean isId100(IdRef<ShieldedObject> id) {
+		if (id == null) {
+			return false;
+		}
 		return id.asLong().equals(100l);
 	}
 

@@ -22,7 +22,7 @@ public class Shield<T> extends Feature {
 	protected void create(T object) {
 	}
 
-	protected void update(T object) {
+	protected void update(IdRef<T> id, T object) {
 	}
 
 	protected void destroy(IdRef<T> id) {
@@ -51,7 +51,7 @@ public class Shield<T> extends Feature {
 
 	public final void protectUpdate() {
 		always();
-		update(null);
+		update(null, null);
 		throwIfNotAllowed();
 	}
 

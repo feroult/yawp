@@ -27,6 +27,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	protected void update() {
 		allow(isJane());
 		allow(isId100());
+		allow(isRequestWithValidObject());
 	}
 
 	@Override
@@ -78,6 +79,6 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		if (object.getStringValue() == null) {
 			return false;
 		}
-		return object.getStringValue().equals("valid route with object");
+		return object.getStringValue().equals("valid object");
 	}
 }

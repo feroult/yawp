@@ -16,18 +16,24 @@ public class ShieldTest extends ServletTestCase {
 
 	@Test
 	public void testNothingIsAllowed() {
+		createObject(1l);
+
 		assertRestActionsStatus(404);
 	}
 
 	@Test
 	public void testEverythingIsAllowed() {
+		createObject(1l);
 		login("jim", "rock.com");
+
 		assertRestActionsStatus(200);
 	}
 
 	@Test
 	public void testSomethingIsAllowed() {
+		createObject(1l);
 		login("jane", "rock.com");
+
 		assertGetWithStatus("/shielded_objects", 404);
 		assertGetWithStatus("/shielded_objects/1", 200);
 		assertPostWithStatus("/shielded_objects", "{stringValue: 'xpto'}", 404);

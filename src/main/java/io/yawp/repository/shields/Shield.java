@@ -66,7 +66,7 @@ public class Shield<T> extends Feature {
 	}
 
 	protected final Shield<T> allow(boolean condition) {
-		this.allow = condition;
+		this.allow = this.allow || condition;
 		return this;
 	}
 

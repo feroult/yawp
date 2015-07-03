@@ -8,6 +8,8 @@ public class Shield<T> extends Feature {
 
 	private boolean allow = false;
 
+	private IdRef<?> id;
+
 	protected void always() {
 	}
 
@@ -74,6 +76,10 @@ public class Shield<T> extends Feature {
 		if (!allow) {
 			throw new HttpException(404);
 		}
+	}
+
+	public void setId(IdRef<?> id) {
+		this.id = id;
 	}
 
 	// TODO

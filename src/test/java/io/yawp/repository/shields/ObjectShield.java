@@ -16,6 +16,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	@Override
 	protected void show(IdRef<ShieldedObject> id) {
 		allow(isJane());
+		allow(isId100(id));
 	}
 
 	@Override
@@ -39,6 +40,11 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	private boolean is(String email) {
 		User currentUser = UserServiceFactory.getUserService().getCurrentUser();
 		return currentUser != null && currentUser.getEmail().equals(email);
+	}
+
+	private boolean isId100(IdRef<ShieldedObject> id) {
+		//return id.asLong().equals(100l);
+		return false;
 	}
 
 }

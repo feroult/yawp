@@ -82,7 +82,7 @@ public abstract class RestAction {
 
 	public HttpResponse execute() {
 		try {
-			if(hasShield()) {
+			if (hasShield()) {
 				shield();
 			}
 
@@ -160,12 +160,19 @@ public abstract class RestAction {
 	public void defineShield() {
 		EndpointFeatures<?> endpointFeatures = r.getEndpointFeatures(endpointClazz);
 		if (endpointFeatures.hasShield()) {
-			try {
-				shield = endpointFeatures.getShield().newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				throw new RuntimeException(e);
-			}
+			shield = createShield(endpointFeatures);
 		}
+	}
+
+	private Shield<?> createShield(EndpointFeatures<?> endpointFeatures) {
+		try {
+			Shield<?> shield = endpointFeatures.getShield().newInstance();
+			shield.setId(id);
+			return shield;
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 }

@@ -11,7 +11,7 @@ public class ShieldTest extends ServletTestCase {
 
 	@Before
 	public void before() {
-		createObject();
+		createObject(1l);
 	}
 
 	@Test
@@ -36,6 +36,15 @@ public class ShieldTest extends ServletTestCase {
 		assertPutWithStatus("/shielded_objects/1/something", 200);
 	}
 
+	@Test
+	public void testRoutesWithIds() {
+		createObject(100l);
+
+//		assertGetWithStatus("/shielded_objects/1", 200);
+//		assertPutWithStatus("/shielded_objects/1", "{id:'/shielded_objects/1', stringValue: 'xpto'}", 200);
+//		assertDeleteWithStatus("/shielded_objects/1", 200);
+	}
+
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);
 		assertGetWithStatus("/shielded_objects/1", status);
@@ -45,9 +54,9 @@ public class ShieldTest extends ServletTestCase {
 		assertPutWithStatus("/shielded_objects/1/something", status);
 	}
 
-	private void createObject() {
+	private void createObject(long id) {
 		ShieldedObject object = new ShieldedObject();
-		object.setId(IdRef.create(yawp, ShieldedObject.class, 1l));
+		object.setId(IdRef.create(yawp, ShieldedObject.class, id));
 		yawp.save(object);
 	}
 

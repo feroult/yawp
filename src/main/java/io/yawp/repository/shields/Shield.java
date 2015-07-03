@@ -51,7 +51,7 @@ public class Shield<T> extends Feature {
 
 	public final void protectUpdate() {
 		always();
-		update(null, null);
+		update(id, null);
 		throwIfNotAllowed();
 	}
 

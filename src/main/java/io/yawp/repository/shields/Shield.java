@@ -53,24 +53,8 @@ public class Shield<T> extends Feature {
 
 	public final void protectCreate() {
 		always();
-
-		if (isArray()) {
-			protectCreateWithArray();
-		} else {
-			protectCreateWithObject();
-		}
-
+		create();
 		throwIfNotAllowed();
-	}
-
-	private void protectCreateWithObject() {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void protectCreateWithArray() {
-		// TODO Auto-generated method stub
-
 	}
 
 	public final void protectUpdate() {
@@ -117,6 +101,10 @@ public class Shield<T> extends Feature {
 		this.objects = (List<T>) objects;
 	}
 
+	protected boolean requestHasObject() {
+		return object != null || (objects != null && objects.size() > 0);
+	}
+
 	protected boolean isArray() {
 		return objects != null;
 	}
@@ -136,4 +124,5 @@ public class Shield<T> extends Feature {
 		// TODO Auto-generated method stub
 
 	}
+
 }

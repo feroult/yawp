@@ -20,7 +20,6 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	@Override
 	protected void create() {
-		allow(isJane());
 		allow(isRouteWithValidObject());
 	}
 
@@ -58,10 +57,27 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	}
 
 	private boolean isRouteWithValidObject() {
-		if (object == null) {
+		if (!requestHasObject()) {
+			return false;
+		}
+
+		if (!isArray()) {
+			return isValidObject(object);
+		}
+
+		for (ShieldedObject objectInList : objects) {
+			if (!isValidObject(objectInList)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private boolean isValidObject(ShieldedObject object) {
+		if (object.getStringValue() == null) {
 			return false;
 		}
 		return object.getStringValue().equals("valid route with object");
 	}
-
 }

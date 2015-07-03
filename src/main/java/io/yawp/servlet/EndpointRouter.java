@@ -203,9 +203,10 @@ public class EndpointRouter {
 			action.setRequestJson(requestJson);
 			action.setParams(params);
 			action.setCustomActionKey(customActionKey);
+
+			action.parseJson();
 			action.defineTrasnformer();
 			action.defineShield();
-			action.parseJson();
 
 			return action;
 

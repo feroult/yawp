@@ -54,7 +54,9 @@ public class ShieldTest extends ServletTestCase {
 	@Test
 	public void testRouteWithObject() {
 		assertPostWithStatus("/shielded_objects", "{stringValue: 'invalid route with object'}", 404);
-//		assertPostWithStatus("/shielded_objects", "{stringValue: 'valid route with object'}", 200);
+		assertPostWithStatus("/shielded_objects", "{stringValue: 'valid route with object'}", 200);
+		assertPostWithStatus("/shielded_objects", "[{stringValue: 'valid route with object'}, {stringValue: 'valid route with object'}]", 200);
+		//assertPostWithStatus("/shielded_objects", "[{stringValue: 'valid route with object'}, {stringValue: 'xpto1'}]", 404);
 	}
 
 	private void assertRestActionsStatus(int status) {

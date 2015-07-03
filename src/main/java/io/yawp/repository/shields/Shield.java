@@ -8,59 +8,59 @@ public class Shield<T> extends Feature {
 
 	private boolean allow = false;
 
-	protected void defaults() {
+	protected void always() {
 	}
 
 	protected void index(IdRef<?> parentId) {
-		defaults();
 	}
 
 	protected void show(IdRef<T> id) {
-		defaults();
 	}
 
 	protected void create(T object) {
-		defaults();
 	}
 
 	protected void update(T object) {
-		defaults();
 	}
 
 	protected void destroy(IdRef<T> id) {
-		defaults();
 	}
 
 	protected void custom() {
-		defaults();
 	}
 
 	public final void protectIndex() {
+		always();
 		index(null);
 		throwIfNotAllowed();
 	}
 
 	public final void protectShow() {
+		always();
 		show(null);
 		throwIfNotAllowed();
 	}
 
 	public final void protectCreate() {
+		always();
 		create(null);
 		throwIfNotAllowed();
 	}
 
 	public final void protectUpdate() {
+		always();
 		update(null);
 		throwIfNotAllowed();
 	}
 
 	public final void protectDestroy() {
+		always();
 		destroy(null);
 		throwIfNotAllowed();
 	}
 
 	public final void protectCustom() {
+		always();
 		custom();
 		throwIfNotAllowed();
 	}

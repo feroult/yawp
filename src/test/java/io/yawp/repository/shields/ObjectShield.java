@@ -9,26 +9,23 @@ import com.google.appengine.api.users.UserServiceFactory;
 public class ObjectShield extends Shield<ShieldedObject> {
 
 	@Override
-	protected void defaults() {
+	protected void always() {
 		allow(isJim());
 	}
 
 	@Override
 	protected void show(IdRef<ShieldedObject> id) {
 		allow(isJane());
-		defaults();
 	}
 
 	@Override
 	protected void update(ShieldedObject object) {
 		allow(isJane());
-		defaults();
 	}
 
 	@Override
 	protected void custom() {
 		allow(isJane());
-		defaults();
 	}
 
 	private boolean isJane() {

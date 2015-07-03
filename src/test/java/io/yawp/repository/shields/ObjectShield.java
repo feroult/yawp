@@ -43,8 +43,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	}
 
 	private boolean isId100(IdRef<ShieldedObject> id) {
-		//return id.asLong().equals(100l);
-		return false;
+		return id.asLong().equals(100l);
 	}
 
 }

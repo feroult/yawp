@@ -8,7 +8,7 @@ public class Shield<T> extends Feature {
 
 	private boolean allow = false;
 
-	private IdRef<?> id;
+	private IdRef<T> id;
 
 	protected void always() {
 	}
@@ -39,7 +39,7 @@ public class Shield<T> extends Feature {
 
 	public final void protectShow() {
 		always();
-		show(null);
+		show(id);
 		throwIfNotAllowed();
 	}
 
@@ -78,8 +78,9 @@ public class Shield<T> extends Feature {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setId(IdRef<?> id) {
-		this.id = id;
+		this.id = (IdRef<T>) id;
 	}
 
 	// TODO

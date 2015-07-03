@@ -7,6 +7,7 @@ import io.yawp.utils.ServletTestCase;
 
 import org.junit.Test;
 
+@Deprecated
 public class RestrictionsTest extends ServletTestCase {
 
 	@Test

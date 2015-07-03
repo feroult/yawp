@@ -10,28 +10,30 @@ public class Shield<T> extends Feature {
 
 	private boolean allow = false;
 
-	private IdRef<T> id;
+	protected IdRef<?> parentId;
 
-	private T object;
+	protected IdRef<T> id;
 
-	private List<T> objects;
+	protected T object;
+
+	protected List<T> objects;
 
 	protected void always() {
 	}
 
-	protected void index(IdRef<?> parentId) {
+	protected void index() {
 	}
 
-	protected void show(IdRef<T> id) {
+	protected void show() {
 	}
 
-	protected void create(T object) {
+	protected void create() {
 	}
 
-	protected void update(IdRef<T> id, T object) {
+	protected void update() {
 	}
 
-	protected void destroy(IdRef<T> id) {
+	protected void destroy() {
 	}
 
 	protected void custom() {
@@ -39,20 +41,20 @@ public class Shield<T> extends Feature {
 
 	public final void protectIndex() {
 		always();
-		index(null);
+		index();
 		throwIfNotAllowed();
 	}
 
 	public final void protectShow() {
 		always();
-		show(id);
+		show();
 		throwIfNotAllowed();
 	}
 
 	public final void protectCreate() {
 		always();
 
-		if(isArray()) {
+		if (isArray()) {
 			protectCreateWithArray();
 		} else {
 			protectCreateWithObject();
@@ -73,13 +75,13 @@ public class Shield<T> extends Feature {
 
 	public final void protectUpdate() {
 		always();
-		update(id, null);
+		update();
 		throwIfNotAllowed();
 	}
 
 	public final void protectDestroy() {
 		always();
-		destroy(id);
+		destroy();
 		throwIfNotAllowed();
 	}
 

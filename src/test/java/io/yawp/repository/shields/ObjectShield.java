@@ -1,8 +1,5 @@
 package io.yawp.repository.shields;
 
-import java.util.List;
-
-import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.ShieldedObject;
 
 import com.google.appengine.api.users.User;
@@ -16,37 +13,26 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	}
 
 	@Override
-	protected void show(IdRef<ShieldedObject> id) {
+	protected void show() {
 		allow(isJane());
-		allow(isId100(id));
+		allow(isId100());
 	}
 
 	@Override
-	protected void create(ShieldedObject object) {
+	protected void create() {
 		allow(isJane());
-
-
-		if (!isArray()) {
-			allow(isRouteWithValidObject(object));
-		}
-	}
-
-	protected void create(List<ShieldedObject> objects) {
-		//allow(isJane());
-
-		// loop
-	}
-
-
-	@Override
-	protected void update(IdRef<ShieldedObject> id, ShieldedObject object) {
-		allow(isJane());
-		allow(isId100(id));
+		allow(isRouteWithValidObject());
 	}
 
 	@Override
-	protected void destroy(IdRef<ShieldedObject> id) {
-		allow(isId100(id));
+	protected void update() {
+		allow(isJane());
+		allow(isId100());
+	}
+
+	@Override
+	protected void destroy() {
+		allow(isId100());
 	}
 
 	@Override
@@ -67,11 +53,11 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		return currentUser != null && currentUser.getEmail().equals(email);
 	}
 
-	private boolean isId100(IdRef<ShieldedObject> id) {
+	private boolean isId100() {
 		return id.asLong().equals(100l);
 	}
 
-	private boolean isRouteWithValidObject(ShieldedObject object) {
+	private boolean isRouteWithValidObject() {
 		if (object == null) {
 			return false;
 		}

@@ -205,6 +205,7 @@ public class EndpointRouter {
 			action.setCustomActionKey(customActionKey);
 			action.defineTrasnformer();
 			action.defineShield();
+			action.parseJson();
 
 			return action;
 

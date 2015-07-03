@@ -1,7 +1,6 @@
 package io.yawp.servlet.rest;
 
 import io.yawp.utils.EntityUtils;
-import io.yawp.utils.JsonUtils;
 
 public class UpdateRestAction extends RestAction {
 
@@ -16,9 +15,10 @@ public class UpdateRestAction extends RestAction {
 
 	@Override
 	public Object action() {
-		assert !JsonUtils.isJsonArray(requestJson);
+		assert !isJsonArray();
 
-		Object object = JsonUtils.from(r, requestJson, endpointClazz);
+		Object object = getObject();
+
 		forceObjectIdFromRequest(object);
 		save(object);
 

@@ -51,6 +51,12 @@ public class ShieldTest extends ServletTestCase {
 		assertDeleteWithStatus("/shielded_objects/100", 200);
 	}
 
+	@Test
+	public void testRouteWithObject() {
+		assertPostWithStatus("/shielded_objects", "{stringValue: 'invalid route with object'}", 404);
+//		assertPostWithStatus("/shielded_objects", "{stringValue: 'valid route with object'}", 200);
+	}
+
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);
 		assertGetWithStatus("/shielded_objects/1", status);
@@ -61,8 +67,13 @@ public class ShieldTest extends ServletTestCase {
 	}
 
 	private void createObject(long id) {
+		createObject(id, null);
+	}
+
+	private void createObject(long id, String stringValue) {
 		ShieldedObject object = new ShieldedObject();
 		object.setId(IdRef.create(yawp, ShieldedObject.class, id));
+		object.setStringValue(stringValue);
 		yawp.save(object);
 	}
 

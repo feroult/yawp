@@ -4,11 +4,17 @@ import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.servlet.HttpException;
 
+import java.util.List;
+
 public class Shield<T> extends Feature {
 
 	private boolean allow = false;
 
 	private IdRef<T> id;
+
+	private T object;
+
+	private List<T> objects;
 
 	protected void always() {
 	}
@@ -20,6 +26,10 @@ public class Shield<T> extends Feature {
 	}
 
 	protected void create(T object) {
+	}
+
+	// TODO: use two methods or loop?
+	protected void create(List<T> objects) {
 	}
 
 	protected void update(IdRef<T> id, T object) {
@@ -45,7 +55,8 @@ public class Shield<T> extends Feature {
 
 	public final void protectCreate() {
 		always();
-		create(null);
+		create(object);
+		create(objects);
 		throwIfNotAllowed();
 	}
 
@@ -83,8 +94,17 @@ public class Shield<T> extends Feature {
 		this.id = (IdRef<T>) id;
 	}
 
-	// TODO
+	@SuppressWarnings("unchecked")
+	public void setObject(Object object) {
+		this.object = (T) object;
+	}
 
+	@SuppressWarnings("unchecked")
+	public void setObjects(List<?> objects) {
+		this.objects = (List<T>) objects;
+	}
+
+	// TODO
 	protected Shield<T> allow() {
 		// TODO Auto-generated method stub
 		return this;

@@ -14,7 +14,10 @@ import io.yawp.repository.transformers.RepositoryTransformers;
 import io.yawp.servlet.HttpException;
 import io.yawp.utils.JsonUtils;
 
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class RestAction {
 
@@ -43,6 +46,10 @@ public abstract class RestAction {
 	protected String transformerName;
 
 	protected Shield<?> shield;
+
+	private List<?> objects;
+
+	private Object object;
 
 	public RestAction(String actionName) {
 		this.actionName = actionName;
@@ -168,11 +175,38 @@ public abstract class RestAction {
 		try {
 			Shield<?> shield = endpointFeatures.getShield().newInstance();
 			shield.setId(id);
+			shield.setObject(object);
+			shield.setObjects(objects);
 			return shield;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
 
 	}
+
+	public void parseJson() {
+		if (StringUtils.isBlank(requestJson)) {
+			return;
+		}
+
+		if (JsonUtils.isJsonArray(requestJson)) {
+			objects = JsonUtils.fromList(r, requestJson, endpointClazz);
+		} else {
+			object = JsonUtils.from(r, requestJson, endpointClazz);
+		}
+	}
+
+	protected boolean isJsonArray() {
+		return objects != null;
+	}
+
+	public List<?> getObjects() {
+		return objects;
+	}
+
+	public Object getObject() {
+		return object;
+	}
+
 
 }

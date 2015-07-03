@@ -2,7 +2,6 @@ package io.yawp.servlet.rest;
 
 import io.yawp.repository.FutureObject;
 import io.yawp.utils.EntityUtils;
-import io.yawp.utils.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,21 +19,18 @@ public class CreateRestAction extends RestAction {
 
 	@Override
 	public Object action() {
-		if (JsonUtils.isJsonArray(requestJson)) {
-			return createFromArray();
+		if (isJsonArray()) {
+			return createFromArray(getObjects());
 		}
 
-		return createFromObject();
+		return createFromObject(getObject());
 	}
 
-	private Object createFromObject() {
-		Object object = JsonUtils.from(r, requestJson, endpointClazz);
+	private Object createFromObject(Object object) {
 		return saveObject(object);
 	}
 
-	private Object createFromArray() {
-		List<?> objects = JsonUtils.fromList(r, requestJson, endpointClazz);
-
+	private Object createFromArray(List<?> objects) {
 		List<FutureObject<Object>> futures = new ArrayList<FutureObject<Object>>();
 		List<Object> resultObjects = new ArrayList<Object>();
 
@@ -62,7 +58,6 @@ public class CreateRestAction extends RestAction {
 			EntityUtils.setParentId(object, id);
 		}
 		return saveAsync(object);
-		// return transform(object);
 	}
 
 }

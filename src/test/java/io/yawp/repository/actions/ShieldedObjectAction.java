@@ -11,4 +11,9 @@ public class ShieldedObjectAction extends Action<ShieldedObject> {
 		return "x";
 	}
 
+	@PUT("anotherthing")
+	public String anotherthing(IdRef<ShieldedObject> id) {
+		return "y";
+	}
+
 }

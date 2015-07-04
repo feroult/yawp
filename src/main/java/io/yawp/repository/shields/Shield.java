@@ -2,7 +2,9 @@ package io.yawp.repository.shields;
 
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.actions.ActionKey;
 import io.yawp.servlet.HttpException;
+import io.yawp.utils.HttpVerb;
 
 import java.util.List;
 
@@ -17,6 +19,8 @@ public class Shield<T> extends Feature {
 	protected T object;
 
 	protected List<T> objects;
+
+	private ActionKey actionKey;
 
 	protected void always() {
 	}
@@ -101,12 +105,31 @@ public class Shield<T> extends Feature {
 		this.objects = (List<T>) objects;
 	}
 
+	public void setActionKey(ActionKey actionKey) {
+		this.actionKey = actionKey;
+	}
+
 	protected boolean requestHasObject() {
 		return object != null || (objects != null && objects.size() > 0);
 	}
 
 	protected boolean isArray() {
 		return objects != null;
+	}
+
+	protected boolean isAction(HttpVerb verb, String actionName) {
+		return isAction(verb, actionName, false);
+	}
+
+	protected boolean isActionOverCollection(HttpVerb verb, String actionName) {
+		return isAction(verb, actionName, true);
+	}
+
+	protected boolean isAction(HttpVerb verb, String actionName, boolean overCollection) {
+		if (actionKey == null) {
+			return false;
+		}
+		return actionKey.equals(new ActionKey(verb, actionName, overCollection));
 	}
 
 	// TODO

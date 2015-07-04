@@ -1,6 +1,7 @@
 package io.yawp.repository.shields;
 
 import io.yawp.repository.models.basic.ShieldedObject;
+import io.yawp.utils.HttpVerb;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -37,7 +38,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	@Override
 	protected void custom() {
-		allow(isJane());
+		allow(isJane() && isSomethingAction());
 	}
 
 	private boolean isJane() {
@@ -80,5 +81,9 @@ public class ObjectShield extends Shield<ShieldedObject> {
 			return false;
 		}
 		return object.getStringValue().equals("valid object");
+	}
+
+	private boolean isSomethingAction() {
+		return isAction(HttpVerb.PUT, "something");
 	}
 }

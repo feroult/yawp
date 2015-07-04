@@ -177,6 +177,7 @@ public abstract class RestAction {
 			shield.setId(id);
 			shield.setObject(object);
 			shield.setObjects(objects);
+			shield.setActionKey(customActionKey);
 			return shield;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
@@ -207,6 +208,5 @@ public abstract class RestAction {
 	public Object getObject() {
 		return object;
 	}
-
 
 }

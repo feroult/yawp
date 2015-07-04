@@ -65,6 +65,15 @@ public class ShieldTest extends ServletTestCase {
 		assertPutWithStatus("/shielded_objects/1", "{id:'/shielded_objects/200', stringValue: 'valid object'}", 200);
 	}
 
+	@Test
+	public void testDifferentActions() {
+		createObject(1l);
+		login("jane", "rock.com");
+
+		assertPutWithStatus("/shielded_objects/1/something", 200);
+//		assertPutWithStatus("/shielded_objects/1/anotherthing", 404);
+	}
+
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);
 		assertGetWithStatus("/shielded_objects/1", status);

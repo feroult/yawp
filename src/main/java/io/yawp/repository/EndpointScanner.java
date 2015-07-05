@@ -1,8 +1,6 @@
 package io.yawp.repository;
 
 import io.yawp.commons.http.HttpVerb;
-import io.yawp.commons.http.annotation.GET;
-import io.yawp.commons.http.annotation.PUT;
 import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.actions.Action;

@@ -1,6 +1,6 @@
 package io.yawp.servlet.rest;
 
-import io.yawp.utils.EntityUtils;
+import io.yawp.commons.utils.EntityUtils;
 
 public class UpdateRestAction extends RestAction {
 

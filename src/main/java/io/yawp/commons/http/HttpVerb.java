@@ -1,4 +1,4 @@
-package io.yawp.utils;
+package io.yawp.commons.http;
 
 public enum HttpVerb {
 

@@ -1,10 +1,10 @@
 package io.yawp.repository.shields;
 
+import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.servlet.HttpException;
-import io.yawp.utils.HttpVerb;
 
 import java.lang.reflect.Method;
 import java.util.List;

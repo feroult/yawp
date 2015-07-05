@@ -1,9 +1,9 @@
 package io.yawp.repository.query;
 
+import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.BaseCondition.SimpleCondition;
-import io.yawp.utils.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,14 +1,14 @@
 package io.yawp.servlet;
 
+import io.yawp.commons.http.ErrorResponse;
+import io.yawp.commons.http.HttpResponse;
+import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.http.JsonResponse;
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.EndpointException;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
-import io.yawp.repository.response.ErrorResponse;
-import io.yawp.repository.response.HttpResponse;
-import io.yawp.repository.response.JsonResponse;
-import io.yawp.utils.HttpVerb;
-import io.yawp.utils.JsonUtils;
 
 import java.io.IOException;
 import java.util.Enumeration;

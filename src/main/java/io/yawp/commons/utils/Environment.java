@@ -1,4 +1,4 @@
-package io.yawp.utils;
+package io.yawp.commons.utils;
 
 import com.google.appengine.api.utils.SystemProperty;
 

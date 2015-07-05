@@ -1,15 +1,15 @@
 package io.yawp.servlet;
 
+import io.yawp.commons.http.HttpResponse;
+import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.annotations.Endpoint;
-import io.yawp.repository.response.HttpResponse;
 import io.yawp.servlet.rest.RestAction;
 import io.yawp.servlet.rest.RestActionType;
-import io.yawp.utils.HttpVerb;
 
 import java.util.Map;
 

@@ -1,7 +1,7 @@
 package io.yawp.servlet;
 
-import io.yawp.repository.response.ErrorResponse;
-import io.yawp.utils.Environment;
+import io.yawp.commons.http.ErrorResponse;
+import io.yawp.commons.utils.Environment;
 
 import java.io.IOException;
 

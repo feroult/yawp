@@ -1,8 +1,8 @@
 package io.yawp.servlet.rest;
 
+import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.servlet.HttpException;
-import io.yawp.utils.HttpVerb;
 
 public enum RestActionType {
 

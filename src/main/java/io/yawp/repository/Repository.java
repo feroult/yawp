@@ -1,10 +1,10 @@
 package io.yawp.repository;
 
+import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.query.DatastoreQuery;
-import io.yawp.utils.EntityUtils;
 
 import java.lang.reflect.Method;
 import java.util.Map;

@@ -1,16 +1,16 @@
 package io.yawp.repository;
 
+import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.http.annotation.GET;
+import io.yawp.commons.http.annotation.PUT;
+import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.actions.ActionKey;
-import io.yawp.repository.actions.annotations.GET;
-import io.yawp.repository.actions.annotations.PUT;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.shields.Shield;
 import io.yawp.repository.transformers.Transformer;
-import io.yawp.utils.EntityUtils;
-import io.yawp.utils.HttpVerb;
-import io.yawp.utils.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

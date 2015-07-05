@@ -1,8 +1,8 @@
 package io.yawp.repository.actions;
 
+import io.yawp.commons.http.annotation.GET;
+import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.actions.annotations.GET;
-import io.yawp.repository.actions.annotations.PUT;
 import io.yawp.repository.models.parents.Parent;
 
 import java.util.List;

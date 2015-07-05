@@ -1,5 +1,8 @@
 package io.yawp.servlet.rest;
 
+import io.yawp.commons.http.HttpResponse;
+import io.yawp.commons.http.JsonResponse;
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
@@ -7,12 +10,9 @@ import io.yawp.repository.Repository;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.DatastoreQuery;
 import io.yawp.repository.query.NoResultException;
-import io.yawp.repository.response.HttpResponse;
-import io.yawp.repository.response.JsonResponse;
 import io.yawp.repository.shields.Shield;
 import io.yawp.repository.transformers.RepositoryTransformers;
 import io.yawp.servlet.HttpException;
-import io.yawp.utils.JsonUtils;
 
 import java.util.List;
 import java.util.Map;

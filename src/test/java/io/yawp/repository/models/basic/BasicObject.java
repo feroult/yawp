@@ -1,13 +1,13 @@
 package io.yawp.repository.models.basic;
 
 import static org.junit.Assert.assertEquals;
+import io.yawp.commons.utils.DateUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
 import io.yawp.repository.annotations.Text;
-import io.yawp.utils.DateUtils;
 
 import java.util.Date;
 import java.util.List;

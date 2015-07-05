@@ -1,4 +1,4 @@
-package io.yawp.utils;
+package io.yawp.commons.utils;
 
 /*
  * Copyright (C) 2008 Google Inc.

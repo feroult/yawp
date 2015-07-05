@@ -1,8 +1,8 @@
 package io.yawp.repository.shields;
 
-import io.yawp.repository.actions.annotations.PUT;
+import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.models.basic.ShieldedObject;
-import io.yawp.utils.HttpVerb;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;

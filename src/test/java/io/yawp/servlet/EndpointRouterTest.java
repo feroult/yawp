@@ -3,11 +3,11 @@ package io.yawp.servlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.utils.EndpointTestCase;
-import io.yawp.utils.HttpVerb;
 
 import java.util.ArrayList;
 

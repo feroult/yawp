@@ -1,4 +1,4 @@
-package io.yawp.repository.response;
+package io.yawp.commons.http;
 
 @Deprecated
 public class ForbiddenResponse extends ErrorResponse {

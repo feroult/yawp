@@ -1,7 +1,7 @@
 package io.yawp.servlet.rest;
 
+import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.FutureObject;
-import io.yawp.utils.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.List;

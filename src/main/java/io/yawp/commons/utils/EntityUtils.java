@@ -1,5 +1,6 @@
-package io.yawp.utils;
+package io.yawp.commons.utils;
 
+import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.actions.Action;

@@ -1,4 +1,4 @@
-package io.yawp.utils;
+package io.yawp.commons.utils;
 
 import java.lang.reflect.InvocationTargetException;
 

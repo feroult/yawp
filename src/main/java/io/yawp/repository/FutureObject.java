@@ -1,7 +1,7 @@
 package io.yawp.repository;
 
+import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.hooks.RepositoryHooks;
-import io.yawp.utils.EntityUtils;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;

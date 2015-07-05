@@ -1,8 +1,8 @@
 package io.yawp.repository.query;
 
+import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
-import io.yawp.utils.EntityUtils;
 
 import java.util.Arrays;
 import java.util.Collection;

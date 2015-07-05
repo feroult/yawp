@@ -1,6 +1,6 @@
 package io.yawp.repository.actions;
 
-import io.yawp.utils.HttpVerb;
+import io.yawp.commons.http.HttpVerb;
 
 public class ActionKey {
 

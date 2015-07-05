@@ -1,7 +1,7 @@
 package io.yawp.repository.actions;
 
+import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.actions.annotations.PUT;
 import io.yawp.repository.models.basic.ShieldedObject;
 
 public class ShieldedObjectAction extends Action<ShieldedObject> {

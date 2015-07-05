@@ -1,6 +1,6 @@
 package io.yawp.repository.tools;
 
-import io.yawp.utils.Environment;
+import io.yawp.commons.utils.Environment;
 
 import java.io.IOException;
 import java.io.PrintWriter;

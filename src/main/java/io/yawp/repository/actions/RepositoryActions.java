@@ -1,8 +1,8 @@
 package io.yawp.repository.actions;
 
+import io.yawp.commons.utils.ThrownExceptionsUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
-import io.yawp.utils.ThrownExceptionsUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -182,7 +182,6 @@ public abstract class RestAction {
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	public void parseJson() {

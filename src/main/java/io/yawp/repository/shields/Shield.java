@@ -6,6 +6,7 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.servlet.HttpException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -136,9 +137,28 @@ public class Shield<T> extends Feature {
 
 	private void annotadedCustoms() {
 		Method[] methods = getClass().getDeclaredMethods();
-		for (int i = 0; i < methods.length; i++) {
+		for (Method method : methods) {
+			if (!methodIsForAction(method)) {
+				continue;
+			}
+			protectCustomAction(method);
 		}
+	}
 
+	private void protectCustomAction(Method method) {
+		try {
+			method.invoke(this);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private boolean methodIsForAction(Method method) {
+		return actionKey.getVerb().hasAnnotation(method) && sameActionName(method);
+	}
+
+	private boolean sameActionName(Method method) {
+		return actionKey.getVerb().getAnnotationValue(method).equals(actionKey.getActionName());
 	}
 
 	// TODO

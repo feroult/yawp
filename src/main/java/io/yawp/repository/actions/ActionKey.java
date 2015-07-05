@@ -16,12 +16,16 @@ public class ActionKey {
 		this.overCollection = overCollection;
 	}
 
-	public boolean isOverCollection() {
-		return this.overCollection;
-	}
-
 	public String getActionName() {
 		return actionName;
+	}
+
+	public HttpVerb getVerb() {
+		return verb;
+	}
+
+	public boolean isOverCollection() {
+		return this.overCollection;
 	}
 
 	@Override

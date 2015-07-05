@@ -1,6 +1,5 @@
 package io.yawp.repository.shields;
 
-import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.models.basic.ShieldedObject;
 
@@ -87,9 +86,5 @@ public class ObjectShield extends Shield<ShieldedObject> {
 			return false;
 		}
 		return object.getStringValue().equals("valid object");
-	}
-
-	private boolean isSomethingAction() {
-		return isAction(HttpVerb.PUT, "something");
 	}
 }

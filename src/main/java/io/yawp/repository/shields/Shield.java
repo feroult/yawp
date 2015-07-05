@@ -82,6 +82,10 @@ public class Shield<T> extends Feature {
 		throwIfNotAllowed();
 	}
 
+	protected void allow() {
+		allow(true);
+	}
+
 	protected final Shield<T> allow(boolean condition) {
 		this.allow = this.allow || condition;
 		return this;
@@ -145,6 +149,10 @@ public class Shield<T> extends Feature {
 		}
 	}
 
+	private boolean methodIsForAction(Method method) {
+		return actionKey.getVerb().hasAnnotation(method) && sameActionName(method);
+	}
+
 	private void protectCustomAction(Method method) {
 		try {
 			method.invoke(this);
@@ -153,20 +161,11 @@ public class Shield<T> extends Feature {
 		}
 	}
 
-	private boolean methodIsForAction(Method method) {
-		return actionKey.getVerb().hasAnnotation(method) && sameActionName(method);
-	}
-
 	private boolean sameActionName(Method method) {
 		return actionKey.getVerb().getAnnotationValue(method).equals(actionKey.getActionName());
 	}
 
 	// TODO
-	protected Shield<T> allow() {
-		// TODO Auto-generated method stub
-		return this;
-	}
-
 	public void where(String string, String string2, int i) {
 		// TODO Auto-generated method stub
 

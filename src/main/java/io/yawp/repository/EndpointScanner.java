@@ -158,14 +158,11 @@ public final class EndpointScanner {
 	private void addAction(Class<?> objectClazz, Method method) {
 		List<ActionKey> actionKeys = new ArrayList<>(2);
 
-		GET get = method.getAnnotation(GET.class);
-		if (get != null) {
-			actionKeys.add(new ActionKey(HttpVerb.GET, get.value(), overCollection(objectClazz, method)));
-		}
-
-		PUT put = method.getAnnotation(PUT.class);
-		if (put != null) {
-			actionKeys.add(new ActionKey(HttpVerb.PUT, put.value(), overCollection(objectClazz, method)));
+		for (HttpVerb verb : HttpVerb.values()) {
+			if (verb.hasAnnotation(method)) {
+				String value = verb.getAnnotationValue(method);
+				actionKeys.add(new ActionKey(verb, value, overCollection(objectClazz, method)));
+			}
 		}
 
 		if (actionKeys.isEmpty()) {

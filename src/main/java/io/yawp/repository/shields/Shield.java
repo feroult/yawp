@@ -6,6 +6,7 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.servlet.HttpException;
 import io.yawp.utils.HttpVerb;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 public class Shield<T> extends Feature {
@@ -22,25 +23,25 @@ public class Shield<T> extends Feature {
 
 	private ActionKey actionKey;
 
-	protected void always() {
+	public void always() {
 	}
 
-	protected void index() {
+	public void index() {
 	}
 
-	protected void show() {
+	public void show() {
 	}
 
-	protected void create() {
+	public void create() {
 	}
 
-	protected void update() {
+	public void update() {
 	}
 
-	protected void destroy() {
+	public void destroy() {
 	}
 
-	protected void custom() {
+	public void custom() {
 	}
 
 	public final void protectIndex() {
@@ -76,6 +77,7 @@ public class Shield<T> extends Feature {
 	public final void protectCustom() {
 		always();
 		custom();
+		annotadedCustoms();
 		throwIfNotAllowed();
 	}
 
@@ -130,6 +132,13 @@ public class Shield<T> extends Feature {
 			return false;
 		}
 		return actionKey.equals(new ActionKey(verb, actionName, overCollection));
+	}
+
+	private void annotadedCustoms() {
+		Method[] methods = getClass().getDeclaredMethods();
+		for (int i = 0; i < methods.length; i++) {
+		}
+
 	}
 
 	// TODO

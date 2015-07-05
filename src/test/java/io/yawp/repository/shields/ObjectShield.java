@@ -1,5 +1,6 @@
 package io.yawp.repository.shields;
 
+import io.yawp.repository.actions.annotations.PUT;
 import io.yawp.repository.models.basic.ShieldedObject;
 import io.yawp.utils.HttpVerb;
 
@@ -9,36 +10,41 @@ import com.google.appengine.api.users.UserServiceFactory;
 public class ObjectShield extends Shield<ShieldedObject> {
 
 	@Override
-	protected void always() {
+	public void always() {
 		allow(isJim());
 	}
 
 	@Override
-	protected void show() {
+	public void show() {
 		allow(isJane());
 		allow(isId100());
 	}
 
 	@Override
-	protected void create() {
+	public void create() {
 		allow(isRequestWithValidObject());
 	}
 
 	@Override
-	protected void update() {
+	public void update() {
 		allow(isJane());
 		allow(isId100());
 		allow(isRequestWithValidObject());
 	}
 
 	@Override
-	protected void destroy() {
+	public void destroy() {
 		allow(isId100());
 	}
 
 	@Override
-	protected void custom() {
-		allow(isJane() && isSomethingAction());
+	public void custom() {
+		allow(isJane());
+	}
+
+	@PUT("anotherthing")
+	public void anotherthing() {
+		allow();
 	}
 
 	private boolean isJane() {

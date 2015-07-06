@@ -186,13 +186,9 @@ public class EndpointRouter {
 		getRestActionType().validateRetrictions(endpointAnnotation);
 	}
 
-	private RestAction getRestAction(boolean enableHooks, String requestJson, Map<String, String> params) {
+	private RestAction createRestAction(boolean enableHooks, String requestJson, Map<String, String> params) {
 		try {
 			Class<? extends RestAction> restActionClazz = getRestActionType().getRestActionClazz();
-
-			if (restActionClazz == null) {
-				return null;
-			}
 
 			RestAction action = restActionClazz.newInstance();
 
@@ -216,7 +212,7 @@ public class EndpointRouter {
 	}
 
 	public HttpResponse executeRestAction(boolean enableHooks, String requestJson, Map<String, String> params) {
-		RestAction restAction = getRestAction(enableHooks, requestJson, params);
+		RestAction restAction = createRestAction(enableHooks, requestJson, params);
 		return restAction.execute();
 	}
 

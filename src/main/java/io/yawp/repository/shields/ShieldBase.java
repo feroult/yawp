@@ -46,6 +46,14 @@ public abstract class ShieldBase<T> extends Feature {
 		return this;
 	}
 
+	protected boolean requestHasAnyObject() {
+		return object != null || (objects != null && objects.size() > 0);
+	}
+
+	protected boolean requestHasObjectArray() {
+		return objects != null;
+	}
+
 	public final void protectIndex() {
 		always();
 		index(parentId);
@@ -108,15 +116,7 @@ public abstract class ShieldBase<T> extends Feature {
 		this.actionKey = actionKey;
 	}
 
-	protected boolean requestHasObject() {
-		return object != null || (objects != null && objects.size() > 0);
-	}
-
-	protected boolean isArray() {
-		return objects != null;
-	}
-
-	protected void annotadedCustoms() {
+	private void annotadedCustoms() {
 		Method[] methods = getClass().getDeclaredMethods();
 		for (Method method : methods) {
 			if (!methodIsForAction(method)) {

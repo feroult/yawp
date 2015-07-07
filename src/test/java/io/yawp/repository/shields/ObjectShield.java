@@ -67,11 +67,11 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	}
 
 	private boolean isRequestWithValidObject(ShieldedObject object, List<ShieldedObject> objects) {
-		if (!requestHasObject()) {
+		if (!requestHasAnyObject()) {
 			return false;
 		}
 
-		if (!isArray()) {
+		if (!requestHasObjectArray()) {
 			return isValidObject(object);
 		}
 

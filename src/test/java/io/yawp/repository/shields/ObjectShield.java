@@ -1,6 +1,9 @@
 package io.yawp.repository.shields;
 
+import java.util.List;
+
 import io.yawp.commons.http.annotation.PUT;
+import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.ShieldedObject;
 
 import com.google.appengine.api.users.User;
@@ -14,26 +17,26 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	}
 
 	@Override
-	public void show() {
+	public void show(IdRef<ShieldedObject> id) {
 		allow(isJane());
-		allow(isId100());
+		allow(isId100(id));
 	}
 
 	@Override
-	public void create() {
-		allow(isRequestWithValidObject());
+	public void create(ShieldedObject object, List<ShieldedObject> objects) {
+		allow(isRequestWithValidObject(object, objects));
 	}
 
 	@Override
-	public void update() {
+	public void update(IdRef<ShieldedObject> id, ShieldedObject object) {
 		allow(isJane());
-		allow(isId100());
-		allow(isRequestWithValidObject());
+		allow(isId100(id));
+		allow(isRequestWithValidObject(object, null));
 	}
 
 	@Override
-	public void destroy() {
-		allow(isId100());
+	public void destroy(IdRef<ShieldedObject> id) {
+		allow(isId100(id));
 	}
 
 	@Override
@@ -59,11 +62,11 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		return currentUser != null && currentUser.getEmail().equals(email);
 	}
 
-	private boolean isId100() {
+	private boolean isId100(IdRef<ShieldedObject> id) {
 		return id.asLong().equals(100l);
 	}
 
-	private boolean isRequestWithValidObject() {
+	private boolean isRequestWithValidObject(ShieldedObject object, List<ShieldedObject> objects) {
 		if (!requestHasObject()) {
 			return false;
 		}

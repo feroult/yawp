@@ -92,4 +92,8 @@ public class ShieldTest extends ServletTestCase {
 		yawp.save(object);
 	}
 
+	// TODO test action with id
+
+	// TODO test parents/childs
+
 }

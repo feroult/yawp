@@ -1,6 +1,7 @@
 package io.yawp.servlet.rest;
 
 import io.yawp.commons.http.HttpResponse;
+import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.JsonResponse;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.EndpointFeatures;
@@ -208,4 +209,32 @@ public abstract class RestAction {
 		return object;
 	}
 
+	public static Class<? extends RestAction> getRestActionClazz(HttpVerb verb, boolean overCollection, boolean isCustomAction) {
+		if (isCustomAction) {
+			return CustomRestAction.class;
+		}
+
+		switch (verb) {
+		case GET:
+			return overCollection ? IndexRestAction.class : ShowRestAction.class;
+		case POST:
+			return CreateRestAction.class;
+		case PUT:
+		case PATCH:
+			assertNotOverCollection(overCollection);
+			return UpdateRestAction.class;
+		case DELETE:
+			assertNotOverCollection(overCollection);
+			return DestroyRestAction.class;
+		case OPTIONS:
+			return RoutesRestAction.class;
+		}
+		throw new HttpException(501, "Unsuported http verb " + verb);
+	}
+
+	private static void assertNotOverCollection(boolean overCollection) {
+		if (overCollection) {
+			throw new HttpException(501);
+		}
+	}
 }

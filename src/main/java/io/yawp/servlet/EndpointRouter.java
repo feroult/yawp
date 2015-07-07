@@ -9,7 +9,6 @@ import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.servlet.rest.RestAction;
-import io.yawp.servlet.rest.RestActionType;
 
 import java.util.Map;
 
@@ -37,7 +36,6 @@ public class EndpointRouter {
 		this.r = r;
 		this.features = r.getFeatures();
 		parseUri();
-		validateRestrictions();
 	}
 
 	public static EndpointRouter parse(Repository r, HttpVerb verb, String uri) {
@@ -174,21 +172,9 @@ public class EndpointRouter {
 		return idRef;
 	}
 
-	private RestActionType getRestActionType() {
-		if (isCustomAction()) {
-			return RestActionType.CUSTOM;
-		}
-		return RestActionType.defaultRestActionType(verb, isOverCollection());
-	}
-
-	private void validateRestrictions() {
-		Endpoint endpointAnnotation = getEndpointFeatures().getEndpointAnnotation();
-		getRestActionType().validateRetrictions(endpointAnnotation);
-	}
-
 	private RestAction createRestAction(boolean enableHooks, String requestJson, Map<String, String> params) {
 		try {
-			Class<? extends RestAction> restActionClazz = getRestActionType().getRestActionClazz();
+			Class<? extends RestAction> restActionClazz = RestAction.getRestActionClazz(verb, isOverCollection(), isCustomAction());
 
 			RestAction action = restActionClazz.newInstance();
 

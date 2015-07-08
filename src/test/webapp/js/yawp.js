@@ -199,9 +199,15 @@
 			return this;
 		}
 
+		function async() {
+			ajaxOptions.async = false;
+			return this;
+		}
+
 		return $.extend({
 			from : from,
 			transform : transform,
+			async : async
 		}, query(options), repository(options), actions(options));
 	}
 

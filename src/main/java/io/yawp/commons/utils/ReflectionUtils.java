@@ -64,6 +64,7 @@ public final class ReflectionUtils {
 		return parameters[0];
 	}
 
+
 	public static Class<?>[] getGenericParameters(Class<?> clazz) {
 		Type genericFieldType = clazz.getGenericSuperclass();
 		if (genericFieldType instanceof ParameterizedType) {

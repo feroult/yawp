@@ -154,7 +154,7 @@ public final class EndpointScanner {
 	}
 
 	private void addAction(Class<?> objectClazz, Method method) {
-		List<ActionKey> actionKeys = new ArrayList<>(2);
+		List<ActionKey> actionKeys = new ArrayList<>();
 
 		for (HttpVerb verb : HttpVerb.values()) {
 			if (verb.hasAnnotation(method)) {

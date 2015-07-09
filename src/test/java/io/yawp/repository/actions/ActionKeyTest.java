@@ -38,7 +38,8 @@ public class ActionKeyTest {
 		}
 
 		@GET("root-collection")
-		public void rootCollection() {
+		public String rootCollection() {
+			return "root-collection-return";
 		}
 
 		@PUT("root-collection-params")
@@ -95,16 +96,24 @@ public class ActionKeyTest {
 	}
 
 	@Test
-	public void testParentRootCollection() throws InvalidActionMethodException {
+	public void testParseMethodParentRootCollection() throws InvalidActionMethodException {
 		List<ActionKey> keys = ActionKey.parseMethod(getMethod("parentRootCollection", IdRef.class));
 		assertActionKey(HttpVerb.PUT, "parent-root-collection", true, keys.get(0));
 	}
 
 	@Test
-	public void testParentRootCollectionParams() throws InvalidActionMethodException {
+	public void testParseMethodParentRootCollectionParams() throws InvalidActionMethodException {
 		List<ActionKey> keys = ActionKey.parseMethod(getMethod("parentRootCollectionParams", IdRef.class, Map.class));
 		assertActionKey(HttpVerb.PUT, "parent-root-collection-params", true, keys.get(0));
 	}
+
+//	@Test
+//	public void testCallActionMethod() throws InvalidActionMethodException {
+//		TestAction testAction = new TestAction();
+//
+//		ActionKey actionKey = ActionKey.parseMethod(getMethod("rootCollection")).get(0);
+//		assertEquals("root-collection-return", actionKey.callActionMethod(testAction));
+//	}
 
 	private void assertActionKey(HttpVerb verb, String actionName, boolean overCollection, ActionKey actual) {
 		ActionKey expected = new ActionKey(verb, actionName, overCollection);

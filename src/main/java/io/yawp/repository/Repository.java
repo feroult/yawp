@@ -118,7 +118,7 @@ public class Repository {
 		namespace.set(clazz);
 		try {
 			Method actionMethod = repositoryFeatures.get(clazz).getAction(actionKey);
-			return RepositoryActions.execute(this, id, actionMethod, params);
+			return RepositoryActions.execute(this, actionMethod, id, params);
 		} finally {
 			namespace.reset();
 		}

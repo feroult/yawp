@@ -81,6 +81,11 @@ public class ActionKey {
 		return "<" + this.verb + ">" + this.actionName + (this.overCollection ? "[]" : "");
 	}
 
+	public Object callActionMethod(Object testAction) {
+
+		return null;
+	}
+
 	public static List<ActionKey> parseMethod(Method method) throws InvalidActionMethodException {
 		List<ActionKey> actionKeys = new ArrayList<>();
 
@@ -188,4 +193,18 @@ public class ActionKey {
 		return !pType.getActualTypeArguments()[0].equals(objectClazz);
 	}
 
+	public static Object[] getActionMethodParameters(Method method, IdRef<?> id, Map<String, String> params) {
+		if (method.getParameterTypes().length == 0) {
+			return new Object[] {};
+		}
+		if (method.getParameterTypes().length == 2) {
+			return new Object[] { id, params };
+		}
+
+		if (IdRef.class.equals(method.getParameterTypes()[0])) {
+			return new Object[] { id };
+		}
+
+		return new Object[] { params };
+	}
 }

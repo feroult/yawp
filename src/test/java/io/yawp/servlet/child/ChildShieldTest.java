@@ -25,6 +25,20 @@ public class ChildShieldTest extends ServletTestCase {
 		assertGetWithStatus("/parents/1/shielded_children/100", 200);
 	}
 
+	@Test
+	public void testActions() {
+		Parent parent = createParent(1l);
+		createShieldedChild(1l, parent);
+		createShieldedChild(100l, parent);
+		createParent(100l);
+
+		assertPutWithStatus("/parents/1/shielded_children/collection", 404);
+		assertPutWithStatus("/parents/100/shielded_children/collection", 200);
+
+		assertPutWithStatus("/parents/1/shielded_children/1/single", 404);
+		assertPutWithStatus("/parents/1/shielded_children/100/single", 200);
+	}
+
 	private void createShieldedChild(long id, Parent parent) {
 		ShieldedChild child = new ShieldedChild();
 		child.setId(parent.getId().createChildId(ShieldedChild.class, id));

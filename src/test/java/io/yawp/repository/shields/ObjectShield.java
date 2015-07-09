@@ -1,10 +1,11 @@
 package io.yawp.repository.shields;
 
-import java.util.List;
-
+import io.yawp.commons.http.annotation.GET;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.ShieldedObject;
+
+import java.util.List;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -46,6 +47,13 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	@PUT("anotherthing")
 	public void anotherthing(IdRef<ShieldedObject> id) {
+		if (isId100(id)) {
+			allow();
+		}
+	}
+
+	@GET("something-over-collection")
+	public void somethingOverCollection() {
 		allow();
 	}
 

@@ -1,5 +1,6 @@
 package io.yawp.repository.actions;
 
+import io.yawp.commons.http.annotation.GET;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.ShieldedObject;
@@ -14,6 +15,11 @@ public class ShieldedObjectAction extends Action<ShieldedObject> {
 	@PUT("anotherthing")
 	public String anotherthing(IdRef<ShieldedObject> id) {
 		return "y";
+	}
+
+	@GET("something-over-collection")
+	public String overSomethingCollection() {
+		return "z";
 	}
 
 }

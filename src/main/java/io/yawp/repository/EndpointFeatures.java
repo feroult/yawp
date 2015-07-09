@@ -4,6 +4,7 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.shields.Shield;
+import io.yawp.repository.shields.ShieldInfo;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -24,6 +25,8 @@ public class EndpointFeatures<T> {
 	private List<Class<? extends Hook<? super T>>> hooks;
 
 	private Class<? extends Shield<? super T>> shield;
+
+	private ShieldInfo<? super T> shieldInfo;
 
 	public EndpointFeatures(Class<T> clazz) {
 		this.clazz = clazz;
@@ -70,6 +73,10 @@ public class EndpointFeatures<T> {
 		this.shield = shield;
 	}
 
+	public void setShieldInfo(ShieldInfo<? super T> shieldInfo) {
+		this.shieldInfo = shieldInfo;
+	}
+
 	public List<Class<? extends Hook<? super T>>> getHooks() {
 		return hooks;
 	}
@@ -103,11 +110,11 @@ public class EndpointFeatures<T> {
 	}
 
 	public boolean hasShield() {
-		return shield != null;
+		return shieldInfo != null;
 	}
 
-	public Class<? extends Shield<? super T>> getShield() {
-		return shield;
+	public ShieldInfo<? super T> getShieldInfo() {
+		return shieldInfo;
 	}
 
 }

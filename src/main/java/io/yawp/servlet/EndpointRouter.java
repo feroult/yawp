@@ -7,7 +7,6 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
-import io.yawp.repository.annotations.Endpoint;
 import io.yawp.servlet.rest.RestAction;
 
 import java.util.Map;

@@ -8,6 +8,7 @@ import io.yawp.repository.actions.InvalidActionMethodException;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.shields.Shield;
+import io.yawp.repository.shields.ShieldInfo;
 import io.yawp.repository.transformers.Transformer;
 
 import java.lang.reflect.Method;
@@ -81,9 +82,17 @@ public final class EndpointScanner {
 
 	private <T, V extends Shield<T>> void setShield(Class<V> shieldClazz) {
 		Class<T> objectClazz = EntityUtils.getShieldObject(shieldClazz);
+
+		ShieldInfo<T> shieldInfo = new ShieldInfo<T>(shieldClazz);
+
 		for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, shieldClazz.getSimpleName())) {
 			endpoint.setShield(shieldClazz);
+			endpoint.setShieldInfo(shieldInfo);
 		}
+	}
+
+	private <T, V extends Shield<T>> ShieldInfo<T> loadShieldInfo(Class<T> objectClazz, Class<V> shieldClazz) {
+		return new ShieldInfo<T>(shieldClazz);
 	}
 
 	private void scanHooks() {

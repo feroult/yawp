@@ -45,7 +45,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	}
 
 	@PUT("anotherthing")
-	public void anotherthing() {
+	public void anotherthing(IdRef<ShieldedObject> id) {
 		allow();
 	}
 

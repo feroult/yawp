@@ -12,6 +12,7 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.DatastoreQuery;
 import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.shields.Shield;
+import io.yawp.repository.shields.ShieldInfo;
 import io.yawp.repository.transformers.RepositoryTransformers;
 import io.yawp.servlet.HttpException;
 
@@ -174,11 +175,15 @@ public abstract class RestAction {
 
 	private Shield<?> createShield(EndpointFeatures<?> endpointFeatures) {
 		try {
-			Shield<?> shield = endpointFeatures.getShield().newInstance();
+			ShieldInfo<?> shieldInfo = endpointFeatures.getShieldInfo();
+
+			Shield<?> shield = shieldInfo.getShieldClazz().newInstance();
+			shield.setRepository(r);
 			shield.setId(id);
 			shield.setObject(object);
 			shield.setObjects(objects);
 			shield.setActionKey(customActionKey);
+			shield.setActionMethods(shieldInfo.getActionMethods());
 			return shield;
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);

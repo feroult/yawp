@@ -8,12 +8,11 @@ import io.yawp.servlet.HttpException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 public abstract class ShieldBase<T> extends Feature {
 
 	private boolean allow = false;
-
-	private IdRef<?> parentId;
 
 	private IdRef<T> id;
 
@@ -21,7 +20,11 @@ public abstract class ShieldBase<T> extends Feature {
 
 	private List<T> objects;
 
+	private Map<String, String> params;
+
 	private ActionKey actionKey;
+
+	private Map<ActionKey, Method> actionMethods;
 
 	public abstract void always();
 
@@ -46,17 +49,17 @@ public abstract class ShieldBase<T> extends Feature {
 		return this;
 	}
 
-	protected boolean requestHasAnyObject() {
+	protected final boolean requestHasAnyObject() {
 		return object != null || (objects != null && objects.size() > 0);
 	}
 
-	protected boolean requestHasObjectArray() {
+	protected final boolean requestHasObjectArray() {
 		return objects != null;
 	}
 
 	public final void protectIndex() {
 		always();
-		index(parentId);
+		index(id);
 		throwIfNotAllowed();
 	}
 
@@ -98,47 +101,47 @@ public abstract class ShieldBase<T> extends Feature {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setId(IdRef<?> id) {
+	public final void setId(IdRef<?> id) {
 		this.id = (IdRef<T>) id;
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setObject(Object object) {
+	public final void setObject(Object object) {
 		this.object = (T) object;
 	}
 
 	@SuppressWarnings("unchecked")
-	public void setObjects(List<?> objects) {
+	public final void setObjects(List<?> objects) {
 		this.objects = (List<T>) objects;
 	}
 
-	public void setActionKey(ActionKey actionKey) {
+	public final void setParams(Map<String, String> params) {
+		this.params = params;
+	}
+
+	public final void setActionKey(ActionKey actionKey) {
 		this.actionKey = actionKey;
 	}
 
+	public final void setActionMethods(Map<ActionKey, Method> actionMethods) {
+		this.actionMethods = actionMethods;
+	}
+
 	private void annotadedCustoms() {
-		Method[] methods = getClass().getDeclaredMethods();
-		for (Method method : methods) {
-			if (!methodIsForAction(method)) {
-				continue;
-			}
-			protectCustomAction(method);
+		if (!actionMethods.containsKey(actionKey)) {
+			return;
 		}
+
+		Method method = actionMethods.get(actionKey);
+		invokeCustomActionShield(method);
 	}
 
-	private boolean methodIsForAction(Method method) {
-		return actionKey.getVerb().hasAnnotation(method) && sameActionName(method);
-	}
-
-	private void protectCustomAction(Method method) {
+	private void invokeCustomActionShield(Method method) {
 		try {
-			method.invoke(this);
+			Object[] arguments = ActionKey.getActionMethodParameters(method, id, params);
+			method.invoke(this, arguments);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	private boolean sameActionName(Method method) {
-		return actionKey.getVerb().getAnnotationValue(method).equals(actionKey.getActionName());
 	}
 }

@@ -107,14 +107,6 @@ public class ActionKeyTest {
 		assertActionKey(HttpVerb.PUT, "parent-root-collection-params", true, keys.get(0));
 	}
 
-//	@Test
-//	public void testCallActionMethod() throws InvalidActionMethodException {
-//		TestAction testAction = new TestAction();
-//
-//		ActionKey actionKey = ActionKey.parseMethod(getMethod("rootCollection")).get(0);
-//		assertEquals("root-collection-return", actionKey.callActionMethod(testAction));
-//	}
-
 	private void assertActionKey(HttpVerb verb, String actionName, boolean overCollection, ActionKey actual) {
 		ActionKey expected = new ActionKey(verb, actionName, overCollection);
 		assertEquals(expected, actual);

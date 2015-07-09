@@ -81,11 +81,6 @@ public class ActionKey {
 		return "<" + this.verb + ">" + this.actionName + (this.overCollection ? "[]" : "");
 	}
 
-	public Object callActionMethod(Object testAction) {
-
-		return null;
-	}
-
 	public static List<ActionKey> parseMethod(Method method) throws InvalidActionMethodException {
 		List<ActionKey> actionKeys = new ArrayList<>();
 

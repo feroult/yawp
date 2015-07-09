@@ -52,8 +52,8 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		allow(params.containsKey("x") && params.get("x").equals("ok"));
 	}
 
-	@GET("something-over-collection")
-	public void somethingOverCollection() {
+	@GET("collection")
+	public void collection() {
 		allow();
 	}
 

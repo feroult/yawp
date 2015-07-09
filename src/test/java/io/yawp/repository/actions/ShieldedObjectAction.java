@@ -8,18 +8,15 @@ import io.yawp.repository.models.basic.ShieldedObject;
 public class ShieldedObjectAction extends Action<ShieldedObject> {
 
 	@PUT("something")
-	public String something(IdRef<ShieldedObject> id) {
-		return "x";
+	public void something(IdRef<ShieldedObject> id) {
 	}
 
 	@PUT("anotherthing")
-	public String anotherthing(IdRef<ShieldedObject> id) {
-		return "y";
+	public void anotherthing(IdRef<ShieldedObject> id) {
 	}
 
-	@GET("something-over-collection")
-	public String overSomethingCollection() {
-		return "z";
+	@GET("collection")
+	public void collection() {
 	}
 
 }

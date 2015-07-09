@@ -7,15 +7,9 @@ import io.yawp.utils.ServletTestCase;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class ShieldTest extends ServletTestCase {
-
-	@Before
-	public void before() {
-		createObject(1l);
-	}
 
 	@Test
 	public void testNothingIsAllowed() {
@@ -73,7 +67,7 @@ public class ShieldTest extends ServletTestCase {
 		assertPutWithStatus("/shielded_objects/1/something", 404);
 		assertPutWithStatus("/shielded_objects/1/anotherthing", 404);
 		assertPutWithStatus("/shielded_objects/100/anotherthing", 200);
-		assertGetWithStatus("/shielded_objects/something-over-collection", 200);
+		assertGetWithStatus("/shielded_objects/collection", 200);
 	}
 
 	@Test
@@ -106,7 +100,5 @@ public class ShieldTest extends ServletTestCase {
 		object.setStringValue(stringValue);
 		yawp.save(object);
 	}
-
-	// TODO test parents/childs
 
 }

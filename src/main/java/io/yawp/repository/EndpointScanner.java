@@ -5,6 +5,7 @@ import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.actions.InvalidActionMethodException;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.shields.Shield;
@@ -154,14 +155,22 @@ public final class EndpointScanner {
 	}
 
 	private void addAction(Class<?> objectClazz, Method method) {
-		List<ActionKey> actionKeys = new ArrayList<>();
+		// List<ActionKey> actionKeys = new ArrayList<>();
 
-		for (HttpVerb verb : HttpVerb.values()) {
-			if (verb.hasAnnotation(method)) {
-				String value = verb.getAnnotationValue(method);
-				actionKeys.add(new ActionKey(verb, value, overCollection(objectClazz, method)));
-			}
+		List<ActionKey> actionKeys = null;
+
+		try {
+			actionKeys = ActionKey.parseMethod(method);
+		} catch (InvalidActionMethodException e) {
+			throw new RuntimeException("Invalid Action: " + objectClazz.getName() + "." + method.getName(), e);
 		}
+
+//		for (HttpVerb verb : HttpVerb.values()) {
+//			if (verb.hasAnnotation(method)) {
+//				String value = verb.getAnnotationValue(method);
+//				actionKeys.add(new ActionKey(verb, value, overCollection(objectClazz, method)));
+//			}
+//		}
 
 		if (actionKeys.isEmpty()) {
 			return;

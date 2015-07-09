@@ -1,6 +1,7 @@
 package io.yawp.repository.actions;
 
 import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
 
@@ -100,16 +101,44 @@ public class ActionKey {
 	}
 
 	private static boolean isValidActionMethod(Method method) {
+
+		if (rootCollection(method)) {
+			return true;
+		}
+
+		if (singleObject(method)) {
+			return true;
+		}
+
+		if (parentCollection(method)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean parentCollection(Method method) {
 		Type[] genericTypes = method.getGenericParameterTypes();
 		Type[] types = method.getParameterTypes();
 
-		if (types.length == 0) {
+		Class<?> objectClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
+		Class<?> parentClazz = EntityUtils.getParentClass(objectClazz);
+
+		if (types.length == 1 && types[0].equals(IdRef.class) && getParameterType(genericTypes, 0).equals(parentClazz)) {
 			return true;
 		}
 
-		if (types.length == 1 && types[0].equals(Map.class)) {
+		if (types.length == 2 && types[0].equals(IdRef.class) && getParameterType(genericTypes, 0).equals(parentClazz)
+				&& types[1].equals(Map.class)) {
 			return true;
 		}
+
+		return false;
+	}
+
+	private static boolean singleObject(Method method) {
+		Type[] genericTypes = method.getGenericParameterTypes();
+		Type[] types = method.getParameterTypes();
 
 		Class<?> objectClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
 
@@ -119,6 +148,20 @@ public class ActionKey {
 
 		if (types.length == 2 && types[0].equals(IdRef.class) && getParameterType(genericTypes, 0).equals(objectClazz)
 				&& types[1].equals(Map.class)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean rootCollection(Method method) {
+		Type[] types = method.getParameterTypes();
+
+		if (types.length == 0) {
+			return true;
+		}
+
+		if (types.length == 1 && types[0].equals(Map.class)) {
 			return true;
 		}
 

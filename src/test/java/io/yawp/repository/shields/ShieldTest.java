@@ -4,6 +4,9 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.ShieldedObject;
 import io.yawp.utils.ServletTestCase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -73,6 +76,17 @@ public class ShieldTest extends ServletTestCase {
 		assertGetWithStatus("/shielded_objects/something-over-collection", 200);
 	}
 
+	@Test
+	public void testActionWithParams() {
+		Map<String, String> params = new HashMap<String, String>();
+
+		params.put("x", "xpto");
+		assertPutWithStatus("/shielded_objects/1/anotherthing", params, 404);
+
+		params.put("x", "ok");
+		assertPutWithStatus("/shielded_objects/1/anotherthing", params, 200);
+	}
+
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);
 		assertGetWithStatus("/shielded_objects/1", status);
@@ -92,8 +106,6 @@ public class ShieldTest extends ServletTestCase {
 		object.setStringValue(stringValue);
 		yawp.save(object);
 	}
-
-	// TODO test action with id
 
 	// TODO test parents/childs
 

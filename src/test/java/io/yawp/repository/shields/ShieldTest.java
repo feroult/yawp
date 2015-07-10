@@ -109,6 +109,14 @@ public class ShieldTest extends ServletTestCase {
 		assertGetWithStatus("/shielded_objects/2", 404);
 	}
 
+//	@Test
+//	public void testCreateWhere() {
+//		login("kurt", "rock.com");
+//
+//		assertPostWithStatus("/shielded_objects", "{stringValue: 'ok'}", 200);
+//		assertPostWithStatus("/shielded_objects", "{stringValue: 'xpto'}", 404);
+//	}
+
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);
 		assertGetWithStatus("/shielded_objects/1", status);

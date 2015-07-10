@@ -1,4 +1,4 @@
-package io.yawp.repository.query;
+package io.yawp.repository.query.condition;
 
 import static io.yawp.repository.query.condition.Condition.c;
 import static org.junit.Assert.assertFalse;

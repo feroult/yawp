@@ -32,6 +32,10 @@ public class IndexRestAction extends RestAction {
 			return query.transform(getTransformerName()).list();
 		}
 
+		if (hasShieldCondition()) {
+			query.and(shield.getCondition());
+		}
+
 		return query.list();
 	}
 

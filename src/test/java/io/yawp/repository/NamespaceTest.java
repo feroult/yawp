@@ -2,8 +2,8 @@ package io.yawp.repository;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.models.basic.BasicObject;
-import io.yawp.utils.EndpointTestCase;
 
 import org.junit.Before;
 import org.junit.Test;

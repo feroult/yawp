@@ -3,7 +3,7 @@ package io.yawp.repository.tools;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import io.yawp.utils.EndpointTestCase;
+import io.yawp.commons.utils.EndpointTestCase;
 
 import java.util.List;
 

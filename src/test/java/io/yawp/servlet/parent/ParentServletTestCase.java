@@ -1,7 +1,7 @@
 package io.yawp.servlet.parent;
 
+import io.yawp.commons.utils.ServletTestCase;
 import io.yawp.repository.models.parents.Parent;
-import io.yawp.utils.ServletTestCase;
 
 public class ParentServletTestCase extends ServletTestCase {
 

@@ -4,12 +4,12 @@ import static io.yawp.commons.http.HttpVerb.GET;
 import static io.yawp.commons.http.HttpVerb.PUT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Job;
 import io.yawp.repository.models.parents.Parent;
-import io.yawp.utils.EndpointTestCase;
 
 import java.util.Arrays;
 import java.util.Collections;

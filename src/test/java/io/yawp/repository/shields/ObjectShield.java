@@ -1,5 +1,6 @@
 package io.yawp.repository.shields;
 
+import static io.yawp.repository.query.Condition.c;
 import io.yawp.commons.http.annotation.GET;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
@@ -19,9 +20,15 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	}
 
 	@Override
+	public void index(IdRef<?> parentId) {
+		allow(isKurt()).where(c("stringValue", "=", "ok"));
+	}
+
+	@Override
 	public void show(IdRef<ShieldedObject> id) {
 		allow(isJane());
 		allow(isId100(id));
+		allow(isKurt()).where(c("stringValue", "=", "ok"));
 	}
 
 	@Override
@@ -63,6 +70,10 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	private boolean isJim() {
 		return is("jim@rock.com");
+	}
+
+	private boolean isKurt() {
+		return is("kurt@rock.com");
 	}
 
 	private boolean is(String email) {

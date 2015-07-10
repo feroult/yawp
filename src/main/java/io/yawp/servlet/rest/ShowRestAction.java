@@ -21,6 +21,10 @@ public class ShowRestAction extends RestAction {
 			return query.transform(getTransformerName()).fetch(id);
 		}
 
+		if (hasShieldCondition()) {
+			query.and(shield.getCondition());
+		}
+
 		return query.fetch(id);
 	}
 

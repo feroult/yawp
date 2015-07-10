@@ -81,6 +81,10 @@ public class DatastoreQuery<T> {
 		return this;
 	}
 
+	public DatastoreQuery<T> and(BaseCondition c) {
+		return where(c);
+	}
+
 	public DatastoreQuery<T> from(IdRef<?> parentId) {
 		if (parentId == null) {
 			parentKey = null;

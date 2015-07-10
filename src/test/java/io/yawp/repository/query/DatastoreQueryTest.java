@@ -5,9 +5,9 @@ import static io.yawp.repository.query.Condition.c;
 import static io.yawp.repository.query.Condition.or;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
-import io.yawp.utils.EndpointTestCase;
 
 import java.util.Arrays;
 import java.util.Collections;

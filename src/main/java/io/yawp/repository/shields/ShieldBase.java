@@ -3,6 +3,7 @@ package io.yawp.repository.shields;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.query.BaseCondition;
 import io.yawp.servlet.HttpException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -13,6 +14,10 @@ import java.util.Map;
 public abstract class ShieldBase<T> extends Feature {
 
 	private boolean allow = false;
+
+	private boolean lastAllow = false;
+
+	private BaseCondition condition = null;
 
 	private IdRef<T> id;
 
@@ -44,8 +49,17 @@ public abstract class ShieldBase<T> extends Feature {
 		return allow(true);
 	}
 
-	protected final ShieldBase<T> allow(boolean condition) {
-		this.allow = this.allow || condition;
+	protected final ShieldBase<T> allow(boolean allow) {
+		this.allow = this.allow || allow;
+		this.lastAllow = allow;
+		return this;
+	}
+
+	protected final ShieldBase<T> where(BaseCondition condition) {
+		if (!lastAllow) {
+			return this;
+		}
+		this.condition = condition;
 		return this;
 	}
 
@@ -113,6 +127,14 @@ public abstract class ShieldBase<T> extends Feature {
 	@SuppressWarnings("unchecked")
 	public final void setObjects(List<?> objects) {
 		this.objects = (List<T>) objects;
+	}
+
+	public BaseCondition getCondition() {
+		return condition;
+	}
+
+	public boolean hasCondition() {
+		return condition != null;
 	}
 
 	public final void setParams(Map<String, String> params) {

@@ -166,6 +166,10 @@ public abstract class RestAction {
 		return shield != null;
 	}
 
+	protected boolean hasShieldCondition() {
+		return hasShield() && shield.hasCondition();
+	}
+
 	public void defineShield() {
 		EndpointFeatures<?> endpointFeatures = r.getEndpointFeatures(endpointClazz);
 		if (endpointFeatures.hasShield()) {

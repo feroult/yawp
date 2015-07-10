@@ -1,9 +1,9 @@
 package io.yawp.repository;
 
 import static org.junit.Assert.assertEquals;
+import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.HookedObject;
-import io.yawp.utils.EndpointTestCase;
 
 import org.junit.Test;
 

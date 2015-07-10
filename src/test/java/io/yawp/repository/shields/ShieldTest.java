@@ -1,10 +1,12 @@
 package io.yawp.repository.shields;
 
+import static org.junit.Assert.assertEquals;
+import io.yawp.commons.utils.ServletTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.ShieldedObject;
-import io.yawp.utils.ServletTestCase;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -81,6 +83,32 @@ public class ShieldTest extends ServletTestCase {
 		assertPutWithStatus("/shielded_objects/1/anotherthing", params, 200);
 	}
 
+	@Test
+	public void testIndexWhere() {
+		login("kurt", "rock.com");
+
+		saveObject(1l, "ok");
+		saveObject(2l, "xpto");
+		saveObject(3l, "xpto");
+
+		String json = get("/shielded_objects");
+		List<ShieldedObject> objects = fromList(json, ShieldedObject.class);
+
+		assertEquals(1, objects.size());
+		assertEquals("ok", objects.get(0).getStringValue());
+	}
+
+	@Test
+	public void testShowWhere() {
+		login("kurt", "rock.com");
+
+		saveObject(1l, "ok");
+		saveObject(2l, "xpto");
+
+		assertGetWithStatus("/shielded_objects/1", 200);
+		assertGetWithStatus("/shielded_objects/2", 404);
+	}
+
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);
 		assertGetWithStatus("/shielded_objects/1", status);
@@ -91,10 +119,10 @@ public class ShieldTest extends ServletTestCase {
 	}
 
 	private void createObject(long id) {
-		createObject(id, null);
+		saveObject(id, null);
 	}
 
-	private void createObject(long id, String stringValue) {
+	private void saveObject(long id, String stringValue) {
 		ShieldedObject object = new ShieldedObject();
 		object.setId(IdRef.create(yawp, ShieldedObject.class, id));
 		object.setStringValue(stringValue);

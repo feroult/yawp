@@ -1,4 +1,4 @@
-package io.yawp.utils;
+package io.yawp.commons.utils;
 
 import static org.junit.Assert.assertEquals;
 import io.yawp.commons.utils.JsonUtils;

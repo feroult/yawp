@@ -1,10 +1,10 @@
 package io.yawp.repository.transformers;
 
 import static org.junit.Assert.assertEquals;
+import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Parent;
-import io.yawp.utils.EndpointTestCase;
 
 import java.util.List;
 import java.util.Map;

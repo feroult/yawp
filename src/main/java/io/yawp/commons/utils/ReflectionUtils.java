@@ -39,6 +39,20 @@ public final class ReflectionUtils {
 		return finalFields;
 	}
 
+	public static Object getFieldValue(Object object, String fieldName) {
+		try {
+			Class<?> clazz = object.getClass();
+			Field field = clazz.getDeclaredField(fieldName);
+			boolean accessible = field.isAccessible();
+			field.setAccessible(true);
+			Object value = field.get(object);
+			field.setAccessible(accessible);
+			return value;
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public static List<Field> getFieldsRecursively(Class<?> clazz) {
 		List<Field> fields = new ArrayList<>();
 		while (!isJavaClass(clazz)) {
@@ -64,7 +78,6 @@ public final class ReflectionUtils {
 		return parameters[0];
 	}
 
-
 	public static Class<?>[] getGenericParameters(Class<?> clazz) {
 		Type genericFieldType = clazz.getGenericSuperclass();
 		if (genericFieldType instanceof ParameterizedType) {
@@ -78,4 +91,5 @@ public final class ReflectionUtils {
 		}
 		return new Class<?>[] {};
 	}
+
 }

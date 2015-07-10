@@ -1,6 +1,7 @@
 package io.yawp.repository.query;
 
 import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 
@@ -18,6 +19,10 @@ public abstract class BaseCondition {
 	protected static final Class<?>[] VALID_ID_CLASSES = new Class<?>[] { IdRef.class, Long.class, String.class, Key.class };
 
 	public abstract Filter getPredicate(Class<?> clazz) throws FalsePredicateException;
+
+	public boolean evaluate(Object object) {
+		return true;
+	}
 
 	public abstract BaseCondition not();
 
@@ -98,7 +103,7 @@ public abstract class BaseCondition {
 					return value.getClass();
 				} else {
 					throw new RuntimeException("If you are searching by @Id, you can only use the valid @Id types classes: "
-					        + Arrays.toString(VALID_ID_CLASSES) + ". Found " + value.getClass().getSimpleName());
+							+ Arrays.toString(VALID_ID_CLASSES) + ". Found " + value.getClass().getSimpleName());
 				}
 			}
 			return null;
@@ -168,6 +173,13 @@ public abstract class BaseCondition {
 		public BaseCondition not() {
 			return new SimpleCondition(field, reverseOperator(operator), value);
 		}
+
+		@Override
+		public boolean evaluate(Object object) {
+			Object objectValue = ReflectionUtils.getFieldValue(object, field);
+			return value.equals(objectValue);
+		}
+
 	}
 
 	static class JoinedCondition extends BaseCondition {

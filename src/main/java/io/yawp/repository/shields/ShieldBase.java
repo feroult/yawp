@@ -3,7 +3,7 @@ package io.yawp.repository.shields;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.actions.ActionKey;
-import io.yawp.repository.query.BaseCondition;
+import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.servlet.HttpException;
 
 import java.lang.reflect.InvocationTargetException;

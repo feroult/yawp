@@ -1,6 +1,6 @@
 package io.yawp.repository.query;
 
-import static io.yawp.repository.query.Condition.c;
+import static io.yawp.repository.query.condition.Condition.c;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import io.yawp.repository.models.basic.BasicObject;

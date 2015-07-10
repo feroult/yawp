@@ -1,4 +1,4 @@
-package io.yawp.repository.query;
+package io.yawp.repository.query.condition;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,13 +1,14 @@
 package io.yawp.repository.query;
 
-import static io.yawp.repository.query.Condition.and;
-import static io.yawp.repository.query.Condition.c;
-import static io.yawp.repository.query.Condition.or;
+import static io.yawp.repository.query.condition.Condition.and;
+import static io.yawp.repository.query.condition.Condition.c;
+import static io.yawp.repository.query.condition.Condition.or;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
+import io.yawp.repository.query.condition.BaseCondition;
 
 import java.util.Arrays;
 import java.util.Collections;

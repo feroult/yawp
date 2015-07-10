@@ -3,7 +3,10 @@ package io.yawp.repository.query;
 import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
-import io.yawp.repository.query.BaseCondition.SimpleCondition;
+import io.yawp.repository.query.condition.BaseCondition;
+import io.yawp.repository.query.condition.Condition;
+import io.yawp.repository.query.condition.FalsePredicateException;
+import io.yawp.repository.query.condition.SimpleCondition;
 
 import java.util.ArrayList;
 import java.util.Collections;

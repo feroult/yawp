@@ -1,5 +1,7 @@
 package io.yawp.repository.query;
 
+import io.yawp.repository.query.condition.BaseCondition;
+import io.yawp.repository.query.condition.Condition;
 import io.yawp.servlet.HttpException;
 
 import java.util.ArrayList;

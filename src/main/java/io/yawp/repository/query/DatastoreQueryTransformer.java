@@ -1,6 +1,7 @@
 package io.yawp.repository.query;
 
 import io.yawp.repository.IdRef;
+import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.transformers.RepositoryTransformers;
 
 import java.util.ArrayList;

@@ -2,8 +2,10 @@ package io.yawp.repository.query;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import io.yawp.repository.query.BaseCondition.JoinedCondition;
-import io.yawp.repository.query.BaseCondition.SimpleCondition;
+import io.yawp.repository.query.condition.BaseCondition;
+import io.yawp.repository.query.condition.JoinedCondition;
+import io.yawp.repository.query.condition.LogicalOperator;
+import io.yawp.repository.query.condition.SimpleCondition;
 
 import java.util.Arrays;
 import java.util.List;

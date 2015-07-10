@@ -1,4 +1,4 @@
-package io.yawp.repository.query;
+package io.yawp.repository.query.condition;
 
 import com.google.appengine.api.datastore.Query.FilterOperator;
 
@@ -9,21 +9,21 @@ public abstract class Condition {
 	}
 
 	public static BaseCondition c(String field, FilterOperator operator, Object comparison) {
-		return new BaseCondition.SimpleCondition(field, operator, comparison);
+		return new SimpleCondition(field, operator, comparison);
 	}
 
 	public static BaseCondition and(BaseCondition... conditions) {
 		if (conditions.length == 1) {
 			return conditions[0];
 		}
-		return new BaseCondition.JoinedCondition(LogicalOperator.AND, conditions);
+		return new JoinedCondition(LogicalOperator.AND, conditions);
 	}
 
 	public static BaseCondition or(BaseCondition... conditions) {
 		if (conditions.length == 1) {
 			return conditions[0];
 		}
-		return new BaseCondition.JoinedCondition(LogicalOperator.OR, conditions);
+		return new JoinedCondition(LogicalOperator.OR, conditions);
 	}
 
 	public static BaseCondition not(BaseCondition c) {

@@ -1,6 +1,6 @@
 package io.yawp.repository.shields;
 
-import static io.yawp.repository.query.Condition.c;
+import static io.yawp.repository.query.condition.Condition.c;
 import io.yawp.commons.http.annotation.GET;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;

@@ -100,7 +100,7 @@ public class DatastoreQueryOptionsTest {
 		SimpleCondition condition = (SimpleCondition) c;
 		assertEquals(p, condition.getField());
 		assertEquals(whereOperator, condition.getWhereOperator());
-		assertEquals(value, condition.getValue());
+		assertEquals(value, condition.getWhereValue());
 	}
 
 	private void assertOrderEquals(String property, String direction, DatastoreQueryOrder order) {

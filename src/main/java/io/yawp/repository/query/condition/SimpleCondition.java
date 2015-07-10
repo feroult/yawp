@@ -14,27 +14,43 @@ public class SimpleCondition extends BaseCondition {
 
 	private String field;
 	private WhereOperator whereOperator;
-	private Object value;
+	private Object whereValue;
 
 	public SimpleCondition(String field, WhereOperator whereOperator, Object value) {
 		this.field = field;
 		this.whereOperator = whereOperator;
-		this.value = value;
+		this.whereValue = value;
 
 		if (whereOperator == WhereOperator.IN) {
 			assertList(value);
 		}
 	}
 
+	public String getField() {
+		return field;
+	}
+
+	public WhereOperator getWhereOperator() {
+		return this.whereOperator;
+	}
+
+	public Object getWhereValue() {
+		return whereValue;
+	}
+
+	public boolean isEqualOperator() {
+		return this.whereOperator == WhereOperator.EQUAL;
+	}
+
 	@Override
 	public Class<?> getIdTypeFor(Class<?> clazz) {
 		if (isFieldIdType(clazz)) {
 			boolean isList = whereOperator == WhereOperator.IN;
-			if (isValidIdClass(value, isList)) {
-				return value.getClass();
+			if (isValidIdClass(whereValue, isList)) {
+				return whereValue.getClass();
 			} else {
 				throw new RuntimeException("If you are searching by @Id, you can only use the valid @Id types classes: "
-						+ Arrays.toString(VALID_ID_CLASSES) + ". Found " + value.getClass().getSimpleName());
+						+ Arrays.toString(VALID_ID_CLASSES) + ". Found " + whereValue.getClass().getSimpleName());
 			}
 		}
 		return null;
@@ -47,50 +63,34 @@ public class SimpleCondition extends BaseCondition {
 	@Override
 	public Filter getPredicate(Class<?> clazz) throws FalsePredicateException {
 		String actualFieldName = EntityUtils.getActualFieldName(field, clazz);
-		Object actualValue = EntityUtils.getActualFieldValue(field, clazz, value);
+		Object actualValue = EntityUtils.getActualFieldValue(field, clazz, whereValue);
 
-		if (whereOperator == WhereOperator.IN && EntityUtils.listSize(value) == 0) {
+		if (whereOperator == WhereOperator.IN && EntityUtils.listSize(whereValue) == 0) {
 			throw new FalsePredicateException();
 		}
 
 		return new FilterPredicate(actualFieldName, whereOperator.getFilterOperator(), actualValue);
 	}
 
-	public String getField() {
-		return field;
-	}
-
-	public WhereOperator getWhereOperator() {
-		return this.whereOperator;
-	}
-
-	public boolean isEqualOperator() {
-		return this.whereOperator == WhereOperator.EQUAL;
-	}
-
-	public Object getValue() {
-		return value;
-	}
-
 	@Override
 	public void normalizeIdRefs(Class<?> clazz, Repository r) {
 		if (isFieldIdType(clazz)) {
-			if (value instanceof String) {
-				value = EntityUtils.convertToIdRef(r, (String) value);
-			} else if (value instanceof List) {
-				value = EntityUtils.convertToIdRefs(r, (List<?>) value);
+			if (whereValue instanceof String) {
+				whereValue = EntityUtils.convertToIdRef(r, (String) whereValue);
+			} else if (whereValue instanceof List) {
+				whereValue = EntityUtils.convertToIdRefs(r, (List<?>) whereValue);
 			}
 		}
 	}
 
 	@Override
 	public BaseCondition not() {
-		return new SimpleCondition(field, whereOperator.reverse(), value);
+		return new SimpleCondition(field, whereOperator.reverse(), whereValue);
 	}
 
 	@Override
 	public boolean evaluate(Object object) {
 		Object objectValue = ReflectionUtils.getFieldValue(object, field);
-		return value.equals(objectValue);
+		return whereOperator.evaluate(objectValue, whereValue);
 	}
 }

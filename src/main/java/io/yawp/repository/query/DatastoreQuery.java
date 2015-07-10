@@ -262,7 +262,7 @@ public class DatastoreQuery<T> {
 		try {
 			condition.normalizeIdRefs(clazz, r);
 			SimpleCondition c = (SimpleCondition) condition;
-			IdRef<?> idRef = (IdRef<?>) c.getValue();
+			IdRef<?> idRef = (IdRef<?>) c.getWhereValue();
 			Key key = idRef.asKey();
 			Entity entity = DatastoreServiceFactory.getDatastoreService().get(key);
 			return EntityUtils.toObject(r, entity, clazz);

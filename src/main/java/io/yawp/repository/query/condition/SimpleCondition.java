@@ -8,21 +8,20 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 public class SimpleCondition extends BaseCondition {
 
 	private String field;
-	private FilterOperator operator;
+	private WhereOperator whereOperator;
 	private Object value;
 
-	public SimpleCondition(String field, FilterOperator operator, Object value) {
+	public SimpleCondition(String field, WhereOperator whereOperator, Object value) {
 		this.field = field;
-		this.operator = operator;
+		this.whereOperator = whereOperator;
 		this.value = value;
 
-		if (operator == FilterOperator.IN) {
+		if (whereOperator == WhereOperator.IN) {
 			assertList(value);
 		}
 	}
@@ -30,7 +29,7 @@ public class SimpleCondition extends BaseCondition {
 	@Override
 	public Class<?> getIdTypeFor(Class<?> clazz) {
 		if (isFieldIdType(clazz)) {
-			boolean isList = operator == FilterOperator.IN;
+			boolean isList = whereOperator == WhereOperator.IN;
 			if (isValidIdClass(value, isList)) {
 				return value.getClass();
 			} else {
@@ -50,19 +49,23 @@ public class SimpleCondition extends BaseCondition {
 		String actualFieldName = EntityUtils.getActualFieldName(field, clazz);
 		Object actualValue = EntityUtils.getActualFieldValue(field, clazz, value);
 
-		if (operator == FilterOperator.IN && EntityUtils.listSize(value) == 0) {
+		if (whereOperator == WhereOperator.IN && EntityUtils.listSize(value) == 0) {
 			throw new FalsePredicateException();
 		}
 
-		return new FilterPredicate(actualFieldName, operator, actualValue);
+		return new FilterPredicate(actualFieldName, whereOperator.getFilterOperator(), actualValue);
 	}
 
 	public String getField() {
 		return field;
 	}
 
-	public FilterOperator getOperator() {
-		return operator;
+	public WhereOperator getWhereOperator() {
+		return this.whereOperator;
+	}
+
+	public boolean isEqualOperator() {
+		return this.whereOperator == WhereOperator.EQUAL;
 	}
 
 	public Object getValue() {
@@ -80,30 +83,9 @@ public class SimpleCondition extends BaseCondition {
 		}
 	}
 
-	public FilterOperator reverseOperator(FilterOperator op) {
-		switch (op) {
-		case EQUAL:
-			return FilterOperator.NOT_EQUAL;
-		case GREATER_THAN:
-			return FilterOperator.LESS_THAN_OR_EQUAL;
-		case GREATER_THAN_OR_EQUAL:
-			return FilterOperator.LESS_THAN;
-		case IN:
-			throw new RuntimeException("Cannot invert (call not) on IN operators.");
-		case LESS_THAN:
-			return FilterOperator.GREATER_THAN_OR_EQUAL;
-		case LESS_THAN_OR_EQUAL:
-			return FilterOperator.GREATER_THAN;
-		case NOT_EQUAL:
-			return FilterOperator.EQUAL;
-		default:
-			throw new RuntimeException("Unexpected enum constant.");
-		}
-	}
-
 	@Override
 	public BaseCondition not() {
-		return new SimpleCondition(field, reverseOperator(operator), value);
+		return new SimpleCondition(field, whereOperator.reverse(), value);
 	}
 
 	@Override
@@ -111,5 +93,4 @@ public class SimpleCondition extends BaseCondition {
 		Object objectValue = ReflectionUtils.getFieldValue(object, field);
 		return value.equals(objectValue);
 	}
-
 }

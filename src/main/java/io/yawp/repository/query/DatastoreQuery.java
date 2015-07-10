@@ -22,7 +22,6 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.QueryResultList;
 
 public class DatastoreQuery<T> {
@@ -278,7 +277,7 @@ public class DatastoreQuery<T> {
 		}
 
 		SimpleCondition c = (SimpleCondition) condition;
-		return c.isByIdFor(clazz) && c.getOperator().equals(FilterOperator.EQUAL);
+		return c.isByIdFor(clazz) && c.isEqualOperator();
 	}
 
 	public void sortList(List<?> objects) {

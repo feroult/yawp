@@ -6,13 +6,12 @@ import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.JoinedCondition;
 import io.yawp.repository.query.condition.LogicalOperator;
 import io.yawp.repository.query.condition.SimpleCondition;
+import io.yawp.repository.query.condition.WhereOperator;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-
-import com.google.appengine.api.datastore.Query.FilterOperator;
 
 public class DatastoreQueryOptionsTest {
 
@@ -34,9 +33,9 @@ public class DatastoreQueryOptionsTest {
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
 
 		JoinedCondition conditions = assertJoinedCondition(options.getCondition(), LogicalOperator.AND, 3);
-		assertSimpleCondition(conditions.getConditions()[0], "longValue", FilterOperator.EQUAL, 1l);
-		assertSimpleCondition(conditions.getConditions()[1], "intValue", FilterOperator.EQUAL, 3l);
-		assertSimpleCondition(conditions.getConditions()[2], "doubleValue", FilterOperator.EQUAL, 4.3);
+		assertSimpleCondition(conditions.getConditions()[0], "longValue", WhereOperator.EQUAL, 1l);
+		assertSimpleCondition(conditions.getConditions()[1], "intValue", WhereOperator.EQUAL, 3l);
+		assertSimpleCondition(conditions.getConditions()[2], "doubleValue", WhereOperator.EQUAL, 4.3);
 
 		List<DatastoreQueryOrder> order = options.getPreOrders();
 		assertEquals(1, order.size());
@@ -53,14 +52,14 @@ public class DatastoreQueryOptionsTest {
 	public void testWhereSimpleCondition() {
 		String q = "{where: {p: 'longValue', op: '=', v: 1}}";
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
-		assertSimpleCondition(options.getCondition(), "longValue", FilterOperator.EQUAL, 1l);
+		assertSimpleCondition(options.getCondition(), "longValue", WhereOperator.EQUAL, 1l);
 	}
 
 	@Test
 	public void testWhereWithIn() {
 		String q = "{ where: [ 'id', 'in', ['1', '3', '5'] ] }";
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
-		assertSimpleCondition(options.getCondition(), "id", FilterOperator.IN, Arrays.asList("1", "3", "5"));
+		assertSimpleCondition(options.getCondition(), "id", WhereOperator.IN, Arrays.asList("1", "3", "5"));
 	}
 
 	@Test
@@ -70,8 +69,8 @@ public class DatastoreQueryOptionsTest {
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
 
 		JoinedCondition condition = assertJoinedCondition(options.getCondition(), LogicalOperator.AND, 2);
-		assertSimpleCondition(condition.getConditions()[0], "longValue", FilterOperator.EQUAL, 1l);
-		assertSimpleCondition(condition.getConditions()[1], "intValue", FilterOperator.EQUAL, 3l);
+		assertSimpleCondition(condition.getConditions()[0], "longValue", WhereOperator.EQUAL, 1l);
+		assertSimpleCondition(condition.getConditions()[1], "intValue", WhereOperator.EQUAL, 3l);
 	}
 
 	@Test
@@ -81,26 +80,26 @@ public class DatastoreQueryOptionsTest {
 		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
 
 		JoinedCondition condition1 = assertJoinedCondition(options.getCondition(), LogicalOperator.AND, 2);
-		assertSimpleCondition(condition1.getConditions()[0], "longValue", FilterOperator.EQUAL, 1l);
+		assertSimpleCondition(condition1.getConditions()[0], "longValue", WhereOperator.EQUAL, 1l);
 
 		JoinedCondition condition2 = assertJoinedCondition(condition1.getConditions()[1], LogicalOperator.OR, 2);
-		assertSimpleCondition(condition2.getConditions()[0], "intValue", FilterOperator.EQUAL, 3l);
-		assertSimpleCondition(condition2.getConditions()[1], "doubleValue", FilterOperator.EQUAL, 4.3);
+		assertSimpleCondition(condition2.getConditions()[0], "intValue", WhereOperator.EQUAL, 3l);
+		assertSimpleCondition(condition2.getConditions()[1], "doubleValue", WhereOperator.EQUAL, 4.3);
 	}
 
-	private JoinedCondition assertJoinedCondition(BaseCondition c, LogicalOperator operator, int length) {
+	private JoinedCondition assertJoinedCondition(BaseCondition c, LogicalOperator logicalOperator, int length) {
 		assertEquals(JoinedCondition.class, c.getClass());
 		JoinedCondition condition = (JoinedCondition) c;
-		assertEquals(operator, condition.getOperator());
+		assertEquals(logicalOperator, condition.getLogicalOperator());
 		assertEquals(length, condition.getConditions().length);
 		return condition;
 	}
 
-	private void assertSimpleCondition(BaseCondition c, String p, FilterOperator op, Object value) {
+	private void assertSimpleCondition(BaseCondition c, String p, WhereOperator whereOperator, Object value) {
 		assertEquals(SimpleCondition.class, c.getClass());
 		SimpleCondition condition = (SimpleCondition) c;
 		assertEquals(p, condition.getField());
-		assertEquals(op, condition.getOperator());
+		assertEquals(whereOperator, condition.getWhereOperator());
 		assertEquals(value, condition.getValue());
 	}
 

@@ -1,15 +1,14 @@
 package io.yawp.repository.query.condition;
 
-import com.google.appengine.api.datastore.Query.FilterOperator;
 
 public abstract class Condition {
 
 	public static BaseCondition c(String field, String operator, Object comparison) {
-		return c(field, toOperator(operator), comparison);
+		return c(field, WhereOperator.toOperator(operator), comparison);
 	}
 
-	public static BaseCondition c(String field, FilterOperator operator, Object comparison) {
-		return new SimpleCondition(field, operator, comparison);
+	public static BaseCondition c(String field, WhereOperator whereOperator, Object comparison) {
+		return new SimpleCondition(field, whereOperator, comparison);
 	}
 
 	public static BaseCondition and(BaseCondition... conditions) {
@@ -30,32 +29,7 @@ public abstract class Condition {
 		return c.not();
 	}
 
-	public static BaseCondition equals(String field, Object comparison) {
-		return c(field, FilterOperator.EQUAL, comparison);
-	}
-
-	public static FilterOperator toOperator(String operator) {
-		if (operator.equals("=")) {
-			return FilterOperator.EQUAL;
-		}
-		if (operator.equals(">")) {
-			return FilterOperator.GREATER_THAN;
-		}
-		if (operator.equals(">=")) {
-			return FilterOperator.GREATER_THAN_OR_EQUAL;
-		}
-		if (operator.equalsIgnoreCase("in")) {
-			return FilterOperator.IN;
-		}
-		if (operator.equals("<")) {
-			return FilterOperator.LESS_THAN;
-		}
-		if (operator.equals("<=")) {
-			return FilterOperator.LESS_THAN_OR_EQUAL;
-		}
-		if (operator.equals("!=")) {
-			return FilterOperator.NOT_EQUAL;
-		}
-		throw new RuntimeException("invalid filter operator " + operator);
+	public static BaseCondition equals(String field, Object value) {
+		return c(field, WhereOperator.EQUAL, value);
 	}
 }

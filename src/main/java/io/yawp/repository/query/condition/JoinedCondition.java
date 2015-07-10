@@ -6,11 +6,13 @@ import io.yawp.repository.Repository;
 import com.google.appengine.api.datastore.Query.Filter;
 
 public class JoinedCondition extends BaseCondition {
-	private LogicalOperator operator;
+
+	private LogicalOperator logicalOperator;
+
 	private BaseCondition[] conditions;
 
-	public JoinedCondition(LogicalOperator operator, BaseCondition[] conditions) {
-		this.operator = operator;
+	public JoinedCondition(LogicalOperator logicalOperator, BaseCondition[] conditions) {
+		this.logicalOperator = logicalOperator;
 		this.conditions = conditions;
 	}
 
@@ -45,11 +47,11 @@ public class JoinedCondition extends BaseCondition {
 
 	@Override
 	public Filter getPredicate(Class<?> clazz) throws FalsePredicateException {
-		return operator.join(clazz, conditions);
+		return logicalOperator.join(clazz, conditions);
 	}
 
-	public LogicalOperator getOperator() {
-		return operator;
+	public LogicalOperator getLogicalOperator() {
+		return logicalOperator;
 	}
 
 	public BaseCondition[] getConditions() {
@@ -69,7 +71,7 @@ public class JoinedCondition extends BaseCondition {
 		for (int i = 0; i < conditions.length; i++) {
 			reversedConditions[i] = conditions[i].not();
 		}
-		return new JoinedCondition(operator.not(), reversedConditions);
+		return new JoinedCondition(logicalOperator.not(), reversedConditions);
 	}
 
 }

@@ -2,11 +2,7 @@ package io.yawp.repository.query;
 
 import com.google.appengine.api.datastore.Query.FilterOperator;
 
-public final class Condition {
-
-	private Condition() {
-		throw new RuntimeException("Shouldn't be instanciated.");
-	}
+public abstract class Condition {
 
 	public static BaseCondition c(String field, String operator, Object comparison) {
 		return c(field, toOperator(operator), comparison);

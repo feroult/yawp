@@ -87,7 +87,8 @@ public abstract class ShieldBase<T> extends Feature {
 		always();
 		create(object, objects);
 		throwNotFoundIfNotAllowed();
-		verifyCondition();
+
+		verifyConditionOnIncomingObjects();
 		throwForbiddenIfNotAllowed();
 	}
 
@@ -95,7 +96,8 @@ public abstract class ShieldBase<T> extends Feature {
 		always();
 		update(id, object);
 		throwNotFoundIfNotAllowed();
-		verifyCondition();
+
+		verifyConditionOnIncomingObjects();
 		throwForbiddenIfNotAllowed();
 	}
 
@@ -147,11 +149,11 @@ public abstract class ShieldBase<T> extends Feature {
 		return condition != null;
 	}
 
-	private void verifyCondition() {
-		this.allow = evaluateCondition();
+	private void verifyConditionOnIncomingObjects() {
+		this.allow = evaluateConditionOnIncomingObjects();
 	}
 
-	private boolean evaluateCondition() {
+	private boolean evaluateConditionOnIncomingObjects() {
 		if (!hasCondition()) {
 			return true;
 		}

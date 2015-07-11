@@ -1,7 +1,6 @@
 package io.yawp.servlet.rest;
 
 import io.yawp.commons.utils.EntityUtils;
-import io.yawp.servlet.HttpException;
 
 public class UpdateRestAction extends RestAction {
 
@@ -19,13 +18,7 @@ public class UpdateRestAction extends RestAction {
 		assert !isJsonArray();
 
 		Object object = getObjectWithRightId();
-
-		if (!satisfyShieldCondition(object)) {
-			throw new HttpException(403);
-		}
-
 		save(object);
-
 		return transform(object);
 	}
 

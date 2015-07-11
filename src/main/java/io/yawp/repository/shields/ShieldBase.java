@@ -8,7 +8,6 @@ import io.yawp.servlet.HttpException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -75,43 +74,53 @@ public abstract class ShieldBase<T> extends Feature {
 	public final void protectIndex() {
 		always();
 		index(id);
-		throwIfNotAllowed();
+		throwNotFoundIfNotAllowed();
 	}
 
 	public final void protectShow() {
 		always();
 		show(id);
-		throwIfNotAllowed();
+		throwNotFoundIfNotAllowed();
 	}
 
 	public final void protectCreate() {
 		always();
 		create(object, objects);
-		throwIfNotAllowed();
+		throwNotFoundIfNotAllowed();
+		verifyCondition();
+		throwForbiddenIfNotAllowed();
 	}
 
 	public final void protectUpdate() {
 		always();
 		update(id, object);
-		throwIfNotAllowed();
+		throwNotFoundIfNotAllowed();
+		verifyCondition();
+		throwForbiddenIfNotAllowed();
 	}
 
 	public final void protectDestroy() {
 		always();
 		destroy(id);
-		throwIfNotAllowed();
+		throwNotFoundIfNotAllowed();
 	}
 
 	public final void protectCustom() {
 		always();
 		custom();
 		annotadedCustoms();
-		throwIfNotAllowed();
+		throwNotFoundIfNotAllowed();
 	}
 
-	private void throwIfNotAllowed() {
+	private void throwNotFoundIfNotAllowed() {
 		if (!allow) {
 			throw new HttpException(404);
+		}
+	}
+
+	private void throwForbiddenIfNotAllowed() {
+		if (!allow) {
+			throw new HttpException(403);
 		}
 	}
 
@@ -138,17 +147,21 @@ public abstract class ShieldBase<T> extends Feature {
 		return condition != null;
 	}
 
-	public boolean satisfyCondition(Object object) {
+	private void verifyCondition() {
+		this.allow = evaluateCondition();
+	}
+
+	private boolean evaluateCondition() {
 		if (!hasCondition()) {
 			return true;
 		}
-		if (Collection.class.isInstance(object)) {
-			return evaluateCondition((Collection<?>) object);
+		if (objects != null) {
+			return evaluateCondition(objects);
 		}
 		return condition.evaluate(object);
 	}
 
-	private boolean evaluateCondition(Collection<?> objects) {
+	private boolean evaluateCondition(List<T> objects) {
 		boolean result = true;
 		for (Object object : objects) {
 			result = result && condition.evaluate(object);

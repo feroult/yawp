@@ -166,13 +166,6 @@ public abstract class RestAction {
 		return shield != null;
 	}
 
-	protected boolean satisfyShieldCondition(Object object) {
-		if (!hasShield()) {
-			return true;
-		}
-		return shield.satisfyCondition(object);
-	}
-
 	protected boolean hasShieldCondition() {
 		return hasShield() && shield.hasCondition();
 	}

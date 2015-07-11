@@ -8,6 +8,7 @@ import io.yawp.servlet.HttpException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -135,6 +136,27 @@ public abstract class ShieldBase<T> extends Feature {
 
 	public boolean hasCondition() {
 		return condition != null;
+	}
+
+	public boolean satisfyCondition(Object object) {
+		if (!hasCondition()) {
+			return true;
+		}
+		if (Collection.class.isInstance(object)) {
+			return evaluateCondition((Collection<?>) object);
+		}
+		return condition.evaluate(object);
+	}
+
+	private boolean evaluateCondition(Collection<?> objects) {
+		boolean result = true;
+		for (Object object : objects) {
+			result = result && condition.evaluate(object);
+			if (!result) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public final void setParams(Map<String, String> params) {

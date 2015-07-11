@@ -42,6 +42,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		allow(isJane());
 		allow(isId100(id));
 		allow(isRequestWithValidObject(object, null));
+		allow(isKurt()).where(c("stringValue", "=", "ok"));
 	}
 
 	@Override

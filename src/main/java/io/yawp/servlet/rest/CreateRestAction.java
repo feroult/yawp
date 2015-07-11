@@ -2,6 +2,7 @@ package io.yawp.servlet.rest;
 
 import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.FutureObject;
+import io.yawp.servlet.HttpException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +28,22 @@ public class CreateRestAction extends RestAction {
 	}
 
 	private Object createFromObject(Object object) {
+		if (!satisfyShieldCondition(object)) {
+			throw new HttpException(403);
+		}
+
 		return saveObject(object);
 	}
 
 	private Object createFromArray(List<?> objects) {
+		if (!satisfyShieldCondition(objects)) {
+			throw new HttpException(403);
+		}
+
+		return saveObjecs(objects);
+	}
+
+	private Object saveObjecs(List<?> objects) {
 		List<FutureObject<Object>> futures = new ArrayList<FutureObject<Object>>();
 		List<Object> resultObjects = new ArrayList<Object>();
 

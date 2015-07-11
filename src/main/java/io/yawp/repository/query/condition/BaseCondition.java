@@ -14,9 +14,7 @@ public abstract class BaseCondition {
 
 	public abstract Filter getPredicate(Class<?> clazz) throws FalsePredicateException;
 
-	public boolean evaluate(Object object) {
-		return true;
-	}
+	public abstract boolean evaluate(Object object);
 
 	public abstract BaseCondition not();
 

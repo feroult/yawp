@@ -74,4 +74,33 @@ public class JoinedCondition extends BaseCondition {
 		return new JoinedCondition(logicalOperator.not(), reversedConditions);
 	}
 
+	@Override
+	public boolean evaluate(Object object) {
+		if (logicalOperator == LogicalOperator.AND) {
+			return evaluateAnd(object);
+		}
+		return evaluateOr(object);
+	}
+
+	private boolean evaluateOr(Object object) {
+		boolean result = false;
+		for (BaseCondition condition : conditions) {
+			result = result || condition.evaluate(object);
+			if (result) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean evaluateAnd(Object object) {
+		boolean result = true;
+		for (BaseCondition condition : conditions) {
+			result = result && condition.evaluate(object);
+			if (!result) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

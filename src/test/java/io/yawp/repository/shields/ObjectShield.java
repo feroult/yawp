@@ -43,6 +43,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		allow(isId100(id));
 		allow(isRequestWithValidObject(object, null));
 		allow(isKurt()).where(c("stringValue", "=", "ok"));
+		allow(isJanis()).where(c("stringValue", "=", "ok-for-janis"));
 	}
 
 	@Override
@@ -76,6 +77,10 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	private boolean isKurt() {
 		return is("kurt@rock.com");
+	}
+
+	private boolean isJanis() {
+		return is("janis@rock.com");
 	}
 
 	private boolean is(String email) {

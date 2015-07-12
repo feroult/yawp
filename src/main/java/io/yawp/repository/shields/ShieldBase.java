@@ -150,20 +150,20 @@ public abstract class ShieldBase<T> extends Feature {
 	}
 
 	private void verifyConditionOnIncomingObjects() {
+		if (!hasCondition()) {
+			return;
+		}
 		this.allow = evaluateConditionOnIncomingObjects();
 	}
 
 	private boolean evaluateConditionOnIncomingObjects() {
-		if (!hasCondition()) {
-			return true;
-		}
 		if (objects != null) {
-			return evaluateCondition(objects);
+			return evaluateConditionOnIncomingObjects(objects);
 		}
 		return condition.evaluate(object);
 	}
 
-	private boolean evaluateCondition(List<T> objects) {
+	private boolean evaluateConditionOnIncomingObjects(List<T> objects) {
 		boolean result = true;
 		for (Object object : objects) {
 			result = result && condition.evaluate(object);

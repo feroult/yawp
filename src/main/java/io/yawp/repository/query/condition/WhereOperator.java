@@ -19,7 +19,7 @@ public enum WhereOperator {
 
 		@Override
 		public boolean evaluate(Object objectValue, Object whereValue) {
-			return compareTo(objectValue, whereValue) == 0;
+			return compareObjects(objectValue, whereValue) == 0;
 		}
 	},
 	GREATER_THAN {
@@ -35,7 +35,7 @@ public enum WhereOperator {
 
 		@Override
 		public boolean evaluate(Object objectValue, Object whereValue) {
-			return compareTo(objectValue, whereValue) > 0;
+			return compareObjects(objectValue, whereValue) > 0;
 		}
 
 	},
@@ -52,7 +52,7 @@ public enum WhereOperator {
 
 		@Override
 		public boolean evaluate(Object objectValue, Object whereValue) {
-			return compareTo(objectValue, whereValue) >= 0;
+			return compareObjects(objectValue, whereValue) >= 0;
 		}
 	},
 	LESS_THAN {
@@ -68,7 +68,7 @@ public enum WhereOperator {
 
 		@Override
 		public boolean evaluate(Object objectValue, Object whereValue) {
-			return compareTo(objectValue, whereValue) < 0;
+			return compareObjects(objectValue, whereValue) < 0;
 		}
 	},
 	LESS_THAN_OR_EQUAL {
@@ -84,7 +84,7 @@ public enum WhereOperator {
 
 		@Override
 		public boolean evaluate(Object objectValue, Object whereValue) {
-			return compareTo(objectValue, whereValue) <= 0;
+			return compareObjects(objectValue, whereValue) <= 0;
 		}
 	},
 	NOT_EQUAL {
@@ -100,7 +100,7 @@ public enum WhereOperator {
 
 		@Override
 		public boolean evaluate(Object objectValue, Object whereValue) {
-			return compareTo(objectValue, whereValue) != 0;
+			return compareObjects(objectValue, whereValue) != 0;
 		}
 	},
 	IN {
@@ -153,7 +153,7 @@ public enum WhereOperator {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static int compareTo(Object objectValue, Object whereValue) {
+	private static int compareObjects(Object objectValue, Object whereValue) {
 		Comparable c1 = (Comparable) objectValue;
 		Comparable c2 = (Comparable) whereValue;
 		return c1.compareTo(c2);

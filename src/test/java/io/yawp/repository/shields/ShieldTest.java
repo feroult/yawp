@@ -121,6 +121,17 @@ public class ShieldTest extends ServletTestCase {
 	}
 
 	@Test
+	public void testCreateWhereOnExistingObjects() {
+		saveObject(1l, "ok-for-janis");
+		saveObject(2l, "ok-for-amy");
+
+		login("janis", "rock.com");
+
+		assertPostWithStatus("/shielded_objects", "{id: '/shielded_objects/1', stringValue: 'ok-for-janis'}", 200);
+		assertPostWithStatus("/shielded_objects", "{id: '/shielded_objects/2', stringValue: 'ok-for-janis'}", 403);
+	}
+
+	@Test
 	public void testUpdateWhere() {
 		login("kurt", "rock.com");
 

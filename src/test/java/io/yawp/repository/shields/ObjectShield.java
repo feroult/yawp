@@ -35,6 +35,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	public void create(ShieldedObject object, List<ShieldedObject> objects) {
 		allow(isRequestWithValidObject(object, objects));
 		allow(isKurt()).where(c("stringValue", "=", "ok"));
+		allow(isJanis()).where(c("stringValue", "=", "ok-for-janis"));
 	}
 
 	@Override

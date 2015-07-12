@@ -91,6 +91,9 @@ public abstract class ShieldBase<T> extends Feature {
 
 		verifyConditionOnIncomingObjects();
 		throwForbiddenIfNotAllowed();
+
+		verifyConditionOnExistingObjects();
+		throwForbiddenIfNotAllowed();
 	}
 
 	public final void protectUpdate() {
@@ -189,13 +192,21 @@ public abstract class ShieldBase<T> extends Feature {
 		if (objects != null) {
 			return evaluateConditionOnExistingObjects(objects);
 		}
-		return evaluateExistingObject(id);
+		IdRef<?> idInObject = EntityUtils.getIdRef(object);
+		if (idInObject == null) {
+			if (id == null) {
+				return true;
+			}
+			return evaluateExistingObject(id);
+		}
+		return evaluateExistingObject(idInObject);
 	}
 
 	private boolean evaluateConditionOnExistingObjects(List<T> objects) {
 		boolean result = true;
 		for (Object object : objects) {
-			result = result && evaluateExistingObject(EntityUtils.getIdRef(object));
+			IdRef<?> id = EntityUtils.getIdRef(object);
+			result = result && (id == null || evaluateExistingObject(id));
 			if (!result) {
 				return false;
 			}

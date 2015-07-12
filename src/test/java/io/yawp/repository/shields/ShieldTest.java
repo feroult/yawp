@@ -130,16 +130,16 @@ public class ShieldTest extends ServletTestCase {
 		assertPutWithStatus("/shielded_objects/1", "{stringValue: 'xpto'}", 403);
 	}
 
-//	@Test
-//	public void testUpdateWhereOnExistingObjects() {
-//		saveObject(1l, "ok-for-janis");
-//		saveObject(2l, "ok-for-amy");
-//
-//		login("janis", "rock.com");
-//
-//		assertPutWithStatus("/shielded_objects/1", "{stringValue: 'ok-for-janis'}", 200);
-//		assertPutWithStatus("/shielded_objects/2", "{stringValue: 'ok-for-janis'}", 403);
-//	}
+	@Test
+	public void testUpdateWhereOnExistingObjects() {
+		saveObject(1l, "ok-for-janis");
+		saveObject(2l, "ok-for-amy");
+
+		login("janis", "rock.com");
+
+		assertPutWithStatus("/shielded_objects/1", "{stringValue: 'ok-for-janis'}", 200);
+		assertPutWithStatus("/shielded_objects/2", "{stringValue: 'ok-for-janis'}", 403);
+	}
 
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);

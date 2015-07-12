@@ -1,5 +1,6 @@
 package io.yawp.repository.shields;
 
+import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.actions.ActionKey;
@@ -99,6 +100,9 @@ public abstract class ShieldBase<T> extends Feature {
 
 		verifyConditionOnIncomingObjects();
 		throwForbiddenIfNotAllowed();
+
+		verifyConditionOnExistingObjects();
+		throwForbiddenIfNotAllowed();
 	}
 
 	public final void protectDestroy() {
@@ -172,6 +176,39 @@ public abstract class ShieldBase<T> extends Feature {
 			}
 		}
 		return true;
+	}
+
+	private void verifyConditionOnExistingObjects() {
+		if (!hasCondition()) {
+			return;
+		}
+		this.allow = evaluateConditionOnExistingObjects();
+	}
+
+	private boolean evaluateConditionOnExistingObjects() {
+		if (objects != null) {
+			return evaluateConditionOnExistingObjects(objects);
+		}
+		return evaluateExistingObject(id);
+	}
+
+	private boolean evaluateConditionOnExistingObjects(List<T> objects) {
+		boolean result = true;
+		for (Object object : objects) {
+			result = result && evaluateExistingObject(EntityUtils.getIdRef(object));
+			if (!result) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean evaluateExistingObject(IdRef<?> id) {
+		Object object = id.fetch();
+		if (object == null) {
+			return true;
+		}
+		return condition.evaluate(object);
 	}
 
 	public final void setParams(Map<String, String> params) {

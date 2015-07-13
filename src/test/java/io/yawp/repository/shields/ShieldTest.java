@@ -123,12 +123,18 @@ public class ShieldTest extends ServletTestCase {
 	@Test
 	public void testCreateWhereOnExistingObjects() {
 		saveObject(1l, "ok-for-janis");
-		saveObject(2l, "ok-for-amy");
+		saveObject(2l, "ok-for-janis");
+		saveObject(3l, "ok-for-amy");
 
 		login("janis", "rock.com");
 
 		assertPostWithStatus("/shielded_objects", "{id: '/shielded_objects/1', stringValue: 'ok-for-janis'}", 200);
-		assertPostWithStatus("/shielded_objects", "{id: '/shielded_objects/2', stringValue: 'ok-for-janis'}", 403);
+		assertPostWithStatus("/shielded_objects", "{id: '/shielded_objects/3', stringValue: 'ok-for-janis'}", 403);
+
+		assertPostWithStatus("/shielded_objects",
+				"[{id: '/shielded_objects/1', stringValue: 'ok-for-janis'}, {id: '/shielded_objects/2', stringValue: 'ok-for-janis'}]", 200);
+		assertPostWithStatus("/shielded_objects",
+				"[{id: '/shielded_objects/2', stringValue: 'ok-for-janis'}, {id: '/shielded_objects/3', stringValue: 'ok-for-janis'}]", 403);
 	}
 
 	@Test
@@ -163,7 +169,16 @@ public class ShieldTest extends ServletTestCase {
 		assertDeleteWithStatus("/shielded_objects/2", 403);
 	}
 
-	// TODO: test action on existing objects
+	@Test
+	public void testActionOnExistingObject() {
+		saveObject(1l, "ok-for-janis");
+		saveObject(2l, "ok-for-amy");
+
+		login("janis", "rock.com");
+
+		assertPutWithStatus("/shielded_objects/1/something", 200);
+		assertPutWithStatus("/shielded_objects/2/something", 403);
+	}
 
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);

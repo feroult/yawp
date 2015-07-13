@@ -122,6 +122,9 @@ public abstract class ShieldBase<T> extends Feature {
 		custom();
 		annotadedCustoms();
 		throwNotFoundIfNotAllowed();
+
+		verifyConditionOnExistingObjects();
+		throwForbiddenIfNotAllowed();
 	}
 
 	private void throwNotFoundIfNotAllowed() {

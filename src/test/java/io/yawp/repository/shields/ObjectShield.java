@@ -58,6 +58,11 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		allow(isJane());
 	}
 
+	@PUT("something")
+	public void something(IdRef<ShieldedObject> id) {
+		allow(isJanis()).where(c("stringValue", "=", "ok-for-janis"));
+	}
+
 	@PUT("anotherthing")
 	public void anotherthing(IdRef<ShieldedObject> id, Map<String, String> params) {
 		allow(isId100(id));

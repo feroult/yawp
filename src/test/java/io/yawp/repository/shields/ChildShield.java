@@ -1,5 +1,10 @@
 package io.yawp.repository.shields;
 
+import static io.yawp.repository.query.condition.Condition.c;
+
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserServiceFactory;
+
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.parents.Parent;
@@ -20,14 +25,25 @@ public class ChildShield extends Shield<ShieldedChild> {
 	@PUT("collection")
 	public void collection(IdRef<Parent> parentId) {
 		allow(isId100(parentId));
+		allow(isJanis()).where(c("name", "=", "ok-for-janis"));
 	}
 
 	@PUT("single")
 	public void single(IdRef<ShieldedChild> id) {
 		allow(isId100(id));
+		//allow(isJanis()).where(c("name", "=", "ok-for-janis"));
 	}
 
 	private boolean isId100(IdRef<?> id) {
 		return id.asLong().equals(100l);
+	}
+
+	private boolean isJanis() {
+		return is("janis@rock.com");
+	}
+
+	private boolean is(String email) {
+		User currentUser = UserServiceFactory.getUserService().getCurrentUser();
+		return currentUser != null && currentUser.getEmail().equals(email);
 	}
 }

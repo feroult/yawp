@@ -163,6 +163,8 @@ public class ShieldTest extends ServletTestCase {
 		assertDeleteWithStatus("/shielded_objects/2", 403);
 	}
 
+	// TODO: test action on existing objects
+
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);
 		assertGetWithStatus("/shielded_objects/1", status);

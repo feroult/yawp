@@ -24,8 +24,6 @@ public class EndpointFeatures<T> {
 
 	private List<Class<? extends Hook<? super T>>> hooks;
 
-	private Class<? extends Shield<? super T>> shield;
-
 	private ShieldInfo<? super T> shieldInfo;
 
 	public EndpointFeatures(Class<T> clazz) {
@@ -70,7 +68,6 @@ public class EndpointFeatures<T> {
 	}
 
 	public void setShield(Class<? extends Shield<? super T>> shield) {
-		this.shield = shield;
 	}
 
 	public void setShieldInfo(ShieldInfo<? super T> shieldInfo) {

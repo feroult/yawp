@@ -40,6 +40,7 @@ public class ChildShieldTest extends ServletTestCase {
 		assertPutWithStatus("/parents/1/shielded_children/100/single", 200);
 	}
 
+	// TODO think about the whole parent where model
 	@Test
 	@Ignore
 	public void testActionWhereOnExistingParentObject() {
@@ -48,11 +49,11 @@ public class ChildShieldTest extends ServletTestCase {
 
 		login("janis", "rock.com");
 
-		//assertPutWithStatus("/parents/1/shielded_children/1/single", 200);
+		// assertPutWithStatus("/parents/1/shielded_children/1/single", 200);
 		assertPutWithStatus("/parents/1/shielded_children/collection", 500);
 
-		//assertPutWithStatus("/parents/2/shielded_children/2/single", 404);
-		//assertPutWithStatus("/parents/2/shielded_children/collection", 500);
+		// assertPutWithStatus("/parents/2/shielded_children/2/single", 404);
+		// assertPutWithStatus("/parents/2/shielded_children/collection", 500);
 	}
 
 	private void saveShieldedChild(long id, Parent parent) {

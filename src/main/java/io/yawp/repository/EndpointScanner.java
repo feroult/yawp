@@ -91,10 +91,6 @@ public final class EndpointScanner {
 		}
 	}
 
-	private <T, V extends Shield<T>> ShieldInfo<T> loadShieldInfo(Class<T> objectClazz, Class<V> shieldClazz) {
-		return new ShieldInfo<T>(shieldClazz);
-	}
-
 	private void scanHooks() {
 		Set<Class<? extends Hook>> clazzes = endpointsPackage.getSubTypesOf(Hook.class);
 

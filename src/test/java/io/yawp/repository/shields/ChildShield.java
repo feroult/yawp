@@ -25,13 +25,13 @@ public class ChildShield extends Shield<ShieldedChild> {
 	@PUT("collection")
 	public void collection(IdRef<Parent> parentId) {
 		allow(isId100(parentId));
-		allow(isJanis()).where(c("name", "=", "ok-for-janis"));
+		// allow(isJanis()).where(c("name", "=", "ok-for-janis")).on(parentId);
 	}
 
 	@PUT("single")
 	public void single(IdRef<ShieldedChild> id) {
 		allow(isId100(id));
-		//allow(isJanis()).where(c("name", "=", "ok-for-janis"));
+		// allow(isJanis()).where(c("name", "=", "ok-for-janis"));
 	}
 
 	private boolean isId100(IdRef<?> id) {

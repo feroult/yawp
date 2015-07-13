@@ -20,7 +20,9 @@ public abstract class ShieldBase<T> extends Feature {
 
 	private BaseCondition condition = null;
 
-	private IdRef<T> id;
+	private Class<?> endpointClazz;
+
+	private IdRef<?> id;
 
 	private T object;
 
@@ -78,9 +80,10 @@ public abstract class ShieldBase<T> extends Feature {
 		throwNotFoundIfNotAllowed();
 	}
 
+	@SuppressWarnings("unchecked")
 	public final void protectShow() {
 		always();
-		show(id);
+		show((IdRef<T>) id);
 		throwNotFoundIfNotAllowed();
 	}
 
@@ -96,9 +99,10 @@ public abstract class ShieldBase<T> extends Feature {
 		throwForbiddenIfNotAllowed();
 	}
 
+	@SuppressWarnings("unchecked")
 	public final void protectUpdate() {
 		always();
-		update(id, object);
+		update((IdRef<T>) id, object);
 		throwNotFoundIfNotAllowed();
 
 		verifyConditionOnIncomingObjects();
@@ -108,9 +112,10 @@ public abstract class ShieldBase<T> extends Feature {
 		throwForbiddenIfNotAllowed();
 	}
 
+	@SuppressWarnings("unchecked")
 	public final void protectDestroy() {
 		always();
-		destroy(id);
+		destroy((IdRef<T>) id);
 		throwNotFoundIfNotAllowed();
 
 		verifyConditionOnExistingObjects();
@@ -139,9 +144,12 @@ public abstract class ShieldBase<T> extends Feature {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	public void setEndpointClazz(Class<?> endpointClazz) {
+		this.endpointClazz = endpointClazz;
+	}
+
 	public final void setId(IdRef<?> id) {
-		this.id = (IdRef<T>) id;
+		this.id = id;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -203,9 +211,16 @@ public abstract class ShieldBase<T> extends Feature {
 			if (id == null) {
 				return true;
 			}
+			assertIdIsNotForParent();
 			return evaluateExistingObject(id);
 		}
 		return evaluateExistingObject(idInObject);
+	}
+
+	private void assertIdIsNotForParent() {
+		if (!id.getClazz().equals(endpointClazz)) {
+			throw new HttpException(500);
+		}
 	}
 
 	private IdRef<?> getIdInIncomingObject() {

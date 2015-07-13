@@ -183,6 +183,7 @@ public abstract class RestAction {
 
 			Shield<?> shield = shieldInfo.getShieldClazz().newInstance();
 			shield.setRepository(r);
+			shield.setEndpointClazz(endpointClazz);
 			shield.setId(id);
 			shield.setObject(object);
 			shield.setObjects(objects);

@@ -152,6 +152,17 @@ public class ShieldTest extends ServletTestCase {
 		assertPutWithStatus("/shielded_objects/2", "{stringValue: 'ok-for-janis'}", 403);
 	}
 
+	@Test
+	public void testDeleteOnExistingObjects() {
+		saveObject(1l, "ok-for-janis");
+		saveObject(2l, "ok-for-amy");
+
+		login("janis", "rock.com");
+
+		assertDeleteWithStatus("/shielded_objects/1", 200);
+		assertDeleteWithStatus("/shielded_objects/2", 403);
+	}
+
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);
 		assertGetWithStatus("/shielded_objects/1", status);

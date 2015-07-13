@@ -112,6 +112,9 @@ public abstract class ShieldBase<T> extends Feature {
 		always();
 		destroy(id);
 		throwNotFoundIfNotAllowed();
+
+		verifyConditionOnExistingObjects();
+		throwForbiddenIfNotAllowed();
 	}
 
 	public final void protectCustom() {
@@ -192,7 +195,7 @@ public abstract class ShieldBase<T> extends Feature {
 		if (objects != null) {
 			return evaluateConditionOnExistingObjects(objects);
 		}
-		IdRef<?> idInObject = EntityUtils.getIdRef(object);
+		IdRef<?> idInObject = getIdInIncomingObject();
 		if (idInObject == null) {
 			if (id == null) {
 				return true;
@@ -200,6 +203,13 @@ public abstract class ShieldBase<T> extends Feature {
 			return evaluateExistingObject(id);
 		}
 		return evaluateExistingObject(idInObject);
+	}
+
+	private IdRef<?> getIdInIncomingObject() {
+		if (object == null) {
+			return null;
+		}
+		return EntityUtils.getIdRef(object);
 	}
 
 	private boolean evaluateConditionOnExistingObjects(List<T> objects) {

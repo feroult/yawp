@@ -50,6 +50,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	@Override
 	public void destroy(IdRef<ShieldedObject> id) {
 		allow(isId100(id));
+		allow(isJanis()).where(c("stringValue", "=", "ok-for-janis"));
 	}
 
 	@Override

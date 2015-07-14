@@ -208,19 +208,16 @@ public abstract class ShieldBase<T> extends Feature {
 		}
 		IdRef<?> idInObject = getIdInIncomingObject();
 		if (idInObject == null) {
-			if (id == null) {
+			if (id == null || isParentId()) {
 				return true;
 			}
-			assertIdIsNotForParent();
 			return evaluateExistingObject(id);
 		}
 		return evaluateExistingObject(idInObject);
 	}
 
-	private void assertIdIsNotForParent() {
-		if (!id.getClazz().equals(endpointClazz)) {
-			throw new HttpException(500);
-		}
+	private boolean isParentId() {
+		return !id.getClazz().equals(endpointClazz);
 	}
 
 	private IdRef<?> getIdInIncomingObject() {

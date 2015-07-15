@@ -1,14 +1,12 @@
 package io.yawp.servlet.child;
 
-import io.yawp.commons.utils.ServletTestCase;
-import io.yawp.repository.IdRef;
 import io.yawp.repository.models.parents.Parent;
 import io.yawp.repository.models.parents.ShieldedChild;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class ChildShieldTest extends ServletTestCase {
+public class ChildShieldTest extends ChildServletTestCase {
 
 	@Test
 	public void testIndex() {
@@ -63,16 +61,5 @@ public class ChildShieldTest extends ServletTestCase {
 		yawp.save(child);
 	}
 
-	private Parent saveParent(long id) {
-		return saveParent(id, null);
-	}
-
-	private Parent saveParent(long id, String name) {
-		Parent parent = new Parent();
-		parent.setId(IdRef.create(yawp, Parent.class, id));
-		parent.setName(name);
-		yawp.save(parent);
-		return parent;
-	}
 
 }

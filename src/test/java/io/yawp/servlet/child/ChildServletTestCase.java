@@ -1,6 +1,7 @@
 package io.yawp.servlet.child;
 
 import io.yawp.commons.utils.ServletTestCase;
+import io.yawp.repository.IdRef;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Parent;
 
@@ -18,6 +19,18 @@ public class ChildServletTestCase extends ServletTestCase {
 
 	protected Parent saveParent() {
 		Parent parent = new Parent();
+		yawp.save(parent);
+		return parent;
+	}
+
+	protected Parent saveParent(Long id) {
+		return saveParent(id, null);
+	}
+
+	protected Parent saveParent(Long id, String name) {
+		Parent parent = new Parent();
+		parent.setId(IdRef.create(yawp, Parent.class, id));
+		parent.setName(name);
 		yawp.save(parent);
 		return parent;
 	}

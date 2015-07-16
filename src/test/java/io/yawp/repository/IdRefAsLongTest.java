@@ -98,8 +98,8 @@ public class IdRefAsLongTest extends EndpointTestCase {
 		Job job2 = new Job("hihi");
 		yawp.save(job2);
 
-		String json = String.format("{id: '/parents/%d', name: 'lala', pastJobIds: ['/jobs/%d', '/jobs/%d']}", parent.getId().asLong(), job1.getId().asLong(),
-		        job2.getId().asLong());
+		String json = String.format("{id: '/parents/%d', name: 'lala', pastJobIds: ['/jobs/%d', '/jobs/%d']}", parent.getId().asLong(),
+				job1.getId().asLong(), job2.getId().asLong());
 
 		Parent retrievedParent = JsonUtils.from(yawp, json, Parent.class);
 
@@ -197,6 +197,14 @@ public class IdRefAsLongTest extends EndpointTestCase {
 		assertEquals("/parents/1", IdRef.parse(yawp, GET, "/parents/1").toString());
 		assertEquals("/parents/1/children/2", IdRef.parse(yawp, GET, "/parents/1/children/2").toString());
 		assertEquals("/parents/1/children/2/grandchildren/3", IdRef.parse(yawp, GET, "/parents/1/children/2/grandchildren/3").toString());
+	}
+
+	@Test
+	public void testAncestor() {
+		IdRef<Object> id = IdRef.parse(yawp, GET, "/parents/1/children/2/grandchildren/3");
+
+		assertEquals(Child.class, id.getAncestorId(0).getClazz());
+		assertEquals(Parent.class, id.getAncestorId(1).getClazz());
 	}
 
 	private Parent saveParentWithJob() {

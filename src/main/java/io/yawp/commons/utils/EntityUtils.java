@@ -579,11 +579,20 @@ public class EntityUtils {
 		return (Class<T>) ReflectionUtils.getGenericParameter(clazz);
 	}
 
-	public static Class<?> getParentClass(Class<?> endpoint) {
-		Field field = getAnnotatedParentFromClass(endpoint);
+	public static Class<?> getParentClazz(Class<?> endpointClazz) {
+		Field field = getAnnotatedParentFromClass(endpointClazz);
 		if (field == null) {
 			return null;
 		}
 		return (Class<?>) getParametrizedTypes(field)[0];
 	}
+
+	public static Class<?> getAncestorClazz(int ancestor, Class<?> endpointClazz) {
+		Class<?> parentClazz = endpointClazz;
+		for (int i = 0; i <= ancestor; i++) {
+			parentClazz = getParentClazz(parentClazz);
+		}
+		return parentClazz;
+	}
+
 }

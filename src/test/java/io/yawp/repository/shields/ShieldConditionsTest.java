@@ -7,6 +7,7 @@ import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.parents.Child;
+import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Parent;
 import io.yawp.repository.query.condition.BaseCondition;
 
@@ -18,7 +19,7 @@ import org.junit.Test;
 public class ShieldConditionsTest extends EndpointTestCase {
 
 	@Test
-	public void testEvaluateIncomingSameAsExisting() {
+	public void testEvaluateIncomingEqualsExisting() {
 		BasicObject object1 = saveObject("xpto");
 		BasicObject object2 = saveObject("xpto");
 		BasicObject object3 = saveObject("xyz");
@@ -28,7 +29,7 @@ public class ShieldConditionsTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testEvaluateIncomingDifferentExisting() {
+	public void testEvaluateIncomingNotEqualsExisting() {
 		BasicObject object1 = saveObject("xpto");
 		BasicObject object2 = saveObject("xpto");
 		BasicObject object3 = saveObject("xyz");
@@ -76,48 +77,72 @@ public class ShieldConditionsTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testParentTrueConditions() {
-		Child child = saveChild("child", saveParent(1l, "parent"));
+	public void testParentTrueCondition() {
+		Child child = saveChild("child", saveParent("parent"));
 
 		ShieldConditions conditions = new ShieldConditions(Child.class, null, Arrays.asList(child));
 		conditions.where(c("name", "=", "child"));
-		conditions.parentWhere(c("name", "=", "parent"));
+		conditions.whereParent(c("name", "=", "parent"));
 
 		assertTrue(conditions.evaluate());
 	}
 
 	@Test
-	public void testParentFalseConditions() {
-		Child child = saveChild("child", saveParent(1l, "another-parent"));
+	public void testParentFalseCondition() {
+		Child child = saveChild("child", saveParent("another-parent"));
 
 		ShieldConditions conditions = new ShieldConditions(Child.class, null, Arrays.asList(child));
 		conditions.where(c("name", "=", "child"));
-		conditions.parentWhere(c("name", "=", "parent"));
+		conditions.whereParent(c("name", "=", "parent"));
 
 		assertFalse(conditions.evaluate());
 	}
 
 	@Test
-	public void testParentWithoutObjectsTrueConditions() {
-		Parent parent = saveParent(1l, "parent");
+	public void testParentWithoutObjectsTrueCondition() {
+		Parent parent = saveParent("parent");
 
 		ShieldConditions conditions = new ShieldConditions(Child.class, parent.getId(), null);
 		conditions.where(c("name", "=", "child"));
-		conditions.parentWhere(c("name", "=", "parent"));
+		conditions.whereParent(c("name", "=", "parent"));
 
 		assertTrue(conditions.evaluate());
 	}
 
 	@Test
-	public void testParentWithoutObjectsFalseConditions() {
-		Parent parent = saveParent(1l, "another-parent");
+	public void testParentWithoutObjectsFalseCondition() {
+		Parent parent = saveParent("another-parent");
 
 		ShieldConditions conditions = new ShieldConditions(Child.class, parent.getId(), null);
 		conditions.where(c("name", "=", "child"));
-		conditions.parentWhere(c("name", "=", "parent"));
+		conditions.whereParent(c("name", "=", "parent"));
 
 		assertFalse(conditions.evaluate());
 	}
+
+//	@Test
+//	public void testGrandparentTrueCondition() {
+//		Grandchild grandchild = saveGrandchild("granchild", saveChild("child", saveParent("parent")));
+//
+//		ShieldConditions conditions = new ShieldConditions(Grandchild.class, null, Arrays.asList(grandchild));
+//		conditions.where(c("name", "=", "granchild"));
+//		conditions.whereParent(c("name", "=", "child"));
+//		conditions.whereGrandparent(c("name", "=", "parent"));
+//
+//		assertTrue(conditions.evaluate());
+//	}
+//
+//	@Test
+//	public void testGrandparentFalseCondition() {
+//		Grandchild grandchild = saveGrandchild("granchild", saveChild("child", saveParent("another-parent")));
+//
+//		ShieldConditions conditions = new ShieldConditions(Grandchild.class, null, Arrays.asList(grandchild));
+//		conditions.where(c("name", "=", "granchild"));
+//		conditions.whereParent(c("name", "=", "child"));
+//		conditions.whereGrandparent(c("name", "=", "parent"));
+//
+//		assertFalse(conditions.evaluate());
+//	}
 
 	private ShieldConditions createShieldConditions(IdRef<?> id, Object object, BaseCondition c) {
 		return createShieldConditions(id, Arrays.asList(object), c);
@@ -140,9 +165,8 @@ public class ShieldConditionsTest extends EndpointTestCase {
 		return object;
 	}
 
-	protected Parent saveParent(Long id, String name) {
+	protected Parent saveParent(String name) {
 		Parent parent = new Parent();
-		parent.setId(IdRef.create(yawp, Parent.class, id));
 		parent.setName(name);
 		yawp.save(parent);
 		return parent;
@@ -153,5 +177,12 @@ public class ShieldConditionsTest extends EndpointTestCase {
 		child.setParentId(parent.getId());
 		yawp.save(child);
 		return child;
+	}
+
+	protected Grandchild saveGrandchild(String name, Child child) {
+		Grandchild grandchild = new Grandchild(name);
+		grandchild.setChildId(child.getId());
+		yawp.save(grandchild);
+		return grandchild;
 	}
 }

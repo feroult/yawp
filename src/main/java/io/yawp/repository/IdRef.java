@@ -78,6 +78,15 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return (IdRef<TT>) parentId;
 	}
 
+	@SuppressWarnings("unchecked")
+	public <TT> IdRef<TT> getAncestorId(int ancestor) {
+		IdRef<?> ancestorId = this;
+		for (int i = 0; i <= ancestor; i++) {
+			ancestorId = ancestorId.getParentId();
+		}
+		return (IdRef<TT>) ancestorId;
+	}
+
 	public static IdRef<?> fromKey(Repository r, Key key) {
 		if (key == null) {
 			return null;
@@ -275,4 +284,5 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		sb.append(id != null ? id : name);
 		return sb.toString();
 	}
+
 }

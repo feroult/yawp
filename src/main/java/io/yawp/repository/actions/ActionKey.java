@@ -122,7 +122,7 @@ public class ActionKey {
 		Type[] types = method.getParameterTypes();
 
 		Class<?> objectClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
-		Class<?> parentClazz = EntityUtils.getParentClass(objectClazz);
+		Class<?> parentClazz = EntityUtils.getParentClazz(objectClazz);
 
 		if (types.length == 1 && types[0].equals(IdRef.class) && getParameterType(genericTypes, 0).equals(parentClazz)) {
 			return true;

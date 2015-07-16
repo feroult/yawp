@@ -53,7 +53,7 @@ public final class EndpointScanner {
 
 		for (Class<?> endpoint : clazzes) {
 			EndpointFeatures<?> features = new EndpointFeatures<>(endpoint);
-			features.setParent(EntityUtils.getParentClass(endpoint));
+			features.setParent(EntityUtils.getParentClazz(endpoint));
 			endpoints.put(endpoint, features);
 		}
 	}

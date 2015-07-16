@@ -50,18 +50,25 @@ public class CreateRestAction extends RestAction {
 	}
 
 	protected Object saveObject(Object object) {
-		if (id != null) {
-			EntityUtils.setParentId(object, id);
-		}
+		assertIdsAreCorrect(object);
 		save(object);
 		return transform(object);
 	}
 
 	protected FutureObject<Object> saveObjectAsync(Object object) {
+		assertIdsAreCorrect(object);
+		return saveAsync(object);
+	}
+
+	private void assertIdsAreCorrect(Object object) {
 		if (id != null) {
 			EntityUtils.setParentId(object, id);
 		}
-		return saveAsync(object);
+		// TODO assert id != null && object has parent && id.getClazz ==
+		// object.getParentClazz
+		// TODO assert if id == null && object has parent? ->
+		// "object.getParentId()" != null
+		// TODO assert object.getId().getParentId() == "object.getParentId()"
 	}
 
 }

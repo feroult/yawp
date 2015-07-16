@@ -30,6 +30,9 @@ public class UpdateRestAction extends RestAction {
 
 	private void forceObjectIdFromRequest(Object object) {
 		EntityUtils.setId(object, id);
+		// TODO assert id != null && id.getObjectClazz = object.getClazz
+		// TODO set parentId also
+		// TODO assert request has id
 	}
 
 }

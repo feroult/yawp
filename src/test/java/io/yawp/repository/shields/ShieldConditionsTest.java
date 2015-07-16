@@ -54,7 +54,7 @@ public class ShieldConditionsTest extends EndpointTestCase {
 	public void testChainnedConditions() {
 		BasicObject object = new BasicObject();
 
-		ShieldConditions conditions = new ShieldConditions(null, Arrays.asList(object));
+		ShieldConditions conditions = new ShieldConditions(BasicObject.class, null, Arrays.asList(object));
 		conditions.where(c("stringValue", "=", "xpto"));
 		conditions.where(c("intValue", "=", 1));
 
@@ -79,7 +79,7 @@ public class ShieldConditionsTest extends EndpointTestCase {
 	public void testParentTrueConditions() {
 		Child child = saveChild("child", saveParent(1l, "parent"));
 
-		ShieldConditions conditions = new ShieldConditions(null, Arrays.asList(child));
+		ShieldConditions conditions = new ShieldConditions(Child.class, null, Arrays.asList(child));
 		conditions.where(c("name", "=", "child"));
 		conditions.parentWhere(c("name", "=", "parent"));
 
@@ -90,7 +90,29 @@ public class ShieldConditionsTest extends EndpointTestCase {
 	public void testParentFalseConditions() {
 		Child child = saveChild("child", saveParent(1l, "another-parent"));
 
-		ShieldConditions conditions = new ShieldConditions(null, Arrays.asList(child));
+		ShieldConditions conditions = new ShieldConditions(Child.class, null, Arrays.asList(child));
+		conditions.where(c("name", "=", "child"));
+		conditions.parentWhere(c("name", "=", "parent"));
+
+		assertFalse(conditions.evaluate());
+	}
+
+	@Test
+	public void testParentWithoutObjectsTrueConditions() {
+		Parent parent = saveParent(1l, "parent");
+
+		ShieldConditions conditions = new ShieldConditions(Child.class, parent.getId(), null);
+		conditions.where(c("name", "=", "child"));
+		conditions.parentWhere(c("name", "=", "parent"));
+
+		assertTrue(conditions.evaluate());
+	}
+
+	@Test
+	public void testParentWithoutObjectsFalseConditions() {
+		Parent parent = saveParent(1l, "another-parent");
+
+		ShieldConditions conditions = new ShieldConditions(Child.class, parent.getId(), null);
 		conditions.where(c("name", "=", "child"));
 		conditions.parentWhere(c("name", "=", "parent"));
 
@@ -106,7 +128,7 @@ public class ShieldConditionsTest extends EndpointTestCase {
 	}
 
 	private ShieldConditions createShieldConditions(IdRef<?> id, List<?> objects, BaseCondition c) {
-		ShieldConditions conditions = new ShieldConditions(id, objects);
+		ShieldConditions conditions = new ShieldConditions(BasicObject.class, id, objects);
 		conditions.where(c);
 		return conditions;
 	}

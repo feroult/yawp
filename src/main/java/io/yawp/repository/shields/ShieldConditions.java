@@ -11,13 +11,16 @@ public class ShieldConditions {
 
 	private BaseCondition c;
 
+	private Class<?> endpointClazz;
+
 	private IdRef<?> id;
 
 	private List<?> objects;
 
 	private BaseCondition parentC;
 
-	public ShieldConditions(IdRef<?> id, List<?> objects) {
+	public ShieldConditions(Class<?> endpointClazz, IdRef<?> id, List<?> objects) {
+		this.endpointClazz = endpointClazz;
 		this.id = id;
 		this.objects = objects;
 	}
@@ -55,6 +58,9 @@ public class ShieldConditions {
 		}
 
 		if (objects == null) {
+			if (!endpointClazz.equals(id.getClazz())) {
+				return true;
+			}
 			return c.evaluate(id.fetch());
 		}
 		return evaluateObjects(c, new EvaluateExisting());
@@ -66,7 +72,10 @@ public class ShieldConditions {
 		}
 
 		if (objects == null) {
-			return id.getParentId() == null || parentC.evaluate(id.getParentId().fetch());
+			if (endpointClazz.equals(id.getClazz())) {
+				return id.getParentId() == null || parentC.evaluate(id.getParentId().fetch());
+			}
+			return parentC.evaluate(id.fetch());
 		}
 
 		return evaluateObjects(parentC, new EvaluateParent());

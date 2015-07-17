@@ -144,6 +144,32 @@ public class ShieldConditionsTest extends EndpointTestCase {
 		assertFalse(conditions.evaluate());
 	}
 
+	@Test
+	public void testGrandparentWithoutObjectTrueCondition() {
+		Parent parent = saveParent("parent");
+		saveGrandchild("granchild", saveChild("child", parent));
+
+		ShieldConditions conditions = new ShieldConditions(Grandchild.class, parent.getId(), null);
+		conditions.where(c("name", "=", "granchild"));
+		conditions.whereParent(c("name", "=", "child"));
+		conditions.whereGrandparent(c("name", "=", "parent"));
+
+		assertTrue(conditions.evaluate());
+	}
+
+	@Test
+	public void testGrandparentWithoutObjectFalseCondition() {
+		Parent parent = saveParent("another-parent");
+		saveGrandchild("granchild", saveChild("child", parent));
+
+		ShieldConditions conditions = new ShieldConditions(Grandchild.class, parent.getId(), null);
+		conditions.where(c("name", "=", "granchild"));
+		conditions.whereParent(c("name", "=", "child"));
+		conditions.whereGrandparent(c("name", "=", "parent"));
+
+		assertFalse(conditions.evaluate());
+	}
+
 	private ShieldConditions createShieldConditions(IdRef<?> id, Object object, BaseCondition c) {
 		return createShieldConditions(id, Arrays.asList(object), c);
 	}

@@ -60,8 +60,8 @@ public class ShieldTest extends ServletTestCase {
 		assertPostWithStatus("/shielded_objects", "[{stringValue: 'valid object'}, {stringValue: 'xpto'}]", 404);
 		assertPostWithStatus("/shielded_objects", "[{stringValue: 'valid object'}, {stringValue: 'valid object'}]", 200);
 
-		assertPutWithStatus("/shielded_objects/1", "{id:'/shielded_objects/200', stringValue: 'xpto'}", 404);
-		assertPutWithStatus("/shielded_objects/1", "{id:'/shielded_objects/200', stringValue: 'valid object'}", 200);
+		assertPutWithStatus("/shielded_objects/200", "{id:'/shielded_objects/200', stringValue: 'xpto'}", 404);
+		assertPutWithStatus("/shielded_objects/200", "{id:'/shielded_objects/200', stringValue: 'valid object'}", 200);
 	}
 
 	@Test

@@ -160,9 +160,29 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 			currentIdRef.setParentId(lastIdRef);
 			lastIdRef = currentIdRef;
+
+			validateParentId(currentIdRef, path);
 		}
 
 		return lastIdRef;
+	}
+
+	private static void validateParentId(IdRef<?> id, String path) {
+		Class<?> parentClazz = EntityUtils.getParentClazz(id.getClazz());
+		if (parentClazz == null) {
+			if (id.getParentId() != null) {
+				throw new RuntimeException("Invalid parent structure for id: " + path);
+			}
+			return;
+		}
+
+		if (id.getParentId() == null) {
+			throw new RuntimeException("Invalid parent structure for id: " + path);
+		}
+
+		if (!parentClazz.equals(id.getParentId().getClazz())) {
+			throw new RuntimeException("Invalid parent structure for id: " + path);
+		}
 	}
 
 	private static Class<?> getIdRefClazz(Repository r, String endpointPath) {

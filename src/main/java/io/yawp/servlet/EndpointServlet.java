@@ -1,5 +1,6 @@
 package io.yawp.servlet;
 
+import static org.junit.Assert.assertFalse;
 import io.yawp.commons.http.ErrorResponse;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
@@ -110,7 +111,13 @@ public class EndpointServlet extends HttpServlet {
 
 	public HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
 		Repository r = getRepository(params);
+
 		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri, requestJson, params);
+
+		if (!router.isValid()) {
+			throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");
+		}
+
 		return router.executeRestAction(enableHooks);
 	}
 

@@ -12,7 +12,6 @@ import io.yawp.repository.actions.ActionKey;
 import java.util.ArrayList;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class EndpointRouterTest extends EndpointTestCase {
@@ -60,10 +59,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 	private EndpointRouter parse(String uri) {
 		return EndpointRouter.parse(yawp, HttpVerb.GET, uri, null, null);
-	}
-
-	private EndpointRouter parse(HttpVerb verb, String uri) {
-		return EndpointRouter.parse(yawp, verb, uri, null, null);
 	}
 
 	private EndpointRouter parse(HttpVerb verb, String uri, String requestJson) {
@@ -169,8 +164,57 @@ public class EndpointRouterTest extends EndpointTestCase {
 	}
 
 	@Test
-	@Ignore
-	public void testValidRoutes() {
-		assertTrue(parse(HttpVerb.GET, "/parents/1").isValid());
+	public void testRouteHasValidIds() {
+		assertTrue(parse(HttpVerb.POST, "/parents", "{}").hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/parents", "[{}, {}]").hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/parents", "{id: '/parents/1'}").hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/parents", "[{id: '/parents/1'}, {id: '/parents/2'}]").hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/parents", "[{id: '/parents/1'}, {}]").hasValidIds());
+		assertTrue(parse(HttpVerb.PUT, "/parents/1", "{}").hasValidIds());
+		assertTrue(parse(HttpVerb.PUT, "/parents/1", "{id: '/parents/1'}").hasValidIds());
+		assertTrue(parse(HttpVerb.PATCH, "/parents/1", "{}").hasValidIds());
+		assertTrue(parse(HttpVerb.PATCH, "/parents/1", "{id: '/parents/1'}").hasValidIds());
+
+		assertTrue(parse(HttpVerb.POST, "/children", "{}").hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/children", "[{}, {}]").hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/children", "{id: '/parents/1/children/1'}").hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/children", "[{id: '/parents/1/children/1'}, {id: '/parents/2/children/2'}]").hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/children", "[{id: '/parents/1/children/1'}, {}]").hasValidIds());
+
+		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "{}").hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "[{}, {}]").hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "{id: '/parents/1/children/1'}").hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/parents/1/children/2'}]")
+				.hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {}]").hasValidIds());
+		assertTrue(parse(HttpVerb.PUT, "/parents/1/children/1", "{}").hasValidIds());
+		assertTrue(parse(HttpVerb.PUT, "/parents/1/children/1", "{id: '/parents/1/children/1'}").hasValidIds());
+		assertTrue(parse(HttpVerb.PATCH, "/parents/1/children/1", "{}").hasValidIds());
+		assertTrue(parse(HttpVerb.PATCH, "/parents/1/children/1", "{id: '/parents/1/children/1'}").hasValidIds());
+
+		assertTrue(parse(HttpVerb.POST, "/grandchildren",
+				"[{id: '/parents/1/children/1/grandchildren/1'}, {id: '/parents/2/children/2/grandchildren/2'}]").hasValidIds());
+		assertTrue(parse(HttpVerb.POST, "/parents/1/grandchildren",
+				"[{id: '/parents/1/children/1/grandchildren/1'}, {id: '/parents/1/children/2/grandchildren/2'}]").hasValidIds());
+	}
+
+	@Test
+	public void testInvalidRouteIds() {
+		assertFalse(parse(HttpVerb.POST, "/parents", "{id: '/basic_objects/1'}").hasValidIds());
+		assertFalse(parse(HttpVerb.POST, "/parents", "[{id: '/parents/1'}, {id: '/basic_objects/1'}]").hasValidIds());
+		assertFalse(parse(HttpVerb.PUT, "/parents/1", "{id: '/basic_objects/1'}").hasValidIds());
+		assertFalse(parse(HttpVerb.PUT, "/parents/1", "{id: '/parents/2'}").hasValidIds());
+		assertFalse(parse(HttpVerb.PATCH, "/parents/1", "{id: '/parents/2'}").hasValidIds());
+
+		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "{id: '/basic_objects/1'}").hasValidIds());
+		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "{id: '/parents/1/children'}").hasValidIds());
+		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/basic_objects/1'}]").hasValidIds());
+		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/parents/2/children/2'}]")
+				.hasValidIds());
+		assertFalse(parse(HttpVerb.PUT, "/parents/1/children", "{id: '/parents/1/children/1'}").hasValidIds());
+		assertFalse(parse(HttpVerb.PUT, "/parents/1/children/1", "{id: '/parents/2/children/1'}").hasValidIds());
+
+		assertFalse(parse(HttpVerb.POST, "/parents/1/grandchildren",
+				"[{id: '/parents/1/children/1/grandchildren/1'}, {id: '/parents/2/children/2/grandchildren/2'}]").hasValidIds());
 	}
 }

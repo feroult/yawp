@@ -2,6 +2,7 @@ package io.yawp.servlet;
 
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.IdRef;
@@ -30,7 +31,7 @@ public class EndpointRouter {
 
 	private HttpVerb verb;
 
-	private IdRef<?> idRef;
+	private IdRef<?> id;
 
 	private Class<?> endpointClazz;
 
@@ -47,6 +48,7 @@ public class EndpointRouter {
 		this.requestJson = requestJson;
 		this.params = params;
 		this.features = r.getFeatures();
+
 		parseAll();
 	}
 
@@ -55,7 +57,7 @@ public class EndpointRouter {
 	}
 
 	private void parseAll() {
-		this.idRef = IdRef.parse(r, verb, uri);
+		this.id = IdRef.parse(r, verb, uri);
 
 		this.customActionKey = parseCustomActionKey();
 		this.overCollection = parseOverCollection();
@@ -73,20 +75,20 @@ public class EndpointRouter {
 			return features.get("/" + parts[parts.length - 1]).getClazz();
 		}
 
-		return idRef.getClazz();
+		return id.getClazz();
 	}
 
 	private ActionKey parseCustomActionKey() {
 
-		if (idRef == null) {
+		if (id == null) {
 			return rootCollectionCustomActionKey();
 		}
 
-		if (idRef.getUri().length() == uri.length()) {
+		if (id.getUri().length() == uri.length()) {
 			return null;
 		}
 
-		String lastToken = uri.substring(idRef.getUri().length() + 1);
+		String lastToken = uri.substring(id.getUri().length() + 1);
 		if (hasTwoParts(lastToken)) {
 			return nestedCollectionCustomActionKey(lastToken);
 		}
@@ -96,7 +98,7 @@ public class EndpointRouter {
 
 	private ActionKey singleObjectCustomActionKey(String lastToken) {
 		ActionKey actionKey = new ActionKey(verb, lastToken, false);
-		if (features.hasCustomAction(idRef.getClazz(), actionKey)) {
+		if (features.hasCustomAction(id.getClazz(), actionKey)) {
 			return actionKey;
 		}
 
@@ -129,21 +131,21 @@ public class EndpointRouter {
 	}
 
 	private boolean parseOverCollection() {
-		if (idRef == null) {
+		if (id == null) {
 			return true;
 		}
 
-		if (idRef.getUri().length() == uri.length()) {
+		if (id.getUri().length() == uri.length()) {
 			return false;
 		}
 
-		String lastToken = uri.substring(idRef.getUri().length() + 1);
+		String lastToken = uri.substring(id.getUri().length() + 1);
 		if (hasTwoParts(lastToken)) {
 			return true;
 		}
 
 		ActionKey actionKey = new ActionKey(verb, lastToken, false);
-		if (features.hasCustomAction(idRef.getClazz(), actionKey)) {
+		if (features.hasCustomAction(id.getClazz(), actionKey)) {
 			return false;
 		}
 
@@ -182,7 +184,7 @@ public class EndpointRouter {
 	}
 
 	public IdRef<?> getIdRef() {
-		return idRef;
+		return id;
 	}
 
 	private RestAction createRestAction(boolean enableHooks) {
@@ -194,7 +196,7 @@ public class EndpointRouter {
 			action.setRepository(r);
 			action.setEnableHooks(enableHooks);
 			action.setEndpointClazz(endpointClazz);
-			action.setId(idRef);
+			action.setId(id);
 			action.setParams(params);
 			action.setCustomActionKey(customActionKey);
 			action.setRequestBodyJsonArray(JsonUtils.isJsonArray(requestJson));
@@ -227,8 +229,83 @@ public class EndpointRouter {
 	}
 
 	public boolean isValid() {
-		// TODO Auto-generated method stub
+		return hasValidIds();
+	}
+
+	public boolean hasValidIds() {
+		if (objects == null) {
+			return true;
+		}
+
+		if (uriIdNotEqualsIdInObject()) {
+			return false;
+		}
+
+		if (!allIdsAreForTheSameEndpointClazz()) {
+			return false;
+		}
+
+		if (!allIdsAreForTheSameAncestorInUri()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private boolean allIdsAreForTheSameAncestorInUri() {
+		if (id == null) {
+			return true;
+		}
+
+		if (id.getClazz().equals(endpointClazz)) {
+			return true;
+		}
+
+		for (Object object : objects) {
+			IdRef<?> idInObject = EntityUtils.getIdRef(object);
+			if (idInObject != null && !sameAncestorId(idInObject)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean sameAncestorId(IdRef<?> idInObject) {
+		IdRef<?> currentId = idInObject;
+		while (currentId.getParentId() != null) {
+			if (currentId.getParentId().getClazz().equals(id.getClazz())) {
+				return id.equals(currentId.getParentId());
+			}
+			currentId = currentId.getParentId();
+		}
 		return false;
 	}
 
+	private boolean allIdsAreForTheSameEndpointClazz() {
+		for (Object object : objects) {
+			IdRef<?> idInObject = EntityUtils.getIdRef(object);
+			if (idInObject != null && !idInObject.getClazz().equals(endpointClazz)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean uriIdNotEqualsIdInObject() {
+		if (id == null) {
+			return false;
+		}
+
+		if (!id.getClazz().equals(endpointClazz) && verb == HttpVerb.POST) {
+			return false;
+		}
+
+		for (Object object : objects) {
+			IdRef<?> idInObject = EntityUtils.getIdRef(object);
+			if (idInObject != null && !idInObject.equals(id)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

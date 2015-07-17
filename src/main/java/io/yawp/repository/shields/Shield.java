@@ -16,7 +16,7 @@ public class Shield<T> extends ShieldBase<T> {
 	public void show(IdRef<T> id) {
 	}
 
-	public void create(T object, List<T> objects) {
+	public void create(List<T> objects) {
 	}
 
 	public void update(IdRef<T> id, T object) {

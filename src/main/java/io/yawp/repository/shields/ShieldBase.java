@@ -28,6 +28,8 @@ public abstract class ShieldBase<T> extends Feature {
 
 	private List<T> objects;
 
+	private List<T> objectsX;
+
 	private Map<String, String> params;
 
 	private ActionKey actionKey;
@@ -40,7 +42,7 @@ public abstract class ShieldBase<T> extends Feature {
 
 	public abstract void show(IdRef<T> id);
 
-	public abstract void create(T object, List<T> objects);
+	public abstract void create(List<T> objects);
 
 	public abstract void update(IdRef<T> id, T object);
 
@@ -67,7 +69,7 @@ public abstract class ShieldBase<T> extends Feature {
 	}
 
 	protected final boolean requestHasAnyObject() {
-		return object != null || (objects != null && objects.size() > 0);
+		return objectsX != null;
 	}
 
 	protected final boolean requestHasObjectArray() {
@@ -89,7 +91,7 @@ public abstract class ShieldBase<T> extends Feature {
 
 	public final void protectCreate() {
 		always();
-		create(object, objects);
+		create(objectsX);
 		throwNotFoundIfNotAllowed();
 
 		verifyConditionOnIncomingObjects();
@@ -102,7 +104,7 @@ public abstract class ShieldBase<T> extends Feature {
 	@SuppressWarnings("unchecked")
 	public final void protectUpdate() {
 		always();
-		update((IdRef<T>) id, object);
+		update((IdRef<T>) id, objectsX == null ? null : objectsX.get(0));
 		throwNotFoundIfNotAllowed();
 
 		verifyConditionOnIncomingObjects();
@@ -160,6 +162,11 @@ public abstract class ShieldBase<T> extends Feature {
 	@SuppressWarnings("unchecked")
 	public final void setObjects(List<?> objects) {
 		this.objects = (List<T>) objects;
+	}
+
+	@SuppressWarnings("unchecked")
+	public final void setObjectsX(List<?> objects) {
+		this.objectsX = (List<T>) objects;
 	}
 
 	public BaseCondition getCondition() {

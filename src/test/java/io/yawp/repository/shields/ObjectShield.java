@@ -6,6 +6,7 @@ import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.ShieldedObject;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +33,8 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	}
 
 	@Override
-	public void create(ShieldedObject object, List<ShieldedObject> objects) {
-		allow(isRequestWithValidObject(object, objects));
+	public void create(List<ShieldedObject> objects) {
+		allow(isRequestWithValidObjects(objects));
 		allow(isKurt()).where(c("stringValue", "=", "ok"));
 		allow(isJanis()).where(c("stringValue", "=", "ok-for-janis"));
 	}
@@ -42,7 +43,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	public void update(IdRef<ShieldedObject> id, ShieldedObject object) {
 		allow(isJane());
 		allow(isId100(id));
-		allow(isRequestWithValidObject(object, null));
+		allow(isRequestWithValidObject(object));
 		allow(isKurt()).where(c("stringValue", "=", "ok"));
 		allow(isJanis()).where(c("stringValue", "=", "ok-for-janis"));
 	}
@@ -99,13 +100,16 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		return id.asLong().equals(100l);
 	}
 
-	private boolean isRequestWithValidObject(ShieldedObject object, List<ShieldedObject> objects) {
-		if (!requestHasAnyObject()) {
+	private boolean isRequestWithValidObject(ShieldedObject object) {
+		if (object == null) {
 			return false;
 		}
+		return isRequestWithValidObjects(Arrays.asList(object));
+	}
 
-		if (!requestHasObjectArray()) {
-			return isValidObject(object);
+	private boolean isRequestWithValidObjects(List<ShieldedObject> objects) {
+		if (!requestHasAnyObject()) {
+			return false;
 		}
 
 		for (ShieldedObject objectInList : objects) {

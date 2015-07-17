@@ -187,6 +187,7 @@ public abstract class RestAction {
 			shield.setId(id);
 			shield.setObject(getObject());
 			shield.setObjects(getObjects());
+			shield.setObjectsX(objects);
 			shield.setParams(params);
 			shield.setActionKey(customActionKey);
 			shield.setActionMethods(shieldInfo.getActionMethods());

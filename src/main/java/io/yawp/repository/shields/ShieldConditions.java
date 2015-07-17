@@ -17,8 +17,6 @@ public class ShieldConditions {
 
 	private Map<Integer, BaseCondition> ancestorConditions = new HashMap<Integer, BaseCondition>();
 
-	private BaseCondition parentCondition;
-
 	private Class<?> endpointClazz;
 
 	private IdRef<?> id;
@@ -39,13 +37,12 @@ public class ShieldConditions {
 		this.condition = condition;
 	}
 
-	public void whereParent(BaseCondition parentCondition) {
-		whereAncestor(0, parentCondition);
-		this.parentCondition = parentCondition;
+	public void whereParent(BaseCondition condition) {
+		whereAncestor(0, condition);
 	}
 
-	public void whereGrandparent(BaseCondition grandparentC) {
-		// TODO Auto-generated method stub
+	public void whereGrandparent(BaseCondition condition) {
+		whereAncestor(1, condition);
 	}
 
 	public void whereAncestor(int i, BaseCondition condition) {
@@ -69,7 +66,7 @@ public class ShieldConditions {
 			return true;
 		}
 
-		return evaluateObjects(condition, new EvaluateIncoming());
+		return evaluateObjects(new EvaluateIncoming(condition));
 	}
 
 	private boolean evaluateExisting() {
@@ -84,7 +81,7 @@ public class ShieldConditions {
 			return condition.evaluate(id.fetch());
 		}
 
-		return evaluateObjects(condition, new EvaluateExisting());
+		return evaluateObjects(new EvaluateExisting(condition));
 	}
 
 	private boolean evaluateAncestors() {
@@ -96,7 +93,7 @@ public class ShieldConditions {
 			return evaluateAncestorByIds();
 		}
 
-		return evaluateObjects(parentCondition, new EvaluateParent());
+		return evaluateObjects(new EvaluateParent());
 	}
 
 	private boolean evaluateAncestorByIds() {
@@ -134,10 +131,10 @@ public class ShieldConditions {
 		return conditionsIndex;
 	}
 
-	private boolean evaluateObjects(BaseCondition condition, Evaluate e) {
+	private boolean evaluateObjects(Evaluate e) {
 		boolean result = true;
 		for (Object object : objects) {
-			result = result && e.evaluate(condition, object);
+			result = result && e.evaluate(object);
 			if (!result) {
 				return false;
 			}
@@ -146,19 +143,33 @@ public class ShieldConditions {
 	}
 
 	private interface Evaluate {
-		public boolean evaluate(BaseCondition condition, Object object);
+		public boolean evaluate(Object object);
 	}
 
 	private class EvaluateIncoming implements Evaluate {
+
+		private BaseCondition condition;
+
+		public EvaluateIncoming(BaseCondition condition) {
+			this.condition = condition;
+		}
+
 		@Override
-		public boolean evaluate(BaseCondition condition, Object object) {
+		public boolean evaluate(Object object) {
 			return condition.evaluate(object);
 		}
 	}
 
 	private class EvaluateExisting implements Evaluate {
+
+		private BaseCondition condition;
+
+		public EvaluateExisting(BaseCondition condition) {
+			this.condition = condition;
+		}
+
 		@Override
-		public boolean evaluate(BaseCondition condition, Object object) {
+		public boolean evaluate(Object object) {
 			IdRef<?> id = EntityUtils.getIdRef(object);
 			if (id == null) {
 				return true;
@@ -169,12 +180,18 @@ public class ShieldConditions {
 
 	private class EvaluateParent implements Evaluate {
 		@Override
-		public boolean evaluate(BaseCondition c, Object object) {
-			IdRef<?> id = EntityUtils.getParentIdRef(object);
-			if (id == null) {
-				return true;
+		public boolean evaluate(Object object) {
+			boolean result = true;
+			for (Integer ancestor : sortAncestorIndexes()) {
+				BaseCondition ancestorCondition = ancestorConditions.get(ancestor);
+				IdRef<?> id = EntityUtils.getParentIdRef(object);
+				IdRef<?> ancestorId = getAncestorId(ancestor, id);
+				result = result && (ancestorId == null || ancestorCondition.evaluate(ancestorId.fetch()));
+				if (!result) {
+					return false;
+				}
 			}
-			return c.evaluate(id.fetch());
+			return true;
 		}
 	}
 

@@ -120,29 +120,29 @@ public class ShieldConditionsTest extends EndpointTestCase {
 		assertFalse(conditions.evaluate());
 	}
 
-//	@Test
-//	public void testGrandparentTrueCondition() {
-//		Grandchild grandchild = saveGrandchild("granchild", saveChild("child", saveParent("parent")));
-//
-//		ShieldConditions conditions = new ShieldConditions(Grandchild.class, null, Arrays.asList(grandchild));
-//		conditions.where(c("name", "=", "granchild"));
-//		conditions.whereParent(c("name", "=", "child"));
-//		conditions.whereGrandparent(c("name", "=", "parent"));
-//
-//		assertTrue(conditions.evaluate());
-//	}
-//
-//	@Test
-//	public void testGrandparentFalseCondition() {
-//		Grandchild grandchild = saveGrandchild("granchild", saveChild("child", saveParent("another-parent")));
-//
-//		ShieldConditions conditions = new ShieldConditions(Grandchild.class, null, Arrays.asList(grandchild));
-//		conditions.where(c("name", "=", "granchild"));
-//		conditions.whereParent(c("name", "=", "child"));
-//		conditions.whereGrandparent(c("name", "=", "parent"));
-//
-//		assertFalse(conditions.evaluate());
-//	}
+	@Test
+	public void testGrandparentTrueCondition() {
+		Grandchild grandchild = saveGrandchild("granchild", saveChild("child", saveParent("parent")));
+
+		ShieldConditions conditions = new ShieldConditions(Grandchild.class, null, Arrays.asList(grandchild));
+		conditions.where(c("name", "=", "granchild"));
+		conditions.whereParent(c("name", "=", "child"));
+		conditions.whereGrandparent(c("name", "=", "parent"));
+
+		assertTrue(conditions.evaluate());
+	}
+
+	@Test
+	public void testGrandparentFalseCondition() {
+		Grandchild grandchild = saveGrandchild("granchild", saveChild("child", saveParent("another-parent")));
+
+		ShieldConditions conditions = new ShieldConditions(Grandchild.class, null, Arrays.asList(grandchild));
+		conditions.where(c("name", "=", "granchild"));
+		conditions.whereParent(c("name", "=", "child"));
+		conditions.whereGrandparent(c("name", "=", "parent"));
+
+		assertFalse(conditions.evaluate());
+	}
 
 	private ShieldConditions createShieldConditions(IdRef<?> id, Object object, BaseCondition c) {
 		return createShieldConditions(id, Arrays.asList(object), c);

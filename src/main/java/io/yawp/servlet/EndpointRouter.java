@@ -47,14 +47,14 @@ public class EndpointRouter {
 		this.requestJson = requestJson;
 		this.params = params;
 		this.features = r.getFeatures();
-		parseUri();
+		parseAll();
 	}
 
 	public static EndpointRouter parse(Repository r, HttpVerb verb, String uri, String requestJson, Map<String, String> params) {
 		return new EndpointRouter(r, verb, uri, requestJson, params);
 	}
 
-	private void parseUri() {
+	private void parseAll() {
 		this.idRef = IdRef.parse(r, verb, uri);
 
 		this.customActionKey = parseCustomActionKey();
@@ -224,6 +224,11 @@ public class EndpointRouter {
 
 	public HttpResponse executeRestAction(boolean enableHooks) {
 		return createRestAction(enableHooks).execute();
+	}
+
+	public boolean isValid() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

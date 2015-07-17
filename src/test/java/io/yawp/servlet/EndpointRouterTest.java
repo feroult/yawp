@@ -12,6 +12,7 @@ import io.yawp.repository.actions.ActionKey;
 import java.util.ArrayList;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class EndpointRouterTest extends EndpointTestCase {
@@ -59,6 +60,14 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 	private EndpointRouter parse(String uri) {
 		return EndpointRouter.parse(yawp, HttpVerb.GET, uri, null, null);
+	}
+
+	private EndpointRouter parse(HttpVerb verb, String uri) {
+		return EndpointRouter.parse(yawp, verb, uri, null, null);
+	}
+
+	private EndpointRouter parse(HttpVerb verb, String uri, String requestJson) {
+		return EndpointRouter.parse(yawp, verb, uri, requestJson, null);
 	}
 
 	@Test
@@ -157,5 +166,11 @@ public class EndpointRouterTest extends EndpointTestCase {
 		assertFalse(router.isOverCollection());
 		assertTrue(router.isCustomAction());
 		assertEquals("action", router.getCustomActionName());
+	}
+
+	@Test
+	@Ignore
+	public void testValidRoutes() {
+		assertTrue(parse(HttpVerb.GET, "/parents/1").isValid());
 	}
 }

@@ -19,8 +19,6 @@ import io.yawp.servlet.HttpException;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
 public abstract class RestAction {
 
 	private static final String DEFAULT_TRANSFORMER_NAME = "defaults";
@@ -196,24 +194,20 @@ public abstract class RestAction {
 		}
 	}
 
-	public void parseJson() {
-		if (StringUtils.isBlank(requestJson)) {
-			return;
-		}
-
-		if (JsonUtils.isJsonArray(requestJson)) {
-			objects = JsonUtils.fromList(r, requestJson, endpointClazz);
-		} else {
-			object = JsonUtils.from(r, requestJson, endpointClazz);
-		}
-	}
-
 	protected boolean isJsonArray() {
 		return objects != null;
 	}
 
+	public void setObjects(List<?> objects) {
+		this.objects = objects;
+	}
+
 	public List<?> getObjects() {
 		return objects;
+	}
+
+	public void setObject(Object object) {
+		this.object = object;
 	}
 
 	public Object getObject() {

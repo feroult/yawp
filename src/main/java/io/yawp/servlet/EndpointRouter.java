@@ -2,6 +2,7 @@ package io.yawp.servlet;
 
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
@@ -10,6 +11,8 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.servlet.rest.RestAction;
 
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class EndpointRouter {
 
@@ -29,16 +32,22 @@ public class EndpointRouter {
 
 	private Class<?> endpointClazz;
 
-	public EndpointRouter(Repository r, HttpVerb verb, String uri) {
+	private String requestJson;
+
+	private Map<String, String> params;
+
+	private EndpointRouter(Repository r, HttpVerb verb, String uri, String requestJson, Map<String, String> params) {
 		this.verb = verb;
 		this.uri = uri;
 		this.r = r;
+		this.requestJson = requestJson;
+		this.params = params;
 		this.features = r.getFeatures();
 		parseUri();
 	}
 
-	public static EndpointRouter parse(Repository r, HttpVerb verb, String uri) {
-		return new EndpointRouter(r, verb, uri);
+	public static EndpointRouter parse(Repository r, HttpVerb verb, String uri, String requestJson, Map<String, String> params) {
+		return new EndpointRouter(r, verb, uri, requestJson, params);
 	}
 
 	private void parseUri() {
@@ -171,7 +180,7 @@ public class EndpointRouter {
 		return idRef;
 	}
 
-	private RestAction createRestAction(boolean enableHooks, String requestJson, Map<String, String> params) {
+	private RestAction createRestAction(boolean enableHooks) {
 		try {
 			Class<? extends RestAction> restActionClazz = RestAction.getRestActionClazz(verb, isOverCollection(), isCustomAction());
 
@@ -184,8 +193,8 @@ public class EndpointRouter {
 			action.setRequestJson(requestJson);
 			action.setParams(params);
 			action.setCustomActionKey(customActionKey);
+			parseJsonIntoObjects(action);
 
-			action.parseJson();
 			action.defineTrasnformer();
 			action.defineShield();
 
@@ -196,9 +205,20 @@ public class EndpointRouter {
 		}
 	}
 
-	public HttpResponse executeRestAction(boolean enableHooks, String requestJson, Map<String, String> params) {
-		RestAction restAction = createRestAction(enableHooks, requestJson, params);
-		return restAction.execute();
+	private void parseJsonIntoObjects(RestAction action) {
+		if (StringUtils.isBlank(requestJson)) {
+			return;
+		}
+
+		if (JsonUtils.isJsonArray(requestJson)) {
+			action.setObjects(JsonUtils.fromList(r, requestJson, endpointClazz));
+		} else {
+			action.setObject(JsonUtils.from(r, requestJson, endpointClazz));
+		}
+	}
+
+	public HttpResponse executeRestAction(boolean enableHooks) {
+		return createRestAction(enableHooks).execute();
 	}
 
 }

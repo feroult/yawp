@@ -50,7 +50,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 		public EndpointFeatures<?> get(Class<?> clazz) {
 			return features.get(clazz);
 		}
-
 	}
 
 	@Before
@@ -59,7 +58,7 @@ public class EndpointRouterTest extends EndpointTestCase {
 	}
 
 	private EndpointRouter parse(String uri) {
-		return EndpointRouter.parse(yawp, HttpVerb.GET, uri);
+		return EndpointRouter.parse(yawp, HttpVerb.GET, uri, null, null);
 	}
 
 	@Test

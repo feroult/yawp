@@ -19,7 +19,7 @@ public class CreateRestAction extends RestAction {
 
 	@Override
 	public Object action() {
-		if (isJsonArray()) {
+		if (isRequestWithArray()) {
 			return createFromArray(getObjects());
 		}
 

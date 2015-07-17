@@ -35,8 +35,6 @@ public abstract class RestAction {
 
 	protected IdRef<?> id;
 
-	protected String requestJson;
-
 	protected Map<String, String> params;
 
 	protected ActionKey customActionKey;
@@ -50,6 +48,10 @@ public abstract class RestAction {
 	private List<?> objects;
 
 	private Object object;
+
+	private List<?> objectsX;
+
+	private boolean requestWithArray;
 
 	public RestAction(String actionName) {
 		this.actionName = actionName;
@@ -71,16 +73,20 @@ public abstract class RestAction {
 		this.id = id;
 	}
 
-	public void setRequestJson(String requestJson) {
-		this.requestJson = requestJson;
-	}
-
 	public void setParams(Map<String, String> params) {
 		this.params = params;
 	}
 
 	public void setCustomActionKey(ActionKey customActionKey) {
 		this.customActionKey = customActionKey;
+	}
+
+	public boolean isRequestWithArray() {
+		return requestWithArray;
+	}
+
+	public void setRequestWithArray(boolean requestWithArray) {
+		this.requestWithArray = requestWithArray;
 	}
 
 	public abstract void shield();
@@ -183,8 +189,8 @@ public abstract class RestAction {
 			shield.setRepository(r);
 			shield.setEndpointClazz(endpointClazz);
 			shield.setId(id);
-			shield.setObject(object);
-			shield.setObjects(objects);
+			shield.setObject(getObject());
+			shield.setObjects(getObjects());
 			shield.setParams(params);
 			shield.setActionKey(customActionKey);
 			shield.setActionMethods(shieldInfo.getActionMethods());
@@ -198,12 +204,16 @@ public abstract class RestAction {
 		return objects != null;
 	}
 
+	public void setObjectsX(List<?> objectsX) {
+		this.objectsX = objectsX;
+	}
+
 	public void setObjects(List<?> objects) {
 		this.objects = objects;
 	}
 
 	public List<?> getObjects() {
-		return objects;
+		return requestWithArray ? objectsX : null;
 	}
 
 	public void setObject(Object object) {
@@ -211,7 +221,7 @@ public abstract class RestAction {
 	}
 
 	public Object getObject() {
-		return object;
+		return objectsX == null || requestWithArray ? null : objectsX.get(0);
 	}
 
 	public static Class<? extends RestAction> getRestActionClazz(HttpVerb verb, boolean overCollection, boolean isCustomAction) {

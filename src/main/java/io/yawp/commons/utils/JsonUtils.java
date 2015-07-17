@@ -79,6 +79,9 @@ public class JsonUtils {
 	}
 
 	public static boolean isJsonArray(String json) {
+		if (json == null) {
+			return false;
+		}
 		JsonElement parsed = new JsonParser().parse(json);
 		return parsed.isJsonArray();
 	}

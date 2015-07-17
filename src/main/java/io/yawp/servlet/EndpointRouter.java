@@ -10,6 +10,8 @@ import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.servlet.rest.RestAction;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +38,8 @@ public class EndpointRouter {
 
 	private Map<String, String> params;
 
+	private List<?> objects;
+
 	private EndpointRouter(Repository r, HttpVerb verb, String uri, String requestJson, Map<String, String> params) {
 		this.verb = verb;
 		this.uri = uri;
@@ -56,6 +60,7 @@ public class EndpointRouter {
 		this.customActionKey = parseCustomActionKey();
 		this.overCollection = parseOverCollection();
 		this.endpointClazz = parseEndpointClazz();
+		this.objects = parseRequestJson();
 	}
 
 	private Class<?> parseEndpointClazz() {
@@ -190,9 +195,10 @@ public class EndpointRouter {
 			action.setEnableHooks(enableHooks);
 			action.setEndpointClazz(endpointClazz);
 			action.setId(idRef);
-			action.setRequestJson(requestJson);
 			action.setParams(params);
 			action.setCustomActionKey(customActionKey);
+			action.setRequestWithArray(JsonUtils.isJsonArray(requestJson));
+			action.setObjectsX(objects);
 			parseJsonIntoObjects(action);
 
 			action.defineTrasnformer();
@@ -215,6 +221,18 @@ public class EndpointRouter {
 		} else {
 			action.setObject(JsonUtils.from(r, requestJson, endpointClazz));
 		}
+	}
+
+	private List<?> parseRequestJson() {
+		if (StringUtils.isBlank(requestJson)) {
+			return null;
+		}
+
+		if (JsonUtils.isJsonArray(requestJson)) {
+			return JsonUtils.fromList(r, requestJson, endpointClazz);
+		}
+
+		return Arrays.asList(JsonUtils.from(r, requestJson, endpointClazz));
 	}
 
 	public HttpResponse executeRestAction(boolean enableHooks) {

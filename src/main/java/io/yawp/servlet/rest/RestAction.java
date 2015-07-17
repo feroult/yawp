@@ -47,7 +47,7 @@ public abstract class RestAction {
 
 	private List<?> objects;
 
-	private boolean requestWithArray;
+	private boolean requestBodyJsonArray;
 
 	public RestAction(String actionName) {
 		this.actionName = actionName;
@@ -77,12 +77,12 @@ public abstract class RestAction {
 		this.customActionKey = customActionKey;
 	}
 
-	public boolean isRequestWithArray() {
-		return requestWithArray;
+	public boolean isRequestBodyJsonArray() {
+		return requestBodyJsonArray;
 	}
 
-	public void setRequestWithArray(boolean requestWithArray) {
-		this.requestWithArray = requestWithArray;
+	public void setRequestBodyJsonArray(boolean requestBodyJsonArray) {
+		this.requestBodyJsonArray = requestBodyJsonArray;
 	}
 
 	public abstract void shield();
@@ -201,11 +201,11 @@ public abstract class RestAction {
 	}
 
 	public List<?> getObjects() {
-		return requestWithArray ? objects : null;
+		return requestBodyJsonArray ? objects : null;
 	}
 
 	public Object getObject() {
-		return objects == null || requestWithArray ? null : objects.get(0);
+		return objects == null || requestBodyJsonArray ? null : objects.get(0);
 	}
 
 	public static Class<? extends RestAction> getRestActionClazz(HttpVerb verb, boolean overCollection, boolean isCustomAction) {

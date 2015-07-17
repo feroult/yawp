@@ -15,7 +15,7 @@ public class UpdateRestAction extends RestAction {
 
 	@Override
 	public Object action() {
-		assert !isRequestWithArray();
+		assert !isRequestBodyJsonArray();
 
 		Object object = getObjectWithRightId();
 		save(object);

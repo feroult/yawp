@@ -198,8 +198,7 @@ public class EndpointRouter {
 			action.setParams(params);
 			action.setCustomActionKey(customActionKey);
 			action.setRequestWithArray(JsonUtils.isJsonArray(requestJson));
-			action.setObjectsX(objects);
-			parseJsonIntoObjects(action);
+			action.setObjects(objects);
 
 			action.defineTrasnformer();
 			action.defineShield();
@@ -208,18 +207,6 @@ public class EndpointRouter {
 
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException(e);
-		}
-	}
-
-	private void parseJsonIntoObjects(RestAction action) {
-		if (StringUtils.isBlank(requestJson)) {
-			return;
-		}
-
-		if (JsonUtils.isJsonArray(requestJson)) {
-			action.setObjects(JsonUtils.fromList(r, requestJson, endpointClazz));
-		} else {
-			action.setObject(JsonUtils.from(r, requestJson, endpointClazz));
 		}
 	}
 

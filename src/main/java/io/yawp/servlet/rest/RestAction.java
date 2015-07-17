@@ -47,10 +47,6 @@ public abstract class RestAction {
 
 	private List<?> objects;
 
-	private Object object;
-
-	private List<?> objectsX;
-
 	private boolean requestWithArray;
 
 	public RestAction(String actionName) {
@@ -200,28 +196,16 @@ public abstract class RestAction {
 		}
 	}
 
-	protected boolean isJsonArray() {
-		return objects != null;
-	}
-
-	public void setObjectsX(List<?> objectsX) {
-		this.objectsX = objectsX;
-	}
-
 	public void setObjects(List<?> objects) {
 		this.objects = objects;
 	}
 
 	public List<?> getObjects() {
-		return requestWithArray ? objectsX : null;
-	}
-
-	public void setObject(Object object) {
-		this.object = object;
+		return requestWithArray ? objects : null;
 	}
 
 	public Object getObject() {
-		return objectsX == null || requestWithArray ? null : objectsX.get(0);
+		return objects == null || requestWithArray ? null : objects.get(0);
 	}
 
 	public static Class<? extends RestAction> getRestActionClazz(HttpVerb verb, boolean overCollection, boolean isCustomAction) {

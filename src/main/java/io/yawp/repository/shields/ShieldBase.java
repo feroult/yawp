@@ -24,11 +24,7 @@ public abstract class ShieldBase<T> extends Feature {
 
 	private IdRef<?> id;
 
-	private T object;
-
 	private List<T> objects;
-
-	private List<T> objectsX;
 
 	private Map<String, String> params;
 
@@ -69,10 +65,6 @@ public abstract class ShieldBase<T> extends Feature {
 	}
 
 	protected final boolean requestHasAnyObject() {
-		return objectsX != null;
-	}
-
-	protected final boolean requestHasObjectArray() {
 		return objects != null;
 	}
 
@@ -91,7 +83,7 @@ public abstract class ShieldBase<T> extends Feature {
 
 	public final void protectCreate() {
 		always();
-		create(objectsX);
+		create(objects);
 		throwNotFoundIfNotAllowed();
 
 		verifyConditionOnIncomingObjects();
@@ -104,7 +96,7 @@ public abstract class ShieldBase<T> extends Feature {
 	@SuppressWarnings("unchecked")
 	public final void protectUpdate() {
 		always();
-		update((IdRef<T>) id, objectsX == null ? null : objectsX.get(0));
+		update((IdRef<T>) id, objects == null ? null : objects.get(0));
 		throwNotFoundIfNotAllowed();
 
 		verifyConditionOnIncomingObjects();
@@ -155,18 +147,8 @@ public abstract class ShieldBase<T> extends Feature {
 	}
 
 	@SuppressWarnings("unchecked")
-	public final void setObject(Object object) {
-		this.object = (T) object;
-	}
-
-	@SuppressWarnings("unchecked")
 	public final void setObjects(List<?> objects) {
 		this.objects = (List<T>) objects;
-	}
-
-	@SuppressWarnings("unchecked")
-	public final void setObjectsX(List<?> objects) {
-		this.objectsX = (List<T>) objects;
 	}
 
 	public BaseCondition getCondition() {
@@ -185,10 +167,10 @@ public abstract class ShieldBase<T> extends Feature {
 	}
 
 	private boolean evaluateConditionOnIncomingObjects() {
-		if (objects != null) {
-			return evaluateConditionOnIncomingObjects(objects);
+		if (objects == null) {
+			return true;
 		}
-		return condition.evaluate(object);
+		return evaluateConditionOnIncomingObjects(objects);
 	}
 
 	private boolean evaluateConditionOnIncomingObjects(List<T> objects) {
@@ -210,28 +192,15 @@ public abstract class ShieldBase<T> extends Feature {
 	}
 
 	private boolean evaluateConditionOnExistingObjects() {
-		if (objects != null) {
-			return evaluateConditionOnExistingObjects(objects);
-		}
-		IdRef<?> idInObject = getIdInIncomingObject();
-		if (idInObject == null) {
-			if (id == null || isParentId()) {
-				return true;
-			}
+		if (id != null && !isParentId()) {
 			return evaluateExistingObject(id);
 		}
-		return evaluateExistingObject(idInObject);
+
+		return evaluateConditionOnExistingObjects(objects);
 	}
 
 	private boolean isParentId() {
 		return !id.getClazz().equals(endpointClazz);
-	}
-
-	private IdRef<?> getIdInIncomingObject() {
-		if (object == null) {
-			return null;
-		}
-		return EntityUtils.getIdRef(object);
 	}
 
 	private boolean evaluateConditionOnExistingObjects(List<T> objects) {

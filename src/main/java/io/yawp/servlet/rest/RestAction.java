@@ -185,9 +185,7 @@ public abstract class RestAction {
 			shield.setRepository(r);
 			shield.setEndpointClazz(endpointClazz);
 			shield.setId(id);
-			shield.setObject(getObject());
-			shield.setObjects(getObjects());
-			shield.setObjectsX(objects);
+			shield.setObjects(objects);
 			shield.setParams(params);
 			shield.setActionKey(customActionKey);
 			shield.setActionMethods(shieldInfo.getActionMethods());

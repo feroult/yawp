@@ -1,6 +1,5 @@
 package io.yawp.servlet;
 
-import static org.junit.Assert.assertFalse;
 import io.yawp.commons.http.ErrorResponse;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;

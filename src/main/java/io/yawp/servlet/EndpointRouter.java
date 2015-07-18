@@ -237,75 +237,34 @@ public class EndpointRouter {
 			return true;
 		}
 
-		if (uriIdNotEqualsIdInObject()) {
-			return false;
-		}
-
-		if (!allIdsAreForTheSameEndpointClazz()) {
-			return false;
-		}
-
-		if (!allIdsAreForTheSameAncestorInUri()) {
-			return false;
-		}
-
-		return true;
-	}
-
-	private boolean allIdsAreForTheSameAncestorInUri() {
-		if (id == null) {
-			return true;
-		}
-
-		if (id.getClazz().equals(endpointClazz)) {
-			return true;
-		}
-
 		for (Object object : objects) {
 			IdRef<?> idInObject = EntityUtils.getIdRef(object);
-			if (idInObject != null && !sameAncestorId(idInObject)) {
+
+			if (idInObject == null) {
+				continue;
+			}
+
+			if (!idInObject.getClazz().equals(endpointClazz)) {
+				return false;
+			}
+
+			if (id == null) {
+				continue;
+			}
+
+			if (id.equals(idInObject)) {
+				continue;
+			}
+
+			if (verb != HttpVerb.POST) {
+				return false;
+			}
+
+			if (!id.isAncestorId(idInObject)) {
 				return false;
 			}
 		}
+
 		return true;
-	}
-
-	private boolean sameAncestorId(IdRef<?> idInObject) {
-		IdRef<?> currentId = idInObject;
-		while (currentId.getParentId() != null) {
-			if (currentId.getParentId().getClazz().equals(id.getClazz())) {
-				return id.equals(currentId.getParentId());
-			}
-			currentId = currentId.getParentId();
-		}
-		return false;
-	}
-
-	private boolean allIdsAreForTheSameEndpointClazz() {
-		for (Object object : objects) {
-			IdRef<?> idInObject = EntityUtils.getIdRef(object);
-			if (idInObject != null && !idInObject.getClazz().equals(endpointClazz)) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private boolean uriIdNotEqualsIdInObject() {
-		if (id == null) {
-			return false;
-		}
-
-		if (!id.getClazz().equals(endpointClazz) && verb == HttpVerb.POST) {
-			return false;
-		}
-
-		for (Object object : objects) {
-			IdRef<?> idInObject = EntityUtils.getIdRef(object);
-			if (idInObject != null && !idInObject.equals(id)) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

@@ -241,6 +241,17 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return name;
 	}
 
+	public boolean isAncestorId(IdRef<?> childId) {
+		IdRef<?> currentId = childId;
+		while (currentId.getParentId() != null) {
+			if (currentId.getParentId().getClazz().equals(this.getClazz())) {
+				return this.equals(currentId.getParentId());
+			}
+			currentId = currentId.getParentId();
+		}
+		return false;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

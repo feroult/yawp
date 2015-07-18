@@ -1,11 +1,11 @@
 package io.yawp.repository.shields;
 
-import java.util.List;
-
 import io.yawp.repository.IdRef;
 
+import java.util.List;
 
-public class Shield<T> extends ShieldBase<T> {
+
+public abstract class Shield<T> extends ShieldBase<T> {
 
 	public void always() {
 	}

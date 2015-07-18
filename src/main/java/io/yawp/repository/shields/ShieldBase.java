@@ -18,7 +18,9 @@ public abstract class ShieldBase<T> extends Feature {
 
 	private boolean lastAllow = false;
 
-	private BaseCondition condition = null;
+	private BaseCondition condition;
+
+	private ShieldConditions conditions;
 
 	private Class<?> endpointClazz;
 
@@ -60,6 +62,9 @@ public abstract class ShieldBase<T> extends Feature {
 		if (!lastAllow) {
 			return this;
 		}
+
+		getConditions().where(condition);
+
 		this.condition = condition;
 		return this;
 	}
@@ -86,10 +91,7 @@ public abstract class ShieldBase<T> extends Feature {
 		create(objects);
 		throwNotFoundIfNotAllowed();
 
-		verifyConditionOnIncomingObjects();
-		throwForbiddenIfNotAllowed();
-
-		verifyConditionOnExistingObjects();
+		verifyConditions();
 		throwForbiddenIfNotAllowed();
 	}
 
@@ -99,11 +101,15 @@ public abstract class ShieldBase<T> extends Feature {
 		update((IdRef<T>) id, objects == null ? null : objects.get(0));
 		throwNotFoundIfNotAllowed();
 
-		verifyConditionOnIncomingObjects();
+		verifyConditions();
 		throwForbiddenIfNotAllowed();
-
-		verifyConditionOnExistingObjects();
-		throwForbiddenIfNotAllowed();
+//
+//
+//		verifyConditionOnIncomingObjects();
+//		throwForbiddenIfNotAllowed();
+//
+//		verifyConditionOnExistingObjects();
+//		throwForbiddenIfNotAllowed();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -152,11 +158,24 @@ public abstract class ShieldBase<T> extends Feature {
 	}
 
 	public BaseCondition getCondition() {
-		return condition;
+		return conditions.getWhere();
 	}
 
 	public boolean hasCondition() {
-		return condition != null;
+		return getConditions().getWhere() != null;
+	}
+
+	private ShieldConditions getConditions() {
+		if (conditions != null) {
+			return conditions;
+		}
+
+		conditions = new ShieldConditions(endpointClazz, id, objects);
+		return conditions;
+	}
+
+	private void verifyConditions() {
+		this.allow = getConditions().evaluate();
 	}
 
 	private void verifyConditionOnIncomingObjects() {

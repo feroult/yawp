@@ -53,6 +53,10 @@ public class ShieldConditions {
 		ancestorConditions.put(i, condition);
 	}
 
+	public BaseCondition getWhere() {
+		return condition;
+	}
+
 	public boolean evaluate() {
 		return evaluateIncoming() && evaluateExisting() && evaluateAncestors();
 	}

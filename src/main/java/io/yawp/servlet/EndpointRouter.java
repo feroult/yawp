@@ -229,16 +229,19 @@ public class EndpointRouter {
 	}
 
 	public boolean isValid() {
-		return hasValidIds();
+		return tryToAdjustIds();
 	}
 
-	public boolean hasValidIds() {
+	public boolean tryToAdjustIds() {
 		if (objects == null) {
 			return true;
 		}
 
 		for (Object object : objects) {
 			IdRef<?> idInObject = EntityUtils.getIdRef(object);
+
+			forceIdInObjectIfNecessary(object, idInObject);
+			forceParentIdInObjectIfNecessary(object, idInObject);
 
 			if (idInObject == null) {
 				continue;
@@ -266,5 +269,35 @@ public class EndpointRouter {
 		}
 
 		return true;
+	}
+
+	private void forceParentIdInObjectIfNecessary(Object object, IdRef<?> idInObject) {
+		if (EntityUtils.getParentClazz(endpointClazz) == null) {
+			return;
+		}
+
+		IdRef<?> parentId = EntityUtils.getParentIdRef(object);
+		if (parentId != null) {
+			return;
+		}
+
+		if (idInObject != null) {
+			EntityUtils.setParentId(object, idInObject.getParentId());
+			return;
+		}
+
+		if (id != null) {
+			EntityUtils.setParentId(object, id);
+		}
+	}
+
+	private void forceIdInObjectIfNecessary(Object object, IdRef<?> idInObject) {
+		if (idInObject != null) {
+			return;
+		}
+
+		if (id != null && id.getClazz().equals(endpointClazz)) {
+			EntityUtils.setId(object, id);
+		}
 	}
 }

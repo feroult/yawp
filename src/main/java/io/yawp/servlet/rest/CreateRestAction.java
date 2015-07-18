@@ -1,6 +1,5 @@
 package io.yawp.servlet.rest;
 
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.FutureObject;
 
 import java.util.ArrayList;
@@ -50,25 +49,12 @@ public class CreateRestAction extends RestAction {
 	}
 
 	protected Object saveObject(Object object) {
-		assertIdsAreCorrect(object);
 		save(object);
 		return transform(object);
 	}
 
 	protected FutureObject<Object> saveObjectAsync(Object object) {
-		assertIdsAreCorrect(object);
 		return saveAsync(object);
-	}
-
-	private void assertIdsAreCorrect(Object object) {
-		if (id != null) {
-			EntityUtils.setParentId(object, id);
-		}
-		// TODO assert id != null && object has parent && id.getClazz ==
-		// object.getParentClazz
-		// TODO assert if id == null && object has parent? ->
-		// "object.getParentId()" != null
-		// TODO assert object.getId().getParentId() == "object.getParentId()"
 	}
 
 }

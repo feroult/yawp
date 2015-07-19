@@ -17,8 +17,6 @@ public abstract class ShieldBase<T> extends Feature {
 
 	private boolean lastAllow = false;
 
-	private BaseCondition condition;
-
 	private ShieldConditions conditions;
 
 	private Class<?> endpointClazz;
@@ -64,7 +62,6 @@ public abstract class ShieldBase<T> extends Feature {
 
 		getConditions().where(condition);
 
-		this.condition = condition;
 		return this;
 	}
 

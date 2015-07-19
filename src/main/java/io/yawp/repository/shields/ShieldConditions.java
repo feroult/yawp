@@ -117,16 +117,13 @@ public class ShieldConditions {
 		Class<?> ancestorClazz = EntityUtils.getAncestorClazz(ancestor, endpointClazz);
 		IdRef<?> ancestorId = id;
 
-		for (int i = 0; i <= ancestor; i++) {
-			if (ancestorId.getClazz().equals(ancestorClazz)) {
-				return ancestorId;
-			}
+		while (!ancestorId.getClazz().equals(ancestorClazz)) {
 			if (ancestorId.getParentId() == null) {
 				return null;
 			}
 			ancestorId = ancestorId.getParentId();
 		}
-		return null;
+		return ancestorId;
 	}
 
 	private List<Integer> sortAncestorIndexes() {

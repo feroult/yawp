@@ -3,7 +3,6 @@ package io.yawp.servlet.child;
 import io.yawp.repository.models.parents.Parent;
 import io.yawp.repository.models.parents.ShieldedChild;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ChildShieldTest extends ChildServletTestCase {
@@ -38,20 +37,19 @@ public class ChildShieldTest extends ChildServletTestCase {
 		assertPutWithStatus("/parents/1/shielded_children/100/single", 200);
 	}
 
-	// TODO think about the whole parent where model
+	// TODO think about whereParent not supporting index
 	@Test
-	@Ignore
 	public void testActionWhereOnExistingParentObject() {
 		saveShieldedChild(1l, saveParent(1l, "ok-for-janis"));
 		saveShieldedChild(2l, saveParent(2l, "ok-for-amy"));
 
 		login("janis", "rock.com");
 
-		// assertPutWithStatus("/parents/1/shielded_children/1/single", 200);
-		assertPutWithStatus("/parents/1/shielded_children/collection", 500);
+		assertPutWithStatus("/parents/1/shielded_children/1/single", 200);
+		assertPutWithStatus("/parents/1/shielded_children/collection", 200);
 
-		// assertPutWithStatus("/parents/2/shielded_children/2/single", 404);
-		// assertPutWithStatus("/parents/2/shielded_children/collection", 500);
+		assertPutWithStatus("/parents/2/shielded_children/2/single", 403);
+		assertPutWithStatus("/parents/2/shielded_children/collection", 403);
 	}
 
 	private void saveShieldedChild(long id, Parent parent) {
@@ -60,6 +58,5 @@ public class ChildShieldTest extends ChildServletTestCase {
 		child.setParentId(parent.getId());
 		yawp.save(child);
 	}
-
 
 }

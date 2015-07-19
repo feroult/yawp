@@ -61,7 +61,15 @@ public abstract class ShieldBase<T> extends Feature {
 		}
 
 		getConditions().where(condition);
+		return this;
+	}
 
+	protected final ShieldBase<T> whereParent(BaseCondition condition) {
+		if (!lastAllow) {
+			return this;
+		}
+
+		getConditions().whereParent(condition);
 		return this;
 	}
 

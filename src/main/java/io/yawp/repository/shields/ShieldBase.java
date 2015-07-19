@@ -73,6 +73,24 @@ public abstract class ShieldBase<T> extends Feature {
 		return this;
 	}
 
+	protected final ShieldBase<T> whereGrandparent(BaseCondition condition) {
+		if (!lastAllow) {
+			return this;
+		}
+
+		getConditions().whereGrandparent(condition);
+		return this;
+	}
+
+	protected final ShieldBase<T> whereAncestor(int ancestorIndex, BaseCondition condition) {
+		if (!lastAllow) {
+			return this;
+		}
+
+		getConditions().whereAncestor(ancestorIndex, condition);
+		return this;
+	}
+
 	protected final boolean requestHasAnyObject() {
 		return objects != null;
 	}

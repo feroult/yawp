@@ -45,12 +45,12 @@ public class ShieldConditions {
 		whereAncestor(1, condition);
 	}
 
-	public void whereAncestor(int i, BaseCondition condition) {
-		if (ancestorConditions.containsKey(i)) {
-			ancestorConditions.put(i, and(ancestorConditions.get(i), condition));
+	public void whereAncestor(int ancestorIndex, BaseCondition condition) {
+		if (ancestorConditions.containsKey(ancestorIndex)) {
+			ancestorConditions.put(ancestorIndex, and(ancestorConditions.get(ancestorIndex), condition));
 			return;
 		}
-		ancestorConditions.put(i, condition);
+		ancestorConditions.put(ancestorIndex, condition);
 	}
 
 	public BaseCondition getWhere() {

@@ -208,7 +208,8 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "{id: '/basic_objects/1'}").tryToAdjustIds());
 		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "{id: '/parents/1/children'}").tryToAdjustIds());
-		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/basic_objects/1'}]").tryToAdjustIds());
+		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/basic_objects/1'}]")
+				.tryToAdjustIds());
 		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/parents/2/children/2'}]")
 				.tryToAdjustIds());
 		assertFalse(parse(HttpVerb.PUT, "/parents/1/children", "{id: '/parents/1/children/1'}").tryToAdjustIds());
@@ -216,5 +217,11 @@ public class EndpointRouterTest extends EndpointTestCase {
 
 		assertFalse(parse(HttpVerb.POST, "/parents/1/grandchildren",
 				"[{id: '/parents/1/children/1/grandchildren/1'}, {id: '/parents/2/children/2/grandchildren/2'}]").tryToAdjustIds());
+	}
+
+	@Test
+	public void testInvalidRouteParentIds() {
+		assertFalse(parse(HttpVerb.PUT, "/parents/1/children/1", "{parentId: '/parents/2'}").tryToAdjustIds());
+		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "{parentId: '/parents/2'}").tryToAdjustIds());
 	}
 }

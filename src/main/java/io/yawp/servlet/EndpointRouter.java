@@ -238,13 +238,18 @@ public class EndpointRouter {
 		}
 
 		for (Object object : objects) {
-			IdRef<?> idInObject = EntityUtils.getIdRef(object);
-
-			forceIdInObjectIfNecessary(object, idInObject);
-			forceParentIdInObjectIfNecessary(object, idInObject);
+			IdRef<?> idInObject = forceIdInObjectIfNecessary(object);
+			IdRef<?> parentIdInObject = forceParentIdInObjectIfNecessary(object, idInObject);
 
 			if (idInObject == null) {
+				if (parentIdInObject != null && !parentIdInObject.equals(id)) {
+					return false;
+				}
 				continue;
+			}
+
+			if (parentIdInObject != null && !parentIdInObject.equals(idInObject.getParentId())) {
+				return false;
 			}
 
 			if (!idInObject.getClazz().equals(endpointClazz)) {
@@ -271,33 +276,41 @@ public class EndpointRouter {
 		return true;
 	}
 
-	private void forceParentIdInObjectIfNecessary(Object object, IdRef<?> idInObject) {
+	private IdRef<?> forceParentIdInObjectIfNecessary(Object object, IdRef<?> idInObject) {
 		if (EntityUtils.getParentClazz(endpointClazz) == null) {
-			return;
+			return null;
 		}
 
-		IdRef<?> parentId = EntityUtils.getParentIdRef(object);
+		IdRef<?> parentId = EntityUtils.getParentId(object);
 		if (parentId != null) {
-			return;
+			return parentId;
 		}
 
 		if (idInObject != null) {
 			EntityUtils.setParentId(object, idInObject.getParentId());
-			return;
+			return idInObject.getParentId();
 		}
 
 		if (id != null) {
 			EntityUtils.setParentId(object, id);
+			return id;
 		}
+
+		return null;
 	}
 
-	private void forceIdInObjectIfNecessary(Object object, IdRef<?> idInObject) {
+	private IdRef<?> forceIdInObjectIfNecessary(Object object) {
+		IdRef<?> idInObject = EntityUtils.getId(object);
+
 		if (idInObject != null) {
-			return;
+			return idInObject;
 		}
 
 		if (id != null && id.getClazz().equals(endpointClazz)) {
 			EntityUtils.setId(object, id);
+			return id;
 		}
+
+		return null;
 	}
 }

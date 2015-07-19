@@ -160,7 +160,7 @@ public class ShieldConditions {
 	private class EvaluateExisting implements Evaluate {
 		@Override
 		public boolean evaluate(Object object) {
-			IdRef<?> id = EntityUtils.getIdRef(object);
+			IdRef<?> id = EntityUtils.getId(object);
 			if (id == null) {
 				return true;
 			}
@@ -174,7 +174,7 @@ public class ShieldConditions {
 			boolean result = true;
 			for (Integer ancestor : sortAncestorIndexes()) {
 				BaseCondition ancestorCondition = ancestorConditions.get(ancestor);
-				IdRef<?> id = EntityUtils.getParentIdRef(object);
+				IdRef<?> id = EntityUtils.getParentId(object);
 				IdRef<?> ancestorId = getAncestorId(ancestor, id);
 				result = result && (ancestorId == null || ancestorCondition.evaluate(ancestorId.fetch()));
 				if (!result) {

@@ -225,7 +225,7 @@ public abstract class ShieldBase<T> extends Feature {
 	private boolean evaluateConditionOnExistingObjects(List<T> objects) {
 		boolean result = true;
 		for (Object object : objects) {
-			IdRef<?> id = EntityUtils.getIdRef(object);
+			IdRef<?> id = EntityUtils.getId(object);
 			result = result && (id == null || evaluateExistingObject(id));
 			if (!result) {
 				return false;

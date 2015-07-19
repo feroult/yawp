@@ -105,10 +105,10 @@ public class EntityUtils {
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-		setParentId(object, id.getParentId());
+		//setParentId(object, id.getParentId());
 	}
 
-	public static IdRef<?> getParentIdRef(Object object) {
+	public static IdRef<?> getParentId(Object object) {
 		Field parentField = EntityUtils.getAnnotatedParentFromClass(object.getClass());
 		if (parentField == null) {
 			return null;
@@ -123,7 +123,7 @@ public class EntityUtils {
 	}
 
 	public static Key getParentKey(Object object) {
-		IdRef<?> parentIdRef = getParentIdRef(object);
+		IdRef<?> parentIdRef = getParentId(object);
 		if (parentIdRef == null) {
 			return null;
 		}
@@ -171,7 +171,7 @@ public class EntityUtils {
 	}
 
 	public static Key getKey(Object object) {
-		IdRef<?> idRef = getIdRef(object);
+		IdRef<?> idRef = getId(object);
 		if (idRef == null) {
 			return null;
 		}
@@ -179,7 +179,7 @@ public class EntityUtils {
 
 	}
 
-	public static IdRef<?> getIdRef(Object object) {
+	public static IdRef<?> getId(Object object) {
 		Field field = getIdField(object.getClass());
 
 		if (!isIdRef(field)) {
@@ -238,7 +238,7 @@ public class EntityUtils {
 	}
 
 	public static Object getIdSimpleValue(Object object) {
-		IdRef<?> idRef = getIdRef(object);
+		IdRef<?> idRef = getId(object);
 		return idRef.getSimpleValue();
 	}
 

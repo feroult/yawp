@@ -186,6 +186,7 @@ public class EndpointRouterTest extends EndpointTestCase {
 		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "{id: '/parents/1/children/1'}").tryToAdjustIds());
 		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/parents/1/children/2'}]")
 				.tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "{}").tryToAdjustIds());
 		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {}]").tryToAdjustIds());
 		assertTrue(parse(HttpVerb.PUT, "/parents/1/children/1", "{}").tryToAdjustIds());
 		assertTrue(parse(HttpVerb.PUT, "/parents/1/children/1", "{id: '/parents/1/children/1'}").tryToAdjustIds());

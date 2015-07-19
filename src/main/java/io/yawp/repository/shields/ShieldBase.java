@@ -1,6 +1,5 @@
 package io.yawp.repository.shields;
 
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.actions.ActionKey;
@@ -103,13 +102,6 @@ public abstract class ShieldBase<T> extends Feature {
 
 		verifyConditions();
 		throwForbiddenIfNotAllowed();
-//
-//
-//		verifyConditionOnIncomingObjects();
-//		throwForbiddenIfNotAllowed();
-//
-//		verifyConditionOnExistingObjects();
-//		throwForbiddenIfNotAllowed();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -118,7 +110,7 @@ public abstract class ShieldBase<T> extends Feature {
 		destroy((IdRef<T>) id);
 		throwNotFoundIfNotAllowed();
 
-		verifyConditionOnExistingObjects();
+		verifyConditions();
 		throwForbiddenIfNotAllowed();
 	}
 
@@ -128,7 +120,7 @@ public abstract class ShieldBase<T> extends Feature {
 		annotadedCustoms();
 		throwNotFoundIfNotAllowed();
 
-		verifyConditionOnExistingObjects();
+		verifyConditions();
 		throwForbiddenIfNotAllowed();
 	}
 
@@ -176,70 +168,6 @@ public abstract class ShieldBase<T> extends Feature {
 
 	private void verifyConditions() {
 		this.allow = getConditions().evaluate();
-	}
-
-	private void verifyConditionOnIncomingObjects() {
-		if (!hasCondition()) {
-			return;
-		}
-		this.allow = evaluateConditionOnIncomingObjects();
-	}
-
-	private boolean evaluateConditionOnIncomingObjects() {
-		if (objects == null) {
-			return true;
-		}
-		return evaluateConditionOnIncomingObjects(objects);
-	}
-
-	private boolean evaluateConditionOnIncomingObjects(List<T> objects) {
-		boolean result = true;
-		for (Object object : objects) {
-			result = result && condition.evaluate(object);
-			if (!result) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private void verifyConditionOnExistingObjects() {
-		if (!hasCondition()) {
-			return;
-		}
-		this.allow = evaluateConditionOnExistingObjects();
-	}
-
-	private boolean evaluateConditionOnExistingObjects() {
-		if (id != null && !isParentId()) {
-			return evaluateExistingObject(id);
-		}
-
-		return evaluateConditionOnExistingObjects(objects);
-	}
-
-	private boolean isParentId() {
-		return !id.getClazz().equals(endpointClazz);
-	}
-
-	private boolean evaluateConditionOnExistingObjects(List<T> objects) {
-		boolean result = true;
-		for (Object object : objects) {
-			IdRef<?> id = EntityUtils.getId(object);
-			result = result && (id == null || evaluateExistingObject(id));
-			if (!result) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	public boolean evaluateExistingObject(IdRef<?> id) {
-		Object object = id.fetch();
-		if (object == null) {
-			return true;
-		}
-		return condition.evaluate(object);
 	}
 
 	public final void setParams(Map<String, String> params) {

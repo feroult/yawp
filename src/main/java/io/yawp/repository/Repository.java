@@ -7,6 +7,7 @@ import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.query.DatastoreQuery;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
 import com.google.appengine.api.datastore.AsyncDatastoreService;
@@ -187,4 +188,13 @@ public class Repository {
 	public RepositoryFeatures getFeatures() {
 		return repositoryFeatures;
 	}
+
+	public <T> IdRef<T> parseId(Class<T> clazz, String idString) {
+		return IdRef.parse(clazz, this, idString);
+	}
+
+	public <T> List<IdRef<T>> parseIds(Class<T> clazz, List<String> idsString) {
+		return IdRef.parse(clazz, this, idsString);
+	}
+
 }

@@ -105,7 +105,7 @@ public class EntityUtils {
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
-		//setParentId(object, id.getParentId());
+		// setParentId(object, id.getParentId());
 	}
 
 	public static IdRef<?> getParentId(Object object) {

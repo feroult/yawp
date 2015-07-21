@@ -53,6 +53,10 @@ public class BasicObject {
 		this.stringValue = stringValue;
 	}
 
+	public BasicObject(Long longValue) {
+		this.longValue = longValue;
+	}
+
 	public IdRef<BasicObject> getId() {
 		return id;
 	}

@@ -167,6 +167,18 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return lastIdRef;
 	}
 
+	public static <T> IdRef<T> parse(Class<T> clazz, Repository r, String idString) {
+		return parse(r, HttpVerb.GET, idString);
+	}
+
+	public static <T> List<IdRef<T>> parse(Class<T> clazz, Repository r, List<String> idsString) {
+		ArrayList<IdRef<T>> ids = new ArrayList<IdRef<T>>();
+		for (String idString : idsString) {
+			ids.add(parse(clazz, r, idString));
+		}
+		return ids;
+	}
+
 	private static void validateParentId(IdRef<?> id, String path) {
 		Class<?> parentClazz = EntityUtils.getParentClazz(id.getClazz());
 		if (parentClazz == null) {

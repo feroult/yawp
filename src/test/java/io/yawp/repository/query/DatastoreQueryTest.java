@@ -68,8 +68,8 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		BasicObject myObj2 = new BasicObject("xpto2");
 		yawp.save(myObj2);
 
-		List<BasicObject> objects = yawp(BasicObject.class).where("id", "in", Arrays.asList(myObj1.getId().toString(), myObj2.getId().toString()))
-		        .order("stringValue").list();
+		List<BasicObject> objects = yawp(BasicObject.class)
+				.where("id", "in", Arrays.asList(myObj1.getId().toString(), myObj2.getId().toString())).order("stringValue").list();
 		assertEquals(2, objects.size());
 
 		assertEquals("xpto1", objects.get(0).getStringValue());
@@ -174,7 +174,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		saveManyBasicObjects(3);
 
 		List<BasicObject> objects1 = yawp(BasicObject.class).where(
-		        or(and(c("intValue", "=", 1), c("intValue", "=", 2)), and(c("intValue", "=", 3), c("intValue", "=", 3)))).list();
+				or(and(c("intValue", "=", 1), c("intValue", "=", 2)), and(c("intValue", "=", 3), c("intValue", "=", 3)))).list();
 
 		assertEquals(1, objects1.size());
 		assertEquals(3, objects1.get(0).getIntValue());
@@ -201,7 +201,8 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testQueryFromOptions() {
 		saveManyBasicObjects(3);
 
-		DatastoreQueryOptions options = DatastoreQueryOptions.parse("{where: ['stringValue', '=', 'xpto'], order: [{p: 'intValue', d: 'desc'}], limit: 2}");
+		DatastoreQueryOptions options = DatastoreQueryOptions
+				.parse("{where: ['stringValue', '=', 'xpto'], order: [{p: 'intValue', d: 'desc'}], limit: 2}");
 
 		List<BasicObject> objects = yawp(BasicObject.class).options(options).list();
 
@@ -384,7 +385,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testIdsOnly() {
+	public void testOnlyId() {
 		Long firstId = saveOneObject("xpto", 10).asLong();
 
 		IdRef<BasicObject> id = yawp(BasicObject.class).where("stringValue", "=", "xpto").onlyId();
@@ -392,7 +393,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testIdsOnlyNoResult() {
+	public void testOnlyIdNoResult() {
 		try {
 			yawp(BasicObject.class).where("stringValue", "=", "xpto").onlyId();
 		} catch (NoResultException ex) {
@@ -402,7 +403,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testIdsOnlyMoreThanOneResult() {
+	public void testOnlyIdMoreThanOneResult() {
 		saveManyBasicObjects(2);
 		try {
 			yawp(BasicObject.class).where("stringValue", "=", "xpto").onlyId();

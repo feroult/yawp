@@ -281,6 +281,10 @@ public class DatastoreQuery<T> {
 	}
 
 	public void sortList(List<?> objects) {
+		if (postOrders.size() == 0) {
+			return;
+		}
+
 		Collections.sort(objects, new Comparator<Object>() {
 			@Override
 			public int compare(Object o1, Object o2) {

@@ -413,7 +413,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		assertTrue(false);
 	}
 
-//	@Test
+	//	@Test
 //	public void testQueryWithoutIndex() {
 //		yawp.save(new BasicObject(1l));
 //		yawp.save(new BasicObject(2l));

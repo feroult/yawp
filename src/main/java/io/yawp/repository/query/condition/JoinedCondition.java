@@ -1,6 +1,5 @@
 package io.yawp.repository.query.condition;
 
-import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 
 import com.google.appengine.api.datastore.Query.Filter;
@@ -17,37 +16,10 @@ public class JoinedCondition extends BaseCondition {
 	}
 
 	@Override
-	public Class<?> getIdTypeFor(Class<?> clazz) {
-		Class<?> mostLimitating = null;
-		for (BaseCondition condition : conditions) {
-			Class<?> current = condition.getIdTypeFor(clazz);
-			if (isMoreLimitating(current, mostLimitating)) {
-				mostLimitating = current;
-			}
+	public void init(Repository r, Class<?> clazz) {
+		for (BaseCondition c : conditions) {
+			c.init(r, clazz);
 		}
-		return mostLimitating;
-	}
-
-	private static boolean isMoreLimitating(Class<?> current, Class<?> mostLimitating) {
-		if (mostLimitating == null) {
-			return true;
-		}
-
-		if (current == null) {
-			return false;
-		}
-		if (IdRef.class.isAssignableFrom(mostLimitating)) {
-			return false;
-		}
-		if (IdRef.class.isAssignableFrom(current)) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public Filter getPredicate() throws FalsePredicateException {
-		return logicalOperator.join(conditions);
 	}
 
 	public LogicalOperator getLogicalOperator() {
@@ -59,19 +31,8 @@ public class JoinedCondition extends BaseCondition {
 	}
 
 	@Override
-	public void init(Repository r, Class<?> clazz) {
-		for (BaseCondition c : conditions) {
-			c.init(r, clazz);
-		}
-	}
-
-	@Override
-	public BaseCondition not() {
-		BaseCondition[] reversedConditions = new BaseCondition[conditions.length];
-		for (int i = 0; i < conditions.length; i++) {
-			reversedConditions[i] = conditions[i].not();
-		}
-		return new JoinedCondition(logicalOperator.not(), reversedConditions);
+	public Filter getPredicate() throws FalsePredicateException {
+		return logicalOperator.join(conditions);
 	}
 
 	@Override
@@ -103,4 +64,14 @@ public class JoinedCondition extends BaseCondition {
 		}
 		return true;
 	}
+
+	@Override
+	public BaseCondition not() {
+		BaseCondition[] reversedConditions = new BaseCondition[conditions.length];
+		for (int i = 0; i < conditions.length; i++) {
+			reversedConditions[i] = conditions[i].not();
+		}
+		return new JoinedCondition(logicalOperator.not(), reversedConditions);
+	}
+
 }

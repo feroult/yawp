@@ -279,7 +279,7 @@ public class DatastoreQuery<T> {
 		}
 
 		SimpleCondition c = (SimpleCondition) condition;
-		return c.isByIdFor(clazz) && c.isEqualOperator();
+		return c.isIdField() && c.isEqualOperator();
 	}
 
 	public void sortList(List<?> objects) {

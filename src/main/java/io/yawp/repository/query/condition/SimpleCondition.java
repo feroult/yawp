@@ -4,7 +4,7 @@ import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.Repository;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.appengine.api.datastore.Query.Filter;
@@ -28,7 +28,7 @@ public class SimpleCondition extends BaseCondition {
 		this.whereValue = value;
 
 		if (whereOperator == WhereOperator.IN) {
-			assertList(value);
+			assertIsList(value);
 		}
 	}
 
@@ -55,22 +55,8 @@ public class SimpleCondition extends BaseCondition {
 		return this.whereOperator == WhereOperator.EQUAL;
 	}
 
-	@Override
-	public Class<?> getIdTypeFor(Class<?> clazz) {
-		if (isFieldIdType(clazz)) {
-			boolean isList = whereOperator == WhereOperator.IN;
-			if (isValidIdClass(whereValue, isList)) {
-				return whereValue.getClass();
-			} else {
-				throw new RuntimeException("If you are searching by @Id, you can only use the valid @Id types classes: "
-						+ Arrays.toString(VALID_ID_CLASSES) + ". Found " + whereValue.getClass().getSimpleName());
-			}
-		}
-		return null;
-	}
-
-	private boolean isFieldIdType(Class<?> clazz) {
-		return this.field.equals(EntityUtils.getIdFieldName(clazz));
+	public boolean isIdField() {
+		return field.equals(EntityUtils.getIdFieldName(clazz));
 	}
 
 	@Override
@@ -86,18 +72,18 @@ public class SimpleCondition extends BaseCondition {
 	}
 
 	@Override
-	public BaseCondition not() {
-		return new SimpleCondition(field, whereOperator.reverse(), whereValue);
-	}
-
-	@Override
 	public boolean evaluate(Object object) {
 		Object objectValue = ReflectionUtils.getFieldValue(object, field);
 		return whereOperator.evaluate(objectValue, whereValue);
 	}
 
+	@Override
+	public BaseCondition not() {
+		return new SimpleCondition(field, whereOperator.reverse(), whereValue);
+	}
+
 	private void normalizeIdRefs() {
-		if (isFieldIdType(clazz)) {
+		if (isIdField()) {
 			if (whereValue instanceof String) {
 				whereValue = EntityUtils.convertToIdRef(r, (String) whereValue);
 			} else if (whereValue instanceof List) {
@@ -106,4 +92,11 @@ public class SimpleCondition extends BaseCondition {
 		}
 	}
 
+	private void assertIsList(Object value) {
+		Class<?> valueClazz = value.getClass();
+		if (!(valueClazz.isArray() || Collection.class.isAssignableFrom(valueClazz))) {
+			throw new RuntimeException("Unsupported 'in' type: must be a primtive array or a Collection<?>. Found "
+					+ valueClazz.getSimpleName());
+		}
+	}
 }

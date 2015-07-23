@@ -22,15 +22,15 @@ public enum LogicalOperator {
 
 	public abstract LogicalOperator not();
 
-	public Filter join(Class<?> clazz, BaseCondition... conditions) throws FalsePredicateException {
-		return performJoin(this, clazz, conditions);
+	public Filter join(BaseCondition... conditions) throws FalsePredicateException {
+		return performJoin(this, conditions);
 	}
 
-	public static Filter performJoin(LogicalOperator operation, Class<?> clazz, BaseCondition... conditions) throws FalsePredicateException {
+	public static Filter performJoin(LogicalOperator operation, BaseCondition... conditions) throws FalsePredicateException {
 		List<Filter> filters = new ArrayList<>();
 		for (int i = 0; i < conditions.length; i++) {
 			try {
-				filters.add(conditions[i].getPredicate(clazz));
+				filters.add(conditions[i].getPredicate());
 			} catch (FalsePredicateException ex) {
 				if (operation == AND) {
 					throw ex;

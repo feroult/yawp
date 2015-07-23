@@ -46,8 +46,8 @@ public class JoinedCondition extends BaseCondition {
 	}
 
 	@Override
-	public Filter getPredicate(Class<?> clazz) throws FalsePredicateException {
-		return logicalOperator.join(clazz, conditions);
+	public Filter getPredicate() throws FalsePredicateException {
+		return logicalOperator.join(conditions);
 	}
 
 	public LogicalOperator getLogicalOperator() {

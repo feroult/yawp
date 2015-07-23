@@ -12,8 +12,14 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 public class SimpleCondition extends BaseCondition {
 
+	private Repository r;
+
+	private Class<?> clazz;
+
 	private String field;
+
 	private WhereOperator whereOperator;
+
 	private Object whereValue;
 
 	public SimpleCondition(String field, WhereOperator whereOperator, Object value) {
@@ -24,6 +30,13 @@ public class SimpleCondition extends BaseCondition {
 		if (whereOperator == WhereOperator.IN) {
 			assertList(value);
 		}
+	}
+
+	@Override
+	public void init(Repository r, Class<?> clazz) {
+		this.r = r;
+		this.clazz = clazz;
+		normalizeIdRefs();
 	}
 
 	public String getField() {
@@ -61,7 +74,7 @@ public class SimpleCondition extends BaseCondition {
 	}
 
 	@Override
-	public Filter getPredicate(Class<?> clazz) throws FalsePredicateException {
+	public Filter getPredicate() throws FalsePredicateException {
 		String actualFieldName = EntityUtils.getActualFieldName(field, clazz);
 		Object actualValue = EntityUtils.getActualFieldValue(field, clazz, whereValue);
 
@@ -70,11 +83,6 @@ public class SimpleCondition extends BaseCondition {
 		}
 
 		return new FilterPredicate(actualFieldName, whereOperator.getFilterOperator(), actualValue);
-	}
-
-	@Override
-	public void init(Repository r, Class<?> clazz) {
-		normalizeIdRefs(r, clazz);
 	}
 
 	@Override
@@ -88,7 +96,7 @@ public class SimpleCondition extends BaseCondition {
 		return whereOperator.evaluate(objectValue, whereValue);
 	}
 
-	private void normalizeIdRefs(Repository r, Class<?> clazz) {
+	private void normalizeIdRefs() {
 		if (isFieldIdType(clazz)) {
 			if (whereValue instanceof String) {
 				whereValue = EntityUtils.convertToIdRef(r, (String) whereValue);

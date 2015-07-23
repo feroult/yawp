@@ -75,11 +75,14 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> where(BaseCondition c) {
+		c.init(r, clazz);
+
 		if (condition == null) {
 			condition = c;
 		} else {
 			condition = Condition.and(condition, c);
 		}
+
 		return this;
 	}
 
@@ -210,7 +213,7 @@ public class DatastoreQuery<T> {
 			if (isQueryById()) {
 				object = executeQueryById();
 			} else {
-				object = executeQueryOnlyFirst();
+				object = executeQueryOnly();
 			}
 
 			if (object == null) {
@@ -223,7 +226,7 @@ public class DatastoreQuery<T> {
 		}
 	}
 
-	private T executeQueryOnlyFirst() throws MoreThanOneResultException {
+	private T executeQueryOnly() throws MoreThanOneResultException {
 		List<T> list = executeQuery();
 		if (list.size() == 0) {
 			return null;
@@ -260,7 +263,6 @@ public class DatastoreQuery<T> {
 
 	private T executeQueryById() {
 		try {
-			condition.init(r, clazz);
 			SimpleCondition c = (SimpleCondition) condition;
 			IdRef<?> idRef = (IdRef<?>) c.getWhereValue();
 			Key key = idRef.asKey();
@@ -342,8 +344,7 @@ public class DatastoreQuery<T> {
 
 	private void prepareQueryWhere(Query q) throws FalsePredicateException {
 		if (condition != null) {
-			condition.init(r, clazz);
-			q.setFilter(condition.getPredicate(clazz));
+			q.setFilter(condition.getPredicate());
 		}
 	}
 

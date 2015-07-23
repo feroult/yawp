@@ -14,7 +14,7 @@ public abstract class BaseCondition {
 
 	public abstract void init(Repository r, Class<?> clazz);
 
-	public abstract Filter getPredicate(Class<?> clazz) throws FalsePredicateException;
+	public abstract Filter getPredicate() throws FalsePredicateException;
 
 	public abstract boolean evaluate(Object object);
 

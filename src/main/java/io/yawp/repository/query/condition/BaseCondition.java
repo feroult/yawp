@@ -12,13 +12,13 @@ public abstract class BaseCondition {
 
 	protected static final Class<?>[] VALID_ID_CLASSES = new Class<?>[] { IdRef.class, Long.class, String.class, Key.class };
 
+	public abstract void init(Repository r, Class<?> clazz);
+
 	public abstract Filter getPredicate(Class<?> clazz) throws FalsePredicateException;
 
 	public abstract boolean evaluate(Object object);
 
 	public abstract BaseCondition not();
-
-	public abstract void normalizeIdRefs(Class<?> clazz, Repository r);
 
 	public abstract Class<?> getIdTypeFor(Class<?> clazz);
 

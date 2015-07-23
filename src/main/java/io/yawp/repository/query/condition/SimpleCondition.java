@@ -73,14 +73,8 @@ public class SimpleCondition extends BaseCondition {
 	}
 
 	@Override
-	public void normalizeIdRefs(Class<?> clazz, Repository r) {
-		if (isFieldIdType(clazz)) {
-			if (whereValue instanceof String) {
-				whereValue = EntityUtils.convertToIdRef(r, (String) whereValue);
-			} else if (whereValue instanceof List) {
-				whereValue = EntityUtils.convertToIdRefs(r, (List<?>) whereValue);
-			}
-		}
+	public void init(Repository r, Class<?> clazz) {
+		normalizeIdRefs(r, clazz);
 	}
 
 	@Override
@@ -93,4 +87,15 @@ public class SimpleCondition extends BaseCondition {
 		Object objectValue = ReflectionUtils.getFieldValue(object, field);
 		return whereOperator.evaluate(objectValue, whereValue);
 	}
+
+	private void normalizeIdRefs(Repository r, Class<?> clazz) {
+		if (isFieldIdType(clazz)) {
+			if (whereValue instanceof String) {
+				whereValue = EntityUtils.convertToIdRef(r, (String) whereValue);
+			} else if (whereValue instanceof List) {
+				whereValue = EntityUtils.convertToIdRefs(r, (List<?>) whereValue);
+			}
+		}
+	}
+
 }

@@ -59,9 +59,9 @@ public class JoinedCondition extends BaseCondition {
 	}
 
 	@Override
-	public void normalizeIdRefs(Class<?> clazz, Repository r) {
+	public void init(Repository r, Class<?> clazz) {
 		for (BaseCondition c : conditions) {
-			c.normalizeIdRefs(clazz, r);
+			c.init(r, clazz);
 		}
 	}
 

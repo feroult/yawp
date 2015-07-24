@@ -60,6 +60,16 @@ public class SimpleCondition extends BaseCondition {
 	}
 
 	@Override
+	public boolean hasPreFilter() {
+		return EntityUtils.hasIndex(clazz, field) || EntityUtils.isId(clazz, field);
+	}
+
+	@Override
+	public boolean hasPostFilter() {
+		return !hasPreFilter();
+	}
+
+	@Override
 	public Filter getPredicate() throws FalsePredicateException {
 		String actualFieldName = EntityUtils.getActualFieldName(field, clazz);
 		Object actualValue = EntityUtils.getActualFieldValue(field, clazz, whereValue);

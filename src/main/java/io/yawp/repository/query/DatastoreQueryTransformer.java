@@ -81,7 +81,7 @@ public class DatastoreQueryTransformer<F, T> {
 
 	public List<T> list() {
 		List<T> transformedList = new ArrayList<T>();
-		List<F> list = query.unsortedList();
+		List<F> list = query.executeQueryList();
 
 		for (F object : list) {
 			transformedList.add(RepositoryTransformers.<F, T> execute(query.getRepository(), object, transformName));

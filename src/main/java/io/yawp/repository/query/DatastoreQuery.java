@@ -75,14 +75,13 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> where(BaseCondition c) {
-		c.init(r, clazz);
-
 		if (condition == null) {
 			condition = c;
 		} else {
 			condition = Condition.and(condition, c);
 		}
 
+		condition.init(r, clazz);
 		return this;
 	}
 
@@ -168,7 +167,7 @@ public class DatastoreQuery<T> {
 		return this;
 	}
 
-	public List<T> unsortedList() {
+	public List<T> executeQueryList() {
 		r.namespace().set(getClazz());
 		try {
 			return executeQuery();
@@ -178,7 +177,7 @@ public class DatastoreQuery<T> {
 	}
 
 	public List<T> list() {
-		List<T> list = unsortedList();
+		List<T> list = executeQueryList();
 		sortList(list);
 		return list;
 	}
@@ -238,21 +237,28 @@ public class DatastoreQuery<T> {
 	}
 
 	private List<T> executeQuery() {
-		QueryResultList<Entity> queryResult;
 		try {
-			queryResult = generateResults(false);
+			QueryResultList<Entity> queryResult = generateResults(false);
+
+			List<T> objects = new ArrayList<T>();
+
+			for (Entity entity : queryResult) {
+				objects.add(EntityUtils.toObject(r, entity, clazz));
+			}
+
+			return postFilter(objects);
+
 		} catch (FalsePredicateException ex) {
 			return Collections.emptyList();
 		}
-		List<T> objects = new ArrayList<T>();
+	}
 
-		for (Entity entity : queryResult) {
-			T object = EntityUtils.toObject(r, entity, clazz);
-			objects.add(object);
+	private List<T> postFilter(List<T> objects) {
+		if (condition == null || !condition.hasPostFilter()) {
+			return objects;
 		}
 
-		setCursor(queryResult);
-		return objects;
+		return condition.applyPostFilter(objects);
 	}
 
 	private void setCursor(QueryResultList<Entity> queryResult) {
@@ -343,7 +349,7 @@ public class DatastoreQuery<T> {
 	}
 
 	private void prepareQueryWhere(Query q) throws FalsePredicateException {
-		if (condition != null) {
+		if (condition != null && condition.hasPreFilter()) {
 			q.setFilter(condition.getPredicate());
 		}
 	}
@@ -387,7 +393,6 @@ public class DatastoreQuery<T> {
 				ids.add(extractIdRef(entity));
 			}
 
-			setCursor(queryResult);
 			return ids;
 		} catch (FalsePredicateException ex) {
 			return Collections.emptyList();
@@ -397,7 +402,9 @@ public class DatastoreQuery<T> {
 	}
 
 	private QueryResultList<Entity> generateResults(boolean keysOnly) throws FalsePredicateException {
-		return prepareQuery(keysOnly).asQueryResultList(configureFetchOptions());
+		QueryResultList<Entity> queryResult = prepareQuery(keysOnly).asQueryResultList(configureFetchOptions());
+		setCursor(queryResult);
+		return queryResult;
 	}
 
 	@SuppressWarnings("unchecked")

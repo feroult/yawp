@@ -515,6 +515,26 @@ public class EntityUtils {
 		field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
 	}
 
+	public static boolean isId(Class<?> clazz, String fieldName) {
+		try {
+			return isId(clazz.getDeclaredField(fieldName));
+		} catch (NoSuchFieldException | SecurityException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static boolean isId(Field field) {
+		return field.getAnnotation(Id.class) != null;
+	}
+
+	public static boolean hasIndex(Class<?> clazz, String fieldName) {
+		try {
+			return hasIndex(clazz.getDeclaredField(fieldName));
+		} catch (NoSuchFieldException | SecurityException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private static boolean hasIndex(Field field) {
 		return field.getAnnotation(Index.class) != null;
 	}

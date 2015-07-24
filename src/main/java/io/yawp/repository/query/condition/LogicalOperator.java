@@ -30,7 +30,12 @@ public enum LogicalOperator {
 		List<Filter> filters = new ArrayList<>();
 		for (int i = 0; i < conditions.length; i++) {
 			try {
-				filters.add(conditions[i].getPredicate());
+				BaseCondition condition = conditions[i];
+				if (condition.hasPostFilter()) {
+					continue;
+				}
+
+				filters.add(condition.getPredicate());
 			} catch (FalsePredicateException ex) {
 				if (operation == AND) {
 					throw ex;

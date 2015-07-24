@@ -10,6 +10,10 @@ public class JoinedCondition extends BaseCondition {
 
 	private BaseCondition[] conditions;
 
+	private boolean hasPreFilter = false;
+
+	private boolean hasPostFilter = false;
+
 	public JoinedCondition(LogicalOperator logicalOperator, BaseCondition[] conditions) {
 		this.logicalOperator = logicalOperator;
 		this.conditions = conditions;
@@ -19,7 +23,17 @@ public class JoinedCondition extends BaseCondition {
 	public void init(Repository r, Class<?> clazz) {
 		for (BaseCondition c : conditions) {
 			c.init(r, clazz);
+
+			if (c.hasPreFilter()) {
+				hasPreFilter = true;
+			}
+
+			if (c.hasPostFilter()) {
+				hasPostFilter = true;
+			}
 		}
+
+		hasPreFilter = hasPreFilter && !(hasPostFilter && logicalOperator == LogicalOperator.OR);
 	}
 
 	public LogicalOperator getLogicalOperator() {
@@ -28,6 +42,16 @@ public class JoinedCondition extends BaseCondition {
 
 	public BaseCondition[] getConditions() {
 		return conditions;
+	}
+
+	@Override
+	public boolean hasPreFilter() {
+		return hasPreFilter;
+	}
+
+	@Override
+	public boolean hasPostFilter() {
+		return hasPostFilter;
 	}
 
 	@Override

@@ -413,13 +413,39 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		assertTrue(false);
 	}
 
-	//	@Test
-//	public void testQueryWithoutIndex() {
-//		yawp.save(new BasicObject(1l));
-//		yawp.save(new BasicObject(2l));
-//
-//		List<BasicObject> objects = yawp(BasicObject.class).where("longValue", "=", 1l).list();
-//		assertEquals(1, objects.size());
-//		assertEquals(1l, objects.get(0).getLongValue());
-//	}
+	@Test
+	public void testWhereWithoutIndex() {
+		yawp.save(new BasicObject("a", 1l));
+		yawp.save(new BasicObject("b", 2l));
+
+		List<BasicObject> objects = yawp(BasicObject.class).where("longValue", "=", 1l).list();
+		assertObjects(objects, "a");
+	}
+
+	@Test
+	public void testWhereAndWithoutIndex() {
+		yawp.save(new BasicObject("a", 1l));
+		yawp.save(new BasicObject("a", 2l));
+		yawp.save(new BasicObject("b", 1l));
+
+		List<BasicObject> objects = yawp(BasicObject.class).where(c("stringValue", "=", "a").and(c("longValue", "=", 1l))).list();
+		assertObjects(objects, "a");
+	}
+
+	@Test
+	public void testWhereOrWithoutIndex() {
+		yawp.save(new BasicObject("a", 1l));
+		yawp.save(new BasicObject("b", 2l));
+		yawp.save(new BasicObject("c", 1l));
+
+		List<BasicObject> objects = yawp(BasicObject.class).where(c("stringValue", "=", "a").or(c("longValue", "=", 1l))).list();
+		assertObjects(objects, "a", "c");
+	}
+
+	private void assertObjects(List<BasicObject> objects, String... strings) {
+		assertEquals(strings.length, objects.size());
+		for (int i = 0; i < strings.length; i++) {
+			assertEquals(strings[i], objects.get(i).getStringValue());
+		}
+	}
 }

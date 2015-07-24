@@ -456,6 +456,29 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		assertObjects(objects, "a", "a", "c");
 	}
 
+	@Test
+	public void testWherWithoutIndexWithId() {
+		yawp.save(setId(new BasicObject("a", 1l), 1l));
+		yawp.save(setId(new BasicObject("b", 2l), 2l));
+		yawp.save(setId(new BasicObject("c", 3l), 3l));
+
+		IdRef<BasicObject> id = IdRef.create(yawp, BasicObject.class, 1l);
+
+		List<BasicObject> objects = yawp(BasicObject.class).where(c("id", "=", id).or(c("longValue", "=", 3l))).list();
+		assertObjects(objects, "a", "c");
+
+		objects = yawp(BasicObject.class).where(c("id", "=", id).and(c("longValue", "=", 1l))).list();
+		assertObjects(objects, "a");
+
+		objects = yawp(BasicObject.class).where(c("id", "=", id).and(c("longValue", "=", 3l))).list();
+		assertObjects(objects);
+	}
+
+	private BasicObject setId(BasicObject basicObject, long id) {
+		basicObject.setId(IdRef.create(yawp, BasicObject.class, id));
+		return basicObject;
+	}
+
 	private void assertObjects(List<BasicObject> objects, String... strings) {
 		assertEquals(strings.length, objects.size());
 		for (int i = 0; i < strings.length; i++) {

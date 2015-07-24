@@ -350,7 +350,7 @@ public class DatastoreQuery<T> {
 
 	private void prepareQueryWhere(Query q) throws FalsePredicateException {
 		if (condition != null && condition.hasPreFilter()) {
-			q.setFilter(condition.getPredicate());
+			q.setFilter(condition.createPreFilter());
 		}
 	}
 

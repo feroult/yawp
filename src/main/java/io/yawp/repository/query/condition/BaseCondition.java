@@ -19,7 +19,7 @@ public abstract class BaseCondition {
 
 	public abstract boolean hasPostFilter();
 
-	public abstract Filter getPredicate() throws FalsePredicateException;
+	public abstract Filter createPreFilter() throws FalsePredicateException;
 
 	public abstract boolean evaluate(Object object);
 

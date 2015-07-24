@@ -70,7 +70,7 @@ public class SimpleCondition extends BaseCondition {
 	}
 
 	@Override
-	public Filter getPredicate() throws FalsePredicateException {
+	public Filter createPreFilter() throws FalsePredicateException {
 		String actualFieldName = EntityUtils.getActualFieldName(field, clazz);
 		Object actualValue = EntityUtils.getActualFieldValue(field, clazz, whereValue);
 

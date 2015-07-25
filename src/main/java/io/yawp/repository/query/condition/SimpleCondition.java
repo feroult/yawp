@@ -1,8 +1,6 @@
 package io.yawp.repository.query.condition;
 
 import io.yawp.commons.utils.EntityUtils;
-import io.yawp.commons.utils.ReflectionUtils;
-import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 
 import java.util.Collection;
@@ -12,8 +10,6 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 public class SimpleCondition extends BaseCondition {
-
-	private static final String PARENT_REF_KEYWORK = "parent";
 
 	private Repository r;
 
@@ -90,15 +86,7 @@ public class SimpleCondition extends BaseCondition {
 
 	@Override
 	public boolean evaluate(Object object) {
-
-		Object objectValue = null;
-
-		if (isRefField()) {
-			objectValue = getRefValue(object);
-		} else {
-			objectValue = ReflectionUtils.getFieldValue(object, field);
-		}
-
+		Object objectValue = new ConditionReference(field, object).getValue();
 		return whereOperator.evaluate(objectValue, whereValue);
 	}
 
@@ -125,67 +113,4 @@ public class SimpleCondition extends BaseCondition {
 		}
 	}
 
-	private Object getRefValue(Object object) {
-		FieldRefs refs = parseFieldRefs();
-
-		Object objectRef = object;
-
-		while (refs.hasMoreRefs()) {
-			IdRef<?> idRef = null;
-
-			if (refs.isParentRef()) {
-				idRef = EntityUtils.getParentId(objectRef);
-				refs.nextRef();
-
-				// advance all parents in a row
-				while (refs.isParentRef()) {
-					idRef = idRef.getParentId();
-					refs.nextRef();
-				}
-
-			} else {
-				idRef = (IdRef<?>) ReflectionUtils.getFieldValue(objectRef, refs.nextRef());
-			}
-
-			if (idRef == null) {
-				return null;
-			}
-
-			objectRef = idRef.fetch();
-		}
-
-		return ReflectionUtils.getFieldValue(objectRef, refs.fieldName());
-	}
-
-	private FieldRefs parseFieldRefs() {
-		return new FieldRefs(field.split("->"));
-	}
-
-	private class FieldRefs {
-
-		private String[] split;
-
-		private int current;
-
-		public FieldRefs(String[] split) {
-			this.split = split;
-			this.current = 0;
-		}
-
-		public boolean hasMoreRefs() {
-			return current < split.length - 1;
-		}
-
-		public String nextRef() {
-			return split[current++];
-		}
-
-		public boolean isParentRef() {
-			return split[current].equalsIgnoreCase(PARENT_REF_KEYWORK);
-		}
-
-		public String fieldName() {
-			return split[split.length - 1];
-		}
-	}
 }

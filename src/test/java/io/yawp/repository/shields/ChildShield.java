@@ -25,7 +25,7 @@ public class ChildShield extends Shield<ShieldedChild> {
 	public void collection(IdRef<Parent> parentId) {
 		allow(isId100(parentId));
 		allow(isJanis()).whereParent(c("name", "=", "ok-for-janis"));
-		// allow(isJanis()).where(c("parent->name", "=", "ok-for-janis"));
+		// allow(isJanis()).where("parent->name", "=", "ok-for-janis");
 	}
 
 	@PUT("single")

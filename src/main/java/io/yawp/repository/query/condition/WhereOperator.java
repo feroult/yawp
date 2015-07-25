@@ -153,9 +153,17 @@ public enum WhereOperator {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static int compareObjects(Object objectValue, Object whereValue) {
-		Comparable c1 = (Comparable) objectValue;
-		Comparable c2 = (Comparable) whereValue;
+	private static int compareObjects(Object o1, Object o2) {
+		if (o1 == null && o2 != null) {
+			return -1;
+		}
+
+		if (o1 != null && o2 == null) {
+			return 1;
+		}
+
+		Comparable c1 = (Comparable) o1;
+		Comparable c2 = (Comparable) o2;
 		return c1.compareTo(c2);
 	}
 

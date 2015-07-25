@@ -37,6 +37,11 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		saveManyBasicObjects(n, "xpto");
 	}
 
+	private BasicObject setId(BasicObject basicObject, long id) {
+		basicObject.setId(IdRef.create(yawp, BasicObject.class, id));
+		return basicObject;
+	}
+
 	@Test
 	public void testWhere() {
 		saveManyBasicObjects(3);
@@ -457,7 +462,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
-	public void testWherWithoutIndexWithId() {
+	public void testWhereWithoutIndexWithId() {
 		yawp.save(setId(new BasicObject("a", 1l), 1l));
 		yawp.save(setId(new BasicObject("b", 2l), 2l));
 		yawp.save(setId(new BasicObject("c", 3l), 3l));
@@ -474,9 +479,19 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		assertObjects(objects);
 	}
 
-	private BasicObject setId(BasicObject basicObject, long id) {
-		basicObject.setId(IdRef.create(yawp, BasicObject.class, id));
-		return basicObject;
+	@Test
+	public void testQueryRef() {
+		BasicObject ref1 = new BasicObject("right");
+		BasicObject ref2 = new BasicObject("wrong");
+
+		yawp.save(ref1);
+		yawp.save(ref2);
+
+		yawp.save(new BasicObject("a", ref1.getId()));
+		yawp.save(new BasicObject("b", ref2.getId()));
+
+		BasicObject object = yawp(BasicObject.class).where("objectId->stringValue", "=", "right").only();
+		assertEquals("a", object.getStringValue());
 	}
 
 	private void assertObjects(List<BasicObject> objects, String... strings) {

@@ -45,6 +45,8 @@ public class BasicObject {
 	@Json
 	private Map<Long, Pojo> jsonMap;
 
+	private IdRef<BasicObject> objectId;
+
 	public BasicObject() {
 
 	}
@@ -60,6 +62,11 @@ public class BasicObject {
 	public BasicObject(String stringValue, long longValue) {
 		this.stringValue = stringValue;
 		this.longValue = longValue;
+	}
+
+	public BasicObject(String stringValue, IdRef<BasicObject> objectId) {
+		this.stringValue = stringValue;
+		this.objectId = objectId;
 	}
 
 	public IdRef<BasicObject> getId() {
@@ -148,6 +155,14 @@ public class BasicObject {
 
 	public void setJsonMap(Map<Long, Pojo> jsonMap) {
 		this.jsonMap = jsonMap;
+	}
+
+	public IdRef<BasicObject> getObjectId() {
+		return objectId;
+	}
+
+	public void setObjectId(IdRef<BasicObject> objectId) {
+		this.objectId = objectId;
 	}
 
 	public void assertObject(String stringValue, String textValue, int intValue, long longValue, double doubleValue, boolean booleanValue,

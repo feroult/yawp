@@ -2,6 +2,7 @@ package io.yawp.repository.query.condition;
 
 import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.ReflectionUtils;
+import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 
 import java.util.Collection;
@@ -61,12 +62,16 @@ public class SimpleCondition extends BaseCondition {
 
 	@Override
 	public boolean hasPreFilter() {
-		return EntityUtils.hasIndex(clazz, field) || EntityUtils.isId(clazz, field);
+		return !isRefField() && (EntityUtils.hasIndex(clazz, field) || EntityUtils.isId(clazz, field));
 	}
 
 	@Override
 	public boolean hasPostFilter() {
 		return !hasPreFilter();
+	}
+
+	private boolean isRefField() {
+		return field.indexOf("->") != -1;
 	}
 
 	@Override
@@ -83,7 +88,15 @@ public class SimpleCondition extends BaseCondition {
 
 	@Override
 	public boolean evaluate(Object object) {
-		Object objectValue = ReflectionUtils.getFieldValue(object, field);
+
+		Object objectValue = null;
+
+		if (isRefField()) {
+			objectValue = getRefValue(object);
+		} else {
+			objectValue = ReflectionUtils.getFieldValue(object, field);
+		}
+
 		return whereOperator.evaluate(objectValue, whereValue);
 	}
 
@@ -109,4 +122,17 @@ public class SimpleCondition extends BaseCondition {
 					+ valueClazz.getSimpleName());
 		}
 	}
+
+	private Object getRefValue(Object object) {
+		String[] split = field.split("->");
+		IdRef<?> idRef = (IdRef<?>) ReflectionUtils.getFieldValue(object, split[0]);
+
+		if (idRef == null) {
+			return null;
+		}
+
+		Object objectRef = idRef.fetch();
+		return ReflectionUtils.getFieldValue(objectRef, split[1]);
+	}
+
 }

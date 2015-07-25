@@ -516,6 +516,21 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		assertEquals("x", object.getObjectId().fetch().getStringValue());
 	}
 
+	@Test
+	public void testQueryRefWithPreFilter() {
+		BasicObject ref1 = new BasicObject("right");
+		BasicObject ref2 = new BasicObject("right");
+
+		yawp.save(ref1);
+		yawp.save(ref2);
+
+		yawp.save(new BasicObject("a", ref1.getId()));
+		yawp.save(new BasicObject("b", ref2.getId()));
+
+		BasicObject object = yawp(BasicObject.class).where(c("objectId->stringValue", "=", "right").and(c("stringValue", "=", "a"))).only();
+		assertEquals("a", object.getStringValue());
+	}
+
 	private void assertObjects(List<BasicObject> objects, String... strings) {
 		assertEquals(strings.length, objects.size());
 		for (int i = 0; i < strings.length; i++) {

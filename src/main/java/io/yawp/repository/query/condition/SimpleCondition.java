@@ -125,14 +125,16 @@ public class SimpleCondition extends BaseCondition {
 
 	private Object getRefValue(Object object) {
 		String[] split = field.split("->");
-		IdRef<?> idRef = (IdRef<?>) ReflectionUtils.getFieldValue(object, split[0]);
+		Object objectRef = object;
 
-		if (idRef == null) {
-			return null;
+		for (int i = 0; i < split.length - 1; i++) {
+			IdRef<?> idRef = (IdRef<?>) ReflectionUtils.getFieldValue(objectRef, split[i]);
+			if (idRef == null) {
+				return null;
+			}
+			objectRef = idRef.fetch();
 		}
 
-		Object objectRef = idRef.fetch();
-		return ReflectionUtils.getFieldValue(objectRef, split[1]);
+		return ReflectionUtils.getFieldValue(objectRef, split[split.length - 1]);
 	}
-
 }

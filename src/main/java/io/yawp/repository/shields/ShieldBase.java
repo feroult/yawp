@@ -4,6 +4,7 @@ import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.condition.BaseCondition;
+import io.yawp.repository.query.condition.Condition;
 import io.yawp.servlet.HttpException;
 
 import java.lang.reflect.InvocationTargetException;
@@ -53,6 +54,10 @@ public abstract class ShieldBase<T> extends Feature {
 		this.allow = this.allow || allow;
 		this.lastAllow = allow;
 		return this;
+	}
+
+	protected final ShieldBase<T> where(String field, String operator, Object value) {
+		return where(Condition.c(field, operator, value));
 	}
 
 	protected final ShieldBase<T> where(BaseCondition condition) {

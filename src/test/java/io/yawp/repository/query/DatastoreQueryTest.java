@@ -8,6 +8,9 @@ import static org.junit.Assert.assertTrue;
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
+import io.yawp.repository.models.parents.Child;
+import io.yawp.repository.models.parents.Grandchild;
+import io.yawp.repository.models.parents.Parent;
 import io.yawp.repository.query.condition.BaseCondition;
 
 import java.util.Arrays;
@@ -529,6 +532,30 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
 		BasicObject object = yawp(BasicObject.class).where(c("objectId->stringValue", "=", "right").and(c("stringValue", "=", "a"))).only();
 		assertEquals("a", object.getStringValue());
+	}
+
+	@Test
+	public void testQueryParentRef() {
+		Parent parent1 = new Parent("right");
+		Parent parent2 = new Parent("wrong");
+
+		yawp.save(parent1);
+		yawp.save(parent2);
+
+		Child child1 = new Child("x", parent1.getId());
+		Child child2 = new Child("y", parent2.getId());
+
+		yawp.save(child1);
+		yawp.save(child2);
+
+		yawp.save(new Grandchild("a", child1.getId()));
+		yawp.save(new Grandchild("b", child2.getId()));
+
+		Grandchild object = yawp(Grandchild.class).where("childId->parentId->name", "=", "right").only();
+		assertEquals("a", object.getName());
+
+		object = yawp(Grandchild.class).where("parent->parent->name", "=", "right").only();
+		assertEquals("a", object.getName());
 	}
 
 	private void assertObjects(List<BasicObject> objects, String... strings) {

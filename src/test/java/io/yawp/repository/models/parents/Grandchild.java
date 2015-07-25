@@ -26,6 +26,11 @@ public class Grandchild {
 		this.name = name;
 	}
 
+	public Grandchild(String name, IdRef<Child> childId) {
+		this.name = name;
+		this.childId = childId;
+	}
+
 	public IdRef<Grandchild> getId() {
 		return id;
 	}

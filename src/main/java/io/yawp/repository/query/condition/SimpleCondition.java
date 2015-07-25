@@ -13,6 +13,8 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 public class SimpleCondition extends BaseCondition {
 
+	private static final String PARENT_REF_KEYWORK = "parent";
+
 	private Repository r;
 
 	private Class<?> clazz;
@@ -128,10 +130,25 @@ public class SimpleCondition extends BaseCondition {
 		Object objectRef = object;
 
 		for (int i = 0; i < split.length - 1; i++) {
-			IdRef<?> idRef = (IdRef<?>) ReflectionUtils.getFieldValue(objectRef, split[i]);
+			IdRef<?> idRef = null;
+
+			if (split[i].equalsIgnoreCase(PARENT_REF_KEYWORK)) {
+				idRef = EntityUtils.getParentId(objectRef);
+
+				// advance all parents in a row
+				for (int j = i + 1; split[j].equalsIgnoreCase(PARENT_REF_KEYWORK); j++) {
+					idRef = idRef.getParentId();
+					i++;
+				}
+
+			} else {
+				idRef = (IdRef<?>) ReflectionUtils.getFieldValue(objectRef, split[i]);
+			}
+
 			if (idRef == null) {
 				return null;
 			}
+
 			objectRef = idRef.fetch();
 		}
 

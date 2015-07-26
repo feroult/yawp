@@ -91,9 +91,9 @@ public class ShieldConditions {
 		}
 
 		if (objects == null) {
-			if (!endpointClazz.equals(id.getClazz())) {
-				return true;
-			}
+//			if (!endpointClazz.equals(id.getClazz())) {
+//				return true;
+//			}
 			// TODO fix parent->parent->? level, if id is an ancestor
 			return condition.evaluate(id.fetch());
 		}

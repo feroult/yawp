@@ -43,7 +43,9 @@ public class ConditionReference {
 		return split[split.length - 1];
 	}
 
-	public Object getValue() {
+	public Object getValue() throws AncestorConditionForChildException {
+		verifyAncestorConditionForChild();
+
 		Object currentObject = advanceAncestorSequenceIfNecessary();
 
 		while (hasMoreRefs()) {
@@ -57,6 +59,12 @@ public class ConditionReference {
 		}
 
 		return ReflectionUtils.getFieldValue(currentObject, fieldName());
+	}
+
+	private void verifyAncestorConditionForChild() throws AncestorConditionForChildException {
+		if (clazz != null && hasStartedWithAncestorObject() && isAncestorChild()) {
+			throw new AncestorConditionForChildException();
+		}
 	}
 
 	private Object advanceAncestorSequenceIfNecessary() {
@@ -97,6 +105,19 @@ public class ConditionReference {
 
 	private boolean hasStartedWithAncestorObject() {
 		return !object.getClass().equals(clazz);
+	}
+
+	private boolean isAncestorChild() {
+		int ancestorRefNumber = -1;
+		for (int i = 0; i < split.length - 1; i++) {
+			if (!split[i].equals(PARENT_REF_KEYWORK)) {
+				break;
+			}
+			ancestorRefNumber++;
+		}
+
+		int ancestorNumber = EntityUtils.getAncestorNumber(clazz, object.getClass());
+		return ancestorNumber > ancestorRefNumber;
 	}
 
 }

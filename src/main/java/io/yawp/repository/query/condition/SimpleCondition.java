@@ -86,8 +86,12 @@ public class SimpleCondition extends BaseCondition {
 
 	@Override
 	public boolean evaluate(Object object) {
-		Object objectValue = new ConditionReference(field, clazz, object).getValue();
-		return whereOperator.evaluate(objectValue, whereValue);
+		try {
+			Object objectValue = new ConditionReference(field, clazz, object).getValue();
+			return whereOperator.evaluate(objectValue, whereValue);
+		} catch (AncestorConditionForChildException e) {
+			return true;
+		}
 	}
 
 	@Override

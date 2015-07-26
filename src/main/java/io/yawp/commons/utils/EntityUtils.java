@@ -615,4 +615,24 @@ public class EntityUtils {
 		return parentClazz;
 	}
 
+	public static int getAncestorNumber(Class<? extends Object> endpointClazz, Class<?> ancestorClazz) {
+		if (endpointClazz.equals(ancestorClazz)) {
+			return -1;
+		}
+
+		Class<?> parentClazz = getParentClazz(endpointClazz);
+		int ancestorNumber = 0;
+
+		while (parentClazz != null && !parentClazz.equals(ancestorClazz)) {
+			parentClazz = getParentClazz(parentClazz);
+			ancestorNumber++;
+		}
+
+		if (parentClazz == null) {
+			throw new RuntimeException("Invalid ancestor " + ancestorClazz.getName() + " for class " + endpointClazz.getName());
+		}
+
+		return ancestorNumber;
+	}
+
 }

@@ -65,4 +65,25 @@ public class ConditionTest extends EndpointTestCase {
 		assertTrue(c.evaluate(child));
 		assertTrue(c.evaluate(parent));
 	}
+
+	@Test
+	public void testIgnoreConditionForChildFields() {
+		Parent parent = new Parent("parent");
+		yawp.save(parent);
+
+		Child child = new Child("child", parent.getId());
+		yawp.save(child);
+
+		Grandchild grandchild = new Grandchild("grandchild", child.getId());
+		grandchild.setAge(10);
+		yawp.save(grandchild);
+
+		BaseCondition c = c("age", "=", 11);
+		c.init(yawp, Grandchild.class);
+
+		assertFalse(c.evaluate(grandchild));
+		assertTrue(c.evaluate(child));
+		assertTrue(c.evaluate(parent));
+
+	}
 }

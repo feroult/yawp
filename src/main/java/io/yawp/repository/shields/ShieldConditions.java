@@ -3,6 +3,7 @@ package io.yawp.repository.shields;
 import static io.yawp.repository.query.condition.Condition.and;
 import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.Repository;
 import io.yawp.repository.query.condition.BaseCondition;
 
 import java.util.ArrayList;
@@ -17,13 +18,16 @@ public class ShieldConditions {
 
 	private Map<Integer, BaseCondition> ancestorConditions = new HashMap<Integer, BaseCondition>();
 
+	private Repository r;
+
 	private Class<?> endpointClazz;
 
 	private IdRef<?> id;
 
 	private List<?> objects;
 
-	public ShieldConditions(Class<?> endpointClazz, IdRef<?> id, List<?> objects) {
+	public ShieldConditions(Repository r, Class<?> endpointClazz, IdRef<?> id, List<?> objects) {
+		this.r = r;
 		this.endpointClazz = endpointClazz;
 		this.id = id;
 		this.objects = objects;
@@ -57,7 +61,15 @@ public class ShieldConditions {
 		return condition;
 	}
 
+	private void initConditions() {
+		if (condition == null) {
+			return;
+		}
+		condition.init(r, endpointClazz);
+	}
+
 	public boolean evaluate() {
+		initConditions();
 		return evaluateIncoming() && evaluateExisting() && evaluateAncestors();
 	}
 

@@ -190,7 +190,7 @@ public abstract class ShieldBase<T> extends Feature {
 			return conditions;
 		}
 
-		conditions = new ShieldConditions(endpointClazz, id, objects);
+		conditions = new ShieldConditions(yawp, endpointClazz, id, objects);
 		return conditions;
 	}
 

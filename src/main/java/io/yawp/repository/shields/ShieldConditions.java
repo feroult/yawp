@@ -6,17 +6,11 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.condition.BaseCondition;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ShieldConditions {
 
 	private BaseCondition condition;
-
-	private Map<Integer, BaseCondition> ancestorConditions = new HashMap<Integer, BaseCondition>();
 
 	private Repository r;
 
@@ -41,22 +35,6 @@ public class ShieldConditions {
 		this.condition = condition;
 	}
 
-	public void whereParent(BaseCondition condition) {
-		whereAncestor(0, condition);
-	}
-
-	public void whereGrandparent(BaseCondition condition) {
-		whereAncestor(1, condition);
-	}
-
-	public void whereAncestor(int ancestorIndex, BaseCondition condition) {
-		if (ancestorConditions.containsKey(ancestorIndex)) {
-			ancestorConditions.put(ancestorIndex, and(ancestorConditions.get(ancestorIndex), condition));
-			return;
-		}
-		ancestorConditions.put(ancestorIndex, condition);
-	}
-
 	public BaseCondition getWhere() {
 		return condition;
 	}
@@ -70,7 +48,7 @@ public class ShieldConditions {
 
 	public boolean evaluate() {
 		initConditions();
-		return evaluateIncoming() && evaluateExisting() && evaluateAncestors();
+		return evaluateIncoming() && evaluateExisting();
 	}
 
 	private boolean evaluateIncoming() {
@@ -91,58 +69,10 @@ public class ShieldConditions {
 		}
 
 		if (objects == null) {
-//			if (!endpointClazz.equals(id.getClazz())) {
-//				return true;
-//			}
-			// TODO fix parent->parent->? level, if id is an ancestor
 			return condition.evaluate(id.fetch());
 		}
 
 		return evaluateObjects(new EvaluateExisting());
-	}
-
-	private boolean evaluateAncestors() {
-		if (ancestorConditions.size() == 0) {
-			return true;
-		}
-
-		if (objects == null) {
-			return evaluateAncestorByIds();
-		}
-
-		return evaluateObjects(new EvaluateAncestors());
-	}
-
-	private boolean evaluateAncestorByIds() {
-		boolean result = true;
-		for (Integer ancestor : sortAncestorIndexes()) {
-			BaseCondition ancestorCondition = ancestorConditions.get(ancestor);
-			IdRef<?> ancestorId = getAncestorId(ancestor, id);
-			result = result && (ancestorId == null || ancestorCondition.evaluate(ancestorId.fetch()));
-			if (!result) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	private IdRef<?> getAncestorId(int ancestor, IdRef<?> id) {
-		Class<?> ancestorClazz = EntityUtils.getAncestorClazz(ancestor, endpointClazz);
-		IdRef<?> ancestorId = id;
-
-		while (!ancestorId.getClazz().equals(ancestorClazz)) {
-			if (ancestorId.getParentId() == null) {
-				return null;
-			}
-			ancestorId = ancestorId.getParentId();
-		}
-		return ancestorId;
-	}
-
-	private List<Integer> sortAncestorIndexes() {
-		ArrayList<Integer> conditionsIndex = new ArrayList<Integer>(ancestorConditions.keySet());
-		Collections.sort(conditionsIndex);
-		return conditionsIndex;
 	}
 
 	private boolean evaluateObjects(Evaluate e) {
@@ -175,23 +105,6 @@ public class ShieldConditions {
 				return true;
 			}
 			return condition.evaluate(id.fetch());
-		}
-	}
-
-	private class EvaluateAncestors implements Evaluate {
-		@Override
-		public boolean evaluate(Object object) {
-			boolean result = true;
-			for (Integer ancestor : sortAncestorIndexes()) {
-				BaseCondition ancestorCondition = ancestorConditions.get(ancestor);
-				IdRef<?> id = EntityUtils.getParentId(object);
-				IdRef<?> ancestorId = getAncestorId(ancestor, id);
-				result = result && (ancestorId == null || ancestorCondition.evaluate(ancestorId.fetch()));
-				if (!result) {
-					return false;
-				}
-			}
-			return true;
 		}
 	}
 

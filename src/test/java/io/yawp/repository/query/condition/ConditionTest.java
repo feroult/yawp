@@ -3,13 +3,17 @@ package io.yawp.repository.query.condition;
 import static io.yawp.repository.query.condition.Condition.c;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.models.basic.BasicObject;
+import io.yawp.repository.models.parents.Child;
+import io.yawp.repository.models.parents.Grandchild;
+import io.yawp.repository.models.parents.Parent;
 
 import java.util.Arrays;
 
 import org.junit.Test;
 
-public class ConditionTest {
+public class ConditionTest extends EndpointTestCase {
 
 	@Test
 	public void testSimpleConditions() {
@@ -41,5 +45,24 @@ public class ConditionTest {
 		assertFalse(c("intValue", "=", 10).not().evaluate(object));
 		assertTrue(c("intValue", "=", 9).not().evaluate(object));
 		assertTrue(c("intValue", "=", 9).or(c("stringValue", "=", "bbb").or(c("longValue", "=", 100l))).evaluate(object));
+	}
+
+	@Test
+	public void testParentRef() {
+		Parent parent = new Parent("parent");
+		yawp.save(parent);
+
+		Child child = new Child("child", parent.getId());
+		yawp.save(child);
+
+		Grandchild grandchild = new Grandchild("grandchild", child.getId());
+		yawp.save(grandchild);
+
+		BaseCondition c = c("parent->parent->name", "=", "parent");
+		c.init(yawp, Grandchild.class);
+
+		assertTrue(c.evaluate(grandchild));
+		assertTrue(c.evaluate(child));
+		assertTrue(c.evaluate(parent));
 	}
 }

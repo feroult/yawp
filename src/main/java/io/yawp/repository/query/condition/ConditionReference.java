@@ -14,8 +14,15 @@ public class ConditionReference {
 
 	private Object object;
 
-	public ConditionReference(String refString, Object object) {
+	private Class<?> clazz;
+
+	private String refString;
+
+	public ConditionReference(String refString, Class<?> clazz, Object object) {
+		this.refString = refString;
+		this.clazz = clazz;
 		this.object = object;
+
 		this.split = refString.split("->");
 		this.current = 0;
 	}
@@ -53,6 +60,10 @@ public class ConditionReference {
 	}
 
 	private Object advanceAncestorSequenceIfNecessary() {
+		if (hasStartedWithAncestorObject()) {
+			advanceToTheRightAncestor();
+		}
+
 		if (!isParentRef()) {
 			return object;
 		}
@@ -66,6 +77,26 @@ public class ConditionReference {
 		}
 
 		return parentId.fetch();
+	}
+
+	private void advanceToTheRightAncestor() {
+		if (clazz == null || object.getClass().equals(clazz)) {
+			return;
+		}
+
+		Class<?> ancestorClazz = clazz;
+
+		for (int i = 0; !object.getClass().equals(ancestorClazz); i++) {
+			ancestorClazz = EntityUtils.getAncestorClazz(i, clazz);
+			if (ancestorClazz == null) {
+				throw new RuntimeException("Invalid condition ref " + refString + " for object class: " + object.getClass().getName());
+			}
+			nextRef();
+		}
+	}
+
+	private boolean hasStartedWithAncestorObject() {
+		return !object.getClass().equals(clazz);
 	}
 
 }

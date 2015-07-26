@@ -43,8 +43,8 @@ public class ConditionReference {
 		return split[split.length - 1];
 	}
 
-	public Object getValue() throws AncestorConditionForChildException {
-		verifyAncestorConditionForChild();
+	public Object getValue() throws ConditionForChildException {
+		verifyIfConditionIsForChild();
 
 		Object currentObject = advanceAncestorSequenceIfNecessary();
 
@@ -61,14 +61,14 @@ public class ConditionReference {
 		return ReflectionUtils.getFieldValue(currentObject, fieldName());
 	}
 
-	private void verifyAncestorConditionForChild() throws AncestorConditionForChildException {
-		if (clazz != null && hasStartedWithAncestorObject() && isAncestorChild()) {
-			throw new AncestorConditionForChildException();
+	private void verifyIfConditionIsForChild() throws ConditionForChildException {
+		if (clazz != null && isObjectAcenstor() && isReferenceForChild()) {
+			throw new ConditionForChildException();
 		}
 	}
 
 	private Object advanceAncestorSequenceIfNecessary() {
-		if (hasStartedWithAncestorObject()) {
+		if (isObjectAcenstor()) {
 			advanceToTheRightAncestor();
 		}
 
@@ -103,11 +103,11 @@ public class ConditionReference {
 		}
 	}
 
-	private boolean hasStartedWithAncestorObject() {
+	private boolean isObjectAcenstor() {
 		return !object.getClass().equals(clazz);
 	}
 
-	private boolean isAncestorChild() {
+	private boolean isReferenceForChild() {
 		int ancestorRefNumber = -1;
 		for (int i = 0; i < split.length - 1; i++) {
 			if (!split[i].equals(PARENT_REF_KEYWORK)) {

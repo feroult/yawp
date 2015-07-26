@@ -89,7 +89,7 @@ public class SimpleCondition extends BaseCondition {
 		try {
 			Object objectValue = new ConditionReference(field, clazz, object).getValue();
 			return whereOperator.evaluate(objectValue, whereValue);
-		} catch (AncestorConditionForChildException e) {
+		} catch (ConditionForChildException e) {
 			return true;
 		}
 	}

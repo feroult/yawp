@@ -17,6 +17,7 @@ public class UpdateRestAction extends RestAction {
 
 		Object object = getObject();
 		save(object);
+		applyGetFacade(object);
 		return transform(object);
 	}
 

@@ -1,6 +1,7 @@
 package io.yawp.repository.shields;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import io.yawp.commons.utils.ServletTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.ShieldedObject;
@@ -181,15 +182,19 @@ public class ShieldTest extends ServletTestCase {
 	}
 
 	@Test
-	public void testSetFacade() {
+	public void testUpdateFacade() {
 		saveObject(1l, "xpto", 10);
 
 		login("amy", "rock.com");
-		put("/shielded_objects/1", "{id: '/shielded_objects/1', stringValue: 'new-xpto', intValue: 99}");
+		String json = put("/shielded_objects/1", "{id: '/shielded_objects/1', stringValue: 'new-xpto', intValue: 99}");
 
-		ShieldedObject object = yawp(ShieldedObject.class).fetch(1l);
-		assertEquals("xpto", object.getStringValue());
-		assertEquals((Integer) 99, object.getIntValue());
+		ShieldedObject resultObject = from(json, ShieldedObject.class);
+		assertEquals("xpto", resultObject.getStringValue());
+		assertNull(resultObject.getIntValue());
+
+		ShieldedObject objectInDatastore = yawp(ShieldedObject.class).fetch(1l);
+		assertEquals("xpto", objectInDatastore.getStringValue());
+		assertEquals((Integer) 99, objectInDatastore.getIntValue());
 	}
 
 	private void assertRestActionsStatus(int status) {

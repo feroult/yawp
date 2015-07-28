@@ -119,10 +119,10 @@ public abstract class ShieldBase<T> extends Feature {
 		update((IdRef<T>) id, objects == null ? null : objects.get(0));
 		throwNotFoundIfNotAllowed();
 
+		applySetFacade();
+
 		verifyConditions();
 		throwForbiddenIfNotAllowed();
-
-		applySetFacade();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -176,6 +176,15 @@ public abstract class ShieldBase<T> extends Feature {
 
 	}
 
+	@SuppressWarnings("unchecked")
+	public void applyGetFacade(Object object) {
+		if (facade == null) {
+			return;
+		}
+
+		FacadeUtils.get((T) object, facade);
+	}
+
 	public void setEndpointClazz(Class<?> endpointClazz) {
 		this.endpointClazz = endpointClazz;
 	}
@@ -208,6 +217,10 @@ public abstract class ShieldBase<T> extends Feature {
 
 	private void verifyConditions() {
 		this.allow = getConditions().evaluate();
+	}
+
+	public boolean hasFacade() {
+		return facade != null;
 	}
 
 	public final void setParams(Map<String, String> params) {

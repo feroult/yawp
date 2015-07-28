@@ -139,6 +139,13 @@ public abstract class RestAction {
 		return RepositoryTransformers.execute(r, object, getTransformerName());
 	}
 
+	protected void applyGetFacade(Object object) {
+		if (!hasFacade()) {
+			return;
+		}
+		shield.applyGetFacade(object);
+	}
+
 	protected String getTransformerName() {
 		return transformerName;
 	}
@@ -164,6 +171,10 @@ public abstract class RestAction {
 
 	protected boolean hasShield() {
 		return shield != null;
+	}
+
+	protected boolean hasFacade() {
+		return shield != null && shield.hasFacade();
 	}
 
 	protected boolean hasShieldCondition() {

@@ -1,19 +1,26 @@
 package io.yawp.commons.utils;
 
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
 
 public class FacadeUtilsTest {
 
-	public interface SimpleFacade {
+	public interface SetFacade {
+		public void setAge(Integer age);
+	}
+
+	public interface GetFacade {
 		String getName();
 	}
 
-	public static class Person implements SimpleFacade {
+	public static class Person implements SetFacade, GetFacade {
 		private String name;
-		private int age;
 
-		public Person(String name, int age) {
+		private Integer age;
+
+		public Person(String name, Integer age) {
 			this.name = name;
 			this.age = age;
 		}
@@ -27,21 +34,33 @@ public class FacadeUtilsTest {
 			this.name = name;
 		}
 
-		public int getAge() {
+		public Integer getAge() {
 			return age;
 		}
 
-		public void setAge(int age) {
+		public void setAge(Integer age) {
 			this.age = age;
 		}
 	}
 
 	@Test
-	public void testCopyingViaFacade() {
-		Person from = new Person("Kala", 12);
-		Person to = new Person("Seth", 17);
-		FacadeUtils.copy(from, to, SimpleFacade.class);
-		assertEquals("Kala", to.getName());
-		assertEquals(17, to.getAge());
+	public void testSetViaFacade() {
+		Person defaults = new Person("jim", 27);
+		Person object = new Person("kurt", 22);
+
+		FacadeUtils.set(object, defaults, SetFacade.class);
+
+		assertEquals("jim", object.getName());
+		assertEquals((Integer) 22, object.getAge());
+	}
+
+	@Test
+	public void testGetViaFacade() {
+		Person object = new Person("jim", 27);
+
+		FacadeUtils.get(object, GetFacade.class);
+
+		assertEquals("jim", object.getName());
+		assertNull(object.getAge());
 	}
 }

@@ -1,14 +1,9 @@
 package io.yawp.commons.utils;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.beanutils.PropertyUtils;
 
 public abstract class FacadeUtils {
 
@@ -46,11 +41,14 @@ public abstract class FacadeUtils {
 	}
 
 	private static void copyProperties(Object from, Object to, List<String> properties) {
+		Class<?> clazz = from.getClass();
 		try {
 			for (String property : properties) {
-				BeanUtils.copyProperty(to, property, BeanUtils.getProperty(from, property));
+				Field field = clazz.getDeclaredField(property);
+				field.setAccessible(true);
+				field.set(to, field.get(from));
 			}
-		} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+		} catch (IllegalAccessException | NoSuchFieldException | SecurityException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -79,12 +77,12 @@ public abstract class FacadeUtils {
 
 	private static List<String> propetiesNotInFacade(Class<?> clazz, Class<?> facade, FacadeType facadeType) {
 		List<String> properties = new ArrayList<String>();
-		PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(clazz);
+		Field[] fields = clazz.getDeclaredFields();
 		List<String> facadeProperties = facadeProperties(facade, facadeType);
-		for (int i = 0; i < propertyDescriptors.length; i++) {
-			PropertyDescriptor descriptor = propertyDescriptors[i];
-			String name = descriptor.getName();
-			if (name.equals("class") || facadeProperties.contains(name)) {
+		for (int i = 0; i < fields.length; i++) {
+			Field field = fields[i];
+			String name = field.getName();
+			if (facadeProperties.contains(name)) {
 				continue;
 			}
 			properties.add(name);

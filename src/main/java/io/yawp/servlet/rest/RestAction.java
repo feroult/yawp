@@ -10,7 +10,6 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.DatastoreQuery;
-import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.shields.Shield;
 import io.yawp.repository.shields.ShieldInfo;
 import io.yawp.repository.transformers.RepositoryTransformers;
@@ -90,22 +89,17 @@ public abstract class RestAction {
 	public abstract Object action();
 
 	public HttpResponse execute() {
-		try {
-			if (hasShield()) {
-				shield();
-			}
-
-			Object object = action();
-
-			if (HttpResponse.class.isInstance(object)) {
-				return (HttpResponse) object;
-			}
-
-			return new JsonResponse(JsonUtils.to(object));
-
-		} catch (NoResultException e) {
-			throw new HttpException(404);
+		if (hasShield()) {
+			shield();
 		}
+
+		Object object = action();
+
+		if (HttpResponse.class.isInstance(object)) {
+			return (HttpResponse) object;
+		}
+
+		return new JsonResponse(JsonUtils.to(object));
 	}
 
 	protected DatastoreQuery<?> query() {

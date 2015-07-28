@@ -12,7 +12,8 @@ public class ShieldedObjectAction extends Action<ShieldedObject> {
 	}
 
 	@PUT("anotherthing")
-	public void anotherthing(IdRef<ShieldedObject> id) {
+	public ShieldedObject anotherthing(IdRef<ShieldedObject> id) {
+		return id.fetch();
 	}
 
 	@GET("collection")

@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
@@ -24,8 +23,7 @@ public class EndpointTestCase extends Feature {
 
 	private LocalServiceTestHelper helper;
 
-	@BeforeClass
-	public static void bootEndpoint() {
+	static {
 		features = new EndpointScanner("io.yawp").scan();
 	}
 

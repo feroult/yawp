@@ -67,6 +67,9 @@ public class ShieldTest extends ServletTestCase {
 
 	@Test
 	public void testDifferentActions() {
+		saveObject(1l);
+		saveObject(100l);
+
 		assertPutWithStatus("/shielded_objects/1/something", 404);
 		assertPutWithStatus("/shielded_objects/1/anotherthing", 404);
 		assertPutWithStatus("/shielded_objects/100/anotherthing", 200);
@@ -75,6 +78,8 @@ public class ShieldTest extends ServletTestCase {
 
 	@Test
 	public void testActionWithParams() {
+		saveObject(1l);
+
 		Map<String, String> params = new HashMap<String, String>();
 
 		params.put("x", "xpto");
@@ -187,9 +192,9 @@ public class ShieldTest extends ServletTestCase {
 
 		String json = post("/shielded_objects", "{stringValue: 'xpto', intValue: 99}");
 
-		ShieldedObject resultObject = from(json, ShieldedObject.class);
-		assertNull(resultObject.getStringValue());
-		assertNull(resultObject.getIntValue());
+		ShieldedObject retrievedObject = from(json, ShieldedObject.class);
+		assertNull(retrievedObject.getStringValue());
+		assertNull(retrievedObject.getIntValue());
 
 		ShieldedObject objectInDatastore = yawp(ShieldedObject.class).first();
 		assertNull(objectInDatastore.getStringValue());
@@ -251,13 +256,25 @@ public class ShieldTest extends ServletTestCase {
 		login("amy", "rock.com");
 		String json = put("/shielded_objects/1", "{id: '/shielded_objects/1', stringValue: 'new-xpto', intValue: 99}");
 
-		ShieldedObject resultObject = from(json, ShieldedObject.class);
-		assertEquals("xpto", resultObject.getStringValue());
-		assertNull(resultObject.getIntValue());
+		ShieldedObject retrievedObject = from(json, ShieldedObject.class);
+		assertEquals("xpto", retrievedObject.getStringValue());
+		assertNull(retrievedObject.getIntValue());
 
 		ShieldedObject objectInDatastore = yawp(ShieldedObject.class).fetch(1l);
 		assertEquals("xpto", objectInDatastore.getStringValue());
 		assertEquals((Integer) 99, objectInDatastore.getIntValue());
+	}
+
+	@Test
+	public void testCustomActionFacade() {
+		saveObject(1l, "xpto", 10);
+
+		login("amy", "rock.com");
+
+		String json = put("/shielded_objects/1/anotherthing");
+		ShieldedObject retrievedObject = from(json, ShieldedObject.class);
+		assertEquals("xpto", retrievedObject.getStringValue());
+		assertNull(retrievedObject.getIntValue());
 	}
 
 	private void assertRestActionsStatus(int status) {

@@ -73,18 +73,17 @@ public abstract class ShieldBase<T> extends Feature {
 		return this;
 	}
 
-	public ShieldBase<T> facade(Class<? super T> facade) {
+	protected ShieldBase<T> facade(Class<? super T> facade) {
 		if (!lastAllow) {
 			return this;
 		}
 
-		if (this.facade != null) {
-			throw new RuntimeException("Facade " + this.facade.getSimpleName() + " already defined for Shield<"
-					+ endpointClazz.getSimpleName() + "> - new facade: " + facade.getSimpleName());
-		}
-
 		this.facade = facade;
 		return this;
+	}
+
+	protected ShieldBase<T> removeFacade() {
+		return facade(null);
 	}
 
 	protected final boolean requestHasAnyObject() {

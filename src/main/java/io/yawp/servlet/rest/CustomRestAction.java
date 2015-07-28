@@ -8,7 +8,6 @@ public class CustomRestAction extends RestAction {
 		super("custom");
 	}
 
-
 	@Override
 	public void shield() {
 		shield.protectCustom();
@@ -22,11 +21,14 @@ public class CustomRestAction extends RestAction {
 			return null;
 		}
 
-		if (hasTransformer()) {
-			if (!object.getClass().equals(endpointClazz)) {
-				throw new HttpException(406);
+		if (object.getClass().equals(endpointClazz)) {
+			applyGetFacade(object);
+			if (hasTransformer()) {
+				return transform(object);
 			}
-			return transform(object);
+
+		} else if (hasTransformer()) {
+			throw new HttpException(406);
 		}
 
 		return object;

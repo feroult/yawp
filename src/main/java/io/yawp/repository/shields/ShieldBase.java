@@ -109,6 +109,8 @@ public abstract class ShieldBase<T> extends Feature {
 		create(objects);
 		throwNotFoundIfNotAllowed();
 
+		applySetFacade();
+
 		verifyConditions();
 		throwForbiddenIfNotAllowed();
 	}

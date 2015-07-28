@@ -36,7 +36,9 @@ public class IndexRestAction extends RestAction {
 			query.and(shield.getCondition());
 		}
 
-		return query.list();
+		List<?> objects = query.list();
+		applyGetFacade(objects);
+		return objects;
 	}
 
 }

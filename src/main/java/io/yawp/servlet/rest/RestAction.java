@@ -146,6 +146,16 @@ public abstract class RestAction {
 		shield.applyGetFacade(object);
 	}
 
+	protected void applyGetFacade(List<?> objects) {
+		if (!hasFacade()) {
+			return;
+		}
+
+		for (Object object : objects) {
+			shield.applyGetFacade(object);
+		}
+	}
+
 	protected String getTransformerName() {
 		return transformerName;
 	}

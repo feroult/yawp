@@ -42,7 +42,9 @@ public class CreateRestAction extends RestAction {
 		}
 
 		for (FutureObject<Object> future : futures) {
-			resultObjects.add(transform(future.get()));
+			Object object = transform(future.get());
+			applyGetFacade(object);
+			resultObjects.add(object);
 		}
 
 		return resultObjects;
@@ -50,6 +52,7 @@ public class CreateRestAction extends RestAction {
 
 	protected Object saveObject(Object object) {
 		save(object);
+		applyGetFacade(object);
 		return transform(object);
 	}
 

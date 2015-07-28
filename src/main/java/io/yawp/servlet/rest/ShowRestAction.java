@@ -18,14 +18,18 @@ public class ShowRestAction extends RestAction {
 		DatastoreQuery<?> query = query();
 
 		if (hasTransformer()) {
-			return query.transform(getTransformerName()).fetch(id);
+			Object object = query.transform(getTransformerName()).fetch(id);
+			applyGetFacade(object);
+			return object;
 		}
 
 		if (hasShieldCondition()) {
 			query.and(shield.getCondition());
 		}
 
-		return query.fetch(id);
+		Object object = query.fetch(id);
+		applyGetFacade(object);
+		return object;
 	}
 
 }

@@ -182,6 +182,69 @@ public class ShieldTest extends ServletTestCase {
 	}
 
 	@Test
+	public void tetCreateFacade() {
+		login("amy", "rock.com");
+
+		String json = post("/shielded_objects", "{stringValue: 'xpto', intValue: 99}");
+
+		ShieldedObject resultObject = from(json, ShieldedObject.class);
+		assertNull(resultObject.getStringValue());
+		assertNull(resultObject.getIntValue());
+
+		ShieldedObject objectInDatastore = yawp(ShieldedObject.class).first();
+		assertNull(objectInDatastore.getStringValue());
+		assertEquals((Integer) 99, objectInDatastore.getIntValue());
+	}
+
+	@Test
+	public void testIndexFacade() {
+		saveObject(1l, "xpto", 10);
+		saveObject(2l, "xpto", 10);
+
+		login("amy", "rock.com");
+
+		String json = get("/shielded_objects");
+		List<ShieldedObject> retrievedObjects = fromList(json, ShieldedObject.class);
+
+		assertEquals("xpto", retrievedObjects.get(0).getStringValue());
+		assertEquals("xpto", retrievedObjects.get(1).getStringValue());
+		assertNull(retrievedObjects.get(0).getIntValue());
+		assertNull(retrievedObjects.get(1).getIntValue());
+	}
+
+	@Test
+	public void testShowFacade() {
+		saveObject(1l, "xpto", 10);
+
+		login("amy", "rock.com");
+
+		String json = get("/shielded_objects/1");
+		ShieldedObject retrievedObject = from(json, ShieldedObject.class);
+
+		assertEquals("xpto", retrievedObject.getStringValue());
+		assertNull(retrievedObject.getIntValue());
+	}
+
+	@Test
+	public void testCreateFacadeArray() {
+		login("amy", "rock.com");
+
+		String json = post("/shielded_objects", "[{stringValue: 'xpto1', intValue: 99}, {stringValue: 'xpto2', intValue: 99}]");
+
+		List<ShieldedObject> retrievedObjects = fromList(json, ShieldedObject.class);
+		assertNull(retrievedObjects.get(0).getStringValue());
+		assertNull(retrievedObjects.get(1).getStringValue());
+		assertNull(retrievedObjects.get(0).getIntValue());
+		assertNull(retrievedObjects.get(1).getIntValue());
+
+		List<ShieldedObject> objectsInDatastore = yawp(ShieldedObject.class).list();
+		assertNull(objectsInDatastore.get(0).getStringValue());
+		assertNull(objectsInDatastore.get(1).getStringValue());
+		assertEquals((Integer) 99, objectsInDatastore.get(0).getIntValue());
+		assertEquals((Integer) 99, objectsInDatastore.get(1).getIntValue());
+	}
+
+	@Test
 	public void testUpdateFacade() {
 		saveObject(1l, "xpto", 10);
 

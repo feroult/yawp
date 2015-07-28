@@ -1,6 +1,6 @@
 # YAWP!
 
-Unbelievably Simple DSL for Google App Engine (Java)
+Unbelievably Simple API DSL for Google App Engine (Java)
 
 [![Build Status](https://api.shippable.com/projects/5418400b50f3833e055ab249/badge?branchName=master)](https://app.shippable.com/projects/5418400b50f3833e055ab249/builds/latest)
 

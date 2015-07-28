@@ -1,6 +1,5 @@
 package io.yawp.repository.shields;
 
-import static io.yawp.repository.query.condition.Condition.c;
 import io.yawp.commons.http.annotation.GET;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
@@ -24,21 +23,21 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	@Override
 	public void index(IdRef<?> parentId) {
-		allow(isKurt()).where(c("stringValue", "=", "ok"));
+		allow(isKurt()).where("stringValue", "=", "ok");
 	}
 
 	@Override
 	public void show(IdRef<ShieldedObject> id) {
 		allow(isRobert());
 		allow(isId100(id));
-		allow(isKurt()).where(c("stringValue", "=", "ok"));
+		allow(isKurt()).where("stringValue", "=", "ok");
 	}
 
 	@Override
 	public void create(List<ShieldedObject> objects) {
 		allow(isRequestWithValidObjects(objects));
-		allow(isKurt()).where(c("stringValue", "=", "ok"));
-		allow(isJanis()).where(c("stringValue", "=", "ok-for-janis"));
+		allow(isKurt()).where("stringValue", "=", "ok");
+		allow(isJanis()).where("stringValue", "=", "ok-for-janis");
 	}
 
 	@Override
@@ -46,14 +45,14 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		allow(isRobert());
 		allow(isId100(id));
 		allow(isRequestWithValidObject(object));
-		allow(isKurt()).where(c("stringValue", "=", "ok"));
-		allow(isJanis()).where(c("stringValue", "=", "ok-for-janis"));
+		allow(isKurt()).where("stringValue", "=", "ok");
+		allow(isJanis()).where("stringValue", "=", "ok-for-janis");
 	}
 
 	@Override
 	public void destroy(IdRef<ShieldedObject> id) {
 		allow(isId100(id));
-		allow(isJanis()).where(c("stringValue", "=", "ok-for-janis"));
+		allow(isJanis()).where("stringValue", "=", "ok-for-janis");
 	}
 
 	@Override
@@ -63,7 +62,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	@PUT("something")
 	public void something(IdRef<ShieldedObject> id) {
-		allow(isJanis()).where(c("stringValue", "=", "ok-for-janis"));
+		allow(isJanis()).where("stringValue", "=", "ok-for-janis");
 	}
 
 	@PUT("anotherthing")

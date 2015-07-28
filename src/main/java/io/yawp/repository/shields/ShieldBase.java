@@ -1,5 +1,7 @@
 package io.yawp.repository.shields;
 
+import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.FacadeUtils;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.actions.ActionKey;
@@ -19,6 +21,8 @@ public abstract class ShieldBase<T> extends Feature {
 	private boolean lastAllow = false;
 
 	private ShieldConditions conditions;
+
+	private Class<? super T> facade;
 
 	private Class<?> endpointClazz;
 
@@ -69,6 +73,20 @@ public abstract class ShieldBase<T> extends Feature {
 		return this;
 	}
 
+	public ShieldBase<T> facade(Class<? super T> facade) {
+		if (!lastAllow) {
+			return this;
+		}
+
+		if (this.facade != null) {
+			throw new RuntimeException("Facade " + this.facade.getSimpleName() + " already defined for Shield<"
+					+ endpointClazz.getSimpleName() + "> - new facade: " + facade.getSimpleName());
+		}
+
+		this.facade = facade;
+		return this;
+	}
+
 	protected final boolean requestHasAnyObject() {
 		return objects != null;
 	}
@@ -103,6 +121,8 @@ public abstract class ShieldBase<T> extends Feature {
 
 		verifyConditions();
 		throwForbiddenIfNotAllowed();
+
+		applySetFacade();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -135,6 +155,25 @@ public abstract class ShieldBase<T> extends Feature {
 		if (!allow) {
 			throw new HttpException(403);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void applySetFacade() {
+		if (facade == null) {
+			return;
+		}
+
+		for (T object : objects) {
+			IdRef<T> existingObjectId = (IdRef<T>) EntityUtils.getId(object);
+
+			if (existingObjectId == null) {
+				FacadeUtils.set(object, facade);
+				continue;
+			}
+
+			FacadeUtils.set(object, existingObjectId.fetch(), facade);
+		}
+
 	}
 
 	public void setEndpointClazz(Class<?> endpointClazz) {
@@ -200,4 +239,5 @@ public abstract class ShieldBase<T> extends Feature {
 			throw new RuntimeException(e);
 		}
 	}
+
 }

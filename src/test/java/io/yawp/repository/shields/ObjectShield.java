@@ -5,6 +5,7 @@ import io.yawp.commons.http.annotation.GET;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.ShieldedObject;
+import io.yawp.repository.models.basic.facades.ShieldedObjectFacades.AmyFacade;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +19,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	@Override
 	public void always() {
 		allow(isJim());
+		allow(isAmy()).facade(AmyFacade.class);
 	}
 
 	@Override
@@ -27,7 +29,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	@Override
 	public void show(IdRef<ShieldedObject> id) {
-		allow(isJane());
+		allow(isRobert());
 		allow(isId100(id));
 		allow(isKurt()).where(c("stringValue", "=", "ok"));
 	}
@@ -41,7 +43,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	@Override
 	public void update(IdRef<ShieldedObject> id, ShieldedObject object) {
-		allow(isJane());
+		allow(isRobert());
 		allow(isId100(id));
 		allow(isRequestWithValidObject(object));
 		allow(isKurt()).where(c("stringValue", "=", "ok"));
@@ -56,7 +58,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	@Override
 	public void custom() {
-		allow(isJane());
+		allow(isRobert());
 	}
 
 	@PUT("something")
@@ -75,8 +77,8 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		allow();
 	}
 
-	private boolean isJane() {
-		return is("jane@rock.com");
+	private boolean isRobert() {
+		return is("robert@rock.com");
 	}
 
 	private boolean isJim() {
@@ -89,6 +91,10 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	private boolean isJanis() {
 		return is("janis@rock.com");
+	}
+
+	private boolean isAmy() {
+		return is("amy@rock.com");
 	}
 
 	private boolean is(String email) {

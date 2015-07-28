@@ -31,7 +31,7 @@ public class ShieldTest extends ServletTestCase {
 	@Test
 	public void testSomethingIsAllowed() {
 		saveObject(1l);
-		login("jane", "rock.com");
+		login("robert", "rock.com");
 
 		assertGetWithStatus("/shielded_objects", 404);
 		assertGetWithStatus("/shielded_objects/1", 200);
@@ -182,7 +182,14 @@ public class ShieldTest extends ServletTestCase {
 
 	@Test
 	public void testSetFacade() {
+		saveObject(1l, "xpto", 10);
 
+		login("amy", "rock.com");
+		put("/shielded_objects/1", "{id: '/shielded_objects/1', stringValue: 'new-xpto', intValue: 99}");
+
+		ShieldedObject object = yawp(ShieldedObject.class).fetch(1l);
+		assertEquals("xpto", object.getStringValue());
+		assertEquals((Integer) 99, object.getIntValue());
 	}
 
 	private void assertRestActionsStatus(int status) {

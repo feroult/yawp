@@ -11,11 +11,15 @@ public abstract class FacadeUtils {
 		SET, GET
 	}
 
-	public static <I, T extends I> void get(T object, Class<I> facade) {
+	public static <T> void get(T object, Class<? super T> facade) {
 		hideProperties(object, notReadable(object.getClass(), facade));
 	}
 
-	public static <I, T extends I> void set(T object, T defaults, Class<I> facade) {
+	public static <T> void set(T object, Class<? super T> facade) {
+		hideProperties(object, notWriteable(object.getClass(), facade));
+	}
+
+	public static <T> void set(T object, T defaults, Class<? super T> facade) {
 		assertSameClazz(object, defaults);
 		copyProperties(defaults, object, notWriteable(object.getClass(), facade));
 	}

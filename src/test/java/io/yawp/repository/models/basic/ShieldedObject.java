@@ -4,9 +4,10 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
+import io.yawp.repository.models.basic.facades.ShieldedObjectFacades.AmyFacade;
 
 @Endpoint(path = "/shielded_objects")
-public class ShieldedObject {
+public class ShieldedObject implements AmyFacade {
 
 	@Id
 	private IdRef<ShieldedObject> id;

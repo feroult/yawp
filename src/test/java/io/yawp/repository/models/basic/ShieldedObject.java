@@ -14,6 +14,8 @@ public class ShieldedObject {
 	@Index
 	private String stringValue;
 
+	private Integer intValue;
+
 	public ShieldedObject() {
 
 	}
@@ -38,4 +40,11 @@ public class ShieldedObject {
 		this.stringValue = stringValue;
 	}
 
+	public Integer getIntValue() {
+		return intValue;
+	}
+
+	public void setIntValue(Integer intValue) {
+		this.intValue = intValue;
+	}
 }

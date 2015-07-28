@@ -180,6 +180,11 @@ public class ShieldTest extends ServletTestCase {
 		assertPutWithStatus("/shielded_objects/2/something", 403);
 	}
 
+	@Test
+	public void testSetFacade() {
+
+	}
+
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);
 		assertGetWithStatus("/shielded_objects/1", status);
@@ -189,14 +194,19 @@ public class ShieldTest extends ServletTestCase {
 		assertPutWithStatus("/shielded_objects/1/something", status);
 	}
 
-	private void saveObject(long id) {
-		saveObject(id, null);
+	private void saveObject(Long id) {
+		saveObject(id, null, null);
 	}
 
-	private void saveObject(long id, String stringValue) {
+	private void saveObject(Long id, String stringValue) {
+		saveObject(id, stringValue, null);
+	}
+
+	private void saveObject(Long id, String stringValue, Integer intValue) {
 		ShieldedObject object = new ShieldedObject();
 		object.setId(IdRef.create(yawp, ShieldedObject.class, id));
 		object.setStringValue(stringValue);
+		object.setIntValue(intValue);
 		yawp.save(object);
 	}
 

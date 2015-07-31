@@ -257,19 +257,6 @@ public class EntityUtils {
 		throw new RuntimeException("Can't get generic type");
 	}
 
-	private static Field getFieldFromAnyParent(Class<?> clazz, String fieldName) {
-		Class<?> baseClazz = clazz;
-		while (clazz != null) {
-			try {
-				return clazz.getDeclaredField(fieldName);
-			} catch (NoSuchFieldException ex) {
-				clazz = clazz.getSuperclass();
-			}
-		}
-
-		throw new RuntimeException("Field '" + fieldName + "'not found in entity " + baseClazz, new NoSuchFieldException(fieldName));
-	}
-
 	public static IdRef<?> convertToIdRef(Repository r, String id) {
 		return IdRef.parse(r, HttpVerb.GET, id);
 	}
@@ -287,7 +274,7 @@ public class EntityUtils {
 	}
 
 	public static <T> String getActualFieldName(String fieldName, Class<T> clazz) {
-		Field field = getFieldFromAnyParent(clazz, fieldName);
+		Field field = ReflectionUtils.getFieldRecursively(clazz, fieldName);
 
 		if (isKey(field)) {
 			return Entity.KEY_RESERVED_PROPERTY;
@@ -314,7 +301,7 @@ public class EntityUtils {
 	}
 
 	public static <T> Object getActualFieldValue(String fieldName, Class<T> clazz, Object value) {
-		Field field = getFieldFromAnyParent(clazz, fieldName);
+		Field field = ReflectionUtils.getFieldRecursively(clazz, fieldName);
 
 		if (isCollection(value)) {
 			return getActualListFieldValue(fieldName, clazz, (Collection<?>) value);
@@ -528,13 +515,9 @@ public class EntityUtils {
 	}
 
 	public static boolean hasIndex(Class<?> clazz, String fieldName) {
-		try {
-			return hasIndex(clazz.getDeclaredField(fieldName));
-		} catch (NoSuchFieldException | SecurityException e) {
-			throw new RuntimeException(e);
-		}
+		return hasIndex(ReflectionUtils.getFieldRecursively(clazz, fieldName));
 	}
-
+	
 	private static boolean hasIndex(Field field) {
 		return field.getAnnotation(Index.class) != null;
 	}

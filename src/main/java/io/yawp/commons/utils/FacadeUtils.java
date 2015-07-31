@@ -35,11 +35,11 @@ public abstract class FacadeUtils {
 		Class<?> clazz = object.getClass();
 		try {
 			for (String property : properties) {
-				Field field = clazz.getDeclaredField(property);
+				Field field = ReflectionUtils.getFieldRecursively(clazz, property);
 				field.setAccessible(true);
 				field.set(object, null);
 			}
-		} catch (IllegalAccessException | NoSuchFieldException | SecurityException e) {
+		} catch (IllegalAccessException | SecurityException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -48,11 +48,11 @@ public abstract class FacadeUtils {
 		Class<?> clazz = from.getClass();
 		try {
 			for (String property : properties) {
-				Field field = clazz.getDeclaredField(property);
+				Field field = ReflectionUtils.getFieldRecursively(clazz, property);
 				field.setAccessible(true);
 				field.set(to, field.get(from));
 			}
-		} catch (IllegalAccessException | NoSuchFieldException | SecurityException e) {
+		} catch (IllegalAccessException | SecurityException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -81,10 +81,9 @@ public abstract class FacadeUtils {
 
 	private static List<String> propetiesNotInFacade(Class<?> clazz, Class<?> facade, FacadeType facadeType) {
 		List<String> properties = new ArrayList<String>();
-		Field[] fields = clazz.getDeclaredFields();
+		List<Field> fields = ReflectionUtils.getFieldsRecursively(clazz);
 		List<String> facadeProperties = facadeProperties(facade, facadeType);
-		for (int i = 0; i < fields.length; i++) {
-			Field field = fields[i];
+		for (Field field : fields) {
 			String name = field.getName();
 			if (facadeProperties.contains(name)) {
 				continue;

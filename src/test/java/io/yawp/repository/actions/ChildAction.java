@@ -1,5 +1,6 @@
 package io.yawp.repository.actions;
 
+import io.yawp.commons.http.annotation.GET;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.parents.Child;
@@ -31,6 +32,12 @@ public class ChildAction extends Action<Child> {
 			child.setName("touched " + child.getName());
 		}
 		return childs;
+	}
+	
+	@GET("childByKind")
+	public List<Child> childByKind(Map<String, String> params) {
+		List<Child> children = yawp(Child.class).where("kindOfChild", "=", params.get("kindOfChild")).list();
+		return children;
 	}
 
 }

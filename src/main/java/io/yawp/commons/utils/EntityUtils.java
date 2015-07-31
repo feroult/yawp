@@ -40,12 +40,27 @@ import com.google.appengine.api.datastore.Text;
 // TODO make it not static and repository aware and smaller, very, very smaller
 public class EntityUtils {
 
+	private static final String KINDRESOLVER_SETTING_KEY = "yawp.kindresolver";
+
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
 
 	private static KindResolver kindResolver;
 
 	static {
-		kindResolver = new DefaultKindResolver();
+		loadKindResolver();
+	}
+
+	private static void loadKindResolver() {
+		String kindResolverClazzName = System.getProperty(KINDRESOLVER_SETTING_KEY);
+		if (kindResolverClazzName == null) {
+			kindResolver = new DefaultKindResolver();
+			return;
+		}
+		try {
+			kindResolver = (KindResolver) Class.forName(kindResolverClazzName).newInstance();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			throw new RuntimeException("Invalid kind resolver: " + kindResolverClazzName, e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -523,7 +538,7 @@ public class EntityUtils {
 	public static boolean hasIndex(Class<?> clazz, String fieldName) {
 		return hasIndex(ReflectionUtils.getFieldRecursively(clazz, fieldName));
 	}
-	
+
 	private static boolean hasIndex(Field field) {
 		return field.getAnnotation(Index.class) != null;
 	}

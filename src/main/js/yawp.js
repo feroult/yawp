@@ -217,7 +217,7 @@
 			return this;
 		}
 
-		function async() {
+		function sync() {
 			ajaxOptions.async = false;
 			return this;
 		}
@@ -225,7 +225,7 @@
 		return $.extend({
 			from : from,
 			transform : transform,
-			async : async
+			sync : sync
 		}, query(options), repository(options), actions(options));
 	}
 

@@ -1,10 +1,11 @@
 package io.yawp.commons.utils;
 
 import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.utils.kind.DefaultKindResolver;
+import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.actions.Action;
-import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
@@ -41,6 +42,12 @@ public class EntityUtils {
 
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
 
+	private static KindResolver kindResolver;
+
+	static {
+		kindResolver = new DefaultKindResolver();
+	}
+
 	@SuppressWarnings("unchecked")
 	public static <T> Class<T> getHookObject(Class<? extends Hook<T>> hook) {
 		return (Class<T>) ReflectionUtils.getGenericParameter(hook);
@@ -52,13 +59,12 @@ public class EntityUtils {
 	}
 
 	public static String getKindFromClass(Class<?> clazz) {
-		// TODO remove / from path, create option for backward compatibility
-		Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
-		return endpoint.path();
+		return kindResolver.getKind(clazz);
 	}
 
 	public static Class<?> getClassFromKind(Repository r, String kind) {
-		return r.getFeatures().get(kind).getClazz();
+		String endpointPath = kindResolver.getPath(kind);
+		return r.getFeatures().get(endpointPath).getClazz();
 	}
 
 	public static void toEntity(Object object, Entity entity) {

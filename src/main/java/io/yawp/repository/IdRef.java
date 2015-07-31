@@ -1,9 +1,9 @@
 package io.yawp.repository;
 
+import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.DatastoreQuery;
-import io.yawp.utils.EntityUtils;
-import io.yawp.utils.HttpVerb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +76,15 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	@SuppressWarnings("unchecked")
 	public <TT> IdRef<TT> getParentId() {
 		return (IdRef<TT>) parentId;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <TT> IdRef<TT> getAncestorId(int ancestor) {
+		IdRef<?> ancestorId = this;
+		for (int i = 0; i <= ancestor; i++) {
+			ancestorId = ancestorId.getParentId();
+		}
+		return (IdRef<TT>) ancestorId;
 	}
 
 	public static IdRef<?> fromKey(Repository r, Key key) {
@@ -151,9 +160,41 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 			currentIdRef.setParentId(lastIdRef);
 			lastIdRef = currentIdRef;
+
+			validateParentId(currentIdRef, path);
 		}
 
 		return lastIdRef;
+	}
+
+	public static <T> IdRef<T> parse(Class<T> clazz, Repository r, String idString) {
+		return parse(r, HttpVerb.GET, idString);
+	}
+
+	public static <T> List<IdRef<T>> parse(Class<T> clazz, Repository r, List<String> idsString) {
+		ArrayList<IdRef<T>> ids = new ArrayList<IdRef<T>>();
+		for (String idString : idsString) {
+			ids.add(parse(clazz, r, idString));
+		}
+		return ids;
+	}
+
+	private static void validateParentId(IdRef<?> id, String path) {
+		Class<?> parentClazz = EntityUtils.getParentClazz(id.getClazz());
+		if (parentClazz == null) {
+			if (id.getParentId() != null) {
+				throw new RuntimeException("Invalid parent structure for id: " + path);
+			}
+			return;
+		}
+
+		if (id.getParentId() == null) {
+			throw new RuntimeException("Invalid parent structure for id: " + path);
+		}
+
+		if (!parentClazz.equals(id.getParentId().getClazz())) {
+			throw new RuntimeException("Invalid parent structure for id: " + path);
+		}
 	}
 
 	private static Class<?> getIdRefClazz(Repository r, String endpointPath) {
@@ -210,6 +251,17 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	public String getName() {
 		return name;
+	}
+
+	public boolean isAncestorId(IdRef<?> childId) {
+		IdRef<?> currentId = childId;
+		while (currentId.getParentId() != null) {
+			if (currentId.getParentId().getClazz().equals(this.getClazz())) {
+				return this.equals(currentId.getParentId());
+			}
+			currentId = currentId.getParentId();
+		}
+		return false;
 	}
 
 	@Override
@@ -275,4 +327,5 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		sb.append(id != null ? id : name);
 		return sb.toString();
 	}
+
 }

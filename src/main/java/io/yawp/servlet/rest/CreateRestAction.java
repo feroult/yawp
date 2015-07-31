@@ -1,8 +1,6 @@
 package io.yawp.servlet.rest;
 
-import io.yawp.repository.IdRef;
-import io.yawp.utils.EntityUtils;
-import io.yawp.utils.JsonUtils;
+import io.yawp.repository.FutureObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,42 +12,52 @@ public class CreateRestAction extends RestAction {
 	}
 
 	@Override
-	public Object action() {
-		if (JsonUtils.isJsonArray(requestJson)) {
-			return createFromArray();
-		}
-
-		return createFromObject();
+	public void shield() {
+		shield.protectCreate();
 	}
 
-	private Object createFromObject() {
-		Object object = JsonUtils.from(r, requestJson, endpointClazz);
+	@Override
+	public Object action() {
+		if (isRequestBodyJsonArray()) {
+			return createFromArray(getObjects());
+		}
+
+		return createFromObject(getObject());
+	}
+
+	private Object createFromObject(Object object) {
 		return saveObject(object);
 	}
 
-	private Object createFromArray() {
-		List<?> objects = JsonUtils.fromList(r, requestJson, endpointClazz);
+	private Object createFromArray(List<?> objects) {
+		return saveObjecs(objects);
+	}
 
+	private Object saveObjecs(List<?> objects) {
+		List<FutureObject<Object>> futures = new ArrayList<FutureObject<Object>>();
 		List<Object> resultObjects = new ArrayList<Object>();
 
 		for (Object object : objects) {
-			resultObjects.add(saveObject(object));
+			futures.add(saveObjectAsync(object));
 		}
+
+		for (FutureObject<Object> future : futures) {
+			Object object = transform(future.get());
+			applyGetFacade(object);
+			resultObjects.add(object);
+		}
+
 		return resultObjects;
 	}
 
 	protected Object saveObject(Object object) {
-		if (id != null) {
-			saveWithParentId(object, id);
-		} else {
-			save(object);
-		}
-
+		save(object);
+		applyGetFacade(object);
 		return transform(object);
 	}
 
-	protected void saveWithParentId(Object object, IdRef<?> parentId) {
-		EntityUtils.setParentId(object, parentId);
-		save(object);
+	protected FutureObject<Object> saveObjectAsync(Object object) {
+		return saveAsync(object);
 	}
+
 }

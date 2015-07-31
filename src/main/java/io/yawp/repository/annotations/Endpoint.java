@@ -11,8 +11,10 @@ public @interface Endpoint {
 
 	String path();
 
+	@Deprecated
 	boolean index() default true;
 
+	@Deprecated
 	boolean update() default true;
 
 }

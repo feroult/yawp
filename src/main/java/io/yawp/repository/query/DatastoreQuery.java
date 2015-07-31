@@ -1,9 +1,12 @@
 package io.yawp.repository.query;
 
+import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
-import io.yawp.repository.query.BaseCondition.SimpleCondition;
-import io.yawp.utils.EntityUtils;
+import io.yawp.repository.query.condition.BaseCondition;
+import io.yawp.repository.query.condition.Condition;
+import io.yawp.repository.query.condition.FalsePredicateException;
+import io.yawp.repository.query.condition.SimpleCondition;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +22,6 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.QueryResultList;
 
 public class DatastoreQuery<T> {
@@ -78,7 +80,13 @@ public class DatastoreQuery<T> {
 		} else {
 			condition = Condition.and(condition, c);
 		}
+
+		condition.init(r, clazz);
 		return this;
+	}
+
+	public DatastoreQuery<T> and(BaseCondition c) {
+		return where(c);
 	}
 
 	public DatastoreQuery<T> from(IdRef<?> parentId) {
@@ -140,10 +148,6 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> options(DatastoreQueryOptions options) {
-		if (options.getWhere() != null) {
-			where(options.getWhere());
-		}
-
 		if (options.getCondition() != null) {
 			where(options.getCondition());
 		}
@@ -163,7 +167,7 @@ public class DatastoreQuery<T> {
 		return this;
 	}
 
-	public List<T> unsortedList() {
+	public List<T> executeQueryList() {
 		r.namespace().set(getClazz());
 		try {
 			return executeQuery();
@@ -173,7 +177,7 @@ public class DatastoreQuery<T> {
 	}
 
 	public List<T> list() {
-		List<T> list = unsortedList();
+		List<T> list = executeQueryList();
 		sortList(list);
 		return list;
 	}
@@ -208,7 +212,7 @@ public class DatastoreQuery<T> {
 			if (isQueryById()) {
 				object = executeQueryById();
 			} else {
-				object = executeQueryOnlyFirst();
+				object = executeQueryOnly();
 			}
 
 			if (object == null) {
@@ -221,7 +225,7 @@ public class DatastoreQuery<T> {
 		}
 	}
 
-	private T executeQueryOnlyFirst() throws MoreThanOneResultException {
+	private T executeQueryOnly() throws MoreThanOneResultException {
 		List<T> list = executeQuery();
 		if (list.size() == 0) {
 			return null;
@@ -233,21 +237,28 @@ public class DatastoreQuery<T> {
 	}
 
 	private List<T> executeQuery() {
-		QueryResultList<Entity> queryResult;
 		try {
-			queryResult = generateResults(false);
+			QueryResultList<Entity> queryResult = generateResults(false);
+
+			List<T> objects = new ArrayList<T>();
+
+			for (Entity entity : queryResult) {
+				objects.add(EntityUtils.toObject(r, entity, clazz));
+			}
+
+			return postFilter(objects);
+
 		} catch (FalsePredicateException ex) {
 			return Collections.emptyList();
 		}
-		List<T> objects = new ArrayList<T>();
+	}
 
-		for (Entity entity : queryResult) {
-			T object = EntityUtils.toObject(r, entity, clazz);
-			objects.add(object);
+	private List<T> postFilter(List<T> objects) {
+		if (condition == null || !condition.hasPostFilter()) {
+			return objects;
 		}
 
-		setCursor(queryResult);
-		return objects;
+		return condition.applyPostFilter(objects);
 	}
 
 	private void setCursor(QueryResultList<Entity> queryResult) {
@@ -259,7 +270,7 @@ public class DatastoreQuery<T> {
 	private T executeQueryById() {
 		try {
 			SimpleCondition c = (SimpleCondition) condition;
-			IdRef<?> idRef = (IdRef<?>) c.getValue();
+			IdRef<?> idRef = (IdRef<?>) c.getWhereValue();
 			Key key = idRef.asKey();
 			Entity entity = DatastoreServiceFactory.getDatastoreService().get(key);
 			return EntityUtils.toObject(r, entity, clazz);
@@ -274,10 +285,14 @@ public class DatastoreQuery<T> {
 		}
 
 		SimpleCondition c = (SimpleCondition) condition;
-		return c.isByIdFor(clazz) && c.getOperator().equals(FilterOperator.EQUAL);
+		return c.isIdField() && c.isEqualOperator();
 	}
 
 	public void sortList(List<?> objects) {
+		if (postOrders.size() == 0) {
+			return;
+		}
+
 		Collections.sort(objects, new Comparator<Object>() {
 			@Override
 			public int compare(Object o1, Object o2) {
@@ -334,8 +349,8 @@ public class DatastoreQuery<T> {
 	}
 
 	private void prepareQueryWhere(Query q) throws FalsePredicateException {
-		if (condition != null) {
-			q.setFilter(condition.getPredicate(clazz));
+		if (condition != null && condition.hasPreFilter()) {
+			q.setFilter(condition.createPreFilter());
 		}
 	}
 
@@ -369,25 +384,49 @@ public class DatastoreQuery<T> {
 	}
 
 	public List<IdRef<T>> ids() {
-		QueryResultList<Entity> queryResult;
+		r.namespace().set(getClazz());
 		try {
-			queryResult = generateResults(true);
+			QueryResultList<Entity> queryResult = generateResults(true);
+			List<IdRef<T>> ids = new ArrayList<>();
+
+			for (Entity entity : queryResult) {
+				ids.add(extractIdRef(entity));
+			}
+
+			return ids;
 		} catch (FalsePredicateException ex) {
 			return Collections.emptyList();
+		} finally {
+			r.namespace().reset();
 		}
-		List<IdRef<T>> ids = new ArrayList<>();
-
-		for (Entity entity : queryResult) {
-			@SuppressWarnings("unchecked")
-			IdRef<T> id = (IdRef<T>) IdRef.fromKey(r, entity.getKey());
-			ids.add(id);
-		}
-
-		setCursor(queryResult);
-		return ids;
 	}
 
 	private QueryResultList<Entity> generateResults(boolean keysOnly) throws FalsePredicateException {
-		return prepareQuery(keysOnly).asQueryResultList(configureFetchOptions());
+		QueryResultList<Entity> queryResult = prepareQuery(keysOnly).asQueryResultList(configureFetchOptions());
+		setCursor(queryResult);
+		return queryResult;
 	}
+
+	@SuppressWarnings("unchecked")
+	private IdRef<T> extractIdRef(Entity entity) {
+		return (IdRef<T>) IdRef.fromKey(r, entity.getKey());
+	}
+
+	public IdRef<T> onlyId() throws NoResultException, MoreThanOneResultException {
+		r.namespace().set(getClazz());
+		try {
+			Entity e = prepareQuery(true).asSingleEntity();
+			if (e == null) {
+				throw new NoResultException();
+			}
+			return extractIdRef(e);
+		} catch (FalsePredicateException ex) {
+			throw new NoResultException();
+		} catch (PreparedQuery.TooManyResultsException ex) {
+			throw new MoreThanOneResultException();
+		} finally {
+			r.namespace().reset();
+		}
+	}
+
 }

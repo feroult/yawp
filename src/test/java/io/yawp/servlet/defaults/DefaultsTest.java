@@ -1,7 +1,7 @@
 package io.yawp.servlet.defaults;
 
 import static org.junit.Assert.assertEquals;
-import io.yawp.servlet.ServletTestCase;
+import io.yawp.commons.utils.ServletTestCase;
 
 import java.util.List;
 

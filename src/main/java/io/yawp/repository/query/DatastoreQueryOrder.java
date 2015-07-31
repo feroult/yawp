@@ -1,6 +1,6 @@
 package io.yawp.repository.query;
 
-import io.yawp.utils.EntityUtils;
+import io.yawp.commons.utils.EntityUtils;
 
 import com.google.appengine.api.datastore.Query.SortDirection;
 

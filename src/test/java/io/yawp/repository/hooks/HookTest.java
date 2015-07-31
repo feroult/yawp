@@ -1,8 +1,8 @@
 package io.yawp.repository.hooks;
 
 import static org.junit.Assert.assertEquals;
+import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.models.basic.HookedObject;
-import io.yawp.utils.EndpointTestCase;
 
 import java.util.List;
 

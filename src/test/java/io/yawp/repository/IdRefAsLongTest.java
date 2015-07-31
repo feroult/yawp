@@ -1,17 +1,18 @@
 package io.yawp.repository;
 
-import static io.yawp.utils.HttpVerb.GET;
-import static io.yawp.utils.HttpVerb.PUT;
+import static io.yawp.commons.http.HttpVerb.GET;
+import static io.yawp.commons.http.HttpVerb.PUT;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import io.yawp.commons.utils.EndpointTestCase;
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Job;
 import io.yawp.repository.models.parents.Parent;
-import io.yawp.utils.EndpointTestCase;
-import io.yawp.utils.JsonUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -35,6 +36,33 @@ public class IdRefAsLongTest extends EndpointTestCase {
 		Job job = retrievedParent.getJobId().fetch();
 
 		assertEquals("haha", job.getName());
+	}
+
+	@Test
+	public void testQueryWithIdAsString() {
+		Parent parent = new Parent("xpto");
+		yawp.save(parent);
+
+		Parent retrievedParent1 = yawp(Parent.class).where("id", "=", parent.getId().toString()).only();
+		assertEquals("xpto", retrievedParent1.getName());
+	}
+
+	@Test
+	public void testQueryWithIdAsStringIn() {
+		Parent parent1 = new Parent("xpto1");
+		yawp.save(parent1);
+
+		Parent parent2 = new Parent("xpto2");
+		yawp.save(parent2);
+
+		final List<String> idAsStringList = Arrays.asList(parent1.getId().toString(), parent2.getId().toString());
+		List<Parent> retrievedParents = yawp(Parent.class).where("id", "IN", idAsStringList).list();
+
+		List<String> nomes = Arrays.asList(retrievedParents.get(0).getName(), retrievedParents.get(1).getName());
+		Collections.sort(nomes);
+		assertEquals(2, nomes.size());
+		assertEquals("xpto1", nomes.get(0));
+		assertEquals("xpto2", nomes.get(1));
 	}
 
 	@Test
@@ -169,6 +197,14 @@ public class IdRefAsLongTest extends EndpointTestCase {
 		assertEquals("/parents/1", IdRef.parse(yawp, GET, "/parents/1").toString());
 		assertEquals("/parents/1/children/2", IdRef.parse(yawp, GET, "/parents/1/children/2").toString());
 		assertEquals("/parents/1/children/2/grandchildren/3", IdRef.parse(yawp, GET, "/parents/1/children/2/grandchildren/3").toString());
+	}
+
+	@Test
+	public void testAncestor() {
+		IdRef<Object> id = IdRef.parse(yawp, GET, "/parents/1/children/2/grandchildren/3");
+
+		assertEquals(Child.class, id.getAncestorId(0).getClazz());
+		assertEquals(Parent.class, id.getAncestorId(1).getClazz());
 	}
 
 	private Parent saveParentWithJob() {

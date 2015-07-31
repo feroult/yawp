@@ -1,14 +1,14 @@
 package io.yawp.servlet;
 
+import io.yawp.commons.http.ErrorResponse;
+import io.yawp.commons.http.HttpResponse;
+import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.http.JsonResponse;
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.EndpointException;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
-import io.yawp.repository.response.ErrorResponse;
-import io.yawp.repository.response.HttpResponse;
-import io.yawp.repository.response.JsonResponse;
-import io.yawp.utils.HttpVerb;
-import io.yawp.utils.JsonUtils;
 
 import java.io.IOException;
 import java.util.Enumeration;
@@ -28,6 +28,7 @@ public class EndpointServlet extends HttpServlet {
 	private RepositoryFeatures features;
 
 	private boolean enableHooks = true;
+	private boolean enableCrossDomain = false;
 
 	public EndpointServlet() {
 	}
@@ -36,12 +37,19 @@ public class EndpointServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		setWithHooks(config.getInitParameter("enableHooks"));
+		setCrossDomain(config.getInitParameter("enableCrossDomain"));
 		scanEndpoints(config.getInitParameter("packagePrefix"));
 	}
 
 	private void setWithHooks(String enableHooksParameter) {
 		boolean enableHooks = enableHooksParameter == null || Boolean.valueOf(enableHooksParameter);
 		setWithHooks(enableHooks);
+	}
+
+	private void setCrossDomain(String enableCrossDomainParameter) {
+		if (enableCrossDomainParameter != null) {
+			this.enableCrossDomain = Boolean.valueOf(enableCrossDomainParameter);
+		}
 	}
 
 	protected void setWithHooks(boolean enableHooks) {
@@ -75,6 +83,11 @@ public class EndpointServlet extends HttpServlet {
 			httpResponse = new ErrorResponse(403);
 		}
 
+		if (enableCrossDomain) {
+			resp.setHeader("Access-Control-Allow-Origin", "*");
+			resp.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+			resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS, DELETE");
+		}
 		response(resp, httpResponse);
 	}
 
@@ -95,11 +108,16 @@ public class EndpointServlet extends HttpServlet {
 		return req.getRequestURI().substring(req.getServletPath().length());
 	}
 
-	protected HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
-
+	public HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
 		Repository r = getRepository(params);
-		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri);
-		return router.executeRestAction(enableHooks, requestJson, params);
+
+		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri, requestJson, params);
+
+		if (!router.isValid()) {
+			throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");
+		}
+
+		return router.executeRestAction(enableHooks);
 	}
 
 	protected Repository getRepository(Map<String, String> params) {

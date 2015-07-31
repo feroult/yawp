@@ -18,12 +18,19 @@ public class Grandchild {
 	@Index
 	private String name;
 
+	private int age;
+
 	public Grandchild() {
 
 	}
 
 	public Grandchild(String name) {
 		this.name = name;
+	}
+
+	public Grandchild(String name, IdRef<Child> childId) {
+		this.name = name;
+		this.childId = childId;
 	}
 
 	public IdRef<Grandchild> getId() {
@@ -48,6 +55,14 @@ public class Grandchild {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
 	}
 
 }

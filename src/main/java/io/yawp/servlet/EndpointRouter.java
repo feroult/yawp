@@ -1,17 +1,21 @@
 package io.yawp.servlet;
 
+import io.yawp.commons.http.HttpResponse;
+import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
-import io.yawp.repository.annotations.Endpoint;
-import io.yawp.repository.response.HttpResponse;
 import io.yawp.servlet.rest.RestAction;
-import io.yawp.servlet.rest.RestActionType;
-import io.yawp.utils.HttpVerb;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class EndpointRouter {
 
@@ -27,29 +31,38 @@ public class EndpointRouter {
 
 	private HttpVerb verb;
 
-	private IdRef<?> idRef;
+	private IdRef<?> id;
 
 	private Class<?> endpointClazz;
 
-	public EndpointRouter(Repository r, HttpVerb verb, String uri) {
+	private String requestJson;
+
+	private Map<String, String> params;
+
+	private List<?> objects;
+
+	private EndpointRouter(Repository r, HttpVerb verb, String uri, String requestJson, Map<String, String> params) {
 		this.verb = verb;
 		this.uri = uri;
 		this.r = r;
+		this.requestJson = requestJson;
+		this.params = params;
 		this.features = r.getFeatures();
-		parseUri();
-		validateRestrictions();
+
+		parseAll();
 	}
 
-	public static EndpointRouter parse(Repository r, HttpVerb verb, String uri) {
-		return new EndpointRouter(r, verb, uri);
+	public static EndpointRouter parse(Repository r, HttpVerb verb, String uri, String requestJson, Map<String, String> params) {
+		return new EndpointRouter(r, verb, uri, requestJson, params);
 	}
 
-	private void parseUri() {
-		this.idRef = IdRef.parse(r, verb, uri);
+	private void parseAll() {
+		this.id = IdRef.parse(r, verb, uri);
 
 		this.customActionKey = parseCustomActionKey();
 		this.overCollection = parseOverCollection();
 		this.endpointClazz = parseEndpointClazz();
+		this.objects = parseRequestJson();
 	}
 
 	private Class<?> parseEndpointClazz() {
@@ -62,20 +75,20 @@ public class EndpointRouter {
 			return features.get("/" + parts[parts.length - 1]).getClazz();
 		}
 
-		return idRef.getClazz();
+		return id.getClazz();
 	}
 
 	private ActionKey parseCustomActionKey() {
 
-		if (idRef == null) {
+		if (id == null) {
 			return rootCollectionCustomActionKey();
 		}
 
-		if (idRef.getUri().length() == uri.length()) {
+		if (id.getUri().length() == uri.length()) {
 			return null;
 		}
 
-		String lastToken = uri.substring(idRef.getUri().length() + 1);
+		String lastToken = uri.substring(id.getUri().length() + 1);
 		if (hasTwoParts(lastToken)) {
 			return nestedCollectionCustomActionKey(lastToken);
 		}
@@ -85,7 +98,7 @@ public class EndpointRouter {
 
 	private ActionKey singleObjectCustomActionKey(String lastToken) {
 		ActionKey actionKey = new ActionKey(verb, lastToken, false);
-		if (features.hasCustomAction(idRef.getClazz(), actionKey)) {
+		if (features.hasCustomAction(id.getClazz(), actionKey)) {
 			return actionKey;
 		}
 
@@ -118,21 +131,21 @@ public class EndpointRouter {
 	}
 
 	private boolean parseOverCollection() {
-		if (idRef == null) {
+		if (id == null) {
 			return true;
 		}
 
-		if (idRef.getUri().length() == uri.length()) {
+		if (id.getUri().length() == uri.length()) {
 			return false;
 		}
 
-		String lastToken = uri.substring(idRef.getUri().length() + 1);
+		String lastToken = uri.substring(id.getUri().length() + 1);
 		if (hasTwoParts(lastToken)) {
 			return true;
 		}
 
 		ActionKey actionKey = new ActionKey(verb, lastToken, false);
-		if (features.hasCustomAction(idRef.getClazz(), actionKey)) {
+		if (features.hasCustomAction(id.getClazz(), actionKey)) {
 			return false;
 		}
 
@@ -171,39 +184,26 @@ public class EndpointRouter {
 	}
 
 	public IdRef<?> getIdRef() {
-		return idRef;
+		return id;
 	}
 
-	private RestActionType getRestActionType() {
-		if (isCustomAction()) {
-			return RestActionType.CUSTOM;
-		}
-		return RestActionType.defaultRestActionType(verb, isOverCollection());
-	}
-
-	private void validateRestrictions() {
-		Endpoint endpointAnnotation = getEndpointFeatures().getEndpointAnnotation();
-		getRestActionType().validateRetrictions(endpointAnnotation);
-	}
-
-	private RestAction getRestAction(boolean enableHooks, String requestJson, Map<String, String> params) {
+	private RestAction createRestAction(boolean enableHooks) {
 		try {
-			Class<? extends RestAction> restActionClazz = getRestActionType().getRestActionClazz();
-
-			if (restActionClazz == null) {
-				return null;
-			}
+			Class<? extends RestAction> restActionClazz = RestAction.getRestActionClazz(verb, isOverCollection(), isCustomAction());
 
 			RestAction action = restActionClazz.newInstance();
 
 			action.setRepository(r);
 			action.setEnableHooks(enableHooks);
 			action.setEndpointClazz(endpointClazz);
-			action.setId(idRef);
-			action.setRequestJson(requestJson);
+			action.setId(id);
 			action.setParams(params);
 			action.setCustomActionKey(customActionKey);
+			action.setRequestBodyJsonArray(JsonUtils.isJsonArray(requestJson));
+			action.setObjects(objects);
+
 			action.defineTrasnformer();
+			action.defineShield();
 
 			return action;
 
@@ -212,9 +212,105 @@ public class EndpointRouter {
 		}
 	}
 
-	public HttpResponse executeRestAction(boolean enableHooks, String requestJson, Map<String, String> params) {
-		RestAction restAction = getRestAction(enableHooks, requestJson, params);
-		return restAction.execute();
+	private List<?> parseRequestJson() {
+		if (StringUtils.isBlank(requestJson)) {
+			return null;
+		}
+
+		if (JsonUtils.isJsonArray(requestJson)) {
+			return JsonUtils.fromList(r, requestJson, endpointClazz);
+		}
+
+		return Arrays.asList(JsonUtils.from(r, requestJson, endpointClazz));
 	}
 
+	public HttpResponse executeRestAction(boolean enableHooks) {
+		return createRestAction(enableHooks).execute();
+	}
+
+	public boolean isValid() {
+		return tryToAdjustIds();
+	}
+
+	public boolean tryToAdjustIds() {
+		if (objects == null) {
+			return true;
+		}
+
+		for (Object object : objects) {
+			IdRef<?> idInObject = forceIdInObjectIfNecessary(object);
+			IdRef<?> parentIdInObject = forceParentIdInObjectIfNecessary(object, idInObject);
+
+			if (idInObject == null) {
+				if (parentIdInObject != null && !parentIdInObject.equals(id)) {
+					return false;
+				}
+				continue;
+			}
+
+			if (parentIdInObject != null && !parentIdInObject.equals(idInObject.getParentId())) {
+				return false;
+			}
+
+			if (!idInObject.getClazz().equals(endpointClazz)) {
+				return false;
+			}
+
+			if (id == null) {
+				continue;
+			}
+
+			if (id.equals(idInObject)) {
+				continue;
+			}
+
+			if (verb != HttpVerb.POST) {
+				return false;
+			}
+
+			if (!id.isAncestorId(idInObject)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private IdRef<?> forceParentIdInObjectIfNecessary(Object object, IdRef<?> idInObject) {
+		if (EntityUtils.getParentClazz(endpointClazz) == null) {
+			return null;
+		}
+
+		IdRef<?> parentId = EntityUtils.getParentId(object);
+		if (parentId != null) {
+			return parentId;
+		}
+
+		if (idInObject != null) {
+			EntityUtils.setParentId(object, idInObject.getParentId());
+			return idInObject.getParentId();
+		}
+
+		if (id != null) {
+			EntityUtils.setParentId(object, id);
+			return id;
+		}
+
+		return null;
+	}
+
+	private IdRef<?> forceIdInObjectIfNecessary(Object object) {
+		IdRef<?> idInObject = EntityUtils.getId(object);
+
+		if (idInObject != null) {
+			return idInObject;
+		}
+
+		if (id != null && id.getClazz().equals(endpointClazz)) {
+			EntityUtils.setId(object, id);
+			return id;
+		}
+
+		return null;
+	}
 }

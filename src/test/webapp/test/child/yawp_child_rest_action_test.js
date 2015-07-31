@@ -140,22 +140,21 @@
 				assert.equal(children.length, 1);
 				assert.equal(children[0].name, 'xpto2');
 				assert.equal(children[0].parentId, parent2.id);
-			});
+			}).then(function() {
 
-		}).then(function() {
+				var order = [ {
+					p : 'name'
+				} ];
 
-			var order = [ {
-				p : 'name'
-			} ];
+				yawp('/children').order(order).list(function(children) {
 
-			yawp('/children').order(order).list(function(children) {
-
-				assert.equal(children.length, 2);
-				assert.equal(children[0].name, 'xpto1');
-				assert.equal(children[1].name, 'xpto2');
-				assert.equal(children[0].parentId, parent1.id);
-				assert.equal(children[1].parentId, parent2.id);
-				t.start();
+					assert.equal(children.length, 2);
+					assert.equal(children[0].name, 'xpto1');
+					assert.equal(children[1].name, 'xpto2');
+					assert.equal(children[0].parentId, parent1.id);
+					assert.equal(children[1].parentId, parent2.id);
+					t.start();
+				});
 			});
 		});
 	});
@@ -175,7 +174,11 @@
 
 		}).then(function() {
 			yawp(child).fetch().fail(function(error) {
-				assert.equal(error.status, 404);
+				if (t.isPhantomJS()) {
+					assert.equal(error.status, 0);
+				} else {
+					assert.equal(error.status, 404);
+				}
 				t.start();
 			});
 		});

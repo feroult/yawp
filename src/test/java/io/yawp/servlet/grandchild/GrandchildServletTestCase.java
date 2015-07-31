@@ -1,9 +1,9 @@
 package io.yawp.servlet.grandchild;
 
+import io.yawp.commons.utils.ServletTestCase;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Parent;
-import io.yawp.servlet.ServletTestCase;
 
 import org.junit.Before;
 

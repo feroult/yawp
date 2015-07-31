@@ -1,8 +1,8 @@
 package io.yawp.repository.hooks;
 
+import io.yawp.commons.utils.ThrownExceptionsUtils;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.DatastoreQuery;
-import io.yawp.utils.ThrownExceptionsUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

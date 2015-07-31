@@ -4,6 +4,8 @@ branches:
   only:
     - master
 
+script: "mvn install -B"
+
 notifications:
   email:
     recipients:

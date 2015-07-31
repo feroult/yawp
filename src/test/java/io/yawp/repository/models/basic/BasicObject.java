@@ -1,12 +1,13 @@
 package io.yawp.repository.models.basic;
 
 import static org.junit.Assert.assertEquals;
+import io.yawp.commons.utils.DateUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
-import io.yawp.utils.DateUtils;
+import io.yawp.repository.annotations.Text;
 
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,9 @@ public class BasicObject {
 
 	@Index
 	private String stringValue;
+
+	@Text
+	private String textValue;
 
 	@Index
 	private int intValue;
@@ -41,12 +45,28 @@ public class BasicObject {
 	@Json
 	private Map<Long, Pojo> jsonMap;
 
+	private IdRef<BasicObject> objectId;
+
 	public BasicObject() {
 
 	}
 
 	public BasicObject(String stringValue) {
 		this.stringValue = stringValue;
+	}
+
+	public BasicObject(Long longValue) {
+		this.longValue = longValue;
+	}
+
+	public BasicObject(String stringValue, long longValue) {
+		this.stringValue = stringValue;
+		this.longValue = longValue;
+	}
+
+	public BasicObject(String stringValue, IdRef<BasicObject> objectId) {
+		this.stringValue = stringValue;
+		this.objectId = objectId;
 	}
 
 	public IdRef<BasicObject> getId() {
@@ -63,6 +83,14 @@ public class BasicObject {
 
 	public void setStringValue(String stringValue) {
 		this.stringValue = stringValue;
+	}
+
+	public String getTextValue() {
+		return textValue;
+	}
+
+	public void setTextValue(String textValue) {
+		this.textValue = textValue;
 	}
 
 	public int getIntValue() {
@@ -129,12 +157,22 @@ public class BasicObject {
 		this.jsonMap = jsonMap;
 	}
 
-	public void assertObject(String stringValue, int intValue, long longValue, double doubleValue, boolean booleanValue, String timestamp) {
+	public IdRef<BasicObject> getObjectId() {
+		return objectId;
+	}
+
+	public void setObjectId(IdRef<BasicObject> objectId) {
+		this.objectId = objectId;
+	}
+
+	public void assertObject(String stringValue, String textValue, int intValue, long longValue, double doubleValue, boolean booleanValue,
+			String timestamp) {
 		assertEquals(intValue, getIntValue());
 		assertEquals(longValue, getLongValue());
 		assertEquals(doubleValue, getDoubleValue(), 0);
 		assertEquals(booleanValue, isBooleanValue());
 		assertEquals(DateUtils.toTimestamp(timestamp), getDateValue());
+		assertEquals(textValue, getTextValue());
 		assertEquals(stringValue, getStringValue());
 	}
 

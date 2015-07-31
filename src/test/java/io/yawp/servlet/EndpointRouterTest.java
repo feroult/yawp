@@ -3,11 +3,11 @@ package io.yawp.servlet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
-import io.yawp.utils.EndpointTestCase;
-import io.yawp.utils.HttpVerb;
 
 import java.util.ArrayList;
 
@@ -50,7 +50,6 @@ public class EndpointRouterTest extends EndpointTestCase {
 		public EndpointFeatures<?> get(Class<?> clazz) {
 			return features.get(clazz);
 		}
-
 	}
 
 	@Before
@@ -59,7 +58,11 @@ public class EndpointRouterTest extends EndpointTestCase {
 	}
 
 	private EndpointRouter parse(String uri) {
-		return EndpointRouter.parse(yawp, HttpVerb.GET, uri);
+		return EndpointRouter.parse(yawp, HttpVerb.GET, uri, null, null);
+	}
+
+	private EndpointRouter parse(HttpVerb verb, String uri, String requestJson) {
+		return EndpointRouter.parse(yawp, verb, uri, requestJson, null);
 	}
 
 	@Test
@@ -158,5 +161,68 @@ public class EndpointRouterTest extends EndpointTestCase {
 		assertFalse(router.isOverCollection());
 		assertTrue(router.isCustomAction());
 		assertEquals("action", router.getCustomActionName());
+	}
+
+	@Test
+	public void testRouteHasValidIds() {
+		assertTrue(parse(HttpVerb.POST, "/parents", "{}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/parents", "[{}, {}]").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/parents", "{id: '/parents/1'}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/parents", "[{id: '/parents/1'}, {id: '/parents/2'}]").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/parents", "[{id: '/parents/1'}, {}]").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.PUT, "/parents/1", "{}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.PUT, "/parents/1", "{id: '/parents/1'}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.PATCH, "/parents/1", "{}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.PATCH, "/parents/1", "{id: '/parents/1'}").tryToAdjustIds());
+
+		assertTrue(parse(HttpVerb.POST, "/children", "{}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/children", "[{}, {}]").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/children", "{id: '/parents/1/children/1'}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/children", "[{id: '/parents/1/children/1'}, {id: '/parents/2/children/2'}]").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/children", "[{id: '/parents/1/children/1'}, {}]").tryToAdjustIds());
+
+		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "{}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "[{}, {}]").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "{id: '/parents/1/children/1'}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/parents/1/children/2'}]")
+				.tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "{}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {}]").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.PUT, "/parents/1/children/1", "{}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.PUT, "/parents/1/children/1", "{id: '/parents/1/children/1'}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.PATCH, "/parents/1/children/1", "{}").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.PATCH, "/parents/1/children/1", "{id: '/parents/1/children/1'}").tryToAdjustIds());
+
+		assertTrue(parse(HttpVerb.POST, "/grandchildren",
+				"[{id: '/parents/1/children/1/grandchildren/1'}, {id: '/parents/2/children/2/grandchildren/2'}]").tryToAdjustIds());
+		assertTrue(parse(HttpVerb.POST, "/parents/1/grandchildren",
+				"[{id: '/parents/1/children/1/grandchildren/1'}, {id: '/parents/1/children/2/grandchildren/2'}]").tryToAdjustIds());
+	}
+
+	@Test
+	public void testInvalidRouteIds() {
+		assertFalse(parse(HttpVerb.POST, "/parents", "{id: '/basic_objects/1'}").tryToAdjustIds());
+		assertFalse(parse(HttpVerb.POST, "/parents", "[{id: '/parents/1'}, {id: '/basic_objects/1'}]").tryToAdjustIds());
+		assertFalse(parse(HttpVerb.PUT, "/parents/1", "{id: '/basic_objects/1'}").tryToAdjustIds());
+		assertFalse(parse(HttpVerb.PUT, "/parents/1", "{id: '/parents/2'}").tryToAdjustIds());
+		assertFalse(parse(HttpVerb.PATCH, "/parents/1", "{id: '/parents/2'}").tryToAdjustIds());
+
+		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "{id: '/basic_objects/1'}").tryToAdjustIds());
+		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "{id: '/parents/1/children'}").tryToAdjustIds());
+		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/basic_objects/1'}]")
+				.tryToAdjustIds());
+		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/parents/2/children/2'}]")
+				.tryToAdjustIds());
+		assertFalse(parse(HttpVerb.PUT, "/parents/1/children", "{id: '/parents/1/children/1'}").tryToAdjustIds());
+		assertFalse(parse(HttpVerb.PUT, "/parents/1/children/1", "{id: '/parents/2/children/1'}").tryToAdjustIds());
+
+		assertFalse(parse(HttpVerb.POST, "/parents/1/grandchildren",
+				"[{id: '/parents/1/children/1/grandchildren/1'}, {id: '/parents/2/children/2/grandchildren/2'}]").tryToAdjustIds());
+	}
+
+	@Test
+	public void testInvalidRouteParentIds() {
+		assertFalse(parse(HttpVerb.PUT, "/parents/1/children/1", "{parentId: '/parents/2'}").tryToAdjustIds());
+		assertFalse(parse(HttpVerb.POST, "/parents/1/children", "{parentId: '/parents/2'}").tryToAdjustIds());
 	}
 }

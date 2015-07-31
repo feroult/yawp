@@ -1,6 +1,8 @@
 package io.yawp.servlet.rest;
 
 import io.yawp.repository.query.DatastoreQuery;
+import io.yawp.repository.query.NoResultException;
+import io.yawp.servlet.HttpException;
 
 public class ShowRestAction extends RestAction {
 
@@ -9,14 +11,33 @@ public class ShowRestAction extends RestAction {
 	}
 
 	@Override
+	public void shield() {
+		shield.protectShow();
+	}
+
+	@Override
 	public Object action() {
 		DatastoreQuery<?> query = query();
 
 		if (hasTransformer()) {
-			return query.transform(getTransformerName()).fetch(id);
+			Object object = query.transform(getTransformerName()).fetch(id);
+			applyGetFacade(object);
+			return object;
 		}
 
-		return query.fetch(id);
+		if (hasShieldCondition()) {
+			query.and(shield.getCondition());
+		}
+
+		try {
+
+			Object object = query.fetch(id);
+			applyGetFacade(object);
+			return object;
+
+		} catch (NoResultException e) {
+			throw new HttpException(404);
+		}
 	}
 
 }

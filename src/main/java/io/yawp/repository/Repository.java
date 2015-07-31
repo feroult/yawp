@@ -1,14 +1,16 @@
 package io.yawp.repository;
 
+import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.query.DatastoreQuery;
-import io.yawp.utils.EntityUtils;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 
+import com.google.appengine.api.datastore.AsyncDatastoreService;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -54,6 +56,10 @@ public class Repository {
 		return this;
 	}
 
+	public AsyncRepository async() {
+		return new AsyncRepository(this);
+	}
+
 	public <T> T saveWithHooks(T object) {
 		namespace.set(object.getClass());
 		try {
@@ -76,17 +82,44 @@ public class Repository {
 		return object;
 	}
 
+	protected <T> FutureObject<T> saveAsyncWithHooks(T object) {
+		namespace.set(object.getClass());
+		try {
+			RepositoryHooks.beforeSave(this, object);
+			FutureObject<T> future = saveInternalAsync(object, true);
+			return future;
+		} finally {
+			namespace.reset();
+		}
+	}
+
+	protected <T> FutureObject<T> saveAsync(T object) {
+		namespace.set(object.getClass());
+		try {
+			FutureObject<T> future = saveInternalAsync(object, false);
+			return future;
+		} finally {
+			namespace.reset();
+		}
+	}
+
 	private void saveInternal(Object object) {
 		Entity entity = createEntity(object);
 		EntityUtils.toEntity(object, entity);
 		saveEntity(object, entity);
 	}
 
+	private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
+		Entity entity = createEntity(object);
+		EntityUtils.toEntity(object, entity);
+		return saveEntityAsync(object, entity, enableHooks);
+	}
+
 	public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
 		namespace.set(clazz);
 		try {
 			Method actionMethod = repositoryFeatures.get(clazz).getAction(actionKey);
-			return RepositoryActions.execute(this, id, actionMethod, params);
+			return RepositoryActions.execute(this, actionMethod, id, params);
 		} finally {
 			namespace.reset();
 		}
@@ -120,6 +153,11 @@ public class Repository {
 		EntityUtils.setKey(this, object, key);
 	}
 
+	private <T> FutureObject<T> saveEntityAsync(T object, Entity entity, boolean enableHooks) {
+		AsyncDatastoreService datastoreService = DatastoreServiceFactory.getAsyncDatastoreService();
+		return new FutureObject<T>(this, datastoreService.put(entity), object, enableHooks);
+	}
+
 	private Entity createEntity(Object object) {
 		Key key = EntityUtils.getKey(object);
 
@@ -150,4 +188,13 @@ public class Repository {
 	public RepositoryFeatures getFeatures() {
 		return repositoryFeatures;
 	}
+
+	public <T> IdRef<T> parseId(Class<T> clazz, String idString) {
+		return IdRef.parse(clazz, this, idString);
+	}
+
+	public <T> List<IdRef<T>> parseIds(Class<T> clazz, List<String> idsString) {
+		return IdRef.parse(clazz, this, idsString);
+	}
+
 }

@@ -1,5 +1,7 @@
 package io.yawp.servlet.rest;
 
+import io.yawp.servlet.HttpException;
+
 public class CustomRestAction extends RestAction {
 
 	public CustomRestAction() {
@@ -7,8 +9,29 @@ public class CustomRestAction extends RestAction {
 	}
 
 	@Override
+	public void shield() {
+		shield.protectCustom();
+	}
+
+	@Override
 	public Object action() {
-		return transform(r.action(id, endpointClazz, customActionKey, params));
+		Object object = r.action(id, endpointClazz, customActionKey, params);
+
+		if (object == null) {
+			return null;
+		}
+
+		if (object.getClass().equals(endpointClazz)) {
+			applyGetFacade(object);
+			if (hasTransformer()) {
+				return transform(object);
+			}
+
+		} else if (hasTransformer()) {
+			throw new HttpException(406);
+		}
+
+		return object;
 	}
 
 }

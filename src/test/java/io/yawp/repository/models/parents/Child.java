@@ -26,6 +26,11 @@ public class Child {
 		this.name = name;
 	}
 
+	public Child(String name, IdRef<Parent> parentId) {
+		this.name = name;
+		this.parentId = parentId;
+	}
+
 	public IdRef<Child> getId() {
 		return id;
 	}

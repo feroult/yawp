@@ -12,6 +12,11 @@ public class IndexRestAction extends RestAction {
 	}
 
 	@Override
+	public void shield() {
+		shield.protectIndex();
+	}
+
+	@Override
 	public List<?> action() {
 		DatastoreQuery<?> query = query();
 
@@ -27,7 +32,13 @@ public class IndexRestAction extends RestAction {
 			return query.transform(getTransformerName()).list();
 		}
 
-		return query.list();
+		if (hasShieldCondition()) {
+			query.and(shield.getCondition());
+		}
+
+		List<?> objects = query.list();
+		applyGetFacade(objects);
+		return objects;
 	}
 
 }

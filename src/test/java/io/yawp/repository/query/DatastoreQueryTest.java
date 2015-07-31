@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
+import io.yawp.repository.models.basic.ComposedChild;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Parent;
@@ -558,6 +559,15 @@ public class DatastoreQueryTest extends EndpointTestCase {
 		assertEquals("a", object.getName());
 	}
 
+	@Test
+	public void testComposedObjectsParentFieldQuery() {
+		ComposedChild child = new ComposedChild("myChild");
+		child = yawp.save(child);
+		
+		ComposedChild returned = yawp(ComposedChild.class).where("name", "=","myChild").only();
+		assertEquals(child.getName(), returned.getName());
+	}
+	
 	private void assertObjects(List<BasicObject> objects, String... strings) {
 		assertEquals(strings.length, objects.size());
 		for (int i = 0; i < strings.length; i++) {

@@ -42,15 +42,27 @@ public final class ReflectionUtils {
 	public static Object getFieldValue(Object object, String fieldName) {
 		try {
 			Class<?> clazz = object.getClass();
-			Field field = clazz.getDeclaredField(fieldName);
+			Field field = getFieldRecursively(clazz, fieldName);
 			boolean accessible = field.isAccessible();
 			field.setAccessible(true);
 			Object value = field.get(object);
 			field.setAccessible(accessible);
 			return value;
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+		} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public static Field getFieldRecursively(Class<?> clazz, String fieldName) {
+		Class<?> baseClazz = clazz;
+		while (clazz != null) {
+			try {
+				return clazz.getDeclaredField(fieldName);
+			} catch (NoSuchFieldException ex) {
+				clazz = clazz.getSuperclass();
+			}
+		}
+		throw new RuntimeException("Field '" + fieldName + "'not found in entity " + baseClazz, new NoSuchFieldException(fieldName));
 	}
 
 	public static List<Field> getFieldsRecursively(Class<?> clazz) {

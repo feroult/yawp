@@ -132,4 +132,19 @@ public class RepositoryTest extends EndpointTestCase {
 		assertEquals("xpto", retrievedGrandchild.getName());
 	}
 
+	@Test
+	public void testTransactionRollback() {
+		yawp.begin();
+		yawp.save(new BasicObject());
+		yawp.rollback();
+		assertEquals(0, yawp(BasicObject.class).list().size());
+	}
+
+	@Test
+	public void testTransactionCommit() {
+		yawp.begin();
+		yawp.save(new BasicObject("xpto"));
+		yawp.commit();
+		assertEquals("xpto", yawp(BasicObject.class).only().getStringValue());
+	}
 }

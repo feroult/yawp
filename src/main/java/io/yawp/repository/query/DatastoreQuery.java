@@ -14,8 +14,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.appengine.api.datastore.Cursor;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
@@ -272,7 +270,7 @@ public class DatastoreQuery<T> {
 			SimpleCondition c = (SimpleCondition) condition;
 			IdRef<?> idRef = (IdRef<?>) c.getWhereValue();
 			Key key = idRef.asKey();
-			Entity entity = DatastoreServiceFactory.getDatastoreService().get(key);
+			Entity entity = r.datastore().get(key);
 			return EntityUtils.toObject(r, entity, clazz);
 		} catch (EntityNotFoundException e) {
 			return null;
@@ -333,8 +331,7 @@ public class DatastoreQuery<T> {
 		prepareQueryWhere(q);
 		prepareQueryOrder(q);
 
-		DatastoreService service = DatastoreServiceFactory.getDatastoreService();
-		return service.prepare(q);
+		return r.datastore().prepare(q);
 	}
 
 	private void prepareQueryOrder(Query q) {

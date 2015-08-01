@@ -15,12 +15,18 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Transaction;
+import com.google.appengine.api.datastore.TransactionOptions;
 
 public class Repository {
 
 	private RepositoryFeatures repositoryFeatures;
 
 	private Namespace namespace;
+
+	private DatastoreService datastore;
+
+	private Transaction tx;
 
 	public static Repository r() {
 		return new Repository();
@@ -54,6 +60,14 @@ public class Repository {
 	public Repository setFeatures(RepositoryFeatures repositoryFeatures) {
 		this.repositoryFeatures = repositoryFeatures;
 		return this;
+	}
+
+	public DatastoreService datastore() {
+		if (datastore != null) {
+			return datastore;
+		}
+		datastore = DatastoreServiceFactory.getDatastoreService();
+		return datastore;
 	}
 
 	public AsyncRepository async() {
@@ -141,15 +155,16 @@ public class Repository {
 			for (IdRef<?> child : id.children()) {
 				destroy(child);
 			}
-			DatastoreServiceFactory.getDatastoreService().delete(id.asKey());
+
+			datastore().delete(id.asKey());
+
 		} finally {
 			namespace.reset();
 		}
 	}
 
 	private void saveEntity(Object object, Entity entity) {
-		DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
-		Key key = datastoreService.put(entity);
+		Key key = datastore().put(entity);
 		EntityUtils.setKey(this, object, key);
 	}
 
@@ -195,6 +210,34 @@ public class Repository {
 
 	public <T> List<IdRef<T>> parseIds(Class<T> clazz, List<String> idsString) {
 		return IdRef.parse(clazz, this, idsString);
+	}
+
+	public void begin() {
+		tx = datastore().beginTransaction();
+	}
+
+	public void beginX() {
+		TransactionOptions options = TransactionOptions.Builder.withXG(true);
+		tx = datastore().beginTransaction(options);
+	}
+
+	public void rollback() {
+		if (tx == null) {
+			throw new RuntimeException("No transaction in progress");
+		}
+
+		if (!tx.isActive()) {
+			return;
+		}
+
+		tx.rollback();
+	}
+
+	public void commit() {
+		if (tx == null) {
+			throw new RuntimeException("No transaction in progress");
+		}
+		tx.commit();
 	}
 
 }

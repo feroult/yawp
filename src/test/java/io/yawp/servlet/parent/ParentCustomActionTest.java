@@ -1,6 +1,7 @@
 package io.yawp.servlet.parent;
 
 import static org.junit.Assert.assertEquals;
+import io.yawp.repository.actions.FakeException;
 import io.yawp.repository.models.parents.Parent;
 
 import java.util.List;
@@ -53,6 +54,16 @@ public class ParentCustomActionTest extends ParentServletTestCase {
 		assertEquals(2, parents.size());
 		assertEquals("touched xpto1 y", parents.get(0).getName());
 		assertEquals("touched xpto2 y", parents.get(1).getName());
+	}
+
+	@Test
+	public void testAtomicRollback() {
+		try {
+			put(uri("/parents/atomic_rollback"));
+		} catch (FakeException e) {
+		}
+
+		assertEquals(0, yawp(Parent.class).list().size());
 	}
 
 }

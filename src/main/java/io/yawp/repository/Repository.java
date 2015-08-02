@@ -227,10 +227,12 @@ public class Repository {
 		}
 
 		if (!tx.isActive()) {
+			tx = null;
 			return;
 		}
 
 		tx.rollback();
+		tx = null;
 	}
 
 	public void commit() {
@@ -238,6 +240,11 @@ public class Repository {
 			throw new RuntimeException("No transaction in progress");
 		}
 		tx.commit();
+		tx = null;
+	}
+
+	public boolean isTransationInProgress() {
+		return tx != null;
 	}
 
 }

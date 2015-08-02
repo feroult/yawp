@@ -11,6 +11,50 @@ import java.util.Map;
 public class RepositoryActions {
 
 	public static Object execute(Repository r, Method method, IdRef<?> id, Map<String, String> params) {
+		boolean rollback = false;
+
+		if (isAtomic(method)) {
+			if (isAtomicCrossEntities(method)) {
+				r.beginX();
+			} else {
+				r.begin();
+			}
+		}
+
+		try {
+
+			return invokeActionMethod(r, method, id, params);
+
+		} catch (Throwable t) {
+			rollback = true;
+
+			if (r.isTransationInProgress()) {
+				r.rollback();
+			}
+
+			throw t;
+
+		} finally {
+			if (r.isTransationInProgress()) {
+				if (rollback) {
+					throw new RuntimeException(
+							"Running on devserver or unit tests? To test cross-group, default_high_rep_job_policy_unapplied_job_pct must be > 0");
+				}
+
+				r.commit();
+			}
+		}
+	}
+
+	private static boolean isAtomicCrossEntities(Method method) {
+		return method.getAnnotation(Atomic.class).cross();
+	}
+
+	private static boolean isAtomic(Method method) {
+		return method.isAnnotationPresent(Atomic.class);
+	}
+
+	private static Object invokeActionMethod(Repository r, Method method, IdRef<?> id, Map<String, String> params) {
 		try {
 
 			@SuppressWarnings("unchecked")

@@ -53,4 +53,11 @@ public class ParentAction extends Action<Parent> {
 		}
 		return parents;
 	}
+
+	@Atomic
+	@PUT("atomic_rollback")
+	public void atomicRollback() {
+		yawp.save(new Parent("xpto"));
+		throw new FakeException();
+	}
 }

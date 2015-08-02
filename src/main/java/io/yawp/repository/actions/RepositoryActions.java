@@ -12,14 +12,7 @@ public class RepositoryActions {
 
 	public static Object execute(Repository r, Method method, IdRef<?> id, Map<String, String> params) {
 		boolean rollback = false;
-
-		if (isAtomic(method)) {
-			if (isAtomicCrossEntities(method)) {
-				r.beginX();
-			} else {
-				r.begin();
-			}
-		}
+		atomicBegin(r, method);
 
 		try {
 
@@ -27,21 +20,37 @@ public class RepositoryActions {
 
 		} catch (Throwable t) {
 			rollback = true;
-
-			if (r.isTransationInProgress()) {
-				r.rollback();
-			}
-
+			atomicRollback(r);
 			throw t;
 
 		} finally {
-			if (r.isTransationInProgress()) {
-				if (rollback) {
-					throw new RuntimeException(
-							"Running on devserver or unit tests? To test cross-group, default_high_rep_job_policy_unapplied_job_pct must be > 0");
-				}
+			atomicCommit(r, rollback);
+		}
+	}
 
-				r.commit();
+	private static void atomicCommit(Repository r, boolean rollback) {
+		if (r.isTransationInProgress()) {
+			if (rollback) {
+				throw new RuntimeException(
+						"Running on devserver or unit tests? To test cross-group, default_high_rep_job_policy_unapplied_job_pct must be > 0");
+			}
+
+			r.commit();
+		}
+	}
+
+	private static void atomicRollback(Repository r) {
+		if (r.isTransationInProgress()) {
+			r.rollback();
+		}
+	}
+
+	private static void atomicBegin(Repository r, Method method) {
+		if (isAtomic(method)) {
+			if (isAtomicCrossEntities(method)) {
+				r.beginX();
+			} else {
+				r.begin();
 			}
 		}
 	}

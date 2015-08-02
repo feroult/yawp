@@ -77,6 +77,14 @@ public class ServletTestCase extends EndpointTestCase {
 		return put(uri, json, new HashMap<String, String>());
 	}
 
+	protected String patch(String uri) {
+		return patch(uri, null, new HashMap<String, String>());
+	}
+
+	protected String patch(String uri, String json) {
+		return patch(uri, json, new HashMap<String, String>());
+	}
+
 	protected void assertPutWithStatus(String uri, String json, Map<String, String> params, int status) {
 		try {
 			put(uri, json, params);
@@ -105,6 +113,14 @@ public class ServletTestCase extends EndpointTestCase {
 
 	protected String put(String uri, String json, Map<String, String> params) {
 		return servlet.execute("PUT", uri, json, params).getText();
+	}
+
+	protected String patch(String uri, Map<String, String> params) {
+		return servlet.execute("PATCH", uri, null, params).getText();
+	}
+
+	protected String patch(String uri, String json, Map<String, String> params) {
+		return servlet.execute("PATCH", uri, json, params).getText();
 	}
 
 	protected String delete(String uri) {

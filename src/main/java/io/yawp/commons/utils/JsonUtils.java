@@ -6,12 +6,15 @@ import io.yawp.repository.Repository;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 // FIXME cyclic dependece with repository
@@ -84,5 +87,14 @@ public class JsonUtils {
 		}
 		JsonElement parsed = new JsonParser().parse(json);
 		return parsed.isJsonArray();
+	}
+
+	public static List<String> getProperties(String json) {
+		List<String> properties = new ArrayList<String>();
+		JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
+		for (Entry<String, JsonElement> property : jsonObject.entrySet()) {
+			properties.add(property.getKey());
+		}
+		return properties;
 	}
 }

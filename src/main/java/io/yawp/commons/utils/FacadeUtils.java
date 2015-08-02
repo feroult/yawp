@@ -24,6 +24,11 @@ public abstract class FacadeUtils {
 		copyProperties(defaults, object, notWriteable(object.getClass(), facade));
 	}
 
+	public static void copyOtherProperties(Object from, Object to, List<String> properties) {
+		assertSameClazz(from, to);
+		copyProperties(from, to, otherProperties(from.getClass(), properties));
+	}
+
 	private static void assertSameClazz(Object object, Object defaults) {
 		if (!object.getClass().equals(defaults.getClass())) {
 			throw new RuntimeException("Objects must have the same class: " + object.getClass().getName() + " != "
@@ -80,17 +85,20 @@ public abstract class FacadeUtils {
 	}
 
 	private static List<String> propetiesNotInFacade(Class<?> clazz, Class<?> facade, FacadeType facadeType) {
-		List<String> properties = new ArrayList<String>();
+		return otherProperties(clazz, facadeProperties(facade, facadeType));
+	}
+
+	private static List<String> otherProperties(Class<?> clazz, List<String> properties) {
+		List<String> otherProperties = new ArrayList<String>();
 		List<Field> fields = ReflectionUtils.getFieldsRecursively(clazz);
-		List<String> facadeProperties = facadeProperties(facade, facadeType);
 		for (Field field : fields) {
 			String name = field.getName();
-			if (facadeProperties.contains(name)) {
+			if (properties.contains(name)) {
 				continue;
 			}
-			properties.add(name);
+			otherProperties.add(name);
 		}
-		return properties;
+		return otherProperties;
 	}
 
 	private static String extractNameFromAttribute(Class<?> facade, Method attribute, FacadeType type) {

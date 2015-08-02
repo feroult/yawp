@@ -199,7 +199,7 @@ public class EndpointRouter {
 			action.setId(id);
 			action.setParams(params);
 			action.setCustomActionKey(customActionKey);
-			action.setRequestBodyJsonArray(JsonUtils.isJsonArray(requestJson));
+			action.setRequestJson(requestJson);
 			action.setObjects(objects);
 
 			action.defineTrasnformer();

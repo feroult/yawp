@@ -46,6 +46,8 @@ public abstract class RestAction {
 
 	private List<?> objects;
 
+	protected String requestJson;
+
 	private boolean requestBodyJsonArray;
 
 	public RestAction(String actionName) {
@@ -80,8 +82,17 @@ public abstract class RestAction {
 		return requestBodyJsonArray;
 	}
 
+	public void setRequestJson(String requestJson) {
+		this.requestJson = requestJson;
+		this.requestBodyJsonArray = JsonUtils.isJsonArray(requestJson);
+	}
+
 	public void setRequestBodyJsonArray(boolean requestBodyJsonArray) {
 		this.requestBodyJsonArray = requestBodyJsonArray;
+	}
+
+	protected void beforeShield() {
+
 	}
 
 	public abstract void shield();
@@ -89,6 +100,8 @@ public abstract class RestAction {
 	public abstract Object action();
 
 	public HttpResponse execute() {
+		beforeShield();
+
 		if (hasShield()) {
 			shield();
 		}
@@ -233,9 +246,11 @@ public abstract class RestAction {
 		case POST:
 			return CreateRestAction.class;
 		case PUT:
-		case PATCH:
 			assertNotOverCollection(overCollection);
 			return UpdateRestAction.class;
+		case PATCH:
+			assertNotOverCollection(overCollection);
+			return PatchRestAction.class;
 		case DELETE:
 			assertNotOverCollection(overCollection);
 			return DestroyRestAction.class;

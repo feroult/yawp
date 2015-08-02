@@ -1,6 +1,7 @@
 package io.yawp.servlet.parent;
 
 import static org.junit.Assert.assertEquals;
+import io.yawp.repository.models.parents.Job;
 import io.yawp.repository.models.parents.Parent;
 
 import java.util.List;
@@ -35,6 +36,22 @@ public class ParentRestActionTest extends ParentServletTestCase {
 		Parent retrievedParent = from(json, Parent.class);
 
 		assertEquals("changed xpto", retrievedParent.getName());
+	}
+
+	@Test
+	public void testPatch() {
+		Job job = new Job("coder");
+		yawp.save(job);
+
+		Parent parent = saveParent("xpto");
+		parent.setJobId(job.getId());
+		yawp.save(parent);
+
+		String json = patch(uri("/parents/%s", parent), "{ name: 'xpto' } ");
+		Parent retrievedParent = from(json, Parent.class);
+
+		assertEquals("xpto", retrievedParent.getName());
+		assertEquals("coder", retrievedParent.getJobId().fetch().getName());
 	}
 
 	@Test

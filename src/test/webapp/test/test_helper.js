@@ -11,6 +11,7 @@
 		c.resetUrl(serverUrl + '/_yawp/delete_all');
 
 		c.bind('parent', '/parents');
+		c.bind('job', '/jobs');
 		c.bind('child', '/children', 'parentId');
 	});
 

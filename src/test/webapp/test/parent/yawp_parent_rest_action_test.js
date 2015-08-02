@@ -50,6 +50,30 @@
 		});
 	});
 
+	t.asyncTest("patch", function(assert) {
+		expect(2);
+
+		var job = fx.job('coder', {
+			name : 'coder'
+		});
+
+		var parent = fx.parent('parent', {
+			name : 'xpto',
+			jobId : job.id
+		});
+
+		var parentPatch = {
+			id : parent.id,
+			name : 'changed xpto'
+		};
+
+		yawp.patch(parentPatch).done(function(retrievedParent) {
+			assert.equal(retrievedParent.name, 'changed xpto');
+			assert.equal(retrievedParent.jobId, job.id);
+			t.start();
+		});
+	});
+
 	t.asyncTest("show", function(assert) {
 		expect(1);
 

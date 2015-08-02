@@ -129,6 +129,11 @@
 			return defaultAjax('PUT', options());
 		}
 
+		function patch(object) {
+			options().data = JSON.stringify(object);
+			return defaultAjax('PATCH', options());
+		}
+
 		function destroy() {
 			return defaultAjax('DELETE', options());
 		}
@@ -136,6 +141,7 @@
 		return {
 			create : create,
 			update : update,
+			patch : patch,
 			destroy : destroy
 		};
 	}
@@ -234,6 +240,11 @@
 		return yawp(id).update(object);
 	}
 
+	function patch(object) {
+		var id = extractId(object);
+		return yawp(id).patch(object);
+	}
+
 	function destroy(object) {
 		var id = extractId(object);
 		return yawp(id).destroy(object);
@@ -242,6 +253,7 @@
 	var api = {
 		config : config,
 		update : update,
+		patch : patch,
 		destroy : destroy
 	};
 

@@ -2,13 +2,13 @@
 
 Unbelievably Simple API DSL for Google App Engine (Java)
 
-[![Build Status](https://api.shippable.com/projects/5418400b50f3833e055ab249/badge?branchName=master)](https://app.shippable.com/projects/5418400b50f3833e055ab249/builds/latest)
+[![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
 
 ## Introduction
 
 **YAWP!** is a Java framework built on top of Google App Engine whose main purpose is to help developers create meaningful APIs to support their REST based applications.
 
-You create your POJOs and **YAWP!** 
+You create your POJOs and **YAWP!**
 
 ## Installation
 
@@ -34,7 +34,7 @@ Point your browser to [http://localhost:8080/test/all.html](http://localhost:808
 
 #### Maven Dependency
 
-If you prefer to configure it manually, use this maven dependency: 
+If you prefer to configure it manually, use this maven dependency:
 
 ```xml
 <dependency>
@@ -56,7 +56,7 @@ Annotate your POJO:
 public class Person {
 
     private String name;
-    
+
 }
 ```
 
@@ -100,7 +100,7 @@ yawp.destroy(person.getId());
 
 ### IdRef
 
-The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of Datastore Key mechanism and creates a type safe link beetween all your domain objects. 
+The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of Datastore Key mechanism and creates a type safe link beetween all your domain objects.
 
 To define the identity field of a domain object you need to declare an IdRef&lt;T&gt; annotated with @Id. Then you can use this identity as a reference from another domain object.
 
@@ -112,14 +112,14 @@ public class Person {
 
     @Id
     private IdRef<Person> id;
-    
+
     @ParentId
     private IdRef<Company> companyId;
-    
+
     private IdRef<Address> addressId;
-    
+
     private String name;
-    
+
 }
 ```
 Note: All **YAWP!** POJOs must have one and only one IdRef attribute annotated with @Id
@@ -132,18 +132,18 @@ From a HTTP call, a Java or Javascript method you can query your objects using a
 ```javascript
 yawp('/people').where([ 'name', '=', 'Janes']).first( function(person) {} );
 
-yawp('/people').order([ { p: 'name', d: 'desc' } ]).list( function(people) {} ); 
+yawp('/people').order([ { p: 'name', d: 'desc' } ]).list( function(people) {} );
 
-yawp('/people').from(parentId).list( function(people) {} ); 
+yawp('/people').from(parentId).list( function(people) {} );
 ````
 
 **Java**:
 ```java
 Person person = yawp(Person.class).where("name", "=", "Janes").first();
 
-List<Person> people = yawp(Person.class).order("name", "desc").list(); 
+List<Person> people = yawp(Person.class).order("name", "desc").list();
 
-List<Person> people = yawp(Person.class).from(parentId).list(); 
+List<Person> people = yawp(Person.class).from(parentId).list();
 ```
 
 Other Java examples, also avaibale from HTTP or Javascript:
@@ -164,7 +164,7 @@ You can look at this [Java test suite](http://github.com/feroult/yawp/tree/maste
 
 So far, you've seen all functionality that you get by just annotating your POJO with @Endpoint. Now it's time to see how to add custom server side business logic to your model, so you can create real world applications with specific needs.
 
-The way **YAWP!** deal with this is by allowing you to extend the default REST schema through **Features**. You can create three kind of features for your objects: **Actions**, **Transformers** and **Hooks**. 
+The way **YAWP!** deal with this is by allowing you to extend the default REST schema through **Features**. You can create three kind of features for your objects: **Actions**, **Transformers** and **Hooks**.
 
 ### Actions
 
@@ -179,7 +179,7 @@ public class ActivatePersonAction extends Action<Person> {
         person.setActive(true);
         yawp.save(person);
     }
-    
+
 }
 ```
 
@@ -203,7 +203,7 @@ public class PersonActions extends Action<Person> {
     public Person me() {
         return SessionManager.getLoggedPerson(yawp);
     }
-  
+
     // over collection with parent IdRef
     @GET("first")
     public Person first(IdRef<Company> companyId) {
@@ -225,11 +225,11 @@ The Transformer API is used to create different views of the same domain object.
 public class BasicObjectTransformer extends Transformer<Person> {
 
     public Map<String, Object> upperCase(Person person) {
-    
+
         Map<String, Object> map = asMap(person);
         map.put("name", person.getName().toUpperCase());
         return map;
-	
+
     }
 
 }
@@ -304,12 +304,12 @@ You can define 3 Hook types for your application:
 ```javascript
 (function(fx) {
 
-	fx.person('janes', {
-		id : '/people/janes',
-		user : 'janes',
-		name : 'Janes Joplin',
-		orgId : fx.organization('dextra').id,
-	});
+    fx.person('janes', {
+        id : '/people/janes',
+        user : 'janes',
+        name : 'Janes Joplin',
+        orgId : fx.organization('dextra').id,
+    });
 
 })(yawp.fixtures.lazy);
 ```
@@ -318,14 +318,14 @@ You can define 3 Hook types for your application:
 
 ```javascript
 t.asyncTest("transformer", function(assert) {
-	expect(1);
+    expect(1);
 
-	fx.person('janes');
+    fx.person('janes');
 
-	yawp('/people').transform('upperCase').first(function(person) {
-		assert.equal(person.name, 'JANES JOPLIN');
-		t.start();
-	});
+    yawp('/people').transform('upperCase').first(function(person) {
+        assert.equal(person.name, 'JANES JOPLIN');
+        t.start();
+    });
 });
 ```
 
@@ -335,4 +335,3 @@ t.asyncTest("transformer", function(assert) {
 * Guilherme Carreiro - karreiro@gmail.com
 * Luan Nico - luannico27@gmail.com
 * Paulo Victor Martins - paulovmr@gmail.com
-

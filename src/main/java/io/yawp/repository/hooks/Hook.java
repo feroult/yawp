@@ -13,4 +13,7 @@ public class Hook<T> extends Feature {
 
 	public void beforeQuery(DatastoreQuery<T> q) {
 	}
+	
+	public void beforeDestroy(T object) {
+	}
 }

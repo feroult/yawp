@@ -21,6 +21,10 @@ public class RepositoryHooks {
 		invokeHooks(r, clazz, q, "beforeQuery");
 	}
 
+	public static void beforeDestroy(Repository r, Object object) {
+		invokeHooks(r, object.getClass(), object, "beforeDestroy");
+	}
+	
 	private static void invokeHooks(Repository r, Class<?> targetClazz, Object object, String methodName) {
 		for (Class<? extends Hook<?>> hookClazz : r.getEndpointFeatures(targetClazz).getHooks()) {
 			invokeHookMethod(r, object, methodName, hookClazz);

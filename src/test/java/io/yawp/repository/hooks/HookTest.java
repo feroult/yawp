@@ -2,6 +2,7 @@ package io.yawp.repository.hooks;
 
 import static org.junit.Assert.assertEquals;
 import io.yawp.commons.utils.EndpointTestCase;
+import io.yawp.repository.models.basic.DeletedHookedObject;
 import io.yawp.repository.models.basic.HookedObject;
 
 import java.util.List;
@@ -44,6 +45,18 @@ public class HookTest extends EndpointTestCase {
 
 		assertEquals(1, objects.size());
 		assertEquals("xpto1", objects.get(0).getStringValue());
+	}
+	
+	@Test
+	public void testBeforeDestroy() {
+		HookedObject hookObject = new HookedObject("xpto1");
+		yawp.save(hookObject);
+		HookedObject xpto = yawp(HookedObject.class).first();
+		
+		yawp.destroy(xpto.getId());
+		
+		DeletedHookedObject deletedObject = yawp(DeletedHookedObject.class).only();
+		assertEquals(hookObject.getStringValue(), deletedObject.getStringValue());
 	}
 
 }

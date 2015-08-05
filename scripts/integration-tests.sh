@@ -7,6 +7,10 @@
 
 MAVEN_ARGS="-Dmaven.test.skip=true -Dappengine.port=8081 -Dappengine.jvmFlags.datastore.default_high_rep_job_policy_unapplied_job_pct=0"
 
+echo "opts: $MAVEN_OPTS"
+
+export
+
 echo "starting devserver..."
 (cd ..; mvn appengine:devserver_start $MAVEN_ARGS)
 echo "done."

@@ -13,6 +13,8 @@ echo "done."
 
 echo "running: $PWD"
 #./runner.py ../src/test/webapp/test/all.html
+wget http://localhost:8081/test/all.html
+cat all.html
 phantomjs runner.js http://localhost:8081/test/all.html
 STATUS=$?
 

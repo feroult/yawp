@@ -2,12 +2,12 @@ package io.yawp.repository.models.basic;
 
 import io.yawp.repository.annotations.Index;
 
-public class ComposedParent {
+public class ComposedSuperClass {
 
 	@Index
 	protected String name;
 
-	public ComposedParent(String name) {
+	public ComposedSuperClass(String name) {
 		this.name = name;
 	}
 

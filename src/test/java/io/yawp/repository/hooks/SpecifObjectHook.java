@@ -1,6 +1,6 @@
 package io.yawp.repository.hooks;
 
-import io.yawp.repository.models.basic.DeletedHookedObject;
+import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.HookedObject;
 import io.yawp.repository.query.DatastoreQuery;
 
@@ -26,10 +26,10 @@ public class SpecifObjectHook extends Hook<HookedObject> {
 	public void beforeQuery(DatastoreQuery<HookedObject> q) {
 		q.where("stringValue", "=", "xpto1");
 	}
-	
+
 	@Override
 	public void beforeDestroy(HookedObject object) {
-		yawp.save(new DeletedHookedObject(object));
+		yawp.save(new BasicObject("created on destroy hook"));
 	}
 
 	private boolean isBeforeSaveTest(HookedObject object) {

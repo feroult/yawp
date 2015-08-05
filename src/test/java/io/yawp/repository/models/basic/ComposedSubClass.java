@@ -6,25 +6,25 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 
-@Endpoint(path = "/composed_children")
-public class ComposedChild extends ComposedParent {
+@Endpoint(path = "/composed_subclasses")
+public class ComposedSubClass extends ComposedSuperClass {
 
 	@Id
-	private IdRef<ComposedChild> id;
+	private IdRef<ComposedSubClass> id;
 
-	public ComposedChild() {
+	public ComposedSubClass() {
 		super(StringUtils.EMPTY);
 	}
 
-	public ComposedChild(String name) {
+	public ComposedSubClass(String name) {
 		super(name);
 	}
 
-	public IdRef<ComposedChild> getId() {
+	public IdRef<ComposedSubClass> getId() {
 		return id;
 	}
 
-	public void setId(IdRef<ComposedChild> id) {
+	public void setId(IdRef<ComposedSubClass> id) {
 		this.id = id;
 	}
 }

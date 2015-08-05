@@ -74,7 +74,7 @@ console output.
     var JUnitPlugin = (function () {
         var module, moduleStart, testStart, testCases = [],
             current_test_assertions = [], JUnitPlugin = {};
-        
+
         JUnitPlugin.begin = function() {
             // That does not work when invoked in PhantomJS
             console.log('<?xml version="1.0" encoding="UTF-8"?>');
@@ -273,7 +273,7 @@ console output.
             failed: 0,
             total: 0
         };
-        
+
         plugin.begin = function() {
             // That does not work when invoked in PhantomJS
             begin = new Date();
@@ -310,14 +310,14 @@ console output.
             }
             testDetails.total += 1;
             if (!verbose) {
-                console.log('    ' + (details.failed ?  color('fail', '× ') : color('checkmark', '✔ ')) + color(details.failed ? 'fail' : 'pass', details.name + ' (' + runtime + 's)')); 
+                console.log('    ' + (details.failed ?  color('fail', '× ') : color('checkmark', '✔ ')) + color(details.failed ? 'fail' : 'pass', details.name + ' (' + runtime + 's)'));
             }
         };
 
         plugin.log = function(details) {
             var runtime = (new Date() - testStart) / 1000;
             if (verbose) {
-                console.log('        ' + (details.result ?  color('checkmark', '✓ ') : color('fail', '☓ ')) + color(details.result ? 'pass' : 'fail', (details.message || details.name) + ' (' + runtime + 's)')); 
+                console.log('        ' + (details.result ?  color('checkmark', '✓ ') : color('fail', '☓ ')) + color(details.result ? 'pass' : 'fail', (details.message || details.name) + ' (' + runtime + 's)'));
             }
 
             if (details.result) {
@@ -379,7 +379,7 @@ console output.
         'tap': TapPlugin,
         'console': ConsolePlugin
     };
-    
+
 
 
     var OutputPlugin = OUTPUT_FORMATS[output];
@@ -491,4 +491,12 @@ console output.
         console.error('');
         phantom.exit(1);
     };
+
+    page.onResourceRequested = function(request) {
+  console.log('Request ' + JSON.stringify(request, undefined, 4));
+};
+page.onResourceReceived = function(response) {
+  console.log('Receive ' + JSON.stringify(response, undefined, 4));
+};
+
 }());

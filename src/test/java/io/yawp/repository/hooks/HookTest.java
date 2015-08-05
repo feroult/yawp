@@ -49,13 +49,25 @@ public class HookTest extends EndpointTestCase {
 
 	@Test
 	public void testBeforeDestroy() {
-		HookedObject objectToDelete = new HookedObject("xpto1");
+		HookedObject objectToDelete = new HookedObject("beforeDestroy test");
 		yawp.save(objectToDelete);
 
 		yawp.destroy(objectToDelete.getId());
 
-		BasicObject basicObject = yawp(BasicObject.class).only();
-		assertEquals("created on destroy hook", basicObject.getStringValue());
+		List<BasicObject> objects = yawp(BasicObject.class).where("stringValue", "=", "beforeDestroy test: " + objectToDelete.getId())
+				.list();
+		assertEquals(1, objects.size());
 	}
 
+	@Test
+	public void testAfterDestroy() {
+		HookedObject objectToDelete = new HookedObject();
+		yawp.save(objectToDelete);
+
+		yawp.destroy(objectToDelete.getId());
+
+		List<BasicObject> objects = yawp(BasicObject.class).where("stringValue", "=", "afterDestroy test: " + objectToDelete.getId())
+				.list();
+		assertEquals(1, objects.size());
+	}
 }

@@ -1,6 +1,7 @@
 package io.yawp.repository.hooks;
 
 import io.yawp.commons.utils.ThrownExceptionsUtils;
+import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.DatastoreQuery;
 
@@ -21,24 +22,33 @@ public class RepositoryHooks {
 		invokeHooks(r, clazz, q, "beforeQuery");
 	}
 
-	public static void beforeDestroy(Repository r, Object object) {
-		invokeHooks(r, object.getClass(), object, "beforeDestroy");
+	public static void beforeDestroy(Repository r, IdRef<?> id) {
+		invokeHooks(r, id.getClazz(), id, "beforeDestroy");
 	}
-	
-	private static void invokeHooks(Repository r, Class<?> targetClazz, Object object, String methodName) {
+
+	public static void afterDestroy(Repository r, IdRef<?> id) {
+		invokeHooks(r, id.getClazz(), id, "afterDestroy");
+	}
+
+	private static void invokeHooks(Repository r, Class<?> targetClazz, Object argument, String methodName) {
 		for (Class<? extends Hook<?>> hookClazz : r.getEndpointFeatures(targetClazz).getHooks()) {
-			invokeHookMethod(r, object, methodName, hookClazz);
+			invokeHookMethod(r, hookClazz, methodName, argument);
 		}
 	}
 
-	private static void invokeHookMethod(Repository r, Object object, String methodName, Class<? extends Hook<?>> hookClazz) {
+	private static void invokeHookMethod(Repository r, Class<? extends Hook<?>> hookClazz, String methodName, Object argument) {
 		try {
 			Hook<?> hook = hookClazz.newInstance();
 			hook.setRepository(r);
 
-			Method hookMethod = getMethod(hook, methodName, object.getClass());
+			Method hookMethod = getMethod(hook, methodName, argument.getClass());
+
+			if (hookMethod == null) {
+				hookMethod = getMethod(hook, methodName, Object.class);
+			}
+
 			if (hookMethod != null) {
-				hookMethod.invoke(hook, object);
+				hookMethod.invoke(hook, argument);
 			}
 		} catch (InstantiationException ex) {
 			throw new RuntimeException("The Hook class " + hookClazz.getSimpleName()
@@ -48,18 +58,15 @@ public class RepositoryHooks {
 		}
 	}
 
-	private static Method getMethod(Object hook, String methodName, Class<?> clazz) {
-		for (Method method : hook.getClass().getMethods()) {
-			if (method.getName().equals(methodName)) {
-				if (method.getParameterTypes().length != 1) {
-					continue;
-				}
-				if (method.getParameterTypes()[0].isAssignableFrom(clazz)) {
-					method.setAccessible(true);
-					return method;
-				}
-			}
+	private static Method getMethod(Object hook, String methodName, Class<?> argumentClazz) {
+
+		try {
+			return hook.getClass().getMethod(methodName, argumentClazz);
+		} catch (NoSuchMethodException e) {
+			return null;
+		} catch (SecurityException e) {
+			throw new RuntimeException(e);
 		}
-		return null;
+
 	}
 }

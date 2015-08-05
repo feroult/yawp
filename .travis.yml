@@ -2,8 +2,8 @@ language: java
 
 sudo: false
 
-#before_install:
-# - source ./scripts/before_install.sh
+before_install:
+ - source ./scripts/before_install.sh
 
 branches:
   only:

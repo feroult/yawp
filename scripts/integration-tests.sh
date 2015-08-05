@@ -13,7 +13,7 @@ echo "done."
 
 echo "running: $PWD"
 #./runner.py ../src/test/webapp/test/all.html
-../phantomjs runner.js http://127.0.0.1:8081/test/all.html
+../phantomjs-2.0.0/phantomjs runner.js http://127.0.0.1:8081/test/all.html
 STATUS=$?
 
 echo "stopping devserver..."

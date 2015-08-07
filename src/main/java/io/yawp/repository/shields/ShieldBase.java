@@ -4,7 +4,6 @@ import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.FacadeUtils;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.actions.Action;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;
@@ -37,8 +36,6 @@ public abstract class ShieldBase<T> extends Feature {
 	private ActionKey actionKey;
 
 	private Map<ActionKey, Method> actionMethods;
-
-	private Class<? extends Action<T>>[] actionClazzes;
 
 	public abstract void always();
 

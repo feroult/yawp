@@ -7,7 +7,7 @@
 
     <groupId>io.yawp</groupId>
     <artifactId>yawp</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5-SNAPSHOT</version>
 
     <name>YAWP!</name>
     <description>Yet Another Web API for Google App Engine</description>

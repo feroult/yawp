@@ -277,6 +277,17 @@ public class ShieldTest extends ServletTestCase {
 		assertNull(retrievedObject.getIntValue());
 	}
 
+	@Test
+	public void testCustomActionByActionClass() {
+		saveObject(1l);
+		login("nat", "rock.com");
+
+//		assertPutWithStatus("/shielded_objects/1/something", 200);
+//		assertPutWithStatus("/shielded_objects/1/anotherthing", 200);
+//		assertGetWithStatus("/shielded_objects/collection", 200);
+		assertGetWithStatus("/shielded_objects/another-action-class", 404);
+	}
+
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);
 		assertGetWithStatus("/shielded_objects/1", status);

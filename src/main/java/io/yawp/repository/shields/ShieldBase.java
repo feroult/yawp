@@ -4,6 +4,7 @@ import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.FacadeUtils;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.actions.Action;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;
@@ -11,6 +12,7 @@ import io.yawp.servlet.HttpException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +37,8 @@ public abstract class ShieldBase<T> extends Feature {
 	private ActionKey actionKey;
 
 	private Map<ActionKey, Method> actionMethods;
+
+	private Class<? extends Action<T>>[] actionClazzes;
 
 	public abstract void always();
 
@@ -84,6 +88,20 @@ public abstract class ShieldBase<T> extends Feature {
 
 	protected ShieldBase<T> removeFacade() {
 		return facade(null);
+	}
+
+	public ShieldBase<T> action(Class<?>... actionClazzes) {
+		if (!lastAllow) {
+			return this;
+		}
+
+		this.allow = Arrays.asList(actionClazzes).contains(currentActionClazz());
+		this.lastAllow = allow;
+		return this;
+	}
+
+	private Class<?> currentActionClazz() {
+		return yawp.getFeatures().get(endpointClazz).getActionClazz(actionKey);
 	}
 
 	protected final boolean requestHasAnyObject() {

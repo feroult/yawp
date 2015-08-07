@@ -90,6 +90,10 @@ public class DatastoreQueryOptions {
 			return jsonPrimitive.getAsString();
 		}
 
+		if (jsonPrimitive.isBoolean()) {
+			return jsonPrimitive.getAsBoolean();
+		}
+
 		// TODO timestamp
 		throw new RuntimeException("Invalid json value: " + jsonPrimitive.getAsString());
 	}
@@ -116,7 +120,7 @@ public class DatastoreQueryOptions {
 	private BaseCondition parseSimpleCondition(JsonArray jsonArray) {
 		if (jsonArray.size() % 3 != 0) {
 			throw new HttpException(422,
-			        "Array condition in where must have size multiple of three ([<field1>, <op1>, <value1>, <field2>, <op2>, <value2>, ...])");
+					"Array condition in where must have size multiple of three ([<field1>, <op1>, <value1>, <field2>, <op2>, <value2>, ...])");
 		}
 		BaseCondition[] conditions = new BaseCondition[jsonArray.size() / 3];
 		for (int i = 0; i < jsonArray.size(); i += 3) {

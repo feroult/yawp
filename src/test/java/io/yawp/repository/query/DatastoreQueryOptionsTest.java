@@ -74,6 +74,14 @@ public class DatastoreQueryOptionsTest {
 	}
 
 	@Test
+	public void testBooleanCodition() {
+		String q = "{where: {p: 'booleanValue', op: '=', v: true}}";
+
+		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
+		assertSimpleCondition(options.getCondition(), "booleanValue", WhereOperator.EQUAL, true);
+	}
+
+	@Test
 	public void testWhereJoinedConditionsWithPrecedence() {
 		String q = "{where: {op: 'and', c: [{p: 'longValue', op: '=', v: 1}, {op: 'or', c: [{p: 'intValue', op: '=', v: 3}, {p: 'doubleValue', op: '=', v: 4.3}]}]}}";
 

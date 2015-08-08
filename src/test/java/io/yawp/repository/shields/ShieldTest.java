@@ -282,9 +282,9 @@ public class ShieldTest extends ServletTestCase {
 		saveObject(1l);
 		login("nat", "rock.com");
 
-//		assertPutWithStatus("/shielded_objects/1/something", 200);
-//		assertPutWithStatus("/shielded_objects/1/anotherthing", 200);
-//		assertGetWithStatus("/shielded_objects/collection", 200);
+		assertPutWithStatus("/shielded_objects/1/something", 200);
+		assertPutWithStatus("/shielded_objects/1/anotherthing", 200);
+		assertGetWithStatus("/shielded_objects/collection", 200);
 		assertGetWithStatus("/shielded_objects/another-action-class", 404);
 	}
 

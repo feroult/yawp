@@ -51,8 +51,6 @@ public abstract class ShieldBase<T> extends Feature {
 
 	public abstract void destroy(IdRef<T> id);
 
-	public abstract void custom();
-
 	protected ShieldBase<T> allow() {
 		return allow(true);
 	}
@@ -155,8 +153,7 @@ public abstract class ShieldBase<T> extends Feature {
 
 	public final void protectCustom() {
 		always();
-		custom();
-		annotadedCustoms();
+		protectedEachCustomAction();
 		throwNotFoundIfNotAllowed();
 
 		verifyConditions();
@@ -253,7 +250,7 @@ public abstract class ShieldBase<T> extends Feature {
 		this.actionMethods = actionMethods;
 	}
 
-	private void annotadedCustoms() {
+	private void protectedEachCustomAction() {
 		if (!actionMethods.containsKey(actionKey)) {
 			defaults();
 			return;

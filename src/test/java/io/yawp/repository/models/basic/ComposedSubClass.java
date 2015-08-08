@@ -1,10 +1,10 @@
 package io.yawp.repository.models.basic;
 
-import org.apache.commons.lang3.StringUtils;
-
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
+
+import org.apache.commons.lang3.StringUtils;
 
 @Endpoint(path = "/composed_subclasses")
 public class ComposedSubClass extends ComposedSuperClass {

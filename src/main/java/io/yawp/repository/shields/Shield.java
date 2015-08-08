@@ -32,8 +32,4 @@ public abstract class Shield<T> extends ShieldBase<T> {
 		defaults();
 	}
 
-	public void custom() {
-
-	}
-
 }

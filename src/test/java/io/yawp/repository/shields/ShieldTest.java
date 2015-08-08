@@ -40,7 +40,6 @@ public class ShieldTest extends ServletTestCase {
 		assertPostWithStatus("/shielded_objects", "{stringValue: 'xpto'}", 404);
 		assertPutWithStatus("/shielded_objects/1", "{id:'/shielded_objects/1', stringValue: 'xpto'}", 200);
 		assertDeleteWithStatus("/shielded_objects/1", 404);
-		assertPutWithStatus("/shielded_objects/1/something", 200);
 	}
 
 	@Test

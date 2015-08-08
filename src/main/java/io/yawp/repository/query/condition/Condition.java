@@ -1,6 +1,5 @@
 package io.yawp.repository.query.condition;
 
-
 public abstract class Condition {
 
 	public static BaseCondition c(String field, String operator, Object comparison) {

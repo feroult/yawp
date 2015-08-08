@@ -57,11 +57,6 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		allow(isJanis()).where("stringValue", "=", "ok-for-janis");
 	}
 
-	@Override
-	public void custom() {
-		allow(isRobert());
-	}
-
 	@PUT("something")
 	public void something(IdRef<ShieldedObject> id) {
 		allow(isJanis()).where("stringValue", "=", "ok-for-janis");

@@ -39,6 +39,8 @@ public abstract class ShieldBase<T> extends Feature {
 
 	public abstract void always();
 
+	public abstract void defaults();
+
 	public abstract void index(IdRef<?> parentId);
 
 	public abstract void show(IdRef<T> id);
@@ -253,6 +255,7 @@ public abstract class ShieldBase<T> extends Feature {
 
 	private void annotadedCustoms() {
 		if (!actionMethods.containsKey(actionKey)) {
+			defaults();
 			return;
 		}
 

@@ -335,6 +335,14 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	}
 
 	@Test
+	public void testWhereInWithNullList() {
+		saveManyBasicObjects(1);
+
+		List<BasicObject> objects = yawp(BasicObject.class).where("intValue", "in", null).list();
+
+		assertEquals(0, objects.size());
+	}
+	@Test
 	public void testWhereInWithEmptyListOrTrueExpression() {
 		saveManyBasicObjects(3);
 		BaseCondition emptyListCondition = c("intValue", "in", Collections.emptyList());

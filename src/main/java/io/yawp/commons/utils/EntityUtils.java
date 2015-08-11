@@ -479,6 +479,9 @@ public class EntityUtils {
 	}
 
 	public static int listSize(Object value) {
+		if (value == null) {
+			return 0;
+		}
 		if (value.getClass().isArray()) {
 			return Array.getLength(value);
 		}

@@ -95,9 +95,9 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 		IdRef<?> ref = null;
 		if (key.getName() != null) {
-			ref = IdRef.create(r, EntityUtils.getIdType(objectClass), key.getName());
+			ref = IdRef.create(r, objectClass, key.getName());
 		} else {
-			ref = IdRef.create(r, EntityUtils.getIdType(objectClass), key.getId());
+			ref = IdRef.create(r, objectClass, key.getId());
 		}
 		ref.parentId = fromKey(r, key.getParent());
 		return ref;

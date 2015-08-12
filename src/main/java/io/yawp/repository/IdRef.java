@@ -309,7 +309,14 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	@Override
 	public int compareTo(IdRef<T> o) {
-		return id.compareTo(o.asLong());
+		if (id != null && o.id != null) {
+			return id.compareTo(o.id);
+		}
+		return idOrNameAsString().compareTo(o.idOrNameAsString());
+	}
+
+	private String idOrNameAsString() {
+		return id != null ? String.valueOf(id) : name;
 	}
 
 	@Override

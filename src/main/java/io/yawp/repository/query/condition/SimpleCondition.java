@@ -110,6 +110,9 @@ public class SimpleCondition extends BaseCondition {
 	}
 
 	private void assertIsList(Object value) {
+		if (value == null) {
+			return;
+		}
 		Class<?> valueClazz = value.getClass();
 		if (!(valueClazz.isArray() || Collection.class.isAssignableFrom(valueClazz))) {
 			throw new RuntimeException("Unsupported 'in' type: must be a primtive array or a Collection<?>. Found "

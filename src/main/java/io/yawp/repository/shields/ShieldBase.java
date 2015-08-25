@@ -92,9 +92,13 @@ public abstract class ShieldBase<T> extends Feature {
 			return this;
 		}
 
-		this.allow = Arrays.asList(actionClazzes).contains(currentActionClazz());
+		this.allow = isActionRoute() && Arrays.asList(actionClazzes).contains(currentActionClazz());
 		this.lastAllow = allow;
 		return this;
+	}
+
+	private boolean isActionRoute() {
+		return actionKey != null;
 	}
 
 	private Class<?> currentActionClazz() {

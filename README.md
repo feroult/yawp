@@ -10,40 +10,6 @@ Unbelievably Simple API DSL for Google App Engine (Java)
 
 You create your POJOs and **YAWP!**
 
-## Installation
-
-#### Maven Archetype
-
-```bash
-mvn archetype:generate \
-  -DarchetypeGroupId=io.yawp \
-  -DarchetypeArtifactId=yawp \
-  -DarchetypeVersion=1.0 \
-  -DgroupId=<your groupId> \
-  -DartifactId=<your artifactId> \
-  -Dversion=<your version>
-```
-
-From the generated app folder run:
-
-```
-mvn appengine:devserver
-```
-
-Point your browser to [http://localhost:8080/test/all.html](http://localhost:8080/test/all.html) to run the default test suite.
-
-#### Maven Dependency
-
-If you prefer to configure it manually, use this maven dependency:
-
-```xml
-<dependency>
-   <groupId>io.yawp</groupId>
-   <artifactId>yawp</artifactId>
-</dependency>
-```
-Then configure the other App Engine's stuff. You can get inspiration from this [guide](https://cloud.google.com/appengine/docs/java/gettingstarted/creating).
-
 ## How it Works
 
 From a single class annotation, it provides a full REST url schema with a fluent progamatic API for Java and Javascript. You write your client side code the same way you do for your server side. It also provides a convenient way to organize your server side business logic.
@@ -296,6 +262,40 @@ You can define 3 Hook types for your application:
  * **beforeQuery**: called before any query made via a URL. It can be used to add security or default validations;
  * **beforeSave**: called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;
  * **afterSave**: called after an object is saved. It can be used to trigger actions or log events.
+
+ ## Installation
+
+ #### Maven Archetype
+
+ ```bash
+ mvn archetype:generate \
+   -DarchetypeGroupId=io.yawp \
+   -DarchetypeArtifactId=yawp \
+   -DarchetypeVersion=1.0 \
+   -DgroupId=<your groupId> \
+   -DartifactId=<your artifactId> \
+   -Dversion=<your version>
+ ```
+
+ From the generated app folder run:
+
+ ```
+ mvn appengine:devserver
+ ```
+
+ Point your browser to [http://localhost:8080/test/all.html](http://localhost:8080/test/all.html) to run the default test suite.
+
+ #### Maven Dependency
+
+ If you prefer to configure it manually, use this maven dependency:
+
+ ```xml
+ <dependency>
+    <groupId>io.yawp</groupId>
+    <artifactId>yawp</artifactId>
+ </dependency>
+ ```
+ Then configure the other App Engine's stuff. You can get inspiration from this [guide](https://cloud.google.com/appengine/docs/java/gettingstarted/creating).
 
 ## Testing
 

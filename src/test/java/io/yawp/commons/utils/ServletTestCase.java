@@ -24,7 +24,7 @@ public class ServletTestCase extends EndpointTestCase {
 			private static final long serialVersionUID = 3374113392343671861L;
 
 			@Override
-			protected Repository getRepository(Map<String, String> params) {
+			protected Repository getRepository() {
 				return yawp;
 			}
 

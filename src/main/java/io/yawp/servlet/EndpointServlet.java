@@ -109,7 +109,7 @@ public class EndpointServlet extends HttpServlet {
 	}
 
 	public HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
-		Repository r = getRepository(params);
+		Repository r = getRepository();
 
 		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri, requestJson, params);
 
@@ -120,7 +120,7 @@ public class EndpointServlet extends HttpServlet {
 		return router.executeRestAction(enableHooks);
 	}
 
-	protected Repository getRepository(Map<String, String> params) {
+	protected Repository getRepository() {
 		return Repository.r().setFeatures(features);
 	}
 }

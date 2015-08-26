@@ -11,6 +11,7 @@ import io.yawp.servlet.HttpException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,8 @@ public abstract class ShieldBase<T> extends Feature {
 
 	public abstract void always();
 
+	public abstract void defaults();
+
 	public abstract void index(IdRef<?> parentId);
 
 	public abstract void show(IdRef<T> id);
@@ -47,8 +50,6 @@ public abstract class ShieldBase<T> extends Feature {
 	public abstract void update(IdRef<T> id, T object);
 
 	public abstract void destroy(IdRef<T> id);
-
-	public abstract void custom();
 
 	protected ShieldBase<T> allow() {
 		return allow(true);
@@ -84,6 +85,24 @@ public abstract class ShieldBase<T> extends Feature {
 
 	protected ShieldBase<T> removeFacade() {
 		return facade(null);
+	}
+
+	public ShieldBase<T> action(Class<?>... actionClazzes) {
+		if (!lastAllow) {
+			return this;
+		}
+
+		this.allow = isActionRoute() && Arrays.asList(actionClazzes).contains(currentActionClazz());
+		this.lastAllow = allow;
+		return this;
+	}
+
+	private boolean isActionRoute() {
+		return actionKey != null;
+	}
+
+	private Class<?> currentActionClazz() {
+		return yawp.getFeatures().get(endpointClazz).getActionClazz(actionKey);
 	}
 
 	protected final boolean requestHasAnyObject() {
@@ -138,8 +157,7 @@ public abstract class ShieldBase<T> extends Feature {
 
 	public final void protectCustom() {
 		always();
-		custom();
-		annotadedCustoms();
+		protectedEachCustomAction();
 		throwNotFoundIfNotAllowed();
 
 		verifyConditions();
@@ -236,8 +254,9 @@ public abstract class ShieldBase<T> extends Feature {
 		this.actionMethods = actionMethods;
 	}
 
-	private void annotadedCustoms() {
+	private void protectedEachCustomAction() {
 		if (!actionMethods.containsKey(actionKey)) {
+			defaults();
 			return;
 		}
 

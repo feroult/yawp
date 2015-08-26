@@ -1,9 +1,9 @@
 package io.yawp.repository.query.condition;
 
+import io.yawp.repository.Repository;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import io.yawp.repository.Repository;
 
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;

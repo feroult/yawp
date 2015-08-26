@@ -94,14 +94,6 @@ public class EntityUtils {
 		}
 	}
 
-	public static Class<?> getIdType(Class<?> clazz) {
-		Field idField = getFieldWithAnnotation(clazz, Id.class);
-		ParameterizedType type = (ParameterizedType) idField.getGenericType();
-		Type[] types = type.getActualTypeArguments();
-		assert types.length == 1;
-		return (Class<?>) types[0];
-	}
-
 	public static void setParentId(Object object, IdRef<?> parentId) {
 		Field parentIdField = getAnnotatedParentFromClass(object.getClass());
 		if (parentIdField == null) {
@@ -219,11 +211,6 @@ public class EntityUtils {
 
 	public static String getIdFieldName(Class<?> clazz) {
 		return getIdField(clazz).getName();
-	}
-
-	public static Class<?> getIdFieldRefClazz(Class<?> clazz) {
-		Field idField = getIdField(clazz);
-		return (Class<?>) getParametrizedTypes(idField)[0];
 	}
 
 	private static Field getIdField(Class<?> clazz) {
@@ -479,6 +466,9 @@ public class EntityUtils {
 	}
 
 	public static int listSize(Object value) {
+		if (value == null) {
+			return 0;
+		}
 		if (value.getClass().isArray()) {
 			return Array.getLength(value);
 		}

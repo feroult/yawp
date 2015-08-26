@@ -1,5 +1,6 @@
 package io.yawp.repository.hooks;
 
+import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.HookedObject;
 import io.yawp.repository.query.DatastoreQuery;
@@ -28,8 +29,14 @@ public class SpecifObjectHook extends Hook<HookedObject> {
 	}
 
 	@Override
-	public void beforeDestroy(HookedObject object) {
-		yawp.save(new BasicObject("created on destroy hook"));
+	public void beforeDestroy(IdRef<HookedObject> id) {
+		HookedObject object = id.fetch();
+		yawp.save(new BasicObject(object.getStringValue() + ": " + id));
+	}
+
+	@Override
+	public void afterDestroy(IdRef<HookedObject> id) {
+		yawp.save(new BasicObject("afterDestroy test: " + id));
 	}
 
 	private boolean isBeforeSaveTest(HookedObject object) {

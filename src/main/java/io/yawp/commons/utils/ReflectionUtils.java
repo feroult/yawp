@@ -52,7 +52,7 @@ public final class ReflectionUtils {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public static Field getFieldRecursively(Class<?> clazz, String fieldName) {
 		Class<?> baseClazz = clazz;
 		while (clazz != null) {

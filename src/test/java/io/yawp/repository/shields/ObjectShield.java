@@ -3,6 +3,7 @@ package io.yawp.repository.shields;
 import io.yawp.commons.http.annotation.GET;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.actions.ShieldedObjectAction;
 import io.yawp.repository.models.basic.ShieldedObject;
 import io.yawp.repository.models.basic.facades.ShieldedObjectFacades.AmyFacade;
 
@@ -19,6 +20,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	public void always() {
 		allow(isJim());
 		allow(isAmy()).facade(AmyFacade.class);
+		allow(isNat()).action(ShieldedObjectAction.class);
 	}
 
 	@Override
@@ -55,11 +57,6 @@ public class ObjectShield extends Shield<ShieldedObject> {
 		allow(isJanis()).where("stringValue", "=", "ok-for-janis");
 	}
 
-	@Override
-	public void custom() {
-		allow(isRobert());
-	}
-
 	@PUT("something")
 	public void something(IdRef<ShieldedObject> id) {
 		allow(isJanis()).where("stringValue", "=", "ok-for-janis");
@@ -94,6 +91,10 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
 	private boolean isAmy() {
 		return is("amy@rock.com");
+	}
+
+	private boolean isNat() {
+		return is("nat@rock.com");
 	}
 
 	private boolean is(String email) {

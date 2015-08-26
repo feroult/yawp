@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import io.yawp.commons.utils.ServletTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.ShieldedObject;
+import io.yawp.repository.models.basic.ShieldedObjectWithDefaults;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +40,6 @@ public class ShieldTest extends ServletTestCase {
 		assertPostWithStatus("/shielded_objects", "{stringValue: 'xpto'}", 404);
 		assertPutWithStatus("/shielded_objects/1", "{id:'/shielded_objects/1', stringValue: 'xpto'}", 200);
 		assertDeleteWithStatus("/shielded_objects/1", 404);
-		assertPutWithStatus("/shielded_objects/1/something", 200);
 	}
 
 	@Test
@@ -277,6 +277,30 @@ public class ShieldTest extends ServletTestCase {
 		assertNull(retrievedObject.getIntValue());
 	}
 
+	@Test
+	public void testCustomActionByActionClass() {
+		saveObject(1l);
+		login("nat", "rock.com");
+
+		assertPutWithStatus("/shielded_objects/1/something", 200);
+		assertPutWithStatus("/shielded_objects/1/anotherthing", 200);
+		assertGetWithStatus("/shielded_objects/collection", 200);
+		assertGetWithStatus("/shielded_objects/another-action-class", 404);
+	}
+
+	@Test
+	public void testDefaults() {
+		saveObjectWithDefaults(1l);
+		login("brian", "rock.com");
+
+		assertGetWithStatus("/shielded_objects_with_defaults", 200);
+		assertGetWithStatus("/shielded_objects_with_defaults/1", 200);
+		assertPostWithStatus("/shielded_objects_with_defaults", "{stringValue: 'xpto'}", 200);
+		assertPutWithStatus("/shielded_objects_with_defaults/1", "{id:'/shielded_objects_with_defaults/1'}", 200);
+		assertDeleteWithStatus("/shielded_objects_with_defaults/1", 404);
+		assertPutWithStatus("/shielded_objects_with_defaults/1/something", 404);
+	}
+
 	private void assertRestActionsStatus(int status) {
 		assertGetWithStatus("/shielded_objects", status);
 		assertGetWithStatus("/shielded_objects/1", status);
@@ -302,4 +326,9 @@ public class ShieldTest extends ServletTestCase {
 		yawp.save(object);
 	}
 
+	private void saveObjectWithDefaults(Long id) {
+		ShieldedObjectWithDefaults object = new ShieldedObjectWithDefaults();
+		object.setId(IdRef.create(yawp, ShieldedObjectWithDefaults.class, id));
+		yawp.save(object);
+	}
 }

@@ -33,7 +33,7 @@ public class ChildAction extends Action<Child> {
 		}
 		return childs;
 	}
-	
+
 	@GET("childByKind")
 	public List<Child> childByKind(Map<String, String> params) {
 		List<Child> children = yawp(Child.class).where("kindOfChild", "=", params.get("kindOfChild")).list();

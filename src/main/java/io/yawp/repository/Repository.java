@@ -152,13 +152,14 @@ public class Repository {
 	public void destroy(IdRef<?> id) {
 		namespace.set(id.getClazz());
 		try {
-			RepositoryHooks.beforeDestroy(this, id.fetch());
+			RepositoryHooks.beforeDestroy(this, id);
 			for (IdRef<?> child : id.children()) {
 				destroy(child);
 			}
 
 			datastore().delete(id.asKey());
 
+			RepositoryHooks.afterDestroy(this, id);
 		} finally {
 			namespace.reset();
 		}

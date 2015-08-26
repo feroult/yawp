@@ -12,7 +12,6 @@ public class AsyncRepository {
 		return r.saveAsync(object);
 	}
 
-
 	public <T> FutureObject<T> saveWithHooks(T object) {
 		return r.saveAsyncWithHooks(object);
 	}

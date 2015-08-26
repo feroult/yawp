@@ -82,6 +82,10 @@ public class EndpointFeatures<T> {
 		return actions.get(ref);
 	}
 
+	public Class<?> getActionClazz(ActionKey ref) {
+		return getAction(ref).getDeclaringClass();
+	}
+
 	public Method getTransformer(String name) {
 		return transformers.get(name);
 	}

@@ -95,9 +95,9 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 		IdRef<?> ref = null;
 		if (key.getName() != null) {
-			ref = IdRef.create(r, EntityUtils.getIdType(objectClass), key.getName());
+			ref = IdRef.create(r, objectClass, key.getName());
 		} else {
-			ref = IdRef.create(r, EntityUtils.getIdType(objectClass), key.getId());
+			ref = IdRef.create(r, objectClass, key.getId());
 		}
 		ref.parentId = fromKey(r, key.getParent());
 		return ref;
@@ -309,7 +309,14 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	@Override
 	public int compareTo(IdRef<T> o) {
-		return id.compareTo(o.asLong());
+		if (id != null && o.id != null) {
+			return id.compareTo(o.id);
+		}
+		return idOrNameAsString().compareTo(o.idOrNameAsString());
+	}
+
+	private String idOrNameAsString() {
+		return id != null ? String.valueOf(id) : name;
 	}
 
 	@Override

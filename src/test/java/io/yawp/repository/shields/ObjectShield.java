@@ -20,7 +20,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	public void always() {
 		allow(isJim());
 		allow(isAmy()).facade(AmyFacade.class);
-		allow(isNat()).action(ShieldedObjectAction.class);
+		allow(isNat() && isAction(ShieldedObjectAction.class));
 	}
 
 	@Override

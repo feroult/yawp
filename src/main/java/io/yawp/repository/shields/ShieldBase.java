@@ -87,14 +87,8 @@ public abstract class ShieldBase<T> extends Feature {
 		return facade(null);
 	}
 
-	public ShieldBase<T> action(Class<?>... actionClazzes) {
-		if (!lastAllow) {
-			return this;
-		}
-
-		this.allow = isActionRoute() && Arrays.asList(actionClazzes).contains(currentActionClazz());
-		this.lastAllow = allow;
-		return this;
+	protected final boolean isAction(Class<?>... actionClazzes) {
+		return isActionRoute() && Arrays.asList(actionClazzes).contains(currentActionClazz());
 	}
 
 	private boolean isActionRoute() {

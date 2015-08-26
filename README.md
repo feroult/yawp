@@ -263,40 +263,6 @@ You can define 3 Hook types for your application:
  * **beforeSave**: called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;
  * **afterSave**: called after an object is saved. It can be used to trigger actions or log events.
 
- ## Installation
-
- #### Maven Archetype
-
- ```bash
- mvn archetype:generate \
-   -DarchetypeGroupId=io.yawp \
-   -DarchetypeArtifactId=yawp \
-   -DarchetypeVersion=1.0 \
-   -DgroupId=<your groupId> \
-   -DartifactId=<your artifactId> \
-   -Dversion=<your version>
- ```
-
- From the generated app folder run:
-
- ```
- mvn appengine:devserver
- ```
-
- Point your browser to [http://localhost:8080/test/all.html](http://localhost:8080/test/all.html) to run the default test suite.
-
- #### Maven Dependency
-
- If you prefer to configure it manually, use this maven dependency:
-
- ```xml
- <dependency>
-    <groupId>io.yawp</groupId>
-    <artifactId>yawp</artifactId>
- </dependency>
- ```
- Then configure the other App Engine's stuff. You can get inspiration from this [guide](https://cloud.google.com/appengine/docs/java/gettingstarted/creating).
-
 ## Testing
 
 ### Fixtures
@@ -328,6 +294,39 @@ t.asyncTest("transformer", function(assert) {
     });
 });
 ```
+## Installation
+
+#### Maven Archetype
+
+```bash
+mvn archetype:generate \
+  -DarchetypeGroupId=io.yawp \
+  -DarchetypeArtifactId=yawp \
+  -DarchetypeVersion=1.0 \
+  -DgroupId=<your groupId> \
+  -DartifactId=<your artifactId> \
+  -Dversion=<your version>
+```
+
+From the generated app folder run:
+
+```
+mvn appengine:devserver
+```
+
+Point your browser to [http://localhost:8080/test/all.html](http://localhost:8080/test/all.html) to run the default test suite.
+
+#### Maven Dependency
+
+If you prefer to configure it manually, use this maven dependency:
+
+```xml
+<dependency>
+   <groupId>io.yawp</groupId>
+   <artifactId>yawp</artifactId>
+</dependency>
+```
+Then configure the other App Engine's stuff. You can get inspiration from this [guide](https://cloud.google.com/appengine/docs/java/gettingstarted/creating).
 
 ## Credits
 

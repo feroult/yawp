@@ -102,4 +102,11 @@ public class ParentRestActionTest extends ParentServletTestCase {
 		Parent object = from(json, Parent.class);
 		assertEquals("xpto", object.getName());
 	}
+
+	@Test
+	public void testInvalidEndpointPath() {
+		assertGetWithStatus("/parentz", 404);
+		assertGetWithStatus("/parentz/123", 404);
+		assertGetWithStatus("/parents/123/childz", 404);
+	}
 }

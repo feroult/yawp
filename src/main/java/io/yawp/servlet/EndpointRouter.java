@@ -6,6 +6,7 @@ import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.NoSuchEndpointPathException;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
@@ -49,7 +50,11 @@ public class EndpointRouter {
 		this.params = params;
 		this.features = r.getFeatures();
 
-		parseAll();
+		try {
+			parseAll();
+		} catch (NoSuchEndpointPathException e) {
+			throw new HttpException(404);
+		}
 	}
 
 	public static EndpointRouter parse(Repository r, HttpVerb verb, String uri, String requestJson, Map<String, String> params) {

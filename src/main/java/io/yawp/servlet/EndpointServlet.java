@@ -4,6 +4,7 @@ import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.JsonResponse;
+import io.yawp.commons.http.StatusObject;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
@@ -65,7 +66,7 @@ public class EndpointServlet extends HttpServlet {
 
 	protected void response(HttpServletResponse resp, HttpResponse httpResponse) throws IOException {
 		if (httpResponse == null) {
-			new JsonResponse("{\"status\":\"ok\"}").execute(resp);
+			new JsonResponse(StatusObject.success().toString()).execute(resp);
 		} else {
 			httpResponse.execute(resp);
 		}

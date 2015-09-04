@@ -26,6 +26,10 @@ public class StatusObject {
 		return new StatusObject(Status.SUCCESS, message);
 	}
 
+	public static StatusObject success() {
+		return new StatusObject(Status.SUCCESS, null);
+	}
+
 	public static StatusObject fail(String message) {
 		return new StatusObject(Status.FAIL, message);
 	}

@@ -31,7 +31,7 @@ public class ErrorResponse extends HttpResponse {
 	public void execute(HttpServletResponse resp) throws IOException {
 		resp.setStatus(httpStatus);
 		if (text != null) {
-			resp.getWriter().write(text);
+			resp.getWriter().write(StatusObject.error(text).toJson());
 		}
 	}
 

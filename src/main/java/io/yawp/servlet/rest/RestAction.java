@@ -1,5 +1,6 @@
 package io.yawp.servlet.rest;
 
+import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.JsonResponse;
@@ -13,7 +14,6 @@ import io.yawp.repository.query.DatastoreQuery;
 import io.yawp.repository.shields.Shield;
 import io.yawp.repository.shields.ShieldInfo;
 import io.yawp.repository.transformers.RepositoryTransformers;
-import io.yawp.servlet.HttpException;
 
 import java.util.List;
 import java.util.Map;

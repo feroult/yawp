@@ -1,12 +1,13 @@
 package io.yawp.servlet;
 
+import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.EndpointFeatures;
+import io.yawp.repository.EndpointNotFoundException;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.NoSuchEndpointPathException;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
@@ -52,8 +53,8 @@ public class EndpointRouter {
 
 		try {
 			parseAll();
-		} catch (NoSuchEndpointPathException e) {
-			throw new HttpException(404);
+		} catch (EndpointNotFoundException e) {
+			throw new HttpException(404, "Endpoint not found: " + e.getEndpointPath());
 		}
 	}
 

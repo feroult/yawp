@@ -69,7 +69,7 @@ public class RepositoryFeatures {
 	public EndpointFeatures<?> get(String endpointPath) {
 		Class<?> clazz = paths.get(endpointPath);
 		if (clazz == null) {
-			throw new NoSuchEndpointPathException();
+			throw new EndpointNotFoundException(endpointPath);
 		}
 		return get(clazz);
 	}

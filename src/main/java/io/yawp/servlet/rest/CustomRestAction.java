@@ -1,6 +1,6 @@
 package io.yawp.servlet.rest;
 
-import io.yawp.servlet.HttpException;
+import io.yawp.commons.http.HttpException;
 
 public class CustomRestAction extends RestAction {
 

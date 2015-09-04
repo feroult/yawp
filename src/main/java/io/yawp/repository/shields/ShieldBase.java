@@ -1,5 +1,6 @@
 package io.yawp.repository.shields;
 
+import io.yawp.commons.http.HttpException;
 import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.FacadeUtils;
 import io.yawp.repository.Feature;
@@ -7,7 +8,6 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;
-import io.yawp.servlet.HttpException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -160,13 +160,13 @@ public abstract class ShieldBase<T> extends Feature {
 
 	private void throwNotFoundIfNotAllowed() {
 		if (!allow) {
-			throw new HttpException(404);
+			throw new HttpException(404, "The resquest was not allowed by the endpoint shield " + getClass().getName());
 		}
 	}
 
 	private void throwForbiddenIfNotAllowed() {
 		if (!allow) {
-			throw new HttpException(403);
+			throw new HttpException(403, "The resquest was not allowed by the endpoint shield " + getClass().getName());
 		}
 	}
 

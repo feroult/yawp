@@ -1,4 +1,6 @@
-package io.yawp.servlet;
+package io.yawp.commons.http;
+
+import io.yawp.commons.utils.Environment;
 
 import com.google.gson.JsonElement;
 
@@ -6,8 +8,9 @@ public class HttpException extends RuntimeException {
 
 	private static final long serialVersionUID = -1369195874459839005L;
 
-	private String text;
 	private int httpStatus;
+
+	private String text;
 
 	public HttpException(int httpStatus, String text) {
 		this.httpStatus = httpStatus;
@@ -28,6 +31,14 @@ public class HttpException extends RuntimeException {
 
 	public String getText() {
 		return text;
+	}
+
+	public HttpResponse createErrorResponse() {
+		if (getHttpStatus() == 404 && Environment.isProduction()) {
+			return new ErrorResponse(getHttpStatus(), "Not Found");
+		}
+
+		return new ErrorResponse(getHttpStatus(), getText());
 	}
 
 	@Override

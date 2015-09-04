@@ -104,7 +104,7 @@ public class ParentRestActionTest extends ParentServletTestCase {
 	}
 
 	@Test
-	public void testInvalidEndpointPath() {
+	public void testEndpointPathNotFound() {
 		assertGetWithStatus("/parentz", 404);
 		assertGetWithStatus("/parentz/123", 404);
 		assertGetWithStatus("/parents/123/childz", 404);

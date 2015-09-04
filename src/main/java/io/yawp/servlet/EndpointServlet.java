@@ -1,6 +1,6 @@
 package io.yawp.servlet;
 
-import io.yawp.commons.http.ErrorResponse;
+import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.JsonResponse;
@@ -77,7 +77,7 @@ public class EndpointServlet extends HttpServlet {
 		try {
 			httpResponse = execute(req.getMethod(), getUri(req), JsonUtils.readJson(req.getReader()), makeParams(req));
 		} catch (HttpException e) {
-			httpResponse = new ErrorResponse(e.getHttpStatus(), e.getText());
+			httpResponse = e.createErrorResponse();
 		}
 
 		if (enableCrossDomain) {

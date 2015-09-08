@@ -1,7 +1,7 @@
 package io.yawp.repository.actions;
 
 import io.yawp.commons.http.HttpVerb;
-import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.ObjectModel;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
 
@@ -121,8 +121,8 @@ public class ActionKey {
 		Type[] genericTypes = method.getGenericParameterTypes();
 		Type[] types = method.getParameterTypes();
 
-		Class<?> objectClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
-		Class<?> parentClazz = EntityUtils.getParentClazz(objectClazz);
+		ObjectModel model = getObjectModel(method);
+		Class<?> parentClazz = model.getParentClazz();
 
 		if (types.length == 1 && types[0].equals(IdRef.class) && getParameterType(genericTypes, 0).equals(parentClazz)) {
 			return true;
@@ -134,6 +134,12 @@ public class ActionKey {
 		}
 
 		return false;
+	}
+
+	private static ObjectModel getObjectModel(Method method) {
+		Class<?> objectClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
+		ObjectModel model = new ObjectModel(objectClazz);
+		return model;
 	}
 
 	private static boolean singleObject(Method method) {

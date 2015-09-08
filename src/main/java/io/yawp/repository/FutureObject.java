@@ -1,6 +1,6 @@
 package io.yawp.repository;
 
-import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.repository.hooks.RepositoryHooks;
 
 import java.util.concurrent.ExecutionException;
@@ -16,20 +16,21 @@ public class FutureObject<T> {
 
 	private T object;
 
+	private ObjectHolder objectH;
+
 	private boolean enableHooks;
 
 	public FutureObject(Repository r, Future<Key> futureKey, T object, boolean enableHooks) {
 		this.r = r;
 		this.futureKey = futureKey;
 		this.object = object;
+		this.objectH = new ObjectHolder(object);
 		this.enableHooks = enableHooks;
 	}
 
 	public T get() {
 		try {
-
-			Key key = futureKey.get();
-			EntityUtils.setKey(r, object, key);
+			objectH.setId(IdRef.fromKey(r, futureKey.get()));
 
 			if (enableHooks) {
 				RepositoryHooks.afterSave(r, object);

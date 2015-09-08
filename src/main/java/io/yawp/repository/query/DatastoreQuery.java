@@ -1,6 +1,7 @@
 package io.yawp.repository.query;
 
 import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.ObjectModel;
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
@@ -27,6 +28,8 @@ public class DatastoreQuery<T> {
 
 	private Class<T> clazz;
 
+	private ObjectModel model;
+
 	private Repository r;
 
 	private Key parentKey;
@@ -48,6 +51,7 @@ public class DatastoreQuery<T> {
 	private DatastoreQuery(Class<T> clazz, Repository r) {
 		this.clazz = clazz;
 		this.r = r;
+		this.model = new ObjectModel(clazz);
 	}
 
 	public <N> DatastoreQueryTransformer<T, N> transform(String transformName) {
@@ -364,7 +368,7 @@ public class DatastoreQuery<T> {
 	}
 
 	public DatastoreQuery<T> whereById(String operator, IdRef<?> id) {
-		return from(id.getParentId()).where(EntityUtils.getIdFieldName(clazz), operator, id);
+		return from(id.getParentId()).where(model.getIdField().getName(), operator, id);
 	}
 
 	public T fetch(IdRef<?> idRef) {

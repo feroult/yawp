@@ -1,6 +1,7 @@
 package io.yawp.repository;
 
 import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
@@ -154,12 +155,7 @@ public class Repository {
 		namespace.set(id.getClazz());
 		try {
 			RepositoryHooks.beforeDestroy(this, id);
-			for (IdRef<?> child : id.children()) {
-				destroy(child);
-			}
-
 			datastore().delete(id.asKey());
-
 			RepositoryHooks.afterDestroy(this, id);
 		} finally {
 			namespace.reset();
@@ -168,7 +164,8 @@ public class Repository {
 
 	private void saveEntity(Object object, Entity entity) {
 		Key key = datastore().put(entity);
-		EntityUtils.setKey(this, object, key);
+		ObjectHolder objectH = new ObjectHolder(object);
+		objectH.setId(IdRef.fromKey(this, key));
 	}
 
 	private <T> FutureObject<T> saveEntityAsync(T object, Entity entity, boolean enableHooks) {
@@ -177,21 +174,24 @@ public class Repository {
 	}
 
 	private Entity createEntity(Object object) {
-		Key key = EntityUtils.getKey(object);
+		ObjectHolder objectH = new ObjectHolder(object);
+		IdRef<?> id = objectH.getId();
 
-		if (key == null) {
+		if (id == null) {
 			return createEntityWithNewKey(object);
 		}
 
-		return new Entity(key);
+		return new Entity(id.asKey());
 	}
 
 	private Entity createEntityWithNewKey(Object object) {
-		Key parentKey = EntityUtils.getParentKey(object);
-		if (parentKey == null) {
+		ObjectHolder objectH = new ObjectHolder(object);
+		IdRef<?> parentId = objectH.getParentId();
+
+		if (parentId == null) {
 			return new Entity(KindResolver.getKindFromClass(object.getClass()));
 		}
-		return new Entity(KindResolver.getKindFromClass(object.getClass()), parentKey);
+		return new Entity(KindResolver.getKindFromClass(object.getClass()), parentId.asKey());
 	}
 
 	@SuppressWarnings("unchecked")

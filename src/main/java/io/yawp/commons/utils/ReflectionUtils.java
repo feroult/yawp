@@ -1,33 +1,14 @@
 package io.yawp.commons.utils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public final class ReflectionUtils {
-
-	private ReflectionUtils() {
-		throw new RuntimeException("Should not be instanciated");
-	}
-
-	public static List<Class<?>> getAllInterfaces(Class<?> clazz) {
-		List<Class<?>> interfaces = new ArrayList<>();
-
-		while (clazz != null) {
-			interfaces.addAll(Arrays.asList(clazz.getInterfaces()));
-			clazz = clazz.getSuperclass();
-		}
-
-		return interfaces;
-	}
-
-	public static boolean isInnerClass(Class<?> clazz) {
-		return clazz.getEnclosingClass() != null && !Modifier.isStatic(clazz.getModifiers());
-	}
 
 	public static List<Field> getImmediateFields(Class<?> clazz) {
 		List<Field> finalFields = new ArrayList<>();
@@ -102,6 +83,22 @@ public final class ReflectionUtils {
 			return clazzes;
 		}
 		return new Class<?>[] {};
+	}
+
+	public static Field getFieldWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
+		Field theField = null;
+		for (Field field : ReflectionUtils.getFieldsRecursively(clazz)) {
+			if (field.isAnnotationPresent(annotationClass)) {
+				if (theField != null) {
+					throw new RuntimeException("You can have at most one field annotated with the " + annotationClass.getSimpleName()
+							+ " class.");
+				}
+				theField = field;
+				theField.setAccessible(true);
+			}
+		}
+
+		return theField;
 	}
 
 }

@@ -5,6 +5,7 @@ import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.JsonUtils;
+import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.EndpointNotFoundException;
 import io.yawp.repository.IdRef;
@@ -286,19 +287,21 @@ public class EndpointRouter {
 		if (EntityUtils.getParentClazz(endpointClazz) == null) {
 			return null;
 		}
+		// check if objectH can be created right from the routing start
+		ObjectHolder objectH = new ObjectHolder(object);
 
-		IdRef<?> parentId = EntityUtils.getParentId(object);
+		IdRef<?> parentId = objectH.getParentId();
 		if (parentId != null) {
 			return parentId;
 		}
 
 		if (idInObject != null) {
-			EntityUtils.setParentId(object, idInObject.getParentId());
+			objectH.setParentId(idInObject.getParentId());
 			return idInObject.getParentId();
 		}
 
 		if (id != null) {
-			EntityUtils.setParentId(object, id);
+			objectH.setParentId(id);
 			return id;
 		}
 
@@ -306,14 +309,15 @@ public class EndpointRouter {
 	}
 
 	private IdRef<?> forceIdInObjectIfNecessary(Object object) {
-		IdRef<?> idInObject = EntityUtils.getId(object);
+		ObjectHolder objectH = new ObjectHolder(object);
+		IdRef<?> idInObject = objectH.getId();
 
 		if (idInObject != null) {
 			return idInObject;
 		}
 
 		if (id != null && id.getClazz().equals(endpointClazz)) {
-			EntityUtils.setId(object, id);
+			objectH.setId(id);
 			return id;
 		}
 

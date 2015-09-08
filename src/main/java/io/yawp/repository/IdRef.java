@@ -2,6 +2,7 @@ package io.yawp.repository;
 
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.ObjectModel;
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.DatastoreQuery;
@@ -18,6 +19,8 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	private Class<T> clazz;
 
+	private ObjectModel model;
+
 	private Long id;
 
 	private String name;
@@ -28,12 +31,14 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		this.r = r;
 		this.clazz = clazz;
 		this.id = id;
+		this.model = new ObjectModel(clazz);
 	}
 
 	public IdRef(Repository r, Class<T> clazz, String name) {
 		this.r = r;
 		this.clazz = clazz;
 		this.name = name;
+		this.model = new ObjectModel(clazz);
 	}
 
 	public void setParentId(IdRef<?> parentId) {
@@ -72,6 +77,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	public Class<T> getClazz() {
 		return clazz;
+	}
+
+	public Class<?> getParentClazz() {
+		return model.getParentClazz();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -233,14 +242,6 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	public void delete() {
 		r.destroy(this);
-	}
-
-	public List<IdRef<?>> children() {
-		List<IdRef<?>> ids = new ArrayList<>();
-		for (EndpointFeatures<?> childEndpoint : r.getFeatures().getChildren(clazz)) {
-			ids.addAll(r.query(childEndpoint.getClazz()).from(this).ids());
-		}
-		return ids;
 	}
 
 	public Object getSimpleValue() {

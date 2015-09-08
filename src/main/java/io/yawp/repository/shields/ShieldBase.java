@@ -1,8 +1,8 @@
 package io.yawp.repository.shields;
 
 import io.yawp.commons.http.HttpException;
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.FacadeUtils;
+import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.actions.ActionKey;
@@ -177,7 +177,8 @@ public abstract class ShieldBase<T> extends Feature {
 		}
 
 		for (T object : objects) {
-			IdRef<T> existingObjectId = (IdRef<T>) EntityUtils.getId(object);
+			ObjectHolder objectH = new ObjectHolder(object);
+			IdRef<T> existingObjectId = (IdRef<T>) objectH.getId();
 
 			if (existingObjectId == null) {
 				FacadeUtils.set(object, facade);

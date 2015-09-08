@@ -1,6 +1,7 @@
 package io.yawp.repository.query.condition;
 
 import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.ObjectModel;
 import io.yawp.repository.Repository;
 
 import java.util.Collection;
@@ -14,6 +15,8 @@ public class SimpleCondition extends BaseCondition {
 	private Repository r;
 
 	private Class<?> clazz;
+
+	private ObjectModel model;
 
 	private String field;
 
@@ -35,6 +38,7 @@ public class SimpleCondition extends BaseCondition {
 	public void init(Repository r, Class<?> clazz) {
 		this.r = r;
 		this.clazz = clazz;
+		this.model = new ObjectModel(clazz);
 		normalizeIdRefs();
 	}
 
@@ -55,7 +59,7 @@ public class SimpleCondition extends BaseCondition {
 	}
 
 	public boolean isIdField() {
-		return field.equals(EntityUtils.getIdFieldName(clazz));
+		return field.equals(model.getIdField().getName());
 	}
 
 	@Override

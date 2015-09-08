@@ -1,5 +1,6 @@
 package io.yawp.repository.query.condition;
 
+import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
@@ -14,6 +15,8 @@ public class ConditionReference {
 
 	private Object object;
 
+	private ObjectHolder objectH;
+
 	private Class<?> clazz;
 
 	private String refString;
@@ -22,6 +25,7 @@ public class ConditionReference {
 		this.refString = refString;
 		this.clazz = clazz;
 		this.object = object;
+		this.objectH = new ObjectHolder(object);
 
 		this.split = refString.split("->");
 		this.current = 0;
@@ -76,7 +80,7 @@ public class ConditionReference {
 			return object;
 		}
 
-		IdRef<?> parentId = EntityUtils.getParentId(object);
+		IdRef<?> parentId = objectH.getParentId();
 		nextRef();
 
 		while (isParentRef()) {

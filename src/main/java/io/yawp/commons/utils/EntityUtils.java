@@ -38,7 +38,6 @@ public class EntityUtils {
 
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
 
-
 	public static void toEntity(Object object, Entity entity) {
 		List<Field> fields = ReflectionUtils.getFieldsRecursively(object.getClass());
 
@@ -51,61 +50,13 @@ public class EntityUtils {
 		}
 	}
 
-	public static void setParentId(Object object, IdRef<?> parentId) {
-		Field parentIdField = getAnnotatedParentFromClass(object.getClass());
-		if (parentIdField == null) {
-			if (parentId != null) {
-				throw new RuntimeException("Trying to set parentId " + parentId + " to class " + object.getClass().getSimpleName()
-						+ ", but it doesn't seem to have a @Parent field.");
-			}
-			return;
-		}
-
-		try {
-			parentIdField.set(object, parentId);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static void setId(Object object, IdRef<?> id) {
-		Field idField = getAnnotatedIdFromClass(object.getClass());
-		try {
-			idField.set(object, id);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-		// setParentId(object, id.getParentId());
-	}
-
-	public static IdRef<?> getParentId(Object object) {
-		Field parentField = EntityUtils.getAnnotatedParentFromClass(object.getClass());
-		if (parentField == null) {
-			return null;
-		}
-
-		try {
-			return (IdRef<?>) parentField.get(object);
-
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static Key getParentKey(Object object) {
-		IdRef<?> parentIdRef = getParentId(object);
-		if (parentIdRef == null) {
-			return null;
-		}
-		return parentIdRef.asKey();
-	}
-
 	public static <T> T toObject(Repository r, Entity entity, Class<T> clazz) {
 		try {
-			Constructor<T> defaultConstructor = clazz.getDeclaredConstructor(new Class<?>[] {});
-			defaultConstructor.setAccessible(true);
-			T object = defaultConstructor.newInstance();
-			setKey(r, object, entity.getKey());
+			T object = createObjectInstance(clazz);
+
+			ObjectHolder objectH = new ObjectHolder(object);
+			objectH.setId(IdRef.fromKey(r, entity.getKey()));
+
 			List<Field> fields = ReflectionUtils.getFieldsRecursively(clazz);
 
 			for (Field field : fields) {
@@ -131,55 +82,12 @@ public class EntityUtils {
 		}
 	}
 
-	public static <T> void setKey(Repository r, T object, Key key) {
-		try {
-			Field idField = getIdField(object.getClass());
-			idField.set(object, IdRef.fromKey(r, key));
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static Key getKey(Object object) {
-		IdRef<?> idRef = getId(object);
-		if (idRef == null) {
-			return null;
-		}
-		return idRef.asKey();
-
-	}
-
-	public static IdRef<?> getId(Object object) {
-		Field field = getIdField(object.getClass());
-
-		if (!isIdRef(field)) {
-			throw new RuntimeException("@Id must be " + IdRef.class.getSimpleName());
-		}
-
-		try {
-
-			IdRef<?> id = (IdRef<?>) field.get(object);
-			return id;
-
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static String getIdFieldName(Class<?> clazz) {
-		return getIdField(clazz).getName();
-	}
-
-	private static Field getIdField(Class<?> clazz) {
-		Field field = getAnnotatedIdFromClass(clazz);
-		if (field == null) {
-			throw new RuntimeException("No @Id annotated field found in class " + clazz.getSimpleName());
-		}
-		return field;
-	}
-
-	private static Field getAnnotatedIdFromClass(Class<?> clazz) {
-		return getFieldWithAnnotation(clazz, Id.class);
+	private static <T> T createObjectInstance(Class<T> clazz) throws NoSuchMethodException, InstantiationException, IllegalAccessException,
+			InvocationTargetException {
+		Constructor<T> defaultConstructor = clazz.getDeclaredConstructor(new Class<?>[] {});
+		defaultConstructor.setAccessible(true);
+		T object = defaultConstructor.newInstance();
+		return object;
 	}
 
 	public static Field getAnnotatedParentFromClass(Class<?> clazz) {
@@ -200,11 +108,6 @@ public class EntityUtils {
 		}
 
 		return theField;
-	}
-
-	public static Object getIdSimpleValue(Object object) {
-		IdRef<?> idRef = getId(object);
-		return idRef.getSimpleValue();
 	}
 
 	public static Class<?> getListType(Field field) {

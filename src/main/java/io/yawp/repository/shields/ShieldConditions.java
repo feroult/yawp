@@ -1,7 +1,7 @@
 package io.yawp.repository.shields;
 
 import static io.yawp.repository.query.condition.Condition.and;
-import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.condition.BaseCondition;
@@ -100,7 +100,8 @@ public class ShieldConditions {
 	private class EvaluateExisting implements Evaluate {
 		@Override
 		public boolean evaluate(Object object) {
-			IdRef<?> id = EntityUtils.getId(object);
+			ObjectHolder objectH = new ObjectHolder(object);
+			IdRef<?> id = objectH.getId();
 			if (id == null) {
 				return true;
 			}

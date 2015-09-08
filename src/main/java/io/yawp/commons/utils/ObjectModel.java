@@ -27,11 +27,12 @@ public class ObjectModel {
 	}
 
 	public Class<?> getParentClazz() {
-		Field field = getParentField();
-		if (field == null) {
+		Field parentField = getParentField();
+		if (parentField == null) {
 			return null;
 		}
-		return (Class<?>) ReflectionUtils.getGenericParameter(clazz);
+		return (Class<?>) ReflectionUtils.getGenericParameter(parentField);
 	}
+
 
 }

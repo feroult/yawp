@@ -1,8 +1,6 @@
 package io.yawp.commons.utils;
 
 import io.yawp.commons.http.HttpVerb;
-import io.yawp.commons.utils.kind.DefaultKindResolver;
-import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.actions.Action;
@@ -10,8 +8,6 @@ import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
 import io.yawp.repository.annotations.ParentId;
-import io.yawp.repository.hooks.Hook;
-import io.yawp.repository.shields.Shield;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -40,47 +36,8 @@ import com.google.appengine.api.datastore.Text;
 // TODO make it not static and repository aware and smaller, very, very smaller
 public class EntityUtils {
 
-	private static final String KINDRESOLVER_SETTING_KEY = "yawp.kindresolver";
-
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
 
-	private static KindResolver kindResolver;
-
-	static {
-		loadKindResolver();
-	}
-
-	private static void loadKindResolver() {
-		String kindResolverClazzName = System.getProperty(KINDRESOLVER_SETTING_KEY);
-		if (kindResolverClazzName == null) {
-			kindResolver = new DefaultKindResolver();
-			return;
-		}
-		try {
-			kindResolver = (KindResolver) Class.forName(kindResolverClazzName).newInstance();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-			throw new RuntimeException("Invalid kind resolver: " + kindResolverClazzName, e);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> Class<T> getHookObject(Class<? extends Hook<T>> hook) {
-		return (Class<T>) ReflectionUtils.getGenericParameter(hook);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> Class<T> getShieldObject(Class<? extends Shield<T>> hook) {
-		return (Class<T>) ReflectionUtils.getGenericParameter(hook);
-	}
-
-	public static String getKindFromClass(Class<?> clazz) {
-		return kindResolver.getKind(clazz);
-	}
-
-	public static Class<?> getClassFromKind(Repository r, String kind) {
-		String endpointPath = kindResolver.getPath(kind);
-		return r.getFeatures().get(endpointPath).getClazz();
-	}
 
 	public static void toEntity(Object object, Entity entity) {
 		List<Field> fields = ReflectionUtils.getFieldsRecursively(object.getClass());

@@ -1,6 +1,7 @@
 package io.yawp.repository;
 
 import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
@@ -188,9 +189,9 @@ public class Repository {
 	private Entity createEntityWithNewKey(Object object) {
 		Key parentKey = EntityUtils.getParentKey(object);
 		if (parentKey == null) {
-			return new Entity(EntityUtils.getKindFromClass(object.getClass()));
+			return new Entity(KindResolver.getKindFromClass(object.getClass()));
 		}
-		return new Entity(EntityUtils.getKindFromClass(object.getClass()), parentKey);
+		return new Entity(KindResolver.getKindFromClass(object.getClass()), parentKey);
 	}
 
 	@SuppressWarnings("unchecked")

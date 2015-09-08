@@ -1,6 +1,7 @@
 package io.yawp.repository.query;
 
 import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.condition.BaseCondition;
@@ -321,7 +322,7 @@ public class DatastoreQuery<T> {
 	}
 
 	private PreparedQuery prepareQuery(boolean keysOnly) throws FalsePredicateException {
-		Query q = new Query(EntityUtils.getKindFromClass(clazz));
+		Query q = new Query(KindResolver.getKindFromClass(clazz));
 
 		if (keysOnly) {
 			q.setKeysOnly();

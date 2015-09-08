@@ -2,6 +2,7 @@ package io.yawp.repository;
 
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.DatastoreQuery;
 
@@ -62,7 +63,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	public Key asKey() {
 		Key parent = parentId == null ? null : parentId.asKey();
-		String kind = EntityUtils.getKindFromClass(clazz);
+		String kind = KindResolver.getKindFromClass(clazz);
 		if (id == null) {
 			return KeyFactory.createKey(parent, kind, name);
 		}
@@ -91,7 +92,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		if (key == null) {
 			return null;
 		}
-		Class<?> objectClass = EntityUtils.getClassFromKind(r, key.getKind());
+		Class<?> objectClass = KindResolver.getClassFromKind(r, key.getKind());
 
 		IdRef<?> ref = null;
 		if (key.getName() != null) {

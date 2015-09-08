@@ -23,6 +23,10 @@ public class ObjectHolder {
 		this(object.getClass(), null, object);
 	}
 
+	public ObjectModel getModel() {
+		return model;
+	}
+
 	public void setId(IdRef<?> id) {
 		Field idField = model.getIdField();
 		try {

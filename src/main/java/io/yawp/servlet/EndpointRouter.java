@@ -3,7 +3,6 @@ package io.yawp.servlet;
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.repository.EndpointFeatures;
@@ -284,11 +283,12 @@ public class EndpointRouter {
 	}
 
 	private IdRef<?> forceParentIdInObjectIfNecessary(Object object, IdRef<?> idInObject) {
-		if (EntityUtils.getParentClazz(endpointClazz) == null) {
-			return null;
-		}
 		// check if objectH can be created right from the routing start
 		ObjectHolder objectH = new ObjectHolder(object);
+
+		if (objectH.getModel().getParentClazz() == null) {
+			return null;
+		}
 
 		IdRef<?> parentId = objectH.getParentId();
 		if (parentId != null) {

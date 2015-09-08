@@ -1,7 +1,6 @@
 package io.yawp.repository;
 
 import io.yawp.commons.http.HttpVerb;
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.ObjectModel;
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;

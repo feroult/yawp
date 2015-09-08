@@ -7,7 +7,6 @@ import io.yawp.repository.transformers.RepositoryTransformers;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO inherits from DatastoreQuery
 public class DatastoreQueryTransformer<F, T> {
 
 	private DatastoreQuery<F> query;

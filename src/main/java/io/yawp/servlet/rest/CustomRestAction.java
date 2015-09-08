@@ -28,7 +28,7 @@ public class CustomRestAction extends RestAction {
 			}
 
 		} else if (hasTransformer()) {
-			throw new HttpException(406);
+			throw new HttpException(406, "You cannot apply a transformer in a object that is not an Endpoint. Your action does not return an instance of endpoint, therefore you can't apply a transformer to it.");
 		}
 
 		return object;

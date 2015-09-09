@@ -279,26 +279,13 @@ public class QueryBuilder<T> {
 
 	private List<T> executeQuery() {
 		try {
+
 			List<T> objects = r.driver().query().execute(this);
 			return postFilter(objects);
-
-			// return executeQueryInternal();
 
 		} catch (FalsePredicateException ex) {
 			return Collections.emptyList();
 		}
-	}
-
-	private List<T> executeQueryInternal() throws FalsePredicateException {
-		QueryResultList<Entity> queryResult = generateResults(false);
-
-		List<T> objects = new ArrayList<T>();
-
-		for (Entity entity : queryResult) {
-			objects.add(EntityUtils.toObject(r, entity, clazz));
-		}
-
-		return postFilter(objects);
 	}
 
 	private List<T> postFilter(List<T> objects) {

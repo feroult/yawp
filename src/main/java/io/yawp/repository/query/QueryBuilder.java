@@ -241,9 +241,8 @@ public class QueryBuilder<T> {
 
 	private List<T> executeQuery() {
 		try {
-			//List<T> objects = r.driver().query().execute(this);
-			//List<T> objects = r.driver().query(this).execute();
-			//return postFilter(objects);
+//			List<T> objects = r.driver().query().execute(this);
+//			return postFilter(objects);
 
 			 return executeQueryInternal();
 

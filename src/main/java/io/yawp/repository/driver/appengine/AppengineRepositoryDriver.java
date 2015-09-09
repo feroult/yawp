@@ -4,7 +4,6 @@ import io.yawp.repository.Repository;
 import io.yawp.repository.driver.api.PersistenceDriver;
 import io.yawp.repository.driver.api.QueryDriver;
 import io.yawp.repository.driver.api.RepositoryDriver;
-import io.yawp.repository.query.QueryBuilder;
 
 public class AppengineRepositoryDriver implements RepositoryDriver {
 
@@ -21,8 +20,8 @@ public class AppengineRepositoryDriver implements RepositoryDriver {
 	}
 
 	@Override
-	public QueryDriver query(QueryBuilder<?> builder) {
-		return new AppengineQueryDriver(builder);
+	public QueryDriver query() {
+		return new AppengineQueryDriver(r);
 	}
 
 }

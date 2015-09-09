@@ -9,6 +9,6 @@ public interface RepositoryDriver {
 
 	public PersistenceDriver persistence();
 
-	public QueryDriver query(QueryBuilder<?> builder);
+	public QueryDriver query();
 
 }

@@ -5,6 +5,8 @@ import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.ParentId;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectModel {
 
@@ -62,6 +64,18 @@ public class ObjectModel {
 		}
 
 		return ancestorNumber;
+	}
+
+	public List<FieldModel> getFieldModels() {
+		 List<Field> fields = ReflectionUtils.getFieldsRecursively(clazz);
+
+		 List<FieldModel> fieldModels = new ArrayList<FieldModel>();
+
+		 for(Field field : fields) {
+			 fieldModels.add(new FieldModel(field));
+		 }
+
+		return fieldModels;
 	}
 
 }

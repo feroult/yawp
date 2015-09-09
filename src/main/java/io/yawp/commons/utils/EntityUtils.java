@@ -35,14 +35,16 @@ public class EntityUtils {
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
 
 	public static void toEntity(Object object, Entity entity) {
-		List<Field> fields = ReflectionUtils.getFieldsRecursively(object.getClass());
+		ObjectHolder objectH = new ObjectHolder(object);
 
-		for (Field field : fields) {
-			if (isControl(field) || isSaveAsList(field)) {
+		List<FieldModel> fieldModels = objectH.getModel().getFieldModels();
+
+		for (FieldModel fieldModel : fieldModels) {
+			if (fieldModel.isControl() || fieldModel.isSaveAsList()) {
 				continue;
 			}
 
-			setEntityProperty(object, entity, field);
+			setEntityProperty(object, entity, fieldModel, fieldModel.getField());
 		}
 	}
 
@@ -161,10 +163,10 @@ public class EntityUtils {
 		return idRef.asKey();
 	}
 
-	private static void setEntityProperty(Object object, Entity entity, Field field) {
+	private static void setEntityProperty(Object object, Entity entity, FieldModel fieldModel, Field field) {
 		Object value = getFieldValue(field, object);
 
-		if (!hasIndex(field)) {
+		if (!fieldModel.hasIndex()) {
 			entity.setUnindexedProperty(field.getName(), value);
 			return;
 		}

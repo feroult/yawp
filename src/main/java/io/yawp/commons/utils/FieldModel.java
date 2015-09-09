@@ -6,6 +6,8 @@ import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Date;
 
 class FieldModel {
 
@@ -40,20 +42,20 @@ class FieldModel {
 		return field.getAnnotation(Index.class) != null;
 	}
 
-	public boolean isString(Field field) {
-		return String.class.isAssignableFrom(field.getType());
-	}
-
 	public boolean isIndexNormalizable() {
 		if (!hasIndex()) {
 			throw new RuntimeException("You must add @Index annotation the the field '" + field.getName()
 					+ "' if you want to use it as a index in where statements.");
 		}
-		return getIndex().normalize() && isString(field);
+		return getIndex().normalize() && isString();
 	}
 
 	public boolean isEnum(Object value) {
 		return value != null && value.getClass().isEnum();
+	}
+
+	public boolean isCollection(Object value) {
+		return Collection.class.isInstance(value);
 	}
 
 	public boolean isEnum() {
@@ -74,6 +76,18 @@ class FieldModel {
 
 	private Index getIndex() {
 		return field.getAnnotation(Index.class);
+	}
+
+	public boolean isInt() {
+		return Integer.class.isAssignableFrom(field.getType()) || field.getType().getName().equals("int");
+	}
+
+	public boolean isDate() {
+		return Date.class.isAssignableFrom(field.getType());
+	}
+
+	private boolean isString() {
+		return String.class.isAssignableFrom(field.getType());
 	}
 
 }

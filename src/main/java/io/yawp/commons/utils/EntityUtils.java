@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,8 +24,6 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Text;
 
-// TODO move to repository package
-// TODO make it not static and repository aware and smaller, very, very smaller
 public class EntityUtils {
 
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
@@ -46,24 +43,31 @@ public class EntityUtils {
 	}
 
 	public static <T> T toObject(Repository r, Entity entity, Class<T> clazz) {
-		try {
-			T object = createObjectInstance(clazz);
+		T object = createObjectInstance(clazz);
 
-			ObjectHolder objectH = new ObjectHolder(object);
-			objectH.setId(IdRef.fromKey(r, entity.getKey()));
+		ObjectHolder objectH = new ObjectHolder(object);
+		objectH.setId(IdRef.fromKey(r, entity.getKey()));
 
-			List<Field> fields = ReflectionUtils.getFieldsRecursively(clazz);
+		List<FieldModel> fieldModels = objectH.getModel().getFieldModels();
 
-			for (Field field : fields) {
-				field.setAccessible(true);
-				if (isControl(field) || isSaveAsList(field)) {
-					continue;
-				}
-
-				setObjectProperty(r, object, entity, field);
+		for (FieldModel fieldModel : fieldModels) {
+			if (fieldModel.isId()) {
+				continue;
 			}
 
-			return object;
+			safeSetObjectProperty(r, entity, object, fieldModel);
+		}
+
+		return object;
+	}
+
+	private static <T> T createObjectInstance(Class<T> clazz) {
+		try {
+
+			Constructor<T> defaultConstructor = clazz.getDeclaredConstructor(new Class<?>[] {});
+			defaultConstructor.setAccessible(true);
+			return defaultConstructor.newInstance();
+
 		} catch (InvocationTargetException e) {
 			throw new RuntimeException("An exception was thrown when calling the default constructor of the class " + clazz.getSimpleName()
 					+ ": ", e);
@@ -75,14 +79,6 @@ public class EntityUtils {
 		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
 			throw new RuntimeException("Unexpected error: ", e);
 		}
-	}
-
-	private static <T> T createObjectInstance(Class<T> clazz) throws NoSuchMethodException, InstantiationException, IllegalAccessException,
-			InvocationTargetException {
-		Constructor<T> defaultConstructor = clazz.getDeclaredConstructor(new Class<?>[] {});
-		defaultConstructor.setAccessible(true);
-		T object = defaultConstructor.newInstance();
-		return object;
 	}
 
 	public static <T> String getActualFieldName(String fieldName, Class<T> clazz) {
@@ -114,20 +110,21 @@ public class EntityUtils {
 
 	public static <T> Object getActualFieldValue(String fieldName, Class<T> clazz, Object value) {
 		Field field = ReflectionUtils.getFieldRecursively(clazz, fieldName);
+		FieldModel fieldModel = new FieldModel(field);
 
-		if (isCollection(value)) {
+		if (fieldModel.isCollection(value)) {
 			return getActualListFieldValue(fieldName, clazz, (Collection<?>) value);
 		}
 
-		if (isKey(field)) {
+		if (fieldModel.isId()) {
 			return getActualKeyFieldValue(clazz, value);
 		}
 
-		if (isEnum(value)) {
+		if (fieldModel.isEnum(value)) {
 			return value.toString();
 		}
 
-		if (isIndexNormalizable(field)) {
+		if (fieldModel.isIndexNormalizable()) {
 			return normalizeValue(value);
 		}
 
@@ -135,15 +132,11 @@ public class EntityUtils {
 			return ((IdRef<?>) value).getUri();
 		}
 
-		if (isDate(field) && value instanceof String) {
+		if (fieldModel.isDate() && value instanceof String) {
 			return DateUtils.toTimestamp((String) value);
 		}
 
 		return value;
-	}
-
-	private static boolean isCollection(Object value) {
-		return Collection.class.isInstance(value);
 	}
 
 	private static <T> Object getActualListFieldValue(String fieldName, Class<T> clazz, Collection<?> value) {
@@ -216,7 +209,16 @@ public class EntityUtils {
 		return value;
 	}
 
-	private static <T> void setObjectProperty(Repository r, T object, Entity entity, Field field) throws IllegalAccessException {
+	private static <T> void safeSetObjectProperty(Repository r, Entity entity, T object, FieldModel fieldModel) {
+		try {
+			setObjectProperty(r, object, entity, fieldModel, fieldModel.getField());
+		} catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static <T> void setObjectProperty(Repository r, T object, Entity entity, FieldModel fieldModel, Field field)
+			throws IllegalAccessException {
 		Object value = entity.getProperty(field.getName());
 
 		if (value == null) {
@@ -224,27 +226,27 @@ public class EntityUtils {
 			return;
 		}
 
-		if (isEnum(field)) {
+		if (fieldModel.isEnum()) {
 			setEnumProperty(object, field, value);
 			return;
 		}
 
-		if (isSaveAsJson(field)) {
+		if (fieldModel.isSaveAsJson()) {
 			setJsonProperty(r, object, field, value);
 			return;
 		}
 
-		if (isInt(field)) {
+		if (fieldModel.isInt()) {
 			setIntProperty(object, field, value);
 			return;
 		}
 
-		if (isIdRef(field)) {
+		if (fieldModel.isIdRef()) {
 			setIdRefProperty(r, object, field, value);
 			return;
 		}
 
-		if (isSaveAsText(field)) {
+		if (fieldModel.isSaveAsText()) {
 			setTextProperty(object, field, value);
 			return;
 		}
@@ -324,20 +326,8 @@ public class EntityUtils {
 		return getIndex(field).normalize() && isString(field);
 	}
 
-	private static boolean isControl(Field field) {
-		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class);
-	}
-
-	private static boolean isIdRef(Field field) {
-		return IdRef.class.isAssignableFrom(field.getType());
-	}
-
 	private static boolean isSaveAsJson(Field field) {
 		return field.getAnnotation(Json.class) != null;
-	}
-
-	private static boolean isSaveAsText(Field field) {
-		return field.getAnnotation(io.yawp.repository.annotations.Text.class) != null;
 	}
 
 	public static boolean isSaveAsList(Field field) {
@@ -350,22 +340,6 @@ public class EntityUtils {
 
 	private static boolean isString(Field field) {
 		return String.class.isAssignableFrom(field.getType());
-	}
-
-	private static boolean isDate(Field field) {
-		return Date.class.isAssignableFrom(field.getType());
-	}
-
-	private static boolean isEnum(Object value) {
-		return value != null && value.getClass().isEnum();
-	}
-
-	private static boolean isEnum(Field field) {
-		return field.getType().isEnum();
-	}
-
-	private static boolean isInt(Field field) {
-		return Integer.class.isAssignableFrom(field.getType()) || field.getType().getName().equals("int");
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

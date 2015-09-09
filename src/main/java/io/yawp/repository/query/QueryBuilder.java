@@ -26,8 +26,6 @@ public class QueryBuilder<T> {
 
 	private Repository r;
 
-	private Key parentKey;
-
 	private IdRef<?> parentId;
 
 	private BaseCondition condition;
@@ -90,19 +88,12 @@ public class QueryBuilder<T> {
 
 	public QueryBuilder<T> from(IdRef<?> parentId) {
 		if (parentId == null) {
-			parentKey = null;
 			this.parentId = null;
 			return this;
 		}
 
-		r.namespace().set(getClazz());
-		try {
-			parentKey = parentId.asKey();
-			this.parentId = parentId;
-			return this;
-		} finally {
-			r.namespace().reset();
-		}
+		this.parentId = parentId;
+		return this;
 	}
 
 	public QueryBuilder<T> order(String property) {

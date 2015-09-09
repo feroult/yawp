@@ -1,6 +1,5 @@
 package io.yawp.repository.query.condition;
 
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.FieldModel;
 import io.yawp.commons.utils.ObjectModel;
 import io.yawp.repository.IdRef;
@@ -9,9 +8,6 @@ import io.yawp.repository.Repository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 public class SimpleCondition extends BaseCondition {
 
@@ -81,18 +77,6 @@ public class SimpleCondition extends BaseCondition {
 
 	private boolean isRefField() {
 		return field.indexOf("->") != -1;
-	}
-
-	@Override
-	public Filter createPreFilter() throws FalsePredicateException {
-		String actualFieldName = EntityUtils.getActualFieldName(field, clazz);
-		Object actualValue = EntityUtils.getActualFieldValue(field, clazz, whereValue);
-
-		if (whereOperator == WhereOperator.IN && EntityUtils.listSize(whereValue) == 0) {
-			throw new FalsePredicateException();
-		}
-
-		return new FilterPredicate(actualFieldName, whereOperator.getFilterOperator(), actualValue);
 	}
 
 	@Override

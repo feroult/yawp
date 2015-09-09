@@ -2,12 +2,6 @@ package io.yawp.repository.query.condition;
 
 import io.yawp.repository.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
-import com.google.appengine.api.datastore.Query.Filter;
-
 public class JoinedCondition extends BaseCondition {
 
 	private LogicalOperator logicalOperator;
@@ -63,44 +57,6 @@ public class JoinedCondition extends BaseCondition {
 	@Override
 	public boolean hasPostFilter() {
 		return hasPostFilter;
-	}
-
-	@Override
-	public Filter createPreFilter() throws FalsePredicateException {
-		List<Filter> filters = new ArrayList<>();
-		for (int i = 0; i < conditions.length; i++) {
-			try {
-				BaseCondition condition = conditions[i];
-				if (!condition.hasPreFilter()) {
-					continue;
-				}
-
-				filters.add(condition.createPreFilter());
-			} catch (FalsePredicateException ex) {
-				if (logicalOperator == LogicalOperator.AND) {
-					throw ex;
-				}
-			}
-		}
-
-		if (filters.isEmpty()) {
-			throw new FalsePredicateException();
-		}
-
-		if (filters.size() == 1) {
-			return filters.get(0);
-		}
-
-		Filter[] filtersArray = filters.toArray(new Filter[filters.size()]);
-
-		if (logicalOperator == LogicalOperator.AND) {
-			return CompositeFilterOperator.and(filtersArray);
-		}
-		if (logicalOperator == LogicalOperator.OR) {
-			return CompositeFilterOperator.or(filtersArray);
-		}
-
-		return null;
 	}
 
 	@Override

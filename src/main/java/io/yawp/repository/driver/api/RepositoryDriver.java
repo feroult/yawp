@@ -1,6 +1,7 @@
 package io.yawp.repository.driver.api;
 
 import io.yawp.repository.Repository;
+import io.yawp.repository.query.QueryBuilder;
 
 public interface RepositoryDriver {
 
@@ -8,6 +9,6 @@ public interface RepositoryDriver {
 
 	public PersistenceDriver persistence();
 
-	public QueryDriver query();
+	public QueryDriver query(QueryBuilder<?> builder);
 
 }

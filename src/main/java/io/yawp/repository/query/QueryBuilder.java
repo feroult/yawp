@@ -24,7 +24,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.QueryResultList;
 
-public class DatastoreQuery<T> {
+public class QueryBuilder<T> {
 
 	private Class<T> clazz;
 
@@ -44,11 +44,11 @@ public class DatastoreQuery<T> {
 
 	private String cursor;
 
-	public static <T> DatastoreQuery<T> q(Class<T> clazz, Repository r) {
-		return new DatastoreQuery<T>(clazz, r);
+	public static <T> QueryBuilder<T> q(Class<T> clazz, Repository r) {
+		return new QueryBuilder<T>(clazz, r);
 	}
 
-	private DatastoreQuery(Class<T> clazz, Repository r) {
+	private QueryBuilder(Class<T> clazz, Repository r) {
 		this.clazz = clazz;
 		this.r = r;
 		this.model = new ObjectModel(clazz);
@@ -59,7 +59,7 @@ public class DatastoreQuery<T> {
 	}
 
 	@Deprecated
-	public DatastoreQuery<T> where(Object... values) {
+	public QueryBuilder<T> where(Object... values) {
 		if (values.length % 3 != 0) {
 			throw new RuntimeException("You must pass values 3 at a time.");
 		}
@@ -69,15 +69,15 @@ public class DatastoreQuery<T> {
 		return this;
 	}
 
-	public DatastoreQuery<T> and(String field, String operator, Object value) {
+	public QueryBuilder<T> and(String field, String operator, Object value) {
 		return where(field, operator, value);
 	}
 
-	public DatastoreQuery<T> where(String field, String operator, Object value) {
+	public QueryBuilder<T> where(String field, String operator, Object value) {
 		return where(Condition.c(field, operator, value));
 	}
 
-	public DatastoreQuery<T> where(BaseCondition c) {
+	public QueryBuilder<T> where(BaseCondition c) {
 		if (condition == null) {
 			condition = c;
 		} else {
@@ -88,11 +88,11 @@ public class DatastoreQuery<T> {
 		return this;
 	}
 
-	public DatastoreQuery<T> and(BaseCondition c) {
+	public QueryBuilder<T> and(BaseCondition c) {
 		return where(c);
 	}
 
-	public DatastoreQuery<T> from(IdRef<?> parentId) {
+	public QueryBuilder<T> from(IdRef<?> parentId) {
 		if (parentId == null) {
 			parentKey = null;
 			return this;
@@ -107,37 +107,37 @@ public class DatastoreQuery<T> {
 		}
 	}
 
-	public DatastoreQuery<T> order(String property) {
+	public QueryBuilder<T> order(String property) {
 		order(property, null);
 		return this;
 	}
 
-	public DatastoreQuery<T> order(String property, String direction) {
+	public QueryBuilder<T> order(String property, String direction) {
 		preOrders.add(new DatastoreQueryOrder(null, property, direction));
 		return this;
 	}
 
-	public DatastoreQuery<T> sort(String property) {
+	public QueryBuilder<T> sort(String property) {
 		sort(property, null);
 		return this;
 	}
 
-	public DatastoreQuery<T> sort(String property, String direction) {
+	public QueryBuilder<T> sort(String property, String direction) {
 		sort(null, property, direction);
 		return this;
 	}
 
-	public DatastoreQuery<T> sort(String entity, String property, String direction) {
+	public QueryBuilder<T> sort(String entity, String property, String direction) {
 		postOrders.add(new DatastoreQueryOrder(entity, property, direction));
 		return this;
 	}
 
-	public DatastoreQuery<T> limit(int limit) {
+	public QueryBuilder<T> limit(int limit) {
 		this.limit = limit;
 		return this;
 	}
 
-	public DatastoreQuery<T> cursor(String cursor) {
+	public QueryBuilder<T> cursor(String cursor) {
 		this.cursor = cursor;
 		return this;
 	}
@@ -150,7 +150,7 @@ public class DatastoreQuery<T> {
 		return this.r;
 	}
 
-	public DatastoreQuery<T> options(DatastoreQueryOptions options) {
+	public QueryBuilder<T> options(DatastoreQueryOptions options) {
 		if (options.getCondition() != null) {
 			where(options.getCondition());
 		}
@@ -241,11 +241,11 @@ public class DatastoreQuery<T> {
 
 	private List<T> executeQuery() {
 		try {
+			//List<T> objects = r.driver().query().execute(this);
+			//List<T> objects = r.driver().query(this).execute();
+			//return postFilter(objects);
 
-			//return r.driver().query().execute(this);
-
-
-			return executeQueryInternal();
+			 return executeQueryInternal();
 
 		} catch (FalsePredicateException ex) {
 			return Collections.emptyList();
@@ -375,7 +375,7 @@ public class DatastoreQuery<T> {
 		return clazz;
 	}
 
-	public DatastoreQuery<T> whereById(String operator, IdRef<?> id) {
+	public QueryBuilder<T> whereById(String operator, IdRef<?> id) {
 		return from(id.getParentId()).where(model.getIdField().getName(), operator, id);
 	}
 

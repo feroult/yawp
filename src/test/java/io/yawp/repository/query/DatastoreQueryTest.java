@@ -288,7 +288,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testCursor() {
 		saveManyBasicObjects(3);
 
-		DatastoreQuery<BasicObject> q = yawp(BasicObject.class).order("intValue", "desc").limit(1);
+		QueryBuilder<BasicObject> q = yawp(BasicObject.class).order("intValue", "desc").limit(1);
 
 		List<BasicObject> objects1 = q.list();
 		assertEquals(3, objects1.get(0).getIntValue());

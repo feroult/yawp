@@ -3,7 +3,7 @@ package io.yawp.repository.hooks;
 import io.yawp.commons.utils.ThrownExceptionsUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
-import io.yawp.repository.query.DatastoreQuery;
+import io.yawp.repository.query.QueryBuilder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,7 +18,7 @@ public class RepositoryHooks {
 		invokeHooks(r, object.getClass(), object, "afterSave");
 	}
 
-	public static <T> void beforeQuery(Repository r, DatastoreQuery<T> q, Class<T> clazz) {
+	public static <T> void beforeQuery(Repository r, QueryBuilder<T> q, Class<T> clazz) {
 		invokeHooks(r, clazz, q, "beforeQuery");
 	}
 

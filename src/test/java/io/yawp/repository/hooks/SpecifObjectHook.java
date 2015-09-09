@@ -3,7 +3,7 @@ package io.yawp.repository.hooks;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.HookedObject;
-import io.yawp.repository.query.DatastoreQuery;
+import io.yawp.repository.query.QueryBuilder;
 
 public class SpecifObjectHook extends Hook<HookedObject> {
 
@@ -24,7 +24,7 @@ public class SpecifObjectHook extends Hook<HookedObject> {
 	}
 
 	@Override
-	public void beforeQuery(DatastoreQuery<HookedObject> q) {
+	public void beforeQuery(QueryBuilder<HookedObject> q) {
 		q.where("stringValue", "=", "xpto1");
 	}
 

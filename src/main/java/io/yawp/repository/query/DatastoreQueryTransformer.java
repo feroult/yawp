@@ -9,11 +9,11 @@ import java.util.List;
 
 public class DatastoreQueryTransformer<F, T> {
 
-	private DatastoreQuery<F> query;
+	private QueryBuilder<F> query;
 
 	private String transformName;
 
-	public DatastoreQueryTransformer(DatastoreQuery<F> query, String transformName) {
+	public DatastoreQueryTransformer(QueryBuilder<F> query, String transformName) {
 		this.query = query;
 		this.transformName = transformName;
 	}

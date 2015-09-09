@@ -1,6 +1,6 @@
 package io.yawp.servlet.rest;
 
-import io.yawp.repository.query.DatastoreQuery;
+import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.DatastoreQueryOptions;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class IndexRestAction extends RestAction {
 
 	@Override
 	public List<?> action() {
-		DatastoreQuery<?> query = query();
+		QueryBuilder<?> query = query();
 
 		if (id != null) {
 			query.from(id);

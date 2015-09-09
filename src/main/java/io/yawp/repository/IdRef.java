@@ -4,7 +4,7 @@ import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.ObjectModel;
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;
-import io.yawp.repository.query.DatastoreQuery;
+import io.yawp.repository.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	}
 
 	public <TT> TT child(Class<TT> childClazz) {
-		DatastoreQuery<TT> q = r.query(childClazz).from(this);
+		QueryBuilder<TT> q = r.query(childClazz).from(this);
 		return q.only();
 	}
 

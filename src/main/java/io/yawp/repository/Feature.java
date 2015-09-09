@@ -1,6 +1,6 @@
 package io.yawp.repository;
 
-import io.yawp.repository.query.DatastoreQuery;
+import io.yawp.repository.query.QueryBuilder;
 
 public class Feature {
 
@@ -10,11 +10,11 @@ public class Feature {
 		this.yawp = yawp;
 	}
 
-	public <T> DatastoreQuery<T> yawp(Class<T> clazz) {
+	public <T> QueryBuilder<T> yawp(Class<T> clazz) {
 		return yawp.query(clazz);
 	}
 
-	public <T> DatastoreQuery<T> yawpWithHooks(Class<T> clazz) {
+	public <T> QueryBuilder<T> yawpWithHooks(Class<T> clazz) {
 		return yawp.queryWithHooks(clazz);
 	}
 

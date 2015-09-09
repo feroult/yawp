@@ -1,7 +1,7 @@
 package io.yawp.servlet.rest;
 
 import io.yawp.commons.http.HttpException;
-import io.yawp.repository.query.DatastoreQuery;
+import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.NoResultException;
 
 public class ShowRestAction extends RestAction {
@@ -17,7 +17,7 @@ public class ShowRestAction extends RestAction {
 
 	@Override
 	public Object action() {
-		DatastoreQuery<?> query = query();
+		QueryBuilder<?> query = query();
 
 		if (hasTransformer()) {
 			Object object = query.transform(getTransformerName()).fetch(id);

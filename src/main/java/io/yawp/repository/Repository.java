@@ -6,7 +6,7 @@ import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.driver.api.RepositoryDriver;
 import io.yawp.repository.driver.api.RepositoryDriverFactory;
 import io.yawp.repository.hooks.RepositoryHooks;
-import io.yawp.repository.query.DatastoreQuery;
+import io.yawp.repository.query.QueryBuilder;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -144,14 +144,14 @@ public class Repository {
 		}
 	}
 
-	public <T> DatastoreQuery<T> queryWithHooks(Class<T> clazz) {
-		DatastoreQuery<T> q = DatastoreQuery.q(clazz, this);
+	public <T> QueryBuilder<T> queryWithHooks(Class<T> clazz) {
+		QueryBuilder<T> q = QueryBuilder.q(clazz, this);
 		RepositoryHooks.beforeQuery(this, q, clazz);
 		return q;
 	}
 
-	public <T> DatastoreQuery<T> query(Class<T> clazz) {
-		return DatastoreQuery.q(clazz, this);
+	public <T> QueryBuilder<T> query(Class<T> clazz) {
+		return QueryBuilder.q(clazz, this);
 	}
 
 	public void destroy(IdRef<?> id) {

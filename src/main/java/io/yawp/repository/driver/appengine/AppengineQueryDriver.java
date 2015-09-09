@@ -288,7 +288,7 @@ public class AppengineQueryDriver implements QueryDriver {
 					continue;
 				}
 
-				filters.add(condition.createPreFilter());
+				filters.add(createFilter(builder, condition));
 			} catch (FalsePredicateException e) {
 				if (logicalOperator == LogicalOperator.AND) {
 					throw e;

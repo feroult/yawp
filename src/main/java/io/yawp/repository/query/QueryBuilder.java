@@ -2,7 +2,6 @@ package io.yawp.repository.query;
 
 import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.ObjectModel;
-import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.condition.BaseCondition;
@@ -18,8 +17,6 @@ import java.util.List;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
 
 public class QueryBuilder<T> {
 
@@ -326,44 +323,6 @@ public class QueryBuilder<T> {
 		});
 	}
 
-	private PreparedQuery prepareQuery(boolean keysOnly) throws FalsePredicateException {
-		Query q = new Query(KindResolver.getKindFromClass(clazz));
-
-		if (keysOnly) {
-			q.setKeysOnly();
-		}
-
-		prepareQueryAncestor(q);
-		prepareQueryWhere(q);
-		prepareQueryOrder(q);
-
-		return r.datastore().prepare(q);
-	}
-
-	private void prepareQueryOrder(Query q) {
-		if (preOrders.isEmpty()) {
-			return;
-		}
-
-		for (DatastoreQueryOrder order : preOrders) {
-			String string = EntityUtils.getActualFieldName(order.getProperty(), clazz);
-			q.addSort(string, order.getSortDirection());
-		}
-	}
-
-	private void prepareQueryWhere(Query q) throws FalsePredicateException {
-		if (condition != null && condition.hasPreFilter()) {
-			q.setFilter(condition.createPreFilter());
-		}
-	}
-
-	private void prepareQueryAncestor(Query q) {
-		if (parentKey == null) {
-			return;
-		}
-		q.setAncestor(parentKey);
-	}
-
 	protected Class<T> getClazz() {
 		return clazz;
 	}
@@ -398,26 +357,19 @@ public class QueryBuilder<T> {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private IdRef<T> extractIdRef(Entity entity) {
-		return (IdRef<T>) IdRef.fromKey(r, entity.getKey());
-	}
-
 	public IdRef<T> onlyId() throws NoResultException, MoreThanOneResultException {
-		r.namespace().set(getClazz());
-		try {
-			Entity e = prepareQuery(true).asSingleEntity();
-			if (e == null) {
-				throw new NoResultException();
-			}
-			return extractIdRef(e);
-		} catch (FalsePredicateException ex) {
+
+		List<IdRef<T>> ids = ids();
+
+		if (ids.size() == 0) {
 			throw new NoResultException();
-		} catch (PreparedQuery.TooManyResultsException ex) {
-			throw new MoreThanOneResultException();
-		} finally {
-			r.namespace().reset();
 		}
+
+		if (ids.size() > 1) {
+			throw new MoreThanOneResultException();
+		}
+
+		return ids.get(0);
 	}
 
 }

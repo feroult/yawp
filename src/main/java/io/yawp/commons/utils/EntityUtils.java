@@ -1,13 +1,9 @@
 package io.yawp.commons.utils;
 
-import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.Repository;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -17,50 +13,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.Text;
 
 public class EntityUtils {
 
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
-
-	public static <T> T toObject(Repository r, Entity entity, Class<T> clazz) {
-		T object = createObjectInstance(clazz);
-
-		ObjectHolder objectH = new ObjectHolder(object);
-		objectH.setId(IdRef.fromKey(r, entity.getKey()));
-
-		List<FieldModel> fieldModels = objectH.getModel().getFieldModels();
-
-		for (FieldModel fieldModel : fieldModels) {
-			if (fieldModel.isId()) {
-				continue;
-			}
-
-			safeSetObjectProperty(r, entity, object, fieldModel);
-		}
-
-		return object;
-	}
-
-	private static <T> T createObjectInstance(Class<T> clazz) {
-		try {
-
-			Constructor<T> defaultConstructor = clazz.getDeclaredConstructor(new Class<?>[] {});
-			defaultConstructor.setAccessible(true);
-			return defaultConstructor.newInstance();
-
-		} catch (InvocationTargetException e) {
-			throw new RuntimeException("An exception was thrown when calling the default constructor of the class " + clazz.getSimpleName()
-					+ ": ", e);
-		} catch (NoSuchMethodException e) {
-			throw new RuntimeException("The class " + clazz.getSimpleName()
-					+ " must have a default constructor and cannot be an non-static inner class.", e);
-		} catch (InstantiationException e) {
-			throw new RuntimeException("The class " + clazz.getSimpleName() + " must cannot be abstract.", e);
-		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
-			throw new RuntimeException("Unexpected error: ", e);
-		}
-	}
 
 	public static <T> String getActualFieldName(String fieldName, Class<T> clazz) {
 		Field field = ReflectionUtils.getFieldRecursively(clazz, fieldName);
@@ -134,51 +90,6 @@ public class EntityUtils {
 		return StringUtils.stripAccents((String) o).toLowerCase();
 	}
 
-	private static <T> void safeSetObjectProperty(Repository r, Entity entity, T object, FieldModel fieldModel) {
-		try {
-			setObjectProperty(r, object, entity, fieldModel, fieldModel.getField());
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private static <T> void setObjectProperty(Repository r, T object, Entity entity, FieldModel fieldModel, Field field)
-			throws IllegalAccessException {
-		Object value = entity.getProperty(field.getName());
-
-		if (value == null) {
-			field.set(object, null);
-			return;
-		}
-
-		if (fieldModel.isEnum()) {
-			setEnumProperty(object, field, value);
-			return;
-		}
-
-		if (fieldModel.isSaveAsJson()) {
-			setJsonProperty(r, object, field, value);
-			return;
-		}
-
-		if (fieldModel.isInt()) {
-			setIntProperty(object, field, value);
-			return;
-		}
-
-		if (fieldModel.isIdRef()) {
-			setIdRefProperty(r, object, field, value);
-			return;
-		}
-
-		if (fieldModel.isSaveAsText()) {
-			setTextProperty(object, field, value);
-			return;
-		}
-
-		field.set(object, value);
-	}
-
 	public static int listSize(Object value) {
 		if (value == null) {
 			return 0;
@@ -203,27 +114,5 @@ public class EntityUtils {
 			i++;
 		}
 		return i;
-	}
-
-	private static <T> void setIdRefProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
-		field.set(object, IdRef.parse(r, HttpVerb.GET, (String) value));
-	}
-
-	private static <T> void setIntProperty(T object, Field field, Object value) throws IllegalAccessException {
-		field.set(object, ((Long) value).intValue());
-	}
-
-	private static <T> void setTextProperty(T object, Field field, Object value) throws IllegalAccessException {
-		field.set(object, ((Text) value).getValue());
-	}
-
-	private static <T> void setJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
-		String json = ((Text) value).getValue();
-		field.set(object, JsonUtils.from(r, json, field.getGenericType()));
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static <T> void setEnumProperty(T object, Field field, Object value) throws IllegalAccessException {
-		field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
 	}
 }

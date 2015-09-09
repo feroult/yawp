@@ -47,17 +47,6 @@ public class QueryBuilder<T> {
 		return new DatastoreQueryTransformer<T, N>(this, transformName);
 	}
 
-	@Deprecated
-	public QueryBuilder<T> where(Object... values) {
-		if (values.length % 3 != 0) {
-			throw new RuntimeException("You must pass values 3 at a time.");
-		}
-		for (int i = 0; i < values.length; i += 3) {
-			where(values[i].toString(), values[i + 1].toString(), values[i + 2]);
-		}
-		return this;
-	}
-
 	public QueryBuilder<T> and(String field, String operator, Object value) {
 		return where(field, operator, value);
 	}
@@ -268,18 +257,10 @@ public class QueryBuilder<T> {
 
 	@SuppressWarnings("unchecked")
 	private T executeQueryById() {
-//		try {
-			SimpleCondition c = (SimpleCondition) condition;
-			IdRef<T> id = (IdRef<T>) c.getWhereValue();
+		SimpleCondition c = (SimpleCondition) condition;
+		IdRef<T> id = (IdRef<T>) c.getWhereValue();
 
-			return r.driver().query().fetch(id);
-
-			// Key key = id.asKey();
-			// Entity entity = r.datastore().get(key);
-			// return EntityUtils.toObject(r, entity, clazz);
-//		} catch (EntityNotFoundException e) {
-//			return null;
-//		}
+		return r.driver().query().fetch(id);
 	}
 
 	private boolean isQueryById() {

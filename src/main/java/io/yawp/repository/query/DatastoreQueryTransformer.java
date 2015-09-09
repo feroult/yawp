@@ -18,12 +18,6 @@ public class DatastoreQueryTransformer<F, T> {
 		this.transformName = transformName;
 	}
 
-	@Deprecated
-	public DatastoreQueryTransformer<F, T> where(Object... values) {
-		query.where(values);
-		return this;
-	}
-
 	public DatastoreQueryTransformer<F, T> where(String field, String operator, Object value) {
 		query.where(field, operator, value);
 		return this;

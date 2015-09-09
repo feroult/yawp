@@ -71,7 +71,7 @@ public class Repository {
 		return datastore;
 	}
 
-	private RepositoryDriver driver() {
+	public RepositoryDriver driver() {
 		if (driver != null) {
 			return driver;
 		}

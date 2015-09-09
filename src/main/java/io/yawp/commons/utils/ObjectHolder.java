@@ -13,7 +13,7 @@ public class ObjectHolder {
 
 	private Object object;
 
-	public ObjectHolder(Class<?> clazz, Repository r, Object object) {
+	private ObjectHolder(Class<?> clazz, Repository r, Object object) {
 		this.r = r;
 		this.object = object;
 		this.model = new ObjectModel(clazz);

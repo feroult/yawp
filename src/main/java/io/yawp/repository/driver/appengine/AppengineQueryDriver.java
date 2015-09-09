@@ -36,7 +36,7 @@ public class AppengineQueryDriver implements QueryDriver {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> List<T> execute(QueryBuilder<?> builder) throws FalsePredicateException {
+	public <T> List<T> objects(QueryBuilder<?> builder) throws FalsePredicateException {
 		QueryResultList<Entity> queryResult = generateResults(builder, false);
 
 		List<T> objects = new ArrayList<T>();
@@ -46,6 +46,19 @@ public class AppengineQueryDriver implements QueryDriver {
 		}
 
 		return objects;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) throws FalsePredicateException {
+		QueryResultList<Entity> queryResult = generateResults(builder, true);
+		List<IdRef<T>> ids = new ArrayList<>();
+
+		for (Entity entity : queryResult) {
+			ids.add((IdRef<T>) extractIdRef(entity));
+		}
+
+		return ids;
 	}
 
 	private QueryResultList<Entity> generateResults(QueryBuilder<?> builder, boolean keysOnly) throws FalsePredicateException {
@@ -140,6 +153,10 @@ public class AppengineQueryDriver implements QueryDriver {
 		return object;
 	}
 
+	private IdRef<?> extractIdRef(Entity entity) {
+		return IdRef.fromKey(r, entity.getKey());
+	}
+
 	private <T> void safeSetObjectProperty(Entity entity, T object, FieldModel fieldModel) {
 		try {
 			setObjectProperty(object, entity, fieldModel, fieldModel.getField());
@@ -205,5 +222,4 @@ public class AppengineQueryDriver implements QueryDriver {
 	private <T> void setEnumProperty(T object, Field field, Object value) throws IllegalAccessException {
 		field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
 	}
-
 }

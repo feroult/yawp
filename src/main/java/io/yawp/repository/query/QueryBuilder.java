@@ -94,16 +94,6 @@ public class QueryBuilder<T> {
 		return where(c);
 	}
 
-	// public QueryBuilder<T> from(IdRef<?> parentId) {
-	// if (parentId == null) {
-	// this.parentId = null;
-	// return this;
-	// }
-	//
-	// this.parentId = parentId;
-	// return this;
-	// }
-
 	public QueryBuilder<T> from(IdRef<?> parentId) {
 		if (parentId == null) {
 			parentKey = null;
@@ -280,7 +270,7 @@ public class QueryBuilder<T> {
 	private List<T> executeQuery() {
 		try {
 
-			List<T> objects = r.driver().query().execute(this);
+			List<T> objects = r.driver().query().objects(this);
 			return postFilter(objects);
 
 		} catch (FalsePredicateException ex) {
@@ -420,19 +410,28 @@ public class QueryBuilder<T> {
 	public List<IdRef<T>> ids() {
 		r.namespace().set(getClazz());
 		try {
-			QueryResultList<Entity> queryResult = generateResults(true);
-			List<IdRef<T>> ids = new ArrayList<>();
 
-			for (Entity entity : queryResult) {
-				ids.add(extractIdRef(entity));
-			}
-
+			List<IdRef<T>> ids = r.driver().query().ids(this);
 			return ids;
+
+
+			//return idsInternal();
 		} catch (FalsePredicateException ex) {
 			return Collections.emptyList();
 		} finally {
 			r.namespace().reset();
 		}
+	}
+
+	private List<IdRef<T>> idsInternal() throws FalsePredicateException {
+		QueryResultList<Entity> queryResult = generateResults(true);
+		List<IdRef<T>> ids = new ArrayList<>();
+
+		for (Entity entity : queryResult) {
+			ids.add(extractIdRef(entity));
+		}
+
+		return ids;
 	}
 
 	private QueryResultList<Entity> generateResults(boolean keysOnly) throws FalsePredicateException {

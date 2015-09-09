@@ -5,6 +5,8 @@ import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
+import io.yawp.repository.driver.api.RepositoryDriver;
+import io.yawp.repository.driver.api.RepositoryDriverFactory;
 import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.query.DatastoreQuery;
 
@@ -27,6 +29,8 @@ public class Repository {
 	private Namespace namespace;
 
 	private DatastoreService datastore;
+
+	private RepositoryDriver driver;
 
 	private Transaction tx;
 
@@ -72,6 +76,14 @@ public class Repository {
 		return datastore;
 	}
 
+	private RepositoryDriver driver() {
+		if (driver != null) {
+			return driver;
+		}
+		driver = RepositoryDriverFactory.getRepositoryDriver(this);
+		return driver;
+	}
+
 	public AsyncRepository async() {
 		return new AsyncRepository(this);
 	}
@@ -91,12 +103,16 @@ public class Repository {
 	public <T> T save(T object) {
 		namespace.set(object.getClass());
 		try {
-			saveInternal(object);
+			ObjectHolder objectH = new ObjectHolder(object);
+			driver().save(objectH);
+
+//			saveInternal(object);
 		} finally {
 			namespace.reset();
 		}
 		return object;
 	}
+
 
 	protected <T> FutureObject<T> saveAsyncWithHooks(T object) {
 		namespace.set(object.getClass());

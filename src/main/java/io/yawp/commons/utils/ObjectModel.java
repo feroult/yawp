@@ -1,5 +1,6 @@
 package io.yawp.commons.utils;
 
+import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.ParentId;
@@ -14,6 +15,10 @@ public class ObjectModel {
 
 	public ObjectModel(Class<?> clazz) {
 		this.clazz = clazz;
+	}
+
+	public String getKind() {
+		return KindResolver.getKindFromClass(clazz);
 	}
 
 	public Field getIdField() {
@@ -81,5 +86,4 @@ public class ObjectModel {
 	public FieldModel getFieldModel(String fieldName) {
 		return new FieldModel(ReflectionUtils.getFieldRecursively(clazz, fieldName));
 	}
-
 }

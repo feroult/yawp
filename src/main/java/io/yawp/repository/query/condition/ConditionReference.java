@@ -1,7 +1,7 @@
 package io.yawp.repository.query.condition;
 
 import io.yawp.commons.utils.ObjectHolder;
-import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.ObjectModel;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
 
@@ -19,11 +19,14 @@ public class ConditionReference {
 
 	private Class<?> clazz;
 
+	private ObjectModel model;
+
 	private String refString;
 
 	public ConditionReference(String refString, Class<?> clazz, Object object) {
 		this.refString = refString;
 		this.clazz = clazz;
+		this.model = new ObjectModel(clazz);
 		this.object = object;
 		this.objectH = new ObjectHolder(object);
 
@@ -99,7 +102,7 @@ public class ConditionReference {
 		Class<?> ancestorClazz = clazz;
 
 		for (int i = 0; !object.getClass().equals(ancestorClazz); i++) {
-			ancestorClazz = EntityUtils.getAncestorClazz(i, clazz);
+			ancestorClazz = model.getAncestorClazz(i);
 			if (ancestorClazz == null) {
 				throw new RuntimeException("Invalid condition ref " + refString + " for object class: " + object.getClass().getName());
 			}
@@ -120,8 +123,7 @@ public class ConditionReference {
 			ancestorRefNumber++;
 		}
 
-		int ancestorNumber = EntityUtils.getAncestorNumber(clazz, object.getClass());
-		return ancestorNumber > ancestorRefNumber;
+		return model.getAncestorNumber(object.getClass()) > ancestorRefNumber;
 	}
 
 }

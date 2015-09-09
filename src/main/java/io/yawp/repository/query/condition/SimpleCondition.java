@@ -2,8 +2,10 @@ package io.yawp.repository.query.condition;
 
 import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.ObjectModel;
+import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -106,9 +108,10 @@ public class SimpleCondition extends BaseCondition {
 	private void normalizeIdRefs() {
 		if (isIdField()) {
 			if (whereValue instanceof String) {
-				whereValue = EntityUtils.convertToIdRef(r, (String) whereValue);
+				whereValue = IdRef.parse(r, (String) whereValue);
+
 			} else if (whereValue instanceof List) {
-				whereValue = EntityUtils.convertToIdRefs(r, (List<?>) whereValue);
+				whereValue = convertToIdRefs((List<?>) whereValue);
 			}
 		}
 	}
@@ -124,4 +127,15 @@ public class SimpleCondition extends BaseCondition {
 		}
 	}
 
+	private List<IdRef<?>> convertToIdRefs(List<?> rawIds) {
+		List<IdRef<?>> ids = new ArrayList<>();
+		for (Object rawId : rawIds) {
+			if (rawId instanceof String) {
+				ids.add(IdRef.parse(r, (String) rawId));
+			} else {
+				ids.add((IdRef<?>) rawId);
+			}
+		}
+		return ids;
+	}
 }

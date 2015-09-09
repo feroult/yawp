@@ -34,5 +34,34 @@ public class ObjectModel {
 		return (Class<?>) ReflectionUtils.getGenericParameter(parentField);
 	}
 
+	public Class<?> getAncestorClazz(int ancestor) {
+		Class<?> parentClazz = clazz;
+		for (int i = 0; i <= ancestor; i++) {
+			ObjectModel model = new ObjectModel(parentClazz);
+			parentClazz = model.getParentClazz();
+		}
+		return parentClazz;
+	}
+
+	public int getAncestorNumber(Class<?> ancestorClazz) {
+		if (clazz.equals(ancestorClazz)) {
+			return -1;
+		}
+
+		Class<?> parentClazz = getParentClazz();
+		int ancestorNumber = 0;
+
+		while (parentClazz != null && !parentClazz.equals(ancestorClazz)) {
+			ObjectModel model = new ObjectModel(parentClazz);
+			parentClazz = model.getParentClazz();
+			ancestorNumber++;
+		}
+
+		if (parentClazz == null) {
+			throw new RuntimeException("Invalid ancestor " + ancestorClazz.getName() + " for class " + clazz.getName());
+		}
+
+		return ancestorNumber;
+	}
 
 }

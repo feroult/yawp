@@ -176,6 +176,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return lastIdRef;
 	}
 
+	public static IdRef<?> parse(Repository r, String id) {
+		return parse(r, HttpVerb.GET, id);
+	}
+
 	public static <T> IdRef<T> parse(Class<T> clazz, Repository r, String idString) {
 		return parse(r, HttpVerb.GET, idString);
 	}

@@ -7,18 +7,14 @@ import io.yawp.repository.actions.Action;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
-import io.yawp.repository.annotations.ParentId;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -88,57 +84,6 @@ public class EntityUtils {
 		defaultConstructor.setAccessible(true);
 		T object = defaultConstructor.newInstance();
 		return object;
-	}
-
-	public static Field getAnnotatedParentFromClass(Class<?> clazz) {
-		return getFieldWithAnnotation(clazz, ParentId.class);
-	}
-
-	private static Field getFieldWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
-		Field theField = null;
-		for (Field field : ReflectionUtils.getFieldsRecursively(clazz)) {
-			if (field.isAnnotationPresent(annotationClass)) {
-				if (theField != null) {
-					throw new RuntimeException("You can have at most one field annotated with the " + annotationClass.getSimpleName()
-							+ " class.");
-				}
-				theField = field;
-				theField.setAccessible(true);
-			}
-		}
-
-		return theField;
-	}
-
-	public static Class<?> getListType(Field field) {
-		return (Class<?>) getParametrizedTypes(field)[0];
-	}
-
-	private static Type[] getParametrizedTypes(Field field) {
-		Type genericFieldType = field.getGenericType();
-		if (genericFieldType instanceof ParameterizedType) {
-			ParameterizedType aType = (ParameterizedType) genericFieldType;
-			Type[] fieldArgTypes = aType.getActualTypeArguments();
-			return fieldArgTypes;
-		}
-
-		throw new RuntimeException("Can't get generic type");
-	}
-
-	public static IdRef<?> convertToIdRef(Repository r, String id) {
-		return IdRef.parse(r, HttpVerb.GET, id);
-	}
-
-	public static List<IdRef<?>> convertToIdRefs(Repository r, List<?> rawIds) {
-		List<IdRef<?>> ids = new ArrayList<>();
-		for (Object rawId : rawIds) {
-			if (rawId instanceof String) {
-				ids.add(convertToIdRef(r, (String) rawId));
-			} else {
-				ids.add((IdRef<?>) rawId);
-			}
-		}
-		return ids;
 	}
 
 	public static <T> String getActualFieldName(String fieldName, Class<T> clazz) {
@@ -452,41 +397,4 @@ public class EntityUtils {
 	private static <T, V extends Action<T>> Class<T> getActionEndpoint(Class<V> clazz) {
 		return (Class<T>) ReflectionUtils.getGenericParameter(clazz);
 	}
-
-	public static Class<?> getParentClazz(Class<?> endpointClazz) {
-		Field field = getAnnotatedParentFromClass(endpointClazz);
-		if (field == null) {
-			return null;
-		}
-		return (Class<?>) getParametrizedTypes(field)[0];
-	}
-
-	public static Class<?> getAncestorClazz(int ancestor, Class<?> endpointClazz) {
-		Class<?> parentClazz = endpointClazz;
-		for (int i = 0; i <= ancestor; i++) {
-			parentClazz = getParentClazz(parentClazz);
-		}
-		return parentClazz;
-	}
-
-	public static int getAncestorNumber(Class<? extends Object> endpointClazz, Class<?> ancestorClazz) {
-		if (endpointClazz.equals(ancestorClazz)) {
-			return -1;
-		}
-
-		Class<?> parentClazz = getParentClazz(endpointClazz);
-		int ancestorNumber = 0;
-
-		while (parentClazz != null && !parentClazz.equals(ancestorClazz)) {
-			parentClazz = getParentClazz(parentClazz);
-			ancestorNumber++;
-		}
-
-		if (parentClazz == null) {
-			throw new RuntimeException("Invalid ancestor " + ancestorClazz.getName() + " for class " + endpointClazz.getName());
-		}
-
-		return ancestorNumber;
-	}
-
 }

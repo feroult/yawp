@@ -13,6 +13,10 @@ import io.yawp.repository.query.DatastoreQueryOrder;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.FalsePredicateException;
+import io.yawp.repository.query.condition.JoinedCondition;
+import io.yawp.repository.query.condition.LogicalOperator;
+import io.yawp.repository.query.condition.SimpleCondition;
+import io.yawp.repository.query.condition.WhereOperator;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -27,6 +31,9 @@ import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Text;
 
@@ -133,7 +140,7 @@ public class AppengineQueryDriver implements QueryDriver {
 	private void prepareQueryWhere(QueryBuilder<?> builder, Query q) throws FalsePredicateException {
 		BaseCondition condition = builder.getCondition();
 		if (condition != null && condition.hasPreFilter()) {
-			q.setFilter(condition.createPreFilter());
+			q.setFilter(createFilter(builder, condition));
 		}
 	}
 
@@ -242,4 +249,71 @@ public class AppengineQueryDriver implements QueryDriver {
 	private <T> void setEnumProperty(T object, Field field, Object value) throws IllegalAccessException {
 		field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
 	}
+
+	private Filter createFilter(QueryBuilder<?> builder, BaseCondition condition) throws FalsePredicateException {
+		if (condition instanceof SimpleCondition) {
+			return createSimpleFilter(builder, (SimpleCondition) condition);
+		}
+		if (condition instanceof JoinedCondition) {
+			return createJoinedFilter(builder, (JoinedCondition) condition);
+		}
+		throw new RuntimeException("Invalid condition class: " + condition.getClass());
+	}
+
+	private Filter createSimpleFilter(QueryBuilder<?> builder, SimpleCondition condition) throws FalsePredicateException {
+		String field = condition.getField();
+		Class<?> clazz = builder.getModel().getClazz();
+		Object whereValue = condition.getWhereValue();
+		WhereOperator whereOperator = condition.getWhereOperator();
+
+		String actualFieldName = EntityUtils.getActualFieldName(field, clazz);
+		Object actualValue = EntityUtils.getActualFieldValue(field, clazz, whereValue);
+
+		if (whereOperator == WhereOperator.IN && EntityUtils.listSize(whereValue) == 0) {
+			throw new FalsePredicateException();
+		}
+
+		return new FilterPredicate(actualFieldName, whereOperator.getFilterOperator(), actualValue);
+	}
+
+	private Filter createJoinedFilter(QueryBuilder<?> builder, JoinedCondition joinedCondition) throws FalsePredicateException {
+		BaseCondition[] conditions = joinedCondition.getConditions();
+		LogicalOperator logicalOperator = joinedCondition.getLogicalOperator();
+
+		List<Filter> filters = new ArrayList<>();
+		for (int i = 0; i < conditions.length; i++) {
+			try {
+				BaseCondition condition = conditions[i];
+				if (!condition.hasPreFilter()) {
+					continue;
+				}
+
+				filters.add(condition.createPreFilter());
+			} catch (FalsePredicateException e) {
+				if (logicalOperator == LogicalOperator.AND) {
+					throw e;
+				}
+			}
+		}
+
+		if (filters.isEmpty()) {
+			throw new FalsePredicateException();
+		}
+
+		if (filters.size() == 1) {
+			return filters.get(0);
+		}
+
+		Filter[] filtersArray = filters.toArray(new Filter[filters.size()]);
+
+		if (logicalOperator == LogicalOperator.AND) {
+			return CompositeFilterOperator.and(filtersArray);
+		}
+		if (logicalOperator == LogicalOperator.OR) {
+			return CompositeFilterOperator.or(filtersArray);
+		}
+
+		throw new RuntimeException("Invalid logical operator: " + logicalOperator);
+	}
+
 }

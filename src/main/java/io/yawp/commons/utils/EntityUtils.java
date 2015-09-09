@@ -23,20 +23,6 @@ public class EntityUtils {
 
 	private static final String NORMALIZED_FIELD_PREFIX = "__";
 
-	public static void toEntity(Object object, Entity entity) {
-		ObjectHolder objectH = new ObjectHolder(object);
-
-		List<FieldModel> fieldModels = objectH.getModel().getFieldModels();
-
-		for (FieldModel fieldModel : fieldModels) {
-			if (fieldModel.isId()) {
-				continue;
-			}
-
-			setEntityProperty(object, entity, fieldModel);
-		}
-	}
-
 	public static <T> T toObject(Repository r, Entity entity, Class<T> clazz) {
 		T object = createObjectInstance(clazz);
 
@@ -136,23 +122,6 @@ public class EntityUtils {
 		return idRef.asKey();
 	}
 
-	private static void setEntityProperty(Object object, Entity entity, FieldModel fieldModel) {
-		Object value = getFieldValue(fieldModel, object);
-
-		if (!fieldModel.hasIndex()) {
-			entity.setUnindexedProperty(fieldModel.getName(), value);
-			return;
-		}
-
-		if (fieldModel.isIndexNormalizable()) {
-			entity.setProperty(NORMALIZED_FIELD_PREFIX + fieldModel.getName(), normalizeValue(value));
-			entity.setUnindexedProperty(fieldModel.getName(), value);
-			return;
-		}
-
-		entity.setProperty(fieldModel.getName(), value);
-	}
-
 	private static Object normalizeValue(Object o) {
 		if (o == null) {
 			return null;
@@ -163,33 +132,6 @@ public class EntityUtils {
 		}
 
 		return StringUtils.stripAccents((String) o).toLowerCase();
-	}
-
-	private static Object getFieldValue(FieldModel fieldModel, Object object) {
-		Object value = fieldModel.getValue(object);
-
-		if (value == null) {
-			return null;
-		}
-
-		if (fieldModel.isEnum(value)) {
-			return value.toString();
-		}
-
-		if (fieldModel.isSaveAsJson()) {
-			return new Text(JsonUtils.to(value));
-		}
-
-		if (fieldModel.isIdRef()) {
-			IdRef<?> idRef = (IdRef<?>) value;
-			return idRef.getUri();
-		}
-
-		if (fieldModel.isSaveAsText()) {
-			return new Text(value.toString());
-		}
-
-		return value;
 	}
 
 	private static <T> void safeSetObjectProperty(Repository r, Entity entity, T object, FieldModel fieldModel) {

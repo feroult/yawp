@@ -1,8 +1,6 @@
 package io.yawp.repository;
 
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.ObjectHolder;
-import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.driver.api.RepositoryDriver;
@@ -14,11 +12,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import com.google.appengine.api.datastore.AsyncDatastoreService;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.datastore.TransactionOptions;
 
@@ -136,10 +131,7 @@ public class Repository {
 	}
 
 	private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
-//		driver().saveAsync(new ObjectHolder(object));
-		Entity entity = createEntity(object);
-		EntityUtils.toEntity(object, entity);
-		return saveEntityAsync(object, entity, enableHooks);
+		return driver().saveAsync(new ObjectHolder(object), enableHooks);
 	}
 
 	public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
@@ -171,38 +163,6 @@ public class Repository {
 		} finally {
 			namespace.reset();
 		}
-	}
-
-	private void saveEntity(Object object, Entity entity) {
-		Key key = datastore().put(entity);
-		ObjectHolder objectH = new ObjectHolder(object);
-		objectH.setId(IdRef.fromKey(this, key));
-	}
-
-	private <T> FutureObject<T> saveEntityAsync(T object, Entity entity, boolean enableHooks) {
-		AsyncDatastoreService datastoreService = DatastoreServiceFactory.getAsyncDatastoreService();
-		return new FutureObject<T>(this, datastoreService.put(entity), object, enableHooks);
-	}
-
-	private Entity createEntity(Object object) {
-		ObjectHolder objectH = new ObjectHolder(object);
-		IdRef<?> id = objectH.getId();
-
-		if (id == null) {
-			return createEntityWithNewKey(object);
-		}
-
-		return new Entity(id.asKey());
-	}
-
-	private Entity createEntityWithNewKey(Object object) {
-		ObjectHolder objectH = new ObjectHolder(object);
-		IdRef<?> parentId = objectH.getParentId();
-
-		if (parentId == null) {
-			return new Entity(KindResolver.getKindFromClass(object.getClass()));
-		}
-		return new Entity(KindResolver.getKindFromClass(object.getClass()), parentId.asKey());
 	}
 
 	@SuppressWarnings("unchecked")

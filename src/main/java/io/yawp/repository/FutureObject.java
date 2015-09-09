@@ -8,6 +8,7 @@ import java.util.concurrent.Future;
 
 import com.google.appengine.api.datastore.Key;
 
+// TODO: driver - create future api
 public class FutureObject<T> {
 
 	private Repository r;
@@ -25,6 +26,15 @@ public class FutureObject<T> {
 		this.futureKey = futureKey;
 		this.object = object;
 		this.objectH = new ObjectHolder(object);
+		this.enableHooks = enableHooks;
+	}
+
+	@SuppressWarnings("unchecked")
+	public FutureObject(Repository r, Future<Key> futureKey, ObjectHolder objectH, boolean enableHooks) {
+		this.r = r;
+		this.futureKey = futureKey;
+		this.object = (T) objectH.getObject();
+		this.objectH = objectH;
 		this.enableHooks = enableHooks;
 	}
 

@@ -3,6 +3,7 @@ package io.yawp.repository.driver.appengine;
 import io.yawp.commons.utils.FieldModel;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ObjectHolder;
+import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.driver.api.RepositoryDriver;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.appengine.api.datastore.AsyncDatastoreService;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -45,6 +47,13 @@ public class AppengineRepositoryDriver implements RepositoryDriver {
 		saveEntity(objectH, entity);
 	}
 
+	@Override
+	public <T> FutureObject<T> saveAsync(ObjectHolder objectH, boolean enableHooks) {
+		Entity entity = createEntity(objectH);
+		toEntity(objectH, entity);
+		return saveEntityAsync(objectH, entity, enableHooks);
+	}
+
 	private Entity createEntity(ObjectHolder objectH) {
 		IdRef<?> id = objectH.getId();
 
@@ -67,6 +76,11 @@ public class AppengineRepositoryDriver implements RepositoryDriver {
 	private void saveEntity(ObjectHolder objectH, Entity entity) {
 		Key key = datastore().put(entity);
 		objectH.setId(IdRef.fromKey(r, key));
+	}
+
+	private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectH, Entity entity, boolean enableHooks) {
+		AsyncDatastoreService datastoreService = DatastoreServiceFactory.getAsyncDatastoreService();
+		return new FutureObject<T>(r, datastoreService.put(entity), objectH, enableHooks);
 	}
 
 	public void toEntity(ObjectHolder objectH, Entity entity) {

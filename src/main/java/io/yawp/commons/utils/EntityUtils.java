@@ -44,7 +44,7 @@ public class EntityUtils {
 				continue;
 			}
 
-			setEntityProperty(object, entity, fieldModel, fieldModel.getField());
+			setEntityProperty(object, entity, fieldModel);
 		}
 	}
 
@@ -163,21 +163,21 @@ public class EntityUtils {
 		return idRef.asKey();
 	}
 
-	private static void setEntityProperty(Object object, Entity entity, FieldModel fieldModel, Field field) {
-		Object value = getFieldValue(field, object);
+	private static void setEntityProperty(Object object, Entity entity, FieldModel fieldModel) {
+		Object value = getFieldValue(fieldModel, object);
 
 		if (!fieldModel.hasIndex()) {
-			entity.setUnindexedProperty(field.getName(), value);
+			entity.setUnindexedProperty(fieldModel.getName(), value);
 			return;
 		}
 
-		if (isIndexNormalizable(field)) {
-			entity.setProperty(NORMALIZED_FIELD_PREFIX + field.getName(), normalizeValue(value));
-			entity.setUnindexedProperty(field.getName(), value);
+		if (fieldModel.isIndexNormalizable()) {
+			entity.setProperty(NORMALIZED_FIELD_PREFIX + fieldModel.getName(), normalizeValue(value));
+			entity.setUnindexedProperty(fieldModel.getName(), value);
 			return;
 		}
 
-		entity.setProperty(field.getName(), value);
+		entity.setProperty(fieldModel.getName(), value);
 	}
 
 	private static Object normalizeValue(Object o) {
@@ -192,36 +192,31 @@ public class EntityUtils {
 		return StringUtils.stripAccents((String) o).toLowerCase();
 	}
 
-	private static Object getFieldValue(Field field, Object object) {
-		try {
-			field.setAccessible(true);
-			Object value = field.get(object);
+	private static Object getFieldValue(FieldModel fieldModel, Object object) {
+		Object value = fieldModel.getValue(object);
 
-			if (value == null) {
-				return null;
-			}
-
-			if (isEnum(value)) {
-				return value.toString();
-			}
-
-			if (isSaveAsJson(field)) {
-				return new Text(JsonUtils.to(value));
-			}
-
-			if (isIdRef(field)) {
-				IdRef<?> idRef = (IdRef<?>) value;
-				return idRef.getUri();
-			}
-
-			if (isSaveAsText(field)) {
-				return new Text(value.toString());
-			}
-
-			return value;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		if (value == null) {
+			return null;
 		}
+
+		if (fieldModel.isEnum(value)) {
+			return value.toString();
+		}
+
+		if (fieldModel.isSaveAsJson()) {
+			return new Text(JsonUtils.to(value));
+		}
+
+		if (fieldModel.isIdRef()) {
+			IdRef<?> idRef = (IdRef<?>) value;
+			return idRef.getUri();
+		}
+
+		if (fieldModel.isSaveAsText()) {
+			return new Text(value.toString());
+		}
+
+		return value;
 	}
 
 	public static Object getter(Object o, String property) {

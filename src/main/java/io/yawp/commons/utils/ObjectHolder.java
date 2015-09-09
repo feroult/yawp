@@ -1,7 +1,6 @@
 package io.yawp.commons.utils;
 
 import io.yawp.repository.IdRef;
-import io.yawp.repository.Repository;
 
 import java.lang.reflect.Field;
 
@@ -9,18 +8,11 @@ public class ObjectHolder {
 
 	private ObjectModel model;
 
-	private Repository r;
-
 	private Object object;
 
-	private ObjectHolder(Class<?> clazz, Repository r, Object object) {
-		this.r = r;
-		this.object = object;
-		this.model = new ObjectModel(clazz);
-	}
-
 	public ObjectHolder(Object object) {
-		this(object.getClass(), null, object);
+		this.object = object;
+		this.model = new ObjectModel(object.getClass());
 	}
 
 	public ObjectModel getModel() {

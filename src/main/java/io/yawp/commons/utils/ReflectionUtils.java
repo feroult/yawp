@@ -1,12 +1,16 @@
 package io.yawp.commons.utils;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public final class ReflectionUtils {
 
@@ -116,4 +120,15 @@ public final class ReflectionUtils {
 		return theField;
 	}
 
+	public static Object getter(Object o, String property) {
+		try {
+			if (Map.class.isInstance(o)) {
+				return ((Map<?, ?>) o).get(property);
+			}
+
+			return new PropertyDescriptor(property, o.getClass()).getReadMethod().invoke(o);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

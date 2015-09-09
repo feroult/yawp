@@ -6,9 +6,6 @@ import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
 
 import java.lang.reflect.Field;
-import java.util.List;
-
-import com.google.appengine.api.datastore.Key;
 
 class FieldModel {
 
@@ -35,16 +32,8 @@ class FieldModel {
 		}
 	}
 
-	public boolean isControl() {
-		return Key.class.equals(field.getType()) || field.isAnnotationPresent(Id.class);
-	}
-
-	private boolean isList() {
-		return List.class.isAssignableFrom(field.getType());
-	}
-
-	public boolean isSaveAsList() {
-		return isList() && !isSaveAsJson();
+	public boolean isId() {
+		return field.isAnnotationPresent(Id.class);
 	}
 
 	public boolean hasIndex() {

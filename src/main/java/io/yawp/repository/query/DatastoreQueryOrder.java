@@ -1,6 +1,6 @@
 package io.yawp.repository.query;
 
-import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.ReflectionUtils;
 
 import com.google.appengine.api.datastore.Query.SortDirection;
 
@@ -84,9 +84,9 @@ public class DatastoreQueryOrder {
 	@SuppressWarnings("rawtypes")
 	private Comparable getComparable(Object o) {
 		if (entity != null) {
-			Object innerObject = EntityUtils.getter(o, entity);
-			return (Comparable) EntityUtils.getter(innerObject, property);
+			Object innerObject = ReflectionUtils.getter(o, entity);
+			return (Comparable) ReflectionUtils.getter(innerObject, property);
 		}
-		return (Comparable) EntityUtils.getter(o, property);
+		return (Comparable) ReflectionUtils.getter(o, property);
 	}
 }

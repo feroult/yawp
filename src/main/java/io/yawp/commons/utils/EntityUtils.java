@@ -8,8 +8,6 @@ import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -20,7 +18,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,7 +37,7 @@ public class EntityUtils {
 		List<FieldModel> fieldModels = objectH.getModel().getFieldModels();
 
 		for (FieldModel fieldModel : fieldModels) {
-			if (fieldModel.isControl() || fieldModel.isSaveAsList()) {
+			if (fieldModel.isId()) {
 				continue;
 			}
 
@@ -217,18 +214,6 @@ public class EntityUtils {
 		}
 
 		return value;
-	}
-
-	public static Object getter(Object o, String property) {
-		try {
-			if (Map.class.isInstance(o)) {
-				return ((Map<?, ?>) o).get(property);
-			}
-
-			return new PropertyDescriptor(property, o.getClass()).getReadMethod().invoke(o);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	private static <T> void setObjectProperty(Repository r, T object, Entity entity, Field field) throws IllegalAccessException {

@@ -9,20 +9,20 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Date;
 
-class FieldModel {
+public class FieldModel {
 
 	private Field field;
 
-	FieldModel(Field field) {
+	public FieldModel(Field field) {
 		this.field = field;
 		field.setAccessible(true);
 	}
 
-	Field getField() {
+	public Field getField() {
 		return field;
 	}
 
-	String getName() {
+	public String getName() {
 		return field.getName();
 	}
 

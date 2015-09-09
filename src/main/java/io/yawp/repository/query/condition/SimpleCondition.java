@@ -1,6 +1,7 @@
 package io.yawp.repository.query.condition;
 
 import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.FieldModel;
 import io.yawp.commons.utils.ObjectModel;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
@@ -66,7 +67,11 @@ public class SimpleCondition extends BaseCondition {
 
 	@Override
 	public boolean hasPreFilter() {
-		return !isRefField() && (EntityUtils.hasIndex(clazz, field) || EntityUtils.isId(clazz, field));
+		if (isRefField()) {
+			return false;
+		}
+		FieldModel fieldModel = model.getFieldModel(field);
+		return fieldModel.hasIndex() || fieldModel.isId();
 	}
 
 	@Override

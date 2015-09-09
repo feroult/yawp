@@ -67,15 +67,19 @@ public class ObjectModel {
 	}
 
 	public List<FieldModel> getFieldModels() {
-		 List<Field> fields = ReflectionUtils.getFieldsRecursively(clazz);
+		List<Field> fields = ReflectionUtils.getFieldsRecursively(clazz);
 
-		 List<FieldModel> fieldModels = new ArrayList<FieldModel>();
+		List<FieldModel> fieldModels = new ArrayList<FieldModel>();
 
-		 for(Field field : fields) {
-			 fieldModels.add(new FieldModel(field));
-		 }
+		for (Field field : fields) {
+			fieldModels.add(new FieldModel(field));
+		}
 
 		return fieldModels;
+	}
+
+	public FieldModel getFieldModel(String fieldName) {
+		return new FieldModel(ReflectionUtils.getFieldRecursively(clazz, fieldName));
 	}
 
 }

@@ -3,16 +3,13 @@ package io.yawp.commons.utils;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
-import io.yawp.repository.actions.Action;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
-import io.yawp.repository.annotations.Json;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -302,55 +299,11 @@ public class EntityUtils {
 		field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
 	}
 
-	public static boolean isId(Class<?> clazz, String fieldName) {
-		try {
-			return isId(clazz.getDeclaredField(fieldName));
-		} catch (NoSuchFieldException | SecurityException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private static boolean isId(Field field) {
-		return field.getAnnotation(Id.class) != null;
-	}
-
-	public static boolean hasIndex(Class<?> clazz, String fieldName) {
-		return hasIndex(ReflectionUtils.getFieldRecursively(clazz, fieldName));
-	}
-
-	private static boolean hasIndex(Field field) {
-		return field.getAnnotation(Index.class) != null;
-	}
-
 	private static boolean isIndexNormalizable(Field field) {
 		return getIndex(field).normalize() && isString(field);
 	}
 
-	private static boolean isSaveAsJson(Field field) {
-		return field.getAnnotation(Json.class) != null;
-	}
-
-	public static boolean isSaveAsList(Field field) {
-		return isList(field) && !isSaveAsJson(field);
-	}
-
-	private static boolean isList(Field field) {
-		return List.class.isAssignableFrom(field.getType());
-	}
-
 	private static boolean isString(Field field) {
 		return String.class.isAssignableFrom(field.getType());
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static Class<?> getActionEndpoint(Method action) {
-		Class<?> declaringClass = action.getDeclaringClass();
-		assert Action.class.isAssignableFrom(declaringClass);
-		return getActionEndpoint((Class<? extends Action>) declaringClass);
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T, V extends Action<T>> Class<T> getActionEndpoint(Class<V> clazz) {
-		return (Class<T>) ReflectionUtils.getGenericParameter(clazz);
 	}
 }

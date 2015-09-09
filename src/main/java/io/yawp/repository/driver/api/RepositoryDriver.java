@@ -8,4 +8,6 @@ public interface RepositoryDriver {
 
 	public PersistenceDriver persistence();
 
+	public QueryDriver query();
+
 }

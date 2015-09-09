@@ -2,6 +2,7 @@ package io.yawp.repository.driver.appengine;
 
 import io.yawp.repository.Repository;
 import io.yawp.repository.driver.api.PersistenceDriver;
+import io.yawp.repository.driver.api.QueryDriver;
 import io.yawp.repository.driver.api.RepositoryDriver;
 
 public class AppengineRepositoryDriver implements RepositoryDriver {
@@ -16,6 +17,11 @@ public class AppengineRepositoryDriver implements RepositoryDriver {
 	@Override
 	public PersistenceDriver persistence() {
 		return new AppenginePersistenceDriver(r);
+	}
+
+	@Override
+	public QueryDriver query() {
+		return new AppengineQueryDriver(r);
 	}
 
 }

@@ -241,19 +241,27 @@ public class DatastoreQuery<T> {
 
 	private List<T> executeQuery() {
 		try {
-			QueryResultList<Entity> queryResult = generateResults(false);
 
-			List<T> objects = new ArrayList<T>();
+			//return r.driver().query().execute(this);
 
-			for (Entity entity : queryResult) {
-				objects.add(EntityUtils.toObject(r, entity, clazz));
-			}
 
-			return postFilter(objects);
+			return executeQueryInternal();
 
 		} catch (FalsePredicateException ex) {
 			return Collections.emptyList();
 		}
+	}
+
+	private List<T> executeQueryInternal() throws FalsePredicateException {
+		QueryResultList<Entity> queryResult = generateResults(false);
+
+		List<T> objects = new ArrayList<T>();
+
+		for (Entity entity : queryResult) {
+			objects.add(EntityUtils.toObject(r, entity, clazz));
+		}
+
+		return postFilter(objects);
 	}
 
 	private List<T> postFilter(List<T> objects) {

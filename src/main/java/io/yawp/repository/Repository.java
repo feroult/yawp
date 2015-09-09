@@ -103,16 +103,12 @@ public class Repository {
 	public <T> T save(T object) {
 		namespace.set(object.getClass());
 		try {
-			ObjectHolder objectH = new ObjectHolder(object);
-			driver().save(objectH);
-
-//			saveInternal(object);
+			saveInternal(object);
 		} finally {
 			namespace.reset();
 		}
 		return object;
 	}
-
 
 	protected <T> FutureObject<T> saveAsyncWithHooks(T object) {
 		namespace.set(object.getClass());
@@ -136,12 +132,11 @@ public class Repository {
 	}
 
 	private void saveInternal(Object object) {
-		Entity entity = createEntity(object);
-		EntityUtils.toEntity(object, entity);
-		saveEntity(object, entity);
+		driver().save(new ObjectHolder(object));
 	}
 
 	private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
+//		driver().saveAsync(new ObjectHolder(object));
 		Entity entity = createEntity(object);
 		EntityUtils.toEntity(object, entity);
 		return saveEntityAsync(object, entity, enableHooks);

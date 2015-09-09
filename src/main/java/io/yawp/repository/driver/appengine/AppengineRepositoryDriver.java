@@ -1,6 +1,5 @@
 package io.yawp.repository.driver.appengine;
 
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.FieldModel;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ObjectHolder;

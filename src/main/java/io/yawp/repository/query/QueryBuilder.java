@@ -15,14 +15,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.QueryResultList;
 
 public class QueryBuilder<T> {
 
@@ -286,12 +283,6 @@ public class QueryBuilder<T> {
 		return condition.applyPostFilter(objects);
 	}
 
-	private void setCursor(QueryResultList<Entity> queryResult) {
-		if (queryResult.getCursor() != null) {
-			this.cursor = queryResult.getCursor().toWebSafeString();
-		}
-	}
-
 	private T executeQueryById() {
 		try {
 			SimpleCondition c = (SimpleCondition) condition;
@@ -333,18 +324,6 @@ public class QueryBuilder<T> {
 				return 0;
 			}
 		});
-	}
-
-	private FetchOptions configureFetchOptions() {
-		FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
-
-		if (limit != null) {
-			fetchOptions.limit(limit);
-		}
-		if (cursor != null) {
-			fetchOptions.startCursor(Cursor.fromWebSafeString(cursor));
-		}
-		return fetchOptions;
 	}
 
 	private PreparedQuery prepareQuery(boolean keysOnly) throws FalsePredicateException {
@@ -410,34 +389,13 @@ public class QueryBuilder<T> {
 	public List<IdRef<T>> ids() {
 		r.namespace().set(getClazz());
 		try {
-
 			List<IdRef<T>> ids = r.driver().query().ids(this);
 			return ids;
-
-
-			//return idsInternal();
 		} catch (FalsePredicateException ex) {
 			return Collections.emptyList();
 		} finally {
 			r.namespace().reset();
 		}
-	}
-
-	private List<IdRef<T>> idsInternal() throws FalsePredicateException {
-		QueryResultList<Entity> queryResult = generateResults(true);
-		List<IdRef<T>> ids = new ArrayList<>();
-
-		for (Entity entity : queryResult) {
-			ids.add(extractIdRef(entity));
-		}
-
-		return ids;
-	}
-
-	private QueryResultList<Entity> generateResults(boolean keysOnly) throws FalsePredicateException {
-		QueryResultList<Entity> queryResult = prepareQuery(keysOnly).asQueryResultList(configureFetchOptions());
-		setCursor(queryResult);
-		return queryResult;
 	}
 
 	@SuppressWarnings("unchecked")

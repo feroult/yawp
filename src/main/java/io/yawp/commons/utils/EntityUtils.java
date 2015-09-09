@@ -3,8 +3,6 @@ package io.yawp.commons.utils;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
-import io.yawp.repository.annotations.Id;
-import io.yawp.repository.annotations.Index;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -80,29 +78,17 @@ public class EntityUtils {
 
 	public static <T> String getActualFieldName(String fieldName, Class<T> clazz) {
 		Field field = ReflectionUtils.getFieldRecursively(clazz, fieldName);
+		FieldModel fieldModel = new FieldModel(field);
 
-		if (isKey(field)) {
+		if (fieldModel.isId()) {
 			return Entity.KEY_RESERVED_PROPERTY;
 		}
 
-		if (isIndexNormalizable(field)) {
+		if (fieldModel.isIndexNormalizable()) {
 			return NORMALIZED_FIELD_PREFIX + fieldName;
 		}
 
 		return fieldName;
-	}
-
-	private static boolean isKey(Field field) {
-		return field.getAnnotation(Id.class) != null;
-	}
-
-	private static Index getIndex(Field field) {
-		Index index = field.getAnnotation(Index.class);
-		if (index == null) {
-			throw new RuntimeException("You must add @Index annotation the the field '" + field.getName()
-					+ "' if you want to use it as a index in where statements.");
-		}
-		return index;
 	}
 
 	public static <T> Object getActualFieldValue(String fieldName, Class<T> clazz, Object value) {
@@ -297,13 +283,5 @@ public class EntityUtils {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static <T> void setEnumProperty(T object, Field field, Object value) throws IllegalAccessException {
 		field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
-	}
-
-	private static boolean isIndexNormalizable(Field field) {
-		return getIndex(field).normalize() && isString(field);
-	}
-
-	private static boolean isString(Field field) {
-		return String.class.isAssignableFrom(field.getType());
 	}
 }

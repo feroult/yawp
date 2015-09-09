@@ -5,7 +5,9 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.ParentId;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +21,10 @@ public class ObjectModel {
 
 	public String getKind() {
 		return KindResolver.getKindFromClass(clazz);
+	}
+
+	public Class<?> getClazz() {
+		return clazz;
 	}
 
 	public Field getIdField() {
@@ -86,4 +92,25 @@ public class ObjectModel {
 	public FieldModel getFieldModel(String fieldName) {
 		return new FieldModel(ReflectionUtils.getFieldRecursively(clazz, fieldName));
 	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T createInstance() {
+		try {
+			Constructor<T> defaultConstructor = (Constructor<T>) clazz.getDeclaredConstructor(new Class<?>[] {});
+			defaultConstructor.setAccessible(true);
+			return defaultConstructor.newInstance();
+
+		} catch (InvocationTargetException e) {
+			throw new RuntimeException("An exception was thrown when calling the default constructor of the class " + clazz.getSimpleName()
+					+ ": ", e);
+		} catch (NoSuchMethodException e) {
+			throw new RuntimeException("The class " + clazz.getSimpleName()
+					+ " must have a default constructor and cannot be an non-static inner class.", e);
+		} catch (InstantiationException e) {
+			throw new RuntimeException("The class " + clazz.getSimpleName() + " must cannot be abstract.", e);
+		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
+			throw new RuntimeException("Unexpected error: ", e);
+		}
+	}
+
 }

@@ -34,6 +34,8 @@ public class QueryBuilder<T> {
 
 	private Key parentKey;
 
+	private IdRef<?> parentId;
+
 	private BaseCondition condition;
 
 	private List<DatastoreQueryOrder> preOrders = new ArrayList<DatastoreQueryOrder>();
@@ -92,15 +94,27 @@ public class QueryBuilder<T> {
 		return where(c);
 	}
 
+	// public QueryBuilder<T> from(IdRef<?> parentId) {
+	// if (parentId == null) {
+	// this.parentId = null;
+	// return this;
+	// }
+	//
+	// this.parentId = parentId;
+	// return this;
+	// }
+
 	public QueryBuilder<T> from(IdRef<?> parentId) {
 		if (parentId == null) {
 			parentKey = null;
+			this.parentId = null;
 			return this;
 		}
 
 		r.namespace().set(getClazz());
 		try {
 			parentKey = parentId.asKey();
+			this.parentId = parentId;
 			return this;
 		} finally {
 			r.namespace().reset();
@@ -142,12 +156,36 @@ public class QueryBuilder<T> {
 		return this;
 	}
 
+	public IdRef<?> getParentId() {
+		return parentId;
+	}
+
 	public String getCursor() {
 		return this.cursor;
 	}
 
+	public void setCursor(String cursor) {
+		this.cursor = cursor;
+	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public List<DatastoreQueryOrder> getPreOrders() {
+		return preOrders;
+	}
+
+	public BaseCondition getCondition() {
+		return condition;
+	}
+
 	public Repository getRepository() {
 		return this.r;
+	}
+
+	public ObjectModel getModel() {
+		return model;
 	}
 
 	public QueryBuilder<T> options(DatastoreQueryOptions options) {
@@ -241,10 +279,10 @@ public class QueryBuilder<T> {
 
 	private List<T> executeQuery() {
 		try {
-//			List<T> objects = r.driver().query().execute(this);
-//			return postFilter(objects);
+			List<T> objects = r.driver().query().execute(this);
+			return postFilter(objects);
 
-			 return executeQueryInternal();
+			// return executeQueryInternal();
 
 		} catch (FalsePredicateException ex) {
 			return Collections.emptyList();

@@ -5,6 +5,7 @@ import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.FieldModel;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ObjectHolder;
+import io.yawp.commons.utils.ObjectModel;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.driver.api.QueryDriver;
@@ -18,7 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.appengine.api.datastore.Cursor;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.PreparedQuery;
@@ -34,6 +38,10 @@ public class AppengineQueryDriver implements QueryDriver {
 		this.r = r;
 	}
 
+	private DatastoreService datastore() {
+		return DatastoreServiceFactory.getDatastoreService();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> List<T> objects(QueryBuilder<?> builder) throws FalsePredicateException {
@@ -42,7 +50,7 @@ public class AppengineQueryDriver implements QueryDriver {
 		List<T> objects = new ArrayList<T>();
 
 		for (Entity entity : queryResult) {
-			objects.add((T) toObject(builder, entity));
+			objects.add((T) toObject(builder.getModel(), entity));
 		}
 
 		return objects;
@@ -59,6 +67,18 @@ public class AppengineQueryDriver implements QueryDriver {
 		}
 
 		return ids;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T fetch(IdRef<T> id) {
+		try {
+			Key key = id.asKey();
+			Entity entity = datastore().get(key);
+			return (T) toObject(id.getModel(), entity);
+		} catch (EntityNotFoundException e) {
+			return null;
+		}
 	}
 
 	private QueryResultList<Entity> generateResults(QueryBuilder<?> builder, boolean keysOnly) throws FalsePredicateException {
@@ -134,8 +154,8 @@ public class AppengineQueryDriver implements QueryDriver {
 		}
 	}
 
-	public Object toObject(QueryBuilder<?> builder, Entity entity) {
-		Object object = builder.getModel().createInstance();
+	public Object toObject(ObjectModel model, Entity entity) {
+		Object object = model.createInstance();
 
 		ObjectHolder objectH = new ObjectHolder(object);
 		objectH.setId(IdRef.fromKey(r, entity.getKey()));

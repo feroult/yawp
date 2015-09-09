@@ -12,4 +12,6 @@ public interface QueryDriver {
 	public <T> List<T> objects(QueryBuilder<?> builder) throws FalsePredicateException;
 
 	public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) throws FalsePredicateException;
+
+	public <T> T fetch(IdRef<T> id);
 }

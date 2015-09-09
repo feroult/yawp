@@ -82,6 +82,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return model.getParentClazz();
 	}
 
+	public ObjectModel getModel() {
+		return new ObjectModel(clazz);
+	}
+
 	@SuppressWarnings("unchecked")
 	public <TT> IdRef<TT> getParentId() {
 		return (IdRef<TT>) parentId;

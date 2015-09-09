@@ -1,6 +1,5 @@
 package io.yawp.repository.query;
 
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.ObjectModel;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
@@ -13,10 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.Key;
 
 public class QueryBuilder<T> {
 
@@ -143,26 +138,6 @@ public class QueryBuilder<T> {
 		this.cursor = cursor;
 	}
 
-	public Integer getLimit() {
-		return limit;
-	}
-
-	public List<DatastoreQueryOrder> getPreOrders() {
-		return preOrders;
-	}
-
-	public BaseCondition getCondition() {
-		return condition;
-	}
-
-	public Repository getRepository() {
-		return this.r;
-	}
-
-	public ObjectModel getModel() {
-		return model;
-	}
-
 	public QueryBuilder<T> options(DatastoreQueryOptions options) {
 		if (options.getCondition() != null) {
 			where(options.getCondition());
@@ -181,6 +156,26 @@ public class QueryBuilder<T> {
 		}
 
 		return this;
+	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public List<DatastoreQueryOrder> getPreOrders() {
+		return preOrders;
+	}
+
+	public BaseCondition getCondition() {
+		return condition;
+	}
+
+	public Repository getRepository() {
+		return this.r;
+	}
+
+	public ObjectModel getModel() {
+		return model;
 	}
 
 	public List<T> executeQueryList() {
@@ -271,16 +266,20 @@ public class QueryBuilder<T> {
 		return condition.applyPostFilter(objects);
 	}
 
+	@SuppressWarnings("unchecked")
 	private T executeQueryById() {
-		try {
+//		try {
 			SimpleCondition c = (SimpleCondition) condition;
-			IdRef<?> idRef = (IdRef<?>) c.getWhereValue();
-			Key key = idRef.asKey();
-			Entity entity = r.datastore().get(key);
-			return EntityUtils.toObject(r, entity, clazz);
-		} catch (EntityNotFoundException e) {
-			return null;
-		}
+			IdRef<T> id = (IdRef<T>) c.getWhereValue();
+
+			return r.driver().query().fetch(id);
+
+			// Key key = id.asKey();
+			// Entity entity = r.datastore().get(key);
+			// return EntityUtils.toObject(r, entity, clazz);
+//		} catch (EntityNotFoundException e) {
+//			return null;
+//		}
 	}
 
 	private boolean isQueryById() {

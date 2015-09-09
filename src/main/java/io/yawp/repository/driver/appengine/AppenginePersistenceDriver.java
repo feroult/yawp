@@ -52,6 +52,11 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 		return saveEntityAsync(objectH, entity, enableHooks);
 	}
 
+	@Override
+	public void destroy(IdRef<?> id) {
+		datastore().delete(id.asKey());
+	}
+
 	private Entity createEntity(ObjectHolder objectH) {
 		IdRef<?> id = objectH.getId();
 

@@ -158,7 +158,7 @@ public class Repository {
 		namespace.set(id.getClazz());
 		try {
 			RepositoryHooks.beforeDestroy(this, id);
-			datastore().delete(id.asKey());
+			driver().persistence().destroy(id);
 			RepositoryHooks.afterDestroy(this, id);
 		} finally {
 			namespace.reset();

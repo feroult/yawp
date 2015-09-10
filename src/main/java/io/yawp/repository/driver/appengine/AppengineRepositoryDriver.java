@@ -5,6 +5,7 @@ import io.yawp.repository.driver.api.NamespaceDriver;
 import io.yawp.repository.driver.api.PersistenceDriver;
 import io.yawp.repository.driver.api.QueryDriver;
 import io.yawp.repository.driver.api.RepositoryDriver;
+import io.yawp.repository.driver.api.TransactionDriver;
 
 public class AppengineRepositoryDriver implements RepositoryDriver {
 
@@ -28,6 +29,11 @@ public class AppengineRepositoryDriver implements RepositoryDriver {
 	@Override
 	public NamespaceDriver namespace() {
 		return new AppengineNamespaceDriver();
+	}
+
+	@Override
+	public TransactionDriver transaction() {
+		return new AppengineTransationDriver();
 	}
 
 }

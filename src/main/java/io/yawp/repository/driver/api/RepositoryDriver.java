@@ -12,6 +12,6 @@ public interface RepositoryDriver {
 
 	public NamespaceDriver namespace();
 
-	//public TransactionDriver transaction();
+	public TransactionDriver transaction();
 
 }

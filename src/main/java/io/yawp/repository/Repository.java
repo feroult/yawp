@@ -5,6 +5,7 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.driver.api.RepositoryDriver;
 import io.yawp.repository.driver.api.RepositoryDriverFactory;
+import io.yawp.repository.driver.api.TransactionDriver;
 import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.query.QueryBuilder;
 
@@ -14,8 +15,6 @@ import java.util.Map;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Transaction;
-import com.google.appengine.api.datastore.TransactionOptions;
 
 public class Repository {
 
@@ -27,7 +26,7 @@ public class Repository {
 
 	private RepositoryDriver driver;
 
-	private Transaction tx;
+	private TransactionDriver tx;
 
 	public static Repository r() {
 		return new Repository();
@@ -187,22 +186,16 @@ public class Repository {
 	}
 
 	public void begin() {
-		tx = datastore().beginTransaction();
+		tx = driver().transaction().begin();
 	}
 
 	public void beginX() {
-		TransactionOptions options = TransactionOptions.Builder.withXG(true);
-		tx = datastore().beginTransaction(options);
+		tx = driver().transaction().beginX();
 	}
 
 	public void rollback() {
 		if (tx == null) {
 			throw new RuntimeException("No transaction in progress");
-		}
-
-		if (!tx.isActive()) {
-			tx = null;
-			return;
 		}
 
 		tx.rollback();

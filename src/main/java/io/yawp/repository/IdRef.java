@@ -65,6 +65,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return name;
 	}
 
+	public Repository getRepository() {
+		return r;
+	}
+
 	public Key asKey() {
 		Key parent = parentId == null ? null : parentId.asKey();
 		String kind = KindResolver.getKindFromClass(clazz);
@@ -260,6 +264,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	public String getName() {
 		return name;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public boolean isAncestorId(IdRef<?> childId) {

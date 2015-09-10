@@ -88,7 +88,7 @@ public class AppengineQueryDriver implements QueryDriver {
 	@Override
 	public <T> T fetch(IdRef<T> id) {
 		try {
-			Key key = id.asKey();
+			Key key = IdRefToKey.convert(id);
 			Entity entity = datastore().get(key);
 			return (T) toObject(id.getModel(), entity);
 		} catch (EntityNotFoundException e) {
@@ -396,8 +396,8 @@ public class AppengineQueryDriver implements QueryDriver {
 	}
 
 	private <T> Key getActualKeyFieldValue(Class<T> clazz, Object value) {
-		IdRef<?> idRef = (IdRef<?>) value;
-		return idRef.asKey();
+		IdRef<?> id = (IdRef<?>) value;
+		return IdRefToKey.convert(id);
 	}
 
 	private FilterOperator getFilterOperator(WhereOperator whereOperator) {

@@ -54,7 +54,7 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 
 	@Override
 	public void destroy(IdRef<?> id) {
-		datastore().delete(IdRefToKey.convert(id));
+		datastore().delete(IdRefToKey.convert(r, id));
 	}
 
 	private Entity createEntity(ObjectHolder objectH) {
@@ -64,7 +64,7 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 			return createEntityWithNewKey(objectH);
 		}
 
-		return new Entity(IdRefToKey.convert(id));
+		return new Entity(IdRefToKey.convert(r, id));
 	}
 
 	private Entity createEntityWithNewKey(ObjectHolder objectH) {
@@ -73,7 +73,7 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 		if (parentId == null) {
 			return new Entity(objectH.getModel().getKind());
 		}
-		return new Entity(objectH.getModel().getKind(), IdRefToKey.convert(parentId));
+		return new Entity(objectH.getModel().getKind(), IdRefToKey.convert(r, parentId));
 	}
 
 	private void saveEntity(ObjectHolder objectH, Entity entity) {

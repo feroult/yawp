@@ -88,7 +88,7 @@ public class AppengineQueryDriver implements QueryDriver {
 	@Override
 	public <T> T fetch(IdRef<T> id) {
 		try {
-			Key key = IdRefToKey.convert(id);
+			Key key = IdRefToKey.convert(r, id);
 			Entity entity = datastore().get(key);
 			return (T) toObject(id.getModel(), entity);
 		} catch (EntityNotFoundException e) {
@@ -131,7 +131,7 @@ public class AppengineQueryDriver implements QueryDriver {
 		prepareQueryWhere(builder, q);
 		prepareQueryOrder(builder, q);
 
-		return r.datastore().prepare(q);
+		return datastore().prepare(q);
 	}
 
 	private void prepareQueryOrder(QueryBuilder<?> builder, Query q) {
@@ -157,16 +157,7 @@ public class AppengineQueryDriver implements QueryDriver {
 		if (parentId == null) {
 			return;
 		}
-		q.setAncestor(getKey(builder, parentId));
-	}
-
-	private Key getKey(QueryBuilder<?> builder, IdRef<?> parentId) {
-		r.namespace().set(builder.getModel().getClazz());
-		try {
-			return parentId.asKey();
-		} finally {
-			r.namespace().reset();
-		}
+		q.setAncestor(IdRefToKey.convert(r, parentId));
 	}
 
 	public SortDirection getSortDirection(QueryOrder order) {
@@ -397,7 +388,7 @@ public class AppengineQueryDriver implements QueryDriver {
 
 	private <T> Key getActualKeyFieldValue(Class<T> clazz, Object value) {
 		IdRef<?> id = (IdRef<?>) value;
-		return IdRefToKey.convert(id);
+		return IdRefToKey.convert(r, id);
 	}
 
 	private FilterOperator getFilterOperator(WhereOperator whereOperator) {

@@ -1,10 +1,10 @@
 package io.yawp.repository.driver.appengine;
 
-import io.yawp.commons.utils.FieldModel;
 import io.yawp.commons.utils.JsonUtils;
-import io.yawp.commons.utils.ObjectHolder;
+import io.yawp.repository.FieldModel;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.Repository;
 import io.yawp.repository.driver.api.PersistenceDriver;
 

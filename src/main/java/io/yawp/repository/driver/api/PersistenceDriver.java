@@ -1,8 +1,8 @@
 package io.yawp.repository.driver.api;
 
-import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.ObjectHolder;
 
 public interface PersistenceDriver {
 

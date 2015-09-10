@@ -1,7 +1,7 @@
-package io.yawp.commons.utils;
+package io.yawp.repository;
 
+import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.commons.utils.kind.KindResolver;
-import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.ParentId;
 

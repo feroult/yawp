@@ -1,6 +1,5 @@
-package io.yawp.commons.utils;
+package io.yawp.repository;
 
-import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;

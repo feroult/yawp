@@ -1,6 +1,5 @@
 package io.yawp.repository;
 
-import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.repository.hooks.RepositoryHooks;
 
 import java.util.concurrent.ExecutionException;

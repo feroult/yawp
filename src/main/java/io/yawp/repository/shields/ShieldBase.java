@@ -2,9 +2,9 @@ package io.yawp.repository.shields;
 
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.utils.FacadeUtils;
-import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;

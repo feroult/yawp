@@ -1,8 +1,8 @@
 package io.yawp.repository.shields;
 
 import static io.yawp.repository.query.condition.Condition.and;
-import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.condition.BaseCondition;
 

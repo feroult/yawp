@@ -1,8 +1,8 @@
 package io.yawp.repository.query.condition;
 
-import io.yawp.commons.utils.FieldModel;
-import io.yawp.commons.utils.ObjectModel;
+import io.yawp.repository.FieldModel;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.ObjectModel;
 import io.yawp.repository.Repository;
 
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package io.yawp.repository.query;
 
-import io.yawp.commons.utils.ObjectModel;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.ObjectModel;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;

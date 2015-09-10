@@ -1,6 +1,5 @@
 package io.yawp.repository;
 
-import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.driver.api.RepositoryDriver;

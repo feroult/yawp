@@ -1,9 +1,9 @@
 package io.yawp.repository.actions;
 
 import io.yawp.commons.http.HttpVerb;
-import io.yawp.commons.utils.ObjectModel;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.ObjectModel;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;

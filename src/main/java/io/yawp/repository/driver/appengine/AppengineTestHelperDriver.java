@@ -11,8 +11,6 @@ import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig
 
 public class AppengineTestHelperDriver implements TestHelperDriver {
 
-	private static final String LOGGED_USER_ID = "10";
-
 	private LocalServiceTestHelper helper;
 
 	@Override
@@ -20,7 +18,6 @@ public class AppengineTestHelperDriver implements TestHelperDriver {
 		helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), new LocalDatastoreServiceTestConfig());
 		helper.setEnvIsLoggedIn(true);
 		Map<String, Object> envs = new HashMap<String, Object>();
-		envs.put("com.google.appengine.api.users.UserService.user_id_key", LOGGED_USER_ID);
 		helper.setEnvAttributes(envs);
 		helper.setEnvAuthDomain("localhost");
 		helper.setEnvEmail("test@localhost");

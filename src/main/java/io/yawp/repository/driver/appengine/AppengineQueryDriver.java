@@ -6,6 +6,7 @@ import io.yawp.commons.utils.FieldModel;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ObjectHolder;
 import io.yawp.commons.utils.ObjectModel;
+import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.driver.api.QueryDriver;
@@ -132,7 +133,7 @@ public class AppengineQueryDriver implements QueryDriver {
 		}
 
 		for (DatastoreQueryOrder order : builder.getPreOrders()) {
-			String string = EntityUtils.getActualFieldName(order.getProperty(), builder.getModel().getClazz());
+			String string = getActualFieldName(order.getProperty(), builder.getModel().getClazz());
 			q.addSort(string, order.getSortDirection());
 		}
 	}
@@ -160,6 +161,8 @@ public class AppengineQueryDriver implements QueryDriver {
 			r.namespace().reset();
 		}
 	}
+
+	// to object
 
 	public Object toObject(ObjectModel model, Entity entity) {
 		Object object = model.createInstance();
@@ -250,6 +253,10 @@ public class AppengineQueryDriver implements QueryDriver {
 		field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
 	}
 
+	// Filter for query
+
+	private static final String NORMALIZED_FIELD_PREFIX = "__";
+
 	private Filter createFilter(QueryBuilder<?> builder, BaseCondition condition) throws FalsePredicateException {
 		if (condition instanceof SimpleCondition) {
 			return createSimpleFilter(builder, (SimpleCondition) condition);
@@ -266,7 +273,7 @@ public class AppengineQueryDriver implements QueryDriver {
 		Object whereValue = condition.getWhereValue();
 		WhereOperator whereOperator = condition.getWhereOperator();
 
-		String actualFieldName = EntityUtils.getActualFieldName(field, clazz);
+		String actualFieldName = getActualFieldName(field, clazz);
 		Object actualValue = EntityUtils.getActualFieldValue(field, clazz, whereValue);
 
 		if (whereOperator == WhereOperator.IN && EntityUtils.listSize(whereValue) == 0) {
@@ -314,6 +321,21 @@ public class AppengineQueryDriver implements QueryDriver {
 		}
 
 		throw new RuntimeException("Invalid logical operator: " + logicalOperator);
+	}
+
+	private <T> String getActualFieldName(String fieldName, Class<T> clazz) {
+		Field field = ReflectionUtils.getFieldRecursively(clazz, fieldName);
+		FieldModel fieldModel = new FieldModel(field);
+
+		if (fieldModel.isId()) {
+			return Entity.KEY_RESERVED_PROPERTY;
+		}
+
+		if (fieldModel.isIndexNormalizable()) {
+			return NORMALIZED_FIELD_PREFIX + fieldName;
+		}
+
+		return fieldName;
 	}
 
 }

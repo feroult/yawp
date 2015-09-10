@@ -24,7 +24,7 @@ public class FutureIdRef extends FutureWrapper<Key, IdRef<?>> {
 
 	@Override
 	protected IdRef<?> wrap(Key key) throws Exception {
-		return IdRef.fromKey(r, key);
+		return IdRefToKey.toIdRef(r, key);
 	}
 
 }

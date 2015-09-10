@@ -78,7 +78,7 @@ public class AppengineQueryDriver implements QueryDriver {
 		List<IdRef<T>> ids = new ArrayList<>();
 
 		for (Entity entity : queryResult) {
-			ids.add((IdRef<T>) extractIdRef(entity));
+			ids.add((IdRef<T>) IdRefToKey.toIdRef(r, entity.getKey()));
 		}
 
 		return ids;
@@ -88,7 +88,7 @@ public class AppengineQueryDriver implements QueryDriver {
 	@Override
 	public <T> T fetch(IdRef<T> id) {
 		try {
-			Key key = IdRefToKey.convert(r, id);
+			Key key = IdRefToKey.toKey(r, id);
 			Entity entity = datastore().get(key);
 			return (T) toObject(id.getModel(), entity);
 		} catch (EntityNotFoundException e) {
@@ -157,7 +157,7 @@ public class AppengineQueryDriver implements QueryDriver {
 		if (parentId == null) {
 			return;
 		}
-		q.setAncestor(IdRefToKey.convert(r, parentId));
+		q.setAncestor(IdRefToKey.toKey(r, parentId));
 	}
 
 	public SortDirection getSortDirection(QueryOrder order) {
@@ -176,7 +176,7 @@ public class AppengineQueryDriver implements QueryDriver {
 		Object object = model.createInstance();
 
 		ObjectHolder objectH = new ObjectHolder(object);
-		objectH.setId(IdRef.fromKey(r, entity.getKey()));
+		objectH.setId(IdRefToKey.toIdRef(r, entity.getKey()));
 
 		List<FieldModel> fieldModels = objectH.getModel().getFieldModels();
 
@@ -189,10 +189,6 @@ public class AppengineQueryDriver implements QueryDriver {
 		}
 
 		return object;
-	}
-
-	private IdRef<?> extractIdRef(Entity entity) {
-		return IdRef.fromKey(r, entity.getKey());
 	}
 
 	private <T> void safeSetObjectProperty(Entity entity, T object, FieldModel fieldModel) {
@@ -388,7 +384,7 @@ public class AppengineQueryDriver implements QueryDriver {
 
 	private <T> Key getActualKeyFieldValue(Class<T> clazz, Object value) {
 		IdRef<?> id = (IdRef<?>) value;
-		return IdRefToKey.convert(r, id);
+		return IdRefToKey.toKey(r, id);
 	}
 
 	private FilterOperator getFilterOperator(WhereOperator whereOperator) {

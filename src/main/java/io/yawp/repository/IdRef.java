@@ -2,14 +2,11 @@ package io.yawp.repository;
 
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.ObjectModel;
-import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.appengine.api.datastore.Key;
 
 public class IdRef<T> implements Comparable<IdRef<T>> {
 
@@ -92,22 +89,6 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 			ancestorId = ancestorId.getParentId();
 		}
 		return (IdRef<TT>) ancestorId;
-	}
-
-	public static IdRef<?> fromKey(Repository r, Key key) {
-		if (key == null) {
-			return null;
-		}
-		Class<?> objectClass = KindResolver.getClassFromKind(r, key.getKind());
-
-		IdRef<?> ref = null;
-		if (key.getName() != null) {
-			ref = IdRef.create(r, objectClass, key.getName());
-		} else {
-			ref = IdRef.create(r, objectClass, key.getId());
-		}
-		ref.parentId = fromKey(r, key.getParent());
-		return ref;
 	}
 
 	public <TT> IdRef<TT> createChildId(Class<TT> clazz, Long id) {

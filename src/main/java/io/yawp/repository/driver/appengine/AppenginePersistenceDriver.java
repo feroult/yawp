@@ -9,6 +9,7 @@ import io.yawp.repository.Repository;
 import io.yawp.repository.driver.api.PersistenceDriver;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -82,7 +83,10 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 	}
 
 	private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectH, Entity entity, boolean enableHooks) {
-		return new FutureObject<T>(r, asyncDatastore().put(entity), objectH, enableHooks);
+		Future<Key> futureKey = asyncDatastore().put(entity);
+		// TODO: driver - remove enableHooks from here? return only
+		// Future<IdRef<?>> ?
+		return new FutureObject<T>(r, new FutureIdRef(r, futureKey), objectH, enableHooks);
 	}
 
 	public void toEntity(ObjectHolder objectH, Entity entity) {

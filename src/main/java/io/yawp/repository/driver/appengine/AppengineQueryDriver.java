@@ -10,8 +10,8 @@ import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.driver.api.QueryDriver;
-import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.QueryBuilder;
+import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.FalsePredicateException;
 import io.yawp.repository.query.condition.JoinedCondition;
@@ -39,6 +39,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultList;
@@ -296,7 +297,7 @@ public class AppengineQueryDriver implements QueryDriver {
 			throw new FalsePredicateException();
 		}
 
-		return new FilterPredicate(actualFieldName, whereOperator.getFilterOperator(), actualValue);
+		return new FilterPredicate(actualFieldName, getFilterOperator(whereOperator), actualValue);
 	}
 
 	private Filter createJoinedFilter(QueryBuilder<?> builder, JoinedCondition joinedCondition) throws FalsePredicateException {
@@ -397,6 +398,27 @@ public class AppengineQueryDriver implements QueryDriver {
 	private <T> Key getActualKeyFieldValue(Class<T> clazz, Object value) {
 		IdRef<?> idRef = (IdRef<?>) value;
 		return idRef.asKey();
+	}
+
+	private FilterOperator getFilterOperator(WhereOperator whereOperator) {
+		switch (whereOperator) {
+		case EQUAL:
+			return FilterOperator.EQUAL;
+		case GREATER_THAN:
+			return FilterOperator.GREATER_THAN;
+		case GREATER_THAN_OR_EQUAL:
+			return FilterOperator.GREATER_THAN_OR_EQUAL;
+		case IN:
+			return FilterOperator.IN;
+		case LESS_THAN:
+			return FilterOperator.LESS_THAN;
+		case LESS_THAN_OR_EQUAL:
+			return FilterOperator.LESS_THAN_OR_EQUAL;
+		case NOT_EQUAL:
+			return FilterOperator.NOT_EQUAL;
+		default:
+			throw new RuntimeException("Invalid where operator: " + whereOperator);
+		}
 	}
 
 	private Object normalizeValue(Object o) {

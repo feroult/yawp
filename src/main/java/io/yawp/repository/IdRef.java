@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 
 public class IdRef<T> implements Comparable<IdRef<T>> {
 
@@ -67,15 +66,6 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	public Repository getRepository() {
 		return r;
-	}
-
-	public Key asKey() {
-		Key parent = parentId == null ? null : parentId.asKey();
-		String kind = KindResolver.getKindFromClass(clazz);
-		if (id == null) {
-			return KeyFactory.createKey(parent, kind, name);
-		}
-		return KeyFactory.createKey(parent, kind, id);
 	}
 
 	public Class<T> getClazz() {

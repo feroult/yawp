@@ -30,10 +30,6 @@ public class AppengineTransationDriver implements TransactionDriver {
 
 	@Override
 	public void rollback() {
-		if (tx == null) {
-			throw new RuntimeException("No transaction in progress");
-		}
-
 		if (!tx.isActive()) {
 			tx = null;
 			return;
@@ -45,9 +41,6 @@ public class AppengineTransationDriver implements TransactionDriver {
 
 	@Override
 	public void commit() {
-		if (tx == null) {
-			throw new RuntimeException("No transaction in progress");
-		}
 		tx.commit();
 		tx = null;
 	}

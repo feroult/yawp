@@ -13,16 +13,11 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-
 public class Repository {
 
 	private RepositoryFeatures repositoryFeatures;
 
 	private Namespace namespace;
-
-	private DatastoreService datastore;
 
 	private RepositoryDriver driver;
 
@@ -60,14 +55,6 @@ public class Repository {
 	public Repository setFeatures(RepositoryFeatures repositoryFeatures) {
 		this.repositoryFeatures = repositoryFeatures;
 		return this;
-	}
-
-	public DatastoreService datastore() {
-		if (datastore != null) {
-			return datastore;
-		}
-		datastore = DatastoreServiceFactory.getDatastoreService();
-		return datastore;
 	}
 
 	public RepositoryDriver driver() {

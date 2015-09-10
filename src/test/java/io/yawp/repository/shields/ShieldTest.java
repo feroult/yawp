@@ -25,7 +25,7 @@ public class ShieldTest extends ServletTestCase {
 	@Test
 	public void testEverythingIsAllowed() {
 		saveObject(1l);
-		login("jim", "rock.com");
+		login("jim");
 
 		assertRestActionsStatus(200);
 	}
@@ -33,7 +33,7 @@ public class ShieldTest extends ServletTestCase {
 	@Test
 	public void testSomethingIsAllowed() {
 		saveObject(1l);
-		login("robert", "rock.com");
+		login("robert");
 
 		assertGetWithStatus("/shielded_objects", 404);
 		assertGetWithStatus("/shielded_objects/1", 200);
@@ -95,7 +95,7 @@ public class ShieldTest extends ServletTestCase {
 		saveObject(2l, "xpto");
 		saveObject(3l, "xpto");
 
-		login("kurt", "rock.com");
+		login("kurt");
 
 		String json = get("/shielded_objects");
 		List<ShieldedObject> objects = fromList(json, ShieldedObject.class);
@@ -109,7 +109,7 @@ public class ShieldTest extends ServletTestCase {
 		saveObject(1l, "ok");
 		saveObject(2l, "xpto");
 
-		login("kurt", "rock.com");
+		login("kurt");
 
 		assertGetWithStatus("/shielded_objects/1", 200);
 		assertGetWithStatus("/shielded_objects/2", 404);
@@ -117,7 +117,7 @@ public class ShieldTest extends ServletTestCase {
 
 	@Test
 	public void testCreateWhere() {
-		login("kurt", "rock.com");
+		login("kurt");
 
 		assertPostWithStatus("/shielded_objects", "{stringValue: 'ok'}", 200);
 		assertPostWithStatus("/shielded_objects", "{stringValue: 'xpto'}", 403);
@@ -132,7 +132,7 @@ public class ShieldTest extends ServletTestCase {
 		saveObject(2l, "ok-for-janis");
 		saveObject(3l, "ok-for-amy");
 
-		login("janis", "rock.com");
+		login("janis");
 
 		assertPostWithStatus("/shielded_objects", "{id: '/shielded_objects/1', stringValue: 'ok-for-janis'}", 200);
 		assertPostWithStatus("/shielded_objects", "{id: '/shielded_objects/3', stringValue: 'ok-for-janis'}", 403);
@@ -145,7 +145,7 @@ public class ShieldTest extends ServletTestCase {
 
 	@Test
 	public void testUpdateWhere() {
-		login("kurt", "rock.com");
+		login("kurt");
 
 		saveObject(1l, "ok");
 
@@ -158,7 +158,7 @@ public class ShieldTest extends ServletTestCase {
 		saveObject(1l, "ok-for-janis");
 		saveObject(2l, "ok-for-amy");
 
-		login("janis", "rock.com");
+		login("janis");
 
 		assertPutWithStatus("/shielded_objects/1", "{stringValue: 'ok-for-janis'}", 200);
 		assertPutWithStatus("/shielded_objects/2", "{stringValue: 'ok-for-janis'}", 403);
@@ -169,7 +169,7 @@ public class ShieldTest extends ServletTestCase {
 		saveObject(1l, "ok-for-janis");
 		saveObject(2l, "ok-for-amy");
 
-		login("janis", "rock.com");
+		login("janis");
 
 		assertDeleteWithStatus("/shielded_objects/1", 200);
 		assertDeleteWithStatus("/shielded_objects/2", 403);
@@ -180,7 +180,7 @@ public class ShieldTest extends ServletTestCase {
 		saveObject(1l, "ok-for-janis");
 		saveObject(2l, "ok-for-amy");
 
-		login("janis", "rock.com");
+		login("janis");
 
 		assertPutWithStatus("/shielded_objects/1/something", 200);
 		assertPutWithStatus("/shielded_objects/2/something", 403);
@@ -188,7 +188,7 @@ public class ShieldTest extends ServletTestCase {
 
 	@Test
 	public void tetCreateFacade() {
-		login("amy", "rock.com");
+		login("amy");
 
 		String json = post("/shielded_objects", "{stringValue: 'xpto', intValue: 99}");
 
@@ -206,7 +206,7 @@ public class ShieldTest extends ServletTestCase {
 		saveObject(1l, "xpto", 10);
 		saveObject(2l, "xpto", 10);
 
-		login("amy", "rock.com");
+		login("amy");
 
 		String json = get("/shielded_objects");
 		List<ShieldedObject> retrievedObjects = fromList(json, ShieldedObject.class);
@@ -221,7 +221,7 @@ public class ShieldTest extends ServletTestCase {
 	public void testShowFacade() {
 		saveObject(1l, "xpto", 10);
 
-		login("amy", "rock.com");
+		login("amy");
 
 		String json = get("/shielded_objects/1");
 		ShieldedObject retrievedObject = from(json, ShieldedObject.class);
@@ -232,7 +232,7 @@ public class ShieldTest extends ServletTestCase {
 
 	@Test
 	public void testCreateFacadeArray() {
-		login("amy", "rock.com");
+		login("amy");
 
 		String json = post("/shielded_objects", "[{stringValue: 'xpto1', intValue: 99}, {stringValue: 'xpto2', intValue: 99}]");
 
@@ -253,7 +253,7 @@ public class ShieldTest extends ServletTestCase {
 	public void testUpdateFacade() {
 		saveObject(1l, "xpto", 10);
 
-		login("amy", "rock.com");
+		login("amy");
 		String json = put("/shielded_objects/1", "{id: '/shielded_objects/1', stringValue: 'new-xpto', intValue: 99}");
 
 		ShieldedObject retrievedObject = from(json, ShieldedObject.class);
@@ -269,7 +269,7 @@ public class ShieldTest extends ServletTestCase {
 	public void testCustomActionFacade() {
 		saveObject(1l, "xpto", 10);
 
-		login("amy", "rock.com");
+		login("amy");
 
 		String json = put("/shielded_objects/1/anotherthing");
 		ShieldedObject retrievedObject = from(json, ShieldedObject.class);
@@ -280,7 +280,7 @@ public class ShieldTest extends ServletTestCase {
 	@Test
 	public void testCustomActionByActionClass() {
 		saveObject(1l);
-		login("nat", "rock.com");
+		login("nat");
 
 		assertPutWithStatus("/shielded_objects/1/something", 200);
 		assertPutWithStatus("/shielded_objects/1/anotherthing", 200);
@@ -291,7 +291,7 @@ public class ShieldTest extends ServletTestCase {
 	@Test
 	public void testDefaults() {
 		saveObjectWithDefaults(1l);
-		login("brian", "rock.com");
+		login("brian");
 
 		assertGetWithStatus("/shielded_objects_with_defaults", 200);
 		assertGetWithStatus("/shielded_objects_with_defaults/1", 200);

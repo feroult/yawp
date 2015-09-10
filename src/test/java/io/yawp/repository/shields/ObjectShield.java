@@ -2,6 +2,7 @@ package io.yawp.repository.shields;
 
 import io.yawp.commons.http.annotation.GET;
 import io.yawp.commons.http.annotation.PUT;
+import io.yawp.commons.utils.TestLoginManager;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.actions.ShieldedObjectAction;
 import io.yawp.repository.models.basic.ShieldedObject;
@@ -10,9 +11,6 @@ import io.yawp.repository.models.basic.facades.ShieldedObjectFacades.AmyFacade;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import com.google.appengine.api.users.User;
-import com.google.appengine.api.users.UserServiceFactory;
 
 public class ObjectShield extends Shield<ShieldedObject> {
 
@@ -74,32 +72,33 @@ public class ObjectShield extends Shield<ShieldedObject> {
 	}
 
 	private boolean isRobert() {
-		return is("robert@rock.com");
+		return is("robert");
 	}
 
 	private boolean isJim() {
-		return is("jim@rock.com");
+		return is("jim");
 	}
 
 	private boolean isKurt() {
-		return is("kurt@rock.com");
+		return is("kurt");
 	}
 
 	private boolean isJanis() {
-		return is("janis@rock.com");
+		return is("janis");
 	}
 
 	private boolean isAmy() {
-		return is("amy@rock.com");
+		return is("amy");
 	}
 
 	private boolean isNat() {
-		return is("nat@rock.com");
+		return is("nat");
 	}
 
-	private boolean is(String email) {
-		User currentUser = UserServiceFactory.getUserService().getCurrentUser();
-		return currentUser != null && currentUser.getEmail().equals(email);
+	private boolean is(String username) {
+		return TestLoginManager.isLogged(username);
+//		User currentUser = UserServiceFactory.getUserService().getCurrentUser();
+//		return currentUser != null && currentUser.getEmail().equals(email);
 	}
 
 	private boolean isId100(IdRef<ShieldedObject> id) {

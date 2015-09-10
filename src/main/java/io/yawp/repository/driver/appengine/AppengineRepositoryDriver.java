@@ -1,6 +1,7 @@
 package io.yawp.repository.driver.appengine;
 
 import io.yawp.repository.Repository;
+import io.yawp.repository.driver.api.HelpersDriver;
 import io.yawp.repository.driver.api.NamespaceDriver;
 import io.yawp.repository.driver.api.PersistenceDriver;
 import io.yawp.repository.driver.api.QueryDriver;
@@ -34,6 +35,11 @@ public class AppengineRepositoryDriver implements RepositoryDriver {
 	@Override
 	public TransactionDriver transaction() {
 		return new AppengineTransationDriver();
+	}
+
+	@Override
+	public HelpersDriver helpers() {
+		return new AppengineHelpersDriver();
 	}
 
 }

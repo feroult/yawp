@@ -210,7 +210,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 	public void testQueryFromOptions() {
 		saveManyBasicObjects(3);
 
-		DatastoreQueryOptions options = DatastoreQueryOptions
+		QueryOptions options = QueryOptions
 				.parse("{where: ['stringValue', '=', 'xpto'], order: [{p: 'intValue', d: 'desc'}], limit: 2}");
 
 		List<BasicObject> objects = yawp(BasicObject.class).options(options).list();

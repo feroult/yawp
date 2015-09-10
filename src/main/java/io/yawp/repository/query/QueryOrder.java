@@ -2,9 +2,7 @@ package io.yawp.repository.query;
 
 import io.yawp.commons.utils.ReflectionUtils;
 
-import com.google.appengine.api.datastore.Query.SortDirection;
-
-public class DatastoreQueryOrder {
+public class QueryOrder {
 
 	private String entity;
 
@@ -12,7 +10,7 @@ public class DatastoreQueryOrder {
 
 	private String direction;
 
-	public DatastoreQueryOrder(String entity, String property, String direction) {
+	public QueryOrder(String entity, String property, String direction) {
 		this.entity = entity;
 		this.property = property;
 		this.direction = direction;
@@ -32,16 +30,6 @@ public class DatastoreQueryOrder {
 
 	public void setDirection(String direction) {
 		this.direction = direction;
-	}
-
-	public SortDirection getSortDirection() {
-		if (isDesc()) {
-			return SortDirection.DESCENDING;
-		}
-		if (isAsc()) {
-			return SortDirection.ASCENDING;
-		}
-		throw new RuntimeException("invalid sort direction");
 	}
 
 	public boolean isAsc() {

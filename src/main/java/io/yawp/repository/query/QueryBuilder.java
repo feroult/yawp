@@ -25,9 +25,9 @@ public class QueryBuilder<T> {
 
 	private BaseCondition condition;
 
-	private List<DatastoreQueryOrder> preOrders = new ArrayList<DatastoreQueryOrder>();
+	private List<QueryOrder> preOrders = new ArrayList<QueryOrder>();
 
-	private List<DatastoreQueryOrder> postOrders = new ArrayList<DatastoreQueryOrder>();
+	private List<QueryOrder> postOrders = new ArrayList<QueryOrder>();
 
 	private Integer limit;
 
@@ -43,8 +43,8 @@ public class QueryBuilder<T> {
 		this.model = new ObjectModel(clazz);
 	}
 
-	public <N> DatastoreQueryTransformer<T, N> transform(String transformName) {
-		return new DatastoreQueryTransformer<T, N>(this, transformName);
+	public <N> QueryTransformer<T, N> transform(String transformName) {
+		return new QueryTransformer<T, N>(this, transformName);
 	}
 
 	public QueryBuilder<T> and(String field, String operator, Object value) {
@@ -86,7 +86,7 @@ public class QueryBuilder<T> {
 	}
 
 	public QueryBuilder<T> order(String property, String direction) {
-		preOrders.add(new DatastoreQueryOrder(null, property, direction));
+		preOrders.add(new QueryOrder(null, property, direction));
 		return this;
 	}
 
@@ -101,7 +101,7 @@ public class QueryBuilder<T> {
 	}
 
 	public QueryBuilder<T> sort(String entity, String property, String direction) {
-		postOrders.add(new DatastoreQueryOrder(entity, property, direction));
+		postOrders.add(new QueryOrder(entity, property, direction));
 		return this;
 	}
 
@@ -127,7 +127,7 @@ public class QueryBuilder<T> {
 		this.cursor = cursor;
 	}
 
-	public QueryBuilder<T> options(DatastoreQueryOptions options) {
+	public QueryBuilder<T> options(QueryOptions options) {
 		if (options.getCondition() != null) {
 			where(options.getCondition());
 		}
@@ -151,7 +151,7 @@ public class QueryBuilder<T> {
 		return limit;
 	}
 
-	public List<DatastoreQueryOrder> getPreOrders() {
+	public List<QueryOrder> getPreOrders() {
 		return preOrders;
 	}
 
@@ -280,7 +280,7 @@ public class QueryBuilder<T> {
 		Collections.sort(objects, new Comparator<Object>() {
 			@Override
 			public int compare(Object o1, Object o2) {
-				for (DatastoreQueryOrder order : postOrders) {
+				for (QueryOrder order : postOrders) {
 					int compare = order.compare(o1, o2);
 
 					if (compare == 0) {

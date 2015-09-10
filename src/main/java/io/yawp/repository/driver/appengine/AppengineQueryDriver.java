@@ -10,7 +10,7 @@ import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.driver.api.QueryDriver;
-import io.yawp.repository.query.DatastoreQueryOrder;
+import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.FalsePredicateException;
@@ -40,6 +40,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.QueryResultList;
 import com.google.appengine.api.datastore.Text;
 
@@ -137,9 +138,9 @@ public class AppengineQueryDriver implements QueryDriver {
 			return;
 		}
 
-		for (DatastoreQueryOrder order : builder.getPreOrders()) {
+		for (QueryOrder order : builder.getPreOrders()) {
 			String string = getActualFieldName(order.getProperty(), builder.getModel().getClazz());
-			q.addSort(string, order.getSortDirection());
+			q.addSort(string, getSortDirection(order));
 		}
 	}
 
@@ -165,6 +166,16 @@ public class AppengineQueryDriver implements QueryDriver {
 		} finally {
 			r.namespace().reset();
 		}
+	}
+
+	public SortDirection getSortDirection(QueryOrder order) {
+		if (order.isDesc()) {
+			return SortDirection.DESCENDING;
+		}
+		if (order.isAsc()) {
+			return SortDirection.ASCENDING;
+		}
+		throw new RuntimeException("Invalid sort direction");
 	}
 
 	// to object

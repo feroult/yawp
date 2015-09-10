@@ -1,7 +1,7 @@
 package io.yawp.repository.driver.appengine;
 
 import io.yawp.commons.http.HttpVerb;
-import io.yawp.commons.utils.EntityUtils;
+import io.yawp.commons.utils.DateUtils;
 import io.yawp.commons.utils.FieldModel;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ObjectHolder;
@@ -19,9 +19,14 @@ import io.yawp.repository.query.condition.LogicalOperator;
 import io.yawp.repository.query.condition.SimpleCondition;
 import io.yawp.repository.query.condition.WhereOperator;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.appengine.api.datastore.Cursor;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -255,7 +260,7 @@ public class AppengineQueryDriver implements QueryDriver {
 
 	// Filter for query
 
-	private static final String NORMALIZED_FIELD_PREFIX = "__";
+	private final String NORMALIZED_FIELD_PREFIX = "__";
 
 	private Filter createFilter(QueryBuilder<?> builder, BaseCondition condition) throws FalsePredicateException {
 		if (condition instanceof SimpleCondition) {
@@ -274,9 +279,9 @@ public class AppengineQueryDriver implements QueryDriver {
 		WhereOperator whereOperator = condition.getWhereOperator();
 
 		String actualFieldName = getActualFieldName(field, clazz);
-		Object actualValue = EntityUtils.getActualFieldValue(field, clazz, whereValue);
+		Object actualValue = getActualFieldValue(field, clazz, whereValue);
 
-		if (whereOperator == WhereOperator.IN && EntityUtils.listSize(whereValue) == 0) {
+		if (whereOperator == WhereOperator.IN && listSize(whereValue) == 0) {
 			throw new FalsePredicateException();
 		}
 
@@ -336,6 +341,89 @@ public class AppengineQueryDriver implements QueryDriver {
 		}
 
 		return fieldName;
+	}
+
+	public <T> Object getActualFieldValue(String fieldName, Class<T> clazz, Object value) {
+		Field field = ReflectionUtils.getFieldRecursively(clazz, fieldName);
+		FieldModel fieldModel = new FieldModel(field);
+
+		if (fieldModel.isCollection(value)) {
+			return getActualListFieldValue(fieldName, clazz, (Collection<?>) value);
+		}
+
+		if (fieldModel.isId()) {
+			return getActualKeyFieldValue(clazz, value);
+		}
+
+		if (fieldModel.isEnum(value)) {
+			return value.toString();
+		}
+
+		if (fieldModel.isIndexNormalizable()) {
+			return normalizeValue(value);
+		}
+
+		if (value instanceof IdRef) {
+			return ((IdRef<?>) value).getUri();
+		}
+
+		if (fieldModel.isDate() && value instanceof String) {
+			return DateUtils.toTimestamp((String) value);
+		}
+
+		return value;
+	}
+
+	private <T> Object getActualListFieldValue(String fieldName, Class<T> clazz, Collection<?> value) {
+		Collection<?> objects = (Collection<?>) value;
+		List<Object> values = new ArrayList<>();
+		for (Object obj : objects) {
+			values.add(getActualFieldValue(fieldName, clazz, obj));
+		}
+		return values;
+	}
+
+	private <T> Key getActualKeyFieldValue(Class<T> clazz, Object value) {
+		IdRef<?> idRef = (IdRef<?>) value;
+		return idRef.asKey();
+	}
+
+	private Object normalizeValue(Object o) {
+		if (o == null) {
+			return null;
+		}
+
+		if (!o.getClass().equals(String.class)) {
+			return o;
+		}
+
+		return StringUtils.stripAccents((String) o).toLowerCase();
+	}
+
+	public int listSize(Object value) {
+		if (value == null) {
+			return 0;
+		}
+		if (value.getClass().isArray()) {
+			return Array.getLength(value);
+		}
+		if (Collection.class.isAssignableFrom(value.getClass())) {
+			return Collection.class.cast(value).size();
+		}
+		if (Iterable.class.isAssignableFrom(value.getClass())) {
+			return iterableSize(value);
+		}
+		throw new RuntimeException("Value used with operator 'in' is not an array or list.");
+	}
+
+	private int iterableSize(Object value) {
+		Iterator<?> it = Iterable.class.cast(value).iterator();
+		int i = 0;
+		while (it.hasNext()) {
+			it.next();
+			i++;
+		}
+		return i;
 	}
 
 }

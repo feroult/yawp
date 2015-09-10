@@ -1,37 +1,40 @@
 package io.yawp.repository;
 
 import io.yawp.repository.annotations.Global;
-
-import com.google.appengine.api.NamespaceManager;
+import io.yawp.repository.driver.api.NamespaceDriver;
 
 public class Namespace {
 
 	public static String GLOBAL = "";
 
-	protected String ns;
+	private NamespaceDriver driver;
 
-	protected String previousNs;
+	private String ns;
 
-	public Namespace() {
+	private String previousNs;
+
+	public Namespace(NamespaceDriver driver) {
+		this.driver = driver;
 	}
 
-	public Namespace(String ns) {
+	public Namespace(String ns, NamespaceDriver driver) {
 		this.ns = ns;
+		this.driver = driver;
 	}
 
 	public void set(Class<?> clazz) {
-		previousNs = NamespaceManager.get();
+		previousNs = driver.get();
 		configureNs(clazz.isAnnotationPresent(Global.class) ? GLOBAL : ns);
 	}
 
 	private void configureNs(String ns) {
 		if (ns != null) {
-			NamespaceManager.set(ns);
+			driver.set(ns);
 		}
 	}
 
 	public void reset() {
-		NamespaceManager.set(previousNs);
+		driver.set(previousNs);
 	}
 
 	public void setNs(String ns) {

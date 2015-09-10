@@ -10,4 +10,8 @@ public interface RepositoryDriver {
 
 	public QueryDriver query();
 
+	public NamespaceDriver namespace();
+
+	//public TransactionDriver transaction();
+
 }

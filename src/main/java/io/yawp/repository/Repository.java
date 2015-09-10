@@ -38,11 +38,11 @@ public class Repository {
 	}
 
 	private Repository() {
-		this.namespace = new Namespace();
+		this.namespace = new Namespace(driver().namespace());
 	}
 
 	private Repository(String ns) {
-		this.namespace = new Namespace(ns);
+		this.namespace = new Namespace(ns, driver().namespace());
 	}
 
 	public Repository namespace(String ns) {

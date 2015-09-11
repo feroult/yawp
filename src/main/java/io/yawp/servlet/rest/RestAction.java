@@ -143,7 +143,7 @@ public abstract class RestAction {
 			return transform((List<?>) object);
 		}
 
-		if (!hasTransformer()) {
+		if (!hasTransformer() || !object.getClass().equals(endpointClazz)) {
 			return object;
 		}
 
@@ -156,6 +156,9 @@ public abstract class RestAction {
 		}
 
 		for (Object object : objects) {
+			if (!object.getClass().equals(endpointClazz)) {
+				continue;
+			}
 			RepositoryTransformers.execute(r, object, getTransformerName());
 		}
 

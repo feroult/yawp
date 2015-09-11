@@ -80,6 +80,13 @@ public class ParentCustomActionTest extends ParentServletTestCase {
 	}
 
 	@Test
+	public void testActionWithTransformAndDifferentClazzResult() {
+		String json = get(uri("/parents/something"), params("t", "upperCase"));
+		String responseString = from(json, String.class);
+		assertEquals("touched", responseString);
+	}
+
+	@Test
 	public void testAtomicRollback() {
 		try {
 			put(uri("/parents/atomic_rollback"));

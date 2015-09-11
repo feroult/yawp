@@ -23,10 +23,6 @@ public class Helper {
 		createEntity(kind, true, propertiesAndValues);
 	}
 
-	public void createEntityWithUnindexedProperty(String kind, Object... propertiesAndValues) {
-		createEntity(kind, false, propertiesAndValues);
-	}
-
 	public void createEntity(String kind, boolean indexed, Object... propertiesAndValues) {
 		Entity entity = new Entity(kind);
 		for (int i = 0; i < propertiesAndValues.length; i += 2) {

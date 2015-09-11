@@ -12,8 +12,6 @@ import org.junit.Before;
 
 public class EndpointTestCase extends Feature {
 
-	private static final String LOGGED_USER_ID = "10";
-
 	private static RepositoryFeatures features;
 
 	private TestHelperDriver helper;
@@ -24,7 +22,7 @@ public class EndpointTestCase extends Feature {
 
 	@Before
 	public void setUp() {
-		yawp = Repository.r(LOGGED_USER_ID).setFeatures(features);
+		yawp = Repository.r().setFeatures(features);
 		helper = testHelperDriver(yawp);
 		helper.setUp();
 	}

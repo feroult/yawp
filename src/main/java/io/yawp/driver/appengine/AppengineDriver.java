@@ -1,10 +1,11 @@
 package io.yawp.driver.appengine;
 
-import io.yawp.driver.api.HelpersDriver;
+import io.yawp.driver.api.Driver;
+import io.yawp.driver.api.EnvironmentDriver;
 import io.yawp.driver.api.NamespaceDriver;
 import io.yawp.driver.api.PersistenceDriver;
 import io.yawp.driver.api.QueryDriver;
-import io.yawp.driver.api.Driver;
+import io.yawp.driver.api.TestHelperDriver;
 import io.yawp.driver.api.TransactionDriver;
 import io.yawp.repository.Repository;
 
@@ -38,8 +39,12 @@ public class AppengineDriver implements Driver {
 	}
 
 	@Override
-	public HelpersDriver helpers() {
-		return new AppengineHelpersDriver();
+	public TestHelperDriver tests() {
+		return new AppengineTestHelperDriver();
 	}
 
+	@Override
+	public EnvironmentDriver environment() {
+		return new AppengineEnvironmentDriver();
+	}
 }

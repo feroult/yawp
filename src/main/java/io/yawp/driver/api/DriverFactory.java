@@ -5,7 +5,7 @@ import io.yawp.repository.Repository;
 
 public class DriverFactory {
 
-	public static Driver getRepositoryDriver(Repository r) {
+	public static Driver getDriver(Repository r) {
 		AppengineDriver driver = new AppengineDriver();
 		driver.init(r);
 		return driver;

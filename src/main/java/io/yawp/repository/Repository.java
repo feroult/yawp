@@ -60,7 +60,7 @@ public class Repository {
 		if (driver != null) {
 			return driver;
 		}
-		driver = DriverFactory.getRepositoryDriver(this);
+		driver = DriverFactory.getDriver(this);
 		return driver;
 	}
 

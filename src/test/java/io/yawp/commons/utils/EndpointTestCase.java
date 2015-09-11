@@ -30,7 +30,7 @@ public class EndpointTestCase extends Feature {
 	}
 
 	private TestHelperDriver testHelperDriver(Repository r) {
-		return DriverFactory.getRepositoryDriver(r).helpers().tests();
+		return DriverFactory.getDriver(r).tests();
 	}
 
 	protected void login(String username) {

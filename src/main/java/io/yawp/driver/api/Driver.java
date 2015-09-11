@@ -14,6 +14,8 @@ public interface Driver {
 
 	public TransactionDriver transaction();
 
-	public HelpersDriver helpers();
+	public TestHelperDriver tests();
+
+	public EnvironmentDriver environment();
 
 }

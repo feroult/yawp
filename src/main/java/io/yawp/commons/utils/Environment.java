@@ -18,6 +18,6 @@ public class Environment {
 	}
 
 	private static EnvironmentDriver environment() {
-		return DriverFactory.getDriver().helpers().environment();
+		return DriverFactory.getDriver().environment();
 	}
 }

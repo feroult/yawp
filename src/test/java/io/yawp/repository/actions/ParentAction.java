@@ -54,6 +54,11 @@ public class ParentAction extends Action<Parent> {
 		return parents;
 	}
 
+	@GET("echo")
+	public Parent echo(IdRef<Parent> id) {
+		return id.fetch();
+	}
+
 	@Atomic
 	@PUT("atomic_rollback")
 	public void atomicRollback() {

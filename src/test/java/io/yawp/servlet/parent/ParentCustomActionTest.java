@@ -57,6 +57,16 @@ public class ParentCustomActionTest extends ParentServletTestCase {
 	}
 
 	@Test
+	public void testActionWithTransformer() {
+		Parent parent = saveParent("xpto1");
+
+		String json = get(uri("/parents/%s/echo", parent), params("t", "upperCase"));
+		Parent retrievedParent = from(json, Parent.class);
+
+		assertEquals("XPTO1", retrievedParent.getName());
+	}
+
+	@Test
 	public void testAtomicRollback() {
 		try {
 			put(uri("/parents/atomic_rollback"));

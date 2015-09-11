@@ -2,6 +2,7 @@ package io.yawp.driver.appengine;
 
 import io.yawp.driver.api.Driver;
 import io.yawp.driver.api.EnvironmentDriver;
+import io.yawp.driver.api.HelpersDriver;
 import io.yawp.driver.api.NamespaceDriver;
 import io.yawp.driver.api.PersistenceDriver;
 import io.yawp.driver.api.QueryDriver;
@@ -46,5 +47,10 @@ public class AppengineDriver implements Driver {
 	@Override
 	public EnvironmentDriver environment() {
 		return new AppengineEnvironmentDriver();
+	}
+
+	@Override
+	public HelpersDriver helpers() {
+		return new AppengineHelpersDriver();
 	}
 }

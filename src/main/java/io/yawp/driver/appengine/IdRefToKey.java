@@ -32,6 +32,7 @@ public class IdRefToKey {
 		if (key == null) {
 			return null;
 		}
+
 		Class<?> objectClass = KindResolver.getClassFromKind(r, key.getKind());
 
 		IdRef<?> ref = null;

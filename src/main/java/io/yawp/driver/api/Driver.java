@@ -1,8 +1,8 @@
-package io.yawp.repository.driver.api;
+package io.yawp.driver.api;
 
 import io.yawp.repository.Repository;
 
-public interface RepositoryDriver {
+public interface Driver {
 
 	void init(Repository r);
 

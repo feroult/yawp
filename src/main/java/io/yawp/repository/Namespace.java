@@ -1,7 +1,7 @@
 package io.yawp.repository;
 
+import io.yawp.driver.api.NamespaceDriver;
 import io.yawp.repository.annotations.Global;
-import io.yawp.repository.driver.api.NamespaceDriver;
 
 public class Namespace {
 

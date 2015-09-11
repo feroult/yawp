@@ -1,4 +1,4 @@
-package io.yawp.repository.driver.api;
+package io.yawp.driver.api;
 
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;

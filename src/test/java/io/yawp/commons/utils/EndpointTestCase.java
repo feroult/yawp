@@ -1,11 +1,11 @@
 package io.yawp.commons.utils;
 
+import io.yawp.driver.api.DriverFactory;
+import io.yawp.driver.api.TestHelperDriver;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Feature;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
-import io.yawp.repository.driver.api.RepositoryDriverFactory;
-import io.yawp.repository.driver.api.TestHelperDriver;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,7 +30,7 @@ public class EndpointTestCase extends Feature {
 	}
 
 	private TestHelperDriver testHelperDriver(Repository r) {
-		return RepositoryDriverFactory.getRepositoryDriver(r).helpers().tests();
+		return DriverFactory.getRepositoryDriver(r).helpers().tests();
 	}
 
 	protected void login(String username) {

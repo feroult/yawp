@@ -1,8 +1,8 @@
-package io.yawp.repository.driver.appengine;
+package io.yawp.driver.appengine;
 
-import io.yawp.repository.driver.api.EnvironmentDriver;
-import io.yawp.repository.driver.api.HelpersDriver;
-import io.yawp.repository.driver.api.TestHelperDriver;
+import io.yawp.driver.api.EnvironmentDriver;
+import io.yawp.driver.api.HelpersDriver;
+import io.yawp.driver.api.TestHelperDriver;
 
 public class AppengineHelpersDriver implements HelpersDriver {
 

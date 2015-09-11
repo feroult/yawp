@@ -1,14 +1,14 @@
-package io.yawp.repository.driver.appengine;
+package io.yawp.driver.appengine;
 
+import io.yawp.driver.api.HelpersDriver;
+import io.yawp.driver.api.NamespaceDriver;
+import io.yawp.driver.api.PersistenceDriver;
+import io.yawp.driver.api.QueryDriver;
+import io.yawp.driver.api.Driver;
+import io.yawp.driver.api.TransactionDriver;
 import io.yawp.repository.Repository;
-import io.yawp.repository.driver.api.HelpersDriver;
-import io.yawp.repository.driver.api.NamespaceDriver;
-import io.yawp.repository.driver.api.PersistenceDriver;
-import io.yawp.repository.driver.api.QueryDriver;
-import io.yawp.repository.driver.api.RepositoryDriver;
-import io.yawp.repository.driver.api.TransactionDriver;
 
-public class AppengineRepositoryDriver implements RepositoryDriver {
+public class AppengineDriver implements Driver {
 
 	private Repository r;
 

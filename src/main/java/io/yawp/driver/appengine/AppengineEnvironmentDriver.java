@@ -1,6 +1,6 @@
-package io.yawp.repository.driver.appengine;
+package io.yawp.driver.appengine;
 
-import io.yawp.repository.driver.api.EnvironmentDriver;
+import io.yawp.driver.api.EnvironmentDriver;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;

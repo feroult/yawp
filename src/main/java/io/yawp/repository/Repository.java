@@ -1,10 +1,10 @@
 package io.yawp.repository;
 
+import io.yawp.driver.api.Driver;
+import io.yawp.driver.api.DriverFactory;
+import io.yawp.driver.api.TransactionDriver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
-import io.yawp.repository.driver.api.RepositoryDriver;
-import io.yawp.repository.driver.api.RepositoryDriverFactory;
-import io.yawp.repository.driver.api.TransactionDriver;
 import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.query.QueryBuilder;
 
@@ -18,7 +18,7 @@ public class Repository {
 
 	private Namespace namespace;
 
-	private RepositoryDriver driver;
+	private Driver driver;
 
 	private TransactionDriver tx;
 
@@ -56,11 +56,11 @@ public class Repository {
 		return this;
 	}
 
-	public RepositoryDriver driver() {
+	public Driver driver() {
 		if (driver != null) {
 			return driver;
 		}
-		driver = RepositoryDriverFactory.getRepositoryDriver(this);
+		driver = DriverFactory.getRepositoryDriver(this);
 		return driver;
 	}
 

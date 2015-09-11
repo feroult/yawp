@@ -1,4 +1,4 @@
-package io.yawp.repository.driver.appengine;
+package io.yawp.driver.appengine;
 
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;

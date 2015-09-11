@@ -1,6 +1,6 @@
-package io.yawp.repository.driver.appengine;
+package io.yawp.driver.appengine;
 
-import io.yawp.repository.driver.api.TransactionDriver;
+import io.yawp.driver.api.TransactionDriver;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;

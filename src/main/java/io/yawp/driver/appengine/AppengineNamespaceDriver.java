@@ -1,6 +1,6 @@
-package io.yawp.repository.driver.appengine;
+package io.yawp.driver.appengine;
 
-import io.yawp.repository.driver.api.NamespaceDriver;
+import io.yawp.driver.api.NamespaceDriver;
 
 import com.google.appengine.api.NamespaceManager;
 

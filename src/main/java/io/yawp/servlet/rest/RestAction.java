@@ -139,6 +139,10 @@ public abstract class RestAction {
 	}
 
 	protected Object transform(Object object) {
+		if (isList(object)) {
+			return transform((List<?>) object);
+		}
+
 		if (!hasTransformer()) {
 			return object;
 		}
@@ -146,7 +150,23 @@ public abstract class RestAction {
 		return RepositoryTransformers.execute(r, object, getTransformerName());
 	}
 
+	protected Object transform(List<?> objects) {
+		if (!hasTransformer()) {
+			return objects;
+		}
+
+		for (Object object : objects) {
+			RepositoryTransformers.execute(r, object, getTransformerName());
+		}
+
+		return objects;
+	}
+
 	protected void applyGetFacade(Object object) {
+		if (isList(object)) {
+			applyGetFacade((List<?>) object);
+		}
+
 		if (!hasFacade()) {
 			return;
 		}
@@ -264,5 +284,9 @@ public abstract class RestAction {
 		if (overCollection) {
 			throw new HttpException(501);
 		}
+	}
+
+	private boolean isList(Object object) {
+		return List.class.isAssignableFrom(object.getClass());
 	}
 }

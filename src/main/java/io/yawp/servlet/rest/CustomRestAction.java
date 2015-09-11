@@ -1,7 +1,5 @@
 package io.yawp.servlet.rest;
 
-import io.yawp.commons.http.HttpException;
-
 public class CustomRestAction extends RestAction {
 
 	public CustomRestAction() {
@@ -21,17 +19,11 @@ public class CustomRestAction extends RestAction {
 			return null;
 		}
 
-		if (object.getClass().equals(endpointClazz)) {
-			applyGetFacade(object);
-			if (hasTransformer()) {
-				return transform(object);
-			}
-
-		} else if (hasTransformer()) {
-			throw new HttpException(406, "You cannot apply a transformer in a object that is not an Endpoint. Your action does not return an instance of endpoint, therefore you can't apply a transformer to it.");
+		applyGetFacade(object);
+		if (hasTransformer()) {
+			return transform(object);
 		}
 
 		return object;
 	}
-
 }

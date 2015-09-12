@@ -8,11 +8,10 @@ public class RoutesRestAction extends RestAction {
 
 	@Override
 	public void shield() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public String action() {
-		return "{ wip : 'todo' }";
+		return "{ \"status\": \"wip\" }";
 	}
 }

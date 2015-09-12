@@ -43,7 +43,7 @@ public class ChildShieldTest extends ChildServletTestCase {
 		saveShieldedChild(1l, saveParent(1l, "ok-for-janis"));
 		saveShieldedChild(2l, saveParent(2l, "ok-for-amy"));
 
-		login("janis", "rock.com");
+		login("janis");
 
 		assertPutWithStatus("/parents/1/shielded_children/1/single", 200);
 		assertPutWithStatus("/parents/1/shielded_children/collection", 200);

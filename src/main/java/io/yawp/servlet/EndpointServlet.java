@@ -90,7 +90,7 @@ public class EndpointServlet extends HttpServlet {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<String, String> makeParams(HttpServletRequest req) {
+	protected Map<String, String> makeParams(HttpServletRequest req) {
 		Map<String, String> map = new HashMap<String, String>();
 
 		Enumeration<String> e = req.getParameterNames();

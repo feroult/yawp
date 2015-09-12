@@ -6,20 +6,15 @@ import io.yawp.repository.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.Query.Filter;
-
 public abstract class BaseCondition {
 
-	protected static final Class<?>[] VALID_ID_CLASSES = new Class<?>[] { IdRef.class, Long.class, String.class, Key.class };
+	protected static final Class<?>[] VALID_ID_CLASSES = new Class<?>[] { IdRef.class, Long.class, String.class };
 
 	public abstract void init(Repository r, Class<?> clazz);
 
 	public abstract boolean hasPreFilter();
 
 	public abstract boolean hasPostFilter();
-
-	public abstract Filter createPreFilter() throws FalsePredicateException;
 
 	public abstract boolean evaluate(Object object);
 

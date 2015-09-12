@@ -2,7 +2,7 @@ package io.yawp.commons.utils.kind;
 
 import io.yawp.repository.annotations.Endpoint;
 
-public class OldKindResolver implements KindResolver {
+public class OldKindResolver extends KindResolver {
 
 	@Override
 	public String getKind(Class<?> clazz) {

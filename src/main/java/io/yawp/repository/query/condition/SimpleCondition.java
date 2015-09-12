@@ -1,19 +1,21 @@
 package io.yawp.repository.query.condition;
 
-import io.yawp.commons.utils.EntityUtils;
+import io.yawp.repository.FieldModel;
+import io.yawp.repository.IdRef;
+import io.yawp.repository.ObjectModel;
 import io.yawp.repository.Repository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 public class SimpleCondition extends BaseCondition {
 
 	private Repository r;
 
 	private Class<?> clazz;
+
+	private ObjectModel model;
 
 	private String field;
 
@@ -35,6 +37,7 @@ public class SimpleCondition extends BaseCondition {
 	public void init(Repository r, Class<?> clazz) {
 		this.r = r;
 		this.clazz = clazz;
+		this.model = new ObjectModel(clazz);
 		normalizeIdRefs();
 	}
 
@@ -55,12 +58,16 @@ public class SimpleCondition extends BaseCondition {
 	}
 
 	public boolean isIdField() {
-		return field.equals(EntityUtils.getIdFieldName(clazz));
+		return field.equals(model.getIdField().getName());
 	}
 
 	@Override
 	public boolean hasPreFilter() {
-		return !isRefField() && (EntityUtils.hasIndex(clazz, field) || EntityUtils.isId(clazz, field));
+		if (isRefField()) {
+			return false;
+		}
+		FieldModel fieldModel = model.getFieldModel(field);
+		return fieldModel.hasIndex() || fieldModel.isId();
 	}
 
 	@Override
@@ -70,18 +77,6 @@ public class SimpleCondition extends BaseCondition {
 
 	private boolean isRefField() {
 		return field.indexOf("->") != -1;
-	}
-
-	@Override
-	public Filter createPreFilter() throws FalsePredicateException {
-		String actualFieldName = EntityUtils.getActualFieldName(field, clazz);
-		Object actualValue = EntityUtils.getActualFieldValue(field, clazz, whereValue);
-
-		if (whereOperator == WhereOperator.IN && EntityUtils.listSize(whereValue) == 0) {
-			throw new FalsePredicateException();
-		}
-
-		return new FilterPredicate(actualFieldName, whereOperator.getFilterOperator(), actualValue);
 	}
 
 	@Override
@@ -102,9 +97,10 @@ public class SimpleCondition extends BaseCondition {
 	private void normalizeIdRefs() {
 		if (isIdField()) {
 			if (whereValue instanceof String) {
-				whereValue = EntityUtils.convertToIdRef(r, (String) whereValue);
+				whereValue = IdRef.parse(r, (String) whereValue);
+
 			} else if (whereValue instanceof List) {
-				whereValue = EntityUtils.convertToIdRefs(r, (List<?>) whereValue);
+				whereValue = convertToIdRefs((List<?>) whereValue);
 			}
 		}
 	}
@@ -120,4 +116,15 @@ public class SimpleCondition extends BaseCondition {
 		}
 	}
 
+	private List<IdRef<?>> convertToIdRefs(List<?> rawIds) {
+		List<IdRef<?>> ids = new ArrayList<>();
+		for (Object rawId : rawIds) {
+			if (rawId instanceof String) {
+				ids.add(IdRef.parse(r, (String) rawId));
+			} else {
+				ids.add((IdRef<?>) rawId);
+			}
+		}
+		return ids;
+	}
 }

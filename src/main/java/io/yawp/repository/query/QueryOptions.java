@@ -13,21 +13,21 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 
-public class DatastoreQueryOptions {
+public class QueryOptions {
 
 	private BaseCondition condition;
 
-	private List<DatastoreQueryOrder> preOrders;
+	private List<QueryOrder> preOrders;
 
-	private List<DatastoreQueryOrder> postOrders;
+	private List<QueryOrder> postOrders;
 
 	private Integer limit;
 
-	public static DatastoreQueryOptions parse(String json) {
-		return new DatastoreQueryOptions(json);
+	public static QueryOptions parse(String json) {
+		return new QueryOptions(json);
 	}
 
-	public DatastoreQueryOptions(String json) {
+	public QueryOptions(String json) {
 		JsonObject jsonObject = (JsonObject) new JsonParser().parse(json);
 
 		this.condition = parseCondition(jsonObject.get("where"));
@@ -44,18 +44,18 @@ public class DatastoreQueryOptions {
 		return jsonElement.getAsInt();
 	}
 
-	private List<DatastoreQueryOrder> parseOrders(JsonArray jsonArray) {
+	private List<QueryOrder> parseOrders(JsonArray jsonArray) {
 		if (jsonArray == null) {
 			return null;
 		}
 
-		List<DatastoreQueryOrder> orders = new ArrayList<DatastoreQueryOrder>();
+		List<QueryOrder> orders = new ArrayList<QueryOrder>();
 
 		for (JsonElement jsonElement : jsonArray) {
 			String entity = getJsonStringValue(jsonElement, "e");
 			String property = getJsonStringValue(jsonElement, "p");
 			String direction = getJsonStringValue(jsonElement, "d");
-			orders.add(new DatastoreQueryOrder(entity, property, direction));
+			orders.add(new QueryOrder(entity, property, direction));
 		}
 
 		return orders;
@@ -170,11 +170,11 @@ public class DatastoreQueryOptions {
 		return condition;
 	}
 
-	public List<DatastoreQueryOrder> getPreOrders() {
+	public List<QueryOrder> getPreOrders() {
 		return preOrders;
 	}
 
-	public List<DatastoreQueryOrder> getPostOrders() {
+	public List<QueryOrder> getPostOrders() {
 		return postOrders;
 	}
 

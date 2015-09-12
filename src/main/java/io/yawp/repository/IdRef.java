@@ -1,21 +1,19 @@
 package io.yawp.repository;
 
 import io.yawp.commons.http.HttpVerb;
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.actions.ActionKey;
-import io.yawp.repository.query.DatastoreQuery;
+import io.yawp.repository.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 
 public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	private Repository r;
 
 	private Class<T> clazz;
+
+	private ObjectModel model;
 
 	private Long id;
 
@@ -27,12 +25,14 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		this.r = r;
 		this.clazz = clazz;
 		this.id = id;
+		this.model = new ObjectModel(clazz);
 	}
 
 	public IdRef(Repository r, Class<T> clazz, String name) {
 		this.r = r;
 		this.clazz = clazz;
 		this.name = name;
+		this.model = new ObjectModel(clazz);
 	}
 
 	public void setParentId(IdRef<?> parentId) {
@@ -48,7 +48,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	}
 
 	public <TT> TT child(Class<TT> childClazz) {
-		DatastoreQuery<TT> q = r.query(childClazz).from(this);
+		QueryBuilder<TT> q = r.query(childClazz).from(this);
 		return q.only();
 	}
 
@@ -60,17 +60,20 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return name;
 	}
 
-	public Key asKey() {
-		Key parent = parentId == null ? null : parentId.asKey();
-		String kind = EntityUtils.getKindFromClass(clazz);
-		if (id == null) {
-			return KeyFactory.createKey(parent, kind, name);
-		}
-		return KeyFactory.createKey(parent, kind, id);
+	public Repository getRepository() {
+		return r;
 	}
 
 	public Class<T> getClazz() {
 		return clazz;
+	}
+
+	public Class<?> getParentClazz() {
+		return model.getParentClazz();
+	}
+
+	public ObjectModel getModel() {
+		return new ObjectModel(clazz);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -85,22 +88,6 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 			ancestorId = ancestorId.getParentId();
 		}
 		return (IdRef<TT>) ancestorId;
-	}
-
-	public static IdRef<?> fromKey(Repository r, Key key) {
-		if (key == null) {
-			return null;
-		}
-		Class<?> objectClass = EntityUtils.getClassFromKind(r, key.getKind());
-
-		IdRef<?> ref = null;
-		if (key.getName() != null) {
-			ref = IdRef.create(r, objectClass, key.getName());
-		} else {
-			ref = IdRef.create(r, objectClass, key.getId());
-		}
-		ref.parentId = fromKey(r, key.getParent());
-		return ref;
 	}
 
 	public <TT> IdRef<TT> createChildId(Class<TT> clazz, Long id) {
@@ -167,6 +154,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		return lastIdRef;
 	}
 
+	public static IdRef<?> parse(Repository r, String id) {
+		return parse(r, HttpVerb.GET, id);
+	}
+
 	public static <T> IdRef<T> parse(Class<T> clazz, Repository r, String idString) {
 		return parse(r, HttpVerb.GET, idString);
 	}
@@ -180,7 +171,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 	}
 
 	private static void validateParentId(IdRef<?> id, String path) {
-		Class<?> parentClazz = EntityUtils.getParentClazz(id.getClazz());
+		Class<?> parentClazz = id.getParentClazz();
 		if (parentClazz == null) {
 			if (id.getParentId() != null) {
 				throw new RuntimeException("Invalid parent structure for id: " + path);
@@ -234,14 +225,6 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 		r.destroy(this);
 	}
 
-	public List<IdRef<?>> children() {
-		List<IdRef<?>> ids = new ArrayList<>();
-		for (EndpointFeatures<?> childEndpoint : r.getFeatures().getChildren(clazz)) {
-			ids.addAll(r.query(childEndpoint.getClazz()).from(this).ids());
-		}
-		return ids;
-	}
-
 	public Object getSimpleValue() {
 		if (id != null) {
 			return id;
@@ -251,6 +234,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
 	public String getName() {
 		return name;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public boolean isAncestorId(IdRef<?> childId) {

@@ -2,12 +2,10 @@ package io.yawp.repository.shields;
 
 import static io.yawp.repository.query.condition.Condition.c;
 import io.yawp.commons.http.annotation.PUT;
+import io.yawp.commons.utils.TestLoginManager;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.parents.Parent;
 import io.yawp.repository.models.parents.ShieldedChild;
-
-import com.google.appengine.api.users.User;
-import com.google.appengine.api.users.UserServiceFactory;
 
 public class ChildShield extends Shield<ShieldedChild> {
 
@@ -38,11 +36,14 @@ public class ChildShield extends Shield<ShieldedChild> {
 	}
 
 	private boolean isJanis() {
-		return is("janis@rock.com");
+		return is("janis");
 	}
 
-	private boolean is(String email) {
-		User currentUser = UserServiceFactory.getUserService().getCurrentUser();
-		return currentUser != null && currentUser.getEmail().equals(email);
+	private boolean is(String username) {
+		return TestLoginManager.isLogged(username);
+		// return TestLoginManager.getLoggedUsername().equals(username);
+		// User currentUser =
+		// UserServiceFactory.getUserService().getCurrentUser();
+		// return currentUser != null && currentUser.getEmail().equals(email);
 	}
 }

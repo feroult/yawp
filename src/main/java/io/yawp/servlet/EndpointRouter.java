@@ -3,11 +3,11 @@ package io.yawp.servlet;
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.EndpointNotFoundException;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
@@ -283,22 +283,24 @@ public class EndpointRouter {
 	}
 
 	private IdRef<?> forceParentIdInObjectIfNecessary(Object object, IdRef<?> idInObject) {
-		if (EntityUtils.getParentClazz(endpointClazz) == null) {
+		ObjectHolder objectHolder = new ObjectHolder(object);
+
+		if (objectHolder.getModel().getParentClazz() == null) {
 			return null;
 		}
 
-		IdRef<?> parentId = EntityUtils.getParentId(object);
+		IdRef<?> parentId = objectHolder.getParentId();
 		if (parentId != null) {
 			return parentId;
 		}
 
 		if (idInObject != null) {
-			EntityUtils.setParentId(object, idInObject.getParentId());
+			objectHolder.setParentId(idInObject.getParentId());
 			return idInObject.getParentId();
 		}
 
 		if (id != null) {
-			EntityUtils.setParentId(object, id);
+			objectHolder.setParentId(id);
 			return id;
 		}
 
@@ -306,14 +308,16 @@ public class EndpointRouter {
 	}
 
 	private IdRef<?> forceIdInObjectIfNecessary(Object object) {
-		IdRef<?> idInObject = EntityUtils.getId(object);
+		ObjectHolder objectHolder = new ObjectHolder(object);
+
+		IdRef<?> idInObject = objectHolder.getId();
 
 		if (idInObject != null) {
 			return idInObject;
 		}
 
 		if (id != null && id.getClazz().equals(endpointClazz)) {
-			EntityUtils.setId(object, id);
+			objectHolder.setId(id);
 			return id;
 		}
 

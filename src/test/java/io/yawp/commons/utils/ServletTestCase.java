@@ -3,6 +3,7 @@ package io.yawp.commons.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import io.yawp.commons.http.HttpException;
+import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.Repository;
 import io.yawp.servlet.EndpointServlet;
 
@@ -147,7 +148,8 @@ public class ServletTestCase extends EndpointTestCase {
 		List<String> longIds = new ArrayList<String>();
 
 		for (Object object : objects) {
-			longIds.add(String.valueOf(EntityUtils.getIdSimpleValue(object)));
+			ObjectHolder objectHolder = new ObjectHolder(object);
+			longIds.add(String.valueOf(objectHolder.getId().getSimpleValue()));
 		}
 
 		return String.format(format, longIds.toArray());

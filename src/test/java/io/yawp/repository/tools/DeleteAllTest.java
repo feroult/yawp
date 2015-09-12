@@ -1,35 +1,26 @@
 package io.yawp.repository.tools;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
 import io.yawp.commons.utils.EndpointTestCase;
+import io.yawp.repository.models.basic.BasicObject;
+import io.yawp.repository.models.parents.Parent;
 
-import org.junit.Before;
 import org.junit.Test;
 
 public class DeleteAllTest extends EndpointTestCase {
-	private Helper helper;
-
-	@Before
-	public void before() {
-		helper = new Helper();
-	}
 
 	@Test
 	public void deleteAll() {
-		helper.createEntityWithIndexedProperty("person", "name", "john");
-		helper.createEntityWithIndexedProperty("car", "model", "ferrari");
-		helper.createEntityWithIndexedProperty("band", "style", "blues");
+		yawp.save(new BasicObject());
+		yawp.save(new Parent());
 
-		assertNotNull(helper.queryEntity("person", "name", "john"));
-		assertNotNull(helper.queryEntity("car", "model", "ferrari"));
-		assertNotNull(helper.queryEntity("band", "style", "blues"));
+		assertEquals(1, yawp(BasicObject.class).list().size());
+		assertEquals(1, yawp(Parent.class).list().size());
 
 		DeleteAll.now();
 
-		assertNull(helper.queryEntity("person", "name", "john"));
-		assertNull(helper.queryEntity("car", "model", "ferrari"));
-		assertNull(helper.queryEntity("band", "style", "blues"));
+		assertEquals(0, yawp(BasicObject.class).list().size());
+		assertEquals(0, yawp(Parent.class).list().size());
 	}
 
 }

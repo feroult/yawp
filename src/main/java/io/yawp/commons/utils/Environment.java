@@ -1,18 +1,23 @@
 package io.yawp.commons.utils;
 
-import com.google.appengine.api.utils.SystemProperty;
+import io.yawp.driver.api.DriverFactory;
+import io.yawp.driver.api.EnvironmentDriver;
 
 public class Environment {
 
 	public static boolean isProduction() {
-		return SystemProperty.environment.value() == SystemProperty.Environment.Value.Production;
+		return environment().isProduction();
 	}
 
 	public static boolean isDevelopment() {
-		return SystemProperty.environment.value() == SystemProperty.Environment.Value.Development;
+		return environment().isDevelopment();
 	}
 
 	public static boolean isTest() {
-		return !isProduction() && !isDevelopment();
+		return environment().isTest();
+	}
+
+	private static EnvironmentDriver environment() {
+		return DriverFactory.getDriver().environment();
 	}
 }

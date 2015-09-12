@@ -1,7 +1,9 @@
 package io.yawp.servlet;
 
 import io.yawp.commons.http.ErrorResponse;
-import io.yawp.commons.utils.Environment;
+import io.yawp.driver.api.Driver;
+import io.yawp.driver.api.DriverFactory;
+import io.yawp.repository.Repository;
 
 import java.io.IOException;
 
@@ -9,9 +11,6 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 
 public class FixturesServlet extends EndpointServlet {
 
@@ -25,19 +24,22 @@ public class FixturesServlet extends EndpointServlet {
 
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		if (!enableFixtures()) {
+		if (!enableFixtures(req)) {
 			response(resp, new ErrorResponse(403));
 			return;
 		}
 		super.service(req, resp);
 	}
 
-	private boolean enableFixtures() {
-		if (!Environment.isProduction()) {
+	private boolean enableFixtures(HttpServletRequest req) {
+		Repository r = getRepository(makeParams(req));
+		Driver driver = DriverFactory.getDriver(r);
+
+		if (!driver.environment().isProduction()) {
 			return true;
 		}
-		UserService userService = UserServiceFactory.getUserService();
-		return userService.isUserLoggedIn() && userService.isUserAdmin();
+
+		return driver.environment().isAdmin();
 	}
 
 }

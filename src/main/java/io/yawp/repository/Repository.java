@@ -1,22 +1,16 @@
 package io.yawp.repository;
 
-import io.yawp.commons.utils.EntityUtils;
+import io.yawp.driver.api.Driver;
+import io.yawp.driver.api.DriverFactory;
+import io.yawp.driver.api.TransactionDriver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
-import io.yawp.repository.query.DatastoreQuery;
+import io.yawp.repository.query.QueryBuilder;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-
-import com.google.appengine.api.datastore.AsyncDatastoreService;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.Transaction;
-import com.google.appengine.api.datastore.TransactionOptions;
 
 public class Repository {
 
@@ -24,9 +18,9 @@ public class Repository {
 
 	private Namespace namespace;
 
-	private DatastoreService datastore;
+	private Driver driver;
 
-	private Transaction tx;
+	private TransactionDriver tx;
 
 	public static Repository r() {
 		return new Repository();
@@ -37,11 +31,11 @@ public class Repository {
 	}
 
 	private Repository() {
-		this.namespace = new Namespace();
+		this.namespace = new Namespace(driver().namespace());
 	}
 
 	private Repository(String ns) {
-		this.namespace = new Namespace(ns);
+		this.namespace = new Namespace(ns, driver().namespace());
 	}
 
 	public Repository namespace(String ns) {
@@ -62,12 +56,12 @@ public class Repository {
 		return this;
 	}
 
-	public DatastoreService datastore() {
-		if (datastore != null) {
-			return datastore;
+	public Driver driver() {
+		if (driver != null) {
+			return driver;
 		}
-		datastore = DatastoreServiceFactory.getDatastoreService();
-		return datastore;
+		driver = DriverFactory.getDriver(this);
+		return driver;
 	}
 
 	public AsyncRepository async() {
@@ -118,15 +112,11 @@ public class Repository {
 	}
 
 	private void saveInternal(Object object) {
-		Entity entity = createEntity(object);
-		EntityUtils.toEntity(object, entity);
-		saveEntity(object, entity);
+		driver().persistence().save(object);
 	}
 
 	private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
-		Entity entity = createEntity(object);
-		EntityUtils.toEntity(object, entity);
-		return saveEntityAsync(object, entity, enableHooks);
+		return driver().persistence().saveAsync(object, enableHooks);
 	}
 
 	public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
@@ -139,58 +129,25 @@ public class Repository {
 		}
 	}
 
-	public <T> DatastoreQuery<T> queryWithHooks(Class<T> clazz) {
-		DatastoreQuery<T> q = DatastoreQuery.q(clazz, this);
+	public <T> QueryBuilder<T> queryWithHooks(Class<T> clazz) {
+		QueryBuilder<T> q = QueryBuilder.q(clazz, this);
 		RepositoryHooks.beforeQuery(this, q, clazz);
 		return q;
 	}
 
-	public <T> DatastoreQuery<T> query(Class<T> clazz) {
-		return DatastoreQuery.q(clazz, this);
+	public <T> QueryBuilder<T> query(Class<T> clazz) {
+		return QueryBuilder.q(clazz, this);
 	}
 
 	public void destroy(IdRef<?> id) {
 		namespace.set(id.getClazz());
 		try {
 			RepositoryHooks.beforeDestroy(this, id);
-			for (IdRef<?> child : id.children()) {
-				destroy(child);
-			}
-
-			datastore().delete(id.asKey());
-
+			driver().persistence().destroy(id);
 			RepositoryHooks.afterDestroy(this, id);
 		} finally {
 			namespace.reset();
 		}
-	}
-
-	private void saveEntity(Object object, Entity entity) {
-		Key key = datastore().put(entity);
-		EntityUtils.setKey(this, object, key);
-	}
-
-	private <T> FutureObject<T> saveEntityAsync(T object, Entity entity, boolean enableHooks) {
-		AsyncDatastoreService datastoreService = DatastoreServiceFactory.getAsyncDatastoreService();
-		return new FutureObject<T>(this, datastoreService.put(entity), object, enableHooks);
-	}
-
-	private Entity createEntity(Object object) {
-		Key key = EntityUtils.getKey(object);
-
-		if (key == null) {
-			return createEntityWithNewKey(object);
-		}
-
-		return new Entity(key);
-	}
-
-	private Entity createEntityWithNewKey(Object object) {
-		Key parentKey = EntityUtils.getParentKey(object);
-		if (parentKey == null) {
-			return new Entity(EntityUtils.getKindFromClass(object.getClass()));
-		}
-		return new Entity(EntityUtils.getKindFromClass(object.getClass()), parentKey);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -215,22 +172,16 @@ public class Repository {
 	}
 
 	public void begin() {
-		tx = datastore().beginTransaction();
+		tx = driver().transaction().begin();
 	}
 
 	public void beginX() {
-		TransactionOptions options = TransactionOptions.Builder.withXG(true);
-		tx = datastore().beginTransaction(options);
+		tx = driver().transaction().beginX();
 	}
 
 	public void rollback() {
 		if (tx == null) {
 			throw new RuntimeException("No transaction in progress");
-		}
-
-		if (!tx.isActive()) {
-			tx = null;
-			return;
 		}
 
 		tx.rollback();

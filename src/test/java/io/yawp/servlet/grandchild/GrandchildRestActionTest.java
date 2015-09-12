@@ -121,24 +121,4 @@ public class GrandchildRestActionTest extends GrandchildServletTestCase {
 		assertGetWithStatus(uri("/parents/%s/children/%s/grandchildren/%s", parent, child, grandchild), 404);
 	}
 
-	@Test
-	public void testDestroyChild() {
-		Grandchild grandchild = saveGrandchild("xpto1", child);
-
-		delete(uri("/parents/%s/children/%s", parent, child));
-		assertGetWithStatus(uri("/parents/%s/children/%s/grandchildren/%s", parent, child, grandchild), 404);
-
-		assertEquals("[]", get("/grandchildren"));
-	}
-
-	@Test
-	public void testDestroyParent() {
-		Grandchild grandchild = saveGrandchild("xpto1", child);
-
-		delete(uri("/parents/%s", parent));
-		assertGetWithStatus(uri("/parents/%s/children/%s/grandchildren/%s", parent, child, grandchild), 404);
-
-		assertEquals("[]", get("/grandchildren"));
-	}
-
 }

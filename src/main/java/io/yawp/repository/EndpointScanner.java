@@ -1,6 +1,5 @@
 package io.yawp.repository;
 
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.actions.ActionKey;
@@ -51,10 +50,8 @@ public final class EndpointScanner {
 	private void scanEndpoints() {
 		Set<Class<?>> clazzes = endpointsPackage.getTypesAnnotatedWith(Endpoint.class);
 
-		for (Class<?> endpoint : clazzes) {
-			EndpointFeatures<?> features = new EndpointFeatures<>(endpoint);
-			features.setParent(EntityUtils.getParentClazz(endpoint));
-			endpoints.put(endpoint, features);
+		for (Class<?> endpointClazz : clazzes) {
+			endpoints.put(endpointClazz, new EndpointFeatures<>(endpointClazz));
 		}
 	}
 
@@ -81,7 +78,7 @@ public final class EndpointScanner {
 	}
 
 	private <T, V extends Shield<T>> void setShield(Class<V> shieldClazz) {
-		Class<T> objectClazz = EntityUtils.getShieldObject(shieldClazz);
+		Class<T> objectClazz = getShieldObject(shieldClazz);
 
 		ShieldInfo<T> shieldInfo = new ShieldInfo<T>(shieldClazz);
 
@@ -100,7 +97,7 @@ public final class EndpointScanner {
 	}
 
 	private <T, V extends Hook<T>> void addHook(Class<V> hookClazz) {
-		Class<T> objectClazz = EntityUtils.getHookObject(hookClazz);
+		Class<T> objectClazz = getHookObject(hookClazz);
 		for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, hookClazz.getSimpleName())) {
 			endpoint.addHook(hookClazz);
 		}
@@ -189,6 +186,14 @@ public final class EndpointScanner {
 	public EndpointScanner enableHooks(boolean enableHooks) {
 		this.enableHooks = enableHooks;
 		return this;
+	}
+
+	private static <T> Class<T> getHookObject(Class<? extends Hook<T>> hook) {
+		return (Class<T>) ReflectionUtils.getGenericParameter(hook);
+	}
+
+	private static <T> Class<T> getShieldObject(Class<? extends Shield<T>> hook) {
+		return (Class<T>) ReflectionUtils.getGenericParameter(hook);
 	}
 
 }

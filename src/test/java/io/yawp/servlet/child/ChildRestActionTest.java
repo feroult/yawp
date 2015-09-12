@@ -109,16 +109,6 @@ public class ChildRestActionTest extends ChildServletTestCase {
 	}
 
 	@Test
-	public void testDestroyParent() {
-		Child child = saveChild("xpto1", parent);
-
-		delete(uri("/parents/%s", parent));
-		assertGetWithStatus(uri("/parents/%s/children/%s", parent, child), 404);
-
-		assertEquals("[]", get("/children"));
-	}
-
-	@Test
 	public void testCreateAndShowWithIdAsLong() {
 		String uri = uri("/parents/%s/children/1", parent);
 

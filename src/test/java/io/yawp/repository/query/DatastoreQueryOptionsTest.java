@@ -19,7 +19,7 @@ public class DatastoreQueryOptionsTest {
 	public void testEmpty() {
 		String q = "{}";
 
-		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
+		QueryOptions options = QueryOptions.parse(q);
 
 		assertNull(options.getPreOrders());
 		assertNull(options.getPostOrders());
@@ -30,18 +30,18 @@ public class DatastoreQueryOptionsTest {
 	public void testQueryOptions() {
 		String q = "{where: ['longValue', '=', 1, 'intValue', '=', 3, 'doubleValue', '=', 4.3], order: [{p:'stringValue', d:'desc'}], sort: [{p:'longValue', d:'desc'}], limit: 2}";
 
-		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
+		QueryOptions options = QueryOptions.parse(q);
 
 		JoinedCondition conditions = assertJoinedCondition(options.getCondition(), LogicalOperator.AND, 3);
 		assertSimpleCondition(conditions.getConditions()[0], "longValue", WhereOperator.EQUAL, 1l);
 		assertSimpleCondition(conditions.getConditions()[1], "intValue", WhereOperator.EQUAL, 3l);
 		assertSimpleCondition(conditions.getConditions()[2], "doubleValue", WhereOperator.EQUAL, 4.3);
 
-		List<DatastoreQueryOrder> order = options.getPreOrders();
+		List<QueryOrder> order = options.getPreOrders();
 		assertEquals(1, order.size());
 		assertOrderEquals("stringValue", "desc", order.get(0));
 
-		List<DatastoreQueryOrder> sort = options.getPostOrders();
+		List<QueryOrder> sort = options.getPostOrders();
 		assertEquals(1, sort.size());
 		assertOrderEquals("longValue", "desc", sort.get(0));
 
@@ -51,14 +51,14 @@ public class DatastoreQueryOptionsTest {
 	@Test
 	public void testWhereSimpleCondition() {
 		String q = "{where: {p: 'longValue', op: '=', v: 1}}";
-		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
+		QueryOptions options = QueryOptions.parse(q);
 		assertSimpleCondition(options.getCondition(), "longValue", WhereOperator.EQUAL, 1l);
 	}
 
 	@Test
 	public void testWhereWithIn() {
 		String q = "{ where: [ 'id', 'in', ['1', '3', '5'] ] }";
-		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
+		QueryOptions options = QueryOptions.parse(q);
 		assertSimpleCondition(options.getCondition(), "id", WhereOperator.IN, Arrays.asList("1", "3", "5"));
 	}
 
@@ -66,7 +66,7 @@ public class DatastoreQueryOptionsTest {
 	public void testWhereJoinedConditions() {
 		String q = "{where: {op: 'and', c: [{p: 'longValue', op: '=', v: 1}, {p: 'intValue', op: '=', v: 3}]}}";
 
-		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
+		QueryOptions options = QueryOptions.parse(q);
 
 		JoinedCondition condition = assertJoinedCondition(options.getCondition(), LogicalOperator.AND, 2);
 		assertSimpleCondition(condition.getConditions()[0], "longValue", WhereOperator.EQUAL, 1l);
@@ -77,7 +77,7 @@ public class DatastoreQueryOptionsTest {
 	public void testBooleanCodition() {
 		String q = "{where: {p: 'booleanValue', op: '=', v: true}}";
 
-		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
+		QueryOptions options = QueryOptions.parse(q);
 		assertSimpleCondition(options.getCondition(), "booleanValue", WhereOperator.EQUAL, true);
 	}
 
@@ -85,7 +85,7 @@ public class DatastoreQueryOptionsTest {
 	public void testWhereJoinedConditionsWithPrecedence() {
 		String q = "{where: {op: 'and', c: [{p: 'longValue', op: '=', v: 1}, {op: 'or', c: [{p: 'intValue', op: '=', v: 3}, {p: 'doubleValue', op: '=', v: 4.3}]}]}}";
 
-		DatastoreQueryOptions options = DatastoreQueryOptions.parse(q);
+		QueryOptions options = QueryOptions.parse(q);
 
 		JoinedCondition condition1 = assertJoinedCondition(options.getCondition(), LogicalOperator.AND, 2);
 		assertSimpleCondition(condition1.getConditions()[0], "longValue", WhereOperator.EQUAL, 1l);
@@ -111,7 +111,7 @@ public class DatastoreQueryOptionsTest {
 		assertEquals(value, condition.getWhereValue());
 	}
 
-	private void assertOrderEquals(String property, String direction, DatastoreQueryOrder order) {
+	private void assertOrderEquals(String property, String direction, QueryOrder order) {
 		assertEquals(property, order.getProperty());
 		assertEquals(direction, order.getDirection());
 	}

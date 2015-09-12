@@ -10,7 +10,7 @@ import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.actions.ActionKey;
-import io.yawp.repository.query.DatastoreQuery;
+import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.shields.Shield;
 import io.yawp.repository.shields.ShieldInfo;
 import io.yawp.repository.transformers.RepositoryTransformers;
@@ -115,7 +115,7 @@ public abstract class RestAction {
 		return new JsonResponse(JsonUtils.to(object));
 	}
 
-	protected DatastoreQuery<?> query() {
+	protected QueryBuilder<?> query() {
 		if (enableHooks) {
 			return r.queryWithHooks(endpointClazz);
 		}

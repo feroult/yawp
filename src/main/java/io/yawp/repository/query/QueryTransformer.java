@@ -7,64 +7,58 @@ import io.yawp.repository.transformers.RepositoryTransformers;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatastoreQueryTransformer<F, T> {
+public class QueryTransformer<F, T> {
 
-	private DatastoreQuery<F> query;
+	private QueryBuilder<F> query;
 
 	private String transformName;
 
-	public DatastoreQueryTransformer(DatastoreQuery<F> query, String transformName) {
+	public QueryTransformer(QueryBuilder<F> query, String transformName) {
 		this.query = query;
 		this.transformName = transformName;
 	}
 
-	@Deprecated
-	public DatastoreQueryTransformer<F, T> where(Object... values) {
-		query.where(values);
-		return this;
-	}
-
-	public DatastoreQueryTransformer<F, T> where(String field, String operator, Object value) {
+	public QueryTransformer<F, T> where(String field, String operator, Object value) {
 		query.where(field, operator, value);
 		return this;
 	}
 
-	public DatastoreQueryTransformer<F, T> where(BaseCondition c) {
+	public QueryTransformer<F, T> where(BaseCondition c) {
 		query.where(c);
 		return this;
 	}
 
-	public DatastoreQueryTransformer<F, T> order(String property) {
+	public QueryTransformer<F, T> order(String property) {
 		order(property, null);
 		return this;
 	}
 
-	public DatastoreQueryTransformer<F, T> order(String property, String direction) {
+	public QueryTransformer<F, T> order(String property, String direction) {
 		query.order(property, direction);
 		return this;
 	}
 
-	public DatastoreQueryTransformer<F, T> sort(String property) {
+	public QueryTransformer<F, T> sort(String property) {
 		sort(property, null);
 		return this;
 	}
 
-	public DatastoreQueryTransformer<F, T> sort(String property, String direction) {
+	public QueryTransformer<F, T> sort(String property, String direction) {
 		query.sort(property, direction);
 		return this;
 	}
 
-	public DatastoreQueryTransformer<F, T> sort(String entity, String property, String direction) {
+	public QueryTransformer<F, T> sort(String entity, String property, String direction) {
 		query.sort(entity, property, direction);
 		return this;
 	}
 
-	public DatastoreQueryTransformer<F, T> limit(int limit) {
+	public QueryTransformer<F, T> limit(int limit) {
 		query.limit(limit);
 		return this;
 	}
 
-	public DatastoreQueryTransformer<F, T> cursor(String cursor) {
+	public QueryTransformer<F, T> cursor(String cursor) {
 		query.cursor(cursor);
 		return this;
 	}
@@ -73,7 +67,7 @@ public class DatastoreQueryTransformer<F, T> {
 		return query.getCursor();
 	}
 
-	public DatastoreQueryTransformer<F, T> options(DatastoreQueryOptions options) {
+	public QueryTransformer<F, T> options(QueryOptions options) {
 		query.options(options);
 		return this;
 	}

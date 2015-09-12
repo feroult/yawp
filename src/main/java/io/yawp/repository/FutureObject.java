@@ -1,35 +1,32 @@
 package io.yawp.repository;
 
-import io.yawp.commons.utils.EntityUtils;
 import io.yawp.repository.hooks.RepositoryHooks;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import com.google.appengine.api.datastore.Key;
-
 public class FutureObject<T> {
 
 	private Repository r;
 
-	private Future<Key> futureKey;
+	private Future<IdRef<?>> futureIdRef;
 
-	private T object;
+	private ObjectHolder objectHolder;
 
 	private boolean enableHooks;
 
-	public FutureObject(Repository r, Future<Key> futureKey, T object, boolean enableHooks) {
+	public FutureObject(Repository r, Future<IdRef<?>> futureIdRef, ObjectHolder objectHolder, boolean enableHooks) {
 		this.r = r;
-		this.futureKey = futureKey;
-		this.object = object;
+		this.futureIdRef = futureIdRef;
+		this.objectHolder = objectHolder;
 		this.enableHooks = enableHooks;
 	}
 
+	@SuppressWarnings("unchecked")
 	public T get() {
 		try {
-
-			Key key = futureKey.get();
-			EntityUtils.setKey(r, object, key);
+			objectHolder.setId(futureIdRef.get());
+			T object = (T) objectHolder.getObject();
 
 			if (enableHooks) {
 				RepositoryHooks.afterSave(r, object);

@@ -40,17 +40,19 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 	}
 
 	@Override
-	public void save(ObjectHolder objectH) {
-		Entity entity = createEntity(objectH);
-		toEntity(objectH, entity);
-		saveEntity(objectH, entity);
+	public void save(Object object) {
+		ObjectHolder objectHolder = new ObjectHolder(object);
+		Entity entity = createEntity(objectHolder);
+		toEntity(objectHolder, entity);
+		saveEntity(objectHolder, entity);
 	}
 
 	@Override
-	public <T> FutureObject<T> saveAsync(ObjectHolder objectH, boolean enableHooks) {
-		Entity entity = createEntity(objectH);
-		toEntity(objectH, entity);
-		return saveEntityAsync(objectH, entity, enableHooks);
+	public <T> FutureObject<T> saveAsync(Object object, boolean enableHooks) {
+		ObjectHolder objectHolder = new ObjectHolder(object);
+		Entity entity = createEntity(objectHolder);
+		toEntity(objectHolder, entity);
+		return saveEntityAsync(objectHolder, entity, enableHooks);
 	}
 
 	@Override
@@ -58,51 +60,51 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 		datastore().delete(IdRefToKey.toKey(r, id));
 	}
 
-	private Entity createEntity(ObjectHolder objectH) {
-		IdRef<?> id = objectH.getId();
+	private Entity createEntity(ObjectHolder objectHolder) {
+		IdRef<?> id = objectHolder.getId();
 
 		if (id == null) {
-			return createEntityWithNewKey(objectH);
+			return createEntityWithNewKey(objectHolder);
 		}
 
 		return new Entity(IdRefToKey.toKey(r, id));
 	}
 
-	private Entity createEntityWithNewKey(ObjectHolder objectH) {
-		IdRef<?> parentId = objectH.getParentId();
+	private Entity createEntityWithNewKey(ObjectHolder objectHolder) {
+		IdRef<?> parentId = objectHolder.getParentId();
 
 		if (parentId == null) {
-			return new Entity(objectH.getModel().getKind());
+			return new Entity(objectHolder.getModel().getKind());
 		}
-		return new Entity(objectH.getModel().getKind(), IdRefToKey.toKey(r, parentId));
+		return new Entity(objectHolder.getModel().getKind(), IdRefToKey.toKey(r, parentId));
 	}
 
-	private void saveEntity(ObjectHolder objectH, Entity entity) {
+	private void saveEntity(ObjectHolder objectHolder, Entity entity) {
 		Key key = datastore().put(entity);
-		objectH.setId(IdRefToKey.toIdRef(r, key));
+		objectHolder.setId(IdRefToKey.toIdRef(r, key));
 	}
 
-	private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectH, Entity entity, boolean enableHooks) {
+	private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectHolder, Entity entity, boolean enableHooks) {
 		Future<Key> futureKey = asyncDatastore().put(entity);
 		// TODO: driver - remove enableHooks from here? return only
 		// Future<IdRef<?>> ?
-		return new FutureObject<T>(r, new FutureIdRef(r, futureKey), objectH, enableHooks);
+		return new FutureObject<T>(r, new FutureIdRef(r, futureKey), objectHolder, enableHooks);
 	}
 
-	public void toEntity(ObjectHolder objectH, Entity entity) {
-		List<FieldModel> fieldModels = objectH.getModel().getFieldModels();
+	public void toEntity(ObjectHolder objectHolder, Entity entity) {
+		List<FieldModel> fieldModels = objectHolder.getModel().getFieldModels();
 
 		for (FieldModel fieldModel : fieldModels) {
 			if (fieldModel.isId()) {
 				continue;
 			}
 
-			setEntityProperty(objectH, entity, fieldModel);
+			setEntityProperty(objectHolder, entity, fieldModel);
 		}
 	}
 
-	private void setEntityProperty(ObjectHolder objectH, Entity entity, FieldModel fieldModel) {
-		Object value = getFieldValue(fieldModel, objectH);
+	private void setEntityProperty(ObjectHolder objectHolder, Entity entity, FieldModel fieldModel) {
+		Object value = getFieldValue(fieldModel, objectHolder);
 
 		if (!fieldModel.hasIndex()) {
 			entity.setUnindexedProperty(fieldModel.getName(), value);
@@ -118,8 +120,8 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 		entity.setProperty(fieldModel.getName(), value);
 	}
 
-	private Object getFieldValue(FieldModel fieldModel, ObjectHolder objectH) {
-		Object value = fieldModel.getValue(objectH.getObject());
+	private Object getFieldValue(FieldModel fieldModel, ObjectHolder objectHolder) {
+		Object value = fieldModel.getValue(objectHolder.getObject());
 
 		if (value == null) {
 			return null;

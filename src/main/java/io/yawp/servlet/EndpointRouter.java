@@ -283,25 +283,24 @@ public class EndpointRouter {
 	}
 
 	private IdRef<?> forceParentIdInObjectIfNecessary(Object object, IdRef<?> idInObject) {
-		// check if objectH can be created right from the routing start
-		ObjectHolder objectH = new ObjectHolder(object);
+		ObjectHolder objectHolder = new ObjectHolder(object);
 
-		if (objectH.getModel().getParentClazz() == null) {
+		if (objectHolder.getModel().getParentClazz() == null) {
 			return null;
 		}
 
-		IdRef<?> parentId = objectH.getParentId();
+		IdRef<?> parentId = objectHolder.getParentId();
 		if (parentId != null) {
 			return parentId;
 		}
 
 		if (idInObject != null) {
-			objectH.setParentId(idInObject.getParentId());
+			objectHolder.setParentId(idInObject.getParentId());
 			return idInObject.getParentId();
 		}
 
 		if (id != null) {
-			objectH.setParentId(id);
+			objectHolder.setParentId(id);
 			return id;
 		}
 
@@ -309,15 +308,16 @@ public class EndpointRouter {
 	}
 
 	private IdRef<?> forceIdInObjectIfNecessary(Object object) {
-		ObjectHolder objectH = new ObjectHolder(object);
-		IdRef<?> idInObject = objectH.getId();
+		ObjectHolder objectHolder = new ObjectHolder(object);
+
+		IdRef<?> idInObject = objectHolder.getId();
 
 		if (idInObject != null) {
 			return idInObject;
 		}
 
 		if (id != null && id.getClazz().equals(endpointClazz)) {
-			objectH.setId(id);
+			objectHolder.setId(id);
 			return id;
 		}
 

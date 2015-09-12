@@ -112,11 +112,11 @@ public class Repository {
 	}
 
 	private void saveInternal(Object object) {
-		driver().persistence().save(new ObjectHolder(object));
+		driver().persistence().save(object);
 	}
 
 	private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
-		return driver().persistence().saveAsync(new ObjectHolder(object), enableHooks);
+		return driver().persistence().saveAsync(object, enableHooks);
 	}
 
 	public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {

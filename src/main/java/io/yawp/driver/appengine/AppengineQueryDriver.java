@@ -175,10 +175,10 @@ public class AppengineQueryDriver implements QueryDriver {
 	public Object toObject(ObjectModel model, Entity entity) {
 		Object object = model.createInstance();
 
-		ObjectHolder objectH = new ObjectHolder(object);
-		objectH.setId(IdRefToKey.toIdRef(r, entity.getKey()));
+		ObjectHolder objectHolder = new ObjectHolder(object);
+		objectHolder.setId(IdRefToKey.toIdRef(r, entity.getKey()));
 
-		List<FieldModel> fieldModels = objectH.getModel().getFieldModels();
+		List<FieldModel> fieldModels = objectHolder.getModel().getFieldModels();
 
 		for (FieldModel fieldModel : fieldModels) {
 			if (fieldModel.isId()) {

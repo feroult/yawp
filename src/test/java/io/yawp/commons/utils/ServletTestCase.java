@@ -148,8 +148,8 @@ public class ServletTestCase extends EndpointTestCase {
 		List<String> longIds = new ArrayList<String>();
 
 		for (Object object : objects) {
-			ObjectHolder objectH = new ObjectHolder(object);
-			longIds.add(String.valueOf(objectH.getId().getSimpleValue()));
+			ObjectHolder objectHolder = new ObjectHolder(object);
+			longIds.add(String.valueOf(objectHolder.getId().getSimpleValue()));
 		}
 
 		return String.format(format, longIds.toArray());

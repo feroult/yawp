@@ -15,7 +15,7 @@ public class ConditionReference {
 
 	private Object object;
 
-	private ObjectHolder objectH;
+	private ObjectHolder objectHolder;
 
 	private Class<?> clazz;
 
@@ -28,7 +28,7 @@ public class ConditionReference {
 		this.clazz = clazz;
 		this.model = new ObjectModel(clazz);
 		this.object = object;
-		this.objectH = new ObjectHolder(object);
+		this.objectHolder = new ObjectHolder(object);
 
 		this.split = refString.split("->");
 		this.current = 0;
@@ -83,7 +83,7 @@ public class ConditionReference {
 			return object;
 		}
 
-		IdRef<?> parentId = objectH.getParentId();
+		IdRef<?> parentId = objectHolder.getParentId();
 		nextRef();
 
 		while (isParentRef()) {

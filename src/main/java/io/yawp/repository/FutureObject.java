@@ -11,22 +11,22 @@ public class FutureObject<T> {
 
 	private Future<IdRef<?>> futureIdRef;
 
-	private ObjectHolder objectH;
+	private ObjectHolder objectHolder;
 
 	private boolean enableHooks;
 
-	public FutureObject(Repository r, Future<IdRef<?>> futureIdRef, ObjectHolder objectH, boolean enableHooks) {
+	public FutureObject(Repository r, Future<IdRef<?>> futureIdRef, ObjectHolder objectHolder, boolean enableHooks) {
 		this.r = r;
 		this.futureIdRef = futureIdRef;
-		this.objectH = objectH;
+		this.objectHolder = objectHolder;
 		this.enableHooks = enableHooks;
 	}
 
 	@SuppressWarnings("unchecked")
 	public T get() {
 		try {
-			objectH.setId(futureIdRef.get());
-			T object = (T) objectH.getObject();
+			objectHolder.setId(futureIdRef.get());
+			T object = (T) objectHolder.getObject();
 
 			if (enableHooks) {
 				RepositoryHooks.afterSave(r, object);

@@ -177,8 +177,8 @@ public abstract class ShieldBase<T> extends Feature {
 		}
 
 		for (T object : objects) {
-			ObjectHolder objectH = new ObjectHolder(object);
-			IdRef<T> existingObjectId = (IdRef<T>) objectH.getId();
+			ObjectHolder objectHolder = new ObjectHolder(object);
+			IdRef<T> existingObjectId = (IdRef<T>) objectHolder.getId();
 
 			if (existingObjectId == null) {
 				FacadeUtils.set(object, facade);

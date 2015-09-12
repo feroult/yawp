@@ -100,8 +100,8 @@ public class ShieldConditions {
 	private class EvaluateExisting implements Evaluate {
 		@Override
 		public boolean evaluate(Object object) {
-			ObjectHolder objectH = new ObjectHolder(object);
-			IdRef<?> id = objectH.getId();
+			ObjectHolder objectHolder = new ObjectHolder(object);
+			IdRef<?> id = objectHolder.getId();
 			if (id == null) {
 				return true;
 			}

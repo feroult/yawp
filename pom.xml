@@ -15,7 +15,7 @@
 
 	<modules>
 		<module>yawp-core</module>
-		<!-- <module>yawp-appengine</module> -->
+		<module>yawp-appengine</module>
 	</modules>
 
 	<profiles>

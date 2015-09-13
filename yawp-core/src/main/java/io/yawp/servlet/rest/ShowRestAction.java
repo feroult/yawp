@@ -1,8 +1,8 @@
 package io.yawp.servlet.rest;
 
 import io.yawp.commons.http.HttpException;
-import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.NoResultException;
+import io.yawp.repository.query.QueryBuilder;
 
 public class ShowRestAction extends RestAction {
 

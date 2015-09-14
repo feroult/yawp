@@ -56,7 +56,7 @@ public class MockQueryDriver implements QueryDriver {
 		List<Object> result = new ArrayList<Object>();
 
 		for (Object object : objectsInStore) {
-			if (!condition.evaluate(object)) {
+			if (condition != null && !condition.evaluate(object)) {
 				continue;
 			}
 

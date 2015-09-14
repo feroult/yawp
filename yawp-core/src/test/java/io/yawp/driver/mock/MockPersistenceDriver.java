@@ -55,6 +55,10 @@ public class MockPersistenceDriver implements PersistenceDriver {
 	}
 
 	private IdRef<?> createId(ObjectHolder objectHolder) {
+		IdRef<?> parentId = objectHolder.getParentId();
+		if (parentId != null) {
+			return parentId.createChildId(objectHolder.getModel().getClazz(), MockStore.nextId());
+		}
 		return IdRef.create(r, objectHolder.getModel().getClazz(), MockStore.nextId());
 	}
 

@@ -12,52 +12,46 @@ import io.yawp.repository.Repository;
 
 public class MockDriver implements Driver {
 
+	private Repository r;
+
 	@Override
 	public void init(Repository r) {
-		// TODO Auto-generated method stub
-		System.out.println("mock!");
+		this.r = r;
 	}
 
 	@Override
 	public PersistenceDriver persistence() {
-		// TODO Auto-generated method stub
-		return null;
+		return new MockPersistenceDriver(r);
 	}
 
 	@Override
 	public QueryDriver query() {
-		// TODO Auto-generated method stub
-		return null;
+		return new MockQueryDriver();
 	}
 
 	@Override
 	public NamespaceDriver namespace() {
-		// TODO Auto-generated method stub
-		return null;
+		return new MockNamespaceDriver();
 	}
 
 	@Override
 	public TransactionDriver transaction() {
-		// TODO Auto-generated method stub
-		return null;
+		return new MockTransactionDriver();
 	}
 
 	@Override
 	public TestHelperDriver tests() {
-		// TODO Auto-generated method stub
-		return null;
+		return new MockTestHelperDriver();
 	}
 
 	@Override
 	public EnvironmentDriver environment() {
-		// TODO Auto-generated method stub
-		return null;
+		return new MockEnvironmentDriver();
 	}
 
 	@Override
 	public HelpersDriver helpers() {
-		// TODO Auto-generated method stub
-		return null;
+		return new MockHelpersDriver();
 	}
 
 }

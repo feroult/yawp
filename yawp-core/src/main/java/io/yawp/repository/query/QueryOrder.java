@@ -47,7 +47,7 @@ public class QueryOrder {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	int compare(Object o1, Object o2) {
+	public int compare(Object o1, Object o2) {
 		Comparable value1 = getComparable(o1);
 		Comparable value2 = getComparable(o2);
 

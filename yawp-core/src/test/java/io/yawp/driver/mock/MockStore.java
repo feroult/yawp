@@ -1,5 +1,6 @@
 package io.yawp.driver.mock;
 
+import io.yawp.driver.mock.MockOperation.Type;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.ObjectHolder;
 
@@ -19,12 +20,16 @@ public class MockStore {
 
 	private static long nextId = 1;
 
-	private static LRUMap cursors = new LRUMap(10);
+	private static LRUMap cursors = new LRUMap(3);
 
 	private static ThreadLocal<String> namespace = new ThreadLocal<String>();
 
-	public static void put(IdRef<?> id, Object object) {
+	private static LRUMap transactions = new LRUMap(3);
+
+	public static void put(IdRef<?> id, Object object, String tx) {
 		Object clone = cloneBean(object);
+
+		transactionLog(tx, MockOperation.Type.PUT, id, clone, get(id));
 		store.put(createNamespacedId(id), clone);
 	}
 
@@ -32,7 +37,8 @@ public class MockStore {
 		return store.get(createNamespacedId(id));
 	}
 
-	public static void remove(IdRef<?> id) {
+	public static void remove(IdRef<?> id, String tx) {
+		transactionLog(tx, MockOperation.Type.REMOVE, id, null, get(id));
 		store.remove(createNamespacedId(id));
 	}
 
@@ -111,6 +117,23 @@ public class MockStore {
 		return namespace.get();
 	}
 
+	public static String createTransaction() {
+		String tx = UUID.randomUUID().toString();
+		transactions.put(tx, new MockTransaction());
+		return tx;
+	}
+
+	public static void rollback(String tx) {
+		MockTransaction mockTransaction = (MockTransaction) transactions.get(tx);
+		mockTransaction.rollback();
+		transactions.remove(tx);
+	}
+
+	public static void commit(String tx) {
+		// till now we dont need to mock transaction isolation
+		transactions.remove(tx);
+	}
+
 	private static Object cloneBean(Object object) {
 		try {
 			return BeanUtils.cloneBean(object);
@@ -121,6 +144,15 @@ public class MockStore {
 
 	private static NamespacedIdRef createNamespacedId(IdRef<?> id) {
 		return new NamespacedIdRef(getNamespace(), id);
+	}
+
+	private static void transactionLog(String tx, Type operationType, IdRef<?> id, Object object, Object previousObject) {
+		if (tx == null) {
+			return;
+		}
+
+		MockTransaction mockTransaction = (MockTransaction) transactions.get(tx);
+		mockTransaction.add(operationType, id, object, previousObject);
 	}
 
 }

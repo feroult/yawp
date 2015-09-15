@@ -200,4 +200,8 @@ public class Repository {
 		return tx != null;
 	}
 
+	public TransactionDriver currentTransaction() {
+		return this.tx;
+	}
+
 }

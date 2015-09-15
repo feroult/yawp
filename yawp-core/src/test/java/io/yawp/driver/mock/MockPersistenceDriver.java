@@ -24,7 +24,15 @@ public class MockPersistenceDriver implements PersistenceDriver {
 
 		setIdIfNecessary(objectHolder);
 
-		MockStore.put(objectHolder.getId(), object);
+		MockStore.put(objectHolder.getId(), object, tx());
+	}
+
+	private String tx() {
+		MockTransactionDriver transationDriver = (MockTransactionDriver) r.currentTransaction();
+		if (transationDriver == null) {
+			return null;
+		}
+		return transationDriver.getTx();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -34,7 +42,7 @@ public class MockPersistenceDriver implements PersistenceDriver {
 
 		setIdIfNecessary(objectHolder);
 
-		MockStore.put(objectHolder.getId(), object);
+		MockStore.put(objectHolder.getId(), object, tx());
 
 		Future<?> futureId = ConcurrentUtils.constantFuture(objectHolder.getId());
 		return new FutureObject<T>(r, (Future<IdRef<?>>) futureId, objectHolder, enableHooks);
@@ -42,7 +50,7 @@ public class MockPersistenceDriver implements PersistenceDriver {
 
 	@Override
 	public void destroy(IdRef<?> id) {
-		MockStore.remove(id);
+		MockStore.remove(id, tx());
 	}
 
 	private void setIdIfNecessary(ObjectHolder objectHolder) {

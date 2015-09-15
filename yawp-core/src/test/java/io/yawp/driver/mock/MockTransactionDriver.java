@@ -4,28 +4,33 @@ import io.yawp.driver.api.TransactionDriver;
 
 public class MockTransactionDriver implements TransactionDriver {
 
+	private String tx;
+
 	@Override
 	public TransactionDriver begin() {
-		// TODO Auto-generated method stub
-		return null;
+		tx = MockStore.createTransaction();
+		return this;
 	}
 
 	@Override
 	public TransactionDriver beginX() {
-		// TODO Auto-generated method stub
-		return null;
+		tx = MockStore.createTransaction();
+		return this;
 	}
 
 	@Override
 	public void rollback() {
-		// TODO Auto-generated method stub
+		MockStore.rollback(tx);
 
 	}
 
 	@Override
 	public void commit() {
-		// TODO Auto-generated method stub
+		MockStore.commit(tx);
+	}
 
+	public String getTx() {
+		return this.tx;
 	}
 
 }

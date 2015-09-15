@@ -40,12 +40,58 @@ public class MockQueryDriver implements QueryDriver {
 		return (T) MockStore.get(id);
 	}
 
-	@SuppressWarnings("unchecked")
 	private <T> List<T> generateResults(QueryBuilder<?> builder) {
 		List<Object> objects = queryWhere(builder);
 
 		sortList(builder, objects);
 
+		List<T> resultFromCursor = applyCursor(builder, objects);
+		List<T> result = applyLimit(builder, resultFromCursor);
+
+		updateCursor(builder, result);
+
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> List<T> applyCursor(QueryBuilder<?> builder, List<Object> objects) {
+		if (builder.getCursor() == null) {
+			return (List<T>) objects;
+		}
+
+		List<T> result = new ArrayList<T>();
+
+		IdRef<?> cursorId = MockStore.getCursor(builder.getCursor());
+		boolean startAdd = false;
+
+		for (Object object : objects) {
+			if (startAdd) {
+				result.add((T) object);
+				continue;
+			}
+			ObjectHolder objectHolder = new ObjectHolder(object);
+			if (cursorId.equals(objectHolder.getId())) {
+				startAdd = true;
+			}
+		}
+
+		return result;
+	}
+
+	private <T> void updateCursor(QueryBuilder<?> builder, List<T> result) {
+		if (result.size() == 0) {
+			return;
+		}
+		T cursorObject = result.get(result.size() - 1);
+
+		if (builder.getCursor() == null) {
+			builder.setCursor(MockStore.createCursor(cursorObject));
+		} else {
+			MockStore.updateCursor(builder.getCursor(), cursorObject);
+		}
+	}
+
+	private <T> List<T> applyLimit(QueryBuilder<?> builder, List<T> objects) {
 		if (builder.getLimit() != null) {
 			return (List<T>) objects.subList(0, builder.getLimit());
 		}

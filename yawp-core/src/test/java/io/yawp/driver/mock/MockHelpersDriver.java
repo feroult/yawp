@@ -6,8 +6,7 @@ public class MockHelpersDriver implements HelpersDriver {
 
 	@Override
 	public void deleteAll() {
-		// TODO Auto-generated method stub
-
+		MockStore.clear();
 	}
 
 }

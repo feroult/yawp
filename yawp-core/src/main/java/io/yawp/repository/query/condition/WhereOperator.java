@@ -79,6 +79,9 @@ public enum WhereOperator {
 
 		@Override
 		public boolean evaluate(Object objectValue, Object whereValue) {
+			if (whereValue == null) {
+				return false;
+			}
 			Collection<?> collection = (Collection<?>) whereValue;
 			return collection.contains(objectValue);
 		}

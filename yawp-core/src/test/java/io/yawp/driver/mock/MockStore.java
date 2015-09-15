@@ -3,10 +3,13 @@ package io.yawp.driver.mock;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.ObjectHolder;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.beanutils.BeanUtils;
 
 public class MockStore {
 
@@ -15,7 +18,8 @@ public class MockStore {
 	private static long nextId = 1;
 
 	public static void put(IdRef<?> id, Object object) {
-		store.put(id, object);
+		Object clone = cloneBean(object);
+		store.put(id, clone);
 	}
 
 	public static Object get(IdRef<?> id) {
@@ -38,7 +42,7 @@ public class MockStore {
 				continue;
 			}
 
-			if (parentId != null && !id.getParentId().equals(parentId)) {
+			if (!isAncestor(id, parentId)) {
 				continue;
 			}
 
@@ -49,6 +53,23 @@ public class MockStore {
 		return objects;
 	}
 
+	private static boolean isAncestor(IdRef<?> id, IdRef<?> parentId) {
+		if (parentId == null) {
+			return true;
+		}
+
+		IdRef<?> currentParentId = id.getParentId();
+
+		while (currentParentId != null) {
+			if (currentParentId.equals(parentId)) {
+				return true;
+			}
+			currentParentId = currentParentId.getParentId();
+		}
+
+		return false;
+	}
+
 	public static long nextId() {
 		return nextId++;
 	}
@@ -56,6 +77,14 @@ public class MockStore {
 	public static void clear() {
 		nextId = 1;
 		store.clear();
+	}
+
+	private static Object cloneBean(Object object) {
+		try {
+			return BeanUtils.cloneBean(object);
+		} catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

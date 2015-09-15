@@ -51,7 +51,6 @@ public class MockStore {
 			}
 
 			objects.add(get(id));
-
 		}
 
 		return objects;
@@ -63,14 +62,12 @@ public class MockStore {
 		}
 
 		IdRef<?> currentParentId = id.getParentId();
-
 		while (currentParentId != null) {
 			if (currentParentId.equals(parentId)) {
 				return true;
 			}
 			currentParentId = currentParentId.getParentId();
 		}
-
 		return false;
 	}
 
@@ -106,5 +103,4 @@ public class MockStore {
 			throw new RuntimeException(e);
 		}
 	}
-
 }

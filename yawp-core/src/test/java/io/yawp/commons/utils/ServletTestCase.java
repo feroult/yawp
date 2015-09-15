@@ -16,10 +16,14 @@ import org.junit.Before;
 
 public class ServletTestCase extends EndpointTestCase {
 
-	private EndpointServlet servlet;
+	private static EndpointServlet servlet;
 
 	@Before
 	public void createServlet() {
+		if (servlet != null) {
+			return;
+		}
+
 		servlet = new EndpointServlet("io.yawp") {
 
 			private static final long serialVersionUID = 3374113392343671861L;

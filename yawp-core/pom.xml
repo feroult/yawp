@@ -16,15 +16,7 @@
 	<name>YAWP! core</name>
 	<description>YAWP! core</description>
 
-	<properties>
-		<appengine.app.version>1</appengine.app.version>
-		<appengine.target.version>1.9.25</appengine.target.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<test.output.directory>test-classes</test.output.directory>
-	</properties>
-
 	<dependencies>
-
 		<!-- Compile/runtime dependencies -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -62,41 +54,9 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
 	<build>
-		<testOutputDirectory>target/${test.output.directory}</testOutputDirectory>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<version>2.5.1</version>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<groupId>com.google.appengine</groupId>
-				<artifactId>appengine-maven-plugin</artifactId>
-				<version>${appengine.target.version}</version>
-				<configuration>
-					<!-- <address>0.0.0.0</address> -->
-					<jvmFlags>
-						<jvmFlag>-Xdebug</jvmFlag>
-						<jvmFlag>-Xnoagent</jvmFlag>
-						<jvmFlag>-Xrunjdwp:transport=dt_socket,address=4001,suspend=n,server=y
-						</jvmFlag>
-						<jvmFlag>-Ddatastore.default_high_rep_job_policy_unapplied_job_pct=0</jvmFlag>
-					</jvmFlags>
-					<appDir>${basedir}/src/test/webapp/</appDir>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.6</version>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -111,72 +71,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>appengine</id>
-			<!-- <activation> <property> <name>m2e.version</name> </property> </activation> -->
-			<dependencies>
-				<dependency>
-					<groupId>io.yawp</groupId>
-					<artifactId>yawp-appengine</artifactId>
-					<version>2.0.2-SNAPSHOT</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>no-yawp-tests</id>
-			<properties>
-				<skipTests>true</skipTests>
-				<maven.test.skip>true</maven.test.skip>
-			</properties>
-		</profile>
-		<profile>
-			<id>js-tests</id>
-			<activation>
-				<property>
-					<name>!skipTests</name>
-				</property>
-			</activation>
-			<properties>
-				<test.output.directory>classes</test.output.directory>
-			</properties>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<version>2.8</version>
-						<executions>
-							<execution>
-								<id>copy-dependencies</id>
-								<phase>package</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.directory}/lib</outputDirectory>
-									<includeScope>runtime</includeScope>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-
-					<plugin>
-						<artifactId>maven-resources-plugin</artifactId>
-						<version>2.6</version>
-					</plugin>
-
-					<!-- <plugin> <artifactId>maven-antrun-plugin</artifactId> <version>1.7</version>
-						<executions> <execution> <phase>integration-test</phase> <goals> <goal>run</goal>
-						</goals> <configuration> <target> <exec dir="${project.basedir}/../scripts"
-						executable="./integration-tests.sh" failonerror="true"></exec> </target>
-						<skip>${maven.test.skip}</skip> </configuration> </execution> </executions>
-						</plugin> -->
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
 </project>

@@ -46,6 +46,10 @@ public class MockQueryDriver implements QueryDriver {
 
 		sortList(builder, objects);
 
+		if (builder.getLimit() != null) {
+			return (List<T>) objects.subList(0, builder.getLimit());
+		}
+
 		return (List<T>) objects;
 	}
 

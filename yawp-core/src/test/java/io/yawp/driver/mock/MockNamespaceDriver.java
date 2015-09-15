@@ -6,14 +6,12 @@ public class MockNamespaceDriver implements NamespaceDriver {
 
 	@Override
 	public String get() {
-		// TODO Auto-generated method stub
-		return null;
+		return MockStore.getNamespace();
 	}
 
 	@Override
 	public void set(String ns) {
-		// TODO Auto-generated method stub
-
+		MockStore.setNamespace(ns);
 	}
 
 }

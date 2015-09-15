@@ -93,7 +93,8 @@ public class MockQueryDriver implements QueryDriver {
 
 	private <T> List<T> applyLimit(QueryBuilder<?> builder, List<T> objects) {
 		if (builder.getLimit() != null) {
-			return (List<T>) objects.subList(0, builder.getLimit());
+			int limit = builder.getLimit() > objects.size() ? objects.size() : builder.getLimit();
+			return (List<T>) objects.subList(0, limit);
 		}
 
 		return (List<T>) objects;

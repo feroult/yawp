@@ -15,30 +15,37 @@ import org.apache.commons.collections.map.LRUMap;
 
 public class MockStore {
 
-	private static Map<IdRef<?>, Object> store = new LinkedHashMap<IdRef<?>, Object>();
+	private static Map<NamespacedIdRef, Object> store = new LinkedHashMap<NamespacedIdRef, Object>();
 
 	private static long nextId = 1;
 
 	private static LRUMap cursors = new LRUMap(10);
 
+	private static ThreadLocal<String> namespace = new ThreadLocal<String>();
+
 	public static void put(IdRef<?> id, Object object) {
 		Object clone = cloneBean(object);
-		store.put(id, clone);
+		store.put(createNamespacedId(id), clone);
 	}
 
 	public static Object get(IdRef<?> id) {
-		return store.get(id);
+		return store.get(createNamespacedId(id));
 	}
 
 	public static void remove(IdRef<?> id) {
-		store.remove(id);
+		store.remove(createNamespacedId(id));
 	}
 
 	public static List<Object> list(Class<?> clazz, IdRef<?> parentId) {
 		List<Object> objects = new ArrayList<Object>();
 
-		for (Object object : store.values()) {
-			ObjectHolder objectHolder = new ObjectHolder(object);
+		for (NamespacedIdRef namespacedId : store.keySet()) {
+
+			if (!namespacedId.isFrom(getNamespace())) {
+				continue;
+			}
+
+			ObjectHolder objectHolder = new ObjectHolder(store.get(namespacedId));
 
 			IdRef<?> id = objectHolder.getId();
 
@@ -96,6 +103,14 @@ public class MockStore {
 		cursors.put(cursor, objectHolder.getId());
 	}
 
+	public static void setNamespace(String ns) {
+		namespace.set(ns);
+	}
+
+	public static String getNamespace() {
+		return namespace.get();
+	}
+
 	private static Object cloneBean(Object object) {
 		try {
 			return BeanUtils.cloneBean(object);
@@ -103,4 +118,9 @@ public class MockStore {
 			throw new RuntimeException(e);
 		}
 	}
+
+	private static NamespacedIdRef createNamespacedId(IdRef<?> id) {
+		return new NamespacedIdRef(getNamespace(), id);
+	}
+
 }

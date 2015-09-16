@@ -48,11 +48,11 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 	}
 
 	@Override
-	public <T> FutureObject<T> saveAsync(Object object, boolean enableHooks) {
+	public <T> FutureObject<T> saveAsync(Object object) {
 		ObjectHolder objectHolder = new ObjectHolder(object);
 		Entity entity = createEntity(objectHolder);
 		toEntity(objectHolder, entity);
-		return saveEntityAsync(objectHolder, entity, enableHooks);
+		return saveEntityAsync(objectHolder, entity);
 	}
 
 	@Override
@@ -84,11 +84,9 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 		objectHolder.setId(IdRefToKey.toIdRef(r, key));
 	}
 
-	private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectHolder, Entity entity, boolean enableHooks) {
+	private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectHolder, Entity entity) {
 		Future<Key> futureKey = asyncDatastore().put(entity);
-		// TODO: driver - remove enableHooks from here? return only
-		// Future<IdRef<?>> ?
-		return new FutureObject<T>(r, new FutureIdRef(r, futureKey), objectHolder, enableHooks);
+		return new FutureObject<T>(r, new FutureIdRef(r, futureKey), objectHolder);
 	}
 
 	public void toEntity(ObjectHolder objectHolder, Entity entity) {

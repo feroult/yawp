@@ -116,7 +116,9 @@ public class Repository {
 	}
 
 	private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
-		return driver().persistence().saveAsync(object, enableHooks);
+		FutureObject<T> futureObject = driver().persistence().saveAsync(object);
+		futureObject.setEnableHooks(enableHooks);
+		return futureObject;
 	}
 
 	public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {

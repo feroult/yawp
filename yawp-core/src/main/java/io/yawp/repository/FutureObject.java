@@ -15,10 +15,13 @@ public class FutureObject<T> {
 
 	private boolean enableHooks;
 
-	public FutureObject(Repository r, Future<IdRef<?>> futureIdRef, ObjectHolder objectHolder, boolean enableHooks) {
+	public FutureObject(Repository r, Future<IdRef<?>> futureIdRef, ObjectHolder objectHolder) {
 		this.r = r;
 		this.futureIdRef = futureIdRef;
 		this.objectHolder = objectHolder;
+	}
+
+	public void setEnableHooks(boolean enableHooks) {
 		this.enableHooks = enableHooks;
 	}
 

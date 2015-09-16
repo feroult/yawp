@@ -7,7 +7,7 @@ public interface PersistenceDriver {
 
 	public void save(Object object);
 
-	public <T> FutureObject<T> saveAsync(Object object, boolean enableHooks);
+	public <T> FutureObject<T> saveAsync(Object object);
 
 	public void destroy(IdRef<?> id);
 

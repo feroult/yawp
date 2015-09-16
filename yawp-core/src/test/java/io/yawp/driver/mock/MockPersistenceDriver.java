@@ -37,7 +37,7 @@ public class MockPersistenceDriver implements PersistenceDriver {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> FutureObject<T> saveAsync(Object object, boolean enableHooks) {
+	public <T> FutureObject<T> saveAsync(Object object) {
 		ObjectHolder objectHolder = new ObjectHolder(object);
 
 		setIdIfNecessary(objectHolder);
@@ -45,7 +45,7 @@ public class MockPersistenceDriver implements PersistenceDriver {
 		MockStore.put(objectHolder.getId(), object, tx());
 
 		Future<?> futureId = ConcurrentUtils.constantFuture(objectHolder.getId());
-		return new FutureObject<T>(r, (Future<IdRef<?>>) futureId, objectHolder, enableHooks);
+		return new FutureObject<T>(r, (Future<IdRef<?>>) futureId, objectHolder);
 	}
 
 	@Override

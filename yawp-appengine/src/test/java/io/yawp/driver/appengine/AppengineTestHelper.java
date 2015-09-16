@@ -1,6 +1,6 @@
 package io.yawp.driver.appengine;
 
-import io.yawp.driver.api.TestHelperDriver;
+import io.yawp.driver.api.TestHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,7 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 
-public class AppengineTestHelperDriver implements TestHelperDriver {
+public class AppengineTestHelper implements TestHelper {
 
 	private LocalServiceTestHelper helper;
 

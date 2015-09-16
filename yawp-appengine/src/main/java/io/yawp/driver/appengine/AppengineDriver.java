@@ -6,7 +6,6 @@ import io.yawp.driver.api.HelpersDriver;
 import io.yawp.driver.api.NamespaceDriver;
 import io.yawp.driver.api.PersistenceDriver;
 import io.yawp.driver.api.QueryDriver;
-import io.yawp.driver.api.TestHelperDriver;
 import io.yawp.driver.api.TransactionDriver;
 import io.yawp.repository.Repository;
 
@@ -37,11 +36,6 @@ public class AppengineDriver implements Driver {
 	@Override
 	public TransactionDriver transaction() {
 		return new AppengineTransationDriver();
-	}
-
-	@Override
-	public TestHelperDriver tests() {
-		return new AppengineTestHelperDriver();
 	}
 
 	@Override

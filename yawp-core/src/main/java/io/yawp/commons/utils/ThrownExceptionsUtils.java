@@ -2,7 +2,6 @@ package io.yawp.commons.utils;
 
 import java.lang.reflect.InvocationTargetException;
 
-// TODO think about the whole expcetion model, relating to repository and servlet packages
 public final class ThrownExceptionsUtils {
 
 	private ThrownExceptionsUtils() {

@@ -144,7 +144,6 @@ public final class EndpointScanner {
 		}
 	}
 
-	// TODO refactor use Java 8 receive io.yawp consumer
 	// TODO should we think that an objectClazz has more than one endpoint?
 	private <T> List<EndpointFeatures<? extends T>> getEndpoints(Class<T> objectClazz, String featureClazz) {
 		List<EndpointFeatures<? extends T>> list = new ArrayList<>();

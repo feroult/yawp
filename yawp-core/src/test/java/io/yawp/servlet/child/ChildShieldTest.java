@@ -37,7 +37,6 @@ public class ChildShieldTest extends ChildServletTestCase {
 		assertPutWithStatus("/parents/1/shielded_children/100/single", 200);
 	}
 
-	// TODO think about whereParent not supporting index
 	@Test
 	public void testActionWhereOnExistingParentObject() {
 		saveShieldedChild(1l, saveParent(1l, "ok-for-janis"));

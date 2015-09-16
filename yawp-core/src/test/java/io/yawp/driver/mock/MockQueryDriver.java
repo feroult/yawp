@@ -6,7 +6,6 @@ import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.condition.BaseCondition;
-import io.yawp.repository.query.condition.FalsePredicateException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,13 +15,13 @@ import java.util.List;
 public class MockQueryDriver implements QueryDriver {
 
 	@Override
-	public <T> List<T> objects(QueryBuilder<?> builder) throws FalsePredicateException {
+	public <T> List<T> objects(QueryBuilder<?> builder) {
 		return generateResults(builder);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) throws FalsePredicateException {
+	public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) {
 		List<IdRef<T>> ids = new ArrayList<IdRef<T>>();
 
 		List<Object> objects = generateResults(builder);

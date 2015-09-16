@@ -5,7 +5,6 @@ import io.yawp.repository.ObjectModel;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;
-import io.yawp.repository.query.condition.FalsePredicateException;
 import io.yawp.repository.query.condition.SimpleCondition;
 
 import java.util.ArrayList;
@@ -237,14 +236,8 @@ public class QueryBuilder<T> {
 	}
 
 	private List<T> executeQuery() {
-		try {
-
-			List<T> objects = r.driver().query().objects(this);
-			return postFilter(objects);
-
-		} catch (FalsePredicateException ex) {
-			return Collections.emptyList();
-		}
+		List<T> objects = r.driver().query().objects(this);
+		return postFilter(objects);
 	}
 
 	private List<T> postFilter(List<T> objects) {
@@ -321,8 +314,6 @@ public class QueryBuilder<T> {
 		try {
 			List<IdRef<T>> ids = r.driver().query().ids(this);
 			return ids;
-		} catch (FalsePredicateException ex) {
-			return Collections.emptyList();
 		} finally {
 			r.namespace().reset();
 		}

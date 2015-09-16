@@ -13,7 +13,6 @@ import io.yawp.repository.Repository;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.condition.BaseCondition;
-import io.yawp.repository.query.condition.FalsePredicateException;
 import io.yawp.repository.query.condition.JoinedCondition;
 import io.yawp.repository.query.condition.LogicalOperator;
 import io.yawp.repository.query.condition.SimpleCondition;
@@ -23,6 +22,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -59,29 +59,37 @@ public class AppengineQueryDriver implements QueryDriver {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> List<T> objects(QueryBuilder<?> builder) throws FalsePredicateException {
-		QueryResultList<Entity> queryResult = generateResults(builder, false);
+	public <T> List<T> objects(QueryBuilder<?> builder) {
+		try {
+			QueryResultList<Entity> queryResult = generateResults(builder, false);
 
-		List<T> objects = new ArrayList<T>();
+			List<T> objects = new ArrayList<T>();
 
-		for (Entity entity : queryResult) {
-			objects.add((T) toObject(builder.getModel(), entity));
+			for (Entity entity : queryResult) {
+				objects.add((T) toObject(builder.getModel(), entity));
+			}
+
+			return objects;
+		} catch (FalsePredicateException e) {
+			return Collections.emptyList();
 		}
-
-		return objects;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) throws FalsePredicateException {
-		QueryResultList<Entity> queryResult = generateResults(builder, true);
-		List<IdRef<T>> ids = new ArrayList<>();
+	public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) {
+		try {
+			QueryResultList<Entity> queryResult = generateResults(builder, true);
+			List<IdRef<T>> ids = new ArrayList<>();
 
-		for (Entity entity : queryResult) {
-			ids.add((IdRef<T>) IdRefToKey.toIdRef(r, entity.getKey()));
+			for (Entity entity : queryResult) {
+				ids.add((IdRef<T>) IdRefToKey.toIdRef(r, entity.getKey()));
+			}
+
+			return ids;
+		} catch (FalsePredicateException e) {
+			return Collections.emptyList();
 		}
-
-		return ids;
 	}
 
 	@SuppressWarnings("unchecked")

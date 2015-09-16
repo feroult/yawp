@@ -45,7 +45,7 @@ public class MockPersistenceDriver implements PersistenceDriver {
 		MockStore.put(objectHolder.getId(), object, tx());
 
 		Future<?> futureId = ConcurrentUtils.constantFuture(objectHolder.getId());
-		return new FutureObject<T>(r, (Future<IdRef<?>>) futureId, objectHolder);
+		return new FutureObject<T>(r, (Future<IdRef<?>>) futureId, (T) object);
 	}
 
 	@Override

@@ -11,25 +11,23 @@ public class FutureObject<T> {
 
 	private Future<IdRef<?>> futureIdRef;
 
-	private ObjectHolder objectHolder;
+	private T object;
 
 	private boolean enableHooks;
 
-	public FutureObject(Repository r, Future<IdRef<?>> futureIdRef, ObjectHolder objectHolder) {
+	public FutureObject(Repository r, Future<IdRef<?>> futureIdRef, T object) {
 		this.r = r;
 		this.futureIdRef = futureIdRef;
-		this.objectHolder = objectHolder;
+		this.object = object;
 	}
 
 	public void setEnableHooks(boolean enableHooks) {
 		this.enableHooks = enableHooks;
 	}
 
-	@SuppressWarnings("unchecked")
 	public T get() {
 		try {
-			objectHolder.setId(futureIdRef.get());
-			T object = (T) objectHolder.getObject();
+			setObjectId();
 
 			if (enableHooks) {
 				RepositoryHooks.afterSave(r, object);
@@ -40,6 +38,11 @@ public class FutureObject<T> {
 		} catch (InterruptedException | ExecutionException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private void setObjectId() throws InterruptedException, ExecutionException {
+		ObjectHolder objectHolder = new ObjectHolder(object);
+		objectHolder.setId(futureIdRef.get());
 	}
 
 }

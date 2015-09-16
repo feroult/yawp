@@ -84,9 +84,10 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 		objectHolder.setId(IdRefToKey.toIdRef(r, key));
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectHolder, Entity entity) {
 		Future<Key> futureKey = asyncDatastore().put(entity);
-		return new FutureObject<T>(r, new FutureIdRef(r, futureKey), objectHolder);
+		return new FutureObject<T>(r, new FutureIdRef(r, futureKey), (T) objectHolder.getObject());
 	}
 
 	public void toEntity(ObjectHolder objectHolder, Entity entity) {

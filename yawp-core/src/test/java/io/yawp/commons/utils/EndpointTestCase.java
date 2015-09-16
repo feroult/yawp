@@ -1,7 +1,7 @@
 package io.yawp.commons.utils;
 
-import io.yawp.driver.api.DriverFactory;
-import io.yawp.driver.api.TestHelperDriver;
+import io.yawp.driver.api.TestHelper;
+import io.yawp.driver.api.TestHelperFactory;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Feature;
 import io.yawp.repository.Repository;
@@ -14,7 +14,7 @@ public class EndpointTestCase extends Feature {
 
 	private static RepositoryFeatures features;
 
-	private TestHelperDriver helper;
+	private TestHelper helper;
 
 	static {
 		features = new EndpointScanner("io.yawp").scan();
@@ -27,8 +27,8 @@ public class EndpointTestCase extends Feature {
 		helper.setUp();
 	}
 
-	private TestHelperDriver testHelperDriver(Repository r) {
-		return DriverFactory.getDriver(r).tests();
+	private TestHelper testHelperDriver(Repository r) {
+		return TestHelperFactory.getHelper();
 	}
 
 	protected void login(String username) {

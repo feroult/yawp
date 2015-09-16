@@ -17,7 +17,7 @@ public class DriverFactory {
 		return driver;
 	}
 
-	public static Driver lookup() {
+	private static Driver lookup() {
 		ServiceLoader<Driver> drivers = ServiceLoader.load(Driver.class);
 		for (Driver driver : drivers) {
 			return driver;

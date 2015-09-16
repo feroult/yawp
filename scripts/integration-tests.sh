@@ -9,14 +9,14 @@ MAVEN_ARGS="-Dmaven.test.skip=true -Dappengine.port=8081 -Dappengine.jvmFlags.da
 unset MAVEN_OPTS
 
 echo "starting devserver..."
-(cd ../yawp-core; mvn appengine:devserver_start $MAVEN_ARGS)
+(cd ../yawp-appengine; mvn appengine:devserver_start $MAVEN_ARGS)
 echo "done."
 
 phantomjs runner.js http://localhost:8081/test/all.html
 STATUS=$?
 
 echo "stopping devserver..."
-(cd ../yawp-core; mvn appengine:devserver_stop $MAVEN_ARGS)
+(cd ../yawp-appengine; mvn appengine:devserver_stop $MAVEN_ARGS)
 echo "done."
 
 exit $STATUS

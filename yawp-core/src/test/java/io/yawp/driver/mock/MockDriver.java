@@ -6,7 +6,7 @@ import io.yawp.driver.api.HelpersDriver;
 import io.yawp.driver.api.NamespaceDriver;
 import io.yawp.driver.api.PersistenceDriver;
 import io.yawp.driver.api.QueryDriver;
-import io.yawp.driver.api.TestHelperDriver;
+import io.yawp.driver.api.TestHelper;
 import io.yawp.driver.api.TransactionDriver;
 import io.yawp.repository.Repository;
 
@@ -37,11 +37,6 @@ public class MockDriver implements Driver {
 	@Override
 	public TransactionDriver transaction() {
 		return new MockTransactionDriver();
-	}
-
-	@Override
-	public TestHelperDriver tests() {
-		return new MockTestHelperDriver();
 	}
 
 	@Override

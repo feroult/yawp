@@ -20,6 +20,7 @@
     <modules>
         <module>yawp-core</module>
         <module>yawp-appengine</module>
+        <module>yawp-postgresql</module>
     </modules>
 
     <build>

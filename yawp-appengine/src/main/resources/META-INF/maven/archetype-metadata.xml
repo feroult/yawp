@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archetype-descriptor name="yawp">
+	<fileSets>
+		<fileSet filtered="true" packaged="true">
+			<directory>src/main/java</directory>
+			<includes>
+				<include>**/*.java</include>
+			</includes>
+		</fileSet>
+		<fileSet filtered="true">
+			<directory>src/main/webapp</directory>
+		</fileSet>
+	</fileSets>
+</archetype-descriptor>

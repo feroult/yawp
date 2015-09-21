@@ -1,8 +1,0 @@
-{
-  "name": "${artifactId}",
-  "version": "${version}",
-  "dependencies": {
-    "yawp": "*"
-  }
-}
-

@@ -48,9 +48,7 @@ public class PGDatastoreTest {
 		Entity entity = new Entity("people");
 		entity.setProperty("name", "jim");
 
-		datastore.put(entity);
-
-		Key key = entity.getKey();
+		Key key = datastore.put(entity);
 
 		entity.setProperty("name", "robert");
 		datastore.put(entity);

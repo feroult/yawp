@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import javax.naming.Context;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.postgresql.ds.PGConnectionPoolDataSource;
 
@@ -16,7 +15,7 @@ public class DatastoreTest {
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitialContextMock.class.getName());
 
 		PGConnectionPoolDataSource ds = new PGConnectionPoolDataSource();
-		ds.setUrl("jdbc:postgresql://localhost/yawp");
+		ds.setUrl("jdbc:postgresql://localhost/yawp_test");
 		// ds.setUser("MY_USER_NAME");
 		// ds.setPassword("MY_USER_PASSWORD");
 
@@ -24,9 +23,10 @@ public class DatastoreTest {
 	}
 
 	@Test
-	@Ignore
 	public void testPutGetEntity() {
-		Entity entity = new Entity("person");
+		// create table people (id bigserial primary key, entity jsonb);
+
+		Entity entity = new Entity("people");
 		entity.setProperty("name", "jim");
 
 		Datastore datastore = new Datastore();

@@ -11,11 +11,11 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class PostgreSQLPersistenceDriver implements PersistenceDriver {
+public class PGPersistenceDriver implements PersistenceDriver {
 
 	private Repository r;
 
-	public PostgreSQLPersistenceDriver(Repository r) {
+	public PGPersistenceDriver(Repository r) {
 		this.r = r;
 	}
 

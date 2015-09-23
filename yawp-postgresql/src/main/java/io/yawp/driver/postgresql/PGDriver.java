@@ -9,7 +9,7 @@ import io.yawp.driver.api.QueryDriver;
 import io.yawp.driver.api.TransactionDriver;
 import io.yawp.repository.Repository;
 
-public class PostgresSQLDriver implements Driver {
+public class PGDriver implements Driver {
 
 	private Repository r;
 
@@ -20,7 +20,7 @@ public class PostgresSQLDriver implements Driver {
 
 	@Override
 	public PersistenceDriver persistence() {
-		return new PostgreSQLPersistenceDriver(r);
+		return new PGPersistenceDriver(r);
 	}
 
 	@Override

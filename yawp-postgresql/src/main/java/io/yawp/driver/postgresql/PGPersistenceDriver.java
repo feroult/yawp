@@ -19,12 +19,12 @@ public class PGPersistenceDriver implements PersistenceDriver {
 		this.r = r;
 	}
 
-	private Datastore datastore() {
+	private PGDatastore datastore() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private Datastore asyncDatastore() {
+	private PGDatastore asyncDatastore() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -9,9 +9,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.postgresql.ds.PGConnectionPoolDataSource;
 
-public class DatastoreTest {
+public class PGDatastoreTest {
 
-	private Datastore datastore;
+	private PGDatastore datastore;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -27,7 +27,7 @@ public class DatastoreTest {
 
 	@Before
 	public void before() {
-		datastore = new Datastore();
+		datastore = new PGDatastore();
 	}
 
 	@Test

@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 import org.postgresql.util.PGobject;
 
-public class Datastore {
+public class PGDatastore {
 
 	private static final String SQL_CREATE = "insert into :kind (entity) values (:entity)";
 

@@ -10,6 +10,11 @@ import org.postgresql.util.PGobject;
 public class Datastore {
 
 	public Key put(Entity entity) {
+		createEntity(entity);
+		return entity.getKey();
+	}
+
+	private void createEntity(Entity entity) {
 		Connection connection = ConnectionPool.connection();
 
 		String sql = String.format("insert into %s (entity) values (?)", entity.getKey().getKind());
@@ -24,8 +29,6 @@ public class Datastore {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-
-		return entity.getKey();
 	}
 
 	public Entity get(Key key) {

@@ -10,17 +10,22 @@ public class Key {
 
 	private Key parentKey;
 
+	private Long id;
+
 	private String name;
 
 	public Key(String kind) {
 		this.kind = kind;
-		this.name = nextName();
 	}
 
 	private Key(String kind, Key parentKey) {
 		this.kind = kind;
 		this.parentKey = parentKey;
-		this.name = nextName();
+	}
+
+	public Key(String kind, String name) {
+		this.kind = kind;
+		this.name = name;
 	}
 
 	public static Key create(String kind, Key parentKey) {
@@ -29,6 +34,10 @@ public class Key {
 
 	public static Key create(String kind) {
 		return new Key(kind);
+	}
+
+	public static Key create(String kind, String name) {
+		return new Key(kind, name);
 	}
 
 	public String getKind() {
@@ -43,7 +52,16 @@ public class Key {
 		return JsonUtils.to(this);
 	}
 
+	public boolean isNew() {
+		return name == null && id == null;
+	}
+
+	public void generate() {
+		this.name = nextName();
+	}
+
 	private String nextName() {
 		return UUID.randomUUID().toString();
 	}
+
 }

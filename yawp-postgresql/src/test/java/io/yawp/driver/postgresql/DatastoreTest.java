@@ -36,4 +36,36 @@ public class DatastoreTest {
 		assertEquals("jim", retrievedEntity.getProperty("name"));
 	}
 
+	@Test
+	public void testCreateUpdateEntity() {
+		Entity entity = new Entity("people");
+		entity.setProperty("name", "jim");
+
+		Datastore datastore = new Datastore();
+		datastore.put(entity);
+
+		Key key = entity.getKey();
+
+		entity.setProperty("name", "robert");
+		datastore.put(entity);
+
+		Entity retrievedEntity = datastore.get(key);
+		assertEquals("robert", retrievedEntity.getProperty("name"));
+
+	}
+
+	@Test
+	public void testForceName() {
+		Key key = Key.create("people", "xpto");
+
+		Entity entity = new Entity(key);
+		entity.setProperty("name", "jim");
+
+		Datastore datastore = new Datastore();
+		datastore.put(entity);
+
+		Entity retrievedEntity = datastore.get(key);
+		assertEquals("jim", retrievedEntity.getProperty("name"));
+	}
+
 }

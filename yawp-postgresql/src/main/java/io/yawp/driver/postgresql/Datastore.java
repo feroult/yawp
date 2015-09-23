@@ -10,25 +10,55 @@ import org.postgresql.util.PGobject;
 public class Datastore {
 
 	public Key put(Entity entity) {
-		createEntity(entity);
+		if (isNewEntity(entity)) {
+			createEntity(entity);
+		} else {
+			updateEntity(entity);
+		}
 		return entity.getKey();
 	}
 
-	private void createEntity(Entity entity) {
+	private void updateEntity(Entity entity) {
 		Connection connection = ConnectionPool.connection();
 
-		String sql = String.format("insert into %s (entity) values (?)", entity.getKey().getKind());
+		String sql = String.format("update %s set entity = ? where entity->'key'->>'name' = ?", entity.getKey().getKind());
 
 		try {
+
 			PreparedStatement ps = connection.prepareStatement(sql);
-
 			ps.setObject(1, createJsonObject(entity.serialize()));
-
+			ps.setString(2, entity.getKey().getName());
 			ps.execute();
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	private void createEntity(Entity entity) {
+		Connection connection = ConnectionPool.connection();
+
+		generateKey(entity);
+
+		String sql = String.format("insert into %s (entity) values (?)", entity.getKey().getKind());
+
+		try {
+			PreparedStatement ps = connection.prepareStatement(sql);
+			ps.setObject(1, createJsonObject(entity.serialize()));
+			ps.execute();
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void generateKey(Entity entity) {
+		Key key = entity.getKey();
+
+		if (!key.isNew()) {
+			return;
+		}
+		key.generate();
 	}
 
 	public Entity get(Key key) {
@@ -58,6 +88,29 @@ public class Datastore {
 	public void delete(Object key) {
 		// TODO Auto-generated method stub
 
+	}
+
+	private boolean isNewEntity(Entity entity) {
+		Key key = entity.getKey();
+		return key.isNew() || !existsEntityWithKey(key);
+	}
+
+	private boolean existsEntityWithKey(Key key) {
+		Connection connection = ConnectionPool.connection();
+		String sql = String.format("select exists(select 1 from %s where entity->'key'->>'name' = ?) as exists", key.getKind());
+
+		try {
+			PreparedStatement ps = connection.prepareStatement(sql);
+
+			ps.setString(1, key.getName());
+
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+
+			return rs.getBoolean(1);
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private PGobject createJsonObject(String json) throws SQLException {

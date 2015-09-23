@@ -23,7 +23,7 @@ public class DatastoreTest {
 	}
 
 	@Test
-	public void testPutGetEntity() {
+	public void testCreateRetrieveEntity() {
 		// create table people (id bigserial primary key, entity jsonb);
 
 		Entity entity = new Entity("people");

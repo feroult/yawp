@@ -92,10 +92,10 @@ public class Datastore {
 
 	private boolean isNewEntity(Entity entity) {
 		Key key = entity.getKey();
-		return key.isNew() || !existsEntityWithKey(key);
+		return key.isNew() || !existsEntityWithThisKey(key);
 	}
 
-	private boolean existsEntityWithKey(Key key) {
+	private boolean existsEntityWithThisKey(Key key) {
 		Connection connection = ConnectionPool.connection();
 		String sql = String.format("select exists(select 1 from %s where entity->'key'->>'name' = ?) as exists", key.getKind());
 

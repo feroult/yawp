@@ -4,11 +4,14 @@ import static org.junit.Assert.assertEquals;
 
 import javax.naming.Context;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.postgresql.ds.PGConnectionPoolDataSource;
 
 public class DatastoreTest {
+
+	private Datastore datastore;
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
@@ -22,6 +25,11 @@ public class DatastoreTest {
 		InitialContextMock.bind("jdbc/yawp_test", ds);
 	}
 
+	@Before
+	public void before() {
+		datastore = new Datastore();
+	}
+
 	@Test
 	public void testCreateRetrieveEntity() {
 		// create table people (id bigserial primary key, entity jsonb);
@@ -29,7 +37,6 @@ public class DatastoreTest {
 		Entity entity = new Entity("people");
 		entity.setProperty("name", "jim");
 
-		Datastore datastore = new Datastore();
 		datastore.put(entity);
 
 		Entity retrievedEntity = datastore.get(entity.getKey());
@@ -41,7 +48,6 @@ public class DatastoreTest {
 		Entity entity = new Entity("people");
 		entity.setProperty("name", "jim");
 
-		Datastore datastore = new Datastore();
 		datastore.put(entity);
 
 		Key key = entity.getKey();
@@ -61,7 +67,6 @@ public class DatastoreTest {
 		Entity entity = new Entity(key);
 		entity.setProperty("name", "jim");
 
-		Datastore datastore = new Datastore();
 		datastore.put(entity);
 
 		Entity retrievedEntity = datastore.get(key);

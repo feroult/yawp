@@ -24,8 +24,8 @@ public abstract class SqlRunner {
 
 	}
 
-	protected void collect(ResultSet rs) throws SQLException {
-
+	protected <T> T collect(ResultSet rs) throws SQLException {
+		return null;
 	}
 
 	protected Object collectScalar(ResultSet rs) throws SQLException {
@@ -36,7 +36,7 @@ public abstract class SqlRunner {
 		this.sql = sql;
 	}
 
-	public void executeQuery() {
+	public <T> T executeQuery() {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
@@ -45,7 +45,7 @@ public abstract class SqlRunner {
 			prepare(ps);
 
 			rs = ps.executeQuery();
-			collect(rs);
+			return collect(rs);
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -98,7 +98,9 @@ public abstract class SqlRunner {
 			prepare(ps);
 
 			rs = ps.executeQuery();
-			rs.next();
+			if (!rs.next()) {
+				return null;
+			}
 			return collectScalar(rs);
 
 		} catch (SQLException e) {

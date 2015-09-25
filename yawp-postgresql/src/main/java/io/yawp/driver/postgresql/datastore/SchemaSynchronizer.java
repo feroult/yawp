@@ -34,20 +34,21 @@ public class SchemaSynchronizer {
 	private static List<String> getExistingTables(Connection connection) throws SQLException {
 		String sql = String.format("%s %s", SQL_CATALOG_SELECT, SQL_CATALOG_TABLES);
 
-		final List<String> tables = new ArrayList<String>();
-
 		SqlRunner runner = new SqlRunner(connection, sql) {
+			@SuppressWarnings("unchecked")
 			@Override
-			public void collect(ResultSet rs) throws SQLException {
+			public List<String> collect(ResultSet rs) throws SQLException {
+				List<String> tables = new ArrayList<String>();
+
 				while (rs.next()) {
 					tables.add(rs.getString("relname"));
 				}
+
+				return tables;
 			}
 		};
 
-		runner.executeQuery();
-
-		return tables;
+		return runner.executeQuery();
 	}
 
 	private static void sync(Connection connection, List<String> existingTables, Class<?> endpointClazz) {

@@ -1,7 +1,9 @@
 package io.yawp.driver.postgresql.datastore;
 
+import io.yawp.driver.postgresql.datastore.sql.PGDatastoreSqlRunner;
 import io.yawp.driver.postgresql.datastore.sql.PlaceHolder;
 import io.yawp.driver.postgresql.datastore.sql.PlaceHolderKey;
+import io.yawp.driver.postgresql.datastore.sql.SqlRunner;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -46,6 +48,7 @@ public class PGDatastore {
 	}
 
 	public Entity get(Key key) {
+
 		PreparedStatement ps = prepareStatement(SQL_GET, key);
 
 		try {
@@ -78,51 +81,42 @@ public class PGDatastore {
 	}
 
 	private boolean existsEntityWithThisKey(Key key) {
-		PreparedStatement ps = prepareStatement(SQL_EXISTS, key);
+		Connection connection = ConnectionPool.connection();
 
-		try {
-			ResultSet rs = ps.executeQuery();
-			rs.next();
+		SqlRunner runner = new PGDatastoreSqlRunner(connection, SQL_EXISTS, key) {
 
-			return rs.getBoolean(1);
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+			@Override
+			protected Object collectScalar(ResultSet rs) throws SQLException {
+				return rs.getBoolean(1);
+			}
+
+		};
+
+		return runner.getBoolean();
 	}
 
 	private void execute(String query, Entity entity) {
-		PreparedStatement ps = prepareStatement(query, entity);
-
-		try {
-			ps.execute();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+		Connection connection = ConnectionPool.connection();
+		SqlRunner runner = new PGDatastoreSqlRunner(connection, query, entity);
+		runner.execute();
 	}
 
 	private void execute(String query, Key key) {
-		PreparedStatement ps = prepareStatement(query, key);
-
-		try {
-			ps.execute();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private PreparedStatement prepareStatement(String query, Entity entity) {
-		return prepareStatement(query, entity.getKey(), entity);
+		Connection connection = ConnectionPool.connection();
+		SqlRunner runner = new PGDatastoreSqlRunner(connection, query, key);
+		runner.execute();
 	}
 
 	private PreparedStatement prepareStatement(String query, Key key) {
 		return prepareStatement(query, key, null);
 	}
 
-	private PreparedStatement prepareStatement(String query, Key key, Entity entity) {
+	private PreparedStatement prepareStatement(String query, final Key key, final Entity entity) {
 		Connection connection = ConnectionPool.connection();
 
-		List<PlaceHolder> placeHolders = PlaceHolder.parse(query);
 		String sql = PlaceHolderKey.replaceAll(query.replaceAll(":kind", key.getKind()));
+
+		final List<PlaceHolder> placeHolders = PlaceHolder.parse(query);
 
 		try {
 

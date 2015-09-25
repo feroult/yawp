@@ -45,7 +45,7 @@ public class SchemaSynchronizer {
 			}
 		};
 
-		runner.run();
+		runner.executeQuery();
 
 		return tables;
 	}

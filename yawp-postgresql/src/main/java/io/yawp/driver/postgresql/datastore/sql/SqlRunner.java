@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public abstract class SqlRunner {
 
-	private String sql;
+	protected String sql;
 
 	private Connection connection;
 
@@ -16,7 +16,11 @@ public abstract class SqlRunner {
 		this.sql = sql;
 	}
 
-	protected void prepare(PreparedStatement ps) {
+	protected SqlRunner(Connection connection) {
+		this.connection = connection;
+	}
+
+	protected void prepare(PreparedStatement ps) throws SQLException {
 
 	}
 
@@ -24,7 +28,15 @@ public abstract class SqlRunner {
 
 	}
 
-	public void run() {
+	protected Object collectScalar(ResultSet rs) throws SQLException {
+		return null;
+	}
+
+	protected void setSql(String sql) {
+		this.sql = sql;
+	}
+
+	public void executeQuery() {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
@@ -51,4 +63,57 @@ public abstract class SqlRunner {
 		}
 	}
 
+	public void execute() {
+		PreparedStatement ps = null;
+
+		try {
+			ps = connection.prepareStatement(sql);
+			prepare(ps);
+
+			ps.execute();
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			try {
+				if (ps != null) {
+					ps.close();
+				}
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+
+	public boolean getBoolean() {
+		return (Boolean) getScalar();
+	}
+
+	private Object getScalar() {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			ps = connection.prepareStatement(sql);
+			prepare(ps);
+
+			rs = ps.executeQuery();
+			rs.next();
+			return collectScalar(rs);
+
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (ps != null) {
+					ps.close();
+				}
+			} catch (SQLException e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
 }

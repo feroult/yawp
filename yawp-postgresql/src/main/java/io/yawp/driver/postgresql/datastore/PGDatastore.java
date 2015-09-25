@@ -65,6 +65,11 @@ public class PGDatastore {
 		execute(SQL_DELETE, key);
 	}
 
+	private boolean isNewEntity(Entity entity) {
+		Key key = entity.getKey();
+		return key.isNew() || !existsEntityWithThisKey(key);
+	}
+
 	private boolean existsEntityWithThisKey(Key key) {
 		PreparedStatement ps = prepareStatement(SQL_EXISTS, key);
 
@@ -134,11 +139,6 @@ public class PGDatastore {
 			return;
 		}
 		key.generate();
-	}
-
-	private boolean isNewEntity(Entity entity) {
-		Key key = entity.getKey();
-		return key.isNew() || !existsEntityWithThisKey(key);
 	}
 
 }

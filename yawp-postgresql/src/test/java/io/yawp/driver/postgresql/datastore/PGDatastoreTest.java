@@ -97,21 +97,42 @@ public class PGDatastoreTest {
 	}
 
 	@Test
-	public void testParentKey() {
-		Key parentKey = Key.create("companies", 1l);
-		Key key = Key.create(parentKey, "people", 1l);
+	public void testChildKey() {
+		Key parentKey = Key.create("parents", 1l);
+		Key childKey = Key.create(parentKey, "people", 1l);
 
-		Entity entity = new Entity(key);
+		Entity entity = new Entity(childKey);
 		entity.setProperty("name", "jim");
 
 		datastore.put(entity);
 
-		Entity retrievedEntity = datastore.get(key);
+		Entity retrievedEntity = datastore.get(childKey);
 		assertEquals("jim", retrievedEntity.getProperty("name"));
 
-		Key anotherParentKey = Key.create("companies", 2l);
-		Key anotherKey = Key.create(anotherParentKey, "people", 1l);
-		assertNull(datastore.get(anotherKey));
+		Key anotherParentKey = Key.create("parents", 2l);
+		Key anotherChildKey = Key.create(anotherParentKey, "people", 1l);
+		assertNull(datastore.get(anotherChildKey));
+	}
+
+	@Test
+	public void testGrandchildKey() {
+		Key parentKey = Key.create("parents", 1l);
+		Key childKey = Key.create(parentKey, "children", 1l);
+		Key grandchildKey = Key.create(childKey, "people", 1l);
+
+		Entity entity = new Entity(grandchildKey);
+		entity.setProperty("name", "jim");
+
+		datastore.put(entity);
+
+		Entity retrievedEntity = datastore.get(grandchildKey);
+		assertEquals("jim", retrievedEntity.getProperty("name"));
+
+		Key anotherParentKey = Key.create("parents", 2l);
+		Key anotherChildKey = Key.create(anotherParentKey, "children", 1l);
+		Key anotherGrandchildKey = Key.create(anotherChildKey, "people", 1l);
+
+		assertNull(datastore.get(anotherGrandchildKey));
 	}
 
 }

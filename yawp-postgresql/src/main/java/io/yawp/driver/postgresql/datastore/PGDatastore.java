@@ -18,6 +18,8 @@ public class PGDatastore {
 
 	private static final String SQL_EXISTS = "select exists(select 1 from :kind where key->>'name' = :search_key) as exists";
 
+	private static final String SQL_DELETE = "delete from :kind where key->>'name' = :search_key";
+
 	public Key put(Entity entity) {
 		if (isNewEntity(entity)) {
 			createEntity(entity);
@@ -59,9 +61,8 @@ public class PGDatastore {
 		}
 	}
 
-	public void delete(Object key) {
-		// TODO Auto-generated method stub
-
+	public void delete(Key key) {
+		execute(SQL_DELETE, key);
 	}
 
 	private boolean existsEntityWithThisKey(Key key) {
@@ -79,6 +80,16 @@ public class PGDatastore {
 
 	private void execute(String query, Entity entity) {
 		PreparedStatement ps = prepareStatement(query, entity);
+
+		try {
+			ps.execute();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void execute(String query, Key key) {
+		PreparedStatement ps = prepareStatement(query, key);
 
 		try {
 			ps.execute();

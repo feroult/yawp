@@ -1,6 +1,7 @@
-package io.yawp.driver.postgresql;
+package io.yawp.driver.postgresql.datastore;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import io.yawp.driver.postgresql.datastore.Entity;
 import io.yawp.driver.postgresql.datastore.Key;
 import io.yawp.driver.postgresql.datastore.PGDatastore;
@@ -59,6 +60,17 @@ public class PGDatastoreTest {
 		Entity retrievedEntity = datastore.get(key);
 		assertEquals("robert", retrievedEntity.getProperty("name"));
 
+	}
+
+	@Test
+	public void delete() {
+		Key key = Key.create("people", "xpto");
+		Entity entity = new Entity(key);
+		datastore.put(entity);
+
+		datastore.delete(key);
+
+		assertNull(datastore.get(key));
 	}
 
 	@Test

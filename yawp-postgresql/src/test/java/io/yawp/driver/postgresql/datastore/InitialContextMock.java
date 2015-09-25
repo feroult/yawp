@@ -1,4 +1,4 @@
-package io.yawp.driver.postgresql;
+package io.yawp.driver.postgresql.datastore;
 
 import java.util.HashMap;
 import java.util.Hashtable;

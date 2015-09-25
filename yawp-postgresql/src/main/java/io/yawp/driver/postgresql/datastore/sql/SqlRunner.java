@@ -7,6 +7,11 @@ import java.sql.SQLException;
 
 public abstract class SqlRunner {
 
+	@SuppressWarnings("serial")
+	private class NotImplementedException extends RuntimeException {
+
+	}
+
 	protected String sql;
 
 	private Connection connection;
@@ -24,11 +29,11 @@ public abstract class SqlRunner {
 
 	}
 
-	protected <T> T collect(ResultSet rs) throws SQLException {
-		return null;
+	protected Object collect(ResultSet rs) throws SQLException {
+		throw new NotImplementedException();
 	}
 
-	protected Object collectScalar(ResultSet rs) throws SQLException {
+	protected Object collectSingle(ResultSet rs) throws SQLException {
 		return null;
 	}
 
@@ -36,6 +41,7 @@ public abstract class SqlRunner {
 		this.sql = sql;
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T executeQuery() {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -45,7 +51,17 @@ public abstract class SqlRunner {
 			prepare(ps);
 
 			rs = ps.executeQuery();
-			return collect(rs);
+
+			try {
+
+				return (T) collect(rs);
+
+			} catch (NotImplementedException e) {
+				if (!rs.next()) {
+					return null;
+				}
+				return (T) collectSingle(rs);
+			}
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -85,37 +101,4 @@ public abstract class SqlRunner {
 		}
 	}
 
-	public boolean getBoolean() {
-		return (Boolean) getScalar();
-	}
-
-	private Object getScalar() {
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-
-		try {
-			ps = connection.prepareStatement(sql);
-			prepare(ps);
-
-			rs = ps.executeQuery();
-			if (!rs.next()) {
-				return null;
-			}
-			return collectScalar(rs);
-
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (ps != null) {
-					ps.close();
-				}
-			} catch (SQLException e) {
-				throw new RuntimeException(e);
-			}
-		}
-	}
 }

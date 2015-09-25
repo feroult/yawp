@@ -48,27 +48,22 @@ public class PGDatastore {
 	}
 
 	public Entity get(Key key) {
+		Connection connection = ConnectionPool.connection();
 
-		PreparedStatement ps = prepareStatement(SQL_GET, key);
+		SqlRunner runner = new PGDatastoreSqlRunner(connection, SQL_GET, key) {
+			@Override
+			public Entity collectSingle(ResultSet rs) throws SQLException {
+				PGobject keyObject = (PGobject) rs.getObject(1);
+				PGobject entityObject = (PGobject) rs.getObject(2);
 
-		try {
-			ResultSet rs = ps.executeQuery();
+				Entity entity = new Entity(Key.deserialize(keyObject.getValue()));
+				entity.deserializeProperties(entityObject.getValue());
 
-			if (!rs.next()) {
-				return null;
+				return entity;
 			}
+		};
 
-			PGobject keyObject = (PGobject) rs.getObject(1);
-			PGobject entityObject = (PGobject) rs.getObject(2);
-
-			Entity entity = new Entity(Key.deserialize(keyObject.getValue()));
-			entity.deserializeProperties(entityObject.getValue());
-
-			return entity;
-
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+		return runner.executeQuery();
 	}
 
 	public void delete(Key key) {
@@ -86,13 +81,13 @@ public class PGDatastore {
 		SqlRunner runner = new PGDatastoreSqlRunner(connection, SQL_EXISTS, key) {
 
 			@Override
-			protected Object collectScalar(ResultSet rs) throws SQLException {
+			protected Object collectSingle(ResultSet rs) throws SQLException {
 				return rs.getBoolean(1);
 			}
 
 		};
 
-		return runner.getBoolean();
+		return runner.executeQuery();
 	}
 
 	private void execute(String query, Entity entity) {

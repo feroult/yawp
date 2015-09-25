@@ -35,7 +35,6 @@ public class SchemaSynchronizer {
 		String sql = String.format("%s %s", SQL_CATALOG_SELECT, SQL_CATALOG_TABLES);
 
 		SqlRunner runner = new SqlRunner(connection, sql) {
-			@SuppressWarnings("unchecked")
 			@Override
 			public List<String> collect(ResultSet rs) throws SQLException {
 				List<String> tables = new ArrayList<String>();

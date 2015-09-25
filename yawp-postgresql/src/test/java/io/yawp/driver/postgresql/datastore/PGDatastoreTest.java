@@ -3,8 +3,11 @@ package io.yawp.driver.postgresql.datastore;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.sql.SQLException;
+
 import javax.naming.Context;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,6 +32,20 @@ public class PGDatastoreTest {
 	@Before
 	public void before() {
 		datastore = new PGDatastore();
+		truncate();
+	}
+
+	@After
+	public void after() {
+		truncate();
+	}
+
+	private void truncate() {
+		try {
+			ConnectionPool.connection().prepareStatement("truncate table people;").execute();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Test

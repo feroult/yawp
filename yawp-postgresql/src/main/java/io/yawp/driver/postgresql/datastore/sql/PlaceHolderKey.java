@@ -1,4 +1,5 @@
-package io.yawp.driver.postgresql.datastore;
+package io.yawp.driver.postgresql.datastore.sql;
+
 
 public enum PlaceHolderKey {
 	KEY {

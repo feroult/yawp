@@ -1,7 +1,8 @@
 package io.yawp.driver.postgresql.datastore;
 
+import io.yawp.driver.postgresql.datastore.sql.SqlRunner;
+
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class SchemaSynchronizer {
 			List<String> existingTables = getExistingTables(connection);
 
 			for (Class<?> endpointClazz : endpointClazzes) {
-				sync(connection, endpointClazz);
+				sync(connection, existingTables, endpointClazz);
 			}
 
 		} catch (SQLException e) {
@@ -31,33 +32,25 @@ public class SchemaSynchronizer {
 	}
 
 	private static List<String> getExistingTables(Connection connection) throws SQLException {
-		List<String> tables = new ArrayList<String>();
-
 		String sql = String.format("%s %s", SQL_CATALOG_SELECT, SQL_CATALOG_TABLES);
 
-		PreparedStatement ps = null;
-		ResultSet rs = null;
+		final List<String> tables = new ArrayList<String>();
 
-		try {
-			ps = connection.prepareStatement(sql);
-			rs = ps.executeQuery();
+		SqlRunner runner = new SqlRunner(connection, sql) {
+			@Override
+			public void collect(ResultSet rs) throws SQLException {
+				while (rs.next()) {
+					tables.add(rs.getString("relname"));
+				}
+			}
+		};
 
-			while (rs.next()) {
-				tables.add(rs.getString("relname"));
-			}
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (ps != null) {
-				ps.close();
-			}
-		}
+		runner.run();
 
 		return tables;
 	}
 
-	private static void sync(Connection connection, Class<?> endpointClazz) {
+	private static void sync(Connection connection, List<String> existingTables, Class<?> endpointClazz) {
 
 	}
 

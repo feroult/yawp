@@ -21,4 +21,12 @@ public class ConnectionPool {
 			throw new RuntimeException(e);
 		}
 	}
+
+	public static void close(Connection connection) {
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }

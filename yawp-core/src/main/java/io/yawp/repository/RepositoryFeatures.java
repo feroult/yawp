@@ -5,6 +5,7 @@ import io.yawp.repository.actions.ActionKey;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class RepositoryFeatures {
 
@@ -70,5 +71,9 @@ public class RepositoryFeatures {
 	public boolean hasCustomAction(Class<?> clazz, ActionKey actionKey) {
 		EndpointFeatures<?> endpointFeatures = get(clazz);
 		return endpointFeatures.hasCustomAction(actionKey);
+	}
+
+	public Set<Class<?>> getEndpointClazzes() {
+		return endpoints.keySet();
 	}
 }

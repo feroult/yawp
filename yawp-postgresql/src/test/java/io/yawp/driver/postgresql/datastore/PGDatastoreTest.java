@@ -13,21 +13,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.postgresql.ds.PGConnectionPoolDataSource;
 
-public class PGDatastoreTest {
+public class PGDatastoreTest extends PGDatastoreTestCase {
 
 	private PGDatastore datastore;
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitialContextMock.class.getName());
-
-		PGConnectionPoolDataSource ds = new PGConnectionPoolDataSource();
-		ds.setUrl("jdbc:postgresql://localhost/yawp_test");
-		// ds.setUser("MY_USER_NAME");
-		// ds.setPassword("MY_USER_PASSWORD");
-
-		InitialContextMock.bind("jdbc/yawp_test", ds);
-	}
 
 	@Before
 	public void before() {

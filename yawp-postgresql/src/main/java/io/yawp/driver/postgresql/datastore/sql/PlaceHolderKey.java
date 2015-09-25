@@ -1,19 +1,21 @@
 package io.yawp.driver.postgresql.datastore.sql;
 
-
 public enum PlaceHolderKey {
+
 	KEY {
 		@Override
 		public PlaceHolder getPlaceHolder() {
 			return new KeyPlaceHolder();
 		}
 	},
+
 	PROPERTIES {
 		@Override
 		public PlaceHolder getPlaceHolder() {
 			return new PropertiesPlaceHolder();
 		}
 	},
+
 	SEARCH_KEY {
 		@Override
 		public PlaceHolder getPlaceHolder() {

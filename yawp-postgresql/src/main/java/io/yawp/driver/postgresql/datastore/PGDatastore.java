@@ -1,9 +1,10 @@
-package io.yawp.driver.postgresql;
+package io.yawp.driver.postgresql.datastore;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.postgresql.util.PGobject;
 
@@ -71,13 +72,6 @@ public class PGDatastore {
 		}
 	}
 
-	private PGobject createJsonObject(String json) throws SQLException {
-		PGobject jsonObject = new PGobject();
-		jsonObject.setType("jsonb");
-		jsonObject.setValue(json);
-		return jsonObject;
-	}
-
 	private void execute(String query, Entity entity) {
 		PreparedStatement ps = prepareStatement(query, entity);
 
@@ -99,23 +93,19 @@ public class PGDatastore {
 	private PreparedStatement prepareStatement(String query, Key key, Entity entity) {
 		Connection connection = ConnectionPool.connection();
 
-		int keyIndex = query.indexOf(":key");
-		int entityIndex = query.indexOf(":entity");
-
-		String sql = query.replaceAll(":kind", key.getKind()).replaceAll(":key", "?").replaceAll(":entity", "?");
+		List<PlaceHolder> placeHolders = PlaceHolder.parse(query);
+		String sql = PlaceHolderKey.replaceAll(query.replaceAll(":kind", key.getKind()));
 
 		try {
+
 			PreparedStatement ps = connection.prepareStatement(sql);
 
-			if (entityIndex != -1) {
-				ps.setObject(keyIndex == -1 || entityIndex < keyIndex ? 1 : 2, createJsonObject(entity.serialize()));
-			}
-
-			if (keyIndex != -1) {
-				ps.setString(entityIndex == -1 || keyIndex < entityIndex ? 1 : 2, key.getName());
+			for (PlaceHolder placeHolder : placeHolders) {
+				placeHolder.setValue(ps, key, entity);
 			}
 
 			return ps;
+
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

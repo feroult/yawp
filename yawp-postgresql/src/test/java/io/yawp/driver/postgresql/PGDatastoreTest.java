@@ -1,6 +1,9 @@
 package io.yawp.driver.postgresql;
 
 import static org.junit.Assert.assertEquals;
+import io.yawp.driver.postgresql.datastore.Entity;
+import io.yawp.driver.postgresql.datastore.Key;
+import io.yawp.driver.postgresql.datastore.PGDatastore;
 
 import javax.naming.Context;
 

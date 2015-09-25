@@ -1,6 +1,9 @@
 package io.yawp.driver.postgresql;
 
 import io.yawp.driver.api.PersistenceDriver;
+import io.yawp.driver.postgresql.datastore.Entity;
+import io.yawp.driver.postgresql.datastore.Key;
+import io.yawp.driver.postgresql.datastore.PGDatastore;
 import io.yawp.repository.FieldModel;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;

@@ -1,5 +1,6 @@
 package io.yawp.driver.postgresql;
 
+import io.yawp.driver.postgresql.datastore.Key;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 

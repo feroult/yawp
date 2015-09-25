@@ -1,4 +1,4 @@
-package io.yawp.driver.postgresql;
+package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.commons.utils.JsonUtils;
 

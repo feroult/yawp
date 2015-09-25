@@ -12,13 +12,13 @@ public class PGDatastore {
 
 	private static final String SQL_CREATE = "insert into :kind (key, properties) values (:key, :properties)";
 
-	private static final String SQL_UPDATE = "update :kind set properties = :properties where key->>'name' = :search_key";
+	private static final String SQL_UPDATE = "update :kind set properties = :properties where key @> :search_key";
 
-	private static final String SQL_GET = "select key, properties from :kind where key->>'name' = :search_key";
+	private static final String SQL_GET = "select key, properties from :kind where key @> :search_key";
 
-	private static final String SQL_EXISTS = "select exists(select 1 from :kind where key->>'name' = :search_key) as exists";
+	private static final String SQL_EXISTS = "select exists(select 1 from :kind where key @> :search_key) as exists";
 
-	private static final String SQL_DELETE = "delete from :kind where key->>'name' = :search_key";
+	private static final String SQL_DELETE = "delete from :kind where key @> :search_key";
 
 	public Key put(Entity entity) {
 		if (isNewEntity(entity)) {
@@ -138,6 +138,7 @@ public class PGDatastore {
 		if (!key.isNew()) {
 			return;
 		}
+
 		key.generate();
 	}
 

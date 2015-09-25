@@ -28,6 +28,11 @@ public class Key {
 		this.name = name;
 	}
 
+	public Key(String kind, Long id) {
+		this.kind = kind;
+		this.id = id;
+	}
+
 	public static Key create(String kind, Key parentKey) {
 		return new Key(kind, parentKey);
 	}
@@ -38,6 +43,10 @@ public class Key {
 
 	public static Key create(String kind, String name) {
 		return new Key(kind, name);
+	}
+
+	public static Key create(String kind, long id) {
+		return new Key(kind, id);
 	}
 
 	public String getKind() {

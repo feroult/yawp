@@ -2,14 +2,12 @@ package io.yawp.driver.postgresql.datastore;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import io.yawp.driver.postgresql.datastore.Entity;
-import io.yawp.driver.postgresql.datastore.Key;
-import io.yawp.driver.postgresql.datastore.PGDatastore;
 
 import javax.naming.Context;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.postgresql.ds.PGConnectionPoolDataSource;
 
@@ -85,5 +83,21 @@ public class PGDatastoreTest {
 		Entity retrievedEntity = datastore.get(key);
 		assertEquals("jim", retrievedEntity.getProperty("name"));
 	}
+
+	@Test
+	@Ignore
+	public void testForceId() {
+		Key key = Key.create("people", 123l);
+
+		Entity entity = new Entity(key);
+		entity.setProperty("name", "jim");
+
+		datastore.put(entity);
+
+		Entity retrievedEntity = datastore.get(key);
+		assertEquals("jim", retrievedEntity.getProperty("name"));
+	}
+
+
 
 }

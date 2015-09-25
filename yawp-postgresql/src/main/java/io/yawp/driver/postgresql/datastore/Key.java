@@ -2,8 +2,6 @@ package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.commons.utils.JsonUtils;
 
-import java.util.UUID;
-
 public class Key {
 
 	private String kind;
@@ -70,11 +68,7 @@ public class Key {
 	}
 
 	public void generate() {
-		this.name = nextName();
-	}
-
-	private String nextName() {
-		return UUID.randomUUID().toString();
+		this.name = NameGenerator.generateKey();
 	}
 
 }

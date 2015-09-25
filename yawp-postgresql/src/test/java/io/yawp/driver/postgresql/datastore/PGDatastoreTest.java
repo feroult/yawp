@@ -7,7 +7,6 @@ import javax.naming.Context;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.postgresql.ds.PGConnectionPoolDataSource;
 
@@ -85,7 +84,6 @@ public class PGDatastoreTest {
 	}
 
 	@Test
-	@Ignore
 	public void testForceId() {
 		Key key = Key.create("people", 123l);
 
@@ -97,7 +95,5 @@ public class PGDatastoreTest {
 		Entity retrievedEntity = datastore.get(key);
 		assertEquals("jim", retrievedEntity.getProperty("name"));
 	}
-
-
 
 }

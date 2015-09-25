@@ -20,6 +20,10 @@ public class PGDatastore {
 
 	private static final String SQL_DELETE = "delete from :kind where key @> :search_key";
 
+	public static PGDatastore create() {
+		return new PGDatastore();
+	}
+
 	public Key put(Entity entity) {
 		if (isNewEntity(entity)) {
 			createEntity(entity);

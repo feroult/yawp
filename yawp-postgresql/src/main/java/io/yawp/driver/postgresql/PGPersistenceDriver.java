@@ -1,5 +1,6 @@
 package io.yawp.driver.postgresql;
 
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.driver.api.PersistenceDriver;
 import io.yawp.driver.postgresql.datastore.Entity;
 import io.yawp.driver.postgresql.datastore.Key;
@@ -11,10 +12,14 @@ import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.Repository;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 
 public class PGPersistenceDriver implements PersistenceDriver {
+
+	private static final String NORMALIZED_FIELD_PREFIX = "__";
 
 	private Repository r;
 
@@ -23,13 +28,11 @@ public class PGPersistenceDriver implements PersistenceDriver {
 	}
 
 	private PGDatastore datastore() {
-		// TODO Auto-generated method stub
-		return null;
+		return PGDatastore.create();
 	}
 
 	private PGDatastore asyncDatastore() {
-		// TODO Auto-generated method stub
-		return null;
+		return PGDatastore.create();
 	}
 
 	@Override
@@ -79,12 +82,9 @@ public class PGPersistenceDriver implements PersistenceDriver {
 
 	@SuppressWarnings("unchecked")
 	private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectHolder, Entity entity) {
-		// Future<Key> futureKey = asyncDatastore().put(entity);
-		// //return new FutureObject<T>(r, new FutureIdRef(r, futureKey), (T)
-		// objectHolder.getObject());
-		// return new FutureObject<T>(r, new FutureIdRef(r, futureKey), (T)
-		// objectHolder.getObject());
-		return null;
+		Key key = asyncDatastore().put(entity);
+		Future<?> futureId = ConcurrentUtils.constantFuture(IdRefToKey.toIdRef(r, key));
+		return new FutureObject<T>(r, (Future<IdRef<?>>) futureId, (T) objectHolder.getObject());
 	}
 
 	public void toEntity(ObjectHolder objectHolder, Entity entity) {
@@ -103,18 +103,17 @@ public class PGPersistenceDriver implements PersistenceDriver {
 		Object value = getFieldValue(fieldModel, objectHolder);
 
 		if (!fieldModel.hasIndex()) {
-			// entity.setUnindexedProperty(fieldModel.getName(), value);
+			entity.setUnindexedProperty(fieldModel.getName(), value);
 			return;
 		}
 
 		if (fieldModel.isIndexNormalizable()) {
-			// entity.setProperty(NORMALIZED_FIELD_PREFIX +
-			// fieldModel.getName(), normalizeValue(value));
-			// entity.setUnindexedProperty(fieldModel.getName(), value);
+			entity.setProperty(NORMALIZED_FIELD_PREFIX + fieldModel.getName(), normalizeValue(value));
+			entity.setUnindexedProperty(fieldModel.getName(), value);
 			return;
 		}
 
-		// entity.setProperty(fieldModel.getName(), value);
+		entity.setProperty(fieldModel.getName(), value);
 	}
 
 	private Object getFieldValue(FieldModel fieldModel, ObjectHolder objectHolder) {
@@ -129,8 +128,7 @@ public class PGPersistenceDriver implements PersistenceDriver {
 		}
 
 		if (fieldModel.isSaveAsJson()) {
-			// return new Text(JsonUtils.to(value));
-			return null;
+			return JsonUtils.to(value);
 		}
 
 		if (fieldModel.isIdRef()) {
@@ -139,8 +137,7 @@ public class PGPersistenceDriver implements PersistenceDriver {
 		}
 
 		if (fieldModel.isSaveAsText()) {
-			// return new Text(value.toString());
-			return null;
+			return value.toString();
 		}
 
 		return value;

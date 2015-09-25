@@ -4,7 +4,7 @@ import io.yawp.commons.utils.JsonUtils;
 
 public class Key {
 
-	private Key parentKey;
+	private Key parent;
 
 	private String kind;
 
@@ -12,49 +12,39 @@ public class Key {
 
 	private String name;
 
-	public Key(String kind) {
+	protected Key(String kind) {
 		this.kind = kind;
 	}
 
-	private Key(Key parentKey, String kind, Long id) {
-		this.parentKey = parentKey;
-		this.kind = kind;
-		this.id = id;
-	}
-
-	private Key(Key parentKey, String kind) {
-		this.parentKey = parentKey;
-		this.kind = kind;
-	}
-
-	public Key(String kind, String name) {
+	protected Key(Key parent, String kind, String name) {
+		this.parent = parent;
 		this.kind = kind;
 		this.name = name;
 	}
 
-	public Key(String kind, Long id) {
+	protected Key(Key parent, String kind, Long id) {
+		this.parent = parent;
 		this.kind = kind;
 		this.id = id;
 	}
 
-	public static Key create(Key parentKey, String kind) {
-		return new Key(parentKey, kind);
+	protected Key(Key parent, String kind) {
+		this.parent = parent;
+		this.kind = kind;
 	}
 
-	public static Key create(String kind) {
-		return new Key(kind);
+	protected Key(String kind, String name) {
+		this.kind = kind;
+		this.name = name;
 	}
 
-	public static Key create(String kind, String name) {
-		return new Key(kind, name);
+	protected Key(String kind, Long id) {
+		this.kind = kind;
+		this.id = id;
 	}
 
-	public static Key create(String kind, Long id) {
-		return new Key(kind, id);
-	}
-
-	public static Key create(Key parentKey, String kind, Long id) {
-		return new Key(parentKey, kind, id);
+	public Key getParent() {
+		return parent;
 	}
 
 	public String getKind() {
@@ -63,6 +53,10 @@ public class Key {
 
 	public String getName() {
 		return name;
+	}
+
+	public Long getId() {
+		return id;
 	}
 
 	public String serialize() {

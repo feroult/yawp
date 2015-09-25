@@ -32,12 +32,12 @@ public class PGDatastoreTest {
 	@Before
 	public void before() {
 		datastore = new PGDatastore();
-		truncate();
+		// truncate();
 	}
 
 	@After
 	public void after() {
-		truncate();
+		// truncate();
 	}
 
 	private void truncate() {
@@ -78,7 +78,7 @@ public class PGDatastoreTest {
 
 	@Test
 	public void delete() {
-		Key key = Key.create("people", "xpto");
+		Key key = KeyFactory.createKey("people", "xpto");
 		Entity entity = new Entity(key);
 		datastore.put(entity);
 
@@ -89,7 +89,7 @@ public class PGDatastoreTest {
 
 	@Test
 	public void testForceName() {
-		Key key = Key.create("people", "xpto");
+		Key key = KeyFactory.createKey("people", "xpto");
 
 		Entity entity = new Entity(key);
 		entity.setProperty("name", "jim");
@@ -102,7 +102,7 @@ public class PGDatastoreTest {
 
 	@Test
 	public void testForceId() {
-		Key key = Key.create("people", 123l);
+		Key key = KeyFactory.createKey("people", 123l);
 
 		Entity entity = new Entity(key);
 		entity.setProperty("name", "jim");
@@ -115,8 +115,8 @@ public class PGDatastoreTest {
 
 	@Test
 	public void testChildKey() {
-		Key parentKey = Key.create("parents", 1l);
-		Key childKey = Key.create(parentKey, "people", 1l);
+		Key parentKey = KeyFactory.createKey("parents", 1l);
+		Key childKey = KeyFactory.createKey(parentKey, "people", 1l);
 
 		Entity entity = new Entity(childKey);
 		entity.setProperty("name", "jim");
@@ -126,16 +126,16 @@ public class PGDatastoreTest {
 		Entity retrievedEntity = datastore.get(childKey);
 		assertEquals("jim", retrievedEntity.getProperty("name"));
 
-		Key anotherParentKey = Key.create("parents", 2l);
-		Key anotherChildKey = Key.create(anotherParentKey, "people", 1l);
+		Key anotherParentKey = KeyFactory.createKey("parents", 2l);
+		Key anotherChildKey = KeyFactory.createKey(anotherParentKey, "people", 1l);
 		assertNull(datastore.get(anotherChildKey));
 	}
 
 	@Test
 	public void testGrandchildKey() {
-		Key parentKey = Key.create("parents", 1l);
-		Key childKey = Key.create(parentKey, "children", 1l);
-		Key grandchildKey = Key.create(childKey, "people", 1l);
+		Key parentKey = KeyFactory.createKey("parents", 1l);
+		Key childKey = KeyFactory.createKey(parentKey, "children", 1l);
+		Key grandchildKey = KeyFactory.createKey(childKey, "people", 1l);
 
 		Entity entity = new Entity(grandchildKey);
 		entity.setProperty("name", "jim");
@@ -145,9 +145,9 @@ public class PGDatastoreTest {
 		Entity retrievedEntity = datastore.get(grandchildKey);
 		assertEquals("jim", retrievedEntity.getProperty("name"));
 
-		Key anotherParentKey = Key.create("parents", 2l);
-		Key anotherChildKey = Key.create(anotherParentKey, "children", 1l);
-		Key anotherGrandchildKey = Key.create(anotherChildKey, "people", 1l);
+		Key anotherParentKey = KeyFactory.createKey("parents", 2l);
+		Key anotherChildKey = KeyFactory.createKey(anotherParentKey, "children", 1l);
+		Key anotherGrandchildKey = KeyFactory.createKey(anotherChildKey, "people", 1l);
 
 		assertNull(datastore.get(anotherGrandchildKey));
 	}

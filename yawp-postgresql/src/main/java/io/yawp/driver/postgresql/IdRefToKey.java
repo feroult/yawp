@@ -1,19 +1,37 @@
 package io.yawp.driver.postgresql;
 
+import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.driver.postgresql.datastore.Key;
+import io.yawp.driver.postgresql.datastore.KeyFactory;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 
 public class IdRefToKey {
 
 	public static Key toKey(Repository r, IdRef<?> id) {
-		// TODO Auto-generated method stub
-		return null;
+		Key parent = id.getParentId() == null ? null : toKey(r, id.getParentId());
+		String kind = KindResolver.getKindFromClass(id.getClazz());
+		if (id.getId() == null) {
+			return KeyFactory.createKey(parent, kind, id.getName());
+		}
+		return KeyFactory.createKey(parent, kind, id.getId());
 	}
 
 	public static IdRef<?> toIdRef(Repository r, Key key) {
-		// TODO Auto-generated method stub
-		return null;
+		if (key == null) {
+			return null;
+		}
+
+		Class<?> objectClass = KindResolver.getClassFromKind(r, key.getKind());
+
+		IdRef<?> ref = null;
+		if (key.getName() != null) {
+			ref = IdRef.create(r, objectClass, key.getName());
+		} else {
+			ref = IdRef.create(r, objectClass, key.getId());
+		}
+		ref.setParentId(toIdRef(r, key.getParent()));
+		return ref;
 	}
 
 }

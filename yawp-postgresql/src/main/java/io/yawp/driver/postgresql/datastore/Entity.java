@@ -20,11 +20,11 @@ public class Entity {
 	}
 
 	public Entity(String kind, Key parentKey) {
-		this.key = Key.create(parentKey, kind);
+		this.key = KeyFactory.createKey(parentKey, kind);
 	}
 
 	public Entity(String kind) {
-		this.key = Key.create(kind);
+		this.key = KeyFactory.createKey(kind);
 	}
 
 	public Key getKey() {
@@ -42,6 +42,10 @@ public class Entity {
 
 	public void setProperty(String property, Object value) {
 		properties.put(property, value);
+	}
+
+	public void setUnindexedProperty(String property, Object value) {
+		setProperty(property, value);
 	}
 
 	public Object getProperty(String property) {

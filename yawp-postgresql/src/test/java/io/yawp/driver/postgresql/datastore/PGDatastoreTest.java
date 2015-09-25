@@ -5,13 +5,9 @@ import static org.junit.Assert.assertNull;
 
 import java.sql.SQLException;
 
-import javax.naming.Context;
-
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.postgresql.ds.PGConnectionPoolDataSource;
 
 public class PGDatastoreTest extends PGDatastoreTestCase {
 

@@ -1,15 +1,11 @@
 package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.driver.postgresql.datastore.sql.PGDatastoreSqlRunner;
-import io.yawp.driver.postgresql.datastore.sql.PlaceHolder;
-import io.yawp.driver.postgresql.datastore.sql.PlaceHolderKey;
 import io.yawp.driver.postgresql.datastore.sql.SqlRunner;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 import org.postgresql.util.PGobject;
 
@@ -79,12 +75,10 @@ public class PGDatastore {
 		Connection connection = ConnectionPool.connection();
 
 		SqlRunner runner = new PGDatastoreSqlRunner(connection, SQL_EXISTS, key) {
-
 			@Override
 			protected Object collectSingle(ResultSet rs) throws SQLException {
 				return rs.getBoolean(1);
 			}
-
 		};
 
 		return runner.executeQuery();
@@ -100,32 +94,6 @@ public class PGDatastore {
 		Connection connection = ConnectionPool.connection();
 		SqlRunner runner = new PGDatastoreSqlRunner(connection, query, key);
 		runner.execute();
-	}
-
-	private PreparedStatement prepareStatement(String query, Key key) {
-		return prepareStatement(query, key, null);
-	}
-
-	private PreparedStatement prepareStatement(String query, final Key key, final Entity entity) {
-		Connection connection = ConnectionPool.connection();
-
-		String sql = PlaceHolderKey.replaceAll(query.replaceAll(":kind", key.getKind()));
-
-		final List<PlaceHolder> placeHolders = PlaceHolder.parse(query);
-
-		try {
-
-			PreparedStatement ps = connection.prepareStatement(sql);
-
-			for (PlaceHolder placeHolder : placeHolders) {
-				placeHolder.setValue(ps, key, entity);
-			}
-
-			return ps;
-
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	private void generateKey(Entity entity) {

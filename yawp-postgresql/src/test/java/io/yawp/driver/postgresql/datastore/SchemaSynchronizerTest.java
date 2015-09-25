@@ -21,15 +21,12 @@ public class SchemaSynchronizerTest extends PGDatastoreTestCase {
 		public void setId(IdRef<Person> id) {
 			this.id = id;
 		}
-
 	}
 
 	@Test
 	public void testCreateTables() {
 		RepositoryFeatures features = new EndpointScanner(testPackage()).scan();
-
 		SchemaSynchronizer.sync(features.getEndpointClazzes());
-
 	}
 
 	private String testPackage() {

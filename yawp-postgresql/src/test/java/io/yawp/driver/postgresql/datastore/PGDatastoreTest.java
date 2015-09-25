@@ -32,12 +32,12 @@ public class PGDatastoreTest {
 	@Before
 	public void before() {
 		datastore = new PGDatastore();
-		// truncate();
+		truncate();
 	}
 
 	@After
 	public void after() {
-		// truncate();
+		truncate();
 	}
 
 	private void truncate() {

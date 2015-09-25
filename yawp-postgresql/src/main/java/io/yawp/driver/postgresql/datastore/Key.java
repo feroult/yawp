@@ -52,6 +52,10 @@ public class Key {
 		return JsonUtils.to(this);
 	}
 
+	public static Key deserialize(String json) {
+		return JsonUtils.from(null, json, Key.class);
+	}
+
 	public boolean isNew() {
 		return name == null && id == null;
 	}

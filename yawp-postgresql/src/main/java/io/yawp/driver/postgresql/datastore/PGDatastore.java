@@ -10,13 +10,13 @@ import org.postgresql.util.PGobject;
 
 public class PGDatastore {
 
-	private static final String SQL_CREATE = "insert into :kind (entity) values (:entity)";
+	private static final String SQL_CREATE = "insert into :kind (key, properties) values (:key, :properties)";
 
-	private static final String SQL_UPDATE = "update :kind set entity = :entity where entity->'key'->>'name' = :key";
+	private static final String SQL_UPDATE = "update :kind set properties = :properties where key->>'name' = :search_key";
 
-	private static final String SQL_GET = "select entity from :kind where entity->'key'->>'name' = :key";
+	private static final String SQL_GET = "select key, properties from :kind where key->>'name' = :search_key";
 
-	private static final String SQL_EXISTS = "select exists(select 1 from :kind where entity->'key'->>'name' = :key) as exists";
+	private static final String SQL_EXISTS = "select exists(select 1 from :kind where key->>'name' = :search_key) as exists";
 
 	public Key put(Entity entity) {
 		if (isNewEntity(entity)) {
@@ -46,8 +46,13 @@ public class PGDatastore {
 				return null;
 			}
 
-			PGobject pgObject = (PGobject) rs.getObject(1);
-			return Entity.deserialize(pgObject.getValue());
+			PGobject keyObject = (PGobject) rs.getObject(1);
+			PGobject entityObject = (PGobject) rs.getObject(2);
+
+			Entity entity = new Entity(Key.deserialize(keyObject.getValue()));
+			entity.deserializeProperties(entityObject.getValue());
+
+			return entity;
 
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

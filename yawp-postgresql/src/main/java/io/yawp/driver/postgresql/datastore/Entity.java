@@ -31,12 +31,13 @@ public class Entity {
 		return key;
 	}
 
-	public String serialize() {
-		return JsonUtils.to(this);
+	public String serializeProperties() {
+		return JsonUtils.to(properties);
 	}
 
-	public static Entity deserialize(String json) {
-		return JsonUtils.from(null, json, Entity.class);
+	@SuppressWarnings("unchecked")
+	public void deserializeProperties(String json) {
+		this.properties = JsonUtils.from(null, json, Map.class);
 	}
 
 	public void setProperty(String property, Object value) {

@@ -7,7 +7,6 @@ public class KeyPlaceHolder extends PlaceHolder {
 
 	@Override
 	public void setValue(PreparedStatement ps, Key key, Entity entity) throws SQLException {
-		ps.setString(index, key.getName());
+		ps.setObject(index, createJsonObject(key.serialize()));
 	}
-
 }

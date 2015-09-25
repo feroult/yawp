@@ -7,10 +7,10 @@ public enum PlaceHolderKey {
 			return new KeyPlaceHolder();
 		}
 	},
-	ENTITY {
+	PROPERTIES {
 		@Override
 		public PlaceHolder getPlaceHolder() {
-			return new EntityPlaceHolder();
+			return new PropertiesPlaceHolder();
 		}
 	},
 	SEARCH_KEY {

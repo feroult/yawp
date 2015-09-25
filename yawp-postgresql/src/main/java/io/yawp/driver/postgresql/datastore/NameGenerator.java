@@ -22,7 +22,6 @@ public class NameGenerator {
 	public static UUID convert(String name) {
 		UUID returnValue = null;
 		if (StringUtils.isNotBlank(name)) {
-			// Convert base64 string to a byte array
 			byte[] decodedArray = BASE64.decode(name);
 			returnValue = fromByteArray(decodedArray);
 		}

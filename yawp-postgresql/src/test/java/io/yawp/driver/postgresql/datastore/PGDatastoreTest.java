@@ -96,4 +96,22 @@ public class PGDatastoreTest {
 		assertEquals("jim", retrievedEntity.getProperty("name"));
 	}
 
+	@Test
+	public void testParentKey() {
+		Key parentKey = Key.create("companies", 1l);
+		Key key = Key.create(parentKey, "people", 1l);
+
+		Entity entity = new Entity(key);
+		entity.setProperty("name", "jim");
+
+		datastore.put(entity);
+
+		Entity retrievedEntity = datastore.get(key);
+		assertEquals("jim", retrievedEntity.getProperty("name"));
+
+		Key anotherParentKey = Key.create("companies", 2l);
+		Key anotherKey = Key.create(anotherParentKey, "people", 1l);
+		assertNull(datastore.get(anotherKey));
+	}
+
 }

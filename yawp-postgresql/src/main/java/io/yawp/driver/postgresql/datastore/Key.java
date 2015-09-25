@@ -4,9 +4,9 @@ import io.yawp.commons.utils.JsonUtils;
 
 public class Key {
 
-	private String kind;
-
 	private Key parentKey;
+
+	private String kind;
 
 	private Long id;
 
@@ -16,9 +16,15 @@ public class Key {
 		this.kind = kind;
 	}
 
-	private Key(String kind, Key parentKey) {
-		this.kind = kind;
+	private Key(Key parentKey, String kind, Long id) {
 		this.parentKey = parentKey;
+		this.kind = kind;
+		this.id = id;
+	}
+
+	private Key(Key parentKey, String kind) {
+		this.parentKey = parentKey;
+		this.kind = kind;
 	}
 
 	public Key(String kind, String name) {
@@ -31,8 +37,8 @@ public class Key {
 		this.id = id;
 	}
 
-	public static Key create(String kind, Key parentKey) {
-		return new Key(kind, parentKey);
+	public static Key create(Key parentKey, String kind) {
+		return new Key(parentKey, kind);
 	}
 
 	public static Key create(String kind) {
@@ -43,8 +49,12 @@ public class Key {
 		return new Key(kind, name);
 	}
 
-	public static Key create(String kind, long id) {
+	public static Key create(String kind, Long id) {
 		return new Key(kind, id);
+	}
+
+	public static Key create(Key parentKey, String kind, Long id) {
+		return new Key(parentKey, kind, id);
 	}
 
 	public String getKind() {
@@ -68,7 +78,7 @@ public class Key {
 	}
 
 	public void generate() {
-		this.name = NameGenerator.generateKey();
+		this.name = NameGenerator.generate();
 	}
 
 }

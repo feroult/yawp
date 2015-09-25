@@ -20,7 +20,7 @@ public class Entity {
 	}
 
 	public Entity(String kind, Key parentKey) {
-		this.key = Key.create(kind, parentKey);
+		this.key = Key.create(parentKey, kind);
 	}
 
 	public Entity(String kind) {

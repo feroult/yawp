@@ -7,11 +7,8 @@ import io.yawp.repository.RepositoryFeatures;
 
 import java.sql.Connection;
 
-import javax.naming.Context;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.postgresql.ds.PGConnectionPoolDataSource;
 
 public class PGDatastoreTestCase {
 
@@ -19,7 +16,7 @@ public class PGDatastoreTestCase {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		configureInitialContext();
+		InitialContextMock.configure();
 		createConnection();
 		createTables();
 	}
@@ -29,23 +26,12 @@ public class PGDatastoreTestCase {
 		closeConnection();
 	}
 
-	private static void configureInitialContext() {
-		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitialContextMock.class.getName());
-
-		PGConnectionPoolDataSource ds = new PGConnectionPoolDataSource();
-		ds.setUrl("jdbc:postgresql://localhost/yawp_test");
-		// ds.setUser("MY_USER_NAME");
-		// ds.setPassword("MY_USER_PASSWORD");
-
-		InitialContextMock.bind("jdbc/yawp_test", ds);
-	}
-
 	private static void createConnection() {
-		connection = ConnectionPool.connection();
+		connection = ConnectionPool.connection("ccc");
 	}
 
 	private static void closeConnection() {
-		ConnectionPool.close(connection);
+		ConnectionPool.close(connection, "ccc");
 	}
 
 	private static void createTables() {

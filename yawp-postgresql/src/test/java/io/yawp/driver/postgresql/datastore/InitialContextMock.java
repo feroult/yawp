@@ -9,6 +9,8 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 
+import org.postgresql.ds.PGConnectionPoolDataSource;
+
 public class InitialContextMock implements InitialContextFactory {
 
 	private static Context context;
@@ -46,5 +48,20 @@ public class InitialContextMock implements InitialContextFactory {
 		} catch (NamingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static void configure() {
+		if (System.getProperty(Context.INITIAL_CONTEXT_FACTORY) != null) {
+			return;
+		}
+
+		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitialContextMock.class.getName());
+
+		PGConnectionPoolDataSource ds = new PGConnectionPoolDataSource();
+		ds.setUrl("jdbc:postgresql://localhost/yawp_test");
+		// ds.setUser("MY_USER_NAME");
+		// ds.setPassword("MY_USER_PASSWORD");
+
+		bind("jdbc/yawp_test", ds);
 	}
 }

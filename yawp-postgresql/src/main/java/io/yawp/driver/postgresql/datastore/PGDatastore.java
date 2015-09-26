@@ -30,16 +30,19 @@ public class PGDatastore {
 	private PGDatastore() {
 	}
 
-	private Connection connection() {
+	private synchronized Connection connection() {
 		if (connection != null) {
 			return connection;
 		}
-		connection = ConnectionPool.connection();
+		connection = ConnectionPool.connection("aaa");
 		return connection;
 	}
 
-	public void dispose() {
-		ConnectionPool.close(connection);
+	public synchronized void dispose() {
+		if (connection == null) {
+			return;
+		}
+		ConnectionPool.close(connection, "aaa");
 	}
 
 	public Key put(Entity entity) {
@@ -61,9 +64,7 @@ public class PGDatastore {
 	}
 
 	public Entity get(Key key) {
-		Connection connection = connection();
-
-		SqlRunner runner = new PGDatastoreSqlRunner(connection, SQL_GET, key) {
+		SqlRunner runner = new PGDatastoreSqlRunner(connection(), SQL_GET, key) {
 			@Override
 			public Entity collectSingle(ResultSet rs) throws SQLException {
 				PGobject keyObject = (PGobject) rs.getObject(1);
@@ -89,9 +90,7 @@ public class PGDatastore {
 	}
 
 	private boolean existsEntityWithThisKey(Key key) {
-		Connection connection = connection();
-
-		SqlRunner runner = new PGDatastoreSqlRunner(connection, SQL_EXISTS, key) {
+		SqlRunner runner = new PGDatastoreSqlRunner(connection(), SQL_EXISTS, key) {
 			@Override
 			protected Object collectSingle(ResultSet rs) throws SQLException {
 				return rs.getBoolean(1);
@@ -102,14 +101,12 @@ public class PGDatastore {
 	}
 
 	private void execute(String query, Entity entity) {
-		Connection connection = connection();
-		SqlRunner runner = new PGDatastoreSqlRunner(connection, query, entity);
+		SqlRunner runner = new PGDatastoreSqlRunner(connection(), query, entity);
 		runner.execute();
 	}
 
 	private void execute(String query, Key key) {
-		Connection connection = connection();
-		SqlRunner runner = new PGDatastoreSqlRunner(connection, query, key);
+		SqlRunner runner = new PGDatastoreSqlRunner(connection(), query, key);
 		runner.execute();
 	}
 

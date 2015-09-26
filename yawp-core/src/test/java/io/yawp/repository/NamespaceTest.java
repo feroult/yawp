@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.models.basic.BasicObject;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,6 +18,12 @@ public class NamespaceTest extends EndpointTestCase {
 	public void before() {
 		r1 = Repository.r("ns1").setFeatures(yawp.getFeatures());
 		r2 = Repository.r("ns2").setFeatures(yawp.getFeatures());
+	}
+
+	@After
+	public void after() {
+		r1.dispose();
+		r2.dispose();
 	}
 
 	@Test

@@ -18,12 +18,14 @@ public class PGDriver implements Driver {
 
 	@Override
 	public void init(Repository r) {
+		System.out.println("init baby");
 		this.r = r;
 		this.datastore = PGDatastore.create();
 	}
 
 	@Override
 	public void dispose() {
+		System.out.println("dispose baby");
 		datastore.dispose();
 	}
 
@@ -40,8 +42,7 @@ public class PGDriver implements Driver {
 
 	@Override
 	public NamespaceDriver namespace() {
-		// TODO Auto-generated method stub
-		return null;
+		return new PGNamespaceDriver();
 	}
 
 	@Override
@@ -52,8 +53,7 @@ public class PGDriver implements Driver {
 
 	@Override
 	public EnvironmentDriver environment() {
-		// TODO Auto-generated method stub
-		return null;
+		return new PGEnvironmentDriver();
 	}
 
 	@Override

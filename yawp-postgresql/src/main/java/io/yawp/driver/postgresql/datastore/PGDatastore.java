@@ -34,7 +34,7 @@ public class PGDatastore {
 		if (connection != null) {
 			return connection;
 		}
-		connection = ConnectionPool.connection("aaa");
+		connection = ConnectionPool.connection();
 		return connection;
 	}
 
@@ -42,7 +42,7 @@ public class PGDatastore {
 		if (connection == null) {
 			return;
 		}
-		ConnectionPool.close(connection, "aaa");
+		ConnectionPool.close(connection);
 	}
 
 	public Key put(Entity entity) {

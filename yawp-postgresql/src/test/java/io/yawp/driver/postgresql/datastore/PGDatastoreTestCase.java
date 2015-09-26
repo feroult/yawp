@@ -27,11 +27,11 @@ public class PGDatastoreTestCase {
 	}
 
 	private static void createConnection() {
-		connection = ConnectionPool.connection("ccc");
+		connection = ConnectionPool.connection();
 	}
 
 	private static void closeConnection() {
-		ConnectionPool.close(connection, "ccc");
+		ConnectionPool.close(connection);
 	}
 
 	private static void createTables() {

@@ -19,7 +19,7 @@ public class SchemaSynchronizer {
 	private static final String SQL_CREATE_TABLE = "create table %s (id bigserial primary key, key jsonb, properties jsonb)";
 
 	public static void sync(Set<Class<?>> endpointClazzes) {
-		Connection connection = ConnectionPool.connection("bbb");
+		Connection connection = ConnectionPool.connection();
 
 		try {
 			List<String> existingTables = getExistingTables(connection);
@@ -31,7 +31,7 @@ public class SchemaSynchronizer {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		} finally {
-			ConnectionPool.close(connection, "bbb");
+			ConnectionPool.close(connection);
 		}
 	}
 

@@ -109,13 +109,17 @@ public class EndpointServlet extends HttpServlet {
 	public HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
 		Repository r = getRepository(params);
 
-		EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri, requestJson, params);
+		try {
+			EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri, requestJson, params);
 
-		if (!router.isValid()) {
-			throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");
+			if (!router.isValid()) {
+				throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");
+			}
+
+			return router.executeRestAction(enableHooks);
+		} finally {
+			r.dispose();
 		}
-
-		return router.executeRestAction(enableHooks);
 	}
 
 	protected Repository getRepository(Map<String, String> params) {

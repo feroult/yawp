@@ -165,6 +165,14 @@ public class Repository {
 		return repositoryFeatures;
 	}
 
+	public Driver getDriver() {
+		return driver();
+	}
+
+	public void dispose() {
+		driver().dispose();
+	}
+
 	public <T> IdRef<T> parseId(Class<T> clazz, String idString) {
 		return IdRef.parse(clazz, this, idString);
 	}

@@ -19,6 +19,10 @@ public class AppengineDriver implements Driver {
 	}
 
 	@Override
+	public void dispose() {
+	}
+
+	@Override
 	public PersistenceDriver persistence() {
 		return new AppenginePersistenceDriver(r);
 	}

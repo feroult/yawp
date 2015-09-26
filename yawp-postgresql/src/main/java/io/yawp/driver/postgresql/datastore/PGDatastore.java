@@ -27,12 +27,19 @@ public class PGDatastore {
 
 	private Connection connection;
 
+	private PGDatastore() {
+	}
+
 	private Connection connection() {
 		if (connection != null) {
 			return connection;
 		}
 		connection = ConnectionPool.connection();
 		return connection;
+	}
+
+	public void dispose() {
+		ConnectionPool.close(connection);
 	}
 
 	public Key put(Entity entity) {

@@ -23,16 +23,11 @@ public class PGPersistenceDriver implements PersistenceDriver {
 
 	private Repository r;
 
-	public PGPersistenceDriver(Repository r) {
+	private PGDatastore datastore;
+
+	public PGPersistenceDriver(Repository r, PGDatastore datastore) {
 		this.r = r;
-	}
-
-	private PGDatastore datastore() {
-		return PGDatastore.create();
-	}
-
-	private PGDatastore asyncDatastore() {
-		return PGDatastore.create();
+		this.datastore = datastore;
 	}
 
 	@Override
@@ -53,7 +48,7 @@ public class PGPersistenceDriver implements PersistenceDriver {
 
 	@Override
 	public void destroy(IdRef<?> id) {
-		datastore().delete(IdRefToKey.toKey(r, id));
+		datastore.delete(IdRefToKey.toKey(r, id));
 	}
 
 	private Entity createEntity(ObjectHolder objectHolder) {
@@ -76,13 +71,13 @@ public class PGPersistenceDriver implements PersistenceDriver {
 	}
 
 	private void saveEntity(ObjectHolder objectHolder, Entity entity) {
-		Key key = datastore().put(entity);
+		Key key = datastore.put(entity);
 		objectHolder.setId(IdRefToKey.toIdRef(r, key));
 	}
 
 	@SuppressWarnings("unchecked")
 	private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectHolder, Entity entity) {
-		Key key = asyncDatastore().put(entity);
+		Key key = datastore.put(entity);
 		Future<?> futureId = ConcurrentUtils.constantFuture(IdRefToKey.toIdRef(r, key));
 		return new FutureObject<T>(r, (Future<IdRef<?>>) futureId, (T) objectHolder.getObject());
 	}

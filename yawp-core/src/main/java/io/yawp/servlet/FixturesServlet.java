@@ -33,7 +33,7 @@ public class FixturesServlet extends EndpointServlet {
 
 	private boolean enableFixtures(HttpServletRequest req) {
 		Repository r = getRepository(makeParams(req));
-		Driver driver = DriverFactory.getDriver(r);
+		Driver driver = r.getDriver();
 
 		if (!driver.environment().isProduction()) {
 			return true;

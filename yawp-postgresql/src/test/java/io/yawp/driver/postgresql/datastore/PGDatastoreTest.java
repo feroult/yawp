@@ -16,12 +16,13 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 
 	@Before
 	public void before() {
-		datastore = new PGDatastore();
+		datastore = PGDatastore.create();
 		truncate();
 	}
 
 	@After
 	public void after() {
+		datastore.dispose();
 		truncate();
 	}
 

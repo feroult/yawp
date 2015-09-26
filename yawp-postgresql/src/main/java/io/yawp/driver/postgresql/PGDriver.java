@@ -18,14 +18,12 @@ public class PGDriver implements Driver {
 
 	@Override
 	public void init(Repository r) {
-		System.out.println("init baby");
 		this.r = r;
 		this.datastore = PGDatastore.create();
 	}
 
 	@Override
 	public void dispose() {
-		System.out.println("dispose baby");
 		datastore.dispose();
 	}
 

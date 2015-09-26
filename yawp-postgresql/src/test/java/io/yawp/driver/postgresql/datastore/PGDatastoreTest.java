@@ -7,6 +7,7 @@ import java.sql.SQLException;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class PGDatastoreTest extends PGDatastoreTestCase {
@@ -33,9 +34,17 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 	}
 
 	@Test
-	public void testCreateRetrieveEntity() {
-		// create table people (id bigserial primary key, entity jsonb);
+	@Ignore
+	public void testPopulate() {
+		for (int i = 0; i < 1000; i++) {
+			Entity entity = new Entity("people");
+			entity.setProperty("name", NameGenerator.generate());
+			datastore.put(entity);
+		}
+	}
 
+	@Test
+	public void testCreateRetrieveEntity() {
 		Entity entity = new Entity("people");
 		entity.setProperty("name", "jim");
 

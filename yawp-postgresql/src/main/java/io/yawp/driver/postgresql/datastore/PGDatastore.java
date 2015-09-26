@@ -25,6 +25,16 @@ public class PGDatastore {
 		return new PGDatastore();
 	}
 
+	private Connection connection;
+
+	private Connection connection() {
+		if (connection != null) {
+			return connection;
+		}
+		connection = ConnectionPool.connection();
+		return connection;
+	}
+
 	public Key put(Entity entity) {
 		if (isNewEntity(entity)) {
 			createEntity(entity);
@@ -44,7 +54,7 @@ public class PGDatastore {
 	}
 
 	public Entity get(Key key) {
-		Connection connection = ConnectionPool.connection();
+		Connection connection = connection();
 
 		SqlRunner runner = new PGDatastoreSqlRunner(connection, SQL_GET, key) {
 			@Override
@@ -72,7 +82,7 @@ public class PGDatastore {
 	}
 
 	private boolean existsEntityWithThisKey(Key key) {
-		Connection connection = ConnectionPool.connection();
+		Connection connection = connection();
 
 		SqlRunner runner = new PGDatastoreSqlRunner(connection, SQL_EXISTS, key) {
 			@Override
@@ -85,13 +95,13 @@ public class PGDatastore {
 	}
 
 	private void execute(String query, Entity entity) {
-		Connection connection = ConnectionPool.connection();
+		Connection connection = connection();
 		SqlRunner runner = new PGDatastoreSqlRunner(connection, query, entity);
 		runner.execute();
 	}
 
 	private void execute(String query, Key key) {
-		Connection connection = ConnectionPool.connection();
+		Connection connection = connection();
 		SqlRunner runner = new PGDatastoreSqlRunner(connection, query, key);
 		runner.execute();
 	}

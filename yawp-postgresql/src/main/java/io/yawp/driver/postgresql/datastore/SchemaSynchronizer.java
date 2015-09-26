@@ -1,6 +1,7 @@
 package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.driver.postgresql.datastore.sql.SqlRunner;
+import io.yawp.repository.ObjectModel;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -12,7 +13,10 @@ import java.util.Set;
 public class SchemaSynchronizer {
 
 	private static final String SQL_CATALOG_SELECT = "SELECT c.* FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace";
+
 	private static final String SQL_CATALOG_TABLES = "WHERE c.relkind = 'r' AND n.nspname = ANY (CURRENT_SCHEMAS(false))";
+
+	private static final String SQL_CREATE_TABLE = "create table %s (id bigserial primary key, key jsonb, properties jsonb)";
 
 	public static void sync(Set<Class<?>> endpointClazzes) {
 		Connection connection = ConnectionPool.connection();
@@ -31,7 +35,7 @@ public class SchemaSynchronizer {
 		}
 	}
 
-	private static List<String> getExistingTables(Connection connection) throws SQLException {
+	protected static List<String> getExistingTables(Connection connection) throws SQLException {
 		String sql = String.format("%s %s", SQL_CATALOG_SELECT, SQL_CATALOG_TABLES);
 
 		SqlRunner runner = new SqlRunner(connection, sql) {
@@ -51,7 +55,17 @@ public class SchemaSynchronizer {
 	}
 
 	private static void sync(Connection connection, List<String> existingTables, Class<?> endpointClazz) {
+		ObjectModel model = new ObjectModel(endpointClazz);
 
+		if (existingTables.contains(model.getKind())) {
+			return;
+		}
+
+		createTable(connection, model.getKind());
+	}
+
+	private static void createTable(Connection connection, String kind) {
+		new SqlRunner(connection, String.format(SQL_CREATE_TABLE, kind)).execute();
 	}
 
 }

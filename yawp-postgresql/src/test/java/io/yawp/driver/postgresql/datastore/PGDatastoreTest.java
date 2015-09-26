@@ -2,8 +2,7 @@ package io.yawp.driver.postgresql.datastore;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
-import java.sql.SQLException;
+import io.yawp.driver.postgresql.datastore.sql.SqlRunner;
 
 import org.junit.After;
 import org.junit.Before;
@@ -23,15 +22,10 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 	@After
 	public void after() {
 		datastore.dispose();
-		truncate();
 	}
 
 	private void truncate() {
-		try {
-			ConnectionPool.connection().prepareStatement("truncate table people;").execute();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
+		new SqlRunner(connection, "truncate table people;").execute();
 	}
 
 	@Test

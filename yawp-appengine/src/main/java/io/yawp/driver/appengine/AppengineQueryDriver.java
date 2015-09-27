@@ -104,6 +104,8 @@ public class AppengineQueryDriver implements QueryDriver {
 		}
 	}
 
+	// query
+
 	private QueryResultList<Entity> generateResults(QueryBuilder<?> builder, boolean keysOnly) throws FalsePredicateException {
 		QueryResultList<Entity> queryResult = prepareQuery(builder, keysOnly).asQueryResultList(configureFetchOptions(builder));
 		setCursor(builder, queryResult);

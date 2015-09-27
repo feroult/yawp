@@ -21,14 +21,14 @@ public class PGDatastore {
 
 	private static final String SQL_DELETE = "delete from :kind where key @> :search_key";
 
-	public static PGDatastore create() {
-		return new PGDatastore();
+	public static PGDatastore create(ConnectionManager connectionManager) {
+		return new PGDatastore(connectionManager);
 	}
 
 	private ConnectionManager connectionManager;
 
-	private PGDatastore() {
-		this.connectionManager = new ConnectionManager();
+	private PGDatastore(ConnectionManager connectionManager) {
+		this.connectionManager = connectionManager;
 	}
 
 	@Deprecated

@@ -2,6 +2,7 @@ package io.yawp.driver.postgresql.datastore;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import io.yawp.driver.postgresql.connection.ConnectionManager;
 import io.yawp.driver.postgresql.connection.SqlRunner;
 
 import org.junit.After;
@@ -15,7 +16,7 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 
 	@Before
 	public void before() {
-		datastore = PGDatastore.create();
+		datastore = PGDatastore.create(new ConnectionManager());
 		truncate();
 	}
 

@@ -22,7 +22,7 @@ public class PGDriver implements Driver {
 	@Override
 	public void init(Repository r) {
 		this.r = r;
-		this.datastore = PGDatastore.create();
+		this.datastore = PGDatastore.create(connectionManager);
 		this.connectionManager = new ConnectionManager();
 	}
 

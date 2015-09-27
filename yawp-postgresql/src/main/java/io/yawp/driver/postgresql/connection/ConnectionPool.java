@@ -12,7 +12,7 @@ public class ConnectionPool {
 
 	private static final String JDBC_YAWP_TEST = "jdbc/yawp_test";
 
-	public synchronized static Connection connection() {
+	public static Connection connection() {
 		try {
 			Context ctx = (Context) new InitialContext().lookup("java:comp/env");
 			DataSource ds = (DataSource) ctx.lookup(JDBC_YAWP_TEST);
@@ -23,7 +23,7 @@ public class ConnectionPool {
 		}
 	}
 
-	public synchronized static void close(Connection connection) {
+	public static void close(Connection connection) {
 		try {
 			connection.close();
 		} catch (SQLException e) {

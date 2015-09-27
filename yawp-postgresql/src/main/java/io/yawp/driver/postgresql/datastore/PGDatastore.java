@@ -31,11 +31,6 @@ public class PGDatastore {
 		this.connectionManager = connectionManager;
 	}
 
-	@Deprecated
-	public void dispose() {
-		connectionManager.dispose();
-	}
-
 	public Key put(Entity entity) {
 		if (isNewEntity(entity)) {
 			createEntity(entity);

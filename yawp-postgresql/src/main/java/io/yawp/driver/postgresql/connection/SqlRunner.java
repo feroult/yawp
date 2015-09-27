@@ -14,8 +14,6 @@ public class SqlRunner {
 
 	protected String sql;
 
-	private Connection connection;
-
 	public SqlRunner() {
 	}
 
@@ -39,13 +37,8 @@ public class SqlRunner {
 		this.sql = sql;
 	}
 
-	public <T> T executeQuery(Connection connection) {
-		this.connection = connection;
-		return executeQuery();
-	}
-
 	@SuppressWarnings("unchecked")
-	public <T> T executeQuery() {
+	public <T> T executeQuery(Connection connection) {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
@@ -83,11 +76,6 @@ public class SqlRunner {
 	}
 
 	public void execute(Connection connection) {
-		this.connection = connection;
-		execute();
-	}
-
-	public void execute() {
 		PreparedStatement ps = null;
 
 		try {

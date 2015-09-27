@@ -43,7 +43,7 @@ public class PGDatastoreTestCase {
 	@SuppressWarnings("unused")
 	private void dropTables() {
 		try {
-			new SqlRunner("drop schema public cascade; create schema public;").execute();
+			new SqlRunner("drop schema public cascade; create schema public;").execute(connection);
 		} finally {
 			closeConnection();
 		}

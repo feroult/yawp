@@ -15,14 +15,11 @@ public class PGDriver implements Driver {
 
 	private Repository r;
 
-	private PGDatastore datastore;
-
 	private ConnectionManager connectionManager;
 
 	@Override
 	public void init(Repository r) {
 		this.r = r;
-		this.datastore = PGDatastore.create(connectionManager);
 		this.connectionManager = new ConnectionManager();
 	}
 
@@ -33,7 +30,7 @@ public class PGDriver implements Driver {
 
 	@Override
 	public PersistenceDriver persistence() {
-		return new PGPersistenceDriver(r, datastore);
+		return new PGPersistenceDriver(r, connectionManager);
 	}
 
 	@Override

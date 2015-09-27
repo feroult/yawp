@@ -2,6 +2,7 @@ package io.yawp.driver.postgresql;
 
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.driver.api.PersistenceDriver;
+import io.yawp.driver.postgresql.connection.ConnectionManager;
 import io.yawp.driver.postgresql.datastore.Entity;
 import io.yawp.driver.postgresql.datastore.Key;
 import io.yawp.driver.postgresql.datastore.PGDatastore;
@@ -25,9 +26,9 @@ public class PGPersistenceDriver implements PersistenceDriver {
 
 	private PGDatastore datastore;
 
-	public PGPersistenceDriver(Repository r, PGDatastore datastore) {
+	public PGPersistenceDriver(Repository r, ConnectionManager connectionManager) {
 		this.r = r;
-		this.datastore = datastore;
+		this.datastore = PGDatastore.create(connectionManager);
 	}
 
 	@Override

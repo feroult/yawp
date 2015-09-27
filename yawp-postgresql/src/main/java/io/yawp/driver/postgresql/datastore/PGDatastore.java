@@ -1,9 +1,9 @@
 package io.yawp.driver.postgresql.datastore;
 
+import io.yawp.driver.postgresql.connection.ConnectionManager;
+import io.yawp.driver.postgresql.connection.SqlRunner;
 import io.yawp.driver.postgresql.datastore.sql.PGDatastoreSqlRunner;
-import io.yawp.driver.postgresql.datastore.sql.SqlRunner;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -25,24 +25,15 @@ public class PGDatastore {
 		return new PGDatastore();
 	}
 
-	private Connection connection;
+	private ConnectionManager connectionManager;
 
 	private PGDatastore() {
+		this.connectionManager = new ConnectionManager();
 	}
 
-	private synchronized Connection connection() {
-		if (connection != null) {
-			return connection;
-		}
-		connection = ConnectionPool.connection();
-		return connection;
-	}
-
-	public synchronized void dispose() {
-		if (connection == null) {
-			return;
-		}
-		ConnectionPool.close(connection);
+	@Deprecated
+	public void dispose() {
+		connectionManager.dispose();
 	}
 
 	public Key put(Entity entity) {
@@ -64,7 +55,7 @@ public class PGDatastore {
 	}
 
 	public Entity get(Key key) {
-		SqlRunner runner = new PGDatastoreSqlRunner(connection(), SQL_GET, key) {
+		SqlRunner runner = new PGDatastoreSqlRunner(null, SQL_GET, key) {
 			@Override
 			public Entity collectSingle(ResultSet rs) throws SQLException {
 				PGobject keyObject = (PGobject) rs.getObject(1);
@@ -77,7 +68,7 @@ public class PGDatastore {
 			}
 		};
 
-		return runner.executeQuery();
+		return connectionManager.executeQuery(runner);
 	}
 
 	public void delete(Key key) {
@@ -90,24 +81,24 @@ public class PGDatastore {
 	}
 
 	private boolean existsEntityWithThisKey(Key key) {
-		SqlRunner runner = new PGDatastoreSqlRunner(connection(), SQL_EXISTS, key) {
+		SqlRunner runner = new PGDatastoreSqlRunner(null, SQL_EXISTS, key) {
 			@Override
 			protected Object collectSingle(ResultSet rs) throws SQLException {
 				return rs.getBoolean(1);
 			}
 		};
 
-		return runner.executeQuery();
+		return connectionManager.executeQuery(runner);
 	}
 
 	private void execute(String query, Entity entity) {
-		SqlRunner runner = new PGDatastoreSqlRunner(connection(), query, entity);
-		runner.execute();
+		SqlRunner runner = new PGDatastoreSqlRunner(null, query, entity);
+		connectionManager.execute(runner);
 	}
 
 	private void execute(String query, Key key) {
-		SqlRunner runner = new PGDatastoreSqlRunner(connection(), query, key);
-		runner.execute();
+		SqlRunner runner = new PGDatastoreSqlRunner(null, query, key);
+		connectionManager.execute(runner);
 	}
 
 	private void generateKey(Entity entity) {

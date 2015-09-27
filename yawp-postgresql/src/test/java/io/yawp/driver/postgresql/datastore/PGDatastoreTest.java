@@ -2,7 +2,7 @@ package io.yawp.driver.postgresql.datastore;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import io.yawp.driver.postgresql.datastore.sql.SqlRunner;
+import io.yawp.driver.postgresql.connection.SqlRunner;
 
 import org.junit.After;
 import org.junit.Before;

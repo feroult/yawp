@@ -7,6 +7,7 @@ import io.yawp.driver.api.NamespaceDriver;
 import io.yawp.driver.api.PersistenceDriver;
 import io.yawp.driver.api.QueryDriver;
 import io.yawp.driver.api.TransactionDriver;
+import io.yawp.driver.postgresql.connection.ConnectionManager;
 import io.yawp.driver.postgresql.datastore.PGDatastore;
 import io.yawp.repository.Repository;
 
@@ -16,15 +17,18 @@ public class PGDriver implements Driver {
 
 	private PGDatastore datastore;
 
+	private ConnectionManager connectionManager;
+
 	@Override
 	public void init(Repository r) {
 		this.r = r;
 		this.datastore = PGDatastore.create();
+		this.connectionManager = new ConnectionManager();
 	}
 
 	@Override
 	public void dispose() {
-		datastore.dispose();
+		connectionManager.dispose();
 	}
 
 	@Override

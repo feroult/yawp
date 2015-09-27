@@ -1,5 +1,6 @@
 package io.yawp.driver.postgresql.datastore.sql;
 
+import io.yawp.driver.postgresql.connection.SqlRunner;
 import io.yawp.driver.postgresql.datastore.Entity;
 import io.yawp.driver.postgresql.datastore.Key;
 

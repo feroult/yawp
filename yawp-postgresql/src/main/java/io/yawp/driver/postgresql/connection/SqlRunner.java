@@ -1,4 +1,4 @@
-package io.yawp.driver.postgresql.datastore.sql;
+package io.yawp.driver.postgresql.connection;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -41,6 +41,11 @@ public class SqlRunner {
 		this.sql = sql;
 	}
 
+	public <T> T executeQuery(Connection connection) {
+		this.connection = connection;
+		return executeQuery();
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T> T executeQuery() {
 		PreparedStatement ps = null;
@@ -77,6 +82,11 @@ public class SqlRunner {
 				throw new RuntimeException(e);
 			}
 		}
+	}
+
+	public void execute(Connection connection) {
+		this.connection = connection;
+		execute();
 	}
 
 	public void execute() {

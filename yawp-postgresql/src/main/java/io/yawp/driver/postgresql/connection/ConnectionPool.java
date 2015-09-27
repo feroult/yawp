@@ -1,4 +1,4 @@
-package io.yawp.driver.postgresql.datastore;
+package io.yawp.driver.postgresql.connection;
 
 import java.sql.Connection;
 import java.sql.SQLException;

@@ -81,6 +81,10 @@ public class FieldModel {
 		return Integer.class.isAssignableFrom(field.getType()) || field.getType().getName().equals("int");
 	}
 
+	public boolean isLong() {
+		return Long.class.isAssignableFrom(field.getType()) || field.getType().getName().equals("long");
+	}
+
 	public boolean isDate() {
 		return Date.class.isAssignableFrom(field.getType());
 	}

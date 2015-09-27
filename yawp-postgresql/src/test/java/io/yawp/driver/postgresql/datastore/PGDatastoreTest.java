@@ -1,15 +1,12 @@
 package io.yawp.driver.postgresql.datastore;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import io.yawp.driver.postgresql.connection.ConnectionManager;
 import io.yawp.driver.postgresql.connection.SqlRunner;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import com.google.gson.annotations.Expose;
 
 public class PGDatastoreTest extends PGDatastoreTestCase {
 

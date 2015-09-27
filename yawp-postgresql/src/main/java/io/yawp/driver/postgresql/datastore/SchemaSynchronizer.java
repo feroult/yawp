@@ -39,7 +39,7 @@ public class SchemaSynchronizer {
 	protected static List<String> getExistingTables(Connection connection) throws SQLException {
 		String sql = String.format("%s %s", SQL_CATALOG_SELECT, SQL_CATALOG_TABLES);
 
-		SqlRunner runner = new SqlRunner(connection, sql) {
+		SqlRunner runner = new SqlRunner(sql) {
 			@Override
 			public List<String> collect(ResultSet rs) throws SQLException {
 				List<String> tables = new ArrayList<String>();
@@ -52,7 +52,7 @@ public class SchemaSynchronizer {
 			}
 		};
 
-		return runner.executeQuery();
+		return runner.executeQuery(connection);
 	}
 
 	private static void sync(Connection connection, List<String> existingTables, Class<?> endpointClazz) {
@@ -66,7 +66,7 @@ public class SchemaSynchronizer {
 	}
 
 	private static void createTable(Connection connection, String kind) {
-		new SqlRunner(connection, String.format(SQL_CREATE_TABLE, kind)).execute();
+		new SqlRunner(String.format(SQL_CREATE_TABLE, kind)).execute(connection);
 	}
 
 }

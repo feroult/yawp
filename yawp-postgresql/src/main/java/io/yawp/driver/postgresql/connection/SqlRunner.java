@@ -16,13 +16,11 @@ public class SqlRunner {
 
 	private Connection connection;
 
-	public SqlRunner(Connection connection, String sql) {
-		this.connection = connection;
-		this.sql = sql;
+	public SqlRunner() {
 	}
 
-	protected SqlRunner(Connection connection) {
-		this.connection = connection;
+	public SqlRunner(String sql) {
+		this.sql = sql;
 	}
 
 	protected void prepare(PreparedStatement ps) throws SQLException {

@@ -55,7 +55,7 @@ public class PGDatastore {
 	}
 
 	public Entity get(Key key) {
-		SqlRunner runner = new PGDatastoreSqlRunner(null, SQL_GET, key) {
+		SqlRunner runner = new PGDatastoreSqlRunner(SQL_GET, key) {
 			@Override
 			public Entity collectSingle(ResultSet rs) throws SQLException {
 				PGobject keyObject = (PGobject) rs.getObject(1);
@@ -81,7 +81,7 @@ public class PGDatastore {
 	}
 
 	private boolean existsEntityWithThisKey(Key key) {
-		SqlRunner runner = new PGDatastoreSqlRunner(null, SQL_EXISTS, key) {
+		SqlRunner runner = new PGDatastoreSqlRunner(SQL_EXISTS, key) {
 			@Override
 			protected Object collectSingle(ResultSet rs) throws SQLException {
 				return rs.getBoolean(1);
@@ -92,12 +92,12 @@ public class PGDatastore {
 	}
 
 	private void execute(String query, Entity entity) {
-		SqlRunner runner = new PGDatastoreSqlRunner(null, query, entity);
+		SqlRunner runner = new PGDatastoreSqlRunner(query, entity);
 		connectionManager.execute(runner);
 	}
 
 	private void execute(String query, Key key) {
-		SqlRunner runner = new PGDatastoreSqlRunner(null, query, key);
+		SqlRunner runner = new PGDatastoreSqlRunner(query, key);
 		connectionManager.execute(runner);
 	}
 

@@ -25,7 +25,7 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 	}
 
 	private void truncate() {
-		new SqlRunner(connection, "truncate table people;").execute();
+		new SqlRunner("truncate table people;").execute(connection);
 	}
 
 	@Test

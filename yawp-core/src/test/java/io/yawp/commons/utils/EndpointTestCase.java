@@ -27,11 +27,6 @@ public class EndpointTestCase extends Feature {
 		helper.setUp();
 	}
 
-	@After
-	public void tearDown() {
-		yawp.dispose();
-	}
-
 	private TestHelper testHelperDriver(Repository r) {
 		return TestHelperFactory.getHelper(r);
 	}

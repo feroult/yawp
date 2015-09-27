@@ -4,29 +4,42 @@ import java.sql.Connection;
 
 public class ConnectionManager {
 
-	private Connection connection;
-
 	private Connection connection() {
-		if (connection != null) {
-			return connection;
+		if (isTransactionInProgress()) {
+			return null;
 		}
-		connection = ConnectionPool.connection();
-		return connection;
+		return ConnectionPool.connection();
 	}
 
+	private boolean isTransactionInProgress() {
+		// TODO
+		return false;
+	}
+
+	@Deprecated
 	public void dispose() {
-		if (connection == null) {
-			return;
-		}
-		ConnectionPool.close(connection);
 	}
 
 	public <T> T executeQuery(SqlRunner runner) {
-		return runner.executeQuery(connection());
+		Connection connection = connection();
+		try {
+			return runner.executeQuery(connection);
+		} finally {
+			if (!isTransactionInProgress()) {
+				ConnectionPool.close(connection);
+			}
+		}
 	}
 
 	public void execute(SqlRunner runner) {
-		runner.execute(connection());
+		Connection connection = connection();
+		try {
+			runner.execute(connection);
+		} finally {
+			if (!isTransactionInProgress()) {
+				ConnectionPool.close(connection);
+			}
+		}
 	}
 
 }

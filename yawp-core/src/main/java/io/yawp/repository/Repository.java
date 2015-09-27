@@ -169,14 +169,6 @@ public class Repository {
 		return driver();
 	}
 
-	public void dispose() {
-		if (driver == null) {
-			return;
-		}
-		driver().dispose();
-		driver = null;
-	}
-
 	public <T> IdRef<T> parseId(Class<T> clazz, String idString) {
 		return IdRef.parse(clazz, this, idString);
 	}

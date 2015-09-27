@@ -2,7 +2,6 @@ package io.yawp.servlet;
 
 import io.yawp.commons.http.ErrorResponse;
 import io.yawp.driver.api.Driver;
-import io.yawp.driver.api.DriverFactory;
 import io.yawp.repository.Repository;
 
 import java.io.IOException;
@@ -33,18 +32,13 @@ public class FixturesServlet extends EndpointServlet {
 
 	private boolean enableFixtures(HttpServletRequest req) {
 		Repository r = getRepository(makeParams(req));
-		try {
-			Driver driver = r.getDriver();
+		Driver driver = r.getDriver();
 
-			if (!driver.environment().isProduction()) {
-				return true;
-			}
-
-			return driver.environment().isAdmin();
-		} finally {
-			r.dispose();
+		if (!driver.environment().isProduction()) {
+			return true;
 		}
 
+		return driver.environment().isAdmin();
 	}
 
 }

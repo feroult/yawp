@@ -8,7 +8,6 @@ import io.yawp.driver.api.PersistenceDriver;
 import io.yawp.driver.api.QueryDriver;
 import io.yawp.driver.api.TransactionDriver;
 import io.yawp.driver.postgresql.connection.ConnectionManager;
-import io.yawp.driver.postgresql.datastore.PGDatastore;
 import io.yawp.repository.Repository;
 
 public class PGDriver implements Driver {
@@ -21,11 +20,6 @@ public class PGDriver implements Driver {
 	public void init(Repository r) {
 		this.r = r;
 		this.connectionManager = new ConnectionManager();
-	}
-
-	@Override
-	public void dispose() {
-		connectionManager.dispose();
 	}
 
 	@Override

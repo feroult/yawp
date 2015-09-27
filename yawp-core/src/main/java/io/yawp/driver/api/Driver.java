@@ -6,8 +6,6 @@ public interface Driver {
 
 	public void init(Repository r);
 
-	public void dispose();
-
 	public PersistenceDriver persistence();
 
 	public QueryDriver query();

@@ -19,10 +19,6 @@ public class MockDriver implements Driver {
 	}
 
 	@Override
-	public void dispose() {
-	}
-
-	@Override
 	public PersistenceDriver persistence() {
 		return new MockPersistenceDriver(r);
 	}

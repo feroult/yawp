@@ -29,8 +29,7 @@ public class PGDriver implements Driver {
 
 	@Override
 	public QueryDriver query() {
-		// TODO Auto-generated method stub
-		return null;
+		return new PGQueryDriver(r, connectionManager);
 	}
 
 	@Override

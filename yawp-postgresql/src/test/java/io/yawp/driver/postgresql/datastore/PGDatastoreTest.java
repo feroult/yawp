@@ -9,6 +9,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.google.gson.annotations.Expose;
+
 public class PGDatastoreTest extends PGDatastoreTestCase {
 
 	private PGDatastore datastore;
@@ -34,7 +36,7 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 	}
 
 	@Test
-	public void testCreateRetrieveEntity() {
+	public void testCreateRetrieveEntity() throws EntityNotFoundException {
 		Entity entity = new Entity("people");
 		entity.setProperty("name", "jim");
 
@@ -45,7 +47,7 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 	}
 
 	@Test
-	public void testCreateUpdateEntity() {
+	public void testCreateUpdateEntity() throws EntityNotFoundException {
 		Entity entity = new Entity("people");
 		entity.setProperty("name", "jim");
 
@@ -59,19 +61,19 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 
 	}
 
-	@Test
-	public void delete() {
+	@Test(expected = EntityNotFoundException.class)
+	public void delete() throws EntityNotFoundException {
 		Key key = KeyFactory.createKey("people", "xpto");
 		Entity entity = new Entity(key);
 		datastore.put(entity);
 
 		datastore.delete(key);
 
-		assertNull(datastore.get(key));
+		datastore.get(key);
 	}
 
 	@Test
-	public void testForceName() {
+	public void testForceName() throws EntityNotFoundException {
 		Key key = KeyFactory.createKey("people", "xpto");
 
 		Entity entity = new Entity(key);
@@ -84,7 +86,7 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 	}
 
 	@Test
-	public void testForceId() {
+	public void testForceId() throws EntityNotFoundException {
 		Key key = KeyFactory.createKey("people", 123l);
 
 		Entity entity = new Entity(key);
@@ -96,8 +98,8 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 		assertEquals("jim", retrievedEntity.getProperty("name"));
 	}
 
-	@Test
-	public void testChildKey() {
+	@Test(expected = EntityNotFoundException.class)
+	public void testChildKey() throws EntityNotFoundException {
 		Key parentKey = KeyFactory.createKey("parents", 1l);
 		Key childKey = KeyFactory.createKey(parentKey, "people", 1l);
 
@@ -111,11 +113,12 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 
 		Key anotherParentKey = KeyFactory.createKey("parents", 2l);
 		Key anotherChildKey = KeyFactory.createKey(anotherParentKey, "people", 1l);
-		assertNull(datastore.get(anotherChildKey));
+
+		datastore.get(anotherChildKey);
 	}
 
-	@Test
-	public void testGrandchildKey() {
+	@Test(expected = EntityNotFoundException.class)
+	public void testGrandchildKey() throws EntityNotFoundException {
 		Key parentKey = KeyFactory.createKey("parents", 1l);
 		Key childKey = KeyFactory.createKey(parentKey, "children", 1l);
 		Key grandchildKey = KeyFactory.createKey(childKey, "people", 1l);
@@ -132,7 +135,7 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 		Key anotherChildKey = KeyFactory.createKey(anotherParentKey, "children", 1l);
 		Key anotherGrandchildKey = KeyFactory.createKey(anotherChildKey, "people", 1l);
 
-		assertNull(datastore.get(anotherGrandchildKey));
+		datastore.get(anotherGrandchildKey);
 	}
 
 }

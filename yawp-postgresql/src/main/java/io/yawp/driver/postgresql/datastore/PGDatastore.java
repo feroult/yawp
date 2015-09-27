@@ -49,7 +49,7 @@ public class PGDatastore {
 		execute(SQL_UPDATE, entity);
 	}
 
-	public Entity get(Key key) {
+	public Entity get(Key key) throws EntityNotFoundException {
 		SqlRunner runner = new PGDatastoreSqlRunner(SQL_GET, key) {
 			@Override
 			public Entity collectSingle(ResultSet rs) throws SQLException {
@@ -63,7 +63,12 @@ public class PGDatastore {
 			}
 		};
 
-		return connectionManager.executeQuery(runner);
+		Entity entity = connectionManager.executeQuery(runner);
+
+		if (entity == null) {
+			throw new EntityNotFoundException();
+		}
+		return entity;
 	}
 
 	public void delete(Key key) {

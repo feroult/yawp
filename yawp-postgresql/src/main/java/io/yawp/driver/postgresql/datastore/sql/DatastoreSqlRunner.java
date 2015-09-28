@@ -34,8 +34,8 @@ public class DatastoreSqlRunner extends SqlRunner {
 		this(query, key, null);
 	}
 
-	public DatastoreSqlRunner(String query) {
-		init(query);
+	public DatastoreSqlRunner(String query, String kind) {
+		init(query.replaceAll(":kind", kind));
 	}
 
 	private void init(String query) {

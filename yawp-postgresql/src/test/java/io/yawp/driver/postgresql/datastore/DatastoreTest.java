@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class DatastoreTest extends DatastoreTestCase {
@@ -25,21 +24,11 @@ public class DatastoreTest extends DatastoreTestCase {
 
 	@After
 	public void after() {
-		//truncate();
+		// truncate();
 	}
 
 	private void truncate() {
 		new SqlRunner("truncate table people;").execute(connection);
-	}
-
-	@Test
-	@Ignore
-	public void testPopulate() {
-		for (int i = 0; i < 1000; i++) {
-			Entity entity = new Entity("people");
-			entity.setProperty("name", NameGenerator.generate());
-			datastore.put(entity);
-		}
 	}
 
 	@Test

@@ -3,9 +3,9 @@ package io.yawp.driver.postgresql;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.driver.api.PersistenceDriver;
 import io.yawp.driver.postgresql.connection.ConnectionManager;
+import io.yawp.driver.postgresql.datastore.Datastore;
 import io.yawp.driver.postgresql.datastore.Entity;
 import io.yawp.driver.postgresql.datastore.Key;
-import io.yawp.driver.postgresql.datastore.PGDatastore;
 import io.yawp.repository.FieldModel;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
@@ -20,15 +20,13 @@ import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 
 public class PGPersistenceDriver implements PersistenceDriver {
 
-	private static final String NORMALIZED_FIELD_PREFIX = "__";
-
 	private Repository r;
 
-	private PGDatastore datastore;
+	private Datastore datastore;
 
 	public PGPersistenceDriver(Repository r, ConnectionManager connectionManager) {
 		this.r = r;
-		this.datastore = PGDatastore.create(connectionManager);
+		this.datastore = Datastore.create(connectionManager);
 	}
 
 	@Override
@@ -104,7 +102,7 @@ public class PGPersistenceDriver implements PersistenceDriver {
 		}
 
 		if (fieldModel.isIndexNormalizable()) {
-			entity.setProperty(NORMALIZED_FIELD_PREFIX + fieldModel.getName(), normalizeValue(value));
+			entity.setProperty(Entity.NORMALIZED_FIELD_PREFIX + fieldModel.getName(), normalizeValue(value));
 			entity.setUnindexedProperty(fieldModel.getName(), value);
 			return;
 		}

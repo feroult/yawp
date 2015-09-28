@@ -10,11 +10,11 @@ import org.junit.Test;
 
 public class PGDatastoreTest extends PGDatastoreTestCase {
 
-	private PGDatastore datastore;
+	private Datastore datastore;
 
 	@Before
 	public void before() {
-		datastore = PGDatastore.create(new ConnectionManager());
+		datastore = Datastore.create(new ConnectionManager());
 		truncate();
 	}
 

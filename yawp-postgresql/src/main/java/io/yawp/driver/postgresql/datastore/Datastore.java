@@ -3,13 +3,15 @@ package io.yawp.driver.postgresql.datastore;
 import io.yawp.driver.postgresql.connection.ConnectionManager;
 import io.yawp.driver.postgresql.connection.SqlRunner;
 import io.yawp.driver.postgresql.datastore.sql.PGDatastoreSqlRunner;
+import io.yawp.driver.postgresql.datastore.sql.Query;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.postgresql.util.PGobject;
 
-public class PGDatastore {
+public class Datastore {
 
 	private static final String SQL_CREATE = "insert into :kind (key, properties) values (:key, :properties)";
 
@@ -21,13 +23,13 @@ public class PGDatastore {
 
 	private static final String SQL_DELETE = "delete from :kind where key @> :search_key";
 
-	public static PGDatastore create(ConnectionManager connectionManager) {
-		return new PGDatastore(connectionManager);
+	public static Datastore create(ConnectionManager connectionManager) {
+		return new Datastore(connectionManager);
 	}
 
 	private ConnectionManager connectionManager;
 
-	private PGDatastore(ConnectionManager connectionManager) {
+	private Datastore(ConnectionManager connectionManager) {
 		this.connectionManager = connectionManager;
 	}
 
@@ -73,6 +75,11 @@ public class PGDatastore {
 
 	public void delete(Key key) {
 		execute(SQL_DELETE, key);
+	}
+
+	public List<Entity> query(Query createQuery) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private boolean isNewEntity(Entity entity) {

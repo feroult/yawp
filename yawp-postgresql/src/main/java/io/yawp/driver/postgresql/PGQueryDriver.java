@@ -3,18 +3,23 @@ package io.yawp.driver.postgresql;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.DateUtils;
 import io.yawp.commons.utils.JsonUtils;
+import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.driver.api.QueryDriver;
 import io.yawp.driver.postgresql.connection.ConnectionManager;
+import io.yawp.driver.postgresql.datastore.Datastore;
 import io.yawp.driver.postgresql.datastore.Entity;
 import io.yawp.driver.postgresql.datastore.EntityNotFoundException;
+import io.yawp.driver.postgresql.datastore.FalsePredicateException;
 import io.yawp.driver.postgresql.datastore.Key;
-import io.yawp.driver.postgresql.datastore.PGDatastore;
+import io.yawp.driver.postgresql.datastore.sql.Query;
 import io.yawp.repository.FieldModel;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.ObjectModel;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.QueryBuilder;
+import io.yawp.repository.query.QueryOrder;
+import io.yawp.repository.query.condition.BaseCondition;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -23,11 +28,11 @@ public class PGQueryDriver implements QueryDriver {
 
 	private Repository r;
 
-	private PGDatastore datastore;
+	private Datastore datastore;
 
 	public PGQueryDriver(Repository r, ConnectionManager connectionManager) {
 		this.r = r;
-		this.datastore = PGDatastore.create(connectionManager);
+		this.datastore = Datastore.create(connectionManager);
 	}
 
 	@Override
@@ -68,6 +73,52 @@ public class PGQueryDriver implements QueryDriver {
 	}
 
 	// query
+
+	private List<Entity> generateResults(QueryBuilder<?> builder, boolean keysOnly) throws FalsePredicateException {
+		List<Entity> queryResult = datastore.query(createQuery(builder, keysOnly));
+		//setCursor(builder, queryResult);
+		return queryResult;
+	}
+
+	private Query createQuery(QueryBuilder<?> builder, boolean keysOnly) throws FalsePredicateException {
+		Query q = new Query(builder.getModel().getKind());
+
+		if (keysOnly) {
+			q.setKeysOnly();
+		}
+
+		prepareQueryAncestor(builder, q);
+		prepareQueryWhere(builder, q);
+		prepareQueryOrder(builder, q);
+
+		return q;
+	}
+
+	private void prepareQueryOrder(QueryBuilder<?> builder, Query q) {
+		if (builder.getPreOrders().isEmpty()) {
+			return;
+		}
+
+		for (QueryOrder order : builder.getPreOrders()) {
+			String string = getActualFieldName(order.getProperty(), builder.getModel().getClazz());
+			q.addSort(string, order);
+		}
+	}
+
+	private void prepareQueryWhere(QueryBuilder<?> builder, Query q) /*throws FalsePredicateException*/ {
+		BaseCondition condition = builder.getCondition();
+		if (condition != null && condition.hasPreFilter()) {
+			//q.setFilter(createFilter(builder, condition));
+		}
+	}
+
+	private void prepareQueryAncestor(QueryBuilder<?> builder, Query q) {
+		IdRef<?> parentId = builder.getParentId();
+		if (parentId == null) {
+			return;
+		}
+		q.setAncestor(IdRefToKey.toKey(r, parentId));
+	}
 
 	// to object
 
@@ -179,6 +230,49 @@ public class PGQueryDriver implements QueryDriver {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private <T> void setEnumProperty(T object, Field field, Object value) throws IllegalAccessException {
 		field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
+	}
+
+	// filter
+
+//	private Filter createFilter(QueryBuilder<?> builder, BaseCondition condition) throws FalsePredicateException {
+//		if (condition instanceof SimpleCondition) {
+//			return createSimpleFilter(builder, (SimpleCondition) condition);
+//		}
+//		if (condition instanceof JoinedCondition) {
+//			return createJoinedFilter(builder, (JoinedCondition) condition);
+//		}
+//		throw new RuntimeException("Invalid condition class: " + condition.getClass());
+//	}
+//
+//	private Filter createSimpleFilter(QueryBuilder<?> builder, SimpleCondition condition) throws FalsePredicateException {
+//		String field = condition.getField();
+//		Class<?> clazz = builder.getModel().getClazz();
+//		Object whereValue = condition.getWhereValue();
+//		WhereOperator whereOperator = condition.getWhereOperator();
+//
+//		String actualFieldName = getActualFieldName(field, clazz);
+//		Object actualValue = getActualFieldValue(field, clazz, whereValue);
+//
+//		if (whereOperator == WhereOperator.IN && listSize(whereValue) == 0) {
+//			throw new FalsePredicateException();
+//		}
+//
+//		return new FilterPredicate(actualFieldName, getFilterOperator(whereOperator), actualValue);
+//	}
+
+	private <T> String getActualFieldName(String fieldName, Class<T> clazz) {
+		Field field = ReflectionUtils.getFieldRecursively(clazz, fieldName);
+		FieldModel fieldModel = new FieldModel(field);
+
+		if (fieldModel.isId()) {
+			return Entity.KEY_RESERVED_PROPERTY;
+		}
+
+		if (fieldModel.isIndexNormalizable()) {
+			return Entity.NORMALIZED_FIELD_PREFIX + fieldName;
+		}
+
+		return fieldName;
 	}
 
 }

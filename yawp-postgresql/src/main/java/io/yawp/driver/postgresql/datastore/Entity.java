@@ -7,6 +7,10 @@ import java.util.Map;
 
 public class Entity {
 
+	public static final String KEY_RESERVED_PROPERTY = "__key__";
+
+	public static final String NORMALIZED_FIELD_PREFIX = "__";
+
 	private Key key;
 
 	private Map<String, Object> properties = new HashMap<String, Object>();

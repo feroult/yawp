@@ -1,14 +1,19 @@
 package io.yawp.driver.postgresql.datastore;
 
+import static io.yawp.repository.query.condition.Condition.c;
 import static org.junit.Assert.assertEquals;
 import io.yawp.driver.postgresql.connection.ConnectionManager;
 import io.yawp.driver.postgresql.connection.SqlRunner;
+import io.yawp.driver.postgresql.datastore.sql.Query;
 
+import java.util.List;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class PGDatastoreTest extends PGDatastoreTestCase {
+public class DatastoreTest extends DatastoreTestCase {
 
 	private Datastore datastore;
 
@@ -16,6 +21,11 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 	public void before() {
 		datastore = Datastore.create(new ConnectionManager());
 		truncate();
+	}
+
+	@After
+	public void after() {
+		//truncate();
 	}
 
 	private void truncate() {
@@ -135,4 +145,24 @@ public class PGDatastoreTest extends PGDatastoreTestCase {
 		datastore.get(anotherGrandchildKey);
 	}
 
+	@Test
+	public void testSimpleQuery() {
+		savePersonWithName("jim");
+		savePersonWithName("robert");
+
+		Query q = new Query("people");
+
+		q.setFilter(c("name", "=", "jim"));
+
+		List<Entity> entities = datastore.query(q);
+
+		assertEquals(1, entities.size());
+		assertEquals("jim", entities.get(0).getProperty("name"));
+	}
+
+	private void savePersonWithName(String name) {
+		Entity entity = new Entity("people");
+		entity.setProperty("name", name);
+		datastore.put(entity);
+	}
 }

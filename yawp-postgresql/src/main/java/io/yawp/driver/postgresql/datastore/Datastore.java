@@ -2,14 +2,12 @@ package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.driver.postgresql.connection.ConnectionManager;
 import io.yawp.driver.postgresql.connection.SqlRunner;
-import io.yawp.driver.postgresql.datastore.sql.PGDatastoreSqlRunner;
+import io.yawp.driver.postgresql.datastore.sql.DatastoreSqlRunner;
 import io.yawp.driver.postgresql.datastore.sql.Query;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-
-import org.postgresql.util.PGobject;
 
 public class Datastore {
 
@@ -52,16 +50,10 @@ public class Datastore {
 	}
 
 	public Entity get(Key key) throws EntityNotFoundException {
-		SqlRunner runner = new PGDatastoreSqlRunner(SQL_GET, key) {
+		SqlRunner runner = new DatastoreSqlRunner(SQL_GET, key) {
 			@Override
 			public Entity collectSingle(ResultSet rs) throws SQLException {
-				PGobject keyObject = (PGobject) rs.getObject(1);
-				PGobject entityObject = (PGobject) rs.getObject(2);
-
-				Entity entity = new Entity(Key.deserialize(keyObject.getValue()));
-				entity.deserializeProperties(entityObject.getValue());
-
-				return entity;
+				return getEntity(rs);
 			}
 		};
 
@@ -77,9 +69,8 @@ public class Datastore {
 		execute(SQL_DELETE, key);
 	}
 
-	public List<Entity> query(Query createQuery) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Entity> query(Query query) {
+		return connectionManager.executeQuery(query.createRunner());
 	}
 
 	private boolean isNewEntity(Entity entity) {
@@ -88,7 +79,7 @@ public class Datastore {
 	}
 
 	private boolean existsEntityWithThisKey(Key key) {
-		SqlRunner runner = new PGDatastoreSqlRunner(SQL_EXISTS, key) {
+		SqlRunner runner = new DatastoreSqlRunner(SQL_EXISTS, key) {
 			@Override
 			protected Object collectSingle(ResultSet rs) throws SQLException {
 				return rs.getBoolean(1);
@@ -99,12 +90,12 @@ public class Datastore {
 	}
 
 	private void execute(String query, Entity entity) {
-		SqlRunner runner = new PGDatastoreSqlRunner(query, entity);
+		SqlRunner runner = new DatastoreSqlRunner(query, entity);
 		connectionManager.execute(runner);
 	}
 
 	private void execute(String query, Key key) {
-		SqlRunner runner = new PGDatastoreSqlRunner(query, key);
+		SqlRunner runner = new DatastoreSqlRunner(query, key);
 		connectionManager.execute(runner);
 	}
 

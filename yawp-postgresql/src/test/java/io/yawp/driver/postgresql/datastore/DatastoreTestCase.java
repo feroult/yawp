@@ -11,7 +11,7 @@ import java.sql.Connection;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-public class PGDatastoreTestCase {
+public class DatastoreTestCase {
 
 	protected static Connection connection;
 

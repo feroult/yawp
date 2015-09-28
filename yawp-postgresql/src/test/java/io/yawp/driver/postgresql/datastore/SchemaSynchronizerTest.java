@@ -5,7 +5,7 @@ import io.yawp.repository.RepositoryFeatures;
 
 import org.junit.Test;
 
-public class SchemaSynchronizerTest extends PGDatastoreTestCase {
+public class SchemaSynchronizerTest extends DatastoreTestCase {
 
 	@Test
 	public void testCreateTables() {

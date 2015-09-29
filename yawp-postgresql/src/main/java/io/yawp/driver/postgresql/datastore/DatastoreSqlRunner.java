@@ -5,6 +5,8 @@ import io.yawp.driver.postgresql.sql.SqlRunner;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.postgresql.util.PGobject;
 
@@ -32,5 +34,15 @@ public class DatastoreSqlRunner extends SqlRunner {
 		entity.deserializeProperties(entityObject.getValue());
 
 		return entity;
+	}
+
+	protected final Object getEntities(ResultSet rs) throws SQLException {
+		List<Entity> entities = new ArrayList<Entity>();
+
+		while (rs.next()) {
+			entities.add(getEntity(rs));
+		}
+
+		return entities;
 	}
 }

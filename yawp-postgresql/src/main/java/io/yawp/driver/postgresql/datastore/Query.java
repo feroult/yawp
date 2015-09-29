@@ -6,8 +6,6 @@ import io.yawp.repository.query.condition.BaseCondition;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Query {
 
@@ -39,9 +37,7 @@ public class Query {
 	}
 
 	public SqlRunner createRunner() {
-		String sql = "select key, properties from :kind where properties->>'name' = :name";
-		return new DatastoreSqlRunner(kind, sql) {
-
+		return new DatastoreSqlRunner(kind, createSql()) {
 			@Override
 			protected void bind() {
 				bind("name", "jim");
@@ -49,15 +45,17 @@ public class Query {
 
 			@Override
 			protected Object collect(ResultSet rs) throws SQLException {
-				List<Entity> entities = new ArrayList<Entity>();
-
-				while (rs.next()) {
-					entities.add(getEntity(rs));
-				}
-
-				return entities;
+				return getEntities(rs);
 			}
 
 		};
+	}
+
+	private String createSql() {
+		return "select key, properties from :kind where " + where();
+	}
+
+	private String where() {
+		return "properties->>'name' = :name";
 	}
 }

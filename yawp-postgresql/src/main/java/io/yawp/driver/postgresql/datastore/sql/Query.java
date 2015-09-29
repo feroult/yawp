@@ -43,7 +43,7 @@ public class Query {
 
 	public SqlRunner createRunner() {
 		String sql = String.format("select key, properties from :kind where properties->>'name' = ?", kind);
-		return new DatastoreSqlRunner(sql, kind) {
+		return new DatastoreSqlRunner(kind, sql) {
 
 			@Override
 			protected void prepare(PreparedStatement ps) throws SQLException {

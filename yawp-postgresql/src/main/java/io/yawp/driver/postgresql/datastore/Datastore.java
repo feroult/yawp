@@ -13,13 +13,13 @@ public class Datastore {
 
 	private static final String SQL_CREATE = "insert into :kind (key, properties) values (:key, :properties)";
 
-	private static final String SQL_UPDATE = "update :kind set properties = :properties where key @> :search_key";
+	private static final String SQL_UPDATE = "update :kind set properties = :properties where key @> :key";
 
-	private static final String SQL_GET = "select key, properties from :kind where key @> :search_key";
+	private static final String SQL_GET = "select key, properties from :kind where key @> :key";
 
-	private static final String SQL_EXISTS = "select exists(select 1 from :kind where key @> :search_key) as exists";
+	private static final String SQL_EXISTS = "select exists(select 1 from :kind where key @> :key) as exists";
 
-	private static final String SQL_DELETE = "delete from :kind where key @> :search_key";
+	private static final String SQL_DELETE = "delete from :kind where key @> :key";
 
 	public static Datastore create(ConnectionManager connectionManager) {
 		return new Datastore(connectionManager);
@@ -49,7 +49,19 @@ public class Datastore {
 		execute(SQL_UPDATE, entity);
 	}
 
-	public Entity get(Key key) throws EntityNotFoundException {
+	public Entity get(final Key key) throws EntityNotFoundException {
+		SqlRunner runnerX = new DatastoreSqlRunner(key.getKind(), SQL_GET) {
+			@Override
+			public void bind() {
+				bind("key", key);
+			}
+
+			@Override
+			public Entity collectSingle(ResultSet rs) throws SQLException {
+				return getEntity(rs);
+			}
+		};
+
 		SqlRunner runner = new DatastoreSqlRunner(SQL_GET, key) {
 			@Override
 			public Entity collectSingle(ResultSet rs) throws SQLException {
@@ -57,7 +69,7 @@ public class Datastore {
 			}
 		};
 
-		Entity entity = connectionManager.executeQuery(runner);
+		Entity entity = connectionManager.executeQuery(runnerX);
 
 		if (entity == null) {
 			throw new EntityNotFoundException();
@@ -78,7 +90,19 @@ public class Datastore {
 		return key.isNew() || !existsEntityWithThisKey(key);
 	}
 
-	private boolean existsEntityWithThisKey(Key key) {
+	private boolean existsEntityWithThisKey(final Key key) {
+		SqlRunner runnerX = new DatastoreSqlRunner(key.getKind(), SQL_EXISTS) {
+			@Override
+			public void bind() {
+				bind("key", key);
+			}
+
+			@Override
+			protected Object collectSingle(ResultSet rs) throws SQLException {
+				return rs.getBoolean(1);
+			}
+		};
+
 		SqlRunner runner = new DatastoreSqlRunner(SQL_EXISTS, key) {
 			@Override
 			protected Object collectSingle(ResultSet rs) throws SQLException {
@@ -86,17 +110,32 @@ public class Datastore {
 			}
 		};
 
-		return connectionManager.executeQuery(runner);
+		return connectionManager.executeQuery(runnerX);
 	}
 
-	private void execute(String query, Entity entity) {
+	private void execute(String query, final Entity entity) {
+		SqlRunner runnerX = new DatastoreSqlRunner(entity.getKind(), query) {
+			@Override
+			public void bind() {
+				bind("key", entity.getKey());
+				bind("properties", entity);
+			}
+		};
+
 		SqlRunner runner = new DatastoreSqlRunner(query, entity);
-		connectionManager.execute(runner);
+		connectionManager.execute(runnerX);
 	}
 
-	private void execute(String query, Key key) {
+	private void execute(String query, final Key key) {
+		SqlRunner runnerX = new DatastoreSqlRunner(key.getKind(), query) {
+			@Override
+			public void bind() {
+				bind("key", key);
+			}
+		};
+
 		SqlRunner runner = new DatastoreSqlRunner(query, key);
-		connectionManager.execute(runner);
+		connectionManager.execute(runnerX);
 	}
 
 	private void generateKey(Entity entity) {

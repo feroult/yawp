@@ -35,6 +35,10 @@ public class Entity {
 		return key;
 	}
 
+	public String getKind() {
+		return key.getKind();
+	}
+
 	public String serializeProperties() {
 		return JsonUtils.to(properties);
 	}

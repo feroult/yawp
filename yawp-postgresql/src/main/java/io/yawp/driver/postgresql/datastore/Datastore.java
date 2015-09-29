@@ -1,5 +1,6 @@
 package io.yawp.driver.postgresql.datastore;
 
+import io.yawp.driver.postgresql.datastore.query.FalsePredicateException;
 import io.yawp.driver.postgresql.datastore.query.Query;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
@@ -73,7 +74,7 @@ public class Datastore {
 		execute(SQL_DELETE, key);
 	}
 
-	public List<Entity> query(Query query) {
+	public List<Entity> query(Query query) throws FalsePredicateException {
 		return connectionManager.executeQuery(query.createRunner());
 	}
 

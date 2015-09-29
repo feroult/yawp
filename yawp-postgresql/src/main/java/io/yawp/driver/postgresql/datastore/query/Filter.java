@@ -1,5 +1,6 @@
 package io.yawp.driver.postgresql.datastore.query;
 
-public class Filter {
+public abstract class Filter {
 
+	public abstract String getWhereCaluse();
 }

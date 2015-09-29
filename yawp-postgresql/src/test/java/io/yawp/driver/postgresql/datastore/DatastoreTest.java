@@ -3,6 +3,7 @@ package io.yawp.driver.postgresql.datastore;
 import static io.yawp.repository.query.condition.Condition.c;
 import static org.junit.Assert.assertEquals;
 import io.yawp.driver.postgresql.Person;
+import io.yawp.driver.postgresql.datastore.query.FalsePredicateException;
 import io.yawp.driver.postgresql.datastore.query.Query;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
@@ -137,7 +138,7 @@ public class DatastoreTest extends DatastoreTestCase {
 	}
 
 	@Test
-	public void testSimpleQuery() {
+	public void testSimpleQuery() throws FalsePredicateException {
 		savePersonWithName("jim");
 		savePersonWithName("robert");
 

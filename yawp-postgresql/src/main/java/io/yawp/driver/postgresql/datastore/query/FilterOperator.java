@@ -1,8 +1,48 @@
 package io.yawp.driver.postgresql.datastore.query;
 
 public enum FilterOperator {
-	EQUAL, GREATER_THAN, GREATER_THAN_OR_EQUAL, IN, LESS_THAN, LESS_THAN_OR_EQUAL, NOT_EQUAL
+	EQUAL {
+		@Override
+		public String getText() {
+			return "=";
+		}
+	},
+	GREATER_THAN {
+		@Override
+		public String getText() {
+			return ">";
+		}
+	},
+	GREATER_THAN_OR_EQUAL {
+		@Override
+		public String getText() {
+			return ">=";
+		}
+	},
+	IN {
+		@Override
+		public String getText() {
+			return "in";
+		}
+	},
+	LESS_THAN {
+		@Override
+		public String getText() {
+			return "<";
+		}
+	},
+	LESS_THAN_OR_EQUAL {
+		@Override
+		public String getText() {
+			return "<=";
+		}
+	},
+	NOT_EQUAL {
+		@Override
+		public String getText() {
+			return "<>";
+		}
+	};
 
-
-
+	public abstract String getText();
 }

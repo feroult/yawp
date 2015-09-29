@@ -32,8 +32,6 @@ public class Query {
 
 	private QueryBuilder<?> builder;
 
-	private BaseCondition c;
-
 	public Query(QueryBuilder<?> builder) {
 		this.builder = builder;
 	}
@@ -53,14 +51,11 @@ public class Query {
 
 	}
 
-	public void setFilter(BaseCondition c) {
-		this.c = c;
-	}
+	public SqlRunner createRunner() throws FalsePredicateException {
 
-	public SqlRunner createRunner() {
+		final Filter filter = createFilter(builder, builder.getCondition());
 
-		// createFilter(builder, c);
-		String sql = SQL_PREFIX;
+		String sql = SQL_PREFIX + filter.getWhereCaluse();
 
 		return new DatastoreSqlRunner(getKind(), createSql()) {
 			@Override

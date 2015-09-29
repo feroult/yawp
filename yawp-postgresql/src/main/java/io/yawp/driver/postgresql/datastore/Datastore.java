@@ -50,7 +50,7 @@ public class Datastore {
 	}
 
 	public Entity get(final Key key) throws EntityNotFoundException {
-		SqlRunner runnerX = new DatastoreSqlRunner(key.getKind(), SQL_GET) {
+		SqlRunner runner = new DatastoreSqlRunner(key.getKind(), SQL_GET) {
 			@Override
 			public void bind() {
 				bind("key", key);
@@ -62,14 +62,7 @@ public class Datastore {
 			}
 		};
 
-		SqlRunner runner = new DatastoreSqlRunner(SQL_GET, key) {
-			@Override
-			public Entity collectSingle(ResultSet rs) throws SQLException {
-				return getEntity(rs);
-			}
-		};
-
-		Entity entity = connectionManager.executeQuery(runnerX);
+		Entity entity = connectionManager.executeQuery(runner);
 
 		if (entity == null) {
 			throw new EntityNotFoundException();
@@ -91,7 +84,7 @@ public class Datastore {
 	}
 
 	private boolean existsEntityWithThisKey(final Key key) {
-		SqlRunner runnerX = new DatastoreSqlRunner(key.getKind(), SQL_EXISTS) {
+		SqlRunner runner = new DatastoreSqlRunner(key.getKind(), SQL_EXISTS) {
 			@Override
 			public void bind() {
 				bind("key", key);
@@ -103,18 +96,11 @@ public class Datastore {
 			}
 		};
 
-		SqlRunner runner = new DatastoreSqlRunner(SQL_EXISTS, key) {
-			@Override
-			protected Object collectSingle(ResultSet rs) throws SQLException {
-				return rs.getBoolean(1);
-			}
-		};
-
-		return connectionManager.executeQuery(runnerX);
+		return connectionManager.executeQuery(runner);
 	}
 
 	private void execute(String query, final Entity entity) {
-		SqlRunner runnerX = new DatastoreSqlRunner(entity.getKind(), query) {
+		SqlRunner runner = new DatastoreSqlRunner(entity.getKind(), query) {
 			@Override
 			public void bind() {
 				bind("key", entity.getKey());
@@ -122,8 +108,7 @@ public class Datastore {
 			}
 		};
 
-		SqlRunner runner = new DatastoreSqlRunner(query, entity);
-		connectionManager.execute(runnerX);
+		connectionManager.execute(runner);
 	}
 
 	private void execute(String query, final Key key) {

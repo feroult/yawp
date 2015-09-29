@@ -1,9 +1,17 @@
 package io.yawp.driver.postgresql.connection;
 
+import io.yawp.driver.postgresql.datastore.sql.PlaceHolder;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.postgresql.util.PGobject;
 
 public class SqlRunner {
 
@@ -14,15 +22,23 @@ public class SqlRunner {
 
 	protected String sql;
 
-	public SqlRunner() {
-	}
+	protected Map<String, PlaceHolder> placeHolders = new HashMap<String, PlaceHolder>();
 
 	public SqlRunner(String sql) {
 		this.sql = sql;
+		init();
+	}
+
+	protected void init() {
+		bind();
+		parsePlaceHoldersIndexes();
+		removePlaceHolders();
+	}
+
+	protected void bind() {
 	}
 
 	protected void prepare(PreparedStatement ps) throws SQLException {
-
 	}
 
 	protected Object collect(ResultSet rs) throws SQLException {
@@ -33,8 +49,15 @@ public class SqlRunner {
 		return null;
 	}
 
-	protected void setSql(String sql) {
-		this.sql = sql;
+	private void prepareInternal(PreparedStatement ps) throws SQLException {
+		prepare(ps);
+		prepareBinded(ps);
+	}
+
+	private void prepareBinded(PreparedStatement ps) throws SQLException {
+		for (PlaceHolder placeHolder : placeHolders.values()) {
+			placeHolder.setValue(ps);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -44,7 +67,7 @@ public class SqlRunner {
 
 		try {
 			ps = connection.prepareStatement(sql);
-			prepare(ps);
+			prepareInternal(ps);
 
 			rs = ps.executeQuery();
 
@@ -80,7 +103,7 @@ public class SqlRunner {
 
 		try {
 			ps = connection.prepareStatement(sql);
-			prepare(ps);
+			prepareInternal(ps);
 
 			ps.execute();
 
@@ -97,5 +120,36 @@ public class SqlRunner {
 		}
 	}
 
+	private void parsePlaceHoldersIndexes() {
+		Pattern pattern = Pattern.compile("\\:\\w+");
+		Matcher matcher = pattern.matcher(sql);
+
+		int index = 1;
+
+		while (matcher.find()) {
+			String key = matcher.group();
+			PlaceHolder placeHolder = placeHolders.get(key);
+			placeHolder.addIndex(index++);
+		}
+
+		return;
+	}
+
+	private void removePlaceHolders() {
+		for (String placeHolderKey : placeHolders.keySet()) {
+			sql = sql.replaceAll(placeHolderKey, "?");
+		}
+	}
+
+	protected PGobject createJsonObject(String json) {
+		try {
+			PGobject jsonObject = new PGobject();
+			jsonObject.setType("jsonb");
+			jsonObject.setValue(json);
+			return jsonObject;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
 }

@@ -3,7 +3,6 @@ package io.yawp.driver.postgresql.datastore;
 import io.yawp.driver.postgresql.connection.ConnectionManager;
 import io.yawp.driver.postgresql.connection.SqlRunner;
 import io.yawp.driver.postgresql.datastore.sql.DatastoreSqlRunner;
-import io.yawp.driver.postgresql.datastore.sql.Query;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -112,15 +111,14 @@ public class Datastore {
 	}
 
 	private void execute(String query, final Key key) {
-		SqlRunner runnerX = new DatastoreSqlRunner(key.getKind(), query) {
+		SqlRunner runner = new DatastoreSqlRunner(key.getKind(), query) {
 			@Override
 			public void bind() {
 				bind("key", key);
 			}
 		};
 
-		SqlRunner runner = new DatastoreSqlRunner(query, key);
-		connectionManager.execute(runnerX);
+		connectionManager.execute(runner);
 	}
 
 	private void generateKey(Entity entity) {

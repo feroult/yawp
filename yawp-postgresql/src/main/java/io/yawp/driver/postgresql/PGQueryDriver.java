@@ -11,7 +11,7 @@ import io.yawp.driver.postgresql.datastore.Entity;
 import io.yawp.driver.postgresql.datastore.EntityNotFoundException;
 import io.yawp.driver.postgresql.datastore.FalsePredicateException;
 import io.yawp.driver.postgresql.datastore.Key;
-import io.yawp.driver.postgresql.datastore.sql.Query;
+import io.yawp.driver.postgresql.datastore.Query;
 import io.yawp.repository.FieldModel;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.ObjectHolder;

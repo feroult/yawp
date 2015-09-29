@@ -1,8 +1,7 @@
-package io.yawp.driver.postgresql.datastore.sql;
+package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.driver.postgresql.connection.SqlRunner;
-import io.yawp.driver.postgresql.datastore.Entity;
-import io.yawp.driver.postgresql.datastore.Key;
+import io.yawp.driver.postgresql.datastore.sql.DatastoreSqlRunner;
 import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.condition.BaseCondition;
 

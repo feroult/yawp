@@ -4,7 +4,6 @@ import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.condition.BaseCondition;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -40,12 +39,12 @@ public class Query {
 	}
 
 	public SqlRunner createRunner() {
-		String sql = String.format("select key, properties from :kind where properties->>'name' = ?", kind);
+		String sql = "select key, properties from :kind where properties->>'name' = :name";
 		return new DatastoreSqlRunner(kind, sql) {
 
 			@Override
-			protected void prepare(PreparedStatement ps) throws SQLException {
-				ps.setString(1, "jim");
+			protected void bind() {
+				bind("name", "jim");
 			}
 
 			@Override

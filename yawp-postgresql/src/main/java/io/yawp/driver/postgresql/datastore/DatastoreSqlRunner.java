@@ -14,17 +14,17 @@ public class DatastoreSqlRunner extends SqlRunner {
 		super(sql.replaceAll(":kind", kind));
 	}
 
-	protected void bind(String placeHolderKey, Key key) {
+	protected final void bind(String placeHolderKey, Key key) {
 		PlaceHolder placeHolderObject = new PlaceHolder(createJsonObject(key.serialize()));
 		bind(placeHolderKey, placeHolderObject);
 	}
 
-	protected void bind(String placeHolderKey, Entity entity) {
+	protected final void bind(String placeHolderKey, Entity entity) {
 		PlaceHolder placeHolderObject = new PlaceHolder(createJsonObject(entity.serializeProperties()));
 		bind(placeHolderKey, placeHolderObject);
 	}
 
-	protected Entity getEntity(ResultSet rs) throws SQLException {
+	protected final Entity getEntity(ResultSet rs) throws SQLException {
 		PGobject keyObject = (PGobject) rs.getObject(1);
 		PGobject entityObject = (PGobject) rs.getObject(2);
 

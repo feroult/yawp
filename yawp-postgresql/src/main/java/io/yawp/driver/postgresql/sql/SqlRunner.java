@@ -27,7 +27,7 @@ public class SqlRunner {
 		init();
 	}
 
-	protected void init() {
+	private void init() {
 		bind();
 		parsePlaceHoldersIndexes();
 		removePlaceHolders();
@@ -47,8 +47,12 @@ public class SqlRunner {
 		return null;
 	}
 
-	protected void bind(String placeHolderKey, PlaceHolder placeHolderObject) {
+	protected final void bind(String placeHolderKey, PlaceHolder placeHolderObject) {
 		placeHolders.put(":" + placeHolderKey, placeHolderObject);
+	}
+
+	protected final void bind(String placeHolderKey, Object value) {
+		bind(placeHolderKey, new PlaceHolder(value));
 	}
 
 	private void prepareInternal(PreparedStatement ps) throws SQLException {
@@ -143,7 +147,7 @@ public class SqlRunner {
 		}
 	}
 
-	protected PGobject createJsonObject(String json) {
+	protected final PGobject createJsonObject(String json) {
 		try {
 			PGobject jsonObject = new PGobject();
 			jsonObject.setType("jsonb");

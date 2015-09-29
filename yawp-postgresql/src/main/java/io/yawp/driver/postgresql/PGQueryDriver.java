@@ -8,9 +8,9 @@ import io.yawp.driver.api.QueryDriver;
 import io.yawp.driver.postgresql.datastore.Datastore;
 import io.yawp.driver.postgresql.datastore.Entity;
 import io.yawp.driver.postgresql.datastore.EntityNotFoundException;
-import io.yawp.driver.postgresql.datastore.FalsePredicateException;
 import io.yawp.driver.postgresql.datastore.Key;
-import io.yawp.driver.postgresql.datastore.Query;
+import io.yawp.driver.postgresql.datastore.query.FalsePredicateException;
+import io.yawp.driver.postgresql.datastore.query.Query;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.repository.FieldModel;
 import io.yawp.repository.IdRef;
@@ -81,7 +81,7 @@ public class PGQueryDriver implements QueryDriver {
 	}
 
 	private Query createQuery(QueryBuilder<?> builder, boolean keysOnly) throws FalsePredicateException {
-		Query q = new Query(builder.getModel().getKind());
+		Query q = new Query(builder);
 
 		if (keysOnly) {
 			q.setKeysOnly();

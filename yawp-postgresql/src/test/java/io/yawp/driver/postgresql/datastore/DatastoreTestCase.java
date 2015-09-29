@@ -4,6 +4,7 @@ import io.yawp.driver.postgresql.Person;
 import io.yawp.driver.postgresql.sql.ConnectionPool;
 import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.EndpointScanner;
+import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 
 import java.sql.Connection;
@@ -15,11 +16,18 @@ public class DatastoreTestCase {
 
 	protected static Connection connection;
 
+	protected static Repository yawp;
+
 	@BeforeClass
 	public static void setUpClass() throws Exception {
 		InitialContextMock.configure();
+		createRepository();
 		createConnection();
 		createTables();
+	}
+
+	private static void createRepository() {
+		yawp = Repository.r().setFeatures(new EndpointScanner(testPackage()).scan());
 	}
 
 	@AfterClass
@@ -36,8 +44,7 @@ public class DatastoreTestCase {
 	}
 
 	private static void createTables() {
-		RepositoryFeatures features = new EndpointScanner(testPackage()).scan();
-		SchemaSynchronizer.sync(features.getEndpointClazzes());
+		SchemaSynchronizer.sync(yawp.getFeatures().getEndpointClazzes());
 	}
 
 	@SuppressWarnings("unused")

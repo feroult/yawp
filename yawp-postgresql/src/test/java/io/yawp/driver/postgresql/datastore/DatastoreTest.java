@@ -2,8 +2,11 @@ package io.yawp.driver.postgresql.datastore;
 
 import static io.yawp.repository.query.condition.Condition.c;
 import static org.junit.Assert.assertEquals;
+import io.yawp.driver.postgresql.Person;
+import io.yawp.driver.postgresql.datastore.query.Query;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
+import io.yawp.repository.query.QueryBuilder;
 
 import java.util.List;
 
@@ -138,9 +141,10 @@ public class DatastoreTest extends DatastoreTestCase {
 		savePersonWithName("jim");
 		savePersonWithName("robert");
 
-		Query q = new Query("people");
+		QueryBuilder<Person> builder = QueryBuilder.q(Person.class, yawp);
+		builder.where(c("name", "=", "jim"));
 
-		q.setFilter(c("name", "=", "jim"));
+		Query q = new Query(builder);
 
 		List<Entity> entities = datastore.query(q);
 

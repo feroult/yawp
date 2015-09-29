@@ -7,7 +7,7 @@ import io.yawp.driver.api.NamespaceDriver;
 import io.yawp.driver.api.PersistenceDriver;
 import io.yawp.driver.api.QueryDriver;
 import io.yawp.driver.api.TransactionDriver;
-import io.yawp.driver.postgresql.connection.ConnectionManager;
+import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.repository.Repository;
 
 public class PGDriver implements Driver {

@@ -1,8 +1,8 @@
 package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.driver.postgresql.Person;
-import io.yawp.driver.postgresql.connection.ConnectionPool;
-import io.yawp.driver.postgresql.connection.SqlRunner;
+import io.yawp.driver.postgresql.sql.ConnectionPool;
+import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.RepositoryFeatures;
 

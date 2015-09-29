@@ -2,8 +2,8 @@ package io.yawp.driver.postgresql.datastore;
 
 import static io.yawp.repository.query.condition.Condition.c;
 import static org.junit.Assert.assertEquals;
-import io.yawp.driver.postgresql.connection.ConnectionManager;
-import io.yawp.driver.postgresql.connection.SqlRunner;
+import io.yawp.driver.postgresql.sql.ConnectionManager;
+import io.yawp.driver.postgresql.sql.SqlRunner;
 
 import java.util.List;
 

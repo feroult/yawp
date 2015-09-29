@@ -1,8 +1,7 @@
-package io.yawp.driver.postgresql.datastore.sql;
+package io.yawp.driver.postgresql.datastore;
 
+import io.yawp.driver.postgresql.connection.PlaceHolder;
 import io.yawp.driver.postgresql.connection.SqlRunner;
-import io.yawp.driver.postgresql.datastore.Entity;
-import io.yawp.driver.postgresql.datastore.Key;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,10 +12,6 @@ public class DatastoreSqlRunner extends SqlRunner {
 
 	public DatastoreSqlRunner(String kind, String sql) {
 		super(sql.replaceAll(":kind", kind));
-	}
-
-	private void bind(String placeHolderKey, PlaceHolder placeHolderObject) {
-		placeHolders.put(":" + placeHolderKey, placeHolderObject);
 	}
 
 	protected void bind(String placeHolderKey, Key key) {

@@ -2,7 +2,6 @@ package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.driver.postgresql.connection.ConnectionManager;
 import io.yawp.driver.postgresql.connection.SqlRunner;
-import io.yawp.driver.postgresql.datastore.sql.DatastoreSqlRunner;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

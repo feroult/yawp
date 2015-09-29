@@ -1,7 +1,5 @@
 package io.yawp.driver.postgresql.connection;
 
-import io.yawp.driver.postgresql.datastore.sql.PlaceHolder;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -47,6 +45,10 @@ public class SqlRunner {
 
 	protected Object collectSingle(ResultSet rs) throws SQLException {
 		return null;
+	}
+
+	protected void bind(String placeHolderKey, PlaceHolder placeHolderObject) {
+		placeHolders.put(":" + placeHolderKey, placeHolderObject);
 	}
 
 	private void prepareInternal(PreparedStatement ps) throws SQLException {

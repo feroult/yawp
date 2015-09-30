@@ -156,6 +156,7 @@ public class DatastoreTest extends DatastoreTestCase {
 	private void savePersonWithName(String name) {
 		Entity entity = new Entity("people");
 		entity.setProperty("name", name);
+		entity.setProperty("__name", name);
 		datastore.put(entity);
 	}
 }

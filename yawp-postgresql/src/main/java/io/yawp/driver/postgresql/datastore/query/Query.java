@@ -21,8 +21,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,6 +33,8 @@ public class Query {
 	private static final String SQL_PREFIX = "select key, properties from :kind where ";
 
 	private QueryBuilder<?> builder;
+
+	private Map<String, Object> whereBinds = new HashMap<String, Object>();
 
 	public Query(QueryBuilder<?> builder) {
 		this.builder = builder;
@@ -53,14 +57,14 @@ public class Query {
 
 	public SqlRunner createRunner() throws FalsePredicateException {
 
-		final Filter filter = createFilter(builder, builder.getCondition());
+		String sql = SQL_PREFIX + where(builder, builder.getCondition());
 
-		String sql = SQL_PREFIX + filter.getWhereCaluse();
-
-		return new DatastoreSqlRunner(getKind(), createSql()) {
+		return new DatastoreSqlRunner(getKind(), sql) {
 			@Override
 			protected void bind() {
-				bind("name", "jim");
+				for (String key : whereBinds.keySet()) {
+					bind(key, whereBinds.get(key));
+				}
 			}
 
 			@Override
@@ -75,21 +79,13 @@ public class Query {
 		return builder.getModel().getKind();
 	}
 
-	private String createSql() {
-		return SQL_PREFIX + where();
-	}
-
-	private String where() {
-		return "properties->>'name' = :name";
-	}
-
 	// filter
 
 	private final String NORMALIZED_FIELD_PREFIX = "__";
 
-	private Filter createFilter(QueryBuilder<?> builder, BaseCondition condition) throws FalsePredicateException {
+	private String where(QueryBuilder<?> builder, BaseCondition condition) throws FalsePredicateException {
 		if (condition instanceof SimpleCondition) {
-			return createSimpleFilter(builder, (SimpleCondition) condition);
+			return simpleWhere(builder, (SimpleCondition) condition);
 		}
 		// if (condition instanceof JoinedCondition) {
 		// return createJoinedFilter(builder, (JoinedCondition) condition);
@@ -97,7 +93,7 @@ public class Query {
 		throw new RuntimeException("Invalid condition class: " + condition.getClass());
 	}
 
-	private Filter createSimpleFilter(QueryBuilder<?> builder, SimpleCondition condition) throws FalsePredicateException {
+	private String simpleWhere(QueryBuilder<?> builder, SimpleCondition condition) throws FalsePredicateException {
 		String field = condition.getField();
 		Class<?> clazz = builder.getModel().getClazz();
 		Object whereValue = condition.getWhereValue();
@@ -110,7 +106,10 @@ public class Query {
 			throw new FalsePredicateException();
 		}
 
-		return new FilterPredicate(actualFieldName, getFilterOperator(whereOperator), actualValue);
+		String placeHolder = "p" + (whereBinds.size() + 1);
+		String where = String.format("properties->>'%s' %s :%s", actualFieldName, getFilterOperator(whereOperator).getText(), placeHolder);
+		whereBinds.put(placeHolder, actualValue);
+		return where;
 	}
 
 	private <T> String getActualFieldName(String fieldName, Class<T> clazz) {

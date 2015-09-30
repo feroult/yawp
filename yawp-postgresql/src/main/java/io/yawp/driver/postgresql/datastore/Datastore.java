@@ -1,7 +1,5 @@
 package io.yawp.driver.postgresql.datastore;
 
-import io.yawp.driver.postgresql.datastore.query.FalsePredicateException;
-import io.yawp.driver.postgresql.datastore.query.Query;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
 

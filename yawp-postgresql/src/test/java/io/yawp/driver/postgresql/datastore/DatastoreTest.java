@@ -1,10 +1,9 @@
 package io.yawp.driver.postgresql.datastore;
 
+import static io.yawp.repository.query.condition.Condition.and;
 import static io.yawp.repository.query.condition.Condition.c;
 import static org.junit.Assert.assertEquals;
 import io.yawp.driver.postgresql.Person;
-import io.yawp.driver.postgresql.datastore.query.FalsePredicateException;
-import io.yawp.driver.postgresql.datastore.query.Query;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.query.QueryBuilder;
@@ -144,6 +143,22 @@ public class DatastoreTest extends DatastoreTestCase {
 
 		QueryBuilder<Person> builder = QueryBuilder.q(Person.class, yawp);
 		builder.where(c("name", "=", "jim"));
+
+		Query q = new Query(builder);
+
+		List<Entity> entities = datastore.query(q);
+
+		assertEquals(1, entities.size());
+		assertEquals("jim", entities.get(0).getProperty("name"));
+	}
+
+	@Test
+	public void testJoinedQuery() throws FalsePredicateException {
+		savePersonWithName("jim");
+		savePersonWithName("robert");
+
+		QueryBuilder<Person> builder = QueryBuilder.q(Person.class, yawp);
+		builder.where(and(c("name", "=", "jim"), c("name", ">", "j")));
 
 		Query q = new Query(builder);
 

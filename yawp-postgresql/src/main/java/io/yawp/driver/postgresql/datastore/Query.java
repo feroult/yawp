@@ -1,17 +1,17 @@
-package io.yawp.driver.postgresql.datastore.query;
+package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.commons.utils.DateUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.driver.postgresql.IdRefToKey;
-import io.yawp.driver.postgresql.datastore.DatastoreSqlRunner;
-import io.yawp.driver.postgresql.datastore.Entity;
-import io.yawp.driver.postgresql.datastore.Key;
 import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.FieldModel;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.Repository;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.condition.BaseCondition;
+import io.yawp.repository.query.condition.JoinedCondition;
+import io.yawp.repository.query.condition.LogicalOperator;
 import io.yawp.repository.query.condition.SimpleCondition;
 import io.yawp.repository.query.condition.WhereOperator;
 
@@ -32,12 +32,15 @@ public class Query {
 
 	private static final String SQL_PREFIX = "select key, properties from :kind where ";
 
+	private Repository r;
+
 	private QueryBuilder<?> builder;
 
 	private Map<String, Object> whereBinds = new HashMap<String, Object>();
 
 	public Query(QueryBuilder<?> builder) {
 		this.builder = builder;
+		this.r = builder.getRepository();
 	}
 
 	public void setKeysOnly() {
@@ -87,9 +90,9 @@ public class Query {
 		if (condition instanceof SimpleCondition) {
 			return simpleWhere(builder, (SimpleCondition) condition);
 		}
-		// if (condition instanceof JoinedCondition) {
-		// return createJoinedFilter(builder, (JoinedCondition) condition);
-		// }
+		if (condition instanceof JoinedCondition) {
+			return joinedWhere(builder, (JoinedCondition) condition);
+		}
 		throw new RuntimeException("Invalid condition class: " + condition.getClass());
 	}
 
@@ -107,9 +110,60 @@ public class Query {
 		}
 
 		String placeHolder = "p" + (whereBinds.size() + 1);
-		String where = String.format("properties->>'%s' %s :%s", actualFieldName, getFilterOperator(whereOperator).getText(), placeHolder);
+		String where = String.format("properties->>'%s' %s :%s", actualFieldName, filterOperatorAsText(whereOperator), placeHolder);
 		whereBinds.put(placeHolder, actualValue);
 		return where;
+	}
+
+	private String joinedWhere(QueryBuilder<?> builder, JoinedCondition joinedCondition) throws FalsePredicateException {
+		BaseCondition[] conditions = joinedCondition.getConditions();
+		LogicalOperator logicalOperator = joinedCondition.getLogicalOperator();
+
+		List<String> wheres = new ArrayList<>();
+		for (int i = 0; i < conditions.length; i++) {
+			try {
+				BaseCondition condition = conditions[i];
+				if (!condition.hasPreFilter()) {
+					continue;
+				}
+
+				wheres.add(where(builder, condition));
+			} catch (FalsePredicateException e) {
+				if (logicalOperator == LogicalOperator.AND) {
+					throw e;
+				}
+			}
+		}
+
+		if (wheres.isEmpty()) {
+			throw new FalsePredicateException();
+		}
+
+		if (wheres.size() == 1) {
+			return wheres.get(0);
+		}
+
+		return applyLogicalOperator(logicalOperator, wheres);
+	}
+
+	private String applyLogicalOperator(LogicalOperator logicalOperator, List<String> wheres) {
+		boolean first = true;
+		String operator = logicalOperatorAsText(logicalOperator);
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("(");
+		for (String where : wheres) {
+			if (!first) {
+				sb.append(operator);
+			} else {
+				first = false;
+			}
+			sb.append(where);
+		}
+		sb.append(")");
+
+		return sb.toString();
 	}
 
 	private <T> String getActualFieldName(String fieldName, Class<T> clazz) {
@@ -169,25 +223,37 @@ public class Query {
 
 	private <T> Key getActualKeyFieldValue(Class<T> clazz, Object value) {
 		IdRef<?> id = (IdRef<?>) value;
-		return IdRefToKey.toKey(null, id);
+		return IdRefToKey.toKey(r, id);
 	}
 
-	private FilterOperator getFilterOperator(WhereOperator whereOperator) {
+	private String logicalOperatorAsText(LogicalOperator logicalOperator) {
+		String operator = null;
+		if (logicalOperator == LogicalOperator.AND) {
+			operator = " and ";
+		} else if (logicalOperator == LogicalOperator.OR) {
+			operator = " or ";
+		} else {
+			throw new RuntimeException("Invalid logical operator: " + logicalOperator);
+		}
+		return operator;
+	}
+
+	private String filterOperatorAsText(WhereOperator whereOperator) {
 		switch (whereOperator) {
 		case EQUAL:
-			return FilterOperator.EQUAL;
+			return "=";
 		case GREATER_THAN:
-			return FilterOperator.GREATER_THAN;
+			return ">";
 		case GREATER_THAN_OR_EQUAL:
-			return FilterOperator.GREATER_THAN_OR_EQUAL;
+			return ">=";
 		case IN:
-			return FilterOperator.IN;
+			return "in";
 		case LESS_THAN:
-			return FilterOperator.LESS_THAN;
+			return "<";
 		case LESS_THAN_OR_EQUAL:
-			return FilterOperator.LESS_THAN_OR_EQUAL;
+			return "<=";
 		case NOT_EQUAL:
-			return FilterOperator.NOT_EQUAL;
+			return "<>";
 		default:
 			throw new RuntimeException("Invalid where operator: " + whereOperator);
 		}

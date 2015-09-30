@@ -19,6 +19,8 @@ import io.yawp.repository.Repository;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PGQueryDriver implements QueryDriver {
@@ -32,29 +34,40 @@ public class PGQueryDriver implements QueryDriver {
 		this.datastore = Datastore.create(connectionManager);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> List<T> objects(QueryBuilder<?> builder) {
-		// try {
-		// QueryResultList<Entity> queryResult = generateResults(builder,
-		// false);
-		//
-		// List<T> objects = new ArrayList<T>();
-		//
-		// for (Entity entity : queryResult) {
-		// objects.add((T) toObject(builder.getModel(), entity));
-		// }
-		//
-		// return objects;
-		// } catch (FalsePredicateException e) {
-		// return Collections.emptyList();
-		// }
-		return null;
+		try {
+			List<Entity> queryResult = generateResults(builder, false);
+
+			List<T> objects = new ArrayList<T>();
+
+			for (Entity entity : queryResult) {
+				objects.add((T) toObject(builder.getModel(), entity));
+			}
+
+			return objects;
+		} catch (FalsePredicateException e) {
+			return Collections.emptyList();
+		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			List<Entity> queryResult = generateResults(builder, false);
+
+			List<IdRef<T>> ids = new ArrayList<IdRef<T>>();
+
+			for (Entity entity : queryResult) {
+				ids.add((IdRef<T>) IdRefToKey.toIdRef(r, entity.getKey()));
+			}
+
+			return ids;
+		} catch (FalsePredicateException e) {
+			return Collections.emptyList();
+		}
 	}
 
 	@SuppressWarnings("unchecked")

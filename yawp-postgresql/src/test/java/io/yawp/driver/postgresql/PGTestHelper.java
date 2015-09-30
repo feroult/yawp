@@ -2,6 +2,7 @@ package io.yawp.driver.postgresql;
 
 import io.yawp.driver.api.TestHelper;
 import io.yawp.driver.postgresql.datastore.InitialContextMock;
+import io.yawp.driver.postgresql.datastore.SchemaSynchronizer;
 import io.yawp.repository.Repository;
 
 public class PGTestHelper implements TestHelper {
@@ -20,7 +21,7 @@ public class PGTestHelper implements TestHelper {
 	}
 
 	private void syncTables() {
-		// SchemaSynchronizer.sync(r.getFeatures().getEndpointClazzes());
+		//SchemaSynchronizer.sync(r.getFeatures().getEndpointClazzes());
 
 	}
 

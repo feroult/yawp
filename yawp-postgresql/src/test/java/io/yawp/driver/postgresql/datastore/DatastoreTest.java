@@ -3,6 +3,7 @@ package io.yawp.driver.postgresql.datastore;
 import static io.yawp.repository.query.condition.Condition.and;
 import static io.yawp.repository.query.condition.Condition.c;
 import static org.junit.Assert.assertEquals;
+import io.yawp.driver.postgresql.IdRefToKey;
 import io.yawp.driver.postgresql.Person;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
@@ -177,6 +178,32 @@ public class DatastoreTest extends DatastoreTestCase {
 		assertEquals(2, entities.size());
 		assertEquals("robert", entities.get(0).getProperty("name"));
 		assertEquals("jim", entities.get(1).getProperty("name"));
+	}
+
+	@Test
+	public void testQueryAncestor() throws FalsePredicateException {
+		savePersonWithName("robert");
+		Key parentKey = savePersonWithAncestorAndName("jim");
+
+		QueryBuilder<Person> builder = QueryBuilder.q(Person.class, yawp);
+		builder.from(IdRefToKey.toIdRef(yawp, parentKey));
+
+		List<Entity> entities = datastore.query(new Query(builder, false));
+		assertEquals(1, entities.size());
+		assertEquals("jim", entities.get(0).getProperty("name"));
+
+	}
+
+	private Key savePersonWithAncestorAndName(String name) {
+		Key parentKey = KeyFactory.createKey("people", 1l);
+		Key childKey = KeyFactory.createKey(parentKey, "people", 2l);
+
+		Entity entity = new Entity(childKey);
+		entity.setProperty("name", name);
+		entity.setProperty("__name", name);
+
+		datastore.put(entity);
+		return parentKey;
 	}
 
 	private void savePersonWithName(String name) {

@@ -144,9 +144,7 @@ public class DatastoreTest extends DatastoreTestCase {
 		QueryBuilder<Person> builder = QueryBuilder.q(Person.class, yawp);
 		builder.where(c("name", "=", "jim"));
 
-		Query q = new Query(builder);
-
-		List<Entity> entities = datastore.query(q);
+		List<Entity> entities = datastore.query(new Query(builder, false));
 
 		assertEquals(1, entities.size());
 		assertEquals("jim", entities.get(0).getProperty("name"));
@@ -160,12 +158,25 @@ public class DatastoreTest extends DatastoreTestCase {
 		QueryBuilder<Person> builder = QueryBuilder.q(Person.class, yawp);
 		builder.where(and(c("name", "=", "jim"), c("name", ">", "j")));
 
-		Query q = new Query(builder);
-
-		List<Entity> entities = datastore.query(q);
+		List<Entity> entities = datastore.query(new Query(builder, false));
 
 		assertEquals(1, entities.size());
 		assertEquals("jim", entities.get(0).getProperty("name"));
+	}
+
+	@Test
+	public void testQueryOrder() throws FalsePredicateException {
+		savePersonWithName("jim");
+		savePersonWithName("robert");
+
+		QueryBuilder<Person> builder = QueryBuilder.q(Person.class, yawp);
+		builder.order("name", "desc");
+
+		List<Entity> entities = datastore.query(new Query(builder, false));
+
+		assertEquals(2, entities.size());
+		assertEquals("robert", entities.get(0).getProperty("name"));
+		assertEquals("jim", entities.get(1).getProperty("name"));
 	}
 
 	private void savePersonWithName(String name) {

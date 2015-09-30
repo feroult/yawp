@@ -30,37 +30,25 @@ import org.apache.commons.lang3.StringUtils;
 
 public class Query {
 
-	private static final String SQL_PREFIX = "select key, properties from :kind where ";
+	private static final String SQL_PREFIX = "select key, properties from :kind";
 
 	private Repository r;
 
 	private QueryBuilder<?> builder;
 
+	private boolean keysOnly;
+
 	private Map<String, Object> whereBinds = new HashMap<String, Object>();
 
-	public Query(QueryBuilder<?> builder) {
+	public Query(QueryBuilder<?> builder, boolean keysOnly) {
 		this.builder = builder;
+		this.keysOnly = keysOnly;
 		this.r = builder.getRepository();
-	}
-
-	public void setKeysOnly() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void setAncestor(Key key) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void addSort(String string, QueryOrder order) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public SqlRunner createRunner() throws FalsePredicateException {
 
-		String sql = SQL_PREFIX + where(builder, builder.getCondition());
+		String sql = SQL_PREFIX + where() + order();
 
 		return new DatastoreSqlRunner(getKind(), sql) {
 			@Override
@@ -82,21 +70,54 @@ public class Query {
 		return builder.getModel().getKind();
 	}
 
+	private String where() throws FalsePredicateException {
+		if (builder.getCondition() == null) {
+			return "";
+		}
+		return " where " + where(builder.getCondition());
+	}
+
+	private String order() {
+		if (builder.getPreOrders() == null) {
+			return "";
+		}
+
+		Class<?> clazz = builder.getModel().getClazz();
+
+		boolean first = true;
+		StringBuilder sb = new StringBuilder();
+		sb.append(" order by ");
+
+		for (QueryOrder order : builder.getPreOrders()) {
+			if (!first) {
+				sb.append(", ");
+			} else {
+				first = false;
+			}
+
+			sb.append(String.format("properties->>'%s'", getActualFieldName(order.getProperty(), clazz)));
+
+			if (order.isDesc()) {
+				sb.append(" desc");
+			}
+		}
+
+		return sb.toString();
+	}
+
 	// filter
 
-	private final String NORMALIZED_FIELD_PREFIX = "__";
-
-	private String where(QueryBuilder<?> builder, BaseCondition condition) throws FalsePredicateException {
+	private String where(BaseCondition condition) throws FalsePredicateException {
 		if (condition instanceof SimpleCondition) {
-			return simpleWhere(builder, (SimpleCondition) condition);
+			return simpleWhere((SimpleCondition) condition);
 		}
 		if (condition instanceof JoinedCondition) {
-			return joinedWhere(builder, (JoinedCondition) condition);
+			return joinedWhere((JoinedCondition) condition);
 		}
 		throw new RuntimeException("Invalid condition class: " + condition.getClass());
 	}
 
-	private String simpleWhere(QueryBuilder<?> builder, SimpleCondition condition) throws FalsePredicateException {
+	private String simpleWhere(SimpleCondition condition) throws FalsePredicateException {
 		String field = condition.getField();
 		Class<?> clazz = builder.getModel().getClazz();
 		Object whereValue = condition.getWhereValue();
@@ -115,7 +136,7 @@ public class Query {
 		return where;
 	}
 
-	private String joinedWhere(QueryBuilder<?> builder, JoinedCondition joinedCondition) throws FalsePredicateException {
+	private String joinedWhere(JoinedCondition joinedCondition) throws FalsePredicateException {
 		BaseCondition[] conditions = joinedCondition.getConditions();
 		LogicalOperator logicalOperator = joinedCondition.getLogicalOperator();
 
@@ -127,7 +148,7 @@ public class Query {
 					continue;
 				}
 
-				wheres.add(where(builder, condition));
+				wheres.add(where(condition));
 			} catch (FalsePredicateException e) {
 				if (logicalOperator == LogicalOperator.AND) {
 					throw e;
@@ -175,7 +196,7 @@ public class Query {
 		}
 
 		if (fieldModel.isIndexNormalizable()) {
-			return NORMALIZED_FIELD_PREFIX + fieldName;
+			return Entity.NORMALIZED_FIELD_PREFIX + fieldName;
 		}
 
 		return fieldName;

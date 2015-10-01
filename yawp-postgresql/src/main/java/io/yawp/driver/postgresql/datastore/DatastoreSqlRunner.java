@@ -16,6 +16,14 @@ public class DatastoreSqlRunner extends SqlRunner {
 		super(sql.replaceAll(":kind", kind));
 	}
 
+	protected final void bind(String placeHolderKey, Object value) {
+		if (value instanceof Key) {
+			bind(placeHolderKey, (Key) value);
+			return;
+		}
+		super.bind(placeHolderKey, value);
+	}
+
 	protected final void bind(String placeHolderKey, Key key) {
 		PlaceHolder placeHolderObject = new PlaceHolder(createJsonObject(key.serialize()));
 		bind(placeHolderKey, placeHolderObject);

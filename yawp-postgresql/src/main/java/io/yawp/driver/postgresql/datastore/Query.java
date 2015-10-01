@@ -72,41 +72,50 @@ public class Query {
 	}
 
 	private String where() throws FalsePredicateException {
-		if (builder.getCondition() == null) {
-			return "";
-		}
-		return " where " + where(builder.getCondition());
-	}
-
-	private String order() {
-		if (CollectionUtils.isEmpty(builder.getPreOrders())) {
+		if (!hasAnyKindOfFilter()) {
 			return "";
 		}
 
-		Class<?> clazz = builder.getModel().getClazz();
-
-		boolean first = true;
 		StringBuilder sb = new StringBuilder();
-		sb.append(" order by ");
+		sb.append(" where ");
 
-		for (QueryOrder order : builder.getPreOrders()) {
-			if (!first) {
-				sb.append(", ");
-			} else {
-				first = false;
+		if (hasPropertyFilter()) {
+			sb.append(where(builder.getCondition()));
+		}
+
+		if (hasAncestorFilter()) {
+			if (hasPropertyFilter()) {
+				sb.append(" and ");
 			}
-
-			sb.append(String.format("properties->>'%s'", getActualFieldName(order.getProperty(), clazz)));
-
-			if (order.isDesc()) {
-				sb.append(" desc");
-			}
+			sb.append(whereAncestor());
 		}
 
 		return sb.toString();
 	}
 
-	// filter
+	private boolean hasAnyKindOfFilter() {
+		return hasPropertyFilter() || hasAncestorFilter();
+	}
+
+	private boolean hasAncestorFilter() {
+		return builder.getParentId() != null;
+	}
+
+	private boolean hasPropertyFilter() {
+		return builder.getCondition() != null;
+	}
+
+	private String bindValue(Object value) {
+		String placeHolder = "p" + (whereBinds.size() + 1);
+		whereBinds.put(placeHolder, value);
+		return placeHolder;
+	}
+
+	private String whereAncestor() {
+		IdRef<?> parentId = builder.getParentId();
+		String placeHolder = bindValue(IdRefToKey.toKey(r, parentId));
+		return String.format("key->'parent' = :%s", placeHolder);
+	}
 
 	private String where(BaseCondition condition) throws FalsePredicateException {
 		if (condition instanceof SimpleCondition) {
@@ -131,9 +140,8 @@ public class Query {
 			throw new FalsePredicateException();
 		}
 
-		String placeHolder = "p" + (whereBinds.size() + 1);
+		String placeHolder = bindValue(actualValue);
 		String where = String.format("properties->>'%s' %s :%s", actualFieldName, filterOperatorAsText(whereOperator), placeHolder);
-		whereBinds.put(placeHolder, actualValue);
 		return where;
 	}
 
@@ -166,6 +174,34 @@ public class Query {
 		}
 
 		return applyLogicalOperator(logicalOperator, wheres);
+	}
+
+	private String order() {
+		if (CollectionUtils.isEmpty(builder.getPreOrders())) {
+			return "";
+		}
+
+		Class<?> clazz = builder.getModel().getClazz();
+
+		boolean first = true;
+		StringBuilder sb = new StringBuilder();
+		sb.append(" order by ");
+
+		for (QueryOrder order : builder.getPreOrders()) {
+			if (!first) {
+				sb.append(", ");
+			} else {
+				first = false;
+			}
+
+			sb.append(String.format("properties->>'%s'", getActualFieldName(order.getProperty(), clazz)));
+
+			if (order.isDesc()) {
+				sb.append(" desc");
+			}
+		}
+
+		return sb.toString();
 	}
 
 	private String applyLogicalOperator(LogicalOperator logicalOperator, List<String> wheres) {

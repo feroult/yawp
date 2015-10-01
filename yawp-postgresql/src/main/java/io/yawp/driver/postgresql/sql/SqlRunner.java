@@ -47,11 +47,11 @@ public class SqlRunner {
 		return null;
 	}
 
-	protected final void bind(String placeHolderKey, PlaceHolder placeHolderObject) {
+	protected void bind(String placeHolderKey, PlaceHolder placeHolderObject) {
 		placeHolders.put(":" + placeHolderKey, placeHolderObject);
 	}
 
-	protected final void bind(String placeHolderKey, Object value) {
+	protected void bind(String placeHolderKey, Object value) {
 		bind(placeHolderKey, new PlaceHolder(value));
 	}
 

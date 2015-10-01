@@ -114,7 +114,21 @@ public class Query {
 	private String whereAncestor() {
 		IdRef<?> parentId = builder.getParentId();
 		String placeHolder = bindValue(IdRefToKey.toKey(r, parentId));
-		return String.format("key->'parent' = :%s", placeHolder);
+		return String.format("key%s = :%s", ancetorLink(parentId), placeHolder);
+	}
+
+	private String ancetorLink(IdRef<?> parentId) {
+		StringBuilder sb = new StringBuilder();
+		int ancestorNumber = getAncetorNumber(parentId);
+		for (int i = -1; i < ancestorNumber; i++) {
+			sb.append("->'parent'");
+		}
+		String ancestorLink = sb.toString();
+		return ancestorLink;
+	}
+
+	protected int getAncetorNumber(IdRef<?> parentId) {
+		return builder.getModel().getAncestorNumber(parentId.getClazz());
 	}
 
 	private String where(BaseCondition condition) throws FalsePredicateException {

@@ -7,6 +7,7 @@ import io.yawp.driver.postgresql.IdRefToKey;
 import io.yawp.driver.postgresql.Person;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
+import io.yawp.repository.IdRef;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.List;
@@ -181,22 +182,45 @@ public class DatastoreTest extends DatastoreTestCase {
 	}
 
 	@Test
-	public void testQueryAncestor() throws FalsePredicateException {
+	public void testQueryParent() throws FalsePredicateException {
 		savePersonWithName("robert");
-		Key parentKey = savePersonWithAncestorAndName("jim");
 
+		Key parentKey = KeyFactory.createKey("people", 1l);
+		savePersonWithParentAndName(parentKey, "jim");
+
+		assertJimIsFromAncestor(0, parentKey);
+	}
+
+	@Test
+	public void testQueryGrandchild() throws FalsePredicateException {
+		savePersonWithName("robert");
+
+		Key grandparentKey = KeyFactory.createKey("people", 1l);
+		Key parentKey = KeyFactory.createKey(grandparentKey, "people", 10l);
+
+		savePersonWithParentAndName(parentKey, "jim");
+
+		assertJimIsFromAncestor(0, parentKey);
+		assertJimIsFromAncestor(1, grandparentKey);
+	}
+
+	private void assertJimIsFromAncestor(final int ancestorNumber, Key parentKey) throws FalsePredicateException {
 		QueryBuilder<Person> builder = QueryBuilder.q(Person.class, yawp);
 		builder.from(IdRefToKey.toIdRef(yawp, parentKey));
 
-		List<Entity> entities = datastore.query(new Query(builder, false));
+		List<Entity> entities = datastore.query(new Query(builder, false) {
+			@Override
+			protected int getAncetorNumber(IdRef<?> parentId) {
+				return ancestorNumber;
+			}
+
+		});
 		assertEquals(1, entities.size());
 		assertEquals("jim", entities.get(0).getProperty("name"));
-
 	}
 
-	private Key savePersonWithAncestorAndName(String name) {
-		Key parentKey = KeyFactory.createKey("people", 1l);
-		Key childKey = KeyFactory.createKey(parentKey, "people", 2l);
+	private Key savePersonWithParentAndName(Key parentKey, String name) {
+		Key childKey = KeyFactory.createKey(parentKey, "people", 100l);
 
 		Entity entity = new Entity(childKey);
 		entity.setProperty("name", name);

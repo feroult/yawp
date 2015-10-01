@@ -179,8 +179,8 @@ public class Query {
 		}
 		sb.append(")");
 
-		String propertyLink = isNumber ? String.format("cast(properties->>'%s' as float)", actualFieldName) : String.format("properties->>'%s'",
-				actualFieldName);
+		String propertyLink = isNumber ? String.format("cast(properties->>'%s' as numeric)", actualFieldName) : String.format(
+				"properties->>'%s'", actualFieldName);
 		return String.format("%s %s %s", propertyLink, filterOperatorAsText(whereOperator), sb.toString());
 	}
 

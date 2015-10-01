@@ -187,10 +187,17 @@ public class Query {
 	}
 
 	private String propertyLink(String fieldName, String actualFieldName) {
-		boolean isNumber = builder.getModel().getFieldModel(fieldName).isNumber();
-		String propertyLink = isNumber ? String.format("cast(properties->>'%s' as numeric)", actualFieldName) : String.format(
-				"properties->>'%s'", actualFieldName);
-		return propertyLink;
+		FieldModel fieldModel = builder.getModel().getFieldModel(fieldName);
+
+		if (fieldModel.isId()) {
+			return "key";
+		}
+
+		if (fieldModel.isNumber()) {
+			return String.format("cast(properties->>'%s' as numeric)", actualFieldName);
+		}
+
+		return String.format("properties->>'%s'", actualFieldName);
 	}
 
 	private String joinedWhere(JoinedCondition joinedCondition) throws FalsePredicateException {

@@ -217,6 +217,20 @@ public class DatastoreTest extends DatastoreTestCase {
 		assertQueryInForField("name", Arrays.asList("jim", "john"));
 	}
 
+	@Test
+	public void testQueryInWithKey() throws FalsePredicateException {
+		Key key = KeyFactory.createKey("people", 1l);
+		Entity entity = new Entity(key);
+		entity.setProperty("name", "jim");
+		entity.setProperty("__name", "jim");
+		entity.setProperty("age", 27);
+		datastore.put(entity);
+
+		Key anotherKey = KeyFactory.createKey("people", 2l);
+
+		assertQueryInForField("id", Arrays.asList(IdRefToKey.toIdRef(yawp, key), IdRefToKey.toIdRef(yawp, anotherKey)));
+	}
+
 	private void assertQueryInForField(String field, List<?> list) throws FalsePredicateException {
 		QueryBuilder<Person> builder = QueryBuilder.q(Person.class, yawp);
 		builder.where(c(field, "in", list));

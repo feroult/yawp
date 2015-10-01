@@ -59,7 +59,7 @@ public class SchemaSynchronizer {
 	}
 
 	public static void recreate(String schema) {
-		new SqlRunner(String.format("drop schema %s cascade; create schema %s;", schema)).execute();
+		new SqlRunner(String.format("drop schema %s cascade; create schema %s;", schema, schema)).execute();
 	}
 
 	public static void truncateAll() {

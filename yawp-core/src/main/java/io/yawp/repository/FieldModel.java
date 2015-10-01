@@ -82,7 +82,11 @@ public class FieldModel {
 	}
 
 	public boolean isNumber() {
-		return Number.class.isAssignableFrom(field.getType());
+		if (Number.class.isAssignableFrom(field.getType())) {
+			return true;
+		}
+		String name = field.getType().getName();
+		return name.equals("int") || name.equals("long") || name.equals("double");
 	}
 
 	public boolean isInt() {

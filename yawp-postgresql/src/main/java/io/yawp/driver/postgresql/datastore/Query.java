@@ -142,26 +142,25 @@ public class Query {
 	}
 
 	private String simpleWhere(SimpleCondition condition) throws FalsePredicateException {
-		String field = condition.getField();
+		String fieldName = condition.getField();
 		Class<?> clazz = builder.getModel().getClazz();
 		Object whereValue = condition.getWhereValue();
 		WhereOperator whereOperator = condition.getWhereOperator();
 
-		String actualFieldName = getActualFieldName(field, clazz);
-		Object actualValue = getActualFieldValue(field, clazz, whereValue);
+		String actualFieldName = getActualFieldName(fieldName, clazz);
+		Object actualValue = getActualFieldValue(fieldName, clazz, whereValue);
 
 		if (whereOperator == WhereOperator.IN) {
 			if (listSize(whereValue) == 0) {
 				throw new FalsePredicateException();
 			}
-			return whereCollectionValue(field, actualFieldName, whereOperator, (Collection<?>) actualValue);
+			return whereCollectionValue(fieldName, actualFieldName, whereOperator, (Collection<?>) actualValue);
 		}
 
-		return whereSingleValue(actualFieldName, whereOperator, actualValue);
+		return whereSingleValue(fieldName, actualFieldName, whereOperator, actualValue);
 	}
 
 	private String whereCollectionValue(String fieldName, String actualFieldName, WhereOperator whereOperator, Collection<?> collection) {
-		boolean isNumber = builder.getModel().getFieldModel(fieldName).isNumber();
 
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
@@ -179,14 +178,19 @@ public class Query {
 		}
 		sb.append(")");
 
-		String propertyLink = isNumber ? String.format("cast(properties->>'%s' as numeric)", actualFieldName) : String.format(
-				"properties->>'%s'", actualFieldName);
-		return String.format("%s %s %s", propertyLink, filterOperatorAsText(whereOperator), sb.toString());
+		return String.format("%s %s %s", propertyLink(fieldName, actualFieldName), filterOperatorAsText(whereOperator), sb.toString());
 	}
 
-	private String whereSingleValue(String actualFieldName, WhereOperator whereOperator, Object actualValue) {
+	private String whereSingleValue(String fieldName, String actualFieldName, WhereOperator whereOperator, Object actualValue) {
 		String placeHolder = bindValue(actualValue);
-		return String.format("properties->>'%s' %s :%s", actualFieldName, filterOperatorAsText(whereOperator), placeHolder);
+		return String.format("%s %s :%s", propertyLink(fieldName, actualFieldName), filterOperatorAsText(whereOperator), placeHolder);
+	}
+
+	private String propertyLink(String fieldName, String actualFieldName) {
+		boolean isNumber = builder.getModel().getFieldModel(fieldName).isNumber();
+		String propertyLink = isNumber ? String.format("cast(properties->>'%s' as numeric)", actualFieldName) : String.format(
+				"properties->>'%s'", actualFieldName);
+		return propertyLink;
 	}
 
 	private String joinedWhere(JoinedCondition joinedCondition) throws FalsePredicateException {

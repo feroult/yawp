@@ -89,6 +89,7 @@ public class SqlRunner {
 			}
 
 		} catch (SQLException e) {
+			System.out.println("problem with sql: " + sql);
 			throw new RuntimeException(e);
 		} finally {
 			try {

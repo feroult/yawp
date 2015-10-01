@@ -4,6 +4,7 @@ import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Date;
@@ -65,6 +66,10 @@ public class FieldModel {
 		return IdRef.class.isAssignableFrom(field.getType());
 	}
 
+	public boolean isCollection() {
+		return Collection.class.isAssignableFrom(field.getType());
+	}
+
 	public boolean isSaveAsJson() {
 		return field.getAnnotation(Json.class) != null;
 	}
@@ -75,6 +80,10 @@ public class FieldModel {
 
 	private Index getIndex() {
 		return field.getAnnotation(Index.class);
+	}
+
+	public boolean isNumber() {
+		return Number.class.isAssignableFrom(field.getType());
 	}
 
 	public boolean isInt() {

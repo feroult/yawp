@@ -14,6 +14,9 @@ public class Person {
 	@Index
 	private String name;
 
+	@Index
+	private Integer age;
+
 	protected IdRef<Person> getId() {
 		return id;
 	}
@@ -30,4 +33,11 @@ public class Person {
 		this.name = name;
 	}
 
+	protected Integer getAge() {
+		return age;
+	}
+
+	protected void setAge(Integer age) {
+		this.age = age;
+	}
 }

@@ -10,6 +10,7 @@ import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.query.QueryBuilder;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.After;
@@ -202,6 +203,28 @@ public class DatastoreTest extends DatastoreTestCase {
 
 		assertJimIsFromAncestor(0, parentKey);
 		assertJimIsFromAncestor(1, grandparentKey);
+	}
+
+	@Test
+	public void testQueryIn() throws FalsePredicateException {
+		Entity entity = new Entity("people");
+		entity.setProperty("name", "jim");
+		entity.setProperty("__name", "jim");
+		entity.setProperty("age", 27);
+		datastore.put(entity);
+
+		assertQueryInForField("age", Arrays.asList(10, 27));
+		assertQueryInForField("name", Arrays.asList("jim", "john"));
+	}
+
+	private void assertQueryInForField(String field, List<?> list) throws FalsePredicateException {
+		QueryBuilder<Person> builder = QueryBuilder.q(Person.class, yawp);
+		builder.where(c(field, "in", list));
+
+		List<Entity> entities = datastore.query(new Query(builder, false));
+
+		assertEquals(1, entities.size());
+		assertEquals(27.0, entities.get(0).getProperty("age"));
 	}
 
 	private void assertJimIsFromAncestor(final int ancestorNumber, Key parentKey) throws FalsePredicateException {

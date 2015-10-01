@@ -5,7 +5,6 @@ import io.yawp.driver.postgresql.sql.ConnectionPool;
 import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
-import io.yawp.repository.RepositoryFeatures;
 
 import java.sql.Connection;
 

@@ -12,17 +12,22 @@ public class PGTestHelper implements TestHelper {
 	@Override
 	public void init(Repository r) {
 		this.r = r;
+		configureInitialContext();
+		resetTables();
+	}
+
+	private void configureInitialContext() {
+		InitialContextMock.configure();
+	}
+
+	private void resetTables() {
+		SchemaSynchronizer.recreate("public");
+		SchemaSynchronizer.sync(r.getFeatures().getEndpointClazzes());
 	}
 
 	@Override
 	public void setUp() {
-		InitialContextMock.configure();
-		syncTables();
-	}
-
-	private void syncTables() {
-		//SchemaSynchronizer.sync(r.getFeatures().getEndpointClazzes());
-
+		SchemaSynchronizer.truncateAll();
 	}
 
 	@Override

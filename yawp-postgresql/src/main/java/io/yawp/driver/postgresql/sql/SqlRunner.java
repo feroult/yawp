@@ -66,6 +66,15 @@ public class SqlRunner {
 		}
 	}
 
+	public <T> T executeQuery() {
+		Connection connection = ConnectionPool.connection();
+		try {
+			return executeQuery(connection);
+		} finally {
+			ConnectionPool.close(connection);
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T> T executeQuery(Connection connection) {
 		PreparedStatement ps = null;
@@ -102,6 +111,15 @@ public class SqlRunner {
 			} catch (SQLException e) {
 				throw new RuntimeException(e);
 			}
+		}
+	}
+
+	public void execute() {
+		Connection connection = ConnectionPool.connection();
+		try {
+			execute(connection);
+		} finally {
+			ConnectionPool.close(connection);
 		}
 	}
 

@@ -73,7 +73,7 @@ public class Datastore {
 	}
 
 	public List<Entity> query(Query query) throws FalsePredicateException {
-		return connectionManager.executeQuery(query.createRunner());
+		return query.execute(connectionManager);
 	}
 
 	private boolean isNewEntity(Entity entity) {

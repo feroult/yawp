@@ -3,6 +3,7 @@ package io.yawp.driver.postgresql.datastore;
 import io.yawp.commons.utils.DateUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.driver.postgresql.IdRefToKey;
+import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.FieldModel;
 import io.yawp.repository.IdRef;
@@ -47,9 +48,24 @@ public class Query {
 		this.r = builder.getRepository();
 	}
 
-	public SqlRunner createRunner() throws FalsePredicateException {
+	public List<Entity> execute(ConnectionManager connectionManager) throws FalsePredicateException {
+		List<Entity> entities = connectionManager.executeQuery(createRunner());
+		setCursor(entities);
+		return entities;
+	}
 
-		String sql = SQL_PREFIX + where() + order() + limit();
+	private void setCursor(List<Entity> entities) {
+		if (entities.isEmpty()) {
+			return;
+		}
+
+		long previousCursor = builder.getCursor() != null ? Long.valueOf(builder.getCursor()) : 0;
+		builder.setCursor(String.valueOf(previousCursor + entities.size()));
+	}
+
+	private SqlRunner createRunner() throws FalsePredicateException {
+
+		String sql = SQL_PREFIX + where() + order() + offset() + limit();
 
 		return new DatastoreSqlRunner(getKind(), sql) {
 			@Override
@@ -115,6 +131,10 @@ public class Query {
 		IdRef<?> parentId = builder.getParentId();
 		String placeHolder = bindValue(IdRefToKey.toKey(r, parentId));
 		return String.format("key%s = :%s", ancetorLink(parentId), placeHolder);
+	}
+
+	private String whereCursor() {
+		return String.format("offset %d", builder.getCursor());
 	}
 
 	private String ancetorLink(IdRef<?> parentId) {
@@ -257,6 +277,13 @@ public class Query {
 		}
 
 		return sb.toString();
+	}
+
+	private String offset() {
+		if (builder.getCursor() == null) {
+			return "";
+		}
+		return String.format(" offset %s", builder.getCursor());
 	}
 
 	private String limit() {
@@ -416,4 +443,5 @@ public class Query {
 		}
 		return i;
 	}
+
 }

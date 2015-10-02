@@ -35,11 +35,11 @@ public class DatastoreSqlRunner extends SqlRunner {
 	}
 
 	protected final Entity getEntity(ResultSet rs) throws SQLException {
-		PGobject keyObject = (PGobject) rs.getObject(1);
-		PGobject entityObject = (PGobject) rs.getObject(2);
+		PGobject keyObject = (PGobject) rs.getObject("key");
+		PGobject propertiesObject = (PGobject) rs.getObject("properties");
 
 		Entity entity = new Entity(Key.deserialize(keyObject.getValue()));
-		entity.deserializeProperties(entityObject.getValue());
+		entity.deserializeProperties(propertiesObject.getValue());
 
 		return entity;
 	}
@@ -53,4 +53,5 @@ public class DatastoreSqlRunner extends SqlRunner {
 
 		return entities;
 	}
+
 }

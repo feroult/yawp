@@ -183,6 +183,21 @@ public class DatastoreTest extends DatastoreTestCase {
 	}
 
 	@Test
+	public void testQueryLimit() throws FalsePredicateException {
+		savePersonWithName("jim");
+		savePersonWithName("robert");
+
+		QueryBuilder<Person> builder = QueryBuilder.q(Person.class, yawp);
+		builder.order("name", "desc");
+		builder.limit(1);
+
+		List<Entity> entities = datastore.query(new Query(builder, false));
+
+		assertEquals(1, entities.size());
+		assertEquals("robert", entities.get(0).getProperty("name"));
+	}
+
+	@Test
 	public void testQueryParent() throws FalsePredicateException {
 		savePersonWithName("robert");
 

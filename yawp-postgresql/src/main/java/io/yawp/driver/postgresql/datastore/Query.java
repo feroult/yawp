@@ -49,7 +49,7 @@ public class Query {
 
 	public SqlRunner createRunner() throws FalsePredicateException {
 
-		String sql = SQL_PREFIX + where() + order();
+		String sql = SQL_PREFIX + where() + order() + limit();
 
 		return new DatastoreSqlRunner(getKind(), sql) {
 			@Override
@@ -257,6 +257,13 @@ public class Query {
 		}
 
 		return sb.toString();
+	}
+
+	private String limit() {
+		if (builder.getLimit() == null) {
+			return "";
+		}
+		return String.format(" limit %d", builder.getLimit());
 	}
 
 	private String applyLogicalOperator(LogicalOperator logicalOperator, List<String> wheres) {

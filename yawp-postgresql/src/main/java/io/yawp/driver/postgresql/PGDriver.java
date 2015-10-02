@@ -39,8 +39,7 @@ public class PGDriver implements Driver {
 
 	@Override
 	public TransactionDriver transaction() {
-		// TODO Auto-generated method stub
-		return null;
+		return new PGTransactionDriver(connectionManager);
 	}
 
 	@Override

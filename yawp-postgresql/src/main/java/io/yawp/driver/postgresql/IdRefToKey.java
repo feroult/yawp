@@ -7,14 +7,22 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 
 public class IdRefToKey {
-
 	public static Key toKey(Repository r, IdRef<?> id) {
-		Key parent = id.getParentId() == null ? null : toKey(r, id.getParentId());
-		String kind = KindResolver.getKindFromClass(id.getClazz());
-		if (id.getId() == null) {
-			return KeyFactory.createKey(parent, kind, id.getName());
+		return convertWithinRightNamespace(r, id.getClazz(), id);
+	}
+
+	private static Key convertWithinRightNamespace(Repository r, Class<?> clazz, IdRef<?> id) {
+		r.namespace().set(clazz);
+		try {
+			Key parent = id.getParentId() == null ? null : toKey(r, id.getParentId());
+			String kind = KindResolver.getKindFromClass(id.getClazz());
+			if (id.getId() == null) {
+				return KeyFactory.createKey(parent, kind, id.getName());
+			}
+			return KeyFactory.createKey(parent, kind, id.getId());
+		} finally {
+			r.namespace().reset();
 		}
-		return KeyFactory.createKey(parent, kind, id.getId());
 	}
 
 	public static IdRef<?> toIdRef(Repository r, Key key) {

@@ -4,6 +4,8 @@ import io.yawp.commons.utils.JsonUtils;
 
 public class Key {
 
+	private String ns;
+
 	private Key parent;
 
 	private String kind;
@@ -16,31 +18,20 @@ public class Key {
 		this.kind = kind;
 	}
 
-	protected Key(Key parent, String kind, String name) {
+	protected Key(String ns, Key parent, String kind, String name, Long id) {
+		this.ns = ns;
 		this.parent = parent;
 		this.kind = kind;
 		this.name = name;
-	}
-
-	protected Key(Key parent, String kind, Long id) {
-		this.parent = parent;
-		this.kind = kind;
 		this.id = id;
 	}
 
-	protected Key(Key parent, String kind) {
-		this.parent = parent;
-		this.kind = kind;
+	protected Key(Key parent, String kind, String name, Long id) {
+		this(null, parent, kind, name, id);
 	}
 
-	protected Key(String kind, String name) {
-		this.kind = kind;
-		this.name = name;
-	}
-
-	protected Key(String kind, Long id) {
-		this.kind = kind;
-		this.id = id;
+	protected String getNs() {
+		return ns;
 	}
 
 	public Key getParent() {

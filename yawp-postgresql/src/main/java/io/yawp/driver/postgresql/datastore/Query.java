@@ -7,6 +7,7 @@ import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.FieldModel;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.Namespace;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.QueryOrder;
@@ -95,14 +96,15 @@ public class Query {
 		StringBuilder sb = new StringBuilder();
 		sb.append(" where ");
 
+		sb.append(whereNamespace());
+
 		if (hasPropertyFilter()) {
+			sb.append(" and ");
 			sb.append(where(builder.getCondition()));
 		}
 
 		if (hasAncestorFilter()) {
-			if (hasPropertyFilter()) {
-				sb.append(" and ");
-			}
+			sb.append(" and ");
 			sb.append(whereAncestor());
 		}
 
@@ -125,6 +127,25 @@ public class Query {
 		String placeHolder = "p" + (whereBinds.size() + 1);
 		whereBinds.put(placeHolder, value);
 		return placeHolder;
+	}
+
+	private String whereNamespace() {
+		String ns = NamespaceManager.get();
+
+		if (Namespace.GLOBAL.equals(ns)) {
+			return whereGlobaleNamespace();
+		}
+
+		return whereNamespace(ns);
+	}
+
+	private String whereNamespace(String ns) {
+		String placeHolder = bindValue(ns);
+		return String.format("key->>'ns' = :%s", placeHolder);
+	}
+
+	private String whereGlobaleNamespace() {
+		return "(key->'ns') is null";
 	}
 
 	private String whereAncestor() {

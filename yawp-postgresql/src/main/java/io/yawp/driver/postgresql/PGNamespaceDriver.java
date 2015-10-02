@@ -1,19 +1,18 @@
 package io.yawp.driver.postgresql;
 
 import io.yawp.driver.api.NamespaceDriver;
+import io.yawp.driver.postgresql.datastore.NamespaceManager;
 
 public class PGNamespaceDriver implements NamespaceDriver {
 
 	@Override
 	public String get() {
-		// TODO Auto-generated method stub
-		return null;
+		return NamespaceManager.get();
 	}
 
 	@Override
 	public void set(String ns) {
-		// TODO Auto-generated method stub
-
+		NamespaceManager.set(ns);
 	}
 
 }

@@ -102,7 +102,7 @@ public class Query {
 	}
 
 	private boolean hasPropertyFilter() {
-		return builder.getCondition() != null;
+		return builder.getCondition() != null && builder.getCondition().hasPreFilter();
 	}
 
 	private String bindValue(Object value) {

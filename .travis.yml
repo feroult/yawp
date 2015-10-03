@@ -10,7 +10,7 @@ before_install:
 
 branches:
   only:
-    - master
+    - pg
 
 script: "mvn install -B"
 

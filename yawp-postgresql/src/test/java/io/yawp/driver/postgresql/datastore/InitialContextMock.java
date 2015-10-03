@@ -59,22 +59,12 @@ public class InitialContextMock implements InitialContextFactory {
 
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitialContextMock.class.getName());
 
-		BasicDataSource x = new BasicDataSource();
+		BasicDataSource ds = new BasicDataSource();
 
-		x.setDriverClassName("org.postgresql.Driver");
-		x.setUrl("jdbc:postgresql://localhost/yawp_test");
-		x.setMaxTotal(50);
-
-		PGConnectionPoolDataSource ds = new PGConnectionPoolDataSource();
+		ds.setDriverClassName("org.postgresql.Driver");
 		ds.setUrl("jdbc:postgresql://localhost/yawp_test");
-//		try {
-//			ds.setProperty("MaxConnections", "30");
-//		} catch (SQLException e) {
-//			throw new RuntimeException(e);
-//		}
-		// ds.setUser("MY_USER_NAME");
-		// ds.setPassword("MY_USER_PASSWORD");
+		ds.setMaxTotal(50);
 
-		bind("jdbc/yawp_test", x);
+		bind("jdbc/yawp_test", ds);
 	}
 }

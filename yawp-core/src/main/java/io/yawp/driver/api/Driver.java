@@ -4,7 +4,7 @@ import io.yawp.repository.Repository;
 
 public interface Driver {
 
-	void init(Repository r);
+	public void init(Repository r);
 
 	public PersistenceDriver persistence();
 

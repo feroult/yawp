@@ -28,7 +28,7 @@ public class EndpointTestCase extends Feature {
 	}
 
 	private TestHelper testHelperDriver(Repository r) {
-		return TestHelperFactory.getHelper();
+		return TestHelperFactory.getHelper(r);
 	}
 
 	protected void login(String username) {

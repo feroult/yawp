@@ -1,6 +1,11 @@
 package io.yawp.driver.postgresql;
 
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.driver.api.PersistenceDriver;
+import io.yawp.driver.postgresql.datastore.Datastore;
+import io.yawp.driver.postgresql.datastore.Entity;
+import io.yawp.driver.postgresql.datastore.Key;
+import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.repository.FieldModel;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
@@ -8,25 +13,20 @@ import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.Repository;
 
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 
-public class PostgreSQLPersistenceDriver implements PersistenceDriver {
+public class PGPersistenceDriver implements PersistenceDriver {
 
 	private Repository r;
 
-	public PostgreSQLPersistenceDriver(Repository r) {
+	private Datastore datastore;
+
+	public PGPersistenceDriver(Repository r, ConnectionManager connectionManager) {
 		this.r = r;
-	}
-
-	private Datastore datastore() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private Datastore asyncDatastore() {
-		// TODO Auto-generated method stub
-		return null;
+		this.datastore = Datastore.create(connectionManager);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class PostgreSQLPersistenceDriver implements PersistenceDriver {
 
 	@Override
 	public void destroy(IdRef<?> id) {
-		datastore().delete(IdRefToKey.toKey(r, id));
+		datastore.delete(IdRefToKey.toKey(r, id));
 	}
 
 	private Entity createEntity(ObjectHolder objectHolder) {
@@ -70,18 +70,15 @@ public class PostgreSQLPersistenceDriver implements PersistenceDriver {
 	}
 
 	private void saveEntity(ObjectHolder objectHolder, Entity entity) {
-		Key key = datastore().put(entity);
+		Key key = datastore.put(entity);
 		objectHolder.setId(IdRefToKey.toIdRef(r, key));
 	}
 
 	@SuppressWarnings("unchecked")
 	private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectHolder, Entity entity) {
-		// Future<Key> futureKey = asyncDatastore().put(entity);
-		// //return new FutureObject<T>(r, new FutureIdRef(r, futureKey), (T)
-		// objectHolder.getObject());
-		// return new FutureObject<T>(r, new FutureIdRef(r, futureKey), (T)
-		// objectHolder.getObject());
-		return null;
+		Key key = datastore.put(entity);
+		Future<?> futureId = ConcurrentUtils.constantFuture(IdRefToKey.toIdRef(r, key));
+		return new FutureObject<T>(r, (Future<IdRef<?>>) futureId, (T) objectHolder.getObject());
 	}
 
 	public void toEntity(ObjectHolder objectHolder, Entity entity) {
@@ -100,18 +97,17 @@ public class PostgreSQLPersistenceDriver implements PersistenceDriver {
 		Object value = getFieldValue(fieldModel, objectHolder);
 
 		if (!fieldModel.hasIndex()) {
-			// entity.setUnindexedProperty(fieldModel.getName(), value);
+			entity.setUnindexedProperty(fieldModel.getName(), value);
 			return;
 		}
 
 		if (fieldModel.isIndexNormalizable()) {
-			// entity.setProperty(NORMALIZED_FIELD_PREFIX +
-			// fieldModel.getName(), normalizeValue(value));
-			// entity.setUnindexedProperty(fieldModel.getName(), value);
+			entity.setProperty(Entity.NORMALIZED_FIELD_PREFIX + fieldModel.getName(), normalizeValue(value));
+			entity.setUnindexedProperty(fieldModel.getName(), value);
 			return;
 		}
 
-		// entity.setProperty(fieldModel.getName(), value);
+		entity.setProperty(fieldModel.getName(), value);
 	}
 
 	private Object getFieldValue(FieldModel fieldModel, ObjectHolder objectHolder) {
@@ -126,8 +122,7 @@ public class PostgreSQLPersistenceDriver implements PersistenceDriver {
 		}
 
 		if (fieldModel.isSaveAsJson()) {
-			// return new Text(JsonUtils.to(value));
-			return null;
+			return JsonUtils.to(value);
 		}
 
 		if (fieldModel.isIdRef()) {
@@ -136,8 +131,7 @@ public class PostgreSQLPersistenceDriver implements PersistenceDriver {
 		}
 
 		if (fieldModel.isSaveAsText()) {
-			// return new Text(value.toString());
-			return null;
+			return value.toString();
 		}
 
 		return value;

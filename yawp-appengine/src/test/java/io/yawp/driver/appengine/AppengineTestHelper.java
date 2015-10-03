@@ -1,6 +1,7 @@
 package io.yawp.driver.appengine;
 
 import io.yawp.driver.api.TestHelper;
+import io.yawp.repository.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,10 @@ import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig
 public class AppengineTestHelper implements TestHelper {
 
 	private LocalServiceTestHelper helper;
+
+	@Override
+	public void init(Repository r) {
+	}
 
 	@Override
 	public void setUp() {

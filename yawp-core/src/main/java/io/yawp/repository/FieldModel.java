@@ -65,6 +65,10 @@ public class FieldModel {
 		return IdRef.class.isAssignableFrom(field.getType());
 	}
 
+	public boolean isCollection() {
+		return Collection.class.isAssignableFrom(field.getType());
+	}
+
 	public boolean isSaveAsJson() {
 		return field.getAnnotation(Json.class) != null;
 	}
@@ -77,8 +81,20 @@ public class FieldModel {
 		return field.getAnnotation(Index.class);
 	}
 
+	public boolean isNumber() {
+		if (Number.class.isAssignableFrom(field.getType())) {
+			return true;
+		}
+		String name = field.getType().getName();
+		return name.equals("int") || name.equals("long") || name.equals("double");
+	}
+
 	public boolean isInt() {
 		return Integer.class.isAssignableFrom(field.getType()) || field.getType().getName().equals("int");
+	}
+
+	public boolean isLong() {
+		return Long.class.isAssignableFrom(field.getType()) || field.getType().getName().equals("long");
 	}
 
 	public boolean isDate() {

@@ -1,5 +1,6 @@
-package io.yawp.driver.postgresql;
+package io.yawp.driver.postgresql.datastore;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -8,6 +9,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
+
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.postgresql.ds.PGConnectionPoolDataSource;
 
 public class InitialContextMock implements InitialContextFactory {
 
@@ -46,5 +50,21 @@ public class InitialContextMock implements InitialContextFactory {
 		} catch (NamingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static void configure() {
+		if (System.getProperty(Context.INITIAL_CONTEXT_FACTORY) != null) {
+			return;
+		}
+
+		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitialContextMock.class.getName());
+
+		BasicDataSource ds = new BasicDataSource();
+
+		ds.setDriverClassName("org.postgresql.Driver");
+		ds.setUrl("jdbc:postgresql://localhost/yawp_test");
+		ds.setMaxTotal(50);
+
+		bind("jdbc/yawp_test", ds);
 	}
 }

@@ -20,7 +20,7 @@
         <module>yawp-core</module>
         <module>yawp-appengine</module>
         <module>yawp-postgresql</module>
-        <module>yawp-maven-plugin</module>
+        <!--module>yawp-maven-plugin</module-->
   </modules>
 
     <build>

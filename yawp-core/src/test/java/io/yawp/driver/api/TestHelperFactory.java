@@ -6,18 +6,33 @@ import java.util.ServiceLoader;
 
 public class TestHelperFactory {
 
-	public static TestHelper getHelper(Repository r) {
-		TestHelper helper = lookup();
-		helper.init(r);
+	public static TestHelper getTestHelper(Repository r) {
+		TestHelper helper = lookup(TestHelper.class);
+
+		if (helper == null) {
+			throw new RuntimeException(String.format("No yawp %s helper found!", TestHelper.class.getSimpleName()));
+		}
+
+		if (r != null) {
+			helper.init(r);
+		}
 		return helper;
 	}
 
-	private static TestHelper lookup() {
-		ServiceLoader<TestHelper> helpers = ServiceLoader.load(TestHelper.class);
-		for (TestHelper helper : helpers) {
-			return helper;
-		}
-		throw new RuntimeException("No yawp test helper driver found!");
+	public static TestHelper getTestHelper() {
+		return getTestHelper(null);
 	}
 
+	public static DevServerHelper getDevServerHelper() {
+		DevServerHelper helper = lookup(DevServerHelper.class);
+		return helper;
+	}
+
+	private static <T> T lookup(Class<T> clazz) {
+		ServiceLoader<T> helpers = ServiceLoader.load(clazz);
+		for (T helper : helpers) {
+			return helper;
+		}
+		return null;
+	}
 }

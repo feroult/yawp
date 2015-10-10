@@ -1,7 +1,4 @@
-package io.yawp.plugin;
-
-import io.yawp.driver.api.DevServerHelper;
-import io.yawp.driver.api.TestHelperFactory;
+package io.yawp.driver.appengine;
 
 import java.io.IOException;
 
@@ -12,25 +9,25 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-public class DriverFilter implements Filter {
-
-	private DevServerHelper helper;
+public class AppengineDevServerFilter implements Filter {
 
 	@Override
-	public void destroy() {
+	public void init(FilterConfig filterConfig) throws ServletException {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		if (helper != null) {
-			helper.setup();
-		}
+		// TODO Auto-generated method stub
+		System.out.println("haaa");
 		chain.doFilter(request, response);
 	}
 
 	@Override
-	public void init(FilterConfig config) throws ServletException {
-		this.helper = TestHelperFactory.getDevServerHelper();
+	public void destroy() {
+		// TODO Auto-generated method stub
+
 	}
 
 }

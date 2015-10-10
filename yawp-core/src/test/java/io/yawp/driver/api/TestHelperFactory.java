@@ -9,10 +9,6 @@ public class TestHelperFactory {
 	public static TestHelper getTestHelper(Repository r) {
 		TestHelper helper = lookup(TestHelper.class);
 
-		if (helper == null) {
-			throw new RuntimeException(String.format("No yawp %s helper found!", TestHelper.class.getSimpleName()));
-		}
-
 		if (r != null) {
 			helper.init(r);
 		}
@@ -23,16 +19,11 @@ public class TestHelperFactory {
 		return getTestHelper(null);
 	}
 
-	public static DevServerHelper getDevServerHelper() {
-		DevServerHelper helper = lookup(DevServerHelper.class);
-		return helper;
-	}
-
 	private static <T> T lookup(Class<T> clazz) {
 		ServiceLoader<T> helpers = ServiceLoader.load(clazz);
 		for (T helper : helpers) {
 			return helper;
 		}
-		return null;
+		throw new RuntimeException(String.format("No yawp %s helper found!", TestHelper.class.getSimpleName()));
 	}
 }

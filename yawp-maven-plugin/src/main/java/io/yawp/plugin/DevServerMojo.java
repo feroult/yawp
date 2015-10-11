@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -58,16 +59,22 @@ public class DevServerMojo extends AbstractMojo {
 
 	private URLClassLoader createClassLoader() {
 		try {
-			List<String> elements = project.getRuntimeClasspathElements();
-			URL[] runtimeUrls = new URL[elements.size()];
-			for (int i = 0; i < elements.size(); i++) {
-				String element = (String) elements.get(i);
-				runtimeUrls[i] = new File(element).toURI().toURL();
-			}
-			URLClassLoader newLoader = new URLClassLoader(runtimeUrls, Thread.currentThread().getContextClassLoader());
+			List<URL> runtimeUrls = new ArrayList<URL>();
+			addURLs(project.getCompileClasspathElements(), runtimeUrls);
+			addURLs(project.getRuntimeClasspathElements(), runtimeUrls);
+			URLClassLoader newLoader = new URLClassLoader(runtimeUrls.toArray(new URL[] {}), Thread.currentThread().getContextClassLoader());
 			return newLoader;
 		} catch (DependencyResolutionRequiredException | MalformedURLException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	private void addURLs(List<String> runtimeClasspathElements, List<URL> runtimeUrls) throws MalformedURLException {
+		List<String> elements = runtimeClasspathElements;
+		for (int i = 0; i < elements.size(); i++) {
+			String element = (String) elements.get(i);
+			runtimeUrls.add(new File(element).toURI().toURL());
+			System.out.println("file: " + element);
 		}
 	}
 

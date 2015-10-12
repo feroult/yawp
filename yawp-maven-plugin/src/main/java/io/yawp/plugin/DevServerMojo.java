@@ -27,6 +27,7 @@ public class DevServerMojo extends PluginAbstractMojo {
 
 	private void init() {
 		this.appengine = new AppengineDevServer(this);
+		// createClassLoader(appengine.getClassPathElements());
 	}
 
 	private void start() {
@@ -49,8 +50,10 @@ public class DevServerMojo extends PluginAbstractMojo {
 		WebAppContext webapp = new WebAppContext(rootPath, "");
 
 		webapp.setDefaultsDescriptor(null);
-		webapp.setParentLoaderPriority(true);
-		// webapp.setClassLoader(createClassLoader());
+
+		//webapp.setParentLoaderPriority(true);
+		webapp.setClassLoader(createClassLoader(appengine.getClassPathElements()));
+		// createClassLoader(appengine.getClassPathElements());
 
 		// TODO: check if its appengine environment
 		appengine.configure(webapp);

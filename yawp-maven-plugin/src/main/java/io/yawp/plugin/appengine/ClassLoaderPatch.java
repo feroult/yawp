@@ -24,12 +24,12 @@ public class ClassLoaderPatch {
 
 	public static void addURL(URL url) {
 		try {
-			URLClassLoader systemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+			URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
 			Class<?> clazz = URLClassLoader.class;
 
 			Method method = clazz.getDeclaredMethod("addURL", parameters);
 			method.setAccessible(true);
-			method.invoke(systemClassLoader, new Object[] { url });
+			method.invoke(classLoader, new Object[] { url });
 
 		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);

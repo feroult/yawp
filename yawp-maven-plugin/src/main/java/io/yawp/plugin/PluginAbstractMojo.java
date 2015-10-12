@@ -1,5 +1,7 @@
 package io.yawp.plugin;
 
+import io.yawp.plugin.appengine.ClassLoaderPatch;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,23 +36,30 @@ public abstract class PluginAbstractMojo extends AbstractMojo {
 	protected MavenProject project;
 
 	protected URLClassLoader createClassLoader() {
+		return createClassLoader(new ArrayList<String>());
+	}
+
+	protected URLClassLoader createClassLoader(List<String> customClasspathElements) {
 		try {
-			List<URL> runtimeUrls = new ArrayList<URL>();
-			addURLs(project.getCompileClasspathElements(), runtimeUrls);
-			addURLs(project.getRuntimeClasspathElements(), runtimeUrls);
-			URLClassLoader newLoader = new URLClassLoader(runtimeUrls.toArray(new URL[] {}), Thread.currentThread().getContextClassLoader());
-			return newLoader;
+			List<URL> urls = new ArrayList<URL>();
+
+			addURLs(project.getRuntimeClasspathElements(), urls);
+			addURLs(customClasspathElements, urls);
+
+			return new URLClassLoader(urls.toArray(new URL[] {}), Thread.currentThread().getContextClassLoader());
 		} catch (DependencyResolutionRequiredException | MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected void addURLs(List<String> runtimeClasspathElements, List<URL> runtimeUrls) throws MalformedURLException {
-		List<String> elements = runtimeClasspathElements;
+	protected void addURLs(List<String> classpathElements, List<URL> runtimeUrls) throws MalformedURLException {
+		List<String> elements = classpathElements;
 		for (int i = 0; i < elements.size(); i++) {
 			String element = (String) elements.get(i);
 			runtimeUrls.add(new File(element).toURI().toURL());
-			System.out.println("file: " + element);
+			getLog().info("Adding to webapp classpath: " + element);
+
+			//ClassLoaderPatch.addFile(element);
 		}
 	}
 

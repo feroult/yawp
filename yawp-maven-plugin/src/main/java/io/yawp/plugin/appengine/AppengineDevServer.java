@@ -51,7 +51,7 @@ public class AppengineDevServer {
 	}
 
 	private void addAppengineServlets(WebAppContext webapp) {
-		//webapp.addServlet(servletClass("com.google.apphosting.utils.servlet.DatastoreViewerServlet"), "/_ah/admin");
+		webapp.addServlet(servletClass("com.google.apphosting.utils.servlet.DatastoreViewerServlet"), "/_ah/admin");
 	}
 
 	@SuppressWarnings("unchecked")

@@ -1,4 +1,4 @@
-package io.yawp.plugin;
+package io.yawp.plugin.appengine;
 
 import java.io.IOException;
 import java.util.HashMap;

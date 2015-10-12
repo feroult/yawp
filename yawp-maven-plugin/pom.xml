@@ -43,13 +43,13 @@
 			<artifactId>jetty-server</artifactId>
 			<version>${jettyVersion}</version>
 			<scope>compile</scope>
-<!-- 			<exclusions>
+			<exclusions>
 				<exclusion>
 					<groupId>org.eclipse.jetty.orbit</groupId>
 					<artifactId>javax.servlet</artifactId>
 				</exclusion>
 			</exclusions>
- -->		</dependency>
+		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>

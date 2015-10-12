@@ -68,8 +68,8 @@ public class AppengineDevServer {
 		// elements.add("/Users/fernando/.m2/repository/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar");
 		// elements.add("/Users/fernando/.m2/repository/org/eclipse/jetty/orbit/javax.servlet/2.5.0.v201103041518/javax.servlet-2.5.0.v201103041518.jar");
 		// elements.add("/Users/fernando/.m2/repository/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016.jar");
-		//elements.add(sdkRoot + "/lib/shared/servlet-api.jar");
-		//elements.add(sdkRoot + "/lib/shared/appengine-local-runtime-shared.jar");
+		elements.add(sdkRoot + "/lib/shared/servlet-api.jar");
+		elements.add(sdkRoot + "/lib/shared/appengine-local-runtime-shared.jar");
 		return elements;
 	}
 }

@@ -1,6 +1,11 @@
 package io.yawp.plugin;
 
 import io.yawp.plugin.appengine.AppengineDevServer;
+import io.yawp.plugin.appengine.ClassLoaderPatch;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -27,7 +32,7 @@ public class DevServerMojo extends PluginAbstractMojo {
 
 	private void init() {
 		this.appengine = new AppengineDevServer(this);
-		// createClassLoader(appengine.getClassPathElements());
+		ClassLoaderPatch.addFiles(appengine.getClassPathElements());
 	}
 
 	private void start() {
@@ -51,7 +56,7 @@ public class DevServerMojo extends PluginAbstractMojo {
 
 		webapp.setDefaultsDescriptor(null);
 
-		//webapp.setParentLoaderPriority(true);
+		// webapp.setParentLoaderPriority(true);
 		webapp.setClassLoader(createClassLoader(appengine.getClassPathElements()));
 		// createClassLoader(appengine.getClassPathElements());
 

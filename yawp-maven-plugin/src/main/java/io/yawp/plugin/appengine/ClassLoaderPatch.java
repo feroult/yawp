@@ -6,9 +6,16 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
 
 public class ClassLoaderPatch {
 	private static final Class<?>[] parameters = new Class[] { URL.class };
+
+	public static void addFiles(List<String> paths) {
+		for (String path : paths) {
+			addFile(path);
+		}
+	}
 
 	public static void addFile(String path) {
 		addFile(new File(path));
@@ -35,4 +42,5 @@ public class ClassLoaderPatch {
 			throw new RuntimeException(e);
 		}
 	}
+
 }

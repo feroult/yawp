@@ -2,8 +2,6 @@ package io.yawp.driver.appengine;
 
 import io.yawp.driver.api.HelpersDriver;
 
-import javax.servlet.Filter;
-
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -20,11 +18,6 @@ public class AppengineHelpersDriver implements HelpersDriver {
 		for (Entity entity : pq.asIterable()) {
 			datastore.delete(entity.getKey());
 		}
-	}
-
-	@Override
-	public Filter getDevServerFilter() {
-		return new AppengineDevServerFilter();
 	}
 
 }

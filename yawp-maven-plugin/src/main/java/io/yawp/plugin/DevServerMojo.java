@@ -50,7 +50,8 @@ public class DevServerMojo extends AbstractMojo {
 	private WebAppContext createWebApp(String rootPath) {
 		WebAppContext webapp = new WebAppContext(rootPath, "");
 
-		webapp.setClassLoader(createClassLoader());
+		webapp.setParentLoaderPriority(true);
+		//webapp.setClassLoader(createClassLoader());
 
 		webapp.setDefaultsDescriptor(null);
 		addDevServerFilter(webapp);
@@ -79,7 +80,7 @@ public class DevServerMojo extends AbstractMojo {
 	}
 
 	private void addDevServerFilter(WebAppContext webapp) {
-		webapp.addFilter(DevServerFilterProxy.class, "/*", EnumSet.allOf(DispatcherType.class));
+		webapp.addFilter(AppengineDevServerFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
 	}
 
 	private int getPort() {

@@ -1,4 +1,4 @@
-package io.yawp.driver.appengine;
+package io.yawp.plugin;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public class AppengineDevServerFilter implements Filter {
 	}
 
 	private LocalServiceTestHelper createHelper() {
-		LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), new LocalDatastoreServiceTestConfig());
+		LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), createDatastoreServiceTestConfig());
 		helper.setEnvIsLoggedIn(true);
 		Map<String, Object> envs = new HashMap<String, Object>();
 		helper.setEnvAttributes(envs);
@@ -52,6 +52,13 @@ public class AppengineDevServerFilter implements Filter {
 		helper.setEnvEmail("test@localhost");
 		helper.setUp();
 		return helper;
+	}
+
+	private LocalDatastoreServiceTestConfig createDatastoreServiceTestConfig() {
+		LocalDatastoreServiceTestConfig config = new LocalDatastoreServiceTestConfig();
+		config.setNoStorage(false);
+		config.setBackingStoreLocation("target/appengine-generated/local_db.bin");
+		return config;
 	}
 
 }

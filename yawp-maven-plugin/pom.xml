@@ -16,6 +16,8 @@
 
 	<properties>
 		<jettyVersion>8.1.18.v20150929</jettyVersion>
+		<appengine.app.version>1</appengine.app.version>
+		<appengine.target.version>1.9.25</appengine.target.version>
 	</properties>
 
 	<dependencies>
@@ -50,6 +52,28 @@
 			<groupId>io.yawp</groupId>
 			<artifactId>yawp-core</artifactId>
 			<version>1.3</version>
+		</dependency>
+
+		<!-- Appengine devserver dependencies -->
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-api-1.0-sdk</artifactId>
+			<version>${appengine.target.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-api-labs</artifactId>
+			<version>${appengine.target.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-testing</artifactId>
+			<version>${appengine.target.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-api-stubs</artifactId>
+			<version>${appengine.target.version}</version>
 		</dependency>
 	</dependencies>
 

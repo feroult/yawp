@@ -39,6 +39,8 @@ public class DevServerMojo extends AbstractMojo {
 		Server server = new Server(port);
 		server.setHandler(createWebApp(rootPath));
 
+		// TODO: configure hot deploy
+
 		try {
 			server.start();
 			server.join();
@@ -51,13 +53,14 @@ public class DevServerMojo extends AbstractMojo {
 		WebAppContext webapp = new WebAppContext(rootPath, "");
 
 		webapp.setParentLoaderPriority(true);
-		//webapp.setClassLoader(createClassLoader());
+		// webapp.setClassLoader(createClassLoader());
 
 		webapp.setDefaultsDescriptor(null);
 		addDevServerFilter(webapp);
 		return webapp;
 	}
 
+	@SuppressWarnings("unused")
 	private URLClassLoader createClassLoader() {
 		try {
 			List<URL> runtimeUrls = new ArrayList<URL>();
@@ -80,6 +83,8 @@ public class DevServerMojo extends AbstractMojo {
 	}
 
 	private void addDevServerFilter(WebAppContext webapp) {
+		// TODO: check if its appengine environment
+		// TODO: add support do admin/login appengine servlets
 		webapp.addFilter(AppengineDevServerFilter.class, "/*", EnumSet.allOf(DispatcherType.class));
 	}
 

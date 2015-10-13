@@ -1,14 +1,13 @@
 package io.yawp.plugin;
 
-import io.yawp.plugin.appengine.AppengineDevServer;
-import io.yawp.plugin.appengine.ClassLoaderPatch;
+import io.yawp.plugin.appengine.AppengineDevServerHelper;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.webapp.WebAppContext;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.webapp.WebAppContext;
 
 @Mojo(name = "devserver", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class DevServerMojo extends PluginAbstractMojo {
@@ -19,7 +18,7 @@ public class DevServerMojo extends PluginAbstractMojo {
 	@Parameter(defaultValue = "8080")
 	private String port;
 
-	private AppengineDevServer appengine;
+	private AppengineDevServerHelper appengine;
 
 	public void execute() throws MojoExecutionException {
 		init();
@@ -27,20 +26,8 @@ public class DevServerMojo extends PluginAbstractMojo {
 	}
 
 	private void init() {
-		this.appengine = new AppengineDevServer(this);
-
-		ClassLoaderPatch.addFile(appengine.getSdkRoot() + "/lib/shared/servlet-api.jar");
-
-		// ClassLoaderPatch.addFiles(appengine.getClassPathElements());
-		// ClassLoaderPatch
-		// .addFile("/Users/fernando/.m2/repository/com/google/appengine/appengine-api-1.0-sdk/1.9.25/appengine-api-1.0-sdk-1.9.25.jar");
-		// ClassLoaderPatch
-		// .addFile("/Users/fernando/.m2/repository/com/google/appengine/appengine-api-labs/1.9.25/appengine-api-labs-1.9.25.jar");
-		// ClassLoaderPatch
-		// .addFile("/Users/fernando/.m2/repository/com/google/appengine/appengine-testing/1.9.25/appengine-testing-1.9.25.jar");
-		//
-		// ClassLoaderPatch
-		// .addFile("/Users/fernando/.m2/repository/com/google/appengine/appengine-api-stubs/1.9.25/appengine-api-stubs-1.9.25.jar");
+		// TODO: check if its appengine environment
+		this.appengine = new AppengineDevServerHelper(this);
 	}
 
 	private void start() {
@@ -62,13 +49,9 @@ public class DevServerMojo extends PluginAbstractMojo {
 	private WebAppContext createWebApp(String rootPath) {
 		WebAppContext webapp = new WebAppContext(rootPath, "");
 
-		webapp.setDefaultsDescriptor(null);
-
-		webapp.setParentLoaderPriority(true);
+		webapp.setDefaultsDescriptor("/webdefault-appengine.xml");
 		webapp.setClassLoader(createClassLoader(appengine.getClassPathElements()));
-		// createClassLoader(appengine.getClassPathElements());
 
-		// TODO: check if its appengine environment
 		appengine.configure(webapp);
 
 		return webapp;

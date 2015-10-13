@@ -16,6 +16,8 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
 import com.google.apphosting.api.ApiProxy;
 import com.google.apphosting.api.ApiProxy.Environment;
+import com.google.apphosting.utils.config.AppEngineWebXml;
+import com.google.apphosting.utils.config.AppEngineWebXmlReader;
 
 public class AppengineDevServerFilter implements Filter {
 
@@ -30,6 +32,13 @@ public class AppengineDevServerFilter implements Filter {
 			environment = ApiProxy.getCurrentEnvironment();
 		}
 		filterConfig.getServletContext().setAttribute("com.google.appengine.devappserver.ApiProxyLocal", ApiProxy.getDelegate());
+		filterConfig.getServletContext().setAttribute("com.google.appengine.tools.development.appEngineWebXml",
+				readAppengineWebXml(filterConfig));
+	}
+
+	private AppEngineWebXml readAppengineWebXml(FilterConfig filterConfig) {
+		AppEngineWebXmlReader reader = new AppEngineWebXmlReader(filterConfig.getServletContext().getRealPath("."));
+		return reader.readAppEngineWebXml();
 	}
 
 	@Override

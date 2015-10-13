@@ -1,7 +1,5 @@
 package io.yawp.plugin;
 
-import io.yawp.plugin.appengine.ClassLoaderPatch;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -57,7 +55,7 @@ public abstract class PluginAbstractMojo extends AbstractMojo {
 		for (int i = 0; i < elements.size(); i++) {
 			String element = (String) elements.get(i);
 			runtimeUrls.add(new File(element).toURI().toURL());
-			getLog().info("Adding to webapp classpath: " + element);
+			getLog().debug("Adding to webapp classpath: " + element);
 		}
 	}
 

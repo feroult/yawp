@@ -3,10 +3,6 @@ package io.yawp.plugin;
 import io.yawp.plugin.appengine.AppengineDevServer;
 import io.yawp.plugin.appengine.ClassLoaderPatch;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -32,7 +28,19 @@ public class DevServerMojo extends PluginAbstractMojo {
 
 	private void init() {
 		this.appengine = new AppengineDevServer(this);
-		ClassLoaderPatch.addFiles(appengine.getClassPathElements());
+
+		ClassLoaderPatch.addFile(appengine.getSdkRoot() + "/lib/shared/servlet-api.jar");
+
+		// ClassLoaderPatch.addFiles(appengine.getClassPathElements());
+		// ClassLoaderPatch
+		// .addFile("/Users/fernando/.m2/repository/com/google/appengine/appengine-api-1.0-sdk/1.9.25/appengine-api-1.0-sdk-1.9.25.jar");
+		// ClassLoaderPatch
+		// .addFile("/Users/fernando/.m2/repository/com/google/appengine/appengine-api-labs/1.9.25/appengine-api-labs-1.9.25.jar");
+		// ClassLoaderPatch
+		// .addFile("/Users/fernando/.m2/repository/com/google/appengine/appengine-testing/1.9.25/appengine-testing-1.9.25.jar");
+		//
+		// ClassLoaderPatch
+		// .addFile("/Users/fernando/.m2/repository/com/google/appengine/appengine-api-stubs/1.9.25/appengine-api-stubs-1.9.25.jar");
 	}
 
 	private void start() {
@@ -56,7 +64,7 @@ public class DevServerMojo extends PluginAbstractMojo {
 
 		webapp.setDefaultsDescriptor(null);
 
-		// webapp.setParentLoaderPriority(true);
+		webapp.setParentLoaderPriority(true);
 		webapp.setClassLoader(createClassLoader(appengine.getClassPathElements()));
 		// createClassLoader(appengine.getClassPathElements());
 

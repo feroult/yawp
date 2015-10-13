@@ -51,7 +51,8 @@ public class AppengineDevServer {
 	}
 
 	private void addAppengineServlets(WebAppContext webapp) {
-		webapp.addServlet(servletClass("com.google.apphosting.utils.servlet.DatastoreViewerServlet"), "/_ah/admin");
+		// webapp.addServlet(servletClass("com.google.apphosting.utils.servlet.DatastoreViewerServlet"),
+		// "/_ah/admin");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -68,8 +69,21 @@ public class AppengineDevServer {
 		// elements.add("/Users/fernando/.m2/repository/javax/servlet/servlet-api/2.5/servlet-api-2.5.jar");
 		// elements.add("/Users/fernando/.m2/repository/org/eclipse/jetty/orbit/javax.servlet/2.5.0.v201103041518/javax.servlet-2.5.0.v201103041518.jar");
 		// elements.add("/Users/fernando/.m2/repository/org/eclipse/jetty/orbit/javax.servlet/3.0.0.v201112011016/javax.servlet-3.0.0.v201112011016.jar");
-		elements.add(sdkRoot + "/lib/shared/servlet-api.jar");
+		// elements.add(sdkRoot + "/lib/shared/servlet-api.jar");
+		elements.add(sdkRoot + "/lib/shared/jsp-api.jar");
+		elements.add(sdkRoot + "/lib/shared/el-api.jar");
+		elements.add(sdkRoot + "/lib/shared/jsp/repackaged-appengine-jasper-el-6.0.29.jar");
+		elements.add(sdkRoot + "/lib/shared/jsp/repackaged-appengine-jasper-6.0.29.jar");
+		elements.add(sdkRoot + "/lib/shared/jsp/repackaged-appengine-tomcat-juli-6.0.29.jar");
+		elements.add(sdkRoot + "/lib/tools/jsp/repackaged-appengine-jakarta-standard-1.1.2.jar");
+		elements.add(sdkRoot + "/lib/java-managed-vm/appengine-java-vmruntime/lib/jsp/taglibs-standard-spec-1.2.3.jar");
+		// elements.add(sdkRoot +
+		// "/lib/shared/jsp/repackaged-appengine-jasper-el-6.0.29.jar");
 		elements.add(sdkRoot + "/lib/shared/appengine-local-runtime-shared.jar");
 		return elements;
+	}
+
+	public String getSdkRoot() {
+		return sdkRoot;
 	}
 }

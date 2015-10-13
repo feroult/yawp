@@ -58,8 +58,6 @@ public abstract class PluginAbstractMojo extends AbstractMojo {
 			String element = (String) elements.get(i);
 			runtimeUrls.add(new File(element).toURI().toURL());
 			getLog().info("Adding to webapp classpath: " + element);
-
-			//ClassLoaderPatch.addFile(element);
 		}
 	}
 

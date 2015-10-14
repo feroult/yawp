@@ -45,6 +45,7 @@ public class SdkResolver {
 	private static final String SDK_ARTIFACT_ID = "appengine-java-sdk";
 	private static final String SDK_EXTENSION = "zip";
 
+	@SuppressWarnings("unchecked")
 	public static File getSdk(MavenProject project, RepositorySystem repoSystem, RepositorySystemSession repoSession,
 			List<RemoteRepository>... repos) throws MojoExecutionException {
 		Artifact artifact = (Artifact) find(project.getPluginArtifacts(), new Predicate<Artifact>() {
@@ -92,6 +93,7 @@ public class SdkResolver {
 		return version;
 	}
 
+	@SuppressWarnings({ "unchecked", "resource" })
 	public static File getSdk(String version, RepositorySystem repoSystem, RepositorySystemSession repoSession,
 			List<RemoteRepository>... repos) throws MojoExecutionException {
 

@@ -5,12 +5,14 @@ unset MAVEN_OPTS
 
 echo "test!"
 
+cd ../yawp-appengine
+
 echo "stopping devserver..."
-(cd ../yawp-appengine; mvn yawp:devserver_stop $MAVEN_ARGS)
+mvn yawp:devserver_stop $MAVEN_ARGS
 echo "done."
 
 echo "starting devserver..."
-(cd ../yawp-appengine; mvn yawp:devserver $MAVEN_ARGS &)
+mvn yawp:devserver $MAVEN_ARGS &
 sleep 5
 echo "done."
 

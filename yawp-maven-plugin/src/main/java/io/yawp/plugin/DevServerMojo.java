@@ -1,42 +1,45 @@
 package io.yawp.plugin;
 
-import io.yawp.plugin.appengine.AppengineDevServerHelper;
+import io.yawp.plugin.appengine.AppengineWebAppContextHelper;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.webapp.WebAppContext;
 
 @Mojo(name = "devserver", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class DevServerMojo extends PluginAbstractMojo {
 
 	@Parameter(defaultValue = "${basedir}/src/main/webapp")
-	private String appDir;
+	protected String appDir;
 
 	@Parameter(defaultValue = "8080")
 	private String port;
 
-	private AppengineDevServerHelper appengine;
+	@Parameter(defaultValue = "3")
+	private String fullScanSeconds;
+
+	@Parameter(defaultValue = "${basedir}/target/classes")
+	protected String hotDeployDir;
+
+	private WebAppContextHelper helper;
 
 	public void execute() throws MojoExecutionException {
-		init();
-		start();
+		initHelper();
+		startServer();
 	}
 
-	private void init() {
-		// TODO: check if its appengine environment
-		this.appengine = new AppengineDevServerHelper(this);
+	private void initHelper() {
+		// TODO: check if its helper environment
+		this.helper = new AppengineWebAppContextHelper(this);
 	}
 
-	private void start() {
+	private void startServer() {
 		getLog().info("Starting webserver at: " + appDir);
 
 		Server server = new Server(getPort());
-		server.setHandler(createWebApp(appDir));
-
-		// TODO: configure hot deploy
+		server.setHandler(helper.createWebApp());
 
 		try {
 			server.start();
@@ -46,19 +49,19 @@ public class DevServerMojo extends PluginAbstractMojo {
 		}
 	}
 
-	private WebAppContext createWebApp(String rootPath) {
-		WebAppContext webapp = new WebAppContext(rootPath, "");
-
-		webapp.setDefaultsDescriptor("/webdefault-appengine.xml");
-		webapp.setClassLoader(createClassLoader(appengine.getClassPathElements()));
-
-		appengine.configure(webapp);
-
-		return webapp;
+	public String getAppDir() {
+		return appDir;
 	}
 
-	private int getPort() {
+	public String getHotDeployDir() {
+		return hotDeployDir;
+	}
+
+	public int getPort() {
 		return Integer.valueOf(port);
 	}
 
+	public int getFullScanSeconds() {
+		return Integer.valueOf(fullScanSeconds);
+	}
 }

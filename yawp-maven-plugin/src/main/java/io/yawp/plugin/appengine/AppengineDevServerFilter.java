@@ -49,7 +49,9 @@ public class AppengineDevServerFilter implements Filter {
 
 	@Override
 	public void destroy() {
+		ApiProxy.setEnvironmentForCurrentThread(environment);
 		helper.tearDown();
+		environment = null;
 	}
 
 	private LocalServiceTestHelper createHelper() {

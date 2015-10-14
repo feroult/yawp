@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MAVEN_ARGS="-Dmaven.test.skip=true -Dyawp.port=8081 -Dyawp.shutdownPort=8331"
+MAVEN_ARGS="-Dyawp.port=8081 -Dyawp.shutdownPort=8331"
 unset MAVEN_OPTS
 
 echo "stopping devserver..."

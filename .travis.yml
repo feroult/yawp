@@ -12,7 +12,7 @@ branches:
   only:
     - master
 
-script: "mvn install -B"
+script: "mvn install -B -X"
 
 notifications:
   email:

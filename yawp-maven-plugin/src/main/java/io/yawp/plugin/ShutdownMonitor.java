@@ -13,6 +13,8 @@ public class ShutdownMonitor extends Thread {
 
 	public static final String DEFAULT_PORT = "8359";
 
+	public static final String SHUTDOWN_MESSAGE = "shutdown";
+
 	private DevServerMojo mojo;
 
 	private ServerSocket socket;
@@ -38,20 +40,27 @@ public class ShutdownMonitor extends Thread {
 	@Override
 	public void run() {
 		try {
-			getShutdownMessage();
+			while (true) {
+				if (getShutdownMessage()) {
+					break;
+				}
+			}
+
+			socket.close();
+			getLog().info("Stopping devserver...");
 			mojo.shutdown();
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	private void getShutdownMessage() throws IOException {
+	private boolean getShutdownMessage() throws IOException {
 		Socket accept = socket.accept();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(accept.getInputStream()));
-		reader.readLine();
-		getLog().info("Stopping devserver...");
+		String msg = reader.readLine();
 		accept.close();
-		socket.close();
+		return msg != null && msg.equals(SHUTDOWN_MESSAGE);
 	}
 
 	private Log getLog() {

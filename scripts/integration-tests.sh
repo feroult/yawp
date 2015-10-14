@@ -13,7 +13,7 @@ echo "done."
 
 echo "starting devserver..."
 mvn yawp:devserver $MAVEN_ARGS &
-sleep 5
+mvn yawp:devserver_wait $MAVEN_ARGS
 echo "done."
 
 exit 0

@@ -5,17 +5,17 @@ unset MAVEN_OPTS
 
 echo "test!"
 
+echo "stopping devserver..."
+(cd ../yawp-appengine; mvn yawp:devserver_stop $MAVEN_ARGS)
+echo "done."
+
+echo "starting devserver..."
+(cd ../yawp-appengine; mvn yawp:devserver $MAVEN_ARGS &)
+sleep 5
+echo "done."
+
 exit 0
 
-# echo "stopping devserver..."
-# (cd ../yawp-appengine; mvn yawp:devserver_stop $MAVEN_ARGS)
-# echo "done."
-#
-# echo "starting devserver..."
-# (cd ../yawp-appengine; mvn yawp:devserver $MAVEN_ARGS &)
-# sleep 5
-# echo "done."
-#
 # phantomjs runner.js http://localhost:8081/test/all.html
 # STATUS=$?
 #

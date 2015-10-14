@@ -90,7 +90,8 @@ public class WebAppContextHelper {
 			addURLs(mojo.getProject().getRuntimeClasspathElements(), urls);
 			addURLs(customClasspathElements, urls);
 
-			return new URLClassLoader(urls.toArray(new URL[] {}), Thread.currentThread().getContextClassLoader());
+			URLClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[] {}), Thread.currentThread().getContextClassLoader());
+			return classLoader;
 		} catch (DependencyResolutionRequiredException | MalformedURLException e) {
 			throw new RuntimeException(e);
 		}

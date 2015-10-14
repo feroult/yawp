@@ -1,22 +1,22 @@
 #!/bin/bash
 
-# if [ "$JAVA_HOME" = "/usr/lib/jvm/java-7-oracle/bin/java" ]; then
-#   echo "Shippable bug detected!"
-#   export JAVA_HOME="/usr/lib/jvm/java-7-oracle"
-# fi
-
-MAVEN_ARGS="-Dmaven.test.skip=true -Dappengine.port=8081 -Dappengine.jvmFlags.datastore.default_high_rep_job_policy_unapplied_job_pct=0"
+MAVEN_ARGS="-Dmaven.test.skip=true -Dyawp.port=8081 -Dyawp.shutdownPort=8331"
 unset MAVEN_OPTS
 
+echo "stopping devserver..."
+(cd ../yawp-appengine; mvn yawp:devserver_stop $MAVEN_ARGS)
+echo "done."
+
 echo "starting devserver..."
-(cd ../yawp-appengine; mvn appengine:devserver_start $MAVEN_ARGS)
+(cd ../yawp-appengine; mvn yawp:devserver $MAVEN_ARGS &)
+sleep 5
 echo "done."
 
 phantomjs runner.js http://localhost:8081/test/all.html
 STATUS=$?
 
 echo "stopping devserver..."
-(cd ../yawp-appengine; mvn appengine:devserver_stop $MAVEN_ARGS)
+(cd ../yawp-appengine; mvn yawp:devserver_stop $MAVEN_ARGS)
 echo "done."
 
 exit $STATUS

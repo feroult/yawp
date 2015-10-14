@@ -11,9 +11,14 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.nio.SelectChannelConnector;
+import org.mortbay.jetty.webapp.WebAppContext;
 
 @Mojo(name = "devserver", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class DevServerMojo extends PluginAbstractMojo {
+
+	private static final String YAWP_GROUP_ID = "io.yawp";
+
+	private static final String YAWP_ARTIFACT_ID = "yawp";
 
 	@Parameter(property = "yawp.appDir", defaultValue = "${basedir}/src/main/webapp")
 	protected String appDir;
@@ -30,11 +35,19 @@ public class DevServerMojo extends PluginAbstractMojo {
 	@Parameter(property = "yawp.hotDeployDir", defaultValue = "${basedir}/target/classes")
 	protected String hotDeployDir;
 
+	protected Server server;
+
+	@Parameter(property = "yawp.shutdownPort", defaultValue = ShutdownMonitor.DEFAULT_PORT)
+	private String shutdownPort;
+
+	private WebAppContext webapp;
+
 	private WebAppContextHelper helper;
 
 	public void execute() throws MojoExecutionException {
 		initHelper();
 		startServer();
+		startShutdownMonitor();
 	}
 
 	private void initHelper() {
@@ -45,19 +58,25 @@ public class DevServerMojo extends PluginAbstractMojo {
 		}
 	}
 
-	private void startServer() {
+	protected void startServer() {
 		getLog().info("Starting webserver at: " + appDir);
 
 		try {
-			Server server = new Server();
+			webapp = helper.createWebApp();
+			server = new Server();
 			server.addConnector(createConnector());
-			server.setHandler(helper.createWebApp());
-
+			server.setHandler(webapp);
 			server.start();
-			server.join();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public void shutdown() {
+		// no better solution to avoid exceptions when trying to stop jetty
+		// server thread
+		// the best options would be server.stop()
+		System.exit(0);
 	}
 
 	private SelectChannelConnector createConnector() throws IOException {
@@ -70,12 +89,26 @@ public class DevServerMojo extends PluginAbstractMojo {
 	}
 
 	private boolean isYawpAppengine() {
+		if (project.getGroupId().equals(YAWP_GROUP_ID) && project.getArtifactId().equals(YAWP_ARTIFACT_ID)) {
+			return true;
+		}
+
 		for (Dependency dependency : project.getDependencies()) {
-			if (dependency.getGroupId().equals("io.yawp") && dependency.getArtifactId().equals("yawp")) {
+			if (dependency.getGroupId().equals(YAWP_GROUP_ID) && dependency.getArtifactId().equals(YAWP_ARTIFACT_ID)) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	protected void startShutdownMonitor() {
+		try {
+			ShutdownMonitor monitor = new ShutdownMonitor(this, getShutdownPort());
+			monitor.start();
+			monitor.join();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public String getAppDir() {
@@ -96,5 +129,9 @@ public class DevServerMojo extends PluginAbstractMojo {
 
 	public int getFullScanSeconds() {
 		return Integer.valueOf(fullScanSeconds);
+	}
+
+	public int getShutdownPort() {
+		return Integer.valueOf(shutdownPort);
 	}
 }

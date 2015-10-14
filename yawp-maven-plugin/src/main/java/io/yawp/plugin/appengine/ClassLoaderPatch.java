@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
 
+@Deprecated
 public class ClassLoaderPatch {
 	private static final Class<?>[] parameters = new Class[] { URL.class };
 

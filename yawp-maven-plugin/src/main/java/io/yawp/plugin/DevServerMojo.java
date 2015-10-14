@@ -1,5 +1,6 @@
 package io.yawp.plugin;
 
+import io.yawp.driver.api.DriverFactory;
 import io.yawp.plugin.appengine.AppengineWebAppContextHelper;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,7 +32,7 @@ public class DevServerMojo extends PluginAbstractMojo {
 	}
 
 	private void initHelper() {
-		// TODO: check if its helper environment
+		System.out.println("xpto: " + DriverFactory.getDriver().getClass());
 		this.helper = new AppengineWebAppContextHelper(this);
 	}
 

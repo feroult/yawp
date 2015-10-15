@@ -7,19 +7,4 @@
    metadata-complete="true"
    version="2.5">
 
-  <filter>
-    <filter-name>_yawp_AppengineDevServerHelper</filter-name>
-    <filter-class>
-      io.yawp.plugin.appengine.AppengineDevServerFilter
-    </filter-class>
-  </filter>
-
-  <filter-mapping>
-    <filter-name>_yawp_AppengineDevServerHelper</filter-name>
-    <url-pattern>/*</url-pattern>
-    <!--  match both real and forwarded requests -->
-    <dispatcher>FORWARD</dispatcher>
-    <dispatcher>REQUEST</dispatcher>
-  </filter-mapping>
-
 </web-app>

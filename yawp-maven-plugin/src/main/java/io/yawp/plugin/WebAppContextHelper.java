@@ -11,8 +11,10 @@ import java.util.List;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.logging.Log;
 import org.mortbay.jetty.webapp.WebAppContext;
+import org.mortbay.resource.Resource;
 import org.mortbay.util.Scanner;
 import org.mortbay.util.Scanner.DiscreteListener;
+import org.mortbay.xml.XmlConfiguration;
 
 public class WebAppContextHelper {
 
@@ -26,10 +28,30 @@ public class WebAppContextHelper {
 
 	public WebAppContext createWebApp() {
 		webapp = new WebAppContext(mojo.getAppDir(), "");
+
+		createWebAppContext();
+
 		webapp.setDefaultsDescriptor(getWebDefaultXml());
 		configureClassloader();
 		configureHotDeploy();
 		return webapp;
+	}
+
+	private WebAppContext createWebAppContext() {
+		try {
+			Resource jettyEnv = Resource.newResource(String.format("%s/WEB-INF/jetty-env.xml", mojo.getAppDir()));
+			if (jettyEnv == null) {
+				return new WebAppContext(mojo.getAppDir(), "");
+			}
+
+			XmlConfiguration conf = new XmlConfiguration(jettyEnv.getInputStream());
+			WebAppContext webapp = (WebAppContext) conf.configure();
+			webapp.setWar(mojo.getAppDir());
+			return webapp;
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	protected String getWebDefaultXml() {

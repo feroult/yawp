@@ -1,6 +1,7 @@
 package io.yawp.plugin;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -40,16 +41,16 @@ public class WebAppContextHelper {
 	private WebAppContext createWebAppContext() {
 		try {
 			Resource jettyEnv = Resource.newResource(String.format("%s/WEB-INF/jetty-env.xml", mojo.getAppDir()));
-			if (jettyEnv == null) {
-				return new WebAppContext(mojo.getAppDir(), "");
-			}
-
 			XmlConfiguration conf = new XmlConfiguration(jettyEnv.getInputStream());
 			WebAppContext webapp = (WebAppContext) conf.configure();
 			webapp.setWar(mojo.getAppDir());
 			System.setProperty("java.naming.factory.url.pkgs", "org.mortbay.naming");
 			System.setProperty("java.naming.factory.initial", "org.mortbay.naming.InitialContextFactory");
 			return webapp;
+		} catch (FileNotFoundException e) {
+
+			mojo.getLog().info("here");
+			return new WebAppContext(mojo.getAppDir(), "");
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);

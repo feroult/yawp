@@ -1,9 +1,11 @@
 #!/bin/bash
 
+DRIVER=$1
+
 MAVEN_ARGS="-Dyawp.port=8081 -Dyawp.shutdownPort=8331"
 unset MAVEN_OPTS
 
-cd ../yawp-appengine
+cd ../yawp-$DRIVER
 
 echo "stopping devserver..."
 mvn yawp:devserver_stop $MAVEN_ARGS

@@ -146,7 +146,9 @@
 								<configuration>
 									<target>
 										<exec dir="${project.basedir}/../scripts" executable="./integration-tests.sh"
-											failonerror="true"></exec>
+											failonerror="true">
+											<arg value="appengine" />
+										</exec>
 									</target>
 									<skip>${maven.test.skip}</skip>
 								</configuration>

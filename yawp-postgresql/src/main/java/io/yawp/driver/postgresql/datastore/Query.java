@@ -39,6 +39,7 @@ public class Query {
 
 	private QueryBuilder<?> builder;
 
+	// TODO: select only keys, today we fetch the entire row from database
 	private boolean keysOnly;
 
 	private Map<String, Object> whereBinds = new HashMap<String, Object>();
@@ -154,10 +155,6 @@ public class Query {
 		return String.format("key%s = :%s", ancetorLink(parentId), placeHolder);
 	}
 
-	private String whereCursor() {
-		return String.format("offset %d", builder.getCursor());
-	}
-
 	private String ancetorLink(IdRef<?> parentId) {
 		StringBuilder sb = new StringBuilder();
 		int ancestorNumber = getAncetorNumber(parentId);
@@ -223,8 +220,19 @@ public class Query {
 	}
 
 	private String whereSingleValue(String fieldName, String actualFieldName, WhereOperator whereOperator, Object actualValue) {
+		if (isNull(whereOperator, actualValue)) {
+			return whereSingleValueIsNull(actualFieldName);
+		}
 		String placeHolder = bindValue(actualValue);
 		return String.format("%s %s :%s", propertyLink(fieldName, actualFieldName), filterOperatorAsText(whereOperator), placeHolder);
+	}
+
+	private String whereSingleValueIsNull(String actualFieldName) {
+		return String.format("(properties->'%s') is null", actualFieldName);
+	}
+
+	private boolean isNull(WhereOperator whereOperator, Object actualValue) {
+		return whereOperator.equals(WhereOperator.EQUAL) && actualValue == null;
 	}
 
 	private String propertyLink(String fieldName, String actualFieldName) {

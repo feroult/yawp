@@ -1,6 +1,5 @@
 package io.yawp.driver.postgresql.datastore;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -11,7 +10,6 @@ import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.postgresql.ds.PGConnectionPoolDataSource;
 
 public class InitialContextMock implements InitialContextFactory {
 

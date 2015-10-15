@@ -47,6 +47,8 @@ public class WebAppContextHelper {
 			XmlConfiguration conf = new XmlConfiguration(jettyEnv.getInputStream());
 			WebAppContext webapp = (WebAppContext) conf.configure();
 			webapp.setWar(mojo.getAppDir());
+			System.setProperty("java.naming.factory.url.pkgs", "org.mortbay.naming");
+			System.setProperty("java.naming.factory.initial", "org.mortbay.naming.InitialContextFactory");
 			return webapp;
 
 		} catch (Exception e) {

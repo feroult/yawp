@@ -1,12 +1,12 @@
 # YAWP!
 
-Unbelievably Simple API DSL for Google App Engine (Java)
+Unbelievably Simple API DSL for Java
 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
 
 ## Introduction
 
-**YAWP!** is a Java framework built on top of Google App Engine whose main purpose is to help developers create meaningful APIs to support their REST based applications.
+**YAWP!** main purpose is to help developers create meaningful APIs to support their REST based applications. It supports Google App Engine and PostgreSQL environments.
 
 You create your POJOs and **YAWP!**
 

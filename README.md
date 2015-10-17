@@ -16,7 +16,7 @@ If you want a really short tutorial to start using YAWP! Try [this one](https://
 
 ## IRC
 
-Channel __#dextra__ at __chat.freenode.net__
+If you want to talk about yawp, go to channel __#dextra__ at __chat.freenode.net__
 
 ## How it Works
 

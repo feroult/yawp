@@ -14,6 +14,10 @@ You create your POJOs and **YAWP!**
 
 If you want a really short tutorial to start using YAWP! Try [this one](https://github.com/feroult/yawp/wiki/The-Shortest-Tutorial).
 
+## IRC
+
+If you want to talk about yawp, go to channel __#dextra__ at __chat.freenode.net__
+
 ## How it Works
 
 From a single class annotation, it provides a full REST url schema with a fluent progamatic API for Java and Javascript. You write your client side code the same way you do for your server side. It also provides a convenient way to organize your server side business logic.

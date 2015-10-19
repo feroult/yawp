@@ -108,19 +108,7 @@
 
 	<profiles>
 		<profile>
-			<id>no-yawp-tests</id>
-			<properties>
-				<skipTests>true</skipTests>
-				<maven.test.skip>true</maven.test.skip>
-			</properties>
-		</profile>
-		<profile>
-			<id>js-tests</id>
-			<activation>
-				<property>
-					<name>!skipTests</name>
-				</property>
-			</activation>
+			<id>it</id>
 			<properties>
 				<test.output.directory>classes</test.output.directory>
 			</properties>

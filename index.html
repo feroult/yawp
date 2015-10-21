@@ -5,60 +5,43 @@
     <title>YAWP! by feroult</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
     <section class="page-header">
       <h1 class="project-name">YAWP!</h1>
-      <h2 class="project-tagline">Unbelievably Simple API DSL for Google App Engine (Java)</h2>
+      <h2 class="project-tagline">Unbelievably Simple API DSL for Java</h2>
       <a href="https://github.com/feroult/yawp" class="btn">View on GitHub</a>
       <a href="https://github.com/feroult/yawp/zipball/master" class="btn">Download .zip</a>
       <a href="https://github.com/feroult/yawp/tarball/master" class="btn">Download .tar.gz</a>
     </section>
 
     <section class="main-content">
-      <h2>
-<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h2>
+      <h1>
+<a id="yawp" class="anchor" href="#yawp" aria-hidden="true"><span class="octicon octicon-link"></span></a>YAWP!</h1>
 
-<p><strong>YAWP!</strong> is a Java framework built on top of Google App Engine whose main purpose is to help developers create meaningful APIs to support their REST based applications.</p>
+<p>Unbelievably Simple API DSL for Java</p>
 
-<p>You create your POJOs and <strong>YAWP!</strong> </p>
+<p><a href="https://travis-ci.org/feroult/yawp"><img src="https://travis-ci.org/feroult/yawp.svg" alt="Build Status"></a></p>
 
 <h2>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
-<h4>
-<a id="maven-archetype" class="anchor" href="#maven-archetype" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maven Archetype</h4>
+<p><strong>YAWP!</strong> main purpose is to help developers create meaningful APIs to support their REST based applications. It supports Google App Engine and PostgreSQL environments.</p>
 
-<div class="highlight highlight-bash"><pre>mvn archetype:generate \
-  -DarchetypeGroupId=io.yawp \
-  -DarchetypeArtifactId=yawp \
-  -DarchetypeVersion=1.0 \
-  -DgroupId=<span class="pl-k">&lt;</span>your groupId<span class="pl-k">&gt;</span> \
-  -DartifactId=<span class="pl-k">&lt;</span>your artifactId<span class="pl-k">&gt;</span> \
-  -Dversion=<span class="pl-k">&lt;</span>your version<span class="pl-k">&gt;</span></pre></div>
+<p>You create your POJOs and <strong>YAWP!</strong></p>
 
-<p>From the generated app folder run:</p>
+<h2>
+<a id="the-shortest-tutorial" class="anchor" href="#the-shortest-tutorial" aria-hidden="true"><span class="octicon octicon-link"></span></a>The Shortest Tutorial</h2>
 
-<pre><code>mvn appengine:devserver
-</code></pre>
+<p>If you want a really short tutorial to start using YAWP! Try <a href="https://github.com/feroult/yawp/wiki/The-Shortest-Tutorial">this one</a>.</p>
 
-<p>Point your browser to <a href="http://localhost:8080/test/all.html">http://localhost:8080/test/all.html</a> to run the default test suite.</p>
+<h2>
+<a id="irc" class="anchor" href="#irc" aria-hidden="true"><span class="octicon octicon-link"></span></a>IRC</h2>
 
-<h4>
-<a id="maven-dependency" class="anchor" href="#maven-dependency" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maven Dependency</h4>
-
-<p>If you prefer to configure it manually, use this maven dependency: </p>
-
-<div class="highlight highlight-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
-   &lt;<span class="pl-ent">groupId</span>&gt;io.yawp&lt;/<span class="pl-ent">groupId</span>&gt;
-   &lt;<span class="pl-ent">artifactId</span>&gt;yawp&lt;/<span class="pl-ent">artifactId</span>&gt;
-   &lt;<span class="pl-ent">version</span>&gt;1.0&lt;/<span class="pl-ent">version</span>&gt;
-&lt;/<span class="pl-ent">dependency</span>&gt;</pre></div>
-
-<p>Then configure the other App Engine's stuff. You can get inspiration from this <a href="https://cloud.google.com/appengine/docs/java/gettingstarted/creating">guide</a>.</p>
+<p>If you want to talk about yawp, go to channel <strong>#dextra</strong> at <strong>chat.freenode.net</strong></p>
 
 <h2>
 <a id="how-it-works" class="anchor" href="#how-it-works" aria-hidden="true"><span class="octicon octicon-link"></span></a>How it Works</h2>
@@ -70,7 +53,7 @@
 
 <p>Annotate your POJO:</p>
 
-<div class="highlight highlight-java"><pre>@Endpoint(path <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>/people<span class="pl-pds">"</span></span>)
+<div class="highlight highlight-source-java"><pre>@Endpoint(path <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>/people<span class="pl-pds">"</span></span>)
 <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Person</span> {
 
     <span class="pl-k">private</span> <span class="pl-smi">String</span> name;
@@ -120,7 +103,7 @@
 
 <p><strong>Javascript</strong>:</p>
 
-<div class="highlight highlight-javascript"><pre>yawp(<span class="pl-s"><span class="pl-pds">'</span>/people<span class="pl-pds">'</span></span>).list( <span class="pl-k">function</span>(<span class="pl-smi">people</span>) {} );
+<div class="highlight highlight-source-js"><pre>yawp(<span class="pl-s"><span class="pl-pds">'</span>/people<span class="pl-pds">'</span></span>).list( <span class="pl-k">function</span>(<span class="pl-smi">people</span>) {} );
 
 yawp(<span class="pl-s"><span class="pl-pds">'</span>/people<span class="pl-pds">'</span></span>).create({ name <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Janes<span class="pl-pds">'</span></span> }).done( <span class="pl-k">function</span>(<span class="pl-smi">person</span>) {} );
 
@@ -132,7 +115,7 @@ yawp.destroy(personId).done( <span class="pl-k">function</span>(<span class="pl-
 
 <p><strong>Java</strong>:</p>
 
-<div class="highlight highlight-java"><pre><span class="pl-k">List&lt;<span class="pl-smi">Person</span>&gt;</span> people <span class="pl-k">=</span> yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>list();
+<div class="highlight highlight-source-java"><pre><span class="pl-k">List&lt;<span class="pl-smi">Person</span>&gt;</span> people <span class="pl-k">=</span> yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>list();
 
 yawp<span class="pl-k">.</span>save(<span class="pl-k">new</span> <span class="pl-smi">Person</span>(<span class="pl-s"><span class="pl-pds">"</span>Janes<span class="pl-pds">"</span></span>));
 
@@ -145,13 +128,13 @@ yawp<span class="pl-k">.</span>destroy(person<span class="pl-k">.</span>getId())
 <h3>
 <a id="idref" class="anchor" href="#idref" aria-hidden="true"><span class="octicon octicon-link"></span></a>IdRef</h3>
 
-<p>The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of Datastore Key mechanism and creates a type safe link beetween all your domain objects. </p>
+<p>The IdRef&lt;T&gt; brings a bit of innovation inside your POJOs. This class simplifies all underlying manipulation of Datastore Key mechanism and creates a type safe link beetween all your domain objects.</p>
 
 <p>To define the identity field of a domain object you need to declare an IdRef&lt;T&gt; annotated with <a href="https://github.com/Id" class="user-mention">@Id</a>. Then you can use this identity as a reference from another domain object.</p>
 
 <p>Also, through the @ParentId annotation, IdRef exposes the Ancestor mechanism of the Datastore Key architecuture, leveraging it's strong consistency model when necessary:</p>
 
-<div class="highlight highlight-java"><pre>@Endpoint(path <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>/people<span class="pl-pds">"</span></span>)
+<div class="highlight highlight-source-java"><pre>@Endpoint(path <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>/people<span class="pl-pds">"</span></span>)
 <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Person</span> {
 
     <span class="pl-k">@Id</span>
@@ -175,45 +158,45 @@ yawp<span class="pl-k">.</span>destroy(person<span class="pl-k">.</span>getId())
 
 <p><strong>Javascript</strong>:</p>
 
-<div class="highlight highlight-javascript"><pre>yawp(<span class="pl-s"><span class="pl-pds">'</span>/people<span class="pl-pds">'</span></span>).where([ <span class="pl-s"><span class="pl-pds">'</span>name<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>=<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>Janes<span class="pl-pds">'</span></span>]).first( <span class="pl-k">function</span>(<span class="pl-smi">person</span>) {} );
+<div class="highlight highlight-source-js"><pre>yawp(<span class="pl-s"><span class="pl-pds">'</span>/people<span class="pl-pds">'</span></span>).where([ <span class="pl-s"><span class="pl-pds">'</span>name<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>=<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>Janes<span class="pl-pds">'</span></span>]).first( <span class="pl-k">function</span>(<span class="pl-smi">person</span>) {} );
 
-yawp(<span class="pl-s"><span class="pl-pds">'</span>/people<span class="pl-pds">'</span></span>).order([ { p<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>name<span class="pl-pds">'</span></span>, d<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>desc<span class="pl-pds">'</span></span> } ]).list( <span class="pl-k">function</span>(<span class="pl-smi">people</span>) {} ); 
+yawp(<span class="pl-s"><span class="pl-pds">'</span>/people<span class="pl-pds">'</span></span>).order([ { p<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>name<span class="pl-pds">'</span></span>, d<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>desc<span class="pl-pds">'</span></span> } ]).list( <span class="pl-k">function</span>(<span class="pl-smi">people</span>) {} );
 
-yawp(<span class="pl-s"><span class="pl-pds">'</span>/people<span class="pl-pds">'</span></span>).from(parentId).list( <span class="pl-k">function</span>(<span class="pl-smi">people</span>) {} ); </pre></div>
+yawp(<span class="pl-s"><span class="pl-pds">'</span>/people<span class="pl-pds">'</span></span>).from(parentId).list( <span class="pl-k">function</span>(<span class="pl-smi">people</span>) {} );</pre></div>
 
 <p><strong>Java</strong>:</p>
 
-<div class="highlight highlight-java"><pre><span class="pl-smi">Person</span> person <span class="pl-k">=</span> yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>where(<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>Janes<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>first();
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">Person</span> person <span class="pl-k">=</span> yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>where(<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>Janes<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>first();
 
-<span class="pl-k">List&lt;<span class="pl-smi">Person</span>&gt;</span> people <span class="pl-k">=</span> yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>order(<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>desc<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>list(); 
+<span class="pl-k">List&lt;<span class="pl-smi">Person</span>&gt;</span> people <span class="pl-k">=</span> yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>order(<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>desc<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>list();
 
-<span class="pl-k">List&lt;<span class="pl-smi">Person</span>&gt;</span> people <span class="pl-k">=</span> yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>from(parentId)<span class="pl-k">.</span>list(); </pre></div>
+<span class="pl-k">List&lt;<span class="pl-smi">Person</span>&gt;</span> people <span class="pl-k">=</span> yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>from(parentId)<span class="pl-k">.</span>list();</pre></div>
 
 <p>Other Java examples, also avaibale from HTTP or Javascript:</p>
 
-<div class="highlight highlight-java"><pre>yawp(<span class="pl-smi">User</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>where(<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>Mark<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>and(<span class="pl-s"><span class="pl-pds">"</span>age<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>&gt;=<span class="pl-pds">"</span></span>, <span class="pl-c1">21</span>)<span class="pl-k">.</span>list();
+<div class="highlight highlight-source-java"><pre>yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>where(<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>Mark<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>and(<span class="pl-s"><span class="pl-pds">"</span>age<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>&gt;=<span class="pl-pds">"</span></span>, <span class="pl-c1">21</span>)<span class="pl-k">.</span>list();
 
-yawp(<span class="pl-smi">User</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>where(or(and(c(<span class="pl-s"><span class="pl-pds">"</span>company<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>github.com<span class="pl-pds">"</span></span>), c(<span class="pl-s"><span class="pl-pds">"</span>age<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>&gt;=<span class="pl-pds">"</span></span>, <span class="pl-c1">21</span>)), and(c(<span class="pl-s"><span class="pl-pds">"</span>company<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>YAWP!<span class="pl-pds">"</span></span>), c(<span class="pl-s"><span class="pl-pds">"</span>age<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>&gt;=<span class="pl-pds">"</span></span>, <span class="pl-c1">18</span>))))<span class="pl-k">.</span>ids();
+yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>where(or(and(c(<span class="pl-s"><span class="pl-pds">"</span>company<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>github.com<span class="pl-pds">"</span></span>), c(<span class="pl-s"><span class="pl-pds">"</span>age<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>&gt;=<span class="pl-pds">"</span></span>, <span class="pl-c1">21</span>)), and(c(<span class="pl-s"><span class="pl-pds">"</span>company<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>YAWP!<span class="pl-pds">"</span></span>), c(<span class="pl-s"><span class="pl-pds">"</span>age<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>&gt;=<span class="pl-pds">"</span></span>, <span class="pl-c1">18</span>))))<span class="pl-k">.</span>ids();
 
-yawp(<span class="pl-smi">User</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>where(<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>John<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>and(<span class="pl-s"><span class="pl-pds">"</span>company<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>github.com<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>only();</pre></div>
+yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>where(<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>John<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>and(<span class="pl-s"><span class="pl-pds">"</span>company<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>github.com<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>only();</pre></div>
 
 <p>Note: The methods <strong>c</strong>, <strong>and</strong> and <strong>or</strong> must be imported static or fully qualified for this to work.</p>
 
-<p>You can look at this <a href="../master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java">Java test suite</a> to see examples of more complex constructions.</p>
+<p>You can look at this <a href="http://github.com/feroult/yawp/tree/master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java">Java test suite</a> to see examples of more complex constructions.</p>
 
 <h3>
 <a id="endpoint-features" class="anchor" href="#endpoint-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Endpoint Features</h3>
 
 <p>So far, you've seen all functionality that you get by just annotating your POJO with <a href="https://github.com/Endpoint" class="user-mention">@Endpoint</a>. Now it's time to see how to add custom server side business logic to your model, so you can create real world applications with specific needs.</p>
 
-<p>The way <strong>YAWP!</strong> deal with this is by allowing you to extend the default REST schema through <strong>Features</strong>. You can create three kind of features for your objects: <strong>Actions</strong>, <strong>Transformers</strong> and <strong>Hooks</strong>. </p>
+<p>The way <strong>YAWP!</strong> deal with this is by allowing you to extend the default REST schema through <strong>Features</strong>. You can create three kind of features for your objects: <strong>Actions</strong>, <strong>Transformers</strong> and <strong>Hooks</strong>.</p>
 
 <h3>
 <a id="actions" class="anchor" href="#actions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actions</h3>
 
 <p>To add custom behavior to your domain object you can use the Action API. Imagine you need to activate a given person. To do this you can create an Action class:</p>
 
-<div class="highlight highlight-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">ActivatePersonAction</span> <span class="pl-k">extends</span> <span class="pl-e">Action&lt;<span class="pl-smi">Person</span>&gt;</span> {
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">ActivatePersonAction</span> <span class="pl-k">extends</span> <span class="pl-e">Action&lt;<span class="pl-smi">Person</span>&gt;</span> {
 
     <span class="pl-k">@PUT</span>(<span class="pl-s"><span class="pl-pds">"</span>active<span class="pl-pds">"</span></span>)
     <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">activate</span>(<span class="pl-k">IdRef&lt;<span class="pl-smi">Person</span>&gt;</span> <span class="pl-v">id</span>) {
@@ -232,21 +215,21 @@ curl -X <b>PUT</b> http://localhost:8080/api<b>/people/123/active</b>
 
 <p>The <strong>Javascript</strong> equivalent would be:</p>
 
-<div class="highlight highlight-javascript"><pre>yawp(<span class="pl-s"><span class="pl-pds">'</span>/people/123<span class="pl-pds">'</span></span>).put(<span class="pl-s"><span class="pl-pds">'</span>active<span class="pl-pds">'</span></span>).done( <span class="pl-k">function</span>(<span class="pl-smi">status</span>) {} );</pre></div>
+<div class="highlight highlight-source-js"><pre>yawp(<span class="pl-s"><span class="pl-pds">'</span>/people/123<span class="pl-pds">'</span></span>).put(<span class="pl-s"><span class="pl-pds">'</span>active<span class="pl-pds">'</span></span>).done( <span class="pl-k">function</span>(<span class="pl-smi">status</span>) {} );</pre></div>
 
 <p>Also, an action be called over a single domain object or over a collection. For an action over a collection, don't specify it's IdRef or specify it's parent IdRef as the first argument:</p>
 
-<div class="highlight highlight-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">UserActions</span> <span class="pl-k">extends</span> <span class="pl-e">Action&lt;<span class="pl-smi">User</span>&gt;</span> {
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">PersonActions</span> <span class="pl-k">extends</span> <span class="pl-e">Action&lt;<span class="pl-smi">Person</span>&gt;</span> {
     <span class="pl-c">// over collection without IdRef</span>
     <span class="pl-k">@GET</span>(<span class="pl-s"><span class="pl-pds">"</span>me<span class="pl-pds">"</span></span>)
-    <span class="pl-k">public</span> <span class="pl-smi">User</span> <span class="pl-en">me</span>() {
-        <span class="pl-k">return</span> <span class="pl-smi">Session</span><span class="pl-k">.</span>getLoggedUser();
+    <span class="pl-k">public</span> <span class="pl-smi">Person</span> <span class="pl-en">me</span>() {
+        <span class="pl-k">return</span> <span class="pl-smi">SessionManager</span><span class="pl-k">.</span>getLoggedPerson(yawp);
     }
 
     <span class="pl-c">// over collection with parent IdRef</span>
     <span class="pl-k">@GET</span>(<span class="pl-s"><span class="pl-pds">"</span>first<span class="pl-pds">"</span></span>)
-    <span class="pl-k">public</span> <span class="pl-smi">User</span> <span class="pl-en">firstUser</span>(<span class="pl-k">IdRef&lt;<span class="pl-smi">Company</span>&gt;</span> <span class="pl-v">companyId</span>) {
-      <span class="pl-k">return</span> yawp(<span class="pl-smi">User</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>where(<span class="pl-s"><span class="pl-pds">"</span>companyId<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, companyId)<span class="pl-k">.</span>first();
+    <span class="pl-k">public</span> <span class="pl-smi">Person</span> <span class="pl-en">first</span>(<span class="pl-k">IdRef&lt;<span class="pl-smi">Company</span>&gt;</span> <span class="pl-v">companyId</span>) {
+      <span class="pl-k">return</span> yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>from(companyId)<span class="pl-k">.</span>first();
     }
 }</pre></div>
 
@@ -262,7 +245,7 @@ curl -X <b>PUT</b> http://localhost:8080/api<b>/people/123/active</b>
 
 <p>The Transformer API is used to create different views of the same domain object. If you wan't to add or hide information to be returned to the client, the way to go is to use a Transfomer. For instance:</p>
 
-<div class="highlight highlight-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">BasicObjectTransformer</span> <span class="pl-k">extends</span> <span class="pl-e">Transformer&lt;<span class="pl-smi">Person</span>&gt;</span> {
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">BasicObjectTransformer</span> <span class="pl-k">extends</span> <span class="pl-e">Transformer&lt;<span class="pl-smi">Person</span>&gt;</span> {
 
     <span class="pl-k">public</span> <span class="pl-k">Map&lt;<span class="pl-smi">String</span>, <span class="pl-smi">Object</span>&gt;</span> <span class="pl-en">upperCase</span>(<span class="pl-smi">Person</span> <span class="pl-v">person</span>) {
 
@@ -282,13 +265,13 @@ curl -X <b>GET</b> http://localhost:8080/api<b>/people/123?t=upperCase</b>
 
 <p>The <strong>Javascript</strong> equivalent would be:</p>
 
-<div class="highlight highlight-javascript"><pre>yawp(<span class="pl-s"><span class="pl-pds">'</span>/people/123<span class="pl-pds">'</span></span>).transform(<span class="pl-s"><span class="pl-pds">'</span>upperCase<span class="pl-pds">'</span></span>).first( <span class="pl-k">function</span>(<span class="pl-smi">person</span>) {} );</pre></div>
+<div class="highlight highlight-source-js"><pre>yawp(<span class="pl-s"><span class="pl-pds">'</span>/people/123<span class="pl-pds">'</span></span>).transform(<span class="pl-s"><span class="pl-pds">'</span>upperCase<span class="pl-pds">'</span></span>).first( <span class="pl-k">function</span>(<span class="pl-smi">person</span>) {} );</pre></div>
 
 <p>Note: All transformers can be applied for collections queries or feching single objects.</p>
 
 <p>You can also create more sofisticated transformers using the presenter pattern, like this:</p>
 
-<div class="highlight highlight-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">UserTransformer</span> <span class="pl-k">extends</span> <span class="pl-e">Transformer&lt;<span class="pl-smi">User</span>&gt;</span> {
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">UserTransformer</span> <span class="pl-k">extends</span> <span class="pl-e">Transformer&lt;<span class="pl-smi">User</span>&gt;</span> {
 
    <span class="pl-k">public</span> <span class="pl-k">static</span> <span class="pl-k">class</span> <span class="pl-en">UserView</span> {
         <span class="pl-k">private</span> <span class="pl-smi">String</span> name;
@@ -312,7 +295,7 @@ curl -X <b>GET</b> http://localhost:8080/api<b>/people/123?t=upperCase</b>
 
 <p>Hooks are portions of business logic that are executed before or after a particular action in the system. They can be used to set pre-calculated information on a domain object or to deny access to some users on certain actions. For example, take a look at this Hook:</p>
 
-<div class="highlight highlight-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">UserHook</span> <span class="pl-k">extends</span> <span class="pl-e">Hook&lt;<span class="pl-smi">User</span>&gt;</span> {
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">UserHook</span> <span class="pl-k">extends</span> <span class="pl-e">Hook&lt;<span class="pl-smi">User</span>&gt;</span> {
 
     <span class="pl-k">@Override</span>
     <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">beforeQuery</span>(<span class="pl-k">DatastoreQuery&lt;<span class="pl-smi">User</span>&gt;</span> <span class="pl-v">q</span>) {
@@ -330,9 +313,90 @@ curl -X <b>GET</b> http://localhost:8080/api<b>/people/123?t=upperCase</b>
 <p>You can define 3 Hook types for your application:</p>
 
 <ul>
-<li>beforeQuery : called before any query made via a URL. It can be used to add security or default validations;</li>
-<li>beforeSave : called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;</li>
-<li>afterSave : called after an object is saved. It can be used to trigger actions or log events.</li>
+<li>
+<strong>beforeQuery</strong>: called before any query made via a URL. It can be used to add security or default validations;</li>
+<li>
+<strong>beforeSave</strong>: called before an object is saved. It can be used to pre-calculate or cache some values in the entity, as well as make validations before saving;</li>
+<li>
+<strong>afterSave</strong>: called after an object is saved. It can be used to trigger actions or log events.</li>
+</ul>
+
+<h2>
+<a id="testing" class="anchor" href="#testing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Testing</h2>
+
+<h3>
+<a id="fixtures" class="anchor" href="#fixtures" aria-hidden="true"><span class="octicon octicon-link"></span></a>Fixtures</h3>
+
+<div class="highlight highlight-source-js"><pre>(<span class="pl-k">function</span>(<span class="pl-smi">fx</span>) {
+
+    fx.person(<span class="pl-s"><span class="pl-pds">'</span>janes<span class="pl-pds">'</span></span>, {
+        id <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>/people/janes<span class="pl-pds">'</span></span>,
+        user <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>janes<span class="pl-pds">'</span></span>,
+        name <span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>Janes Joplin<span class="pl-pds">'</span></span>,
+        orgId <span class="pl-k">:</span> fx.organization(<span class="pl-s"><span class="pl-pds">'</span>dextra<span class="pl-pds">'</span></span>).<span class="pl-c1">id</span>,
+    });
+
+})(yawp.fixtures.lazy);</pre></div>
+
+<h3>
+<a id="using-quint" class="anchor" href="#using-quint" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using QUint</h3>
+
+<div class="highlight highlight-source-js"><pre>t.asyncTest(<span class="pl-s"><span class="pl-pds">"</span>transformer<span class="pl-pds">"</span></span>, <span class="pl-k">function</span>(<span class="pl-smi">assert</span>) {
+    expect(<span class="pl-c1">1</span>);
+
+    fx.person(<span class="pl-s"><span class="pl-pds">'</span>janes<span class="pl-pds">'</span></span>);
+
+    yawp(<span class="pl-s"><span class="pl-pds">'</span>/people<span class="pl-pds">'</span></span>).transform(<span class="pl-s"><span class="pl-pds">'</span>upperCase<span class="pl-pds">'</span></span>).first(<span class="pl-k">function</span>(<span class="pl-smi">person</span>) {
+        assert.equal(person.<span class="pl-c1">name</span>, <span class="pl-s"><span class="pl-pds">'</span>JANES JOPLIN<span class="pl-pds">'</span></span>);
+        t.<span class="pl-c1">start</span>();
+    });
+});</pre></div>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<h4>
+<a id="maven-archetype" class="anchor" href="#maven-archetype" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maven Archetype</h4>
+
+<div class="highlight highlight-source-shell"><pre>mvn archetype:generate \
+  -DarchetypeGroupId=io.yawp \
+  -DarchetypeArtifactId=yawp \
+  -DarchetypeVersion=1.0 \
+  -DgroupId=<span class="pl-k">&lt;</span>your groupId<span class="pl-k">&gt;</span> \
+  -DartifactId=<span class="pl-k">&lt;</span>your artifactId<span class="pl-k">&gt;</span> \
+  -Dversion=<span class="pl-k">&lt;</span>your version<span class="pl-k">&gt;</span></pre></div>
+
+<p>From the generated app folder run:</p>
+
+<pre><code>mvn appengine:devserver
+</code></pre>
+
+<p>Point your browser to <a href="http://localhost:8080/test/all.html">http://localhost:8080/test/all.html</a> to run the default test suite.</p>
+
+<h4>
+<a id="maven-dependency" class="anchor" href="#maven-dependency" aria-hidden="true"><span class="octicon octicon-link"></span></a>Maven Dependency</h4>
+
+<p>If you prefer to configure it manually, use this maven dependency:</p>
+
+<div class="highlight highlight-text-xml"><pre>&lt;<span class="pl-ent">dependency</span>&gt;
+   &lt;<span class="pl-ent">groupId</span>&gt;io.yawp&lt;/<span class="pl-ent">groupId</span>&gt;
+   &lt;<span class="pl-ent">artifactId</span>&gt;yawp&lt;/<span class="pl-ent">artifactId</span>&gt;
+&lt;/<span class="pl-ent">dependency</span>&gt;</pre></div>
+
+<p>Then configure the other App Engine's stuff. You can get inspiration from this <a href="https://cloud.google.com/appengine/docs/java/gettingstarted/creating">guide</a>.</p>
+
+<h2>
+<a id="credits" class="anchor" href="#credits" aria-hidden="true"><span class="octicon octicon-link"></span></a>Credits</h2>
+
+<ul>
+<li>Fernando Ultremare - <a href="mailto:feroult@gmail.com">feroult@gmail.com</a>
+</li>
+<li>Guilherme Carreiro - <a href="mailto:karreiro@gmail.com">karreiro@gmail.com</a>
+</li>
+<li>Luan Nico - <a href="mailto:luannico27@gmail.com">luannico27@gmail.com</a>
+</li>
+<li>Paulo Victor Martins - <a href="mailto:paulovmr@gmail.com">paulovmr@gmail.com</a>
+</li>
 </ul>
 
       <footer class="site-footer">
@@ -356,4 +420,3 @@ curl -X <b>GET</b> http://localhost:8080/api<b>/people/123?t=upperCase</b>
 
   </body>
 </html>
-

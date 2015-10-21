@@ -51,7 +51,7 @@ public class AppengineWebAppContextHelper extends WebAppContextHelper {
 
 		Constraint constraint = new Constraint();
 		constraint.setName(Constraint.__FORM_AUTH);
-		constraint.setRoles(new String[] { USER_ROLE, ADMIN_ROLE });
+		//constraint.setRoles(new String[] { USER_ROLE, ADMIN_ROLE });
 		constraint.setAuthenticate(true);
 
 		ConstraintMapping constraintMapping = new ConstraintMapping();

@@ -33,7 +33,7 @@ public class WebAppContextHelper {
 		createWebAppContext();
 
 		webapp.setDefaultsDescriptor(getWebDefaultXml());
-		//configureSecurity();
+		configureSecurity();
 		configureClassloader();
 		configureHotDeploy();
 		return webapp;

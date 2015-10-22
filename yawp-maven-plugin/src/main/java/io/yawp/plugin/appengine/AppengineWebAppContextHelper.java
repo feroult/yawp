@@ -11,9 +11,7 @@ import java.util.List;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.mortbay.jetty.security.Constraint;
 import org.mortbay.jetty.security.ConstraintMapping;
-import org.mortbay.jetty.security.HashUserRealm;
 import org.mortbay.jetty.security.SecurityHandler;
-import org.mortbay.jetty.security.UserRealm;
 
 import com.google.appengine.tools.development.DevSocketImplFactory;
 
@@ -51,7 +49,7 @@ public class AppengineWebAppContextHelper extends WebAppContextHelper {
 
 		Constraint constraint = new Constraint();
 		constraint.setName(Constraint.__FORM_AUTH);
-		//constraint.setRoles(new String[] { USER_ROLE, ADMIN_ROLE });
+		constraint.setRoles(AppengineUserRealm.ROLES);
 		constraint.setAuthenticate(true);
 
 		ConstraintMapping constraintMapping = new ConstraintMapping();

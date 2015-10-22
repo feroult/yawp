@@ -7,8 +7,6 @@ import java.util.Map;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.security.UserRealm;
 
-import com.google.appengine.api.users.User;
-
 public class AppengineUserRealm implements UserRealm {
 
 	private static final String REALM_NAME = "YAWP! DevServer Realm";
@@ -17,7 +15,9 @@ public class AppengineUserRealm implements UserRealm {
 
 	public static final String ADMIN_ROLE = "admin";
 
-	Map<String, User> users = new HashMap<String, User>();
+	public static final String[] ROLES = new String[] { USER_ROLE, ADMIN_ROLE };
+
+	Map<String, AppengineUser> users = new HashMap<String, AppengineUser>();
 
 	@Override
 	public String getName() {
@@ -26,63 +26,49 @@ public class AppengineUserRealm implements UserRealm {
 
 	@Override
 	public Principal getPrincipal(String username) {
-		if (!isUserLoggedIn(username)) {
+		if (!users.containsKey(username)) {
 			return null;
 		}
-		return getPrincipal(users.get(username));
+		return users.get(username).getPrincipal();
 	}
 
 	@Override
 	public Principal authenticate(String username, Object credentials, Request request) {
-		users.put(username, (User) credentials);
-		return getPrincipal(username);
+		AppengineUser user = (AppengineUser) credentials;
+		users.put(username, user);
+		return user.getPrincipal();
 	}
 
 	@Override
 	public boolean reauthenticate(Principal user) {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean isUserInRole(Principal user, String role) {
 		if (role.equals(ADMIN_ROLE)) {
-
+			return users.get(user.getName()).isAdmin();
 		}
-		return false;
+		return role.equals(USER_ROLE);
 	}
 
 	@Override
 	public void disassociate(Principal user) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public Principal pushRole(Principal user, String role) {
-		// TODO Auto-generated method stub
-		return null;
+		return users.get(user.getName()).getPrincipal();
 	}
 
 	@Override
 	public Principal popRole(Principal user) {
-		// TODO Auto-generated method stub
-		return null;
+		return users.get(user.getName()).getPrincipal();
 	}
 
 	@Override
 	public void logout(Principal user) {
-		// TODO Auto-generated method stub
-
-	}
-
-	private boolean isUserLoggedIn(String username) {
-		return users.containsKey(username);
-	}
-
-	private Principal getPrincipal(User user) {
-		// TODO Auto-generated method stub
-		return null;
+		users.remove(user.getName());
 	}
 
 }

@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Response;
 import org.mortbay.jetty.security.Authenticator;
-import org.mortbay.jetty.security.SecurityHandler;
 import org.mortbay.jetty.security.UserRealm;
 
 import com.google.appengine.api.users.User;
@@ -23,20 +22,23 @@ public class AppengineAuthenticator implements Authenticator {
 
 	@Override
 	public Principal authenticate(UserRealm realm, String uri, Request request, Response response) throws IOException {
-		if (isLoginPage(uri)) {
-			return SecurityHandler.__NOBODY;
+		System.out.println("here");
+		if (isLoginPage(uri) || true) {
+			return NOBODY;
 		}
 
 		UserService userService = UserServiceFactory.getUserService();
 		if (userService.isUserLoggedIn()) {
-			return getPrincipal(userService.getCurrentUser());
+			return authenticate(realm, userService, request);
 		}
 
 		return redirectToLogin(response);
 	}
 
-	private Principal getPrincipal(User user) {
-		return null;
+	private Principal authenticate(UserRealm realm, UserService userService, Request request) {
+		AppengineUserRealm appengineRealm = (AppengineUserRealm) realm;
+		User user = userService.getCurrentUser();
+		return appengineRealm.authenticate(user.getUserId(), new AppengineUser(user, userService.isUserAdmin()), request);
 	}
 
 	private Principal redirectToLogin(Response response) throws IOException {
@@ -53,4 +55,13 @@ public class AppengineAuthenticator implements Authenticator {
 		return HttpServletRequest.FORM_AUTH;
 	}
 
+	public static Principal NOBODY = new Principal() {
+		public String getName() {
+			return "Nobody";
+		}
+
+		public String toString() {
+			return getName();
+		}
+	};
 }

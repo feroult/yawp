@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.mortbay.jetty.security.Constraint;
-import org.mortbay.jetty.security.ConstraintMapping;
 import org.mortbay.jetty.security.SecurityHandler;
 import org.mortbay.jetty.webapp.WebAppContext;
 
@@ -57,16 +55,6 @@ public class AppengineWebAppContextHelper extends WebAppContextHelper {
 	private void configureSecurity() {
 		SecurityHandler handler = new SecurityHandler();
 
-		Constraint constraint = new Constraint();
-		constraint.setName(Constraint.__FORM_AUTH);
-		constraint.setRoles(AppengineUserRealm.ROLES);
-		constraint.setAuthenticate(true);
-
-		ConstraintMapping constraintMapping = new ConstraintMapping();
-		constraintMapping.setConstraint(constraint);
-		constraintMapping.setPathSpec("/*");
-
-		//handler.setConstraintMappings(new ConstraintMapping[] { constraintMapping });
 		handler.setAuthenticator(new AppengineAuthenticator());
 		handler.setUserRealm(createAppengineUserRealm());
 

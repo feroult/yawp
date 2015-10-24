@@ -66,7 +66,7 @@ public class AppengineWebAppContextHelper extends WebAppContextHelper {
 		constraintMapping.setConstraint(constraint);
 		constraintMapping.setPathSpec("/*");
 
-		handler.setConstraintMappings(new ConstraintMapping[] { constraintMapping });
+		//handler.setConstraintMappings(new ConstraintMapping[] { constraintMapping });
 		handler.setAuthenticator(new AppengineAuthenticator());
 		handler.setUserRealm(createAppengineUserRealm());
 

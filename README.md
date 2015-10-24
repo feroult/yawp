@@ -312,8 +312,7 @@ mvn archetype:generate \
   -DarchetypeArtifactId=yawp \
   -DarchetypeVersion=LATEST \
   -DgroupId=<your groupId> \
-  -DartifactId=<your artifactId> \
-  -Dversion=<your version>
+  -DartifactId=<your artifactId>
 ```
 
 From the generated app folder run:

@@ -2,30 +2,23 @@ package io.yawp.plugin.appengine;
 
 import java.security.Principal;
 
-import com.google.appengine.api.users.User;
-
 public class AppengineUser {
 
-	private User user;
+	private String username;
 
 	private boolean admin;
 
 	private Principal principal;
 
-	public AppengineUser(final User user, boolean admin) {
-		this.user = user;
-		this.admin = admin;
-
-		this.principal = new Principal() {
-			@Override
-			public String getName() {
-				return user.getEmail();
-			}
-		};
+	public AppengineUser(String cookie) {
+		// amy@domain.com:true:141224291207813574210
+		String[] split = cookie.split(":");
+		this.username = split[0];
+		this.admin = Boolean.valueOf(split[1]);
 	}
 
-	public User getUser() {
-		return user;
+	public String getUsername() {
+		return username;
 	}
 
 	public boolean isAdmin() {
@@ -33,6 +26,14 @@ public class AppengineUser {
 	}
 
 	public Principal getPrincipal() {
+		if (principal == null) {
+			this.principal = new Principal() {
+				@Override
+				public String getName() {
+					return username;
+				}
+			};
+		}
 		return principal;
 	}
 

@@ -12,6 +12,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.mortbay.jetty.security.Constraint;
 import org.mortbay.jetty.security.ConstraintMapping;
 import org.mortbay.jetty.security.SecurityHandler;
+import org.mortbay.jetty.webapp.WebAppContext;
 
 import com.google.appengine.tools.development.DevSocketImplFactory;
 
@@ -44,7 +45,16 @@ public class AppengineWebAppContextHelper extends WebAppContextHelper {
 	}
 
 	@Override
-	protected void configureSecurity() {
+	protected WebAppContext createDefaultWebAppContext() {
+		return new AppengineWebAppContext(mojo.getAppDir(), "");
+	}
+
+	@Override
+	protected void configureCustom() {
+		configureSecurity();
+	}
+
+	private void configureSecurity() {
 		SecurityHandler handler = new SecurityHandler();
 
 		Constraint constraint = new Constraint();
@@ -58,9 +68,14 @@ public class AppengineWebAppContextHelper extends WebAppContextHelper {
 
 		handler.setConstraintMappings(new ConstraintMapping[] { constraintMapping });
 		handler.setAuthenticator(new AppengineAuthenticator());
-		handler.setUserRealm(new AppengineUserRealm());
+		handler.setUserRealm(createAppengineUserRealm());
 
 		webapp.setSecurityHandler(handler);
+	}
+
+	private AppengineUserRealm createAppengineUserRealm() {
+		AppengineWebAppContext appengineWebApp = (AppengineWebAppContext) webapp;
+		return new AppengineUserRealm(appengineWebApp.getHelper());
 	}
 
 	@Override

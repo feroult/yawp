@@ -35,20 +35,11 @@
     This file is applied to a Web application before its own WEB_INF/web.xml file
   </description>
 
-
   <!-- TODO(schwardo): I don't really know what this is.  Sounds hacky. -->
   <context-param>
     <param-name>org.mortbay.jetty.webapp.NoTLDJarPattern</param-name>
     <param-value>start.jar|ant-.*\.jar|dojo-.*\.jar|jetty-.*\.jar|jsp-api-.*\.jar|junit-.*\.jar|servlet-api-.*\.jar|dnsns\.jar|rt\.jar|jsse\.jar|tools\.jar|sunpkcs11\.jar|sunjce_provider\.jar|xerces.*\.jar</param-value>
   </context-param>
-
-  <!-- YAWP! Added -->
-  <filter>
-    <filter-name>_yawp_AppengineDevServerHelper</filter-name>
-    <filter-class>
-      io.yawp.plugin.appengine.AppengineDevServerFilter
-    </filter-class>
-  </filter>
 
   <!-- YAWP! Removed
   <filter>
@@ -105,15 +96,6 @@
       com.google.appengine.tools.development.ResponseRewriterFilter
     </filter-class>
   </filter>
-
-  <!-- YAWP! Added -->
-  <filter-mapping>
-    <filter-name>_yawp_AppengineDevServerHelper</filter-name>
-    <url-pattern>/*</url-pattern>
-    <!--  match both real and forwarded requests -->
-    <dispatcher>FORWARD</dispatcher>
-    <dispatcher>REQUEST</dispatcher>
-  </filter-mapping>
 
   <!-- YAWP! Removed
   <filter-mapping>

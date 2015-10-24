@@ -28,18 +28,16 @@ public class WebAppContextHelper {
 	}
 
 	public WebAppContext createWebApp() {
-		webapp = new WebAppContext(mojo.getAppDir(), "");
-
-		createWebAppContext();
-
+		webapp = createWebAppContext();
 		webapp.setDefaultsDescriptor(getWebDefaultXml());
-		configureSecurity();
+
+		configureCustom();
 		configureClassloader();
 		configureHotDeploy();
 		return webapp;
 	}
 
-	protected void configureSecurity() {
+	protected void configureCustom() {
 	}
 
 	private WebAppContext createWebAppContext() {
@@ -53,12 +51,15 @@ public class WebAppContextHelper {
 			return webapp;
 		} catch (FileNotFoundException e) {
 
-			mojo.getLog().info("here");
-			return new WebAppContext(mojo.getAppDir(), "");
+			return createDefaultWebAppContext();
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	protected WebAppContext createDefaultWebAppContext() {
+		return new WebAppContext(mojo.getAppDir(), "");
 	}
 
 	protected String getWebDefaultXml() {

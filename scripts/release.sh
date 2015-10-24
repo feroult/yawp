@@ -8,6 +8,7 @@ git commit -am "release $VERSION"
 # check if it is not a snapshot
 git tag "yawp-$VERSION"
 git push --tags
-#killall -9 gpg-agent
-#eval "$(gpg-agent --daemon)"
+git push
+killall -9 gpg-agent
+eval "$(gpg-agent --daemon)"
 mvn clean deploy -Prelease

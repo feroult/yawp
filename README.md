@@ -310,9 +310,7 @@ t.asyncTest("transformer", function(assert) {
 mvn archetype:generate \
   -DarchetypeGroupId=io.yawp \
   -DarchetypeArtifactId=yawp \
-  -DarchetypeVersion=LATEST \
-  -DgroupId=<your groupId> \
-  -DartifactId=<your artifactId>
+  -DarchetypeVersion=LATEST
 ```
 
 From the generated app folder run:

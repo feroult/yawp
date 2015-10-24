@@ -159,6 +159,7 @@ public abstract class RestAction {
 		List<Object> result = new ArrayList<Object>();
 		for (Object object : objects) {
 			if (!hasTransformer() || !object.getClass().equals(endpointClazz)) {
+				result.add(object);
 				continue;
 			}
 			result.add(RepositoryTransformers.execute(r, object, getTransformerName()));

@@ -15,6 +15,7 @@ import io.yawp.repository.shields.Shield;
 import io.yawp.repository.shields.ShieldInfo;
 import io.yawp.repository.transformers.RepositoryTransformers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -155,14 +156,15 @@ public abstract class RestAction {
 			return objects;
 		}
 
+		List<Object> result = new ArrayList<Object>();
 		for (Object object : objects) {
-			if (!object.getClass().equals(endpointClazz)) {
+			if (!hasTransformer() || !object.getClass().equals(endpointClazz)) {
 				continue;
 			}
-			RepositoryTransformers.execute(r, object, getTransformerName());
+			result.add(RepositoryTransformers.execute(r, object, getTransformerName()));
 		}
 
-		return objects;
+		return result;
 	}
 
 	protected void applyGetFacade(Object object) {

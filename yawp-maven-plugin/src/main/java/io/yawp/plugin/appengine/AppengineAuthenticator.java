@@ -13,13 +13,19 @@ import org.mortbay.jetty.security.UserRealm;
 
 public class AppengineAuthenticator implements Authenticator {
 
-	private static final String CONTINUE_KEY = "continue";
-
 	private static final long serialVersionUID = 8961206693928060634L;
 
-	private static String LOGIN_URI = "/_ah/login";
+	private static final String LOGIN_URI = "/_ah/login";
 
-	private static String DEV_APPSERVER_LOGIN_COOKIE = "dev_appserver_login";
+	private static final String DEV_APPSERVER_LOGIN_COOKIE = "dev_appserver_login";
+
+	private static final String CONTINUE_KEY = "continue";
+
+	private static final Principal NOBODY = new Principal() {
+		public String getName() {
+			return "Nobody";
+		}
+	};
 
 	@Override
 	public Principal authenticate(UserRealm realm, String uri, Request request, Response response) throws IOException {
@@ -28,12 +34,8 @@ public class AppengineAuthenticator implements Authenticator {
 			return authenticateInRealm(realm, cookie, request);
 		}
 
-		if (isLoginForm(request, uri)) {
+		if (isLoginUri(uri)) {
 			return NOBODY;
-		}
-
-		if (isLoginPost(request, uri)) {
-			return redirectToContinueUri(response, request.getParameter(CONTINUE_KEY));
 		}
 
 		return redirectToLogin(response, uri);
@@ -59,11 +61,6 @@ public class AppengineAuthenticator implements Authenticator {
 		return null;
 	}
 
-	private Principal redirectToContinueUri(Response response, String uri) throws IOException {
-		//response.sendRedirect(response.encodeRedirectURL(uri));
-		return NOBODY;
-	}
-
 	private String getAppengineCookie(Request request) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies == null) {
@@ -79,21 +76,8 @@ public class AppengineAuthenticator implements Authenticator {
 		return null;
 	}
 
-	private boolean isLoginForm(Request request, String uri) {
-		return request.getMethod().equals("GET") && uri.startsWith(LOGIN_URI);
+	private boolean isLoginUri(String uri) {
+		return uri.startsWith(LOGIN_URI);
 	}
 
-	private boolean isLoginPost(Request request, String uri) {
-		return request.getMethod().equals("POST") && uri.startsWith(LOGIN_URI);
-	}
-
-	public static Principal NOBODY = new Principal() {
-		public String getName() {
-			return "Nobody";
-		}
-
-		public String toString() {
-			return getName();
-		}
-	};
 }

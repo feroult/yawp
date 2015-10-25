@@ -1,0 +1,650 @@
+{
+  "id": "4317",
+  "name": "Paid Media Landing Page",
+  "mobile": true,
+  "notes": "Original Template v3",
+  "syntax": 4,
+  "version": 1.02,
+  "style": {
+    "replacements": [
+      {
+      	"type": "color",
+      	"name": "Body Color",
+      	"find": "#fffffc"
+      },
+      {
+      	"type": "color",
+      	"name": "Menu Background",
+      	"find": "#363637"
+      },
+      {
+      	"type": "color",
+      	"name": "Menu Text Color",
+      	"find": "#fffffe"
+      },
+      {
+      	"type": "color",
+      	"name": "Menu Text Hover",
+      	"find": "#51aadc"
+      },
+      {
+      	"type": "color",
+      	"name": "Menu Button Text",
+      	"find": "#fffff5"
+      },
+      {
+      	"type": "color",
+      	"name": "Menu Button",
+      	"find": "#1ec279"
+      },
+      {
+      	"type": "color",
+      	"name": "Menu Button Hover",
+      	"find": "#00b069"
+      },
+      {
+      	"type": "color",
+      	"name": "Header Background Color",
+      	"find": "#115d8d"
+      },
+      {
+      	"type": "color",
+      	"name": "Header Text Color",
+      	"find": "#fffffd"
+      },
+      {
+      	"type": "color",
+      	"name": "Green Button Text",
+      	"find": "#fffff4"
+      },
+      {
+      	"type": "color",
+      	"name": "Green Button Color",
+      	"find": "#1ec278"
+      },
+      {
+      	"type": "color",
+      	"name": "Green Button Hover",
+      	"find": "#00a75f"
+      },
+      {
+      	"type": "color",
+      	"name": "Transparent Button Text",
+      	"find": "#fffff6"
+      },
+      {
+      	"type": "color",
+      	"name": "Transparent Button Hover",
+      	"find": "#006fb5"
+      },
+      {
+      	"type": "color",
+      	"name": "Circle Color",
+      	"find": "#1fa2ed"
+      },
+      {
+      	"type": "color",
+      	"name": "Tutorial List Icon Color",
+      	"find": "#1ec277"
+      },
+      {
+      	"type": "color",
+      	"name": "Slider Background Color",
+      	"find": "#f8f8f8"
+      },
+      {
+      	"type": "color",
+      	"name": "Builder List Icon Color",
+      	"find": "#1ec280"
+      },
+      {
+      	"type": "color",
+      	"name": "About Background Color",
+      	"find": "#f8f8f9"
+      },
+      {
+      	"type": "color",
+      	"name": "Footer Text",
+      	"find": "#fffff3"
+      },
+      {
+      	"type": "color",
+      	"name": "Footer Background Color",
+      	"find": "#363636"
+      }
+    ]
+	},
+	"variables": {
+		"facebookurl": {
+		  "variable": "facebookurl",
+		  "dafault": "",
+		  "name": "The URL to share on Facebook. Leave blank to share the current page."
+		},
+		"twitterurl": {
+		  "variable": "twitterurl",
+		  "dafault": "",
+		  "name": "The URL to share on Twitter. Leave blank to share the current page."
+		}
+	},
+	"elements": [
+		{
+			"id": "menu",
+			"name": "Menu",
+			"type": "container"
+		},
+		{
+			"id": "menu-content-logo",
+			"name": "Logo Image",
+			"type": "image-link",
+			"comment": "Recommended image width 209 pixels",
+			"data": {
+				"max-width": 209,
+				"max-height": 33
+			}
+		},
+		{
+			"id": "freeTutorial",
+			"name": "Menu 1",
+			"type": "link",
+			"data": {
+				"href": "#free-tutorial"
+			}
+		},
+		{
+			"id": "testimonials",
+			"name": "Menu 2",
+			"type": "link",
+			"data": {
+				"href": "#testimonials"
+			}
+		},
+		{
+			"id": "theProduct",
+			"name": "Menu 3",
+			"type": "link",
+			"data": {
+				"href": "#the-product"
+			}
+		},
+		{
+			"id": "about",
+			"name": "Menu 4",
+			"type": "link",
+			"data": {
+				"href": "#about"
+			}
+		},
+		{
+			"id": "contact",
+			"name": "Menu 5",
+			"type": "link",
+			"data": {
+				"href": "#contact"
+			}
+		},
+		{
+			"id": "menu-content-button",
+			"name": "Menu Button",
+			"type": "link"
+		},
+		{
+			"id": "header-bg",
+			"name": "Header Section",
+			"type": "container"
+		},
+		{
+			"id": "header-bg-img",
+			"name": "Header Background Image",
+			"type": "image"
+		},
+		{
+			"id": "header-bg-content-img",
+			"name": "Main Image",
+			"type": "image",
+			"data": {
+				"max-width": 273,
+				"max-height": 272
+			}
+		},
+		{
+			"id": "header-bg-container",
+			"name": "Header Content",
+			"type": "container"
+		},
+		{
+			"id": "header-bg-title",
+			"name": "Header Title",
+			"type": "text"
+		},
+		{
+			"id": "header-bg-copy",
+			"name": "Header Copy",
+			"type": "text"
+		},
+		{
+			"id": "header-btn-1",
+			"name": "Header Button 1",
+			"type": "link",
+			"data": {
+				"href": "#/optin"
+			}
+		},
+		{
+			"id": "header-btn-2",
+			"name": "Header Button 2",
+			"type": "link"
+		},
+		{
+			"id": "header-bg-disclaimer",
+			"name": "Header Disclaimer",
+			"type": "text"
+		},
+		{
+			"id": "header-bg-privacy",
+			"name": "Header Privacy Link",
+			"type": "link"
+		},
+		{
+			"id": "header-bg-circle",
+			"name": "Header Circle",
+			"type": "container"
+		},
+		{
+			"id": "tutorial-sec",
+			"name": "Tutorial Section",
+			"type": "container"
+		},
+		{
+			"id": "tutorial-title",
+			"name": "Tutorial Title",
+			"type": "text"
+		},
+		{
+			"id": "tutorial-list-1",
+			"name": "Tutorial List 1",
+			"type": "text"
+		},
+		{
+			"id": "tutorial-list-2",
+			"name": "Tutorial List 2",
+			"type": "text"
+		},
+		{
+			"id": "tutorial-btn",
+			"name": "Tutorial Button",
+			"type": "link",
+			"data": {
+				"href": "#/optin"
+			}
+		},
+		{
+			"id": "divider-bar",
+			"name": "Divider Bar",
+			"type": "container"
+		},
+		{
+			"id": "presenter-sec",
+			"name": "Presenter Section",
+			"type": "container"
+		},
+		{
+			"id": "presenter-title",
+			"name": "Presenter Title",
+			"type": "text"
+		},
+		{
+			"id": "presenter-img",
+			"name": "Presenter Image",
+			"type": "image",
+			"data": {
+				"max-width": 181,
+				"max-height": 181
+			}
+		},
+		{
+			"id": "presenter-name",
+			"name": "Presenter Name",
+			"type": "text"
+		},
+		{
+			"id": "presenter-info",
+			"name": "Presenter Info",
+			"type": "text"
+		},
+		{
+			"id": "presenter-copy",
+			"name": "Presenter Copy",
+			"type": "text"
+		},
+		{
+			"id": "presenter-btn",
+			"name": "Presenter Button",
+			"type": "link",
+			"data": {
+				"href": "#/optin"
+			}
+		},
+		{
+			"id": "testimonial-sec",
+			"name": "Testimonial Section",
+			"type": "container"
+		},
+		{
+			"id": "testimonial-header",
+			"name": "Testimonial Header",
+			"type": "text"
+		},
+		{
+			"id": "test-01",
+			"name": "Testimonial 1",
+			"type": "container"
+		},
+		{
+			"id": "test-01-img",
+			"name": "Testimonial 1 Image",
+			"type": "image",
+			"data": {
+				"max-width": 107,
+				"max-height": 107
+			}
+		},
+		{
+			"id": "test-cont-01",
+			"name": "Testimonial 01 Box",
+			"type": "container"
+		},
+		{
+			"id": "test-01-copy",
+			"name": "Testimonial 1 Copy",
+			"type": "text"
+		},
+		{
+			"id": "test-01-author",
+			"name": "Testimonial 1 Author",
+			"type": "text"
+		},
+		{
+			"id": "test-02",
+			"name": "Testimonial 2",
+			"type": "container"
+		},
+		{
+			"id": "test-02-img",
+			"name": "Testimonial 2 Image",
+			"type": "image",
+			"data": {
+				"max-width": 107,
+				"max-height": 107
+			}
+		},
+		{
+			"id": "test-cont-02",
+			"name": "Testimonial 02 Box",
+			"type": "container"
+		},
+		{
+			"id": "test-02-copy",
+			"name": "Testimonial 2 Copy",
+			"type": "text"
+		},
+		{
+			"id": "test-02-author",
+			"name": "Testimonial 2 Author",
+			"type": "text"
+		},
+		{
+			"id": "test-03",
+			"name": "Testimonial 3",
+			"type": "container"
+		},
+		{
+			"id": "test-03-img",
+			"name": "Testimonial 3 Image",
+			"type": "image",
+			"data": {
+				"max-width": 107,
+				"max-height": 107
+			}
+		},
+		{
+			"id": "test-cont-03",
+			"name": "Testimonial 03 Box",
+			"type": "container"
+		},
+		{
+			"id": "test-03-copy",
+			"name": "Testimonial 3 Copy",
+			"type": "text"
+		},
+		{
+			"id": "test-03-author",
+			"name": "Testimonial 3 Author",
+			"type": "text"
+		},
+		{
+			"id": "test-04",
+			"name": "Testimonial 4",
+			"type": "container"
+		},
+		{
+			"id": "test-04-img",
+			"name": "Testimonial 4 Image",
+			"type": "image",
+			"data": {
+				"max-width": 107,
+				"max-height": 107
+			}
+		},
+		{
+			"id": "test-cont-04",
+			"name": "Testimonial 04 Box",
+			"type": "container"
+		},
+		{
+			"id": "test-04-copy",
+			"name": "Testimonial 4 Copy",
+			"type": "text"
+		},
+		{
+			"id": "test-04-author",
+			"name": "Testimonial 4 Author",
+			"type": "text"
+		},
+		{
+			"id": "test-05",
+			"name": "Testimonial 5",
+			"type": "container"
+		},
+		{
+			"id": "test-05-img",
+			"name": "Testimonial 5 Image",
+			"type": "image",
+			"data": {
+				"max-width": 107,
+				"max-height": 107
+			}
+		},
+		{
+			"id": "test-cont-05",
+			"name": "Testimonial 05 Box",
+			"type": "container"
+		},
+		{
+			"id": "test-05-copy",
+			"name": "Testimonial 5 Copy",
+			"type": "text"
+		},
+		{
+			"id": "test-05-author",
+			"name": "Testimonial 5 Author",
+			"type": "text"
+		},
+		{
+			"id": "builder-sec",
+			"name": "Builder Section",
+			"type": "container"
+		},
+		{
+			"id": "builder-title",
+			"name": "Builder Title",
+			"type": "text"
+		},
+		{
+			"id": "builder-list",
+			"name": "Builder List",
+			"type": "text"
+		},
+		{
+			"id": "builder-btn",
+			"name": "Builder Button",
+			"type": "link"
+		},
+		{
+			"id": "builder-img",
+			"name": "Builder Image",
+			"type": "image",
+			"data": {
+				"max-width": 600,
+				"max-height": 423
+			}
+		},
+		{
+			"id": "about-sec",
+			"name": "About Section",
+			"type": "container"
+		},
+		{
+			"id": "about-title",
+			"name": "About Title",
+			"type": "text"
+		},
+		{
+			"id": "about-img",
+			"name": "About Image",
+			"type": "image",
+			"data": {
+				"max-width": 114,
+				"max-height": 114
+			}
+		},
+		{
+			"id": "about-phrase",
+			"name": "About Subheadline",
+			"type": "text"
+		},
+		{
+			"id": "about-copy",
+			"name": "About Copy",
+			"type": "text"
+		},
+		{
+			"id": "contact-sec",
+			"name": "Contact Section",
+			"type": "container"
+		},
+		{
+			"id": "contact-bg-img",
+			"name": "Contact Background Image",
+			"type": "image"
+		},
+		{
+			"id": "contact-title",
+			"name": "Contact Title",
+			"type": "text"
+		},
+		{
+			"id": "contact-container1",
+			"name": "Email Container",
+			"type": "container"
+		},
+		{
+			"id": "contact-btn1-text",
+			"name": "Email Text",
+			"type": "text"
+		},
+		{
+			"id": "contact-btn1",
+			"name": "Email Button",
+			"type": "link"
+		},
+		{
+			"id": "contact-container2",
+			"name": "Form Container",
+			"type": "container"
+		},
+		{
+			"id": "contact-btn2-text",
+			"name": "Form Text",
+			"type": "text"
+		},
+		{
+			"id": "contact-btn2",
+			"name": "Form Button",
+			"type": "link",
+			"data": {
+				"href": "#/optin"
+			}
+		},
+		{
+			"id": "footer-sec",
+			"name": "Footer Section",
+			"type": "container"
+		},
+		{
+			"id": "facebook-btn",
+			"name": "Facebook Button",
+			"type": "dynamic",
+			"data": {
+				"variables": "facebookurl"
+			}
+		},
+		{
+			"id": "twitter-btn",
+			"name": "Twitter Button",
+			"type": "dynamic",
+			"data": {
+				"variables": "twitterurl"
+			}
+		},
+		{
+			"id": "footer-link1",
+			"name": "Footer Link 1",
+			"type": "link"
+		},
+		{
+			"id": "footer-link2",
+			"name": "Footer Link 2",
+			"type": "link"
+		},
+		{
+			"id": "footer-link3",
+			"name": "Footer Link 3",
+			"type": "link"
+		},
+		{
+			"id": "footer-link4",
+			"name": "Footer Link 4",
+			"type": "link"
+		},
+		{
+			"id": "footer-link5",
+			"name": "Footer Link 5",
+			"type": "link"
+		},
+		{
+			"id": "footer-logo",
+			"name": "Footer Logo",
+			"type": "image",
+			"data": {
+				"max-width": 187,
+				"max-height": 30
+			}
+		},
+		{
+			"id": "footer-copyright",
+			"name": "Footer Copyright",
+			"type": "text"
+		}
+  	],
+  	"form": {}
+}

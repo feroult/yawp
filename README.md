@@ -129,7 +129,7 @@ yawp(Person.class).where(or(and(c("company", "=", "github.com"), c("age", ">=", 
 
 yawp(Person.class).where("name", "=", "John").and("company", "=", "github.com").only();
 ```
-Note: The methods **c**, **and** and **or** must be imported static or fully qualified for this to work.
+Note: The methods **c**, **and** and **or** must be static imported or fully qualified.
 
 
 You can look at this [Java test suite](http://github.com/feroult/yawp/tree/master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java) to see examples of more complex constructions.

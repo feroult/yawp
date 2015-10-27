@@ -138,7 +138,7 @@ You can look at this [Java test suite](http://github.com/feroult/yawp/tree/maste
 
 So far, you've seen all functionality that you get by just annotating your POJO with @Endpoint. Now it's time to see how to add custom server side business logic to your model, so you can create real world applications with specific needs.
 
-The way **YAWP!** deal with this is by allowing you to extend the default REST schema through **Features**. You can create three kind of features for your objects: **Actions**, **Transformers** and **Hooks**.
+The way **YAWP!** deals with this is by allowing you to extend the default REST schema through **Features**. You can create four kind of features for your objects: **Actions**, **Transformers**, **Shields** and **Hooks**.
 
 ### Actions
 
@@ -243,6 +243,37 @@ public class UserTransformer extends Transformer<User> {
     }
 }
 ```
+
+### Shields
+
+Shields are a way to allow and disallow access to certain rest actions to your models, absolutely or based any criteria (like the logged user or a characteristic of the requested object).
+
+To create a simple Shield, extend the Shield class for your endpoint:
+
+```java
+public class PersonShield extends Shield<Person> {
+}
+```
+
+By simply creating this class, you could try your APIs again and find out that none of them work anymore. That is because Shields by default block every action, like create, show or list. You need to specify what you want to allow, and you can do so by overriding the methods for actions you want:
+
+```java
+    @Override
+    public void show(IdRef<Person> id) {
+        allow();
+    }
+```
+
+This will `allow()` the `SHOW` action for everyone. You can also call `disallow()`, and you can use a conditional expression:
+
+```java
+    @Override
+    public void destroy(IdRef<Person> id) {
+        allow(Session.getLoggedUser().getId().equals(id));
+    }
+```
+
+This will allow each user to destroy only himself. The name of the method being the action you are configuring (`index(IdRef<?> parentId)`, `show(IdRef<T> id)`, `create(List<T> objects)`, `update(IdRef<T> id, T object)`, `destroy(IdRef<T> id)`) or `always()` for everyone or `defaults()` for custom actions (created via inheriting the Action class).
 
 ### Hooks
 

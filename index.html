@@ -1,17 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
-    <!-- Begin Inspectlet Embed Code -->
-    <script type="text/javascript" id="inspectletjs">
-    window.__insp = window.__insp || [];
-    __insp.push(['wid', 86703955]);
-    (function() {
-    function ldinsp(){if(typeof window.__inspld != "undefined") return; window.__inspld = 1; var insp = document.createElement('script'); insp.type = 'text/javascript'; insp.async = true; insp.id = "inspsync"; insp.src = ('https:' == document.location.protocol ? 'https' : 'http') + '://cdn.inspectlet.com/inspectlet.js'; var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(insp, x); };
-    setTimeout(ldinsp, 500); document.readyState != "complete" ? (window.attachEvent ? window.attachEvent('onload', ldinsp) : window.addEventListener('load', ldinsp, false)) : ldinsp();
-    })();
-    </script>
-    <!-- End Inspectlet Embed Code -->
-
     <meta charset="UTF-8">
     <title>YAWP! by feroult</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,7 +8,6 @@
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
     <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
-    <meta name="google-site-verification" content="M6k8Ek0uNY4lajqXCtfLutObDtu7H9jDeEU7W35F9nY" />
   </head>
   <body>
     <section class="page-header">
@@ -192,7 +180,7 @@ yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span cl
 
 yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span class="pl-k">.</span>where(<span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>John<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>and(<span class="pl-s"><span class="pl-pds">"</span>company<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>github.com<span class="pl-pds">"</span></span>)<span class="pl-k">.</span>only();</pre></div>
 
-<p>Note: The methods <strong>c</strong>, <strong>and</strong> and <strong>or</strong> must be imported static or fully qualified for this to work.</p>
+<p>Note: The methods <strong>c</strong>, <strong>and</strong> and <strong>or</strong> must be static imported or fully qualified.</p>
 
 <p>You can look at this <a href="http://github.com/feroult/yawp/tree/master/src/test/java/io/yawp/repository/query/DatastoreQueryTest.java">Java test suite</a> to see examples of more complex constructions.</p>
 
@@ -201,7 +189,7 @@ yawp(<span class="pl-smi">Person</span><span class="pl-k">.</span>class)<span cl
 
 <p>So far, you've seen all functionality that you get by just annotating your POJO with <a href="https://github.com/Endpoint" class="user-mention">@Endpoint</a>. Now it's time to see how to add custom server side business logic to your model, so you can create real world applications with specific needs.</p>
 
-<p>The way <strong>YAWP!</strong> deal with this is by allowing you to extend the default REST schema through <strong>Features</strong>. You can create three kind of features for your objects: <strong>Actions</strong>, <strong>Transformers</strong> and <strong>Hooks</strong>.</p>
+<p>The way <strong>YAWP!</strong> deals with this is by allowing you to extend the default REST schema through <strong>Features</strong>. You can create four kind of features for your objects: <strong>Actions</strong>, <strong>Transformers</strong>, <strong>Shields</strong> and <strong>Hooks</strong>.</p>
 
 <h3>
 <a id="actions" class="anchor" href="#actions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Actions</h3>
@@ -301,6 +289,58 @@ curl -X <b>GET</b> http://localhost:8080/api<b>/people/123?t=upperCase</b>
         <span class="pl-k">return</span> <span class="pl-k">new</span> <span class="pl-smi">UserView</span>(user);
     }
 }</pre></div>
+
+<h3>
+<a id="shields" class="anchor" href="#shields" aria-hidden="true"><span class="octicon octicon-link"></span></a>Shields</h3>
+
+<p>With Shields it is possible to provide security to your APIs (custom and default actions). It works like a firewall white list where you can specify what is allowed. To create a simple Shield, just extend the Shield class for your endpoint:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">PersonShield</span> <span class="pl-k">extends</span> <span class="pl-e">Shield&lt;<span class="pl-smi">Person</span>&gt;</span> {
+}</pre></div>
+
+<p>Since this Shield works like a white list, by simply creating this class, all the rest actions get instantly blocked (they will return 404 in production). Now, you can specify what kind of action you want to allow based on some business rules. You can do this by overriding the methods of the Shield base class. For instance, to allow only the show rest action of the person's model to be accessed by everyone, you can add this method to your Shield:</p>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> show(<span class="pl-k">IdRef&lt;<span class="pl-smi">Person</span>&gt;</span> id) {
+        allow();
+    }</pre></div>
+
+<p>Now, you may want to provide access to the destroy rest action only if the current logged user is the creator of a person's instance:</p>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> destroy(<span class="pl-k">IdRef&lt;<span class="pl-smi">Person</span>&gt;</span> id) {
+        <span class="pl-smi">Person</span> person id<span class="pl-k">.</span>fetch();
+        allow(person<span class="pl-k">.</span>getCreatorId(<span class="pl-smi">Session</span><span class="pl-k">.</span>getLoggedUserId());
+    }</pre></div>
+
+<p>The name of the method being the action you are configuring (<code>index(IdRef&lt;?&gt; parentId)</code>, <code>show(IdRef&lt;T&gt; id)</code>, <code>create(List&lt;T&gt; objects)</code>, <code>update(IdRef&lt;T&gt; id, T object)</code>, <code>destroy(IdRef&lt;T&gt; id)</code>) or <code>always()</code> for every action  or <code>defaults()</code> for actions without a more specific shield rule.</p>
+
+<p>Shields can also filter the data a user can see, create, update or destroy. For instance, if the current user can interact only with people he'd created, a shield would be:</p>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> always() {
+        allow()<span class="pl-k">.</span>where(<span class="pl-s"><span class="pl-pds">"</span>creatorId<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-smi">Session</span><span class="pl-k">.</span>getLoggedUserId());
+    }</pre></div>
+
+<p>Finally, Shields have a façade API. That means you can specify what attributes of your model a user can read or write. To do this, create a java interface that your model implements. Inside this interface specify what setters and getters will be allowed:</p>
+
+<div class="highlight highlight-source-java"><pre>    @Endpoint(path <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">"</span>/people<span class="pl-pds">"</span></span>)
+    <span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">Person</span> <span class="pl-k">implements</span> <span class="pl-e">NameFacade</span> {
+    (<span class="pl-c1">...</span>)
+
+    <span class="pl-k">public</span> <span class="pl-k">interface</span> <span class="pl-en">NameFacade</span> {
+
+        <span class="pl-k">public</span> <span class="pl-smi">String</span> <span class="pl-en">getName</span>();
+
+        <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">setName</span>(<span class="pl-smi">String</span> <span class="pl-v">name</span>);
+    (<span class="pl-c1">...</span>)</pre></div>
+
+<p>Now wire up your façade:</p>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> always() {
+        allow()<span class="pl-k">.</span>where(<span class="pl-s"><span class="pl-pds">"</span>creatorId<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>=<span class="pl-pds">"</span></span>, <span class="pl-smi">Session</span><span class="pl-k">.</span>getLoggedUserId())<span class="pl-k">.</span>facade(<span class="pl-smi">NameFacade</span><span class="pl-k">.</span>class);
+    }</pre></div>
 
 <h3>
 <a id="hooks" class="anchor" href="#hooks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hooks</h3>

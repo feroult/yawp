@@ -256,20 +256,20 @@ public class PersonShield extends Shield<Person> {
 Since this Shield works like a white list, by simply creating this class, all the rest actions get instantly blocked (they will return 404 in production). Now, you can specify what kind of action you want to allow based on some business rules. You can do this by overriding the methods of the Shield base class. For instance, to allow only the show rest action of the person's model to be accessed by everyone, you can add this method to your Shield:
 
 ```java
-    @Override
-    public void show(IdRef<Person> id) {
-        allow();
-    }
+@Override
+public void show(IdRef<Person> id) {
+    allow();
+}
 ```
 
 Now, you may want to provide access to the destroy rest action only if the current logged user is the creator of a person's instance:
 
 ```java
-    @Override
-    public void destroy(IdRef<Person> id) {
-        Person person id.fetch();
-        allow(person.getCreatorId(Session.getLoggedUserId());
-    }
+@Override
+public void destroy(IdRef<Person> id) {
+    Person person id.fetch();
+    allow(person.getCreatorId(Session.getLoggedUserId());
+}
 ```
 
 The name of the method being the action you are configuring (`index(IdRef<?> parentId)`, `show(IdRef<T> id)`, `create(List<T> objects)`, `update(IdRef<T> id, T object)`, `destroy(IdRef<T> id)`) or `always()` for every action  or `defaults()` for actions without a more specific shield rule.
@@ -277,34 +277,34 @@ The name of the method being the action you are configuring (`index(IdRef<?> par
 Shields can also filter the data a user can see, create, update or destroy. For instance, if the current user can interact only with people he'd created, a shield would be:
 
 ```java
-    @Override
-    public void always() {
-        allow().where("creatorId", "=", Session.getLoggedUserId());
-    }
+@Override
+public void always() {
+    allow().where("creatorId", "=", Session.getLoggedUserId());
+}
 ```
 
 Finally, Shields have a façade API. That means you can specify what attributes of your model a user can read or write. To do this, create a java interface that your model implements. Inside this interface specify what setters and getters will be allowed:
 
 ```java
-    @Endpoint(path = "/people")
-    public class Person implements NameFacade {
-    (...)
+@Endpoint(path = "/people")
+public class Person implements NameFacade {
+(...)
+
+public interface NameFacade {
+
+    public String getName();
     
-    public interface NameFacade {
-    
-        public String getName();
-        
-        public void setName(String name);
-    (...)
+    public void setName(String name);
+(...)
 ```
 
 Now wire up your façade:
 
 ```java
-    @Override
-    public void always() {
-        allow().where("creatorId", "=", Session.getLoggedUserId()).facade(NameFacade.class);
-    }
+@Override
+public void always() {
+    allow().where("creatorId", "=", Session.getLoggedUserId()).facade(NameFacade.class);
+}
 ```
 
 ### Hooks

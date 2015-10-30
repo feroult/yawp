@@ -246,16 +246,14 @@ public class UserTransformer extends Transformer<User> {
 
 ### Shields
 
-Shields are the way provide security to your model's rest APIs. Througth the Shields allow and disallow access based on your business needs, for instance, the roles of the current logged user.
-
-To create a Shield, extend the Shield class for your endpoint:
+With Shields it is possible to provide security to your APIs (custom and default actions). It works like a firewall white list where you can specify what is allowed. To create a simple Shield, extend the Shield class for your endpoint:
 
 ```java
 public class PersonShield extends Shield<Person> {
 }
 ```
 
-By simply creating this class, you could try your APIs again and find out that none of them work anymore. That is because Shields by default block every action, like create, show or list. You need to specify what you want to allow, and you can do so by overriding the methods for actions you want:
+Since this Shield works like a white list, by simply creating this class, all the rest actions get instantly blocked (they will return 404 in production). Now, you can specify what kind of action you want to allow based on some business rules. You can do this by overriding the methods of the Shield base class. For instance, to allow only the show rest action of the person's model to be accessed by everyone, we can add this method to your Shield:
 
 ```java
     @Override
@@ -264,16 +262,50 @@ By simply creating this class, you could try your APIs again and find out that n
     }
 ```
 
-This will `allow()` the `SHOW` action for everyone. You can also call `disallow()`, and you can use a conditional expression:
+Now, you may want to provide access to the destroy rest action only if the current logged user is the creator that person model:
 
 ```java
     @Override
     public void destroy(IdRef<Person> id) {
-        allow(Session.getLoggedUser().getId().equals(id));
+        Person person id.fetch();
+        allow(person.getCreatorId(Session.getLoggedUserId());
     }
 ```
 
-This will allow each user to destroy only himself. The name of the method being the action you are configuring (`index(IdRef<?> parentId)`, `show(IdRef<T> id)`, `create(List<T> objects)`, `update(IdRef<T> id, T object)`, `destroy(IdRef<T> id)`) or `always()` for everyone or `defaults()` for custom actions (created via inheriting the Action class).
+The name of the method being the action you are configuring (`index(IdRef<?> parentId)`, `show(IdRef<T> id)`, `create(List<T> objects)`, `update(IdRef<T> id, T object)`, `destroy(IdRef<T> id)`) or `always()` for every action  or `defaults()` for actions without a more specific shield rule.
+
+Shields can also filter the data a user can see, create, update or destroy. For instance, if the current user can interact with people he'd created, a shield would be:
+
+```java
+    @Override
+    public void always() {
+        allow().where("creatorId", "=", Session.getLoggedUserId());
+    }
+```
+
+Finally Shields have a façade API. That means you can specify what attributes of your model a user can read or write. To do this, create a java interface that your model implements. Inside this interface specify what setters and getters will be allowed:
+
+```java
+    @Endpoint(path = "/people")
+    public class Person implements NameFacade {
+    (...)
+    
+    public interface NameFacade {
+    
+        public String getName();
+        
+        public void setName(String name);
+    (...)
+```
+
+Now wire up your façade:
+
+```java
+    @Override
+    public void always() {
+        allow().where("creatorId", "=", Session.getLoggedUserId()).facade(NameFacade.class);
+    }
+```
 
 ### Hooks
 

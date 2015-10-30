@@ -246,9 +246,9 @@ public class UserTransformer extends Transformer<User> {
 
 ### Shields
 
-Shields are a way to allow and disallow access to certain rest actions to your models, absolutely or based any criteria (like the logged user or a characteristic of the requested object).
+Shields are the way provide security to your model's rest APIs. Througth the Shields allow and disallow access based on your business needs, for instance, the roles of the current logged user.
 
-To create a simple Shield, extend the Shield class for your endpoint:
+To create a Shield, extend the Shield class for your endpoint:
 
 ```java
 public class PersonShield extends Shield<Person> {

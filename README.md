@@ -246,14 +246,14 @@ public class UserTransformer extends Transformer<User> {
 
 ### Shields
 
-With Shields it is possible to provide security to your APIs (custom and default actions). It works like a firewall white list where you can specify what is allowed. To create a simple Shield, extend the Shield class for your endpoint:
+With Shields it is possible to provide security to your APIs (custom and default actions). It works like a firewall white list where you can specify what is allowed. To create a simple Shield, just extend the Shield class for your endpoint:
 
 ```java
 public class PersonShield extends Shield<Person> {
 }
 ```
 
-Since this Shield works like a white list, by simply creating this class, all the rest actions get instantly blocked (they will return 404 in production). Now, you can specify what kind of action you want to allow based on some business rules. You can do this by overriding the methods of the Shield base class. For instance, to allow only the show rest action of the person's model to be accessed by everyone, we can add this method to your Shield:
+Since this Shield works like a white list, by simply creating this class, all the rest actions get instantly blocked (they will return 404 in production). Now, you can specify what kind of action you want to allow based on some business rules. You can do this by overriding the methods of the Shield base class. For instance, to allow only the show rest action of the person's model to be accessed by everyone, you can add this method to your Shield:
 
 ```java
     @Override
@@ -262,7 +262,7 @@ Since this Shield works like a white list, by simply creating this class, all th
     }
 ```
 
-Now, you may want to provide access to the destroy rest action only if the current logged user is the creator that person model:
+Now, you may want to provide access to the destroy rest action only if the current logged user is the creator of a person's instance:
 
 ```java
     @Override
@@ -274,7 +274,7 @@ Now, you may want to provide access to the destroy rest action only if the curre
 
 The name of the method being the action you are configuring (`index(IdRef<?> parentId)`, `show(IdRef<T> id)`, `create(List<T> objects)`, `update(IdRef<T> id, T object)`, `destroy(IdRef<T> id)`) or `always()` for every action  or `defaults()` for actions without a more specific shield rule.
 
-Shields can also filter the data a user can see, create, update or destroy. For instance, if the current user can interact with people he'd created, a shield would be:
+Shields can also filter the data a user can see, create, update or destroy. For instance, if the current user can interact only with people he'd created, a shield would be:
 
 ```java
     @Override
@@ -283,7 +283,7 @@ Shields can also filter the data a user can see, create, update or destroy. For 
     }
 ```
 
-Finally Shields have a façade API. That means you can specify what attributes of your model a user can read or write. To do this, create a java interface that your model implements. Inside this interface specify what setters and getters will be allowed:
+Finally, Shields have a façade API. That means you can specify what attributes of your model a user can read or write. To do this, create a java interface that your model implements. Inside this interface specify what setters and getters will be allowed:
 
 ```java
     @Endpoint(path = "/people")

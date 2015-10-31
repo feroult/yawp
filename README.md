@@ -283,7 +283,7 @@ public void always() {
 }
 ```
 
-Finally, Shields have a façade API. That means you can specify what attributes of your model a user can read or write. To do this, create a java interface that your model implements. Inside this interface specify what setters and getters will be allowed:
+Finally, Shields have a façade API. That means you can specify which attributes of your model a user can read or write. To do this, create a java interface that your model implements. Inside this interface specify what setters and getters will be allowed:
 
 ```java
 @Endpoint(path = "/people")

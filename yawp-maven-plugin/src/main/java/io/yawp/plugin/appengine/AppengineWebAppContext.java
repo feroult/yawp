@@ -32,11 +32,11 @@ public class AppengineWebAppContext extends WebAppContext {
 	public AppengineWebAppContext(String appDir, String contextPath) {
 		super(appDir, contextPath);
 		this.appDir = appDir;
-		this.helper = createHelper();
 	}
 
 	@Override
 	protected void doStart() throws Exception {
+		this.helper = createHelper();
 		this.environment = ApiProxy.getCurrentEnvironment();
 		getServletContext().setAttribute(API_PROXY_LOCAL, ApiProxy.getDelegate());
 		getServletContext().setAttribute(APPENGINE_WEB_XML, readAppengineWebXml(getServletContext()));

@@ -1,7 +1,7 @@
 package io.yawp.commons.utils;
 
-import io.yawp.driver.api.TestHelper;
-import io.yawp.driver.api.TestHelperFactory;
+import io.yawp.driver.api.testing.TestHelper;
+import io.yawp.driver.api.testing.TestHelperFactory;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Feature;
 import io.yawp.repository.Repository;

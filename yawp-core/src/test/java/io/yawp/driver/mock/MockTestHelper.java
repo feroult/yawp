@@ -1,6 +1,6 @@
 package io.yawp.driver.mock;
 
-import io.yawp.driver.api.TestHelper;
+import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.repository.Repository;
 
 public class MockTestHelper implements TestHelper {

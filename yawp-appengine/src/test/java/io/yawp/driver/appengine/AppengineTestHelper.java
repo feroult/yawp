@@ -1,6 +1,6 @@
 package io.yawp.driver.appengine;
 
-import io.yawp.driver.api.TestHelper;
+import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.repository.Repository;
 
 import java.util.HashMap;

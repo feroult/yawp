@@ -21,17 +21,28 @@ public class AppengineTestHelper implements TestHelper {
 	@Override
 	public void setUp() {
 		helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), new LocalDatastoreServiceTestConfig());
-		helper.setEnvIsLoggedIn(true);
 		Map<String, Object> envs = new HashMap<String, Object>();
 		helper.setEnvAttributes(envs);
-		helper.setEnvAuthDomain("localhost");
-		helper.setEnvEmail("test@localhost");
 		helper.setUp();
 	}
 
 	@Override
 	public void tearDown() {
 		helper.tearDown();
+	}
+
+	public void login(String username, String domain) {
+		login(username, domain, false);
+	}
+
+	public void login(String username, String domain, boolean isAdmin) {
+		helper.setEnvAuthDomain(domain);
+		helper.setEnvEmail(username + "@" + domain);
+		helper.setEnvIsLoggedIn(true);
+	}
+
+	public void logout() {
+		helper.setEnvIsLoggedIn(false);
 	}
 
 }

@@ -28,7 +28,7 @@ public class EndpointTestCase extends Feature {
 
 	private static EndpointServlet servlet;
 
-	private TestHelper helper;
+	protected TestHelper helper;
 
 	@Before
 	public void setUp() {

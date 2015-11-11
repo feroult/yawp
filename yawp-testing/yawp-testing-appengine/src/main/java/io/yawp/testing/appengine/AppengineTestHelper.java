@@ -39,6 +39,7 @@ public class AppengineTestHelper implements TestHelper {
 		helper.setEnvAuthDomain(domain);
 		helper.setEnvEmail(username + "@" + domain);
 		helper.setEnvIsLoggedIn(true);
+		helper.setEnvIsAdmin(isAdmin);
 	}
 
 	public void logout() {

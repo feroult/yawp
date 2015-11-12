@@ -9,7 +9,7 @@ public class PersonTest extends EndpointTestCase {
 
 	@Override
 	protected String getAppPackage() {
-		return "yawptut";
+		return "${package}";
 	}
 
 	@Test

@@ -1,7 +1,7 @@
 package ${package}.shields;
 
 import io.yawp.repository.shields.Shield;
-import yawptut.models.Person;
+import ${package}.models.Person;
 
 public class PersonShield extends Shield<Person> {
 

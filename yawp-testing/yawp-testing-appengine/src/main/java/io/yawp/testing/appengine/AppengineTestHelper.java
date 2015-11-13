@@ -20,10 +20,14 @@ public class AppengineTestHelper implements TestHelper {
 
 	@Override
 	public void setUp() {
-		helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), new LocalDatastoreServiceTestConfig());
+		helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), createDatastoreService());
 		Map<String, Object> envs = new HashMap<String, Object>();
 		helper.setEnvAttributes(envs);
 		helper.setUp();
+	}
+
+	private LocalDatastoreServiceTestConfig createDatastoreService() {
+		return new LocalDatastoreServiceTestConfig().setDefaultHighRepJobPolicyUnappliedJobPercentage(0);
 	}
 
 	@Override

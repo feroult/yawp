@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>yawp-root</artifactId>
 		<groupId>io.yawp</groupId>
-		<version>1.3.7-SNAPSHOT</version>
+		<version>1.3.6</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>

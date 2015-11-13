@@ -51,21 +51,21 @@ public abstract class ShieldBase<T> extends Feature {
 
 	public abstract void destroy(IdRef<T> id);
 
-	protected ShieldBase<T> allow() {
+	public final ShieldBase<T> allow() {
 		return allow(true);
 	}
 
-	protected final ShieldBase<T> allow(boolean allow) {
+	public final ShieldBase<T> allow(boolean allow) {
 		this.allow = this.allow || allow;
 		this.lastAllow = allow;
 		return this;
 	}
 
-	protected final ShieldBase<T> where(String field, String operator, Object value) {
+	public final ShieldBase<T> where(String field, String operator, Object value) {
 		return where(Condition.c(field, operator, value));
 	}
 
-	protected final ShieldBase<T> where(BaseCondition condition) {
+	public final ShieldBase<T> where(BaseCondition condition) {
 		if (!lastAllow) {
 			return this;
 		}
@@ -74,7 +74,7 @@ public abstract class ShieldBase<T> extends Feature {
 		return this;
 	}
 
-	protected ShieldBase<T> facade(Class<? super T> facade) {
+	public final ShieldBase<T> facade(Class<? super T> facade) {
 		if (!lastAllow) {
 			return this;
 		}
@@ -83,11 +83,11 @@ public abstract class ShieldBase<T> extends Feature {
 		return this;
 	}
 
-	protected ShieldBase<T> removeFacade() {
+	public final ShieldBase<T> removeFacade() {
 		return facade(null);
 	}
 
-	protected final boolean isAction(Class<?>... actionClazzes) {
+	public final boolean isAction(Class<?>... actionClazzes) {
 		return isActionRoute() && Arrays.asList(actionClazzes).contains(currentActionClazz());
 	}
 
@@ -99,7 +99,7 @@ public abstract class ShieldBase<T> extends Feature {
 		return yawp.getFeatures().get(endpointClazz).getActionClazz(actionKey);
 	}
 
-	protected final boolean requestHasAnyObject() {
+	public final boolean requestHasAnyObject() {
 		return objects != null;
 	}
 
@@ -151,7 +151,7 @@ public abstract class ShieldBase<T> extends Feature {
 
 	public final void protectCustom() {
 		always();
-		protectedEachCustomAction();
+		protectEachCustomAction();
 		throwNotFoundIfNotAllowed();
 
 		verifyConditions();
@@ -249,7 +249,7 @@ public abstract class ShieldBase<T> extends Feature {
 		this.actionMethods = actionMethods;
 	}
 
-	private void protectedEachCustomAction() {
+	private void protectEachCustomAction() {
 		if (!actionMethods.containsKey(actionKey)) {
 			defaults();
 			return;

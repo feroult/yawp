@@ -63,7 +63,7 @@ public class EndpointTestCase extends Feature {
 			return servlet;
 		}
 
-		servlet = new EndpointServlet("io.yawp") {
+		servlet = new EndpointServlet(getAppPackage()) {
 
 			private static final long serialVersionUID = 3374113392343671861L;
 

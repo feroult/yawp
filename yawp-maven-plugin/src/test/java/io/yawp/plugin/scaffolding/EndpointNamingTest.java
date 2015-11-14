@@ -25,6 +25,10 @@ public class EndpointNamingTest {
 	public void testEndpointPath() {
 		assertEquals("people", new EndpointNaming("Person").getPath());
 		assertEquals("person-addresses", new EndpointNaming("PersonAddress").getPath());
+		assertEquals("parents", new EndpointNaming("Parent").getPath());
+		assertEquals("parent-addresses", new EndpointNaming("ParentAddress").getPath());
+		assertEquals("children", new EndpointNaming("Child").getPath());
+		assertEquals("grandchildren", new EndpointNaming("Grandchild").getPath());
 	}
 
 }

@@ -83,9 +83,21 @@ public final class EndpointScanner {
 		ShieldInfo<T> shieldInfo = new ShieldInfo<T>(shieldClazz);
 
 		for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, shieldClazz.getSimpleName())) {
+			if (endpoint.getShieldInfo() != null) {
+				throwDuplicateShield(shieldClazz, objectClazz, endpoint);
+			}
+
 			endpoint.setShield(shieldClazz);
 			endpoint.setShieldInfo(shieldInfo);
 		}
+	}
+
+	private <V extends Shield<T>, T> void throwDuplicateShield(Class<V> shieldClazz, Class<T> objectClazz, EndpointFeatures<? extends T> endpoint) {
+		ShieldInfo<?> existingShieldInfo = endpoint.getShieldInfo();
+
+		throw new RuntimeException("Trying to a second shield '" + shieldClazz.getName() + "' for endpoint '"
+				+ objectClazz.getName() + "'. The shield '" + existingShieldInfo.getShieldClazz().getName()
+				+ "' was already associated. Endpoints can have only one Shield.");
 	}
 
 	private void scanHooks() {

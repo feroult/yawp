@@ -52,6 +52,18 @@
 			<version>6.1.26</version>
 		</dependency>
 
+		<!-- Scaffolding dependencies -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.atteo</groupId>
+			<artifactId>evo-inflector</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+
 		<!-- Appengine devserver dependencies -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -105,7 +117,7 @@
 			<version>${appengine.target.version}</version>
 		</dependency>
 
-		<!-- Postgres devserver dependencies -->
+		<!-- PostgreSQL devserver dependencies -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -117,6 +129,13 @@
 			<version>2.1.1</version>
 		</dependency>
 
+		<!-- test dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

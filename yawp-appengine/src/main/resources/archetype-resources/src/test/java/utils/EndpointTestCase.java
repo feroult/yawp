@@ -10,5 +10,3 @@ public class EndpointTestCase extends EndpointTestCaseBase {
 	}
 
 }
-
-

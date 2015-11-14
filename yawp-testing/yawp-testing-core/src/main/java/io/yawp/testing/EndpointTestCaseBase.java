@@ -22,7 +22,7 @@ import io.yawp.servlet.EndpointServlet;
 import org.junit.After;
 import org.junit.Before;
 
-public class EndpointTestCase extends Feature {
+public class EndpointTestCaseBase extends Feature {
 
 	private static RepositoryFeatures features;
 

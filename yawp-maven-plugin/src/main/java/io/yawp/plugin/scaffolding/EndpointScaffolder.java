@@ -23,7 +23,7 @@ public class EndpointScaffolder extends Scaffolder {
 	@Override
 	public void createTo(String baseDir) {
 		createFile(endpointNaming.getFilename(sourceMainJava(baseDir)), modelContent);
-		//createFile(endpointNaming.getTestFilename(sourceTestJava(baseDir)), modelContent);
+		createFile(endpointNaming.getTestFilename(sourceTestJava(baseDir)), modelTestContent);
 	}
 
 	protected String getModelContent() {

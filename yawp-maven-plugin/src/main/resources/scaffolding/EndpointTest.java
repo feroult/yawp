@@ -1,19 +1,12 @@
 package ${yawpPackage}.models.${endpoint.packageName};
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import io.yawp.testing.EndpointTestCase;
-
-import ${yawpPackage}.models.${endpoint.packageName}.${endpoint.name};
 
 import org.junit.Test;
 
-public class $endpoint.testName extends EndpointTestCase {
+import yawpapp.utils.EndpointTestCase;
 
-	@Override
-	protected String getAppPackage() {
-		return "$yawpPackage";
-	}
+public class $endpoint.testName extends EndpointTestCase {
 
 	@Test
 	public void testCreate() {

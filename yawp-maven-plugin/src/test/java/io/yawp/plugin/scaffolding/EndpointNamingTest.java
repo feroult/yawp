@@ -31,4 +31,10 @@ public class EndpointNamingTest {
 		assertEquals("grandchildren", new EndpointNaming("Grandchild").getPath());
 	}
 
+	@Test
+	public void testEndpointFilename() {
+		assertEquals("person/Person.java", new EndpointNaming("Person").getFilename());
+		assertEquals("personaddress/PersonAddress.java", new EndpointNaming("PersonAddress").getFilename());
+	}
+
 }

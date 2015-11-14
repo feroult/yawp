@@ -17,11 +17,14 @@ public class EndpointNaming {
 
 	private Properties customPlurals;
 
+	private String filename;
+
 	public EndpointNaming(String input) {
 		loadCustomPlurals();
 		this.name = endpointName(input);
 		this.packageName = endpointPackageName();
 		this.path = endpointPath();
+		this.filename = endpointFilename();
 	}
 
 	private String endpointName(String input) {
@@ -37,6 +40,10 @@ public class EndpointNaming {
 		return plural(endpointPath);
 	}
 
+	private String endpointFilename() {
+		return String.format("%s/%s.java", packageName, name);
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -47,6 +54,10 @@ public class EndpointNaming {
 
 	public String getPath() {
 		return path;
+	}
+
+	public String getFilename() {
+		return filename;
 	}
 
 	private void loadCustomPlurals() {
@@ -67,4 +78,5 @@ public class EndpointNaming {
 		}
 		return English.plural(word);
 	}
+
 }

@@ -9,8 +9,6 @@ import org.atteo.evo.inflector.English;
 
 public class EndpointNaming {
 
-	private String input;
-
 	private String name;
 
 	private String packageName;
@@ -21,14 +19,12 @@ public class EndpointNaming {
 
 	public EndpointNaming(String input) {
 		loadCustomPlurals();
-
-		this.input = input;
-		this.name = endpointName();
+		this.name = endpointName(input);
 		this.packageName = endpointPackageName();
 		this.path = endpointPath();
 	}
 
-	private String endpointName() {
+	private String endpointName(String input) {
 		return WordUtils.capitalize(input, new char[] { '_' }).replaceAll("_", "");
 	}
 

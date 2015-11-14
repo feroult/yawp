@@ -19,7 +19,12 @@ public class EndpointNamingTest {
 	public void testEndpointPackage() {
 		assertEquals("person", new EndpointNaming("Person").getPackageName());
 		assertEquals("personaddress", new EndpointNaming("PersonAddress").getPackageName());
+	}
 
+	@Test
+	public void testEndpointPath() {
+		assertEquals("people", new EndpointNaming("Person").getPath());
+		assertEquals("person-addresses", new EndpointNaming("PersonAddress").getPath());
 	}
 
 }

@@ -1,4 +1,4 @@
-package io.yawp.plugin;
+package io.yawp.plugin.devserver;
 
 import java.io.BufferedReader;
 import java.io.IOException;

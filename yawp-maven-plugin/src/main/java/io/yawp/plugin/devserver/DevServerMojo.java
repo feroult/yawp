@@ -1,6 +1,7 @@
-package io.yawp.plugin;
+package io.yawp.plugin.devserver;
 
-import io.yawp.plugin.appengine.AppengineWebAppContextHelper;
+import io.yawp.plugin.PluginAbstractMojo;
+import io.yawp.plugin.devserver.appengine.AppengineWebAppContextHelper;
 
 import java.io.IOException;
 

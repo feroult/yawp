@@ -1,4 +1,4 @@
-package io.yawp.plugin.appengine;
+package io.yawp.plugin.devserver.appengine;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

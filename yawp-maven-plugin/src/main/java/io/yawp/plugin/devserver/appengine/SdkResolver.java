@@ -1,7 +1,7 @@
 /**
  * Copyright 2012 Google Inc. All Rights Reserved.
  */
-package io.yawp.plugin.appengine;
+package io.yawp.plugin.devserver.appengine;
 
 import static com.google.common.collect.Iterables.find;
 

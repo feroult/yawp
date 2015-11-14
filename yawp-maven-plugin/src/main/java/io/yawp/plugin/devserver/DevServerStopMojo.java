@@ -1,4 +1,6 @@
-package io.yawp.plugin;
+package io.yawp.plugin.devserver;
+
+import io.yawp.plugin.PluginAbstractMojo;
 
 import java.io.IOException;
 import java.io.PrintWriter;

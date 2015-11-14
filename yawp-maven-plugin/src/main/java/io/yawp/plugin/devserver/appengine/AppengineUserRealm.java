@@ -1,4 +1,4 @@
-package io.yawp.plugin.appengine;
+package io.yawp.plugin.devserver.appengine;
 
 import java.security.Principal;
 import java.util.HashMap;

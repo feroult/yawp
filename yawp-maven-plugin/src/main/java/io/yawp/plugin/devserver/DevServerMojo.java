@@ -24,9 +24,6 @@ public class DevServerMojo extends PluginAbstractMojo {
 
 	private static final String YAWP_ARTIFACT_ID = "yawp";
 
-	@Parameter(property = "yawp.appDir", defaultValue = "${basedir}/src/main/webapp")
-	protected String appDir;
-
 	@Parameter(property = "yawp.address", defaultValue = "0.0.0.0")
 	private String address;
 
@@ -113,10 +110,6 @@ public class DevServerMojo extends PluginAbstractMojo {
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public String getAppDir() {
-		return appDir;
 	}
 
 	public String getHotDeployDir() {

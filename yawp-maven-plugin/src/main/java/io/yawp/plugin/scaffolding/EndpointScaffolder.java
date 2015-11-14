@@ -1,5 +1,6 @@
 package io.yawp.plugin.scaffolding;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -14,6 +15,8 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 public class EndpointScaffolder {
 
 	private static final String SCAFFOLDING_TEMPLATE = "scaffolding/Endpoint.java";
+
+	private static final String SOURCE_MAIN_JAVA = "src/main/java";
 
 	private static final String SCAFFOLDING_FOLDER = "models";
 
@@ -62,7 +65,7 @@ public class EndpointScaffolder {
 	public void createTo(String appDir) {
 		PrintWriter pw = null;
 		try {
-			pw = new PrintWriter(new FileWriter(getFilename(appDir)));
+			pw = new PrintWriter(new FileWriter(getFile(appDir)));
 			pw.print(clazzText);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -73,8 +76,14 @@ public class EndpointScaffolder {
 		}
 	}
 
-	private String getFilename(String appDir) {
-		String dir = String.format("%s/%s/%s", appDir, yawpPackage, SCAFFOLDING_FOLDER).replaceAll("\\.", "/");
-		return String.format("%s/%s", dir, endpointNaming.getFilename());
+	private File getFile(String appDir) {
+		String dir = String.format("%s/%s/%s/%s", appDir, SOURCE_MAIN_JAVA, yawpPackageDir(), SCAFFOLDING_FOLDER);
+		File file = new File(String.format("%s/%s", dir, endpointNaming.getFilename()));
+		file.getParentFile().mkdirs();
+		return file;
+	}
+
+	private String yawpPackageDir() {
+		return yawpPackage.replaceAll("\\.", "/");
 	}
 }

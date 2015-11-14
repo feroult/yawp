@@ -9,55 +9,13 @@ import org.atteo.evo.inflector.English;
 
 public class EndpointNaming {
 
-	private String name;
-
-	private String packageName;
-
-	private String path;
-
 	private Properties customPlurals;
 
-	private String filename;
+	private String input;
 
 	public EndpointNaming(String input) {
 		loadCustomPlurals();
-		this.name = endpointName(input);
-		this.packageName = endpointPackageName();
-		this.path = endpointPath();
-		this.filename = endpointFilename();
-	}
-
-	private String endpointName(String input) {
-		return WordUtils.capitalize(input, new char[] { '_' }).replaceAll("_", "");
-	}
-
-	private String endpointPackageName() {
-		return name.toLowerCase();
-	}
-
-	private String endpointPath() {
-		String endpointPath = name.replaceAll("(.)(\\p{Lu})", "$1-$2").toLowerCase();
-		return plural(endpointPath);
-	}
-
-	private String endpointFilename() {
-		return String.format("%s/%s.java", packageName, name);
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getPackageName() {
-		return packageName;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public String getFilename() {
-		return filename;
+		this.input = input;
 	}
 
 	private void loadCustomPlurals() {
@@ -77,6 +35,43 @@ public class EndpointNaming {
 			return customPlurals.getProperty(key);
 		}
 		return English.plural(word);
+	}
+
+	public String getName() {
+		return WordUtils.capitalize(input, new char[] { '_' }).replaceAll("_", "");
+	}
+
+	public String getPackageName() {
+		return getName().toLowerCase();
+	}
+
+	public String getPath() {
+		String endpointPath = getName().replaceAll("(.)(\\p{Lu})", "$1-$2").toLowerCase();
+		return plural(endpointPath);
+	}
+
+	public String getFilename() {
+		return String.format("%s/%s.java", getPackageName(), getName());
+	}
+
+	public String getFilename(String basedir) {
+		return String.format("%s/%s", basedir, getFilename());
+	}
+
+	public String getTestName() {
+		return String.format("%sTest", getName());
+	}
+
+	public String getTestFilename() {
+		return String.format("%s/%s.java", getPackageName(), getTestName());
+	}
+
+	public String getTestFilename(String basedir) {
+		return String.format("%s/%s", basedir, getTestFilename());
+	}
+
+	public String getInstance() {
+		return WordUtils.uncapitalize(getName());
 	}
 
 }

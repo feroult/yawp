@@ -10,8 +10,8 @@ public class EndpointScaffolderTest {
 	public void testTemplate() {
 		EndpointScaffolder scaffolder = new EndpointScaffolder("yawpapp", "person");
 
-		String clazzText = scaffolder.getClazzText();
-		assertTrue(clazzText.indexOf("@Endpoint(path = \"/people\")") != -1);
+		assertTrue(scaffolder.getModelContent().indexOf("@Endpoint(path = \"/people\")") != -1);
+		assertTrue(scaffolder.getModelTestContent().indexOf("public class PersonTest extends EndpointTestCase") != -1);
 	}
 
 }

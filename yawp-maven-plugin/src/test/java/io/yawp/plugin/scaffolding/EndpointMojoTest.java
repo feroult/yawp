@@ -9,8 +9,12 @@ public class EndpointMojoTest extends AbstractMojoTestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		deleteGeneratedFiles();
+	}
 
-		getGeneratedFile().delete();
+	private void deleteGeneratedFiles() {
+		getModelFile().delete();
+		getModelTestFile().delete();
 	}
 
 	@Override
@@ -25,11 +29,16 @@ public class EndpointMojoTest extends AbstractMojoTestCase {
 		assertNotNull(endpointMojo);
 		endpointMojo.execute();
 
-		assertTrue(getGeneratedFile().exists());
+		assertTrue(getModelFile().exists());
+		assertTrue(getModelTestFile().exists());
 	}
 
-	private File getGeneratedFile() {
+	private File getModelFile() {
 		return new File("./target/scaffolding-test/src/main/java/yawpapp/models/person/Person.java");
+	}
+
+	private File getModelTestFile() {
+		return new File("./target/scaffolding-test/src/test/java/yawpapp/models/person/PersonTest.java");
 	}
 
 }

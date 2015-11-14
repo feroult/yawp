@@ -1,6 +1,5 @@
 package io.yawp.plugin.devserver;
 
-import io.yawp.plugin.PluginAbstractMojo;
 import io.yawp.plugin.devserver.appengine.AppengineWebAppContextHelper;
 
 import java.io.IOException;
@@ -18,7 +17,7 @@ import org.mortbay.jetty.webapp.WebAppContext;
 
 @Execute(phase = LifecyclePhase.COMPILE)
 @Mojo(name = "devserver", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
-public class DevServerMojo extends PluginAbstractMojo {
+public class DevServerMojo extends DevserverAbstractMojo {
 
 	private static final String YAWP_GROUP_ID = "io.yawp";
 
@@ -36,10 +35,10 @@ public class DevServerMojo extends PluginAbstractMojo {
 	@Parameter(property = "yawp.hotDeployDir", defaultValue = "${basedir}/target/classes")
 	protected String hotDeployDir;
 
-	protected Server server;
+	@Parameter(property = "yawp.appDir", defaultValue = "${basedir}/src/main/webapp")
+	protected String appDir;
 
-	@Parameter(property = "yawp.shutdownPort", defaultValue = ShutdownMonitor.DEFAULT_PORT)
-	private String shutdownPort;
+	protected Server server;
 
 	private WebAppContext webapp;
 
@@ -128,7 +127,7 @@ public class DevServerMojo extends PluginAbstractMojo {
 		return Integer.valueOf(fullScanSeconds);
 	}
 
-	public int getShutdownPort() {
-		return Integer.valueOf(shutdownPort);
+	public String getAppDir() {
+		return appDir;
 	}
 }

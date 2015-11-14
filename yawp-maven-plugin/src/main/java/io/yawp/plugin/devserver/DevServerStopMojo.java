@@ -1,7 +1,5 @@
 package io.yawp.plugin.devserver;
 
-import io.yawp.plugin.PluginAbstractMojo;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -9,13 +7,9 @@ import java.net.Socket;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 
 @Mojo(name = "devserver_stop")
-public class DevServerStopMojo extends PluginAbstractMojo {
-
-	@Parameter(property = "yawp.shutdownPort", defaultValue = ShutdownMonitor.DEFAULT_PORT)
-	private String shutdownPort;
+public class DevServerStopMojo extends DevserverAbstractMojo {
 
 	public void execute() throws MojoExecutionException {
 		shutdown();
@@ -31,10 +25,6 @@ public class DevServerStopMojo extends PluginAbstractMojo {
 		} catch (IOException e) {
 			getLog().info("Server is not running");
 		}
-	}
-
-	public int getShutdownPort() {
-		return Integer.valueOf(shutdownPort);
 	}
 
 }

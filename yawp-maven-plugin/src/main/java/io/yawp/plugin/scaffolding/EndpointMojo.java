@@ -16,9 +16,9 @@ public class EndpointMojo extends PluginAbstractMojo {
 	protected String model;
 
 	public void execute() throws MojoExecutionException {
-		getLog().info("scaffolding to: " + appDir);
+		getLog().info("scaffolding to: " + baseDir);
 		EndpointScaffolder scaffolder = new EndpointScaffolder(yawpPackage, model);
-		scaffolder.createTo(appDir);
+		scaffolder.createTo(baseDir);
 	}
 
 }

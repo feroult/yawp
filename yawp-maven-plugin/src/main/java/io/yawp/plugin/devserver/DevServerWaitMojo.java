@@ -1,7 +1,5 @@
 package io.yawp.plugin.devserver;
 
-import io.yawp.plugin.PluginAbstractMojo;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
@@ -9,17 +7,13 @@ import java.net.UnknownHostException;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 
 @Mojo(name = "devserver_wait")
-public class DevServerWaitMojo extends PluginAbstractMojo {
+public class DevServerWaitMojo extends DevserverAbstractMojo {
 
 	private static final int SLEEP_MILLIS = 500;
 
 	private static final int MAX_RETRIES = 2 * 60;
-
-	@Parameter(property = "yawp.shutdownPort", defaultValue = ShutdownMonitor.DEFAULT_PORT)
-	private String shutdownPort;
 
 	public void execute() throws MojoExecutionException {
 		waitSever();
@@ -55,10 +49,6 @@ public class DevServerWaitMojo extends PluginAbstractMojo {
 	private void tryToConnect() throws IOException, UnknownHostException {
 		Socket socket = new Socket(InetAddress.getByName("127.0.0.1"), getShutdownPort());
 		socket.close();
-	}
-
-	public int getShutdownPort() {
-		return Integer.valueOf(shutdownPort);
 	}
 
 }

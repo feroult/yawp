@@ -27,8 +27,8 @@ public abstract class PluginAbstractMojo extends AbstractMojo {
 	@Parameter(defaultValue = "${project}")
 	protected MavenProject project;
 
-	@Parameter(property = "yawp.appDir", defaultValue = "${basedir}/src/main/webapp")
-	protected String appDir;
+	@Parameter(property = "yawp.dir", defaultValue = "${basedir}")
+	protected String baseDir;
 
 	public RepositorySystem getRepoSystem() {
 		return repoSystem;
@@ -48,10 +48,6 @@ public abstract class PluginAbstractMojo extends AbstractMojo {
 
 	public MavenProject getProject() {
 		return project;
-	}
-
-	public String getAppDir() {
-		return appDir;
 	}
 
 }

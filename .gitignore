@@ -5,6 +5,7 @@ tmp
 .project
 .classpath
 .settings
+.working
 target
 test-output
 bin

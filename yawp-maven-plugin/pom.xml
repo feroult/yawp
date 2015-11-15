@@ -150,6 +150,37 @@
 		</dependency>
 	</dependencies>
 
+    <profiles>
+        <profile>
+            <id>it</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <exec dir="${project.basedir}/../scripts" executable="./scaffolding-tests.sh"
+                                            failonerror="true">
+                                            <arg value="${project.version}" />
+                                        </exec>
+                                    </target>
+                                    <skip>${maven.test.skip}</skip>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 	<build>
 		<pluginManagement>
 			<plugins>

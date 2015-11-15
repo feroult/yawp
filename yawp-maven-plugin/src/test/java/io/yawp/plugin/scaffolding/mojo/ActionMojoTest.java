@@ -3,7 +3,7 @@ package io.yawp.plugin.scaffolding.mojo;
 public class ActionMojoTest extends ScaffolderMojoTestCase {
 
 	public void testCreateAction() throws Exception {
-		lookupMojo("action");
+		lookupGoal("action");
 		setParameter("name", "activate");
 		executeGoal();
 

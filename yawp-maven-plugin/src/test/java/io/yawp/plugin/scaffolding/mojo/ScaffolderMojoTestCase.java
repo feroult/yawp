@@ -26,13 +26,13 @@ public abstract class ScaffolderMojoTestCase extends AbstractMojoTestCase {
 		super.tearDown();
 	}
 
-	protected void lookupMojo(String goal) throws Exception {
+	protected void lookupGoal(String goal) throws Exception {
 		File pom = getTestFile("src/test/resources/pom.xml");
 		mojo = lookupMojo(goal, pom);
 	}
 
 	protected void executeGoal(String goal) throws Exception, MojoExecutionException {
-		lookupMojo(goal);
+		lookupGoal(goal);
 		executeGoal();
 	}
 

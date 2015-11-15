@@ -12,7 +12,8 @@ branches:
   only:
     - master
 
-script: "mvn install -B"
+script:
+ - source ./scripts/complete-it.sh
 
 notifications:
   email:

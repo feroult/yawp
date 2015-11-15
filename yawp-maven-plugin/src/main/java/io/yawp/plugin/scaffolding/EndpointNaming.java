@@ -85,11 +85,11 @@ public class EndpointNaming {
 		return String.format("%s/%s.java", getPackageName(), getShieldName());
 	}
 
-	public Object getActionName() {
+	public String getActionName() {
 		return String.format("%s%sAction", getName(), capitalize(action));
 	}
 
-	public Object getActionFilename() {
+	public String getActionFilename() {
 		return String.format("%s/%s.java", getPackageName(), getActionName());
 	}
 

@@ -13,7 +13,7 @@ public class ActionScaffolder extends Scaffolder {
 
 	@Override
 	public void execute(String baseDir) {
-		//sourceMainJava(baseDir, endpointNaming.getActionFilename(), ACTION_TEMPLATE);
+		sourceMainJava(baseDir, endpointNaming.getActionFilename(), ACTION_TEMPLATE);
 	}
 
 }

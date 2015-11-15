@@ -7,7 +7,7 @@ public class ActionMojoTest extends ScaffolderMojoTestCase {
 		setParameter("name", "activate");
 		executeGoal();
 
-		assertSourceMain("/person/PersonActivateAction.java", "xpto");
+		assertSourceMain("/person/PersonActivateAction.java", "public class PersonActivateAction extends Action<Person>");
 	}
 
 }

@@ -9,7 +9,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 @Mojo(name = "hook")
 public class HookMojo extends ScaffolderAbstractMojo {
 
-	@Parameter(property = "name")
+	@Parameter(property = "name", required = true)
 	protected String name;
 
 	public void execute() throws MojoExecutionException {

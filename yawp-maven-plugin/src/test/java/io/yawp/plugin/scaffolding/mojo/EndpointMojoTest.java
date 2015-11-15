@@ -8,6 +8,7 @@ public class EndpointMojoTest extends ScaffolderMojoTestCase {
 
 		assertSourceMain("/person/Person.java", "@Endpoint(path = \"/people\")");
 		assertSourceTest("/person/PersonTest.java", "public class PersonTest extends EndpointTestCase");
+		assertSourceMain("/person/PersonShield.java", "public class PersonShield extends Shield<Person>");
 	}
 
 }

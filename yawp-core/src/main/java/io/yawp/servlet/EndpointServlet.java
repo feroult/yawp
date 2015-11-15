@@ -6,6 +6,7 @@ import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.JsonResponse;
 import io.yawp.commons.http.StatusObject;
 import io.yawp.commons.utils.JsonUtils;
+import io.yawp.driver.api.DriverFactory;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
@@ -49,6 +50,8 @@ public class EndpointServlet extends HttpServlet {
 	private void setCrossDomain(String enableCrossDomainParameter) {
 		if (enableCrossDomainParameter != null) {
 			this.enableCrossDomain = Boolean.valueOf(enableCrossDomainParameter);
+		} else {
+			this.enableCrossDomain = !DriverFactory.getDriver().environment().isProduction();
 		}
 	}
 

@@ -87,6 +87,7 @@ public abstract class Scaffolder {
 		try {
 			pw = new PrintWriter(new FileWriter(getFile(baseDir, relativeFilename)));
 			pw.print(content);
+			log.info(String.format("Scaffold %s created.", relativeFilename));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} catch (ScaffoldAlreadyExistsException e) {

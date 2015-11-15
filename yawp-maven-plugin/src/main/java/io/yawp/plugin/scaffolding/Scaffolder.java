@@ -65,7 +65,9 @@ public abstract class Scaffolder {
 		return ve;
 	}
 
-	private File getFile(String filename) throws ScaffoldAlreadyExistsException {
+	private File getFile(String baseDir, String relativeFilename) throws ScaffoldAlreadyExistsException {
+		String filename = String.format("%s/%s", baseDir, relativeFilename);
+
 		File file = new File(filename);
 
 		if (file.exists()) {
@@ -76,30 +78,19 @@ public abstract class Scaffolder {
 		return file;
 	}
 
-	private String sourceMainJava(String appDir) {
-		return String.format("%s/%s/%s/%s", appDir, SOURCE_MAIN_JAVA, yawpPackageDir(), MODELS_FOLDER);
-	}
-
-	private String sourceTestJava(String appDir) {
-		return String.format("%s/%s/%s/%s", appDir, SOURCE_TEST_JAVA, yawpPackageDir(), MODELS_FOLDER);
-	}
-
 	private String yawpPackageDir() {
 		return yawpPackage.replaceAll("\\.", "/");
 	}
 
-	private void createFile(String filename, String content) {
+	private void createFile(String baseDir, String relativeFilename, String content) {
 		PrintWriter pw = null;
 		try {
-			pw = new PrintWriter(new FileWriter(getFile(filename)));
+			pw = new PrintWriter(new FileWriter(getFile(baseDir, relativeFilename)));
 			pw.print(content);
-
-			log.info(String.format("Scaffolld %s created.", filename));
-
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} catch (ScaffoldAlreadyExistsException e) {
-			log.info(String.format("Scaffold %s already exists, skipping.", filename));
+			log.info(String.format("Scaffold %s already exists, skipping.", relativeFilename));
 		} finally {
 			if (pw != null) {
 				pw.close();
@@ -107,14 +98,22 @@ public abstract class Scaffolder {
 		}
 	}
 
+	private String sourceMainJava() {
+		return String.format("%s/%s/%s", SOURCE_MAIN_JAVA, yawpPackageDir(), MODELS_FOLDER);
+	}
+
+	private String sourceTestJava() {
+		return String.format("%s/%s/%s", SOURCE_TEST_JAVA, yawpPackageDir(), MODELS_FOLDER);
+	}
+
 	protected void sourceMainJava(String baseDir, String filename, String modelTemplate) {
-		String absoluteFilename = String.format("%s/%s", sourceMainJava(baseDir), filename);
-		createFile(absoluteFilename, parse(modelTemplate));
+		String relativeFilename = String.format("%s/%s", sourceMainJava(), filename);
+		createFile(baseDir, relativeFilename, parse(modelTemplate));
 	}
 
 	protected void sourceTestJava(String baseDir, String filename, String modelTemplate) {
-		String absoluteFilename = String.format("%s/%s", sourceTestJava(baseDir), filename);
-		createFile(absoluteFilename, parse(modelTemplate));
+		String relativeFilename = String.format("%s/%s", sourceTestJava(), filename);
+		createFile(baseDir, relativeFilename, parse(modelTemplate));
 	}
 
 }

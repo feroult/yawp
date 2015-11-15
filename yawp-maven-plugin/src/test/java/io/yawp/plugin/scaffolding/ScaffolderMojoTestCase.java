@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
-public class ScaffolderMojoTestCase extends AbstractMojoTestCase {
+public abstract class ScaffolderMojoTestCase extends AbstractMojoTestCase {
 
 	@Override
 	protected void setUp() throws Exception {

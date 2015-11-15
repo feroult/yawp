@@ -54,10 +54,6 @@ public class EndpointNaming {
 		return String.format("%s/%s.java", getPackageName(), getName());
 	}
 
-	public String getFilename(String basedir) {
-		return String.format("%s/%s", basedir, getFilename());
-	}
-
 	public String getTestName() {
 		return String.format("%sTest", getName());
 	}
@@ -66,12 +62,16 @@ public class EndpointNaming {
 		return String.format("%s/%s.java", getPackageName(), getTestName());
 	}
 
-	public String getTestFilename(String basedir) {
-		return String.format("%s/%s", basedir, getTestFilename());
-	}
-
 	public String getInstance() {
 		return WordUtils.uncapitalize(getName());
+	}
+
+	public String getShieldName() {
+		return String.format("%sShield", getName());
+	}
+
+	public String getShieldFilename() {
+		return String.format("%s/%s.java", getPackageName(), getShieldName());
 	}
 
 }

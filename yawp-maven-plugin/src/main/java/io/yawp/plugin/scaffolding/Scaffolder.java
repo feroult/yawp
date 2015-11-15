@@ -27,14 +27,11 @@ public abstract class Scaffolder {
 	public Scaffolder(String yawpPackage, String name) {
 		this.yawpPackage = yawpPackage;
 		this.endpointNaming = new EndpointNaming(name);
-		parse();
 	}
-
-	protected abstract void parse();
 
 	public abstract void createTo(String baseDir);
 
-	protected String parse(String scaffoldingTemplate) {
+	private String parse(String scaffoldingTemplate) {
 		VelocityContext context = new VelocityContext();
 		context.put("yawpPackage", yawpPackage);
 		context.put("endpoint", endpointNaming);
@@ -59,7 +56,25 @@ public abstract class Scaffolder {
 		return ve;
 	}
 
-	protected void createFile(String filename, String content) {
+	private File getFile(String filename) {
+		File file = new File(filename);
+		file.getParentFile().mkdirs();
+		return file;
+	}
+
+	private String sourceMainJava(String appDir) {
+		return String.format("%s/%s/%s/%s", appDir, SOURCE_MAIN_JAVA, yawpPackageDir(), MODELS_FOLDER);
+	}
+
+	private String sourceTestJava(String appDir) {
+		return String.format("%s/%s/%s/%s", appDir, SOURCE_TEST_JAVA, yawpPackageDir(), MODELS_FOLDER);
+	}
+
+	private String yawpPackageDir() {
+		return yawpPackage.replaceAll("\\.", "/");
+	}
+
+	private void createFile(String filename, String content) {
 		PrintWriter pw = null;
 		try {
 			pw = new PrintWriter(new FileWriter(getFile(filename)));
@@ -73,22 +88,14 @@ public abstract class Scaffolder {
 		}
 	}
 
-	private File getFile(String filename) {
-		File file = new File(filename);
-		file.getParentFile().mkdirs();
-		return file;
+	protected void sourceMainJava(String baseDir, String filename, String modelTemplate) {
+		String absoluteFilename = String.format("%s/%s", sourceMainJava(baseDir), filename);
+		createFile(absoluteFilename, parse(modelTemplate));
 	}
 
-	protected String sourceMainJava(String appDir) {
-		return String.format("%s/%s/%s/%s", appDir, SOURCE_MAIN_JAVA, yawpPackageDir(), MODELS_FOLDER);
-	}
-
-	protected String sourceTestJava(String appDir) {
-		return String.format("%s/%s/%s/%s", appDir, SOURCE_TEST_JAVA, yawpPackageDir(), MODELS_FOLDER);
-	}
-
-	private String yawpPackageDir() {
-		return yawpPackage.replaceAll("\\.", "/");
+	protected void sourceTestJava(String baseDir, String filename, String modelTemplate) {
+		String absoluteFilename = String.format("%s/%s", sourceTestJava(baseDir), filename);
+		createFile(absoluteFilename, parse(modelTemplate));
 	}
 
 }

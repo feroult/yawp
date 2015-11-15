@@ -35,7 +35,6 @@ public class EndpointNamingTest {
 	public void testEndpointFilename() {
 		assertEquals("person/Person.java", new EndpointNaming("Person").getFilename());
 		assertEquals("personaddress/PersonAddress.java", new EndpointNaming("PersonAddress").getFilename());
-		assertEquals("/some/base/dir/person/Person.java", new EndpointNaming("Person").getFilename("/some/base/dir"));
 	}
 
 	@Test
@@ -48,13 +47,24 @@ public class EndpointNamingTest {
 	public void testEndpointTestFilename() {
 		assertEquals("person/PersonTest.java", new EndpointNaming("Person").getTestFilename());
 		assertEquals("personaddress/PersonAddressTest.java", new EndpointNaming("PersonAddress").getTestFilename());
-		assertEquals("/some/base/dir/person/PersonTest.java", new EndpointNaming("Person").getTestFilename("/some/base/dir"));
 	}
 
 	@Test
 	public void testEndpointInstance() {
 		assertEquals("person", new EndpointNaming("Person").getInstance());
 		assertEquals("personAddress", new EndpointNaming("PersonAddress").getInstance());
+	}
+
+	@Test
+	public void testEndpointShieldName() {
+		assertEquals("PersonShield", new EndpointNaming("Person").getShieldName());
+		assertEquals("PersonAddressShield", new EndpointNaming("PersonAddress").getShieldName());
+	}
+
+	@Test
+	public void testEndpointShieldFilename() {
+		assertEquals("person/PersonShield.java", new EndpointNaming("Person").getShieldFilename());
+		assertEquals("personaddress/PersonAddressShield.java", new EndpointNaming("PersonAddress").getShieldFilename());
 	}
 
 }

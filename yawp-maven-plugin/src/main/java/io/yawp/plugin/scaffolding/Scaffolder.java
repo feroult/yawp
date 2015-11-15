@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.maven.plugin.logging.Log;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -20,16 +21,24 @@ public abstract class Scaffolder {
 
 	private static final String MODELS_FOLDER = "models";
 
+	private Log log;
+
 	protected EndpointNaming endpointNaming;
 
 	protected String yawpPackage;
 
-	public Scaffolder(String yawpPackage, String name) {
+	public Scaffolder(Log log, String yawpPackage, String name) {
+		this.log = log;
 		this.yawpPackage = yawpPackage;
 		this.endpointNaming = new EndpointNaming(name);
 	}
 
-	public abstract void createTo(String baseDir);
+	public void createTo(String baseDir) {
+		log.info("Scaffolding to " + baseDir);
+		execute(baseDir);
+	}
+
+	protected abstract void execute(String baseDir);
 
 	private String parse(String scaffoldingTemplate) {
 		VelocityContext context = new VelocityContext();
@@ -56,8 +65,13 @@ public abstract class Scaffolder {
 		return ve;
 	}
 
-	private File getFile(String filename) {
+	private File getFile(String filename) throws ScaffoldAlreadyExistsException {
 		File file = new File(filename);
+
+		if (file.exists()) {
+			throw new ScaffoldAlreadyExistsException();
+		}
+
 		file.getParentFile().mkdirs();
 		return file;
 	}
@@ -79,8 +93,13 @@ public abstract class Scaffolder {
 		try {
 			pw = new PrintWriter(new FileWriter(getFile(filename)));
 			pw.print(content);
+
+			log.info(String.format("Scaffolld %s created.", filename));
+
 		} catch (IOException e) {
 			throw new RuntimeException(e);
+		} catch (ScaffoldAlreadyExistsException e) {
+			log.info(String.format("Scaffold %s already exists, skipping.", filename));
 		} finally {
 			if (pw != null) {
 				pw.close();

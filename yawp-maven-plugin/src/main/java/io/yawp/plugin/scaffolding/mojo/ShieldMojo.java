@@ -9,8 +9,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 public class ShieldMojo extends ScaffolderAbstractMojo {
 
 	public void execute() throws MojoExecutionException {
-		getLog().info("Scaffolding to: " + baseDir);
-		ShieldScaffolder scaffolder = new ShieldScaffolder(yawpPackage, model);
+		ShieldScaffolder scaffolder = new ShieldScaffolder(getLog(), yawpPackage, model);
 		scaffolder.createTo(baseDir);
 	}
 

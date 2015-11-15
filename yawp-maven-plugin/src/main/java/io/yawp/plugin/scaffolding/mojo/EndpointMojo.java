@@ -9,8 +9,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 public class EndpointMojo extends ScaffolderAbstractMojo {
 
 	public void execute() throws MojoExecutionException {
-		getLog().info("Scaffolding to: " + baseDir);
-		EndpointScaffolder scaffolder = new EndpointScaffolder(yawpPackage, model);
+		EndpointScaffolder scaffolder = new EndpointScaffolder(getLog(), yawpPackage, model);
 		scaffolder.createTo(baseDir);
 	}
 

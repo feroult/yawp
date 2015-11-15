@@ -1,5 +1,7 @@
 package io.yawp.plugin.scaffolding;
 
+import org.apache.maven.plugin.logging.Log;
+
 public class EndpointScaffolder extends Scaffolder {
 
 	private static final String MODEL_TEMPLATE = "scaffolding/Endpoint.java";
@@ -8,18 +10,18 @@ public class EndpointScaffolder extends Scaffolder {
 
 	private ShieldScaffolder shieldScaffolder;
 
-	public EndpointScaffolder(String yawpPackage, String name) {
-		super(yawpPackage, name);
+	public EndpointScaffolder(Log log, String yawpPackage, String name) {
+		super(log, yawpPackage, name);
 
-		this.shieldScaffolder = new ShieldScaffolder(yawpPackage, name);
+		this.shieldScaffolder = new ShieldScaffolder(log, yawpPackage, name);
 	}
 
 	@Override
-	public void createTo(String baseDir) {
+	public void execute(String baseDir) {
 		sourceMainJava(baseDir, endpointNaming.getFilename(), MODEL_TEMPLATE);
 		sourceTestJava(baseDir, endpointNaming.getTestFilename(), MODEL_TEST_TEMPLATE);
 
-		shieldScaffolder.createTo(baseDir);
+		shieldScaffolder.execute(baseDir);
 	}
 
 }

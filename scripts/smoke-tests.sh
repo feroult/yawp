@@ -46,7 +46,7 @@ run_scaffolds() {
     mvn clean install
 }
 
-run_endpoint_test() {
+run_smoke_tests() {
     echo "running smoke tests"
 
     echo "stopping devserver..."
@@ -72,7 +72,7 @@ run_endpoint_test() {
 
 run() {
     run_scaffolds
-    run_endpoint_test
+    run_smoke_tests
 }
 
 before

@@ -9,7 +9,7 @@
 	<packaging>war</packaging>
 
 	<properties>
-		<yawp.version>${projectVersion}</yawp.version>
+		<yawp.version>${yawpVersion}</yawp.version>
 		<yawp.package>${groupId}</yawp.package>
 		<appengine.app.version>1</appengine.app.version>
 		<appengine.target.version>1.9.25</appengine.target.version>
@@ -23,13 +23,13 @@
 			<version>${yawp.version}</version>
 		</dependency>
 
-        <!-- testing dependencies -->
-        <dependency>
-            <groupId>io.yawp</groupId>
-            <artifactId>yawp-testing</artifactId>
-            <version>${yawp.version}</version>
-            <scope>test</scope>
-        </dependency>
+		<!-- testing dependencies -->
+		<dependency>
+			<groupId>io.yawp</groupId>
+			<artifactId>yawp-testing</artifactId>
+			<version>${yawp.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

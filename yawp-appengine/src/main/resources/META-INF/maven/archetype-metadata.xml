@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archetype-descriptor name="yawp">
 	<requiredProperties>
-		<requiredProperty key="projectVersion">
+		<requiredProperty key="yawpVersion">
 			<defaultValue>${project.version}</defaultValue>
 		</requiredProperty>
 	</requiredProperties>

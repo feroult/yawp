@@ -17,6 +17,8 @@ public class EndpointNaming {
 
 	private String transformer;
 
+	private String hook;
+
 	public EndpointNaming(String input) {
 		loadCustomPlurals();
 		this.input = input;
@@ -52,6 +54,11 @@ public class EndpointNaming {
 
 	public EndpointNaming transformer(String transformer) {
 		this.transformer = transformer;
+		return this;
+	}
+
+	public EndpointNaming hook(String hook) {
+		this.hook = hook;
 		return this;
 	}
 
@@ -108,4 +115,11 @@ public class EndpointNaming {
 		return String.format("%s/%s.java", getPackageName(), getTransformerName());
 	}
 
+	public String getHookName() {
+		return String.format("%s%sHook", getName(), capitalize(hook));
+	}
+
+	public String getHookFilename() {
+		return String.format("%s/%s.java", getPackageName(), getHookName());
+	}
 }

@@ -103,4 +103,16 @@ public class EndpointNamingTest {
 		assertEquals("personaddress/PersonAddressUpperCaseTransformer.java", new EndpointNaming("PersonAddress").transformer("upper_case").getTransformerFilename());
 	}
 
+	@Test
+	public void testEndpointHookName() {
+		assertEquals("PersonValidateHook", new EndpointNaming("Person").hook("validate").getHookName());
+		assertEquals("PersonAddressValidateHook", new EndpointNaming("PersonAddress").hook("Validate").getHookName());
+	}
+
+	@Test
+	public void testEndpointHookFilename() {
+		assertEquals("person/PersonValidateHook.java", new EndpointNaming("Person").hook("Validate").getHookFilename());
+		assertEquals("personaddress/PersonAddressValidateHook.java", new EndpointNaming("PersonAddress").hook("validate").getHookFilename());
+	}
+
 }

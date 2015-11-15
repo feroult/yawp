@@ -13,6 +13,8 @@ public class EndpointNaming {
 
 	private String input;
 
+	private String action;
+
 	public EndpointNaming(String input) {
 		loadCustomPlurals();
 		this.input = input;
@@ -37,8 +39,17 @@ public class EndpointNaming {
 		return English.plural(word);
 	}
 
+	private String capitalize(String word) {
+		return WordUtils.capitalize(word, new char[] { '_' }).replaceAll("_", "");
+	}
+
+	public EndpointNaming action(String action) {
+		this.action = action;
+		return this;
+	}
+
 	public String getName() {
-		return WordUtils.capitalize(input, new char[] { '_' }).replaceAll("_", "");
+		return capitalize(input);
 	}
 
 	public String getPackageName() {
@@ -72,6 +83,14 @@ public class EndpointNaming {
 
 	public String getShieldFilename() {
 		return String.format("%s/%s.java", getPackageName(), getShieldName());
+	}
+
+	public Object getActionName() {
+		return String.format("%s%sAction", getName(), capitalize(action));
+	}
+
+	public Object getActionFilename() {
+		return String.format("%s/%s.java", getPackageName(), getActionName());
 	}
 
 }

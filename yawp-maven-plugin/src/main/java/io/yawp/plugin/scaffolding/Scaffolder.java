@@ -27,10 +27,10 @@ public abstract class Scaffolder {
 
 	protected String yawpPackage;
 
-	public Scaffolder(Log log, String yawpPackage, String name) {
+	public Scaffolder(Log log, String yawpPackage, String model) {
 		this.log = log;
 		this.yawpPackage = yawpPackage;
-		this.endpointNaming = new EndpointNaming(name);
+		this.endpointNaming = new EndpointNaming(model);
 	}
 
 	public void createTo(String baseDir) {

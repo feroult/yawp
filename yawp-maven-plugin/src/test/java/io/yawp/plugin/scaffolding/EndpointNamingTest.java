@@ -68,4 +68,26 @@ public class EndpointNamingTest {
 		assertEquals("personaddress/PersonAddressShield.java", new EndpointNaming("PersonAddress").getShieldFilename());
 	}
 
+	@Test
+	public void testEndpointActionName() {
+		assertEquals("PersonActivateAction", new EndpointNaming("Person").action("activate").getActionName());
+		assertEquals("PersonAddressActivateAction", new EndpointNaming("PersonAddress").action("activate").getActionName());
+
+		assertEquals("PersonActivateAllAction", new EndpointNaming("Person").action("ActivateAll").getActionName());
+		assertEquals("PersonAddressActivateAllAction", new EndpointNaming("PersonAddress").action("activate_all").getActionName());
+		assertEquals("PersonAddressActivateAllAction", new EndpointNaming("PersonAddress").action("activateAll").getActionName());
+	}
+
+	@Test
+	public void testEndpointActionFilename() {
+		assertEquals("person/PersonActivateAction.java", new EndpointNaming("Person").action("activate").getActionFilename());
+		assertEquals("personaddress/PersonAddressActivateAction.java", new EndpointNaming("PersonAddress").action("activate").getActionFilename());
+
+		assertEquals("person/PersonActivateAllAction.java", new EndpointNaming("Person").action("ActivateAll").getActionFilename());
+		assertEquals("personaddress/PersonAddressActivateAllAction.java", new EndpointNaming("PersonAddress").action("activate_all")
+				.getActionFilename());
+		assertEquals("personaddress/PersonAddressActivateAllAction.java", new EndpointNaming("PersonAddress").action("activateAll")
+				.getActionFilename());
+	}
+
 }

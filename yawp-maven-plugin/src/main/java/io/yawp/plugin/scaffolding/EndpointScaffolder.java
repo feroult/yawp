@@ -10,10 +10,10 @@ public class EndpointScaffolder extends Scaffolder {
 
 	private ShieldScaffolder shieldScaffolder;
 
-	public EndpointScaffolder(Log log, String yawpPackage, String name) {
-		super(log, yawpPackage, name);
+	public EndpointScaffolder(Log log, String yawpPackage, String model) {
+		super(log, yawpPackage, model);
 
-		this.shieldScaffolder = new ShieldScaffolder(log, yawpPackage, name);
+		this.shieldScaffolder = new ShieldScaffolder(log, yawpPackage, model);
 	}
 
 	@Override

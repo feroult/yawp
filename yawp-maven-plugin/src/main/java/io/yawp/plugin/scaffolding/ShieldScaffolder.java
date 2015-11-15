@@ -6,8 +6,8 @@ public class ShieldScaffolder extends Scaffolder {
 
 	private static final String SHIELD_TEMPLATE = "scaffolding/Shield.java";
 
-	public ShieldScaffolder(Log log, String yawpPackage, String name) {
-		super(log, yawpPackage, name);
+	public ShieldScaffolder(Log log, String yawpPackage, String model) {
+		super(log, yawpPackage, model);
 	}
 
 	@Override

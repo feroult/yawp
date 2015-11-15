@@ -1,4 +1,4 @@
-package io.yawp.plugin.scaffolding;
+package io.yawp.plugin.scaffolding.mojo;
 
 public class ShieldMojoTest extends ScaffolderMojoTestCase {
 

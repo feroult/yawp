@@ -1,6 +1,7 @@
 package io.yawp.plugin.scaffolding;
 
 import static org.junit.Assert.assertEquals;
+import io.yawp.plugin.scaffolding.EndpointNaming;
 
 import org.junit.Test;
 

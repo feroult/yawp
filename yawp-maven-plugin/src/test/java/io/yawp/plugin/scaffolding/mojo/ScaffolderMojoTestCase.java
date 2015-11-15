@@ -1,4 +1,4 @@
-package io.yawp.plugin.scaffolding;
+package io.yawp.plugin.scaffolding.mojo;
 
 import java.io.File;
 import java.io.IOException;

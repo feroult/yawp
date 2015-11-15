@@ -2,7 +2,7 @@ package io.yawp.plugin.scaffolding.mojo;
 
 public class HookMojoTest extends ScaffolderMojoTestCase {
 
-	public void testCreateTransformer() throws Exception {
+	public void testCreateHook() throws Exception {
 		lookupGoal("hook");
 		setParameter("name", "validate");
 		executeGoal();

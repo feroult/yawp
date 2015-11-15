@@ -1,8 +1,6 @@
 package ${yawpPackage}.models.${endpoint.packageName};
 
-import io.yawp.commons.http.annotation.GET;
-import io.yawp.repository.IdRef;
-import io.yawp.repository.actions.Action;
+import io.yawp.repository.transformers.Transformer;
 
 public class $endpoint.transformerName extends Transformer<$endpoint.name> {
 

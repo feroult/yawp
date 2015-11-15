@@ -90,4 +90,17 @@ public class EndpointNamingTest {
 				.getActionFilename());
 	}
 
+
+	@Test
+	public void testEndpointTransformerName() {
+		assertEquals("PersonUpperCaseTransformer", new EndpointNaming("Person").transformer("upper_case").getTransformerName());
+		assertEquals("PersonAddressUpperCaseTransformer", new EndpointNaming("PersonAddress").transformer("upperCase").getTransformerName());
+	}
+
+	@Test
+	public void testEndpointTransformerFilename() {
+		assertEquals("person/PersonUpperCaseTransformer.java", new EndpointNaming("Person").transformer("upperCase").getTransformerFilename());
+		assertEquals("personaddress/PersonAddressUpperCaseTransformer.java", new EndpointNaming("PersonAddress").transformer("upper_case").getTransformerFilename());
+	}
+
 }

@@ -10,6 +10,7 @@ public class $endpoint.testName extends EndpointTestCase {
 
 	@Test
 	public void testCreate() {
+		// TODO Auto-generated method stub
 		String json = post("/$endpoint.path", "{}");
 		Person $endpoint.instance = from(json, ${endpoint.name}.class);
 

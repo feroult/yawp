@@ -6,6 +6,7 @@ public class $endpoint.shieldName extends Shield<$endpoint.name> {
 
 	@Override
 	public void defaults() {
+		// TODO Auto-generated method stub
 		allow();
 	}
 

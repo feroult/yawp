@@ -15,6 +15,8 @@ public class EndpointNaming {
 
 	private String action;
 
+	private String transformer;
+
 	public EndpointNaming(String input) {
 		loadCustomPlurals();
 		this.input = input;
@@ -45,6 +47,11 @@ public class EndpointNaming {
 
 	public EndpointNaming action(String action) {
 		this.action = action;
+		return this;
+	}
+
+	public EndpointNaming transformer(String transformer) {
+		this.transformer = transformer;
 		return this;
 	}
 
@@ -91,6 +98,14 @@ public class EndpointNaming {
 
 	public String getActionFilename() {
 		return String.format("%s/%s.java", getPackageName(), getActionName());
+	}
+
+	public String getTransformerName() {
+		return String.format("%s%sTransformer", getName(), capitalize(transformer));
+	}
+
+	public String getTransformerFilename() {
+		return String.format("%s/%s.java", getPackageName(), getTransformerName());
 	}
 
 }

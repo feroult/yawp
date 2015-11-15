@@ -8,6 +8,7 @@ public class $endpoint.actionName extends Action<$endpoint.name> {
 
 	@GET("dummy")
 	public $endpoint.name dummy(IdRef<$endpoint.name> id) {
+		// TODO Auto-generated method stub
 		return id.fetch();
 	}
 

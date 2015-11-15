@@ -1,4 +1,4 @@
-package io.yawp.plugin.scaffolding;
+package io.yawp.plugin.scaffolding.mojo;
 
 import org.apache.maven.plugins.annotations.Parameter;
 

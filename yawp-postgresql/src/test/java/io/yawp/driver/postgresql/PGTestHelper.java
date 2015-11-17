@@ -7,31 +7,31 @@ import io.yawp.repository.Repository;
 
 public class PGTestHelper implements TestHelper {
 
-	private Repository r;
+    private Repository r;
 
-	@Override
-	public void init(Repository r) {
-		this.r = r;
-		configureInitialContext();
-		resetTables();
-	}
+    @Override
+    public void init(Repository r) {
+        this.r = r;
+        configureInitialContext();
+        resetTables();
+    }
 
-	private void configureInitialContext() {
-		InitialContextMock.configure();
-	}
+    private void configureInitialContext() {
+        InitialContextMock.configure();
+    }
 
-	private void resetTables() {
-		SchemaSynchronizer.recreate("public");
-		SchemaSynchronizer.sync(r.getFeatures().getEndpointClazzes());
-	}
+    private void resetTables() {
+        SchemaSynchronizer.recreate("public");
+        SchemaSynchronizer.sync(r.getFeatures().getEndpointClazzes());
+    }
 
-	@Override
-	public void setUp() {
-		SchemaSynchronizer.truncateAll();
-	}
+    @Override
+    public void setUp() {
+        SchemaSynchronizer.truncateAll();
+    }
 
-	@Override
-	public void tearDown() {
-	}
+    @Override
+    public void tearDown() {
+    }
 
 }

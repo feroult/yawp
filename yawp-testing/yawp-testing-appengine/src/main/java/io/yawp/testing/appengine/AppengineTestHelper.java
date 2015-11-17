@@ -12,42 +12,42 @@ import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig
 
 public class AppengineTestHelper implements TestHelper {
 
-	private LocalServiceTestHelper helper;
+    private LocalServiceTestHelper helper;
 
-	@Override
-	public void init(Repository r) {
-	}
+    @Override
+    public void init(Repository r) {
+    }
 
-	@Override
-	public void setUp() {
-		helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), createDatastoreService());
-		Map<String, Object> envs = new HashMap<String, Object>();
-		helper.setEnvAttributes(envs);
-		helper.setUp();
-	}
+    @Override
+    public void setUp() {
+        helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), createDatastoreService());
+        Map<String, Object> envs = new HashMap<String, Object>();
+        helper.setEnvAttributes(envs);
+        helper.setUp();
+    }
 
-	private LocalDatastoreServiceTestConfig createDatastoreService() {
-		return new LocalDatastoreServiceTestConfig().setDefaultHighRepJobPolicyUnappliedJobPercentage(0);
-	}
+    private LocalDatastoreServiceTestConfig createDatastoreService() {
+        return new LocalDatastoreServiceTestConfig().setDefaultHighRepJobPolicyUnappliedJobPercentage(0);
+    }
 
-	@Override
-	public void tearDown() {
-		helper.tearDown();
-	}
+    @Override
+    public void tearDown() {
+        helper.tearDown();
+    }
 
-	public void login(String username, String domain) {
-		login(username, domain, false);
-	}
+    public void login(String username, String domain) {
+        login(username, domain, false);
+    }
 
-	public void login(String username, String domain, boolean isAdmin) {
-		helper.setEnvAuthDomain(domain);
-		helper.setEnvEmail(username + "@" + domain);
-		helper.setEnvIsLoggedIn(true);
-		helper.setEnvIsAdmin(isAdmin);
-	}
+    public void login(String username, String domain, boolean isAdmin) {
+        helper.setEnvAuthDomain(domain);
+        helper.setEnvEmail(username + "@" + domain);
+        helper.setEnvIsLoggedIn(true);
+        helper.setEnvIsAdmin(isAdmin);
+    }
 
-	public void logout() {
-		helper.setEnvIsLoggedIn(false);
-	}
+    public void logout() {
+        helper.setEnvIsLoggedIn(false);
+    }
 
 }

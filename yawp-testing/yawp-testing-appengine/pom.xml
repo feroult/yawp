@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<parent>
-		<groupId>io.yawp</groupId>
-		<artifactId>yawp-testing-root</artifactId>
-		<version>1.3.9-SNAPSHOT</version>
-	</parent>
+    <parent>
+        <groupId>io.yawp</groupId>
+        <artifactId>yawp-testing-root</artifactId>
+        <version>1.3.9-SNAPSHOT</version>
+    </parent>
 
-	<modelVersion>4.0.0</modelVersion>
-	<packaging>jar</packaging>
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>jar</packaging>
 
-	<artifactId>yawp-testing</artifactId>
+    <artifactId>yawp-testing</artifactId>
 
-	<name>YAWP! testing appengine</name>
-	<description>YAWP! testing appengine</description>
+    <name>YAWP! testing appengine</name>
+    <description>YAWP! testing appengine</description>
 
-	<properties>
-		<appengine.app.version>1</appengine.app.version>
-		<appengine.target.version>1.9.25</appengine.target.version>
-	</properties>
+    <properties>
+        <appengine.app.version>1</appengine.app.version>
+        <appengine.target.version>1.9.25</appengine.target.version>
+    </properties>
 
-	<dependencies>
+    <dependencies>
         <dependency>
             <groupId>io.yawp</groupId>
             <artifactId>yawp-core</artifactId>
@@ -32,21 +32,21 @@
             <artifactId>yawp-testing-core</artifactId>
             <version>1.3.9-SNAPSHOT</version>
         </dependency>
-		<dependency>
-			<groupId>com.google.appengine</groupId>
-			<artifactId>appengine-testing</artifactId>
-			<version>${appengine.target.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.appengine</groupId>
-			<artifactId>appengine-api-stubs</artifactId>
-			<version>${appengine.target.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-testing</artifactId>
+            <version>${appengine.target.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.appengine</groupId>
+            <artifactId>appengine-api-stubs</artifactId>
+            <version>${appengine.target.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+        </dependency>
+    </dependencies>
 
 </project>

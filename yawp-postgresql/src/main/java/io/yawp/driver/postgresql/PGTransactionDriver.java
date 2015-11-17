@@ -5,31 +5,31 @@ import io.yawp.driver.postgresql.sql.ConnectionManager;
 
 public class PGTransactionDriver implements TransactionDriver {
 
-	private ConnectionManager connectionManager;
+    private ConnectionManager connectionManager;
 
-	public PGTransactionDriver(ConnectionManager connectionManager) {
-		this.connectionManager = connectionManager;
-	}
+    public PGTransactionDriver(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
 
-	@Override
-	public TransactionDriver begin() {
-		connectionManager.beginTransaction();
-		return this;
-	}
+    @Override
+    public TransactionDriver begin() {
+        connectionManager.beginTransaction();
+        return this;
+    }
 
-	@Override
-	public TransactionDriver beginX() {
-		return begin();
-	}
+    @Override
+    public TransactionDriver beginX() {
+        return begin();
+    }
 
-	@Override
-	public void rollback() {
-		connectionManager.rollback();
-	}
+    @Override
+    public void rollback() {
+        connectionManager.rollback();
+    }
 
-	@Override
-	public void commit() {
-		connectionManager.commit();
-	}
+    @Override
+    public void commit() {
+        connectionManager.commit();
+    }
 
 }

@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Atomic {
 
-	boolean cross() default false;
+    boolean cross() default false;
 
 }

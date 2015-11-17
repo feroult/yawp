@@ -7,33 +7,33 @@ import io.yawp.repository.annotations.Id;
 @Endpoint(path = "/jobs")
 public class Job {
 
-	@Id
-	private IdRef<Job> id;
+    @Id
+    private IdRef<Job> id;
 
-	private String name;
+    private String name;
 
-	public Job() {
+    public Job() {
 
-	}
+    }
 
-	public Job(String name) {
-		this.name = name;
-	}
+    public Job(String name) {
+        this.name = name;
+    }
 
-	public IdRef<Job> getId() {
-		return id;
-	}
+    public IdRef<Job> getId() {
+        return id;
+    }
 
-	public void setId(IdRef<Job> id) {
-		this.id = id;
-	}
+    public void setId(IdRef<Job> id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

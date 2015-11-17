@@ -3,15 +3,15 @@
 
 <Configure class="org.mortbay.jetty.webapp.WebAppContext">
 
-	<New id="DSTest" class="org.mortbay.jetty.plus.naming.Resource">
-		<Arg></Arg>
-		<Arg>java:comp/env/jdbc/yawp_test</Arg>
-		<Arg>
-			<New class="org.apache.commons.dbcp2.BasicDataSource">
-				<Set name="driverClassName">org.postgresql.Driver</Set>
-				<Set name="url">jdbc:postgresql://localhost/yawp_test</Set>
-			</New>
-		</Arg>
-	</New>
+    <New id="DSTest" class="org.mortbay.jetty.plus.naming.Resource">
+        <Arg></Arg>
+        <Arg>java:comp/env/jdbc/yawp_test</Arg>
+        <Arg>
+            <New class="org.apache.commons.dbcp2.BasicDataSource">
+                <Set name="driverClassName">org.postgresql.Driver</Set>
+                <Set name="url">jdbc:postgresql://localhost/yawp_test</Set>
+            </New>
+        </Arg>
+    </New>
 
 </Configure>

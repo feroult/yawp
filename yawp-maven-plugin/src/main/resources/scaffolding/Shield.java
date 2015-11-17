@@ -1,13 +1,15 @@
-package ${yawpPackage}.models.${endpoint.packageName};
+package $
 
-import io.yawp.repository.shields.Shield;
+{yawpPackage}.models.${endpoint.packageName};
 
-public class $endpoint.shieldName extends Shield<$endpoint.name> {
+        import io.yawp.repository.shields.Shield;
 
-	@Override
-	public void defaults() {
-		// TODO Auto-generated method stub
-		allow();
-	}
+public class $endpoint.shieldName extends Shield<$endpoint.name>{
 
-}
+@Override
+public void defaults(){
+        // TODO Auto-generated method stub
+        allow();
+        }
+
+        }

@@ -13,32 +13,32 @@ import javax.servlet.http.HttpServletResponse;
 
 public class FixturesServlet extends EndpointServlet {
 
-	private static final long serialVersionUID = -7833278558858095857L;
+    private static final long serialVersionUID = -7833278558858095857L;
 
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
-		setWithHooks(false);
-	}
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
+        setWithHooks(false);
+    }
 
-	@Override
-	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		if (!enableFixtures(req)) {
-			response(resp, new ErrorResponse(403));
-			return;
-		}
-		super.service(req, resp);
-	}
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!enableFixtures(req)) {
+            response(resp, new ErrorResponse(403));
+            return;
+        }
+        super.service(req, resp);
+    }
 
-	private boolean enableFixtures(HttpServletRequest req) {
-		Repository r = getRepository(makeParams(req));
-		Driver driver = r.getDriver();
+    private boolean enableFixtures(HttpServletRequest req) {
+        Repository r = getRepository(makeParams(req));
+        Driver driver = r.getDriver();
 
-		if (!driver.environment().isProduction()) {
-			return true;
-		}
+        if (!driver.environment().isProduction()) {
+            return true;
+        }
 
-		return driver.environment().isAdmin();
-	}
+        return driver.environment().isAdmin();
+    }
 
 }

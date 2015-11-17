@@ -11,20 +11,20 @@ import org.apache.maven.plugins.annotations.Mojo;
 @Mojo(name = "devserver_stop")
 public class DevServerStopMojo extends DevserverAbstractMojo {
 
-	public void execute() throws MojoExecutionException {
-		shutdown();
-	}
+    public void execute() throws MojoExecutionException {
+        shutdown();
+    }
 
-	private void shutdown() {
-		try {
-			Socket socket = new Socket(InetAddress.getByName("127.0.0.1"), getShutdownPort());
-			PrintWriter pw = new PrintWriter(socket.getOutputStream());
-			pw.println(ShutdownMonitor.SHUTDOWN_MESSAGE);
-			pw.flush();
-			socket.close();
-		} catch (IOException e) {
-			getLog().info("Server is not running");
-		}
-	}
+    private void shutdown() {
+        try {
+            Socket socket = new Socket(InetAddress.getByName("127.0.0.1"), getShutdownPort());
+            PrintWriter pw = new PrintWriter(socket.getOutputStream());
+            pw.println(ShutdownMonitor.SHUTDOWN_MESSAGE);
+            pw.flush();
+            socket.close();
+        } catch (IOException e) {
+            getLog().info("Server is not running");
+        }
+    }
 
 }

@@ -1,13 +1,15 @@
-package ${yawpPackage}.models.${endpoint.packageName};
+package $
 
-import io.yawp.repository.transformers.Transformer;
+{yawpPackage}.models.${endpoint.packageName};
 
-public class $endpoint.transformerName extends Transformer<$endpoint.name> {
+        import io.yawp.repository.transformers.Transformer;
 
-	@Override
-	public Object defaults($endpoint.name $endpoint.instance) {
-		// TODO Auto-generated method stub
-		return super.defaults($endpoint.instance);
-	}
+public class $endpoint.transformerName extends Transformer<$endpoint.name>{
 
-}
+@Override
+public Object defaults($endpoint.name $endpoint.instance){
+        // TODO Auto-generated method stub
+        return super.defaults($endpoint.instance);
+        }
+
+        }

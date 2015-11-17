@@ -2,23 +2,23 @@ package io.yawp.servlet.rest;
 
 public class UpdateRestAction extends RestAction {
 
-	public UpdateRestAction() {
-		super("update");
-	}
+    public UpdateRestAction() {
+        super("update");
+    }
 
-	@Override
-	public void shield() {
-		shield.protectUpdate();
-	}
+    @Override
+    public void shield() {
+        shield.protectUpdate();
+    }
 
-	@Override
-	public Object action() {
-		assert !isRequestBodyJsonArray();
+    @Override
+    public Object action() {
+        assert !isRequestBodyJsonArray();
 
-		Object object = getObject();
-		save(object);
-		applyGetFacade(object);
-		return transform(object);
-	}
+        Object object = getObject();
+        save(object);
+        applyGetFacade(object);
+        return transform(object);
+    }
 
 }

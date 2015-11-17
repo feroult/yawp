@@ -5,9 +5,9 @@ import io.yawp.driver.postgresql.datastore.SchemaSynchronizer;
 
 public class PGHelpersDriver implements HelpersDriver {
 
-	@Override
-	public void deleteAll() {
-		SchemaSynchronizer.truncateAll();
-	}
+    @Override
+    public void deleteAll() {
+        SchemaSynchronizer.truncateAll();
+    }
 
 }

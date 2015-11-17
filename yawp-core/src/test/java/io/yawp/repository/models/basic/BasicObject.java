@@ -1,6 +1,7 @@
 package io.yawp.repository.models.basic;
 
 import static org.junit.Assert.assertEquals;
+
 import io.yawp.commons.utils.DateUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
@@ -16,164 +17,164 @@ import java.util.Map;
 @Endpoint(path = "/basic_objects")
 public class BasicObject {
 
-	@Id
-	private IdRef<BasicObject> id;
+    @Id
+    private IdRef<BasicObject> id;
 
-	@Index
-	private String stringValue;
+    @Index
+    private String stringValue;
 
-	@Text
-	private String textValue;
+    @Text
+    private String textValue;
 
-	@Index
-	private int intValue;
+    @Index
+    private int intValue;
 
-	private long longValue;
+    private long longValue;
 
-	private double doubleValue;
+    private double doubleValue;
 
-	private boolean booleanValue;
+    private boolean booleanValue;
 
-	private Date dateValue;
+    private Date dateValue;
 
-	@Json
-	private Pojo jsonValue;
+    @Json
+    private Pojo jsonValue;
 
-	@Json
-	private List<Pojo> jsonList;
+    @Json
+    private List<Pojo> jsonList;
 
-	@Json
-	private Map<Long, Pojo> jsonMap;
+    @Json
+    private Map<Long, Pojo> jsonMap;
 
-	private IdRef<BasicObject> objectId;
+    private IdRef<BasicObject> objectId;
 
-	public BasicObject() {
+    public BasicObject() {
 
-	}
+    }
 
-	public BasicObject(String stringValue) {
-		this.stringValue = stringValue;
-	}
+    public BasicObject(String stringValue) {
+        this.stringValue = stringValue;
+    }
 
-	public BasicObject(Long longValue) {
-		this.longValue = longValue;
-	}
+    public BasicObject(Long longValue) {
+        this.longValue = longValue;
+    }
 
-	public BasicObject(String stringValue, long longValue) {
-		this.stringValue = stringValue;
-		this.longValue = longValue;
-	}
+    public BasicObject(String stringValue, long longValue) {
+        this.stringValue = stringValue;
+        this.longValue = longValue;
+    }
 
-	public BasicObject(String stringValue, IdRef<BasicObject> objectId) {
-		this.stringValue = stringValue;
-		this.objectId = objectId;
-	}
+    public BasicObject(String stringValue, IdRef<BasicObject> objectId) {
+        this.stringValue = stringValue;
+        this.objectId = objectId;
+    }
 
-	public IdRef<BasicObject> getId() {
-		return id;
-	}
+    public IdRef<BasicObject> getId() {
+        return id;
+    }
 
-	public void setId(IdRef<BasicObject> id) {
-		this.id = id;
-	}
+    public void setId(IdRef<BasicObject> id) {
+        this.id = id;
+    }
 
-	public String getStringValue() {
-		return stringValue;
-	}
+    public String getStringValue() {
+        return stringValue;
+    }
 
-	public void setStringValue(String stringValue) {
-		this.stringValue = stringValue;
-	}
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
 
-	public String getTextValue() {
-		return textValue;
-	}
+    public String getTextValue() {
+        return textValue;
+    }
 
-	public void setTextValue(String textValue) {
-		this.textValue = textValue;
-	}
+    public void setTextValue(String textValue) {
+        this.textValue = textValue;
+    }
 
-	public int getIntValue() {
-		return intValue;
-	}
+    public int getIntValue() {
+        return intValue;
+    }
 
-	public void setIntValue(int intValue) {
-		this.intValue = intValue;
-	}
+    public void setIntValue(int intValue) {
+        this.intValue = intValue;
+    }
 
-	public long getLongValue() {
-		return longValue;
-	}
+    public long getLongValue() {
+        return longValue;
+    }
 
-	public void setLongValue(long longValue) {
-		this.longValue = longValue;
-	}
+    public void setLongValue(long longValue) {
+        this.longValue = longValue;
+    }
 
-	public double getDoubleValue() {
-		return doubleValue;
-	}
+    public double getDoubleValue() {
+        return doubleValue;
+    }
 
-	public void setDoubleValue(double doubleValue) {
-		this.doubleValue = doubleValue;
-	}
+    public void setDoubleValue(double doubleValue) {
+        this.doubleValue = doubleValue;
+    }
 
-	public boolean isBooleanValue() {
-		return booleanValue;
-	}
+    public boolean isBooleanValue() {
+        return booleanValue;
+    }
 
-	public void setBooleanValue(boolean booleanValue) {
-		this.booleanValue = booleanValue;
-	}
+    public void setBooleanValue(boolean booleanValue) {
+        this.booleanValue = booleanValue;
+    }
 
-	public Date getDateValue() {
-		return dateValue;
-	}
+    public Date getDateValue() {
+        return dateValue;
+    }
 
-	public void setDateValue(Date dateValue) {
-		this.dateValue = dateValue;
-	}
+    public void setDateValue(Date dateValue) {
+        this.dateValue = dateValue;
+    }
 
-	public Pojo getJsonValue() {
-		return jsonValue;
-	}
+    public Pojo getJsonValue() {
+        return jsonValue;
+    }
 
-	public void setJsonValue(Pojo jsonValue) {
-		this.jsonValue = jsonValue;
-	}
+    public void setJsonValue(Pojo jsonValue) {
+        this.jsonValue = jsonValue;
+    }
 
-	public List<Pojo> getJsonList() {
-		return jsonList;
-	}
+    public List<Pojo> getJsonList() {
+        return jsonList;
+    }
 
-	public void setJsonList(List<Pojo> jsonList) {
-		this.jsonList = jsonList;
-	}
+    public void setJsonList(List<Pojo> jsonList) {
+        this.jsonList = jsonList;
+    }
 
-	public Map<Long, Pojo> getJsonMap() {
-		return jsonMap;
-	}
+    public Map<Long, Pojo> getJsonMap() {
+        return jsonMap;
+    }
 
-	public void setJsonMap(Map<Long, Pojo> jsonMap) {
-		this.jsonMap = jsonMap;
-	}
+    public void setJsonMap(Map<Long, Pojo> jsonMap) {
+        this.jsonMap = jsonMap;
+    }
 
-	public IdRef<BasicObject> getObjectId() {
-		return objectId;
-	}
+    public IdRef<BasicObject> getObjectId() {
+        return objectId;
+    }
 
-	public void setObjectId(IdRef<BasicObject> objectId) {
-		this.objectId = objectId;
-	}
+    public void setObjectId(IdRef<BasicObject> objectId) {
+        this.objectId = objectId;
+    }
 
-	public void assertObject(String stringValue, String textValue, int intValue, long longValue, double doubleValue, boolean booleanValue,
-			String timestamp) {
-		assertEquals(intValue, getIntValue());
-		assertEquals(longValue, getLongValue());
-		assertEquals(doubleValue, getDoubleValue(), 0);
-		assertEquals(booleanValue, isBooleanValue());
-		assertEquals(DateUtils.toTimestamp(timestamp), getDateValue());
-		assertEquals(textValue, getTextValue());
-		assertEquals(stringValue, getStringValue());
-	}
+    public void assertObject(String stringValue, String textValue, int intValue, long longValue, double doubleValue, boolean booleanValue,
+                             String timestamp) {
+        assertEquals(intValue, getIntValue());
+        assertEquals(longValue, getLongValue());
+        assertEquals(doubleValue, getDoubleValue(), 0);
+        assertEquals(booleanValue, isBooleanValue());
+        assertEquals(DateUtils.toTimestamp(timestamp), getDateValue());
+        assertEquals(textValue, getTextValue());
+        assertEquals(stringValue, getStringValue());
+    }
 
 }

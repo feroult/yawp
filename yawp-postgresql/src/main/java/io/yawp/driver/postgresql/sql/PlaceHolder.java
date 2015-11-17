@@ -7,26 +7,26 @@ import java.util.List;
 
 public class PlaceHolder {
 
-	private List<Integer> indexes = new ArrayList<Integer>();
+    private List<Integer> indexes = new ArrayList<Integer>();
 
-	private Object value;
+    private Object value;
 
-	public PlaceHolder(Object value) {
-		this.value = value;
-	}
+    public PlaceHolder(Object value) {
+        this.value = value;
+    }
 
-	public void addIndex(int index) {
-		indexes.add(index);
-	}
+    public void addIndex(int index) {
+        indexes.add(index);
+    }
 
-	public void setValue(PreparedStatement ps) {
-		try {
-			for (int index : indexes) {
-				ps.setObject(index, value);
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public void setValue(PreparedStatement ps) {
+        try {
+            for (int index : indexes) {
+                ps.setObject(index, value);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

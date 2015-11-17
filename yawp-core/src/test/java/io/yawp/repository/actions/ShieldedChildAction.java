@@ -7,12 +7,12 @@ import io.yawp.repository.models.parents.ShieldedChild;
 
 public class ShieldedChildAction extends Action<ShieldedChild> {
 
-	@PUT("collection")
-	public void collection(IdRef<Parent> parentId) {
-	}
+    @PUT("collection")
+    public void collection(IdRef<Parent> parentId) {
+    }
 
-	@PUT("single")
-	public void single(IdRef<ShieldedChild> id) {
-	}
+    @PUT("single")
+    public void single(IdRef<ShieldedChild> id) {
+    }
 
 }

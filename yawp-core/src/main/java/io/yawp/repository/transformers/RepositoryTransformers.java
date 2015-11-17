@@ -7,18 +7,18 @@ import java.lang.reflect.Method;
 
 public class RepositoryTransformers {
 
-	@SuppressWarnings("unchecked")
-	public static <F, T> T execute(Repository r, F object, String name) {
-		try {
-			Method method = r.getEndpointFeatures(object.getClass()).getTransformer(name);
-			Class<? extends Transformer<F>> transformerClazz = (Class<? extends Transformer<F>>) method.getDeclaringClass();
+    @SuppressWarnings("unchecked")
+    public static <F, T> T execute(Repository r, F object, String name) {
+        try {
+            Method method = r.getEndpointFeatures(object.getClass()).getTransformer(name);
+            Class<? extends Transformer<F>> transformerClazz = (Class<? extends Transformer<F>>) method.getDeclaringClass();
 
-			Transformer<F> transformerInstance = transformerClazz.newInstance();
-			transformerInstance.setRepository(r);
+            Transformer<F> transformerInstance = transformerClazz.newInstance();
+            transformerInstance.setRepository(r);
 
-			return (T) method.invoke(transformerInstance, object);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}
-	}
+            return (T) method.invoke(transformerInstance, object);
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -12,42 +12,42 @@ import org.eclipse.aether.repository.RemoteRepository;
 
 public abstract class PluginAbstractMojo extends AbstractMojo {
 
-	@Component
-	protected RepositorySystem repoSystem;
+    @Component
+    protected RepositorySystem repoSystem;
 
-	@Parameter(defaultValue = "${repositorySystemSession}")
-	protected RepositorySystemSession repoSession;
+    @Parameter(defaultValue = "${repositorySystemSession}")
+    protected RepositorySystemSession repoSession;
 
-	@Parameter(defaultValue = "${project.remoteProjectRepositories}")
-	protected List<RemoteRepository> projectRepos;
+    @Parameter(defaultValue = "${project.remoteProjectRepositories}")
+    protected List<RemoteRepository> projectRepos;
 
-	@Parameter(defaultValue = "${project.remotePluginRepositories}")
-	protected List<RemoteRepository> pluginRepos;
+    @Parameter(defaultValue = "${project.remotePluginRepositories}")
+    protected List<RemoteRepository> pluginRepos;
 
-	@Parameter(defaultValue = "${project}")
-	protected MavenProject project;
+    @Parameter(defaultValue = "${project}")
+    protected MavenProject project;
 
-	@Parameter(property = "yawp.dir", defaultValue = "${basedir}")
-	protected String baseDir;
+    @Parameter(property = "yawp.dir", defaultValue = "${basedir}")
+    protected String baseDir;
 
-	public RepositorySystem getRepoSystem() {
-		return repoSystem;
-	}
+    public RepositorySystem getRepoSystem() {
+        return repoSystem;
+    }
 
-	public RepositorySystemSession getRepoSession() {
-		return repoSession;
-	}
+    public RepositorySystemSession getRepoSession() {
+        return repoSession;
+    }
 
-	public List<RemoteRepository> getProjectRepos() {
-		return projectRepos;
-	}
+    public List<RemoteRepository> getProjectRepos() {
+        return projectRepos;
+    }
 
-	public List<RemoteRepository> getPluginRepos() {
-		return pluginRepos;
-	}
+    public List<RemoteRepository> getPluginRepos() {
+        return pluginRepos;
+    }
 
-	public MavenProject getProject() {
-		return project;
-	}
+    public MavenProject getProject() {
+        return project;
+    }
 
 }

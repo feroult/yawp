@@ -10,38 +10,38 @@ import java.util.List;
 
 @Deprecated
 public class ClassLoaderPatch {
-	private static final Class<?>[] parameters = new Class[] { URL.class };
+    private static final Class<?>[] parameters = new Class[]{URL.class};
 
-	public static void addFiles(List<String> paths) {
-		for (String path : paths) {
-			addFile(path);
-		}
-	}
+    public static void addFiles(List<String> paths) {
+        for (String path : paths) {
+            addFile(path);
+        }
+    }
 
-	public static void addFile(String path) {
-		addFile(new File(path));
-	}
+    public static void addFile(String path) {
+        addFile(new File(path));
+    }
 
-	public static void addFile(File file) {
-		try {
-			addURL(file.toURI().toURL());
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public static void addFile(File file) {
+        try {
+            addURL(file.toURI().toURL());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	public static void addURL(URL url) {
-		try {
-			URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-			Class<?> clazz = URLClassLoader.class;
+    public static void addURL(URL url) {
+        try {
+            URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+            Class<?> clazz = URLClassLoader.class;
 
-			Method method = clazz.getDeclaredMethod("addURL", parameters);
-			method.setAccessible(true);
-			method.invoke(classLoader, new Object[] { url });
+            Method method = clazz.getDeclaredMethod("addURL", parameters);
+            method.setAccessible(true);
+            method.invoke(classLoader, new Object[]{url});
 
-		} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new RuntimeException(e);
-		}
-	}
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface QueryDriver {
 
-	public <T> List<T> objects(QueryBuilder<?> builder);
+    public <T> List<T> objects(QueryBuilder<?> builder);
 
-	public <T> List<IdRef<T>> ids(QueryBuilder<?> builder);
+    public <T> List<IdRef<T>> ids(QueryBuilder<?> builder);
 
-	public <T> T fetch(IdRef<T> id);
+    public <T> T fetch(IdRef<T> id);
 }

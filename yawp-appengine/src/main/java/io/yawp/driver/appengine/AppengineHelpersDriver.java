@@ -10,14 +10,14 @@ import com.google.appengine.api.datastore.Query;
 
 public class AppengineHelpersDriver implements HelpersDriver {
 
-	@Override
-	public void deleteAll() {
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Query query = new Query();
-		PreparedQuery pq = datastore.prepare(query);
-		for (Entity entity : pq.asIterable()) {
-			datastore.delete(entity.getKey());
-		}
-	}
+    @Override
+    public void deleteAll() {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query query = new Query();
+        PreparedQuery pq = datastore.prepare(query);
+        for (Entity entity : pq.asIterable()) {
+            datastore.delete(entity.getKey());
+        }
+    }
 
 }

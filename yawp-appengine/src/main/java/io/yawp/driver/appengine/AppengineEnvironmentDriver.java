@@ -8,25 +8,25 @@ import com.google.appengine.api.utils.SystemProperty;
 
 public class AppengineEnvironmentDriver implements EnvironmentDriver {
 
-	@Override
-	public boolean isProduction() {
-		return SystemProperty.environment.value() == SystemProperty.Environment.Value.Production;
-	}
+    @Override
+    public boolean isProduction() {
+        return SystemProperty.environment.value() == SystemProperty.Environment.Value.Production;
+    }
 
-	@Override
-	public boolean isDevelopment() {
-		return SystemProperty.environment.value() == SystemProperty.Environment.Value.Development;
-	}
+    @Override
+    public boolean isDevelopment() {
+        return SystemProperty.environment.value() == SystemProperty.Environment.Value.Development;
+    }
 
-	@Override
-	public boolean isTest() {
-		return !isProduction() && !isDevelopment();
-	}
+    @Override
+    public boolean isTest() {
+        return !isProduction() && !isDevelopment();
+    }
 
-	@Override
-	public boolean isAdmin() {
-		UserService userService = UserServiceFactory.getUserService();
-		return userService.isUserLoggedIn() && userService.isUserAdmin();
-	}
+    @Override
+    public boolean isAdmin() {
+        UserService userService = UserServiceFactory.getUserService();
+        return userService.isUserLoggedIn() && userService.isUserAdmin();
+    }
 
 }

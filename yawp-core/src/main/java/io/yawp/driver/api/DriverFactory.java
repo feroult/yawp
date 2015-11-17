@@ -6,23 +6,23 @@ import java.util.ServiceLoader;
 
 public class DriverFactory {
 
-	public static Driver getDriver(Repository r) {
-		Driver driver = lookup();
-		driver.init(r);
-		return driver;
-	}
+    public static Driver getDriver(Repository r) {
+        Driver driver = lookup();
+        driver.init(r);
+        return driver;
+    }
 
-	public static Driver getDriver() {
-		Driver driver = lookup();
-		return driver;
-	}
+    public static Driver getDriver() {
+        Driver driver = lookup();
+        return driver;
+    }
 
-	private static Driver lookup() {
-		ServiceLoader<Driver> drivers = ServiceLoader.load(Driver.class);
-		for (Driver driver : drivers) {
-			return driver;
-		}
-		throw new RuntimeException("No yawp driver found!");
-	}
+    private static Driver lookup() {
+        ServiceLoader<Driver> drivers = ServiceLoader.load(Driver.class);
+        for (Driver driver : drivers) {
+            return driver;
+        }
+        throw new RuntimeException("No yawp driver found!");
+    }
 
 }

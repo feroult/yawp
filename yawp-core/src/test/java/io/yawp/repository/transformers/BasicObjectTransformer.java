@@ -7,19 +7,19 @@ import java.util.Map;
 
 public class BasicObjectTransformer extends Transformer<BasicObject> {
 
-	public Map<String, Object> simple(BasicObject object) {
-		Map<String, Object> map = new HashMap<String, Object>();
+    public Map<String, Object> simple(BasicObject object) {
+        Map<String, Object> map = new HashMap<String, Object>();
 
-		map.put("innerValue", object.getStringValue());
-		map.put("innerObject", object);
+        map.put("innerValue", object.getStringValue());
+        map.put("innerObject", object);
 
-		return map;
-	}
+        return map;
+    }
 
-	public Map<String, Object> addAttribute(BasicObject object) {
-		Map<String, Object> map = asMap(object);
-		map.put("attr", "xpto");
-		return map;
-	}
+    public Map<String, Object> addAttribute(BasicObject object) {
+        Map<String, Object> map = asMap(object);
+        map.put("attr", "xpto");
+        return map;
+    }
 
 }

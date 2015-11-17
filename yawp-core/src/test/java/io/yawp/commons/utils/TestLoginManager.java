@@ -2,26 +2,26 @@ package io.yawp.commons.utils;
 
 public class TestLoginManager {
 
-	private static ThreadLocal<String> loggedUsername = new ThreadLocal<String>();
+    private static ThreadLocal<String> loggedUsername = new ThreadLocal<String>();
 
-	public static void login(String username) {
-		loggedUsername.set(username);
-	}
+    public static void login(String username) {
+        loggedUsername.set(username);
+    }
 
-	public static boolean isLogged(String username) {
-		return isLogged() && getLoggedUsername().equals(username);
-	}
+    public static boolean isLogged(String username) {
+        return isLogged() && getLoggedUsername().equals(username);
+    }
 
-	private static boolean isLogged() {
-		return getLoggedUsername() != null;
-	}
+    private static boolean isLogged() {
+        return getLoggedUsername() != null;
+    }
 
-	private static String getLoggedUsername() {
-		return loggedUsername.get();
-	}
+    private static String getLoggedUsername() {
+        return loggedUsername.get();
+    }
 
-	public static void logout() {
-		login(null);
-	}
+    public static void logout() {
+        login(null);
+    }
 
 }

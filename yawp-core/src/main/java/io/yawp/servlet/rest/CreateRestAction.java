@@ -7,57 +7,57 @@ import java.util.List;
 
 public class CreateRestAction extends RestAction {
 
-	public CreateRestAction() {
-		super("create");
-	}
+    public CreateRestAction() {
+        super("create");
+    }
 
-	@Override
-	public void shield() {
-		shield.protectCreate();
-	}
+    @Override
+    public void shield() {
+        shield.protectCreate();
+    }
 
-	@Override
-	public Object action() {
-		if (isRequestBodyJsonArray()) {
-			return createFromArray(getObjects());
-		}
+    @Override
+    public Object action() {
+        if (isRequestBodyJsonArray()) {
+            return createFromArray(getObjects());
+        }
 
-		return createFromObject(getObject());
-	}
+        return createFromObject(getObject());
+    }
 
-	private Object createFromObject(Object object) {
-		return saveObject(object);
-	}
+    private Object createFromObject(Object object) {
+        return saveObject(object);
+    }
 
-	private Object createFromArray(List<?> objects) {
-		return saveObjecs(objects);
-	}
+    private Object createFromArray(List<?> objects) {
+        return saveObjecs(objects);
+    }
 
-	private Object saveObjecs(List<?> objects) {
-		List<FutureObject<Object>> futures = new ArrayList<FutureObject<Object>>();
-		List<Object> resultObjects = new ArrayList<Object>();
+    private Object saveObjecs(List<?> objects) {
+        List<FutureObject<Object>> futures = new ArrayList<FutureObject<Object>>();
+        List<Object> resultObjects = new ArrayList<Object>();
 
-		for (Object object : objects) {
-			futures.add(saveObjectAsync(object));
-		}
+        for (Object object : objects) {
+            futures.add(saveObjectAsync(object));
+        }
 
-		for (FutureObject<Object> future : futures) {
-			Object object = transform(future.get());
-			applyGetFacade(object);
-			resultObjects.add(object);
-		}
+        for (FutureObject<Object> future : futures) {
+            Object object = transform(future.get());
+            applyGetFacade(object);
+            resultObjects.add(object);
+        }
 
-		return resultObjects;
-	}
+        return resultObjects;
+    }
 
-	protected Object saveObject(Object object) {
-		save(object);
-		applyGetFacade(object);
-		return transform(object);
-	}
+    protected Object saveObject(Object object) {
+        save(object);
+        applyGetFacade(object);
+        return transform(object);
+    }
 
-	protected FutureObject<Object> saveObjectAsync(Object object) {
-		return saveAsync(object);
-	}
+    protected FutureObject<Object> saveObjectAsync(Object object) {
+        return saveAsync(object);
+    }
 
 }

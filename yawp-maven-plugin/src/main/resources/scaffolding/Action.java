@@ -1,15 +1,17 @@
-package ${yawpPackage}.models.${endpoint.packageName};
+package $
 
-import io.yawp.commons.http.annotation.GET;
-import io.yawp.repository.IdRef;
-import io.yawp.repository.actions.Action;
+{yawpPackage}.models.${endpoint.packageName};
 
-public class $endpoint.actionName extends Action<$endpoint.name> {
+        import io.yawp.commons.http.annotation.GET;
+        import io.yawp.repository.IdRef;
+        import io.yawp.repository.actions.Action;
 
-	@GET("dummy")
-	public $endpoint.name dummy(IdRef<$endpoint.name> id) {
-		// TODO Auto-generated method stub
-		return id.fetch();
-	}
+public class $endpoint.actionName extends Action<$endpoint.name>{
 
-}
+@GET("dummy")
+public $endpoint.name dummy(IdRef<$endpoint.name>id){
+        // TODO Auto-generated method stub
+        return id.fetch();
+        }
+
+        }

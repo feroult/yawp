@@ -9,60 +9,60 @@ import io.yawp.repository.annotations.ParentId;
 @Endpoint(path = "/grandchildren")
 public class Grandchild {
 
-	@Id
-	private IdRef<Grandchild> id;
+    @Id
+    private IdRef<Grandchild> id;
 
-	@ParentId
-	private IdRef<Child> childId;
+    @ParentId
+    private IdRef<Child> childId;
 
-	@Index
-	private String name;
+    @Index
+    private String name;
 
-	private int age;
+    private int age;
 
-	public Grandchild() {
+    public Grandchild() {
 
-	}
+    }
 
-	public Grandchild(String name) {
-		this.name = name;
-	}
+    public Grandchild(String name) {
+        this.name = name;
+    }
 
-	public Grandchild(String name, IdRef<Child> childId) {
-		this.name = name;
-		this.childId = childId;
-	}
+    public Grandchild(String name, IdRef<Child> childId) {
+        this.name = name;
+        this.childId = childId;
+    }
 
-	public IdRef<Grandchild> getId() {
-		return id;
-	}
+    public IdRef<Grandchild> getId() {
+        return id;
+    }
 
-	public void setId(IdRef<Grandchild> id) {
-		this.id = id;
-	}
+    public void setId(IdRef<Grandchild> id) {
+        this.id = id;
+    }
 
-	public IdRef<Child> getChildId() {
-		return childId;
-	}
+    public IdRef<Child> getChildId() {
+        return childId;
+    }
 
-	public void setChildId(IdRef<Child> childId) {
-		this.childId = childId;
-	}
+    public void setChildId(IdRef<Child> childId) {
+        this.childId = childId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public int getAge() {
-		return age;
-	}
+    public int getAge() {
+        return age;
+    }
 
-	public void setAge(int age) {
-		this.age = age;
-	}
+    public void setAge(int age) {
+        this.age = age;
+    }
 
 }

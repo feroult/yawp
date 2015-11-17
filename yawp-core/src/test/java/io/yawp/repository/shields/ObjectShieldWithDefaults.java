@@ -6,17 +6,17 @@ import io.yawp.repository.models.basic.ShieldedObjectWithDefaults;
 
 public class ObjectShieldWithDefaults extends Shield<ShieldedObjectWithDefaults> {
 
-	@Override
-	public void defaults() {
-		allow();
-	}
+    @Override
+    public void defaults() {
+        allow();
+    }
 
-	@Override
-	public void destroy(IdRef<ShieldedObjectWithDefaults> id) {
-	}
+    @Override
+    public void destroy(IdRef<ShieldedObjectWithDefaults> id) {
+    }
 
-	@PUT("something")
-	public void something(IdRef<ShieldedObjectWithDefaults> id) {
-	}
+    @PUT("something")
+    public void something(IdRef<ShieldedObjectWithDefaults> id) {
+    }
 
 }

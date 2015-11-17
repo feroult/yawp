@@ -12,27 +12,27 @@ import javax.servlet.http.HttpServletResponse;
 
 public class DeleteAllServlet extends HttpServlet {
 
-	private static final long serialVersionUID = -3346681549334024512L;
+    private static final long serialVersionUID = -3346681549334024512L;
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		if (Environment.isProduction()) {
-			forbidden(resp);
-			return;
-		}
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (Environment.isProduction()) {
+            forbidden(resp);
+            return;
+        }
 
-		resp.setContentType("text/plain");
-		execute(resp.getWriter());
-	}
+        resp.setContentType("text/plain");
+        execute(resp.getWriter());
+    }
 
-	private void execute(PrintWriter writer) {
-		DeleteAll.now();
-		writer.println("ok");
-	}
+    private void execute(PrintWriter writer) {
+        DeleteAll.now();
+        writer.println("ok");
+    }
 
-	private void forbidden(HttpServletResponse resp) {
-		resp.setStatus(403);
-		return;
-	}
+    private void forbidden(HttpServletResponse resp) {
+        resp.setStatus(403);
+        return;
+    }
 
 }

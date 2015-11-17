@@ -9,12 +9,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 @Mojo(name = "transformer")
 public class TransformerMojo extends ScaffolderAbstractMojo {
 
-	@Parameter(property = "name", required = true)
-	protected String name;
+    @Parameter(property = "name", required = true)
+    protected String name;
 
-	public void execute() throws MojoExecutionException {
-		TransformerScaffolder scaffolder = new TransformerScaffolder(getLog(), yawpPackage, model, name);
-		scaffolder.createTo(baseDir);
-	}
+    public void execute() throws MojoExecutionException {
+        TransformerScaffolder scaffolder = new TransformerScaffolder(getLog(), yawpPackage, model, name);
+        scaffolder.createTo(baseDir);
+    }
 
 }

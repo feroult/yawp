@@ -6,10 +6,10 @@ import io.yawp.plugin.PluginAbstractMojo;
 
 public abstract class ScaffolderAbstractMojo extends PluginAbstractMojo {
 
-	@Parameter(property = "yawp.package", required = true)
-	protected String yawpPackage;
+    @Parameter(property = "yawp.package", required = true)
+    protected String yawpPackage;
 
-	@Parameter(property = "model", required = true)
-	protected String model;
+    @Parameter(property = "model", required = true)
+    protected String model;
 
 }

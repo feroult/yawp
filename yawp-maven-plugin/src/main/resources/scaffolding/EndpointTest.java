@@ -1,19 +1,21 @@
-package ${yawpPackage}.models.${endpoint.packageName};
+package $
 
-import static org.junit.Assert.assertNotNull;
+{yawpPackage}.models.${endpoint.packageName};
 
-import org.junit.Test;
+        import static org.junit.Assert.assertNotNull;
 
-import ${yawpPackage}.utils.EndpointTestCase;
+        import org.junit.Test;
 
-public class $endpoint.testName extends EndpointTestCase {
+        import ${yawpPackage}.utils.EndpointTestCase;
 
-	@Test
-	public void testCreate() {
-		// TODO Auto-generated method stub
-		String json = post("/$endpoint.path", "{}");
-		$endpoint.name $endpoint.instance = from(json, ${endpoint.name}.class);
+public class $endpoint.testName extends EndpointTestCase{
 
-		assertNotNull($endpoint.instance);
-	}
-}
+@Test
+public void testCreate(){
+        // TODO Auto-generated method stub
+        String json=post("/$endpoint.path","{}");
+        $endpoint.name $endpoint.instance=from(json,${endpoint.name}.class);
+
+        assertNotNull($endpoint.instance);
+        }
+        }

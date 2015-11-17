@@ -6,30 +6,30 @@ import io.yawp.repository.annotations.Index;
 
 public class ComposedSuperClass<T> {
 
-	@Index
-	protected String name;
+    @Index
+    protected String name;
 
-	@Id
-	private IdRef<T> id;
+    @Id
+    private IdRef<T> id;
 
-	public ComposedSuperClass(String name) {
-		this.name = name;
-	}
+    public ComposedSuperClass(String name) {
+        this.name = name;
+    }
 
-	public IdRef<T> getId() {
-		return id;
-	}
+    public IdRef<T> getId() {
+        return id;
+    }
 
-	public void setId(IdRef<T> id) {
-		this.id = id;
-	}
+    public void setId(IdRef<T> id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

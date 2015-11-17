@@ -19,121 +19,121 @@ import org.mortbay.xml.XmlConfiguration;
 
 public class WebAppContextHelper {
 
-	protected DevServerMojo mojo;
+    protected DevServerMojo mojo;
 
-	protected WebAppContext webapp;
+    protected WebAppContext webapp;
 
-	public WebAppContextHelper(DevServerMojo mojo) {
-		this.mojo = mojo;
-	}
+    public WebAppContextHelper(DevServerMojo mojo) {
+        this.mojo = mojo;
+    }
 
-	public WebAppContext createWebApp() {
-		webapp = createWebAppContext();
-		webapp.setDefaultsDescriptor(getWebDefaultXml());
+    public WebAppContext createWebApp() {
+        webapp = createWebAppContext();
+        webapp.setDefaultsDescriptor(getWebDefaultXml());
 
-		configureCustom();
-		configureClassloader();
-		configureHotDeploy();
-		return webapp;
-	}
+        configureCustom();
+        configureClassloader();
+        configureHotDeploy();
+        return webapp;
+    }
 
-	protected void configureCustom() {
-	}
+    protected void configureCustom() {
+    }
 
-	private WebAppContext createWebAppContext() {
-		try {
-			Resource jettyEnv = Resource.newResource(String.format("%s/WEB-INF/jetty-env.xml", mojo.getAppDir()));
-			XmlConfiguration conf = new XmlConfiguration(jettyEnv.getInputStream());
-			WebAppContext webapp = (WebAppContext) conf.configure();
-			webapp.setWar(mojo.getAppDir());
-			System.setProperty("java.naming.factory.url.pkgs", "org.mortbay.naming");
-			System.setProperty("java.naming.factory.initial", "org.mortbay.naming.InitialContextFactory");
-			return webapp;
-		} catch (FileNotFoundException e) {
+    private WebAppContext createWebAppContext() {
+        try {
+            Resource jettyEnv = Resource.newResource(String.format("%s/WEB-INF/jetty-env.xml", mojo.getAppDir()));
+            XmlConfiguration conf = new XmlConfiguration(jettyEnv.getInputStream());
+            WebAppContext webapp = (WebAppContext) conf.configure();
+            webapp.setWar(mojo.getAppDir());
+            System.setProperty("java.naming.factory.url.pkgs", "org.mortbay.naming");
+            System.setProperty("java.naming.factory.initial", "org.mortbay.naming.InitialContextFactory");
+            return webapp;
+        } catch (FileNotFoundException e) {
 
-			return createDefaultWebAppContext();
+            return createDefaultWebAppContext();
 
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	protected WebAppContext createDefaultWebAppContext() {
-		return new WebAppContext(mojo.getAppDir(), "");
-	}
+    protected WebAppContext createDefaultWebAppContext() {
+        return new WebAppContext(mojo.getAppDir(), "");
+    }
 
-	protected String getWebDefaultXml() {
-		return "/webdefault.xml";
-	}
+    protected String getWebDefaultXml() {
+        return "/webdefault.xml";
+    }
 
-	private void configureClassloader() {
-		webapp.setClassLoader(createClassLoader(getCustomClassPathElements()));
-	}
+    private void configureClassloader() {
+        webapp.setClassLoader(createClassLoader(getCustomClassPathElements()));
+    }
 
-	protected List<String> getCustomClassPathElements() {
-		return new ArrayList<String>();
-	}
+    protected List<String> getCustomClassPathElements() {
+        return new ArrayList<String>();
+    }
 
-	protected void configureHotDeploy() {
-		getLog().info("HotDeploy scanner: " + mojo.getHotDeployDir());
-		Scanner scanner = new Scanner();
-		scanner.setScanInterval(mojo.getFullScanSeconds());
-		scanner.setScanDirs(Arrays.asList(new File(mojo.getHotDeployDir())));
-		scanner.addListener(new DiscreteListener() {
+    protected void configureHotDeploy() {
+        getLog().info("HotDeploy scanner: " + mojo.getHotDeployDir());
+        Scanner scanner = new Scanner();
+        scanner.setScanInterval(mojo.getFullScanSeconds());
+        scanner.setScanDirs(Arrays.asList(new File(mojo.getHotDeployDir())));
+        scanner.addListener(new DiscreteListener() {
 
-			@Override
-			public void fileChanged(String filename) throws Exception {
-				fileAdded(filename);
-			}
+            @Override
+            public void fileChanged(String filename) throws Exception {
+                fileAdded(filename);
+            }
 
-			@Override
-			public void fileAdded(String filename) throws Exception {
-				if (!webapp.isStarted()) {
-					return;
-				}
-				getLog().info(filename + " updated, reloading the webapp!");
-				restart(webapp);
-			}
+            @Override
+            public void fileAdded(String filename) throws Exception {
+                if (!webapp.isStarted()) {
+                    return;
+                }
+                getLog().info(filename + " updated, reloading the webapp!");
+                restart(webapp);
+            }
 
-			@Override
-			public void fileRemoved(String filename) throws Exception {
-			}
-		});
-		scanner.scan();
-		scanner.start();
-	}
+            @Override
+            public void fileRemoved(String filename) throws Exception {
+            }
+        });
+        scanner.scan();
+        scanner.start();
+    }
 
-	private Log getLog() {
-		return mojo.getLog();
-	}
+    private Log getLog() {
+        return mojo.getLog();
+    }
 
-	private void restart(WebAppContext webapp) throws Exception {
-		webapp.stop();
-		configureClassloader();
-		webapp.start();
-	}
+    private void restart(WebAppContext webapp) throws Exception {
+        webapp.stop();
+        configureClassloader();
+        webapp.start();
+    }
 
-	protected URLClassLoader createClassLoader(List<String> customClasspathElements) {
-		try {
-			List<URL> urls = new ArrayList<URL>();
+    protected URLClassLoader createClassLoader(List<String> customClasspathElements) {
+        try {
+            List<URL> urls = new ArrayList<URL>();
 
-			addURLs(mojo.getProject().getRuntimeClasspathElements(), urls);
-			addURLs(customClasspathElements, urls);
+            addURLs(mojo.getProject().getRuntimeClasspathElements(), urls);
+            addURLs(customClasspathElements, urls);
 
-			URLClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[] {}), Thread.currentThread().getContextClassLoader());
-			return classLoader;
-		} catch (DependencyResolutionRequiredException | MalformedURLException e) {
-			throw new RuntimeException(e);
-		}
-	}
+            URLClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[]{}), Thread.currentThread().getContextClassLoader());
+            return classLoader;
+        } catch (DependencyResolutionRequiredException | MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	protected void addURLs(List<String> classpathElements, List<URL> runtimeUrls) throws MalformedURLException {
-		List<String> elements = classpathElements;
-		for (int i = 0; i < elements.size(); i++) {
-			String element = (String) elements.get(i);
-			runtimeUrls.add(new File(element).toURI().toURL());
-			getLog().debug("Adding to webapp classpath: " + element);
-		}
-	}
+    protected void addURLs(List<String> classpathElements, List<URL> runtimeUrls) throws MalformedURLException {
+        List<String> elements = classpathElements;
+        for (int i = 0; i < elements.size(); i++) {
+            String element = (String) elements.get(i);
+            runtimeUrls.add(new File(element).toURI().toURL());
+            getLog().debug("Adding to webapp classpath: " + element);
+        }
+    }
 
 }

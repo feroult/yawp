@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
-	<application>${artifactId}</application>
-	<version>${appengine.app.version}</version>
-	<threadsafe>true</threadsafe>
+    <application>${artifactId}</application>
+    <version>${appengine.app.version}</version>
+    <threadsafe>true</threadsafe>
 
-	<system-properties>
-		<property name="java.util.logging.config.file" value="WEB-INF/logging.properties" />
-		<property name="file.encoding" value="UTF-8" />
-		<property name="DEFAULT_ENCODING" value="UTF-8" />
-	</system-properties>
+    <system-properties>
+        <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
+        <property name="file.encoding" value="UTF-8"/>
+        <property name="DEFAULT_ENCODING" value="UTF-8"/>
+    </system-properties>
 </appengine-web-app>

@@ -9,12 +9,12 @@ import org.apache.maven.plugins.annotations.Parameter;
 @Mojo(name = "hook")
 public class HookMojo extends ScaffolderAbstractMojo {
 
-	@Parameter(property = "name", required = true)
-	protected String name;
+    @Parameter(property = "name", required = true)
+    protected String name;
 
-	public void execute() throws MojoExecutionException {
-		HookScaffolder scaffolder = new HookScaffolder(getLog(), yawpPackage, model, name);
-		scaffolder.createTo(baseDir);
-	}
+    public void execute() throws MojoExecutionException {
+        HookScaffolder scaffolder = new HookScaffolder(getLog(), yawpPackage, model, name);
+        scaffolder.createTo(baseDir);
+    }
 
 }

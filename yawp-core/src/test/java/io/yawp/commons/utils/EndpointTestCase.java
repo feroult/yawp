@@ -12,32 +12,32 @@ import org.junit.Before;
 
 public class EndpointTestCase extends Feature {
 
-	private static RepositoryFeatures features;
+    private static RepositoryFeatures features;
 
-	private TestHelper helper;
+    private TestHelper helper;
 
-	static {
-		features = new EndpointScanner("io.yawp").scan();
-	}
+    static {
+        features = new EndpointScanner("io.yawp").scan();
+    }
 
-	@Before
-	public void setUp() {
-		yawp = Repository.r().setFeatures(features);
-		helper = testHelperDriver(yawp);
-		helper.setUp();
-	}
+    @Before
+    public void setUp() {
+        yawp = Repository.r().setFeatures(features);
+        helper = testHelperDriver(yawp);
+        helper.setUp();
+    }
 
-	private TestHelper testHelperDriver(Repository r) {
-		return TestHelperFactory.getTestHelper(r);
-	}
+    private TestHelper testHelperDriver(Repository r) {
+        return TestHelperFactory.getTestHelper(r);
+    }
 
-	protected void login(String username) {
-		TestLoginManager.login(username);
-	}
+    protected void login(String username) {
+        TestLoginManager.login(username);
+    }
 
-	@After
-	public void tearDownHelper() {
-		helper.tearDown();
-		TestLoginManager.logout();
-	}
+    @After
+    public void tearDownHelper() {
+        helper.tearDown();
+        TestLoginManager.logout();
+    }
 }

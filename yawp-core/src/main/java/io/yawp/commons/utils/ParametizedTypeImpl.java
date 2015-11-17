@@ -26,17 +26,17 @@ import java.util.Arrays;
  * object is used to support serialization and deserialization of classes with
  * an {@code ParameterizedType} field where as least one of the actual type
  * parameters is a {@code TypeVariable}.
- *
- * <p>
+ * <p/>
+ * <p/>
  * Here's an example class:
- * 
+ * <p/>
  * <pre>
  * class Foo&lt;T&gt; {
  * 	private List&lt;T&gt; someList;
- * 
+ *
  * 	Foo(List&lt;T&gt; list) {
  * 		this.someList = list;
- * 	}
+ *    }
  * }
  * </pre>
  *
@@ -45,48 +45,48 @@ import java.util.Arrays;
  */
 final class ParameterizedTypeImpl implements ParameterizedType {
 
-	private final Type rawType;
-	private final Type[] actualTypeArguments;
-	private final Type owner;
+    private final Type rawType;
+    private final Type[] actualTypeArguments;
+    private final Type owner;
 
-	public ParameterizedTypeImpl(Type rawType, Type[] actualTypeArguments, Type owner) {
-		this.rawType = rawType;
-		this.actualTypeArguments = actualTypeArguments;
-		this.owner = owner;
-	}
+    public ParameterizedTypeImpl(Type rawType, Type[] actualTypeArguments, Type owner) {
+        this.rawType = rawType;
+        this.actualTypeArguments = actualTypeArguments;
+        this.owner = owner;
+    }
 
-	public Type getRawType() {
-		return rawType;
-	}
+    public Type getRawType() {
+        return rawType;
+    }
 
-	public Type[] getActualTypeArguments() {
-		return actualTypeArguments;
-	}
+    public Type[] getActualTypeArguments() {
+        return actualTypeArguments;
+    }
 
-	public Type getOwnerType() {
-		return owner;
-	}
+    public Type getOwnerType() {
+        return owner;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (!(o instanceof ParameterizedType)) {
-			return false;
-		}
-		// Check that information is equivalent
-		ParameterizedType that = (ParameterizedType) o;
-		if (this == that) {
-			return true;
-		}
-		Type thatOwner = that.getOwnerType();
-		Type thatRawType = that.getRawType();
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ParameterizedType)) {
+            return false;
+        }
+        // Check that information is equivalent
+        ParameterizedType that = (ParameterizedType) o;
+        if (this == that) {
+            return true;
+        }
+        Type thatOwner = that.getOwnerType();
+        Type thatRawType = that.getRawType();
 
-		return (owner == null ? thatOwner == null : owner.equals(thatOwner))
-				&& (rawType == null ? thatRawType == null : rawType.equals(thatRawType))
-				&& Arrays.equals(actualTypeArguments, that.getActualTypeArguments());
-	}
+        return (owner == null ? thatOwner == null : owner.equals(thatOwner))
+                && (rawType == null ? thatRawType == null : rawType.equals(thatRawType))
+                && Arrays.equals(actualTypeArguments, that.getActualTypeArguments());
+    }
 
-	@Override
-	public int hashCode() {
-		return Arrays.hashCode(actualTypeArguments) ^ (owner == null ? 0 : owner.hashCode()) ^ (rawType == null ? 0 : rawType.hashCode());
-	}
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(actualTypeArguments) ^ (owner == null ? 0 : owner.hashCode()) ^ (rawType == null ? 0 : rawType.hashCode());
+    }
 }

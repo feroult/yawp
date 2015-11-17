@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <archetype-descriptor name="yawp">
-	<requiredProperties>
-		<requiredProperty key="yawpVersion">
-			<defaultValue>${project.version}</defaultValue>
-		</requiredProperty>
-	</requiredProperties>
+    <requiredProperties>
+        <requiredProperty key="yawpVersion">
+            <defaultValue>${project.version}</defaultValue>
+        </requiredProperty>
+    </requiredProperties>
 
-	<fileSets>
-		<fileSet filtered="true" packaged="true">
-			<directory>src/main/java</directory>
-			<includes>
-				<include>**/*.java</include>
-			</includes>
-		</fileSet>
+    <fileSets>
+        <fileSet filtered="true" packaged="true">
+            <directory>src/main/java</directory>
+            <includes>
+                <include>**/*.java</include>
+            </includes>
+        </fileSet>
         <fileSet filtered="true" packaged="true">
             <directory>src/test/java</directory>
             <includes>
                 <include>**/*.java</include>
             </includes>
         </fileSet>
-		<fileSet filtered="true">
-			<directory>src/main/webapp</directory>
-		</fileSet>
-	</fileSets>
+        <fileSet filtered="true">
+            <directory>src/main/webapp</directory>
+        </fileSet>
+    </fileSets>
 </archetype-descriptor>

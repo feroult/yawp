@@ -14,98 +14,98 @@ import java.util.Map;
 
 public class EndpointFeatures<T> {
 
-	private Class<T> clazz;
+    private Class<T> clazz;
 
-	private Map<ActionKey, Method> actions;
+    private Map<ActionKey, Method> actions;
 
-	private Map<String, Method> transformers;
+    private Map<String, Method> transformers;
 
-	private List<Class<? extends Hook<? super T>>> hooks;
+    private List<Class<? extends Hook<? super T>>> hooks;
 
-	private ShieldInfo<? super T> shieldInfo;
+    private ShieldInfo<? super T> shieldInfo;
 
-	public EndpointFeatures(Class<T> clazz) {
-		this.clazz = clazz;
-		this.actions = new HashMap<>();
-		this.transformers = new HashMap<>();
-		this.hooks = new ArrayList<>();
-	}
+    public EndpointFeatures(Class<T> clazz) {
+        this.clazz = clazz;
+        this.actions = new HashMap<>();
+        this.transformers = new HashMap<>();
+        this.hooks = new ArrayList<>();
+    }
 
-	public Class<T> getClazz() {
-		return this.clazz;
-	}
+    public Class<T> getClazz() {
+        return this.clazz;
+    }
 
-	private <V> void assertInexistence(V key, Method method, Map<V, Method> map, String type) {
-		if (map.get(key) != null) {
-			throw new RuntimeException("Trying to add two " + type + " with the same name '" + key + "' to io.yawp "
-					+ clazz.getSimpleName() + ": one at " + map.get(key).getDeclaringClass().getSimpleName() + " and the other at "
-					+ method.getDeclaringClass().getSimpleName());
-		}
-	}
+    private <V> void assertInexistence(V key, Method method, Map<V, Method> map, String type) {
+        if (map.get(key) != null) {
+            throw new RuntimeException("Trying to add two " + type + " with the same name '" + key + "' to io.yawp "
+                    + clazz.getSimpleName() + ": one at " + map.get(key).getDeclaringClass().getSimpleName() + " and the other at "
+                    + method.getDeclaringClass().getSimpleName());
+        }
+    }
 
-	public void addAction(ActionKey actionRef, Method method) {
-		assertInexistence(actionRef, method, actions, "Actions");
-		actions.put(actionRef, method);
-	}
+    public void addAction(ActionKey actionRef, Method method) {
+        assertInexistence(actionRef, method, actions, "Actions");
+        actions.put(actionRef, method);
+    }
 
-	public void addTransformer(String name, Method method) {
-		assertInexistence(name, method, transformers, "Transformers");
-		transformers.put(name, method);
-	}
+    public void addTransformer(String name, Method method) {
+        assertInexistence(name, method, transformers, "Transformers");
+        transformers.put(name, method);
+    }
 
-	public void addHook(Class<? extends Hook<? super T>> hook) {
-		hooks.add(hook);
-	}
+    public void addHook(Class<? extends Hook<? super T>> hook) {
+        hooks.add(hook);
+    }
 
-	public void setShield(Class<? extends Shield<? super T>> shield) {
-	}
+    public void setShield(Class<? extends Shield<? super T>> shield) {
+    }
 
-	public void setShieldInfo(ShieldInfo<? super T> shieldInfo) {
-		this.shieldInfo = shieldInfo;
-	}
+    public void setShieldInfo(ShieldInfo<? super T> shieldInfo) {
+        this.shieldInfo = shieldInfo;
+    }
 
-	public List<Class<? extends Hook<? super T>>> getHooks() {
-		return hooks;
-	}
+    public List<Class<? extends Hook<? super T>>> getHooks() {
+        return hooks;
+    }
 
-	public Method getAction(ActionKey ref) {
-		return actions.get(ref);
-	}
+    public Method getAction(ActionKey ref) {
+        return actions.get(ref);
+    }
 
-	public Class<?> getActionClazz(ActionKey ref) {
-		return getAction(ref).getDeclaringClass();
-	}
+    public Class<?> getActionClazz(ActionKey ref) {
+        return getAction(ref).getDeclaringClass();
+    }
 
-	public Method getTransformer(String name) {
-		return transformers.get(name);
-	}
+    public Method getTransformer(String name) {
+        return transformers.get(name);
+    }
 
-	public Endpoint getEndpointAnnotation() {
-		return clazz.getAnnotation(Endpoint.class);
-	}
+    public Endpoint getEndpointAnnotation() {
+        return clazz.getAnnotation(Endpoint.class);
+    }
 
-	public String getEndpointPath() {
-		Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
-		if (endpoint == null) {
-			throw new RuntimeException("The class " + clazz + " was used as an entity but was not annotated with @Endpoint.");
-		}
-		return endpoint.path();
-	}
+    public String getEndpointPath() {
+        Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
+        if (endpoint == null) {
+            throw new RuntimeException("The class " + clazz + " was used as an entity but was not annotated with @Endpoint.");
+        }
+        return endpoint.path();
+    }
 
-	public boolean hasCustomAction(ActionKey actionKey) {
-		return actions.containsKey(actionKey);
-	}
+    public boolean hasCustomAction(ActionKey actionKey) {
+        return actions.containsKey(actionKey);
+    }
 
-	public boolean hasTranformer(String transformerName) {
-		return transformers.containsKey(transformerName);
-	}
+    public boolean hasTranformer(String transformerName) {
+        return transformers.containsKey(transformerName);
+    }
 
-	public boolean hasShield() {
-		return shieldInfo != null;
-	}
+    public boolean hasShield() {
+        return shieldInfo != null;
+    }
 
-	public ShieldInfo<? super T> getShieldInfo() {
-		return shieldInfo;
-	}
+    public ShieldInfo<? super T> getShieldInfo() {
+        return shieldInfo;
+    }
 
 }

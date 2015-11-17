@@ -7,17 +7,17 @@ import io.yawp.repository.models.basic.ShieldedObject;
 
 public class ShieldedObjectAction extends Action<ShieldedObject> {
 
-	@PUT("something")
-	public void something(IdRef<ShieldedObject> id) {
-	}
+    @PUT("something")
+    public void something(IdRef<ShieldedObject> id) {
+    }
 
-	@PUT("anotherthing")
-	public ShieldedObject anotherthing(IdRef<ShieldedObject> id) {
-		return id.fetch();
-	}
+    @PUT("anotherthing")
+    public ShieldedObject anotherthing(IdRef<ShieldedObject> id) {
+        return id.fetch();
+    }
 
-	@GET("collection")
-	public void collection() {
-	}
+    @GET("collection")
+    public void collection() {
+    }
 
 }

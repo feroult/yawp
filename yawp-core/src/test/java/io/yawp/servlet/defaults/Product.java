@@ -7,33 +7,33 @@ import io.yawp.repository.annotations.Id;
 @Endpoint(path = "/products")
 public class Product {
 
-	@Id
-	private IdRef<Product> id;
+    @Id
+    private IdRef<Product> id;
 
-	private String name;
+    private String name;
 
-	public Product() {
+    public Product() {
 
-	}
+    }
 
-	public Product(String name) {
-		this.name = name;
-	}
+    public Product(String name) {
+        this.name = name;
+    }
 
-	public IdRef<Product> getId() {
-		return id;
-	}
+    public IdRef<Product> getId() {
+        return id;
+    }
 
-	public void setId(IdRef<Product> id) {
-		this.id = id;
-	}
+    public void setId(IdRef<Product> id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

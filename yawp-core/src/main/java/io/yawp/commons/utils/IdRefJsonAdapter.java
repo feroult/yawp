@@ -15,21 +15,21 @@ import com.google.gson.JsonSerializer;
 
 public class IdRefJsonAdapter implements JsonSerializer<IdRef<?>>, JsonDeserializer<IdRef<?>> {
 
-	private Repository r;
+    private Repository r;
 
-	public IdRefJsonAdapter(Repository r) {
-		this.r = r;
-	}
+    public IdRefJsonAdapter(Repository r) {
+        this.r = r;
+    }
 
-	@Override
-	public JsonElement serialize(IdRef<?> idRef, Type type, JsonSerializationContext ctx) {
-		return new JsonPrimitive(idRef.toString());
-	}
+    @Override
+    public JsonElement serialize(IdRef<?> idRef, Type type, JsonSerializationContext ctx) {
+        return new JsonPrimitive(idRef.toString());
+    }
 
-	@Override
-	public IdRef<?> deserialize(JsonElement json, Type type, JsonDeserializationContext ctx) throws JsonParseException {
-		String path = json.getAsJsonPrimitive().getAsString();
-		return IdRef.parse(r, null, path);
-	}
+    @Override
+    public IdRef<?> deserialize(JsonElement json, Type type, JsonDeserializationContext ctx) throws JsonParseException {
+        String path = json.getAsJsonPrimitive().getAsString();
+        return IdRef.parse(r, null, path);
+    }
 
 }

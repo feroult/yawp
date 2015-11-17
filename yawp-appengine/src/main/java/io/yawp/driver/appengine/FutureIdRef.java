@@ -10,21 +10,21 @@ import com.google.appengine.api.utils.FutureWrapper;
 
 public class FutureIdRef extends FutureWrapper<Key, IdRef<?>> {
 
-	private Repository r;
+    private Repository r;
 
-	public FutureIdRef(Repository r, Future<Key> futureKey) {
-		super(futureKey);
-		this.r = r;
-	}
+    public FutureIdRef(Repository r, Future<Key> futureKey) {
+        super(futureKey);
+        this.r = r;
+    }
 
-	@Override
-	protected Throwable convertException(Throwable t) {
-		return t;
-	}
+    @Override
+    protected Throwable convertException(Throwable t) {
+        return t;
+    }
 
-	@Override
-	protected IdRef<?> wrap(Key key) throws Exception {
-		return IdRefToKey.toIdRef(r, key);
-	}
+    @Override
+    protected IdRef<?> wrap(Key key) throws Exception {
+        return IdRefToKey.toIdRef(r, key);
+    }
 
 }

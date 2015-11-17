@@ -8,15 +8,17 @@ import java.util.List;
 
 public class MockTransaction {
 
-	private List<MockOperation> operations = new ArrayList<MockOperation>();
+    private List<MockOperation> operations = new ArrayList<MockOperation>();
 
-	public void add(Type operationType, IdRef<?> id, Object object, Object previousObject) {
-		operations.add(new MockOperation(operationType, id, object, previousObject));
-	}
+    public void add(Type operationType, IdRef<?> id, Object object, Object previousObject) {
+        operations.add(new MockOperation(operationType, id, object, previousObject));
+    }
 
-	public void rollback() {
-		for (MockOperation operation : operations) {
-			operation.rollback();
-		}
-	};
+    public void rollback() {
+        for (MockOperation operation : operations) {
+            operation.rollback();
+        }
+    }
+
+    ;
 }

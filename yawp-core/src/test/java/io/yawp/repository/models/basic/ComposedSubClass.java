@@ -7,12 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 @Endpoint(path = "/composed_subclasses")
 public class ComposedSubClass extends ComposedSuperClass<ComposedSubClass> {
 
-	public ComposedSubClass() {
-		super(StringUtils.EMPTY);
-	}
+    public ComposedSubClass() {
+        super(StringUtils.EMPTY);
+    }
 
-	public ComposedSubClass(String name) {
-		super(name);
-	}
+    public ComposedSubClass(String name) {
+        super(name);
+    }
 
 }

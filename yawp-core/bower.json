@@ -19,6 +19,11 @@
     "gae",
     "rest"
   ],
-  "ignore" : [ "**/*", "!bower.json", "!src/main/js/*", "!src/test/webapp/*" ],
+  "ignore": [
+    "**/*",
+    "!bower.json",
+    "!src/main/js/*",
+    "!src/test/webapp/*"
+  ],
   "license": "Apache Software License 2.0"
 }

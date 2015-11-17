@@ -7,123 +7,123 @@ import io.yawp.repository.ObjectModel;
 
 public class ConditionReference {
 
-	private static final String PARENT_REF_KEYWORK = "parent";
+    private static final String PARENT_REF_KEYWORK = "parent";
 
-	private String[] split;
+    private String[] split;
 
-	private int current;
+    private int current;
 
-	private Object object;
+    private Object object;
 
-	private ObjectHolder objectHolder;
+    private ObjectHolder objectHolder;
 
-	private Class<?> clazz;
+    private Class<?> clazz;
 
-	private ObjectModel model;
+    private ObjectModel model;
 
-	private String refString;
+    private String refString;
 
-	public ConditionReference(String refString, Class<?> clazz, Object object) {
-		this.refString = refString;
-		this.clazz = clazz;
-		this.model = new ObjectModel(clazz);
-		this.object = object;
-		this.objectHolder = new ObjectHolder(object);
+    public ConditionReference(String refString, Class<?> clazz, Object object) {
+        this.refString = refString;
+        this.clazz = clazz;
+        this.model = new ObjectModel(clazz);
+        this.object = object;
+        this.objectHolder = new ObjectHolder(object);
 
-		this.split = refString.split("->");
-		this.current = 0;
-	}
+        this.split = refString.split("->");
+        this.current = 0;
+    }
 
-	private boolean hasMoreRefs() {
-		return current < split.length - 1;
-	}
+    private boolean hasMoreRefs() {
+        return current < split.length - 1;
+    }
 
-	private String nextRef() {
-		return split[current++];
-	}
+    private String nextRef() {
+        return split[current++];
+    }
 
-	private boolean isParentRef() {
-		return split[current].equalsIgnoreCase(PARENT_REF_KEYWORK);
-	}
+    private boolean isParentRef() {
+        return split[current].equalsIgnoreCase(PARENT_REF_KEYWORK);
+    }
 
-	private String fieldName() {
-		return split[split.length - 1];
-	}
+    private String fieldName() {
+        return split[split.length - 1];
+    }
 
-	public Object getValue() throws ConditionForChildException {
-		verifyIfConditionIsForChild();
+    public Object getValue() throws ConditionForChildException {
+        verifyIfConditionIsForChild();
 
-		Object currentObject = advanceAncestorSequenceIfNecessary();
+        Object currentObject = advanceAncestorSequenceIfNecessary();
 
-		while (hasMoreRefs()) {
-			IdRef<?> objectId = (IdRef<?>) ReflectionUtils.getFieldValue(currentObject, nextRef());
+        while (hasMoreRefs()) {
+            IdRef<?> objectId = (IdRef<?>) ReflectionUtils.getFieldValue(currentObject, nextRef());
 
-			if (objectId == null) {
-				return null;
-			}
+            if (objectId == null) {
+                return null;
+            }
 
-			currentObject = objectId.fetch();
-		}
+            currentObject = objectId.fetch();
+        }
 
-		return ReflectionUtils.getFieldValue(currentObject, fieldName());
-	}
+        return ReflectionUtils.getFieldValue(currentObject, fieldName());
+    }
 
-	private void verifyIfConditionIsForChild() throws ConditionForChildException {
-		if (clazz != null && isObjectAcenstor() && isReferenceForChild()) {
-			throw new ConditionForChildException();
-		}
-	}
+    private void verifyIfConditionIsForChild() throws ConditionForChildException {
+        if (clazz != null && isObjectAcenstor() && isReferenceForChild()) {
+            throw new ConditionForChildException();
+        }
+    }
 
-	private Object advanceAncestorSequenceIfNecessary() {
-		if (isObjectAcenstor()) {
-			advanceToTheRightAncestor();
-		}
+    private Object advanceAncestorSequenceIfNecessary() {
+        if (isObjectAcenstor()) {
+            advanceToTheRightAncestor();
+        }
 
-		if (!isParentRef()) {
-			return object;
-		}
+        if (!isParentRef()) {
+            return object;
+        }
 
-		IdRef<?> parentId = objectHolder.getParentId();
-		nextRef();
+        IdRef<?> parentId = objectHolder.getParentId();
+        nextRef();
 
-		while (isParentRef()) {
-			parentId = parentId.getParentId();
-			nextRef();
-		}
+        while (isParentRef()) {
+            parentId = parentId.getParentId();
+            nextRef();
+        }
 
-		return parentId.fetch();
-	}
+        return parentId.fetch();
+    }
 
-	private void advanceToTheRightAncestor() {
-		if (clazz == null || object.getClass().equals(clazz)) {
-			return;
-		}
+    private void advanceToTheRightAncestor() {
+        if (clazz == null || object.getClass().equals(clazz)) {
+            return;
+        }
 
-		Class<?> ancestorClazz = clazz;
+        Class<?> ancestorClazz = clazz;
 
-		for (int i = 0; !object.getClass().equals(ancestorClazz); i++) {
-			ancestorClazz = model.getAncestorClazz(i);
-			if (ancestorClazz == null) {
-				throw new RuntimeException("Invalid condition ref " + refString + " for object class: " + object.getClass().getName());
-			}
-			nextRef();
-		}
-	}
+        for (int i = 0; !object.getClass().equals(ancestorClazz); i++) {
+            ancestorClazz = model.getAncestorClazz(i);
+            if (ancestorClazz == null) {
+                throw new RuntimeException("Invalid condition ref " + refString + " for object class: " + object.getClass().getName());
+            }
+            nextRef();
+        }
+    }
 
-	private boolean isObjectAcenstor() {
-		return !object.getClass().equals(clazz);
-	}
+    private boolean isObjectAcenstor() {
+        return !object.getClass().equals(clazz);
+    }
 
-	private boolean isReferenceForChild() {
-		int ancestorRefNumber = -1;
-		for (int i = 0; i < split.length - 1; i++) {
-			if (!split[i].equals(PARENT_REF_KEYWORK)) {
-				break;
-			}
-			ancestorRefNumber++;
-		}
+    private boolean isReferenceForChild() {
+        int ancestorRefNumber = -1;
+        for (int i = 0; i < split.length - 1; i++) {
+            if (!split[i].equals(PARENT_REF_KEYWORK)) {
+                break;
+            }
+            ancestorRefNumber++;
+        }
 
-		return model.getAncestorNumber(object.getClass()) > ancestorRefNumber;
-	}
+        return model.getAncestorNumber(object.getClass()) > ancestorRefNumber;
+    }
 
 }

@@ -1,12 +1,14 @@
-package ${package}.utils;
+package $
 
-import io.yawp.testing.EndpointTestCaseBase;
+{package}.utils;
+
+        import io.yawp.testing.EndpointTestCaseBase;
 
 public class EndpointTestCase extends EndpointTestCaseBase {
 
-	@Override
-	protected String getAppPackage() {
-		return "${package}";
-	}
+    @Override
+    protected String getAppPackage() {
+        return "${package}";
+    }
 
 }

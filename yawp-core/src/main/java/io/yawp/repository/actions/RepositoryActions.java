@@ -10,74 +10,74 @@ import java.util.Map;
 
 public class RepositoryActions {
 
-	public static Object execute(Repository r, Method method, IdRef<?> id, Map<String, String> params) {
-		boolean rollback = false;
-		atomicBegin(r, method);
+    public static Object execute(Repository r, Method method, IdRef<?> id, Map<String, String> params) {
+        boolean rollback = false;
+        atomicBegin(r, method);
 
-		try {
+        try {
 
-			return invokeActionMethod(r, method, id, params);
+            return invokeActionMethod(r, method, id, params);
 
-		} catch (Throwable t) {
-			rollback = true;
-			atomicRollback(r);
-			throw t;
+        } catch (Throwable t) {
+            rollback = true;
+            atomicRollback(r);
+            throw t;
 
-		} finally {
-			atomicCommit(r, rollback);
-		}
-	}
+        } finally {
+            atomicCommit(r, rollback);
+        }
+    }
 
-	private static void atomicCommit(Repository r, boolean rollback) {
-		if (r.isTransationInProgress()) {
-			if (rollback) {
-				throw new RuntimeException(
-						"Running on devserver or unit tests? To test cross-group, default_high_rep_job_policy_unapplied_job_pct must be > 0");
-			}
+    private static void atomicCommit(Repository r, boolean rollback) {
+        if (r.isTransationInProgress()) {
+            if (rollback) {
+                throw new RuntimeException(
+                        "Running on devserver or unit tests? To test cross-group, default_high_rep_job_policy_unapplied_job_pct must be > 0");
+            }
 
-			r.commit();
-		}
-	}
+            r.commit();
+        }
+    }
 
-	private static void atomicRollback(Repository r) {
-		if (r.isTransationInProgress()) {
-			r.rollback();
-		}
-	}
+    private static void atomicRollback(Repository r) {
+        if (r.isTransationInProgress()) {
+            r.rollback();
+        }
+    }
 
-	private static void atomicBegin(Repository r, Method method) {
-		if (isAtomic(method)) {
-			if (isAtomicCrossEntities(method)) {
-				r.beginX();
-			} else {
-				r.begin();
-			}
-		}
-	}
+    private static void atomicBegin(Repository r, Method method) {
+        if (isAtomic(method)) {
+            if (isAtomicCrossEntities(method)) {
+                r.beginX();
+            } else {
+                r.begin();
+            }
+        }
+    }
 
-	private static boolean isAtomicCrossEntities(Method method) {
-		return method.getAnnotation(Atomic.class).cross();
-	}
+    private static boolean isAtomicCrossEntities(Method method) {
+        return method.getAnnotation(Atomic.class).cross();
+    }
 
-	private static boolean isAtomic(Method method) {
-		return method.isAnnotationPresent(Atomic.class);
-	}
+    private static boolean isAtomic(Method method) {
+        return method.isAnnotationPresent(Atomic.class);
+    }
 
-	private static Object invokeActionMethod(Repository r, Method method, IdRef<?> id, Map<String, String> params) {
-		try {
+    private static Object invokeActionMethod(Repository r, Method method, IdRef<?> id, Map<String, String> params) {
+        try {
 
-			@SuppressWarnings("unchecked")
-			Class<? extends Action<?>> actionClazz = (Class<? extends Action<?>>) method.getDeclaringClass();
+            @SuppressWarnings("unchecked")
+            Class<? extends Action<?>> actionClazz = (Class<? extends Action<?>>) method.getDeclaringClass();
 
-			Action<?> actionInstance = actionClazz.newInstance();
-			actionInstance.setRepository(r);
+            Action<?> actionInstance = actionClazz.newInstance();
+            actionInstance.setRepository(r);
 
-			Object[] arguments = ActionKey.getActionMethodParameters(method, id, params);
-			return method.invoke(actionInstance, arguments);
+            Object[] arguments = ActionKey.getActionMethodParameters(method, id, params);
+            return method.invoke(actionInstance, arguments);
 
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
-			throw ThrownExceptionsUtils.handle(e);
-		}
-	}
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
+            throw ThrownExceptionsUtils.handle(e);
+        }
+    }
 
 }

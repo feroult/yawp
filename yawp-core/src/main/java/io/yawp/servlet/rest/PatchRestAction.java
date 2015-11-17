@@ -5,10 +5,10 @@ import io.yawp.commons.utils.JsonUtils;
 
 public class PatchRestAction extends UpdateRestAction {
 
-	@Override
-	protected void beforeShield() {
-		assert !isRequestBodyJsonArray();
-		FacadeUtils.copyOtherProperties(id.fetch(), getObject(), JsonUtils.getProperties(requestJson));
-	}
+    @Override
+    protected void beforeShield() {
+        assert !isRequestBodyJsonArray();
+        FacadeUtils.copyOtherProperties(id.fetch(), getObject(), JsonUtils.getProperties(requestJson));
+    }
 
 }

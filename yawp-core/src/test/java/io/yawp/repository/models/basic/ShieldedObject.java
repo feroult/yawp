@@ -9,43 +9,43 @@ import io.yawp.repository.models.basic.facades.ShieldedObjectFacades.AmyFacade;
 @Endpoint(path = "/shielded_objects")
 public class ShieldedObject implements AmyFacade {
 
-	@Id
-	private IdRef<ShieldedObject> id;
+    @Id
+    private IdRef<ShieldedObject> id;
 
-	@Index
-	private String stringValue;
+    @Index
+    private String stringValue;
 
-	private Integer intValue;
+    private Integer intValue;
 
-	public ShieldedObject() {
+    public ShieldedObject() {
 
-	}
+    }
 
-	public ShieldedObject(String stringValue) {
-		this.stringValue = stringValue;
-	}
+    public ShieldedObject(String stringValue) {
+        this.stringValue = stringValue;
+    }
 
-	public IdRef<ShieldedObject> getId() {
-		return id;
-	}
+    public IdRef<ShieldedObject> getId() {
+        return id;
+    }
 
-	public void setId(IdRef<ShieldedObject> id) {
-		this.id = id;
-	}
+    public void setId(IdRef<ShieldedObject> id) {
+        this.id = id;
+    }
 
-	public String getStringValue() {
-		return stringValue;
-	}
+    public String getStringValue() {
+        return stringValue;
+    }
 
-	public void setStringValue(String stringValue) {
-		this.stringValue = stringValue;
-	}
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
 
-	public Integer getIntValue() {
-		return intValue;
-	}
+    public Integer getIntValue() {
+        return intValue;
+    }
 
-	public void setIntValue(Integer intValue) {
-		this.intValue = intValue;
-	}
+    public void setIntValue(Integer intValue) {
+        this.intValue = intValue;
+    }
 }

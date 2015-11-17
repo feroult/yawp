@@ -6,21 +6,21 @@ import io.yawp.driver.api.NamespaceDriver;
 
 public class DeleteAll {
 
-	public static void now(String ns) {
-		namespace().set(ns);
-		now();
-	}
+    public static void now(String ns) {
+        namespace().set(ns);
+        now();
+    }
 
-	public static void now() {
-		helpers().deleteAll();
-	}
+    public static void now() {
+        helpers().deleteAll();
+    }
 
-	private static NamespaceDriver namespace() {
-		return DriverFactory.getDriver().namespace();
-	}
+    private static NamespaceDriver namespace() {
+        return DriverFactory.getDriver().namespace();
+    }
 
-	private static HelpersDriver helpers() {
-		return DriverFactory.getDriver().helpers();
-	}
+    private static HelpersDriver helpers() {
+        return DriverFactory.getDriver().helpers();
+    }
 
 }

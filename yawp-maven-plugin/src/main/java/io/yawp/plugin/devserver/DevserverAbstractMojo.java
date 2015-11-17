@@ -6,11 +6,11 @@ import io.yawp.plugin.PluginAbstractMojo;
 
 public abstract class DevserverAbstractMojo extends PluginAbstractMojo {
 
-	@Parameter(property = "yawp.shutdownPort", defaultValue = ShutdownMonitor.DEFAULT_PORT)
-	private String shutdownPort;
+    @Parameter(property = "yawp.shutdownPort", defaultValue = ShutdownMonitor.DEFAULT_PORT)
+    private String shutdownPort;
 
-	public int getShutdownPort() {
-		return Integer.valueOf(shutdownPort);
-	}
+    public int getShutdownPort() {
+        return Integer.valueOf(shutdownPort);
+    }
 
 }

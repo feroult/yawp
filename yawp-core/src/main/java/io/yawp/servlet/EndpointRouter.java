@@ -4,20 +4,14 @@ import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.JsonUtils;
-import io.yawp.repository.EndpointFeatures;
-import io.yawp.repository.EndpointNotFoundException;
-import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectHolder;
-import io.yawp.repository.Repository;
-import io.yawp.repository.RepositoryFeatures;
+import io.yawp.repository.*;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.servlet.rest.RestAction;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 
 public class EndpointRouter {
 
@@ -151,15 +145,12 @@ public class EndpointRouter {
         }
 
         ActionKey actionKey = new ActionKey(verb, lastToken, false);
-        if (features.hasCustomAction(id.getClazz(), actionKey)) {
-            return false;
-        }
+        return !features.hasCustomAction(id.getClazz(), actionKey);
 
-        return true;
     }
 
     private boolean hasTwoParts(String lastToken) {
-        return lastToken.indexOf("/") != -1;
+        return lastToken.contains("/");
     }
 
     public boolean isOverCollection() {
@@ -175,22 +166,6 @@ public class EndpointRouter {
             return null;
         }
         return customActionKey.getActionName();
-    }
-
-    public ActionKey getCustomActionKey() {
-        return customActionKey;
-    }
-
-    public EndpointFeatures<?> getEndpointFeatures() {
-        return features.get(endpointClazz);
-    }
-
-    public Class<?> getEndpointClazz() {
-        return getEndpointFeatures().getClazz();
-    }
-
-    public IdRef<?> getIdRef() {
-        return id;
     }
 
     private RestAction createRestAction(boolean enableHooks) {
@@ -227,7 +202,7 @@ public class EndpointRouter {
             return JsonUtils.fromList(r, requestJson, endpointClazz);
         }
 
-        return Arrays.asList(JsonUtils.from(r, requestJson, endpointClazz));
+        return Collections.singletonList(JsonUtils.from(r, requestJson, endpointClazz));
     }
 
     public HttpResponse executeRestAction(boolean enableHooks) {

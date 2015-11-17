@@ -1,8 +1,6 @@
-package $
+package ${package}.utils;
 
-{package}.utils;
-
-        import io.yawp.testing.EndpointTestCaseBase;
+import io.yawp.testing.EndpointTestCaseBase;
 
 public class EndpointTestCase extends EndpointTestCaseBase {
 

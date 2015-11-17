@@ -4,9 +4,9 @@ import org.apache.maven.plugin.logging.Log;
 
 public class EndpointScaffolder extends Scaffolder {
 
-    private static final String MODEL_TEMPLATE = "scaffolding/Endpoint.java";
+    private static final String MODEL_TEMPLATE = "scaffolding/Endpoint.java.vm";
 
-    private static final String MODEL_TEST_TEMPLATE = "scaffolding/EndpointTest.java";
+    private static final String MODEL_TEST_TEMPLATE = "scaffolding/EndpointTest.java.vm";
 
     private ShieldScaffolder shieldScaffolder;
 

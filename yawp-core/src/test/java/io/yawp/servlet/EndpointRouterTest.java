@@ -28,18 +28,12 @@ public class EndpointRouterTest extends EndpointTestCase {
 
         @Override
         public boolean hasCustomAction(String endpointPath, ActionKey actionKey) {
-            if (actionKey.getActionName().equals("action")) {
-                return true;
-            }
-            return features.hasCustomAction(endpointPath, actionKey);
+            return actionKey.getActionName().equals("action") || features.hasCustomAction(endpointPath, actionKey);
         }
 
         @Override
         public boolean hasCustomAction(Class<?> clazz, ActionKey actionKey) {
-            if (actionKey.getActionName().equals("action")) {
-                return true;
-            }
-            return features.hasCustomAction(clazz, actionKey);
+            return actionKey.getActionName().equals("action") || features.hasCustomAction(clazz, actionKey);
         }
 
         @Override

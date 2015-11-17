@@ -1,0 +1,225 @@
+/**
+ * basic styles for the javascript sandbox console
+ *
+ * http://openexchangerates.github.io/javascript-sandbox-console/
+ */
+
+html {
+  font-family: sans-serif;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1 {
+    text-align: left;
+    margin-top: 40px;
+    font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+h1 span {
+    color: #5C28AB;
+}
+
+#main {
+    width: 840px;
+    margin: 0px auto;
+    display: block;
+    
+}
+
+#console {
+    height: 259px;
+}
+
+#log {
+    width: 288px;
+    top: 0px;
+    padding-top: 10px;
+    background-color: #FBF9FF;
+    float: right;
+    /*display:inline-block;*/
+    -webkit-border-top-right-radius: 10px;
+       -moz-border-top-right-radius: 10px;
+            border-top-right-radius: 10px;
+    -webkit-border-bottom-right-radius: 10px;
+       -moz-border-bottom-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+    padding: 10px;
+    font-size: 12px;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+
+#log .hljs {
+    background-color: #FBF9FF;
+}
+
+#log p {
+    margin: 2px;
+}
+
+#log pre {
+    display:block;
+    white-space:pre;
+    height: 237px;
+    overflow-y:auto;
+    overflow-x:auto;
+    position:relative;
+    padding:0;
+    margin:0;
+    border:0 none;
+}
+
+#log code {
+    line-height: 17px;
+    padding: 0;
+}
+
+#log h2 {
+    font-size: 10px;
+    font-weight: normal;
+    color: #ccc;
+    margin: 0;
+}
+
+#log hr {
+    border: 1px dashed #efefef;
+}
+
+
+#help h3 {
+    font-weight: bold;
+    font-style: italic;
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+#help pre code {
+  padding: 15px !important;
+  white-space: pre-wrap;
+  background-color: #FBF9FF;
+  border-radius: 10px;
+  font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+  font-size: 0.8em;
+}
+
+#sandbox,
+#sandbox pre.output,
+#sandbox textarea,
+#sandbox textarea:focus {
+    font-size:12px;
+    line-height:1.3;
+    font-weight: normal;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+    border:0 none;
+    outline:0 none;
+    -webkit-box-shadow:none;
+       -moz-box-shadow:none;
+            box-shadow:none;
+}
+
+#sandbox pre.output span {
+    font-size: 12px;
+}
+
+#sandbox {
+    background:#333;
+    color: #ccc;
+    background: #333;
+    padding:20px 20px 15px;
+    -webkit-border-top-left-radius: 10px;
+       -moz-border-top-left-radius: 10px;
+            border-top-left-radius: 10px;
+    -webkit-border-bottom-left-radius: 10px;
+       -moz-border-bottom-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+    width:491px;
+    float: left;
+    /*display:inline-block;*/
+    /*margin:30px auto;*/
+/*
+    border-left: 1px solid #aaa;
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+*/
+
+}
+
+#sandbox pre.output {
+    display:block;
+    white-space:pre;
+    width:100%;
+    height:195px;
+    overflow-y:auto;
+    position:relative;
+    padding:0;
+    margin:0 0 10px;
+    border:0 none;
+}
+#sandbox pre.output span           { color:#f7f7f7; }
+#sandbox pre.output span.command   { color:#ccc; }
+#sandbox pre.output span.prefix    { color:#777; }
+#sandbox pre.output span.undefined { color:#777; }
+#sandbox pre.output span.string    { color:#99f; }
+#sandbox pre.output span.number    { color:#7f7; }
+#sandbox pre.output span.error     { color:#f77; }
+
+#sandbox .input {
+    padding:0 0 0 15px;
+    position:relative;
+}
+#sandbox .input:before {
+    content:">";
+    position:absolute;
+    top: 1px;
+    left: 0;
+    color:#ddd
+}
+#sandbox textarea {
+    color:#f7f7f7;
+    background:#333;
+    border:0 none;
+    outline:0 none;
+    padding:0;
+    margin:0;
+    resize: none;
+    width:100%;
+    overflow:hidden;
+}
+#sandbox textarea:focus {
+    outline:0 none;
+}
+
+
+#sandbox pre.output::-webkit-scrollbar,
+#sandbox pre.output::-webkit-scrollbar-button,
+#sandbox pre.output::-webkit-scrollbar-track,
+#sandbox pre.output::-webkit-scrollbar-track-piece,
+#sandbox pre.output::-webkit-scrollbar-thumb,
+#sandbox pre.output::-webkit-scrollbar-corner,
+#sandbox pre.output::-webkit-resizer {
+    background: transparent;
+}
+#sandbox pre.output::-webkit-scrollbar {
+    width:  7px;
+    height: 7px;
+    -webkit-border-radius: 4px;
+            border-radius: 4px;
+}
+#sandbox pre.output::-webkit-scrollbar-track-piece {
+    -webkit-border-radius: 5px;
+            border-radius: 5px;
+}
+#sandbox pre.output::-webkit-scrollbar-thumb {
+    background: #4f4f4f;
+            border-radius: 5px;
+}
+#sandbox pre.output::-webkit-scrollbar-button {
+    width:0;
+    height:0;
+}

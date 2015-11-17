@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>YAWP! Sandbox</title>
+
+    <link href="assets/sandbox/css/sandbox.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/sandbox/css/atelier-cave.light.min.css">
+</head>
+
+<body>
+    <section id="main">
+
+        <h1>YAWP! <span>Sandbox</span></h1>
+
+        <section id="console">
+            <div id="sandbox">sandbox console loading...</div>
+            <div id="log">
+                <pre><code class="javascript"></code></pre>
+            </div>
+        </section>
+
+        <section id="help">
+           <h3>
+               Before you start, scaffold and compile a endpoint
+           </h3>
+           <pre><code>$ mvn yawp:endpoint -Dmodel=person && mvn clean install</code></pre>
+
+           <h3>
+               Now copy &amp; paste the js below to the YAWP! Sandbox to try out the API
+           </h3>
+           <pre><code class="javascript">// create a person
+yawp('/people').create({}).done(function(p) { console.log(p); });
+
+// list people
+yawp('/people').list(function(p) { console.log(p); });
+</code></pre>
+
+        </section>
+
+    </section>
+    <script type="text/template" id="tplSandbox">
+        <pre class="output"></pre>
+        <div class="input">
+            <textarea id="prompt" rows="1" placeholder="// type js here and hit enter. /clear to reset"></textarea>
+        </div>
+    </script>
+
+    <script type="text/template" id="tplCommand"><% if (! _hidden) { %><span class="command"><%= command %></span>
+<span class="prefix"><%= this.resultPrefix %></span><span class="<%= _class %>"><%= result %></span>
+<% } %></script>
+
+    <script src="assets/sandbox/js/underscore.min.js"></script>
+    <script src="assets/sandbox/js/backbone.min.js"></script>
+    <script src="assets/sandbox/js/backbone-localStorage.min.js"></script>
+    <script src="assets/sandbox/js/jquery.min.js"></script>
+    <script src="assets/sandbox/js/highlight.min.js"></script>
+    <script src="assets/sandbox/js/sandbox-console.js"></script>
+    <script src="assets/sandbox/js/yawp-sandbox.js"></script>
+
+    <script src="assets/js/yawp.js"></script>
+</body>
+
+</html>

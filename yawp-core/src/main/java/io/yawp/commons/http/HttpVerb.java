@@ -13,10 +13,10 @@ public enum HttpVerb {
 
     private Class<? extends Annotation> annotationClazz;
 
-    private HttpVerb() {
+    HttpVerb() {
     }
 
-    private HttpVerb(Class<? extends Annotation> annotation) {
+    HttpVerb(Class<? extends Annotation> annotation) {
         this.annotationClazz = annotation;
 
     }

@@ -2,12 +2,12 @@ package io.yawp.driver.api;
 
 public interface TransactionDriver {
 
-    public TransactionDriver begin();
+    TransactionDriver begin();
 
-    public TransactionDriver beginX();
+    TransactionDriver beginX();
 
-    public void rollback();
+    void rollback();
 
-    public void commit();
+    void commit();
 
 }

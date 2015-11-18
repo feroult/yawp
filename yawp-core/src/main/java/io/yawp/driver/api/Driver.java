@@ -4,18 +4,18 @@ import io.yawp.repository.Repository;
 
 public interface Driver {
 
-    public void init(Repository r);
+    void init(Repository r);
 
-    public PersistenceDriver persistence();
+    PersistenceDriver persistence();
 
-    public QueryDriver query();
+    QueryDriver query();
 
-    public NamespaceDriver namespace();
+    NamespaceDriver namespace();
 
-    public TransactionDriver transaction();
+    TransactionDriver transaction();
 
-    public EnvironmentDriver environment();
+    EnvironmentDriver environment();
 
-    public HelpersDriver helpers();
+    HelpersDriver helpers();
 
 }

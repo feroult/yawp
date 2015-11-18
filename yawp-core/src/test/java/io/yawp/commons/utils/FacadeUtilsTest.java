@@ -8,7 +8,7 @@ import org.junit.Test;
 public class FacadeUtilsTest {
 
     public interface SetFacade {
-        public void setAge(Integer age);
+        void setAge(Integer age);
     }
 
     public interface GetFacade {

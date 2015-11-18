@@ -40,8 +40,6 @@ public class DevServerMojo extends DevserverAbstractMojo {
 
     protected Server server;
 
-    private WebAppContext webapp;
-
     private WebAppContextHelper helper;
 
     public void execute() throws MojoExecutionException {
@@ -62,10 +60,9 @@ public class DevServerMojo extends DevserverAbstractMojo {
         getLog().info("Starting webserver at: " + appDir);
 
         try {
-            webapp = helper.createWebApp();
             server = new Server();
             server.addConnector(createConnector());
-            server.setHandler(webapp);
+            server.setHandler(helper.createWebApp());
             server.start();
         } catch (Exception e) {
             throw new RuntimeException(e);

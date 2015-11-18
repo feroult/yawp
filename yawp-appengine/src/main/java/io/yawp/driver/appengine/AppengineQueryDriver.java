@@ -269,7 +269,7 @@ public class AppengineQueryDriver implements QueryDriver {
 
     // Filter for query
 
-    private final String NORMALIZED_FIELD_PREFIX = "__";
+    private static final String NORMALIZED_FIELD_PREFIX = "__";
 
     private Filter createFilter(QueryBuilder<?> builder, BaseCondition condition) throws FalsePredicateException {
         if (condition instanceof SimpleCondition) {

@@ -10,7 +10,7 @@ public class StatusObject {
         @SerializedName("success")
         SUCCESS, @SerializedName("fail")
         FAIL, @SerializedName("error")
-        ERROR;
+        ERROR
     }
 
     private Status status;

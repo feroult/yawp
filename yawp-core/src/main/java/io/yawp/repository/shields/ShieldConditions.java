@@ -88,7 +88,7 @@ public class ShieldConditions {
     }
 
     private interface Evaluate {
-        public boolean evaluate(Object object);
+        boolean evaluate(Object object);
     }
 
     private class EvaluateIncoming implements Evaluate {

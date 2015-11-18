@@ -4,9 +4,9 @@ public class ShieldedObjectFacades {
 
     public interface AmyFacade {
 
-        public String getStringValue();
+        String getStringValue();
 
-        public void setIntValue(Integer intValue);
+        void setIntValue(Integer intValue);
 
     }
 

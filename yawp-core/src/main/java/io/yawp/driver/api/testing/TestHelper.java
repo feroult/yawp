@@ -4,10 +4,10 @@ import io.yawp.repository.Repository;
 
 public interface TestHelper {
 
-    public void init(Repository r);
+    void init(Repository r);
 
-    public void setUp();
+    void setUp();
 
-    public void tearDown();
+    void tearDown();
 
 }

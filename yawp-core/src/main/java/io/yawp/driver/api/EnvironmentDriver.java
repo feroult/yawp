@@ -2,11 +2,11 @@ package io.yawp.driver.api;
 
 public interface EnvironmentDriver {
 
-    public boolean isProduction();
+    boolean isProduction();
 
-    public boolean isDevelopment();
+    boolean isDevelopment();
 
-    public boolean isTest();
+    boolean isTest();
 
-    public boolean isAdmin();
+    boolean isAdmin();
 }

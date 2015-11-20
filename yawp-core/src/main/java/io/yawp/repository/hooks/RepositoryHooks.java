@@ -10,6 +10,10 @@ import java.lang.reflect.Method;
 
 public class RepositoryHooks {
 
+    public static void beforeShield(Repository r, Object object) {
+        invokeHooks(r, object.getClass(), object, "beforeShield");
+    }
+
     public static void beforeSave(Repository r, Object object) {
         invokeHooks(r, object.getClass(), object, "beforeSave");
     }
@@ -69,4 +73,5 @@ public class RepositoryHooks {
         }
 
     }
+
 }

@@ -6,6 +6,9 @@ import io.yawp.repository.query.QueryBuilder;
 
 public class Hook<T> extends Feature {
 
+    public void beforeShield(T object) {
+    }
+
     public void beforeSave(T object) {
     }
 

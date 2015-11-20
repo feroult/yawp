@@ -10,6 +10,7 @@ import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.shields.Shield;
 import io.yawp.repository.shields.ShieldInfo;
@@ -93,7 +94,12 @@ public abstract class RestAction {
     }
 
     protected void beforeShield() {
-
+        if(objects == null) {
+            return;
+        }
+        for(Object object : objects) {
+            RepositoryHooks.beforeShield(r, object);
+        }
     }
 
     public abstract void shield();

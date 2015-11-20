@@ -8,6 +8,7 @@ import io.yawp.repository.models.basic.HookedObject;
 
 import java.util.List;
 
+import io.yawp.repository.models.basic.ShieldedObject;
 import org.junit.Test;
 
 public class HookTest extends EndpointTestCase {
@@ -71,4 +72,6 @@ public class HookTest extends EndpointTestCase {
                 .list();
         assertEquals(1, objects.size());
     }
+
+
 }

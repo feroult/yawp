@@ -38,6 +38,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
         allow(isRequestWithValidObjects(objects));
         allow(isKurt()).where("stringValue", "=", "ok");
         allow(isJanis()).where("stringValue", "=", "ok-for-janis");
+        allow(hasAppliedBeforeShield(objects));
     }
 
     @Override
@@ -97,12 +98,19 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
     private boolean is(String username) {
         return TestLoginManager.isLogged(username);
-//		User currentUser = UserServiceFactory.getUserService().getCurrentUser();
-//		return currentUser != null && currentUser.getEmail().equals(email);
     }
 
     private boolean isId100(IdRef<ShieldedObject> id) {
         return id.asLong().equals(100l);
+    }
+
+    private boolean hasAppliedBeforeShield(List<ShieldedObject> objects) {
+        for(ShieldedObject object : objects) {
+            if(!object.getStringValue().contains("applied beforeShield")) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean isRequestWithValidObject(ShieldedObject object) {

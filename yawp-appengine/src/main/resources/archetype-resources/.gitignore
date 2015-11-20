@@ -1,11 +1,15 @@
-target
-appengine-generated
-
+*.iml
+.idea
+*.class
 .project
 .classpath
 .settings
+target
+bin
 
-*.class
+# Package Files #
 *.jar
 *.war
 *.ear
+
+.DS_Store

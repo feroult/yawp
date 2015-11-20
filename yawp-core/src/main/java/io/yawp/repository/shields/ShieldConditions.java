@@ -5,6 +5,7 @@ import static io.yawp.repository.query.condition.Condition.and;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.Repository;
+import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.query.condition.BaseCondition;
 
 import java.util.List;
@@ -106,7 +107,15 @@ public class ShieldConditions {
             if (id == null) {
                 return true;
             }
-            return condition.evaluate(id.fetch());
+
+            Object existingObject;
+            try {
+                existingObject = id.fetch();
+            } catch(NoResultException e) {
+                return true;
+            }
+
+            return condition.evaluate(existingObject);
         }
     }
 

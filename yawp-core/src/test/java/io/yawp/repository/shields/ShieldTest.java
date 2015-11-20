@@ -145,6 +145,13 @@ public class ShieldTest extends ServletTestCase {
     }
 
     @Test
+    public void testCreateWhereOnMissingExistingObjects() {
+        login("janis");
+
+        assertPostWithStatus("/shielded_objects/1", "{stringValue: 'ok-for-janis'}", 200);
+    }
+
+    @Test
     public void testUpdateWhere() {
         login("kurt");
 

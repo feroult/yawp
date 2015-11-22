@@ -10,12 +10,4 @@ public class $endpoint.name {
     @Id
     private IdRef<$endpoint.name>id;
 
-    public IdRef<$endpoint.name>getId() {
-        return id;
-    }
-
-    public void setId(IdRef<$endpoint.name>id) {
-        this.id=id;
-    }
-
 }

@@ -14,7 +14,7 @@ You create your POJOs and __YAWP!__
 
 Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 
-If you want a hands-on tutorial to start with, try the [Todo App List Tutorial](http://yawp.io/guides/tutorials/todo-list-app).
+If you want a simple hands-on tutorial to start with, try the [Todo App List Tutorial](http://yawp.io/guides/tutorials/todo-list-app).
 
 ## IRC
 

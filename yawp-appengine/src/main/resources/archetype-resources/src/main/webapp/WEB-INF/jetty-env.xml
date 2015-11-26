@@ -5,7 +5,7 @@
 
     <New id="DSTest" class="org.mortbay.jetty.plus.naming.Resource">
         <Arg></Arg>
-        <Arg>java:comp/env/jdbc/${artifactId}_test</Arg>
+        <Arg>java:comp/env/jdbc/yawp_test</Arg>
         <Arg>
             <New class="org.apache.commons.dbcp2.BasicDataSource">
                 <Set name="driverClassName">org.postgresql.Driver</Set>
@@ -14,9 +14,9 @@
         </Arg>
     </New>
 
-    <New id="DSTest" class="org.mortbay.jetty.plus.naming.Resource">
+    <New id="DSDevelopment" class="org.mortbay.jetty.plus.naming.Resource">
         <Arg></Arg>
-        <Arg>java:comp/env/jdbc/${artifactId}_development</Arg>
+        <Arg>java:comp/env/jdbc/yawp_development</Arg>
         <Arg>
             <New class="org.apache.commons.dbcp2.BasicDataSource">
                 <Set name="driverClassName">org.postgresql.Driver</Set>
@@ -25,9 +25,9 @@
         </Arg>
     </New>
 
-    <New id="DSTest" class="org.mortbay.jetty.plus.naming.Resource">
+    <New id="DSProduction" class="org.mortbay.jetty.plus.naming.Resource">
         <Arg></Arg>
-        <Arg>java:comp/env/jdbc/${artifactId}_production</Arg>
+        <Arg>java:comp/env/jdbc/yawp_production</Arg>
         <Arg>
             <New class="org.apache.commons.dbcp2.BasicDataSource">
                 <Set name="driverClassName">org.postgresql.Driver</Set>

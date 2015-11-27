@@ -4,7 +4,6 @@ import io.yawp.plugin.devserver.appengine.AppengineWebAppContextHelper;
 
 import java.io.IOException;
 
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -13,15 +12,10 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.nio.SelectChannelConnector;
-import org.mortbay.jetty.webapp.WebAppContext;
 
 @Execute(phase = LifecyclePhase.COMPILE)
 @Mojo(name = "devserver", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class DevServerMojo extends DevserverAbstractMojo {
-
-    private static final String YAWP_GROUP_ID = "io.yawp";
-
-    private static final String YAWP_ARTIFACT_ID = "yawp";
 
     @Parameter(property = "yawp.address", defaultValue = "0.0.0.0")
     private String address;
@@ -49,7 +43,7 @@ public class DevServerMojo extends DevserverAbstractMojo {
     }
 
     private void initHelper() {
-        if (isYawpAppengine()) {
+        if (isAppengine()) {
             this.helper = new AppengineWebAppContextHelper(this);
         } else {
             this.helper = new WebAppContextHelper(this);
@@ -83,19 +77,6 @@ public class DevServerMojo extends DevserverAbstractMojo {
         connector.setSoLingerTime(0);
         connector.open();
         return connector;
-    }
-
-    private boolean isYawpAppengine() {
-        if (project.getGroupId().equals(YAWP_GROUP_ID) && project.getArtifactId().equals(YAWP_ARTIFACT_ID)) {
-            return true;
-        }
-
-        for (Dependency dependency : project.getDependencies()) {
-            if (dependency.getGroupId().equals(YAWP_GROUP_ID) && dependency.getArtifactId().equals(YAWP_ARTIFACT_ID)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     protected void startShutdownMonitor() {

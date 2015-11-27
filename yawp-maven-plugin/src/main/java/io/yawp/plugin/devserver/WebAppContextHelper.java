@@ -40,7 +40,7 @@ public class WebAppContextHelper {
     protected void configureCustom() {
     }
 
-    private WebAppContext createWebAppContext() {
+    protected WebAppContext createWebAppContext() {
         try {
             Resource jettyEnv = Resource.newResource(String.format("%s/WEB-INF/jetty-env.xml", mojo.getAppDir()));
             XmlConfiguration conf = new XmlConfiguration(jettyEnv.getInputStream());
@@ -49,17 +49,9 @@ public class WebAppContextHelper {
             System.setProperty("java.naming.factory.url.pkgs", "org.mortbay.naming");
             System.setProperty("java.naming.factory.initial", "org.mortbay.naming.InitialContextFactory");
             return webapp;
-        } catch (FileNotFoundException e) {
-
-            return createDefaultWebAppContext();
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    protected WebAppContext createDefaultWebAppContext() {
-        return new WebAppContext(mojo.getAppDir(), "");
     }
 
     protected String getWebDefaultXml() {

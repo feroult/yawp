@@ -1,7 +1,6 @@
-package io.yawp.driver.postgresql;
+package io.yawp.testing.postgresql;
 
 import io.yawp.driver.api.testing.TestHelper;
-import io.yawp.driver.postgresql.datastore.InitialContextMock;
 import io.yawp.driver.postgresql.datastore.SchemaSynchronizer;
 import io.yawp.repository.Repository;
 

@@ -19,5 +19,6 @@
     <modules>
         <module>yawp-testing-core</module>
         <module>yawp-testing-appengine</module>
+        <module>yawp-testing-postgresql</module>        
     </modules>
 </project>

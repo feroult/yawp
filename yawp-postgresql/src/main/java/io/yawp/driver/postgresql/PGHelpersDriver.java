@@ -10,4 +10,9 @@ public class PGHelpersDriver implements HelpersDriver {
         SchemaSynchronizer.truncateAll();
     }
 
+    @Override
+    public void sync() {
+        System.out.println("postgresql helper");
+    }
+
 }

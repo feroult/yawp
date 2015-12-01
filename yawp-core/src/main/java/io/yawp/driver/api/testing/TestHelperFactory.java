@@ -1,8 +1,7 @@
 package io.yawp.driver.api.testing;
 
+import io.yawp.commons.utils.ServiceLookup;
 import io.yawp.repository.Repository;
-
-import java.util.ServiceLoader;
 
 public class TestHelperFactory {
 
@@ -20,10 +19,6 @@ public class TestHelperFactory {
     }
 
     private static <T> T lookup(Class<T> clazz) {
-        ServiceLoader<T> helpers = ServiceLoader.load(clazz);
-        for (T helper : helpers) {
-            return helper;
-        }
-        throw new RuntimeException(String.format("No yawp %s helper found!", TestHelper.class.getSimpleName()));
+        return ServiceLookup.lookup(clazz);
     }
 }

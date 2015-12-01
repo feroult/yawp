@@ -4,4 +4,6 @@ public interface HelpersDriver {
 
     void deleteAll();
 
+    void sync();
+
 }

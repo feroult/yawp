@@ -72,7 +72,7 @@ public class AppengineWebAppContextHelper extends WebAppContextHelper {
     }
 
     @Override
-    protected List<String> getCustomClassPathElements() {
+    protected List<String> getCustomClasspathElements() {
         List<String> elements = new ArrayList<String>();
         // elements.add(sdkRoot + "/lib/shared/servlet-api.jar");
         elements.add(sdkRoot + "/lib/shared/el-api.jar");

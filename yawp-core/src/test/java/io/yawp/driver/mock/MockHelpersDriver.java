@@ -9,4 +9,8 @@ public class MockHelpersDriver implements HelpersDriver {
         MockStore.clear();
     }
 
+    @Override
+    public void sync() {
+    }
+
 }

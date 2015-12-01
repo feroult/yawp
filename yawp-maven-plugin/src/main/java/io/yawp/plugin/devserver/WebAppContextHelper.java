@@ -1,7 +1,6 @@
 package io.yawp.plugin.devserver;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -9,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import io.yawp.plugin.base.ClassLoaderBuilder;
 import org.apache.maven.plugin.logging.Log;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.mortbay.resource.Resource;
@@ -59,10 +58,10 @@ public class WebAppContextHelper {
     }
 
     private void configureClassloader() {
-        webapp.setClassLoader(createClassLoader(getCustomClassPathElements()));
+        webapp.setClassLoader(createClassLoader());
     }
 
-    protected List<String> getCustomClassPathElements() {
+    protected List<String> getCustomClasspathElements() {
         return new ArrayList<String>();
     }
 
@@ -105,27 +104,11 @@ public class WebAppContextHelper {
         webapp.start();
     }
 
-    protected URLClassLoader createClassLoader(List<String> customClasspathElements) {
-        try {
-            List<URL> urls = new ArrayList<URL>();
-
-            addURLs(mojo.getProject().getRuntimeClasspathElements(), urls);
-            addURLs(customClasspathElements, urls);
-
-            URLClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[]{}), Thread.currentThread().getContextClassLoader());
-            return classLoader;
-        } catch (DependencyResolutionRequiredException | MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+    protected URLClassLoader createClassLoader() {
+        ClassLoaderBuilder builder = new ClassLoaderBuilder();
+        builder.addRuntime(mojo);
+        builder.add(getCustomClasspathElements());
+        return builder.build();
     }
-
-    protected void addURLs(List<String> classpathElements, List<URL> runtimeUrls) throws MalformedURLException {
-        List<String> elements = classpathElements;
-        for (int i = 0; i < elements.size(); i++) {
-            String element = (String) elements.get(i);
-            runtimeUrls.add(new File(element).toURI().toURL());
-            getLog().debug("Adding to webapp classpath: " + element);
-        }
-    }
-
+    
 }

@@ -1,8 +1,7 @@
 package io.yawp.driver.api;
 
+import io.yawp.commons.utils.ServiceLookup;
 import io.yawp.repository.Repository;
-
-import java.util.ServiceLoader;
 
 public class DriverFactory {
 
@@ -18,11 +17,7 @@ public class DriverFactory {
     }
 
     private static Driver lookup() {
-        ServiceLoader<Driver> drivers = ServiceLoader.load(Driver.class);
-        for (Driver driver : drivers) {
-            return driver;
-        }
-        throw new RuntimeException("No yawp driver found!");
+        return ServiceLookup.lookup(Driver.class);
     }
 
 }

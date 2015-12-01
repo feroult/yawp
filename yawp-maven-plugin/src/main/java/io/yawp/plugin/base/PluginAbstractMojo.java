@@ -1,4 +1,4 @@
-package io.yawp.plugin;
+package io.yawp.plugin.base;
 
 import java.util.List;
 

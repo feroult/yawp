@@ -28,5 +28,4 @@ public class SyncMojo extends PluginAbstractMojo {
         builder.addRuntime(this);
         return builder.build();
     }
-
 }

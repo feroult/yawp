@@ -7,6 +7,8 @@ import io.yawp.repository.query.QueryBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class IdRef<T> implements Comparable<IdRef<T>> {
 
     private Repository r;
@@ -120,6 +122,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
     @SuppressWarnings("unchecked")
     public static <TT> IdRef<TT> parse(Repository r, HttpVerb verb, String path) {
+		if (StringUtils.isBlank(path)) {
+			return null;
+		}
+		
         String[] parts = path.substring(1).split("/");
 
         if (parts.length < 2) {

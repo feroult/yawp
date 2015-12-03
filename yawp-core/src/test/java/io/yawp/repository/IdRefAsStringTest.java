@@ -104,6 +104,18 @@ public class IdRefAsStringTest extends EndpointTestCase {
     }
 
     @Test
+    public void testParseBlankPath() {
+        IdRef<Parent> parentId = IdRef.parse(yawp, GET, "");
+        assertNull(parentId);
+
+        parentId = IdRef.parse(yawp, GET, null);
+        assertNull(parentId);
+
+        parentId = IdRef.parse(yawp, GET, " ");
+        assertNull(parentId);
+    }
+
+    @Test
     public void testParseChildId() {
         IdRef<Child> childId = IdRef.parse(yawp, GET, "/parents/a/children/b");
         IdRef<Parent> parentId = childId.getParentId();

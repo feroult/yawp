@@ -1,6 +1,7 @@
 package io.yawp.testing.postgresql;
 
 import io.yawp.driver.api.testing.TestHelper;
+import io.yawp.driver.postgresql.configuration.InitialContextSetup;
 import io.yawp.driver.postgresql.datastore.SchemaSynchronizer;
 import io.yawp.repository.Repository;
 
@@ -16,7 +17,7 @@ public class PGTestHelper implements TestHelper {
     }
 
     private void configureInitialContext() {
-        InitialContextMock.configure();
+        InitialContextSetup.configure();
     }
 
     private void resetTables() {

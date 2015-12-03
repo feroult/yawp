@@ -1,6 +1,7 @@
 package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.driver.postgresql.Person;
+import io.yawp.driver.postgresql.configuration.InitialContextSetup;
 import io.yawp.driver.postgresql.sql.ConnectionPool;
 import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.EndpointScanner;
@@ -19,7 +20,7 @@ public class DatastoreTestCase {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        InitialContextMock.configure();
+        InitialContextSetup.configure();
         createRepository();
         createConnection();
         createTables();

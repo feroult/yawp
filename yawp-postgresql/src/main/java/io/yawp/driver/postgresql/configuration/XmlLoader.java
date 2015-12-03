@@ -71,4 +71,8 @@ public class XmlLoader {
     public String getTextContent() {
         return item.getTextContent();
     }
+
+    public String getAttributeText(String attr) {
+        return item.getAttributes().getNamedItem(attr).getNodeValue();
+    }
 }

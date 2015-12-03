@@ -20,6 +20,7 @@ public class XmlLoaderTest {
         XmlLoader xml = new XmlLoader("configuration/jetty-env-test.xml");
         List<XmlLoader> result = xml.find("/Configure/New[starts-with(@id, 'yawp')]");
         XmlLoader datasourceXml = result.get(0);
+        assertEquals("yawp_test", datasourceXml.getAttributeText("id"));
         assertEquals("java:comp/env/jdbc/yawp_test", datasourceXml.find("Arg").get(1).getTextContent());
         assertEquals("org.postgresql.Driver", datasourceXml.find("Arg/New/Set[@name='driverClassName']").get(0).getTextContent());
         assertEquals("jdbc:postgresql://localhost/yawp_test", datasourceXml.find("Arg/New/Set[@name='url']").get(0).getTextContent());

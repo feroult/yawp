@@ -1,5 +1,6 @@
 package io.yawp.plugin.sync;
 
+import io.yawp.commons.utils.Environment;
 import io.yawp.commons.utils.ServiceLookup;
 import io.yawp.driver.api.Driver;
 import io.yawp.plugin.base.ClassLoaderBuilder;
@@ -20,6 +21,10 @@ public class SyncMojo extends PluginAbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Driver driver = ServiceLookup.lookup(Driver.class, runtimeClassLoader());
+
+        Environment.set(env);
+        Environment.setBaseDir(baseDir);
+
         driver.helpers().sync();
     }
 

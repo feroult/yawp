@@ -7,7 +7,7 @@ public class Environment {
 
     private static final String YAWP_ENV = "yawp.env";
 
-    private static final String YAWP_APP_DIR = "yawp.dir";
+    private static final String YAWP_BASE_DIR = "yawp.dir";
 
 
     public static boolean isProduction() {
@@ -43,12 +43,12 @@ public class Environment {
         return System.getProperty(YAWP_ENV);
     }
 
-    public static void setAppDir(String appDir) {
-        System.setProperty(YAWP_APP_DIR, appDir);
+    public static void setBaseDir(String appDir) {
+        System.setProperty(YAWP_BASE_DIR, appDir);
     }
 
-    public static String getAppDir() {
-        return System.getProperty(YAWP_APP_DIR);
+    public static String getBaseDir() {
+        return System.getProperty(YAWP_BASE_DIR);
     }
 
 }

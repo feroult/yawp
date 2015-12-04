@@ -32,6 +32,9 @@ public abstract class PluginAbstractMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}")
     protected MavenProject project;
 
+    @Parameter(property = "env", defaultValue = "development")
+    protected String env;
+
     @Parameter(property = "yawp.dir", defaultValue = "${basedir}")
     protected String baseDir;
 

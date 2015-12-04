@@ -33,7 +33,7 @@ public class DatastoreTestCase {
     }
 
     private static void configureEnvironment() {
-        Configuration.setEnv("test");
+        InitialContextSetup.setEnv("test");
         InitialContextSetup.configure("configuration/jetty-env-test.xml");
     }
 

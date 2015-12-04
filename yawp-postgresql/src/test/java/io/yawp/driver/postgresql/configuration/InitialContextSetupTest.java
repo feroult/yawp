@@ -19,7 +19,7 @@ public class InitialContextSetupTest {
 
     @Before
     public void setup() {
-        Configuration.setEnv("test");
+        InitialContextSetup.setEnv("test");
     }
 
     @After
@@ -41,7 +41,7 @@ public class InitialContextSetupTest {
 
     private void assertInitialContextHasDataSource() throws NamingException {
         Context ctx = (Context) new InitialContext().lookup("java:comp/env");
-        DataSource ds = (DataSource) ctx.lookup(Configuration.envDataSourceName());
+        DataSource ds = (DataSource) ctx.lookup(InitialContextSetup.envDataSourceName());
 
         assertNotNull(ds);
     }

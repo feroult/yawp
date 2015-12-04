@@ -6,8 +6,6 @@ import java.util.Map;
 
 public class Configuration {
 
-    private static final String YAWP_ENV = "yawp.env";
-
     private static final String XPATH_ENVS = "/Configure/New[starts-with(@id, 'yawp')]";
 
     private static final String XPATH_NAME = "Arg";
@@ -25,18 +23,6 @@ public class Configuration {
     private String env;
 
     private Map<String, DataSourceInfo> envs;
-
-    private static String env() {
-        return System.getProperty(YAWP_ENV);
-    }
-
-    public static void setEnv(String env) {
-        System.setProperty(YAWP_ENV, env);
-    }
-
-    public static String envDataSourceName() {
-        return String.format("jdbc/yawp_%s", env());
-    }
 
     public Configuration(String resourceUri) {
         this.resourceUri = resourceUri;
@@ -81,10 +67,5 @@ public class Configuration {
     public DataSourceInfo getDatasourceInfo(String env) {
         return envs.get(env);
     }
-
-    public DataSourceInfo getDatasourceInfo() {
-        return getDatasourceInfo(env());
-    }
-
 
 }

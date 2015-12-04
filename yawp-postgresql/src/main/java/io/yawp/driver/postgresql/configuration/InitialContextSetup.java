@@ -18,6 +18,20 @@ public class InitialContextSetup implements InitialContextFactory {
 
     private static Context context;
 
+    private static final String YAWP_ENV = "yawp.env";
+
+    private static String env() {
+        return System.getProperty(YAWP_ENV);
+    }
+
+    public static void setEnv(String env) {
+        System.setProperty(YAWP_ENV, env);
+    }
+
+    public static String envDataSourceName() {
+        return String.format("jdbc/yawp_%s", env());
+    }
+
     static {
         try {
             context = new InitialContext(true) {
@@ -39,6 +53,7 @@ public class InitialContextSetup implements InitialContextFactory {
             throw new RuntimeException(e);
         }
     }
+
 
     @Override
     public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
@@ -82,9 +97,8 @@ public class InitialContextSetup implements InitialContextFactory {
         }
 
         Configuration configuration = new Configuration(file.getAbsolutePath());
-        DataSourceInfo dsInfo = configuration.getDatasourceInfo();
-        bind(Configuration.envDataSourceName(), dsInfo.buildDatasource());
-
+        DataSourceInfo dsInfo = configuration.getDatasourceInfo(env());
+        bind(envDataSourceName(), dsInfo.buildDatasource());
     }
 
     private static boolean alreadyRegisteredInitialContext() {

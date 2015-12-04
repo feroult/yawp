@@ -34,7 +34,10 @@ public class RepositoryFeatures {
 
     }
 
-    private boolean isValidEndpointPath(String endpointName) {
+    protected RepositoryFeatures() {
+    }
+
+    protected boolean isValidEndpointPath(String endpointName) {
         char[] charArray = endpointName.toCharArray();
         for (int i = 0; i < charArray.length; i++) {
             char c = charArray[i];
@@ -44,7 +47,7 @@ public class RepositoryFeatures {
                 }
                 continue;
             }
-            if (!(Character.isAlphabetic(c) || c == '_')) {
+            if (!(Character.isAlphabetic(c) || c == '_' || c == '-')) {
                 return false;
             }
         }

@@ -64,4 +64,7 @@ public class InitialContextSetup implements InitialContextFactory {
 
         bind("jdbc/yawp_test", ds);
     }
+
+    public static void configure(String resourceUri) {
+    }
 }

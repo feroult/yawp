@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 public class ConfigurationTest {
 
     @Test
-    public void testConfiguration() {
+    public void testLoad() {
         Configuration config = new Configuration("configuration/jetty-env-test.xml");
         assertEquals("test", config.getEnv());
         DataSourceInfo ds = config.getDatasourceInfo("test");

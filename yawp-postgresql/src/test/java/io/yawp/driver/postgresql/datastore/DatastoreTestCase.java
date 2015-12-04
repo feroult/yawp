@@ -1,16 +1,16 @@
 package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.driver.postgresql.Person;
+import io.yawp.driver.postgresql.configuration.Configuration;
 import io.yawp.driver.postgresql.configuration.InitialContextSetup;
 import io.yawp.driver.postgresql.sql.ConnectionPool;
 import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
-
-import java.sql.Connection;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+
+import java.sql.Connection;
 
 public class DatastoreTestCase {
 
@@ -20,19 +20,25 @@ public class DatastoreTestCase {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        InitialContextSetup.configure();
+        configureEnvironment();
         createRepository();
         createConnection();
         createTables();
     }
 
-    private static void createRepository() {
-        yawp = Repository.r().setFeatures(new EndpointScanner(testPackage()).scan());
-    }
-
     @AfterClass
     public static void tearDownClass() {
         closeConnection();
+        InitialContextSetup.unregister();
+    }
+
+    private static void configureEnvironment() {
+        Configuration.setEnv("test");
+        InitialContextSetup.configure("configuration/jetty-env-test.xml");
+    }
+
+    private static void createRepository() {
+        yawp = Repository.r().setFeatures(new EndpointScanner(testPackage()).scan());
     }
 
     private static void createConnection() {

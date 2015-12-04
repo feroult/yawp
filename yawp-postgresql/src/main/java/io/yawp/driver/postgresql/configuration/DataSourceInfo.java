@@ -1,5 +1,9 @@
 package io.yawp.driver.postgresql.configuration;
 
+import org.apache.commons.dbcp2.BasicDataSource;
+
+import javax.sql.DataSource;
+
 public class DataSourceInfo {
 
     private String name;
@@ -41,5 +45,14 @@ public class DataSourceInfo {
 
     public void setEnv(String env) {
         this.env = env;
+    }
+
+    public DataSource buildDatasource() {
+        BasicDataSource ds = new BasicDataSource();
+
+        ds.setDriverClassName(driverClassName);
+        ds.setUrl(url);
+
+        return ds;
     }
 }

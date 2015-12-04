@@ -1,7 +1,10 @@
 package io.yawp.driver.postgresql.configuration;
 
+import io.yawp.commons.utils.ResourceFinder;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -9,13 +12,13 @@ import static org.junit.Assert.assertEquals;
 public class XmlLoaderTest {
 
     @Test
-    public void testLoad() {
+    public void testLoad() throws IOException {
         List<XmlLoader> envs = loadFromXml();
         assertEquals(3, envs.size());
     }
 
     @Test
-    public void testLoadAndExtract() {
+    public void testLoadAndExtract() throws IOException {
         List<XmlLoader> envs = loadFromXml();
         XmlLoader datasourceXml = envs.get(0);
         assertEquals("yawp_test", datasourceXml.getAttributeText("id"));
@@ -24,8 +27,9 @@ public class XmlLoaderTest {
         assertEquals("jdbc:postgresql://localhost/yawp_test", datasourceXml.find("Arg/New/Set[@name='url']").get(0).getTextContent());
     }
 
-    private List<XmlLoader> loadFromXml() {
-        XmlLoader xml = new XmlLoader("configuration/jetty-env-test.xml");
+    private List<XmlLoader> loadFromXml() throws IOException {
+        URL url = new ResourceFinder().find("configuration/jetty-env-test.xml");
+        XmlLoader xml = new XmlLoader(url.getFile());
         return xml.find("/Configure/New[starts-with(@id, 'yawp')]");
     }
 }

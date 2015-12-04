@@ -19,25 +19,21 @@ import java.util.List;
 
 public class XmlLoader {
 
-    private String resourceUri;
-
     private Node item;
 
-    public XmlLoader(String resourceUri) {
-        this.resourceUri = resourceUri;
-        load();
+    public XmlLoader(String path) {
+        load(path);
     }
 
     public XmlLoader(Node item) {
         this.item = item;
     }
 
-    public void load() {
+    public void load(String path) {
         try {
-            URL url = new ResourceFinder().find(resourceUri);
             DocumentBuilderFactory dbf = createDocumentFactory();
             DocumentBuilder db = dbf.newDocumentBuilder();
-            item = db.parse(url.getFile()).getDocumentElement();
+            item = db.parse(path).getDocumentElement();
         } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new RuntimeException(e);
         }

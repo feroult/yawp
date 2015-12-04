@@ -1,11 +1,15 @@
 package io.yawp.driver.postgresql.configuration;
 
+import io.yawp.commons.utils.ResourceFinder;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.naming.spi.InitialContextFactory;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
@@ -49,12 +53,14 @@ public class InitialContextSetup implements InitialContextFactory {
         }
     }
 
+    public static void unregister() {
+        System.clearProperty(Context.INITIAL_CONTEXT_FACTORY);
+    }
+
     public static void configure() {
-        if (System.getProperty(Context.INITIAL_CONTEXT_FACTORY) != null) {
+        if (alreadyRegisteredInitialContext()) {
             return;
         }
-
-        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitialContextSetup.class.getName());
 
         BasicDataSource ds = new BasicDataSource();
 
@@ -66,5 +72,37 @@ public class InitialContextSetup implements InitialContextFactory {
     }
 
     public static void configure(String resourceUri) {
+        String path = getPath(resourceUri);
+        configure(new File(path));
     }
+
+    public static void configure(File file) {
+        if (alreadyRegisteredInitialContext()) {
+            return;
+        }
+
+        Configuration configuration = new Configuration(file.getAbsolutePath());
+        DataSourceInfo dsInfo = configuration.getDatasourceInfo();
+        bind(Configuration.envDataSourceName(), dsInfo.buildDatasource());
+
+    }
+
+    private static boolean alreadyRegisteredInitialContext() {
+        if (System.getProperty(Context.INITIAL_CONTEXT_FACTORY) != null) {
+            return true;
+        }
+
+        System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitialContextSetup.class.getName());
+        return false;
+    }
+
+    private static String getPath(String resourceUri) {
+        try {
+            URL url = new ResourceFinder().find(resourceUri);
+            return url.getFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

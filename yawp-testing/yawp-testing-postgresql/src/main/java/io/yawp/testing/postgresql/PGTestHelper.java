@@ -17,7 +17,8 @@ public class PGTestHelper implements TestHelper {
     }
 
     private void configureInitialContext() {
-        InitialContextSetup.configure();
+        InitialContextSetup.setEnv("test");
+        InitialContextSetup.configure("configuration/jetty-env.xml");
     }
 
     private void resetTables() {

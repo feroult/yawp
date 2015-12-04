@@ -72,20 +72,6 @@ public class InitialContextSetup implements InitialContextFactory {
         System.clearProperty(Context.INITIAL_CONTEXT_FACTORY);
     }
 
-    public static void configure() {
-        if (alreadyRegisteredInitialContext()) {
-            return;
-        }
-
-        BasicDataSource ds = new BasicDataSource();
-
-        ds.setDriverClassName("org.postgresql.Driver");
-        ds.setUrl("jdbc:postgresql://localhost/yawp_test");
-        ds.setMaxTotal(50);
-
-        bind("jdbc/yawp_test", ds);
-    }
-
     public static void configure(String resourceUri) {
         String path = getPath(resourceUri);
         configure(new File(path));

@@ -5,19 +5,50 @@ import io.yawp.driver.api.EnvironmentDriver;
 
 public class Environment {
 
+    private static final String YAWP_ENV = "yawp.env";
+
+    private static final String YAWP_APP_DIR = "yawp.dir";
+
+
     public static boolean isProduction() {
+        if (get() != null) {
+            return get().equals("production");
+        }
         return environment().isProduction();
     }
 
     public static boolean isDevelopment() {
+        if (get() != null) {
+            return get().equals("development");
+        }
         return environment().isDevelopment();
     }
 
     public static boolean isTest() {
+        if (get() != null) {
+            return get().equals("test");
+        }
         return environment().isTest();
     }
 
     private static EnvironmentDriver environment() {
         return DriverFactory.getDriver().environment();
     }
+
+    public static void set(String env) {
+        System.setProperty(YAWP_ENV, env);
+    }
+
+    public static String get() {
+        return System.getProperty(YAWP_ENV);
+    }
+
+    public static void setAppDir(String appDir) {
+        System.setProperty(YAWP_APP_DIR, appDir);
+    }
+
+    public static String getAppDir() {
+        return System.getProperty(YAWP_APP_DIR);
+    }
+
 }

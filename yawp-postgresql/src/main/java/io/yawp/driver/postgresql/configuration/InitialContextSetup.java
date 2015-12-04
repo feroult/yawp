@@ -1,5 +1,6 @@
 package io.yawp.driver.postgresql.configuration;
 
+import io.yawp.commons.utils.Environment;
 import io.yawp.commons.utils.ResourceFinder;
 import org.apache.commons.dbcp2.BasicDataSource;
 
@@ -18,18 +19,8 @@ public class InitialContextSetup implements InitialContextFactory {
 
     private static Context context;
 
-    private static final String YAWP_ENV = "yawp.env";
-
-    private static String env() {
-        return System.getProperty(YAWP_ENV);
-    }
-
-    public static void setEnv(String env) {
-        System.setProperty(YAWP_ENV, env);
-    }
-
     public static String envDataSourceName() {
-        return String.format("jdbc/yawp_%s", env());
+        return String.format("jdbc/yawp_%s", Environment.get());
     }
 
     static {
@@ -72,6 +63,7 @@ public class InitialContextSetup implements InitialContextFactory {
         System.clearProperty(Context.INITIAL_CONTEXT_FACTORY);
     }
 
+
     public static void configure(String resourceUri) {
         String path = getPath(resourceUri);
         configure(new File(path));
@@ -83,7 +75,7 @@ public class InitialContextSetup implements InitialContextFactory {
         }
 
         Configuration configuration = new Configuration(file.getAbsolutePath());
-        DataSourceInfo dsInfo = configuration.getDatasourceInfo(env());
+        DataSourceInfo dsInfo = configuration.getDatasourceInfo(Environment.get());
         bind(envDataSourceName(), dsInfo.buildDatasource());
     }
 

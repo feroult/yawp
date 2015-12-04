@@ -1,5 +1,6 @@
 package io.yawp.testing.postgresql;
 
+import io.yawp.commons.utils.Environment;
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.driver.postgresql.configuration.InitialContextSetup;
 import io.yawp.driver.postgresql.datastore.SchemaSynchronizer;
@@ -17,7 +18,7 @@ public class PGTestHelper implements TestHelper {
     }
 
     private void configureInitialContext() {
-        InitialContextSetup.setEnv("test");
+        Environment.set("test");
         InitialContextSetup.configure("configuration/jetty-env.xml");
     }
 

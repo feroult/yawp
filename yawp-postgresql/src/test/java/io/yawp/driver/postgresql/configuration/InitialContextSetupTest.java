@@ -1,5 +1,6 @@
 package io.yawp.driver.postgresql.configuration;
 
+import io.yawp.commons.utils.Environment;
 import io.yawp.commons.utils.ResourceFinder;
 import org.junit.After;
 import org.junit.Before;
@@ -19,7 +20,7 @@ public class InitialContextSetupTest {
 
     @Before
     public void setup() {
-        InitialContextSetup.setEnv("test");
+        Environment.set("test");
     }
 
     @After

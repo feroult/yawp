@@ -22,6 +22,7 @@ public class RepositoryFeaturesTest {
 
         assertFalse(features.isValidEndpointPath("parents"));
         assertFalse(features.isValidEndpointPath("/123parents"));
+        assertFalse(features.isValidEndpointPath("/par?ents"));
     }
 
 }

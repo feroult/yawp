@@ -20,7 +20,8 @@ public class SyncMojo extends PluginAbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Driver driver = ServiceLookup.lookup(Driver.class, runtimeClassLoader());
+        configureRuntimeClassLoader();
+        Driver driver = ServiceLookup.lookup(Driver.class);
 
         Environment.set(env);
         Environment.setBaseDir(baseDir);
@@ -28,9 +29,11 @@ public class SyncMojo extends PluginAbstractMojo {
         driver.helpers().sync();
     }
 
-    private URLClassLoader runtimeClassLoader() {
+    private URLClassLoader configureRuntimeClassLoader() {
         ClassLoaderBuilder builder = new ClassLoaderBuilder();
         builder.addRuntime(this);
-        return builder.build();
+        URLClassLoader classLoader = builder.build();
+        Thread.currentThread().setContextClassLoader(classLoader);
+        return classLoader;
     }
 }

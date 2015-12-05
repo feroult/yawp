@@ -22,21 +22,29 @@ public class InitialContextSetup implements InitialContextFactory {
         return String.format("jdbc/yawp_%s", Environment.get());
     }
 
+    private static class Xpto extends InitialContext {
+
+        Map<String, Object> bindings = new HashMap<String, Object>();
+
+        public Xpto() throws NamingException {
+            super(true);
+        }
+
+        @Override
+        public void bind(String name, Object obj) throws NamingException {
+            bindings.put(name, obj);
+        }
+
+        @Override
+        public Object lookup(String name) throws NamingException {
+            return bindings.get(name);
+        }
+
+    }
+
     static {
         try {
-            context = new InitialContext(true) {
-                Map<String, Object> bindings = new HashMap<String, Object>();
-
-                @Override
-                public void bind(String name, Object obj) throws NamingException {
-                    bindings.put(name, obj);
-                }
-
-                @Override
-                public Object lookup(String name) throws NamingException {
-                    return bindings.get(name);
-                }
-            };
+            context = new Xpto();
 
             context.bind("java:comp/env", context);
         } catch (NamingException e) {
@@ -84,6 +92,7 @@ public class InitialContextSetup implements InitialContextFactory {
         }
 
         System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InitialContextSetup.class.getName());
+        System.setProperty("java.naming.factory.url.pkgs", InitialContextSetup.class.getPackage().getName());
         return false;
     }
 

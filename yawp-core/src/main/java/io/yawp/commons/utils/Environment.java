@@ -43,8 +43,8 @@ public class Environment {
         return System.getProperty(YAWP_ENV);
     }
 
-    public static void setBaseDir(String appDir) {
-        System.setProperty(YAWP_BASE_DIR, appDir);
+    public static void setBaseDir(String baseDir) {
+        System.setProperty(YAWP_BASE_DIR, baseDir);
     }
 
     public static String getBaseDir() {

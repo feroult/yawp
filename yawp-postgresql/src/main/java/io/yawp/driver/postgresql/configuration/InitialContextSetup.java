@@ -2,7 +2,6 @@ package io.yawp.driver.postgresql.configuration;
 
 import io.yawp.commons.utils.Environment;
 import io.yawp.commons.utils.ResourceFinder;
-import org.apache.commons.dbcp2.BasicDataSource;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -74,7 +73,7 @@ public class InitialContextSetup implements InitialContextFactory {
             return;
         }
 
-        Configuration configuration = new Configuration(file.getAbsolutePath());
+        JettyConfiguration configuration = new JettyConfiguration(file.getAbsolutePath());
         DataSourceInfo dsInfo = configuration.getDatasourceInfo(Environment.get());
         bind(envDataSourceName(), dsInfo.buildDatasource());
     }

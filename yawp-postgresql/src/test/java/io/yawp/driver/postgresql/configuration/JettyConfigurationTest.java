@@ -8,11 +8,11 @@ import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
-public class ConfigurationTest {
+public class JettyConfigurationTest {
 
     @Test
     public void testLoad() throws IOException {
-        Configuration config = new Configuration(getPath());
+        JettyConfiguration config = new JettyConfiguration(getPath());
         DataSourceInfo ds = config.getDatasourceInfo("test");
         assertEquals("jdbc/yawp_test", ds.getName());
         assertEquals("org.postgresql.Driver", ds.getDriverClassName());

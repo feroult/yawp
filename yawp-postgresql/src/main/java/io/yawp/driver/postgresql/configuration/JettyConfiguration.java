@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Configuration {
+public class JettyConfiguration {
 
     private static final String XPATH_ENVS = "/Configure/New[starts-with(@id, 'yawp')]";
 
@@ -18,14 +18,14 @@ public class Configuration {
 
     private static final int NAME_PREFIX_LENGTH = "java:comp/env/".length();
 
-    private String resourceUri;
+    private String path;
 
     private String env;
 
     private Map<String, DataSourceInfo> envs;
 
-    public Configuration(String resourceUri) {
-        this.resourceUri = resourceUri;
+    public JettyConfiguration(String path) {
+        this.path = path;
         this.env = "test";
         load();
     }
@@ -33,7 +33,7 @@ public class Configuration {
     private void load() {
         envs = new HashMap<String, DataSourceInfo>();
 
-        XmlLoader xml = new XmlLoader(resourceUri);
+        XmlLoader xml = new XmlLoader(path);
         List<XmlLoader> allEnvsXml = xml.find(XPATH_ENVS);
         for (XmlLoader envXml : allEnvsXml) {
             DataSourceInfo ds = new DataSourceInfo();

@@ -2,7 +2,6 @@ package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.commons.utils.Environment;
 import io.yawp.driver.postgresql.Person;
-import io.yawp.driver.postgresql.configuration.Configuration;
 import io.yawp.driver.postgresql.configuration.InitialContextSetup;
 import io.yawp.driver.postgresql.sql.ConnectionPool;
 import io.yawp.driver.postgresql.sql.SqlRunner;

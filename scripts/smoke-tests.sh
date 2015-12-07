@@ -51,8 +51,13 @@ init_appengine() {
 }
 
 change_to_postgresql() {
-    sed -i '' -e "s/<artifactId>yawp<\/artifactId>/<artifactId>yawp-postgresql<\/artifactId>/g" pom.xml
-    sed -i '' -e "s/<artifactId>yawp-testing<\/artifactId>/<artifactId>yawp-testing-postgresql<\/artifactId>/g" pom.xml
+    if [ "$(uname)" = "Linux" ]; then
+        SED="sed -i -e"
+    else
+        SED="sed -i '' -e"
+    fi
+    $SED "s/<artifactId>yawp<\/artifactId>/<artifactId>yawp-postgresql<\/artifactId>/g" pom.xml
+    $SED "s/<artifactId>yawp-testing<\/artifactId>/<artifactId>yawp-testing-postgresql<\/artifactId>/g" pom.xml
 }
 
 after() {

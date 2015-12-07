@@ -5,28 +5,31 @@ import io.yawp.driver.api.EnvironmentDriver;
 
 public class Environment {
 
+    public static final String DEFAULT_DEVELOPMENT_ENVIRONMENT = "development";
+
+    public static final String DEFAULT_TEST_ENVIRONMENT = "test";
+
     private static final String YAWP_ENV = "yawp.env";
 
     private static final String YAWP_BASE_DIR = "yawp.dir";
 
-
     public static boolean isProduction() {
         if (get() != null) {
-            return get().equals("production");
+            return getOrDefault().equals("production");
         }
         return environment().isProduction();
     }
 
     public static boolean isDevelopment() {
         if (get() != null) {
-            return get().equals("development");
+            return getOrDefault().equals("development");
         }
         return environment().isDevelopment();
     }
 
     public static boolean isTest() {
         if (get() != null) {
-            return get().equals("test");
+            return getOrDefault().equals("test");
         }
         return environment().isTest();
     }
@@ -41,6 +44,14 @@ public class Environment {
 
     public static String get() {
         return System.getProperty(YAWP_ENV);
+    }
+
+    public static String getOrDefault() {
+        String env = System.getProperty(YAWP_ENV);
+        if (env != null) {
+            return env;
+        }
+        return DEFAULT_DEVELOPMENT_ENVIRONMENT;
     }
 
     public static void setBaseDir(String baseDir) {

@@ -19,7 +19,7 @@ public class InitialContextSetup implements InitialContextFactory {
     private static Context context;
 
     public static String envDataSourceName() {
-        return String.format("jdbc/yawp_%s", Environment.get());
+        return String.format("jdbc/yawp_%s", Environment.getOrDefault());
     }
 
     private static class Xpto extends InitialContext {
@@ -82,7 +82,7 @@ public class InitialContextSetup implements InitialContextFactory {
         }
 
         JettyConfiguration configuration = new JettyConfiguration(file.getAbsolutePath());
-        DataSourceInfo dsInfo = configuration.getDatasourceInfo(Environment.get());
+        DataSourceInfo dsInfo = configuration.getDatasourceInfo(Environment.getOrDefault());
         bind(envDataSourceName(), dsInfo.buildDatasource());
     }
 

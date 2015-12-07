@@ -12,7 +12,7 @@ mvn yawp:devserver_stop $MAVEN_ARGS
 echo "done."
 
 echo "starting devserver..."
-mvn yawp:devserver $MAVEN_ARGS &
+mvn yawp:devserver -Dyawp.env=test $MAVEN_ARGS &
 mvn yawp:devserver_wait $MAVEN_ARGS
 echo "done."
 

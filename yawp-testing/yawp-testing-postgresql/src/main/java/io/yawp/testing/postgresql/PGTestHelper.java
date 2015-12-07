@@ -21,12 +21,18 @@ public class PGTestHelper implements TestHelper {
     @Override
     public void init(Repository r) {
         this.r = r;
+        configureEnvironment();
         configureInitialContext();
         resetTables();
     }
 
+    private void configureEnvironment() {
+        if (Environment.get() == null) {
+            Environment.set(Environment.DEFAULT_TEST_ENVIRONMENT);
+        }
+    }
+
     private void configureInitialContext() {
-        Environment.set("test");
         if (isUserTest()) {
             InitialContextSetup.configure(getUserJettyConfigFile());
         } else {

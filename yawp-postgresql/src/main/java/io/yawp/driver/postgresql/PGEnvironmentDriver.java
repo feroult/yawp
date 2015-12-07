@@ -1,31 +1,32 @@
 package io.yawp.driver.postgresql;
 
+import io.yawp.commons.utils.Environment;
 import io.yawp.driver.api.EnvironmentDriver;
 
 public class PGEnvironmentDriver implements EnvironmentDriver {
 
     @Override
     public boolean isProduction() {
-        // TODO Auto-generated method stub
-        return false;
+        return envContains("production");
     }
 
     @Override
     public boolean isDevelopment() {
-        // TODO Auto-generated method stub
-        return true;
+        return envContains("development");
     }
 
     @Override
     public boolean isTest() {
-        // TODO Auto-generated method stub
-        return true;
+        return envContains("test");
     }
 
     @Override
     public boolean isAdmin() {
-        // TODO Auto-generated method stub
-        return true;
+        return false;
+    }
+
+    private boolean envContains(String env) {
+        return Environment.getOrDefault().toLowerCase().contains(env);
     }
 
 }

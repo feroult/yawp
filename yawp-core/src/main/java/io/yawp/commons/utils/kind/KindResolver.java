@@ -1,11 +1,10 @@
 package io.yawp.commons.utils.kind;
 
-import io.yawp.repository.Repository;
-
 public abstract class KindResolver {
 
     public abstract String getKind(Class<?> clazz);
 
+    @Deprecated
     public abstract String getPath(String kind);
 
     private static final String KINDRESOLVER_SETTING_KEY = "yawp.kindresolver";
@@ -31,11 +30,6 @@ public abstract class KindResolver {
 
     public static String getKindFromClass(Class<?> clazz) {
         return kindResolver.getKind(clazz);
-    }
-
-    public static Class<?> getClassFromKind(Repository r, String kind) {
-        String endpointPath = kindResolver.getPath(kind);
-        return r.getFeatures().get(endpointPath).getClazz();
     }
 
 }

@@ -65,10 +65,10 @@ after() {
 run_scaffolds() {
     echo "runnning scaffolds..."
 
-    mvn yawp:endpoint -Dmodel=person
-    mvn yawp:action -Dmodel=person -Dname=dummy
-    mvn yawp:transformer -Dmodel=person -Dname=dummy
-    mvn yawp:hook -Dmodel=person -Dname=dummy
+    mvn yawp:endpoint -Dmodel=person_address
+    mvn yawp:action -Dmodel=person_address -Dname=dummy
+    mvn yawp:transformer -Dmodel=person_address -Dname=dummy
+    mvn yawp:hook -Dmodel=person_address -Dname=dummy
 
     mvn clean install
 }
@@ -89,7 +89,7 @@ run_smoke_tests() {
     echo "done."
 
     echo "calling endpoint..."
-    ID=$(curl -f -sS -H "Content-type: application/json" -X POST -d "{}" http://localhost:8081/api/people | sed -e 's/^.*"id":"\([^"]*\)".*$/\1/')
+    ID=$(curl -f -sS -H "Content-type: application/json" -X POST -d "{}" http://localhost:8081/api/person-addresses | sed -e 's/^.*"id":"\([^"]*\)".*$/\1/')
     echo "created person: $ID"
 
     curl -f -v http://localhost:8081/api$ID; echo
@@ -108,7 +108,7 @@ run_smoke_tests() {
 
 postgresql_last_check() {
     echo "executing last specific postgresql driver check"
-    RESULT=$(psql -d yawpsmoke_development -c "select * from people" | grep people)
+    RESULT=$(psql -d yawpsmoke_development -c "select * from person_addresses" | grep person_addresses)
     if [ -z "$RESULT" ]; then
         exit 1
     fi

@@ -10,7 +10,7 @@ public class DefaultKindResolver extends KindResolver {
         if (endpoint.path() == null) {
             return clazz.getSimpleName();
         }
-        return endpoint.path().substring(1);
+        return endpoint.path().substring(1).replaceAll("-", "_");
     }
 
     @Override

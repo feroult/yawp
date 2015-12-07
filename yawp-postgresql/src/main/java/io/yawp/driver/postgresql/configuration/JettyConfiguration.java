@@ -20,13 +20,10 @@ public class JettyConfiguration {
 
     private String path;
 
-    private String env;
-
     private Map<String, DataSourceInfo> envs;
 
     public JettyConfiguration(String path) {
         this.path = path;
-        this.env = "test";
         load();
     }
 

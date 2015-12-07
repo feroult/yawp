@@ -4,7 +4,7 @@ import io.yawp.commons.utils.Environment;
 import io.yawp.commons.utils.ResourceFinder;
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.driver.postgresql.configuration.InitialContextSetup;
-import io.yawp.driver.postgresql.datastore.SchemaSynchronizer;
+import io.yawp.driver.postgresql.tools.DatabaseSynchronizer;
 import io.yawp.repository.Repository;
 
 import java.io.File;
@@ -16,7 +16,7 @@ public class PGTestHelper implements TestHelper {
 
     private Repository r;
 
-    SchemaSynchronizer schemaSynchronizer = new SchemaSynchronizer();
+    DatabaseSynchronizer dbSynchronizer = new DatabaseSynchronizer();
 
     @Override
     public void init(Repository r) {
@@ -35,13 +35,13 @@ public class PGTestHelper implements TestHelper {
     }
 
     private void resetTables() {
-        schemaSynchronizer.recreate("public");
-        schemaSynchronizer.sync(r.getFeatures().getEndpointClazzes());
+        dbSynchronizer.recreate("public");
+        dbSynchronizer.sync(r.getFeatures().getEndpointClazzes());
     }
 
     @Override
     public void setUp() {
-        schemaSynchronizer.truncateAll();
+        dbSynchronizer.truncateAll();
     }
 
     @Override

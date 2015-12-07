@@ -3,15 +3,13 @@ package io.yawp.driver.postgresql.datastore;
 import io.yawp.commons.utils.Environment;
 import io.yawp.driver.postgresql.Person;
 import io.yawp.driver.postgresql.configuration.InitialContextSetup;
+import io.yawp.driver.postgresql.tools.DatabaseSynchronizer;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
-import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-
-import java.sql.Connection;
 
 public class DatastoreTestCase {
 
@@ -46,8 +44,8 @@ public class DatastoreTestCase {
     }
 
     private static void syncTables() {
-        SchemaSynchronizer schemaSynchronizer = new SchemaSynchronizer();
-        schemaSynchronizer.sync(yawp.getFeatures().getEndpointClazzes());
+        DatabaseSynchronizer dbSynchronizer = new DatabaseSynchronizer();
+        dbSynchronizer.sync(yawp.getFeatures().getEndpointClazzes());
     }
 
     @SuppressWarnings("unused")

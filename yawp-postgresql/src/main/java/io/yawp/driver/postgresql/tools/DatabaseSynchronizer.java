@@ -1,4 +1,4 @@
-package io.yawp.driver.postgresql.datastore;
+package io.yawp.driver.postgresql.tools;
 
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class SchemaSynchronizer {
+public class DatabaseSynchronizer {
 
     private static final String SQL_CATALOG_SELECT = "SELECT c.* FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace";
 

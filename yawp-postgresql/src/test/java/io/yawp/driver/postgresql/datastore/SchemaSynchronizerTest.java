@@ -10,7 +10,8 @@ public class SchemaSynchronizerTest extends DatastoreTestCase {
     @Test
     public void testCreateTables() {
         RepositoryFeatures features = new EndpointScanner(testPackage()).scan();
-        SchemaSynchronizer.sync(features.getEndpointClazzes());
+        SchemaSynchronizer schemaSynchronizer = new SchemaSynchronizer();
+        schemaSynchronizer.sync(features.getEndpointClazzes());
     }
 
 }

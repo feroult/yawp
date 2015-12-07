@@ -43,6 +43,10 @@ public class ConnectionManager {
         }
     }
 
+    public void execute(String sql) {
+        execute(new SqlRunner(sql));
+    }
+
     public synchronized void beginTransaction() {
         if (isTransactionInProgress()) {
             throw new RuntimeException("Another transaction already in progress");

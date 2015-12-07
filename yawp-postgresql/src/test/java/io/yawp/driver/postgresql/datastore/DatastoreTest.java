@@ -34,7 +34,7 @@ public class DatastoreTest extends DatastoreTestCase {
     }
 
     private void truncate() {
-        new SqlRunner("truncate table people;").execute(connection);
+        connectionManager.execute("truncate table people;");
     }
 
     @Test

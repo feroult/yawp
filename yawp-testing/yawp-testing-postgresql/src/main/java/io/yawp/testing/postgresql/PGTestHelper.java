@@ -12,8 +12,11 @@ import java.io.IOException;
 
 public class PGTestHelper implements TestHelper {
 
-    public static final String INTERNAL_TEST_JETTY_ENV_XML = "configuration/jetty-env.xml";
+    private static final String INTERNAL_TEST_JETTY_ENV_XML = "configuration/jetty-env.xml";
+
     private Repository r;
+
+    SchemaSynchronizer schemaSynchronizer = new SchemaSynchronizer();
 
     @Override
     public void init(Repository r) {
@@ -32,13 +35,13 @@ public class PGTestHelper implements TestHelper {
     }
 
     private void resetTables() {
-        SchemaSynchronizer.recreate("public");
-        SchemaSynchronizer.sync(r.getFeatures().getEndpointClazzes());
+        schemaSynchronizer.recreate("public");
+        schemaSynchronizer.sync(r.getFeatures().getEndpointClazzes());
     }
 
     @Override
     public void setUp() {
-        SchemaSynchronizer.truncateAll();
+        schemaSynchronizer.truncateAll();
     }
 
     @Override
@@ -59,7 +62,7 @@ public class PGTestHelper implements TestHelper {
     }
 
     private String getBaseDir() {
-        if(Environment.getBaseDir() != null) {
+        if (Environment.getBaseDir() != null) {
             return Environment.getBaseDir();
         }
         return PGTestHelper.class.getResource("/").getFile() + "../../";

@@ -8,20 +8,23 @@ import io.yawp.driver.postgresql.datastore.SchemaSynchronizer;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.RepositoryFeatures;
 
+import javax.xml.validation.Schema;
 import java.io.File;
 import java.util.Set;
 
 public class PGHelpersDriver implements HelpersDriver {
 
+    private SchemaSynchronizer schemaSynchronizer = new SchemaSynchronizer();
+
     @Override
     public void deleteAll() {
-        SchemaSynchronizer.truncateAll();
+        schemaSynchronizer.truncateAll();
     }
 
     @Override
     public void sync() {
         InitialContextSetup.configure(getJettyConfigFile());
-        SchemaSynchronizer.sync(scanEndpointClazzes());
+        schemaSynchronizer.sync(scanEndpointClazzes());
     }
 
     private Set<Class<?>> scanEndpointClazzes() {

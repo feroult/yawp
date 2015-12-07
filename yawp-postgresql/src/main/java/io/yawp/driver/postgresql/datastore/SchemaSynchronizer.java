@@ -1,5 +1,6 @@
 package io.yawp.driver.postgresql.datastore;
 
+import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
 import io.yawp.repository.ObjectModel;
 
@@ -17,7 +18,9 @@ public class SchemaSynchronizer {
 
     private static final String SQL_CREATE_TABLE = "create table %s (id bigserial primary key, key jsonb, properties jsonb)";
 
-    public static void sync(Set<Class<?>> endpointClazzes) {
+    private ConnectionManager connectionManager = new ConnectionManager();
+
+    public void sync(Set<Class<?>> endpointClazzes) {
         List<String> existingTables = getExistingTables();
 
         for (Class<?> endpointClazz : endpointClazzes) {
@@ -25,7 +28,7 @@ public class SchemaSynchronizer {
         }
     }
 
-    protected static List<String> getExistingTables() {
+    protected List<String> getExistingTables() {
         String sql = String.format("%s %s", SQL_CATALOG_SELECT, SQL_CATALOG_TABLES);
 
         SqlRunner runner = new SqlRunner(sql) {
@@ -41,10 +44,10 @@ public class SchemaSynchronizer {
             }
         };
 
-        return runner.executeQuery();
+        return connectionManager.executeQuery(runner);
     }
 
-    private static void sync(List<String> existingTables, Class<?> endpointClazz) {
+    private void sync(List<String> existingTables, Class<?> endpointClazz) {
         ObjectModel model = new ObjectModel(endpointClazz);
 
         if (existingTables.contains(model.getKind())) {
@@ -54,23 +57,23 @@ public class SchemaSynchronizer {
         createTable(model.getKind());
     }
 
-    private static void createTable(String kind) {
-        new SqlRunner(String.format(SQL_CREATE_TABLE, kind)).execute();
+    private void createTable(String kind) {
+        connectionManager.execute(String.format(SQL_CREATE_TABLE, kind));
     }
 
-    public static void recreate(String schema) {
-        new SqlRunner(String.format("drop schema %s cascade; create schema %s;", schema, schema)).execute();
+    public void recreate(String schema) {
+        connectionManager.execute(String.format("drop schema %s cascade; create schema %s;", schema, schema));
     }
 
-    public static void truncateAll() {
+    public void truncateAll() {
         List<String> existingTables = getExistingTables();
         for (String table : existingTables) {
             truncate(table);
         }
     }
 
-    private static void truncate(String table) {
-        new SqlRunner(String.format("truncate table %s cascade", table)).execute();
+    private void truncate(String table) {
+        connectionManager.execute(String.format("truncate table %s cascade", table));
     }
 
 }

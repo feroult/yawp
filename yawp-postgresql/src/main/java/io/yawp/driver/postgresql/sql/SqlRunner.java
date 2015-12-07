@@ -66,17 +66,8 @@ public class SqlRunner {
         }
     }
 
-    public <T> T executeQuery() {
-        Connection connection = ConnectionPool.connection();
-        try {
-            return executeQuery(connection);
-        } finally {
-            ConnectionPool.close(connection);
-        }
-    }
-
     @SuppressWarnings("unchecked")
-    public <T> T executeQuery(Connection connection) {
+    protected <T> T executeQuery(Connection connection) {
         PreparedStatement ps = null;
         ResultSet rs = null;
 
@@ -114,16 +105,7 @@ public class SqlRunner {
         }
     }
 
-    public void execute() {
-        Connection connection = ConnectionPool.connection();
-        try {
-            execute(connection);
-        } finally {
-            ConnectionPool.close(connection);
-        }
-    }
-
-    public void execute(Connection connection) {
+    protected void execute(Connection connection) {
         PreparedStatement ps = null;
 
         try {

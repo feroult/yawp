@@ -19,6 +19,7 @@
                 <artifactId>yawp-maven-plugin</artifactId>
                 <version>${pom.version}</version>
                 <configuration>
+                    <env>test</env>
                     <baseDir>./target/scaffolding-test</baseDir>
                     <yawpPackage>yawpapp</yawpPackage>
                     <model>person</model>

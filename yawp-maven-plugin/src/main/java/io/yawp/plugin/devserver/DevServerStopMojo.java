@@ -11,7 +11,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 @Mojo(name = "devserver_stop")
 public class DevServerStopMojo extends DevserverAbstractMojo {
 
-    public void execute() throws MojoExecutionException {
+    @Override
+    public void run() throws MojoExecutionException {
         shutdown();
     }
 

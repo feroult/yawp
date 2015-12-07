@@ -12,7 +12,8 @@ public class HookMojo extends ScaffolderAbstractMojo {
     @Parameter(property = "name", required = true)
     protected String name;
 
-    public void execute() throws MojoExecutionException {
+    @Override
+    public void run() throws MojoExecutionException {
         HookScaffolder scaffolder = new HookScaffolder(getLog(), yawpPackage, model, name);
         scaffolder.createTo(baseDir);
     }

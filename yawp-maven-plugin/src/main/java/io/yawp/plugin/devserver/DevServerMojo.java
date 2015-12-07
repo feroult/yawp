@@ -33,7 +33,8 @@ public class DevServerMojo extends DevserverAbstractMojo {
 
     private WebAppContextHelper helper;
 
-    public void execute() throws MojoExecutionException {
+    @Override
+    public void run() throws MojoExecutionException {
         initHelper();
         startServer();
         startShutdownMonitor();

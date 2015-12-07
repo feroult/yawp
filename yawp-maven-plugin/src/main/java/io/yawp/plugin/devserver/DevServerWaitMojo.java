@@ -15,7 +15,8 @@ public class DevServerWaitMojo extends DevserverAbstractMojo {
 
     private static final int MAX_RETRIES = 2 * 60;
 
-    public void execute() throws MojoExecutionException {
+    @Override
+    public void run() throws MojoExecutionException {
         waitSever();
     }
 

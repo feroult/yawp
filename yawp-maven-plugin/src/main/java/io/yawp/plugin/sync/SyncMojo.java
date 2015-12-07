@@ -19,11 +19,10 @@ import java.net.URLClassLoader;
 public class SyncMojo extends PluginAbstractMojo {
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void run() throws MojoExecutionException, MojoFailureException {
         configureRuntimeClassLoader();
         Driver driver = ServiceLookup.lookup(Driver.class);
 
-        Environment.set(env);
         Environment.setAppDir(appDir);
 
         driver.helpers().sync();

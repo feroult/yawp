@@ -12,7 +12,8 @@ public class TransformerMojo extends ScaffolderAbstractMojo {
     @Parameter(property = "name", required = true)
     protected String name;
 
-    public void execute() throws MojoExecutionException {
+    @Override
+    public void run() throws MojoExecutionException {
         TransformerScaffolder scaffolder = new TransformerScaffolder(getLog(), yawpPackage, model, name);
         scaffolder.createTo(baseDir);
     }

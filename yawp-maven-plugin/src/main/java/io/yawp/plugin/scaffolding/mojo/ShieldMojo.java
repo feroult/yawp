@@ -8,7 +8,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 @Mojo(name = "shield")
 public class ShieldMojo extends ScaffolderAbstractMojo {
 
-    public void execute() throws MojoExecutionException {
+    @Override
+    public void run() throws MojoExecutionException {
         ShieldScaffolder scaffolder = new ShieldScaffolder(getLog(), yawpPackage, model);
         scaffolder.createTo(baseDir);
     }

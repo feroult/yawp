@@ -2,8 +2,11 @@ package io.yawp.plugin.base;
 
 import java.util.List;
 
+import io.yawp.commons.utils.Environment;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
@@ -40,6 +43,14 @@ public abstract class PluginAbstractMojo extends AbstractMojo {
 
     @Parameter(property = "yawp.appDir", defaultValue = "${basedir}/src/main/webapp")
     protected String appDir;
+
+    public abstract void run() throws MojoExecutionException, MojoFailureException;
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        Environment.set(env);
+        run();
+    }
 
     public RepositorySystem getRepoSystem() {
         return repoSystem;

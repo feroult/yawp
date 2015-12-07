@@ -7,6 +7,8 @@ import javax.sql.DataSource;
 
 public class DataSourceInfo {
 
+    public static final String JDBC_YAWP_INIT = "jdbc/_yawp_init";
+
     private String name;
 
     private String driverClassName;
@@ -49,7 +51,7 @@ public class DataSourceInfo {
     public DataSourceInfo getInitDatasource() {
         DataSourceInfo dsInit = new DataSourceInfo();
 
-        dsInit.setName("jdbc/_yawp_init");
+        dsInit.setName(JDBC_YAWP_INIT);
         dsInit.setDriverClassName(getDriverClassName());
         dsInit.setUrl(getInitDatabaseUrl());
 

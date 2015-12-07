@@ -4,17 +4,27 @@ import java.sql.Connection;
 
 public class ConnectionManager {
 
+    private ConnectionPool connectionPool;
+
     private Connection connection;
+
+    public ConnectionManager() {
+        this.connectionPool = new ConnectionPool();
+    }
+
+    public ConnectionManager(String dataSourceName) {
+        this.connectionPool = new ConnectionPool(dataSourceName);
+    }
 
     private Connection getConnection() {
         if (isTransactionInProgress()) {
             return connection;
         }
-        return ConnectionPool.connection();
+        return connectionPool.connection();
     }
 
     private void returnToPool(Connection connection) {
-        ConnectionPool.close(connection);
+        connectionPool.close(connection);
     }
 
     private boolean isTransactionInProgress() {
@@ -52,14 +62,14 @@ public class ConnectionManager {
             throw new RuntimeException("Another transaction already in progress");
         }
 
-        this.connection = ConnectionPool.connection(false);
+        this.connection = connectionPool.connection(false);
     }
 
     public synchronized void rollback() {
         if (!isTransactionInProgress()) {
             throw new RuntimeException("No transaction already in progress");
         }
-        ConnectionPool.rollbackAndClose(connection);
+        connectionPool.rollbackAndClose(connection);
         this.connection = null;
     }
 
@@ -67,7 +77,7 @@ public class ConnectionManager {
         if (!isTransactionInProgress()) {
             throw new RuntimeException("No transaction already in progress");
         }
-        ConnectionPool.commitAndClose(connection);
+        connectionPool.commitAndClose(connection);
         this.connection = null;
     }
 

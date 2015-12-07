@@ -2,34 +2,35 @@ package io.yawp.driver.postgresql.sql;
 
 import io.yawp.commons.utils.Environment;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class ConnectionPool {
 
     private static final String JDBC_YAWP_PREFIX = "jdbc/yawp_";
 
-    public static Connection connection() {
-        return connection(true, null);
+    private String dataSourceName;
+
+    public ConnectionPool() {
+        this.dataSourceName = JDBC_YAWP_PREFIX + Environment.getOrDefault();
     }
 
-    public static Connection connection(String dataSourceName) {
-        return connection(true, dataSourceName);
+    public ConnectionPool(String dataSourceName) {
+        this.dataSourceName = dataSourceName;
     }
 
-    public static Connection connection(boolean autoCommit) {
-        return connection(autoCommit, null);
+    protected Connection connection() {
+        return connection(true);
     }
 
-    public static Connection connection(boolean autoCommit, String dataSourceName) {
+    protected Connection connection(boolean autoCommit) {
         try {
             Context ctx = (Context) new InitialContext().lookup("java:comp/env");
-            DataSource ds = (DataSource) ctx.lookup(defineDatasourceName(dataSourceName));
+            DataSource ds = (DataSource) ctx.lookup(dataSourceName);
             Connection connection = ds.getConnection();
             connection.setAutoCommit(autoCommit);
             return connection;
@@ -38,14 +39,7 @@ public class ConnectionPool {
         }
     }
 
-    private static String defineDatasourceName(String dataSourceName) {
-        if(dataSourceName != null) {
-            return dataSourceName;
-        }
-        return JDBC_YAWP_PREFIX + Environment.getOrDefault();
-    }
-
-    public static void close(Connection connection) {
+    protected void close(Connection connection) {
         try {
             connection.close();
         } catch (SQLException e) {
@@ -53,7 +47,7 @@ public class ConnectionPool {
         }
     }
 
-    public static void rollbackAndClose(Connection connection) {
+    protected void rollbackAndClose(Connection connection) {
         try {
             connection.rollback();
         } catch (SQLException e) {
@@ -63,7 +57,7 @@ public class ConnectionPool {
         }
     }
 
-    public static void commitAndClose(Connection connection) {
+    protected void commitAndClose(Connection connection) {
         try {
             connection.commit();
         } catch (SQLException e) {

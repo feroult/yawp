@@ -7,7 +7,7 @@ import javax.sql.DataSource;
 
 public class DataSourceInfo {
 
-    public static final String JDBC_YAWP_INIT = "jdbc/_yawp_init";
+    public static final String INIT_DATASOURCE = "jdbc/_yawp_init";
 
     private String name;
 
@@ -44,6 +44,7 @@ public class DataSourceInfo {
 
         ds.setDriverClassName(driverClassName);
         ds.setUrl(url);
+        ds.setMaxTotal(50);
 
         return ds;
     }
@@ -51,7 +52,7 @@ public class DataSourceInfo {
     public DataSourceInfo getInitDatasource() {
         DataSourceInfo dsInit = new DataSourceInfo();
 
-        dsInit.setName(JDBC_YAWP_INIT);
+        dsInit.setName(INIT_DATASOURCE);
         dsInit.setDriverClassName(getDriverClassName());
         dsInit.setUrl(getInitDatabaseUrl());
 
@@ -61,5 +62,16 @@ public class DataSourceInfo {
     public String getInitDatabaseUrl() {
         int endIndex = StringUtils.ordinalIndexOf(url, "/", 3) + 1;
         return url.substring(0, endIndex) + "template1";
+    }
+
+    public String getDatabaseName() {
+        int startIndex = StringUtils.ordinalIndexOf(url, "/", 3) + 1;
+        String databaseName = url.substring(startIndex);
+
+        int endIndex = databaseName.indexOf("?");
+        if(endIndex == -1) {
+            return databaseName;
+        }
+        return databaseName.substring(0, endIndex);
     }
 }

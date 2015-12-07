@@ -81,8 +81,10 @@ public class InitialContextSetup implements InitialContextFactory {
             return;
         }
 
-        JettyConfiguration configuration = new JettyConfiguration(file.getAbsolutePath());
+        JettyConfiguration configuration = JettyConfiguration.load(file.getAbsolutePath());
         DataSourceInfo dsInfo = configuration.getDatasourceInfo(Environment.getOrDefault());
+
+        bind(DataSourceInfo.INIT_DATASOURCE, dsInfo.getInitDatasource().buildDatasource());
         bind(envDataSourceName(), dsInfo.buildDatasource());
     }
 

@@ -24,7 +24,7 @@ public class SyncMojo extends PluginAbstractMojo {
         Driver driver = ServiceLookup.lookup(Driver.class);
 
         Environment.set(env);
-        Environment.setBaseDir(baseDir);
+        Environment.setAppDir(appDir);
 
         driver.helpers().sync();
     }

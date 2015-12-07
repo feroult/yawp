@@ -11,7 +11,7 @@ public class Environment {
 
     private static final String YAWP_ENV = "yawp.env";
 
-    private static final String YAWP_BASE_DIR = "yawp.dir";
+    private static final String YAWP_APP_DIR = "yawp.dir";
 
     public static boolean isProduction() {
         if (get() != null) {
@@ -42,6 +42,13 @@ public class Environment {
         System.setProperty(YAWP_ENV, env);
     }
 
+    public static void setIfEmpty(String env) {
+        if (get() != null) {
+            return;
+        }
+        set(env);
+    }
+
     public static String get() {
         return System.getProperty(YAWP_ENV);
     }
@@ -54,12 +61,11 @@ public class Environment {
         return DEFAULT_DEVELOPMENT_ENVIRONMENT;
     }
 
-    public static void setBaseDir(String baseDir) {
-        System.setProperty(YAWP_BASE_DIR, baseDir);
+    public static void setAppDir(String appDir) {
+        System.setProperty(YAWP_APP_DIR, appDir);
     }
 
-    public static String getBaseDir() {
-        return System.getProperty(YAWP_BASE_DIR);
+    public static String getAppDir() {
+        return System.getProperty(YAWP_APP_DIR);
     }
-
 }

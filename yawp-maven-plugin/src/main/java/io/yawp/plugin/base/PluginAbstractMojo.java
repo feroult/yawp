@@ -38,6 +38,9 @@ public abstract class PluginAbstractMojo extends AbstractMojo {
     @Parameter(property = "yawp.dir", defaultValue = "${basedir}")
     protected String baseDir;
 
+    @Parameter(property = "yawp.appDir", defaultValue = "${basedir}/src/main/webapp")
+    protected String appDir;
+
     public RepositorySystem getRepoSystem() {
         return repoSystem;
     }
@@ -73,5 +76,9 @@ public abstract class PluginAbstractMojo extends AbstractMojo {
 
     protected boolean isPostgreSQL() {
         return !isAppengine();
+    }
+
+    public String getAppDir() {
+        return appDir;
     }
 }

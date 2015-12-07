@@ -14,13 +14,24 @@
         </Arg>
     </New>
 
+    <New id="yawp_test_creation" class="org.mortbay.jetty.plus.naming.Resource">
+        <Arg></Arg>
+        <Arg>java:comp/env/jdbc/yawp_test</Arg>
+        <Arg>
+            <New class="org.apache.commons.dbcp2.BasicDataSource">
+                <Set name="driverClassName">org.postgresql.Driver</Set>
+                <Set name="url">jdbc:postgresql://localhost/yawp_pg_driver_test_creation</Set>
+            </New>
+        </Arg>
+    </New>
+
     <New id="yawp_development" class="org.mortbay.jetty.plus.naming.Resource">
         <Arg></Arg>
         <Arg>java:comp/env/jdbc/yawp_development</Arg>
         <Arg>
             <New class="org.apache.commons.dbcp2.BasicDataSource">
                 <Set name="driverClassName">org.postgresql.Driver</Set>
-                <Set name="url">jdbc:postgresql://127.0.0.1:5432/yawp_pg_driver_development</Set>
+                <Set name="url">jdbc:postgresql://127.0.0.1:5432/yawp_pg_driver_development?user=jim</Set>
             </New>
         </Arg>
     </New>

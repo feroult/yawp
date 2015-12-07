@@ -11,6 +11,9 @@ echo "stopping devserver..."
 mvn yawp:devserver_stop $MAVEN_ARGS
 echo "done."
 
+echo "synchronizing datatastore (if necessary)"
+mvn yawp:sync -Denv=test
+
 echo "starting devserver..."
 mvn yawp:devserver -Dyawp.env=test $MAVEN_ARGS &
 mvn yawp:devserver_wait $MAVEN_ARGS

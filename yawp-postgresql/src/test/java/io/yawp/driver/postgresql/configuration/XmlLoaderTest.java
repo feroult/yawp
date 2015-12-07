@@ -14,7 +14,7 @@ public class XmlLoaderTest {
     @Test
     public void testLoad() throws IOException {
         List<XmlLoader> envs = loadFromXml();
-        assertEquals(3, envs.size());
+        assertEquals(4, envs.size());
     }
 
     @Test

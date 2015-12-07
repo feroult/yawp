@@ -22,6 +22,8 @@ public class EndpointTestCase extends Feature {
 
     @Before
     public void setUp() {
+        Environment.setIfEmpty(Environment.DEFAULT_TEST_ENVIRONMENT);
+
         yawp = Repository.r().setFeatures(features);
         helper = testHelperDriver(yawp);
         helper.setUp();

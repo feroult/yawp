@@ -1,13 +1,9 @@
 package io.yawp.driver.postgresql.datastore;
 
-import io.yawp.commons.utils.Environment;
 import io.yawp.driver.postgresql.Person;
-import io.yawp.driver.postgresql.configuration.InitialContextSetup;
-import io.yawp.driver.postgresql.tools.DatabaseSynchronizer;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 public class DatastoreTestCase {
@@ -18,18 +14,7 @@ public class DatastoreTestCase {
 
     @BeforeClass
     public static void setUpTestCase() throws Exception {
-        configureEnvironment();
         createRepository();
-    }
-
-    @AfterClass
-    public static void tearDownTestCase() {
-        InitialContextSetup.unregister();
-    }
-
-    private static void configureEnvironment() {
-        Environment.set("test");
-        InitialContextSetup.configure("configuration/jetty-env-test.xml");
     }
 
     private static void createRepository() {

@@ -29,9 +29,6 @@ public class DevServerMojo extends DevserverAbstractMojo {
     @Parameter(property = "yawp.hotDeployDir", defaultValue = "${basedir}/target/classes")
     protected String hotDeployDir;
 
-    @Parameter(property = "yawp.appDir", defaultValue = "${basedir}/src/main/webapp")
-    protected String appDir;
-
     protected Server server;
 
     private WebAppContextHelper helper;
@@ -105,7 +102,4 @@ public class DevServerMojo extends DevserverAbstractMojo {
         return Integer.valueOf(fullScanSeconds);
     }
 
-    public String getAppDir() {
-        return appDir;
-    }
 }

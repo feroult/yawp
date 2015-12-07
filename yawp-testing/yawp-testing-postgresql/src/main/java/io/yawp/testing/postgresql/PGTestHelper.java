@@ -16,20 +16,13 @@ public class PGTestHelper implements TestHelper {
 
     private Repository r;
 
-    DatabaseSynchronizer dbSynchronizer = new DatabaseSynchronizer();
+    DatabaseSynchronizer dbSynchronizer;
 
     @Override
     public void init(Repository r) {
         this.r = r;
-        configureEnvironment();
         configureInitialContext();
-        resetTables();
-    }
-
-    private void configureEnvironment() {
-        if (Environment.get() == null) {
-            Environment.set(Environment.DEFAULT_TEST_ENVIRONMENT);
-        }
+        initDatabase();
     }
 
     private void configureInitialContext() {
@@ -40,8 +33,8 @@ public class PGTestHelper implements TestHelper {
         }
     }
 
-    private void resetTables() {
-        dbSynchronizer.recreate("public");
+    private void initDatabase() {
+        dbSynchronizer = new DatabaseSynchronizer();
         dbSynchronizer.sync(r.getFeatures().getEndpointClazzes());
     }
 
@@ -64,14 +57,14 @@ public class PGTestHelper implements TestHelper {
     }
 
     private File getUserJettyConfigFile() {
-        return new File(String.format("%s/src/main/webapp/WEB-INF/jetty-env.xml", getBaseDir()));
+        return new File(String.format("%s/WEB-INF/jetty-env.xml", getAppDir()));
     }
 
-    private String getBaseDir() {
-        if (Environment.getBaseDir() != null) {
-            return Environment.getBaseDir();
+    private String getAppDir() {
+        if (Environment.getAppDir() != null) {
+            return Environment.getAppDir();
         }
-        return PGTestHelper.class.getResource("/").getFile() + "../../";
+        return PGTestHelper.class.getResource("/").getFile() + "../../src/main/webapp";
     }
 
 }

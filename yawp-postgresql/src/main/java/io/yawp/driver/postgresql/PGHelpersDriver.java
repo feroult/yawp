@@ -33,11 +33,11 @@ public class PGHelpersDriver implements HelpersDriver {
     }
 
     private File getJettyConfigFile() {
-        return new File(String.format("%s/src/main/webapp/WEB-INF/jetty-env.xml", Environment.getBaseDir()));
+        return new File(String.format("%s/WEB-INF/jetty-env.xml", Environment.getAppDir()));
     }
 
     private String getWebConfigFile() {
-        return String.format("%s/src/main/webapp/WEB-INF/web.xml", Environment.getBaseDir());
+        return String.format("%s/WEB-INF/web.xml", Environment.getAppDir());
     }
 
 }

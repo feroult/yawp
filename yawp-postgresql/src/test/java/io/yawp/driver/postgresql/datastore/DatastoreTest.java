@@ -4,8 +4,10 @@ import static io.yawp.repository.query.condition.Condition.and;
 import static io.yawp.repository.query.condition.Condition.c;
 import static org.junit.Assert.assertEquals;
 
+import io.yawp.commons.utils.Environment;
 import io.yawp.driver.postgresql.IdRefToKey;
 import io.yawp.driver.postgresql.Person;
+import io.yawp.driver.postgresql.configuration.InitialContextSetup;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.tools.DatabaseSynchronizer;
 import io.yawp.repository.IdRef;
@@ -22,12 +24,23 @@ public class DatastoreTest extends DatastoreTestCase {
 
     @BeforeClass
     public static void setUpClass() {
+        configureEnvironment();
         createDatabase();
     }
 
     @AfterClass
-    public static void tearDownClass() {
-        dropDatabase();
+    public static void tearDownTestCase() {
+        InitialContextSetup.unregister();
+    }
+
+    private static void configureEnvironment() {
+        Environment.set("test");
+        InitialContextSetup.configure("configuration/jetty-env-test.xml");
+    }
+
+    private static void createDatabase() {
+        DatabaseSynchronizer dbSynchronizer = new DatabaseSynchronizer();
+        dbSynchronizer.sync(yawp.getFeatures().getEndpointClazzes());
     }
 
     @Before
@@ -39,15 +52,6 @@ public class DatastoreTest extends DatastoreTestCase {
     @After
     public void after() {
         // truncate();
-    }
-
-    private static void createDatabase() {
-        DatabaseSynchronizer dbSynchronizer = new DatabaseSynchronizer();
-        dbSynchronizer.sync(yawp.getFeatures().getEndpointClazzes());
-    }
-
-    private static void dropDatabase() {
-        // TODO
     }
 
     private void truncate() {

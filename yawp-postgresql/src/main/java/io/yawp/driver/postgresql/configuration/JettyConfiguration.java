@@ -1,5 +1,7 @@
 package io.yawp.driver.postgresql.configuration;
 
+import io.yawp.commons.utils.Environment;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,9 +24,20 @@ public class JettyConfiguration {
 
     private Map<String, DataSourceInfo> envs;
 
-    public JettyConfiguration(String path) {
+    protected static JettyConfiguration instance;
+
+    protected JettyConfiguration(String path) {
         this.path = path;
         load();
+    }
+
+    public static JettyConfiguration load(String path) {
+        instance = new JettyConfiguration(path);
+        return instance;
+    }
+
+    public static JettyConfiguration get() {
+        return instance;
     }
 
     private void load() {
@@ -64,4 +77,7 @@ public class JettyConfiguration {
         return envs.get(env);
     }
 
+    public DataSourceInfo getDatasourceInfo() {
+        return envs.get(Environment.getOrDefault());
+    }
 }

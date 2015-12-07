@@ -15,7 +15,7 @@ public class JettyConfigurationTest {
 
     @Before
     public void setUp() throws IOException {
-        config = new JettyConfiguration(getPath());
+        config = JettyConfiguration.load(getPath());
     }
 
     @Test
@@ -24,6 +24,13 @@ public class JettyConfigurationTest {
         assertEquals("jdbc/yawp_test", dsTest.getName());
         assertEquals("org.postgresql.Driver", dsTest.getDriverClassName());
         assertEquals("jdbc:postgresql://localhost/yawp_pg_driver_test", dsTest.getUrl());
+        assertEquals("yawp_pg_driver_test", dsTest.getDatabaseName());
+
+        DataSourceInfo dsDevelopment = config.getDatasourceInfo("development");
+        assertEquals("jdbc/yawp_development", dsDevelopment.getName());
+        assertEquals("org.postgresql.Driver", dsDevelopment.getDriverClassName());
+        assertEquals("jdbc:postgresql://127.0.0.1:5432/yawp_pg_driver_development?user=jim", dsDevelopment.getUrl());
+        assertEquals("yawp_pg_driver_development", dsDevelopment.getDatabaseName());
     }
 
     @Test
@@ -39,6 +46,7 @@ public class JettyConfigurationTest {
         assertEquals("jdbc/_yawp_init", dsInitForDevelopment.getName());
         assertEquals("org.postgresql.Driver", dsInitForDevelopment.getDriverClassName());
         assertEquals("jdbc:postgresql://127.0.0.1:5432/template1", dsInitForDevelopment.getUrl());
+
     }
 
     private String getPath() throws IOException {

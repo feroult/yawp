@@ -1,6 +1,6 @@
 package io.yawp.driver.postgresql.datastore;
 
-import io.yawp.driver.postgresql.Person;
+import io.yawp.driver.postgresql.datastore.models.Parent;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
@@ -27,7 +27,7 @@ public class DatastoreTestCase {
     }
 
     protected static String testPackage() {
-        return Person.class.getPackage().getName();
+        return Parent.class.getPackage().getName();
     }
 
 }

@@ -1,15 +1,19 @@
-package io.yawp.driver.postgresql;
+package io.yawp.driver.postgresql.datastore.models;
 
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
+import io.yawp.repository.annotations.ParentId;
 
-@Endpoint(path = "/people")
-public class Person {
+@Endpoint(path = "/children")
+public class Child {
 
     @Id
-    private IdRef<Person> id;
+    private IdRef<Child> id;
+
+    @ParentId
+    private IdRef<Parent> parentId;
 
     @Index
     private String name;
@@ -17,11 +21,11 @@ public class Person {
     @Index
     private Integer age;
 
-    protected IdRef<Person> getId() {
+    protected IdRef<Child> getId() {
         return id;
     }
 
-    protected void setId(IdRef<Person> id) {
+    protected void setId(IdRef<Child> id) {
         this.id = id;
     }
 

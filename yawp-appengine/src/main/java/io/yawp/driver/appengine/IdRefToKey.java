@@ -2,6 +2,7 @@ package io.yawp.driver.appengine;
 
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.ObjectModel;
 import io.yawp.repository.Repository;
 
 import com.google.appengine.api.datastore.Key;
@@ -28,20 +29,20 @@ public class IdRefToKey {
         }
     }
 
-    public static IdRef<?> toIdRef(Repository r, Key key) {
-        if (key == null) {
-            return null;
-        }
+    public static IdRef<?> toIdRef(Repository r, Key key, ObjectModel model) {
+        Class<?> objectClass = model.getClazz();
 
-        Class<?> objectClass = KindResolver.getClassFromKind(r, key.getKind());
-
-        IdRef<?> ref = null;
+        IdRef<?> idRef = null;
         if (key.getName() != null) {
-            ref = IdRef.create(r, objectClass, key.getName());
+            idRef = IdRef.create(r, objectClass, key.getName());
         } else {
-            ref = IdRef.create(r, objectClass, key.getId());
+            idRef = IdRef.create(r, objectClass, key.getId());
         }
-        ref.setParentId(toIdRef(r, key.getParent()));
-        return ref;
+
+        if (model.hasParent()) {
+            idRef.setParentId(toIdRef(r, key.getParent(), model.getParentModel()));
+        }
+        return idRef;
     }
+
 }

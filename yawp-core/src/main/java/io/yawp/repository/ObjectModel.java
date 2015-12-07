@@ -47,6 +47,14 @@ public class ObjectModel {
         return (Class<?>) ReflectionUtils.getGenericParameter(parentField);
     }
 
+    public boolean hasParent() {
+        return getParentClazz() != null;
+    }
+
+    public ObjectModel getParentModel() {
+        return new ObjectModel(getParentClazz());
+    }
+
     public Class<?> getAncestorClazz(int ancestor) {
         Class<?> parentClazz = clazz;
         for (int i = 0; i <= ancestor; i++) {

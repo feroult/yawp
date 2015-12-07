@@ -83,7 +83,7 @@ public class AppengineQueryDriver implements QueryDriver {
             List<IdRef<T>> ids = new ArrayList<>();
 
             for (Entity entity : queryResult) {
-                ids.add((IdRef<T>) IdRefToKey.toIdRef(r, entity.getKey()));
+                ids.add((IdRef<T>) IdRefToKey.toIdRef(r, entity.getKey(), builder.getModel()));
             }
 
             return ids;
@@ -186,7 +186,7 @@ public class AppengineQueryDriver implements QueryDriver {
         Object object = model.createInstance();
 
         ObjectHolder objectHolder = new ObjectHolder(object);
-        objectHolder.setId(IdRefToKey.toIdRef(r, entity.getKey()));
+        objectHolder.setId(IdRefToKey.toIdRef(r, entity.getKey(), model));
 
         List<FieldModel> fieldModels = objectHolder.getModel().getFieldModels();
 

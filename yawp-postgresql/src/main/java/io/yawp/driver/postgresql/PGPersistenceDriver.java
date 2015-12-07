@@ -71,13 +71,13 @@ public class PGPersistenceDriver implements PersistenceDriver {
 
     private void saveEntity(ObjectHolder objectHolder, Entity entity) {
         Key key = datastore.put(entity);
-        objectHolder.setId(IdRefToKey.toIdRef(r, key));
+        objectHolder.setId(IdRefToKey.toIdRef(r, key, objectHolder.getModel()));
     }
 
     @SuppressWarnings("unchecked")
     private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectHolder, Entity entity) {
         Key key = datastore.put(entity);
-        Future<?> futureId = ConcurrentUtils.constantFuture(IdRefToKey.toIdRef(r, key));
+        Future<?> futureId = ConcurrentUtils.constantFuture(IdRefToKey.toIdRef(r, key, objectHolder.getModel()));
         return new FutureObject<T>(r, (Future<IdRef<?>>) futureId, (T) objectHolder.getObject());
     }
 

@@ -26,7 +26,7 @@ public class DatabaseSynchronizer {
 
     private static final String SQL_CATALOG_TABLES = "WHERE c.relkind = 'r' AND n.nspname = ANY (CURRENT_SCHEMAS(false))";
 
-    private static final String SQL_CREATE_TABLE = "create table %s (id bigserial primary key, key jsonb, properties jsonb)";
+    private static final String SQL_TABLE_CREATE = "create table \"%s\" (id bigserial primary key, key jsonb, properties jsonb)";
 
     private ConnectionManager initConnectionManager = new ConnectionManager(DataSourceInfo.INIT_DATASOURCE);
 
@@ -122,7 +122,7 @@ public class DatabaseSynchronizer {
     }
 
     private void createTable(String kind) {
-        connectionManager.execute(String.format(SQL_CREATE_TABLE, kind));
+        connectionManager.execute(String.format(SQL_TABLE_CREATE, kind));
     }
 
     public void recreate(String schema) {

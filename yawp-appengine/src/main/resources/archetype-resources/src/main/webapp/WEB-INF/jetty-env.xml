@@ -3,7 +3,7 @@
 
 <Configure class="org.mortbay.jetty.webapp.WebAppContext">
 
-    <New id="DSTest" class="org.mortbay.jetty.plus.naming.Resource">
+    <New id="yawp_test" class="org.mortbay.jetty.plus.naming.Resource">
         <Arg></Arg>
         <Arg>java:comp/env/jdbc/yawp_test</Arg>
         <Arg>
@@ -14,7 +14,7 @@
         </Arg>
     </New>
 
-    <New id="DSDevelopment" class="org.mortbay.jetty.plus.naming.Resource">
+    <New id="yawp_development" class="org.mortbay.jetty.plus.naming.Resource">
         <Arg></Arg>
         <Arg>java:comp/env/jdbc/yawp_development</Arg>
         <Arg>
@@ -25,7 +25,7 @@
         </Arg>
     </New>
 
-    <New id="DSProduction" class="org.mortbay.jetty.plus.naming.Resource">
+    <New id="yawp_production" class="org.mortbay.jetty.plus.naming.Resource">
         <Arg></Arg>
         <Arg>java:comp/env/jdbc/yawp_production</Arg>
         <Arg>

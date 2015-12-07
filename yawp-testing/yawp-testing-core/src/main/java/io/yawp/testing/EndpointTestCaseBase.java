@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.yawp.commons.http.HttpException;
+import io.yawp.commons.utils.Environment;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.driver.api.testing.TestHelperFactory;
@@ -32,6 +33,8 @@ public class EndpointTestCaseBase extends Feature {
 
     @Before
     public void setUp() {
+        Environment.setIfEmpty(Environment.DEFAULT_TEST_ENVIRONMENT);
+
         yawp = Repository.r().setFeatures(getFeatures());
         helper = testHelperDriver(yawp);
         helper.setUp();

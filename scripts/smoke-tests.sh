@@ -1,11 +1,12 @@
 #!/bin/bash -e
 
-if [ $# -ne 1 ]; then
-    echo "use: smoke-tests.sh YAWP_VERSION"
+if [ $# -ne 2 ]; then
+    echo "use: smoke-tests.sh YAWP_VERSION DRIVER"
     exit 1
 fi
 
 VERSION=$1
+POSTGRESQL=$2
 WORKING_DIR=.working/smoke-tests
 MAVEN_ARGS="-Dyawp.port=8081 -Dyawp.shutdownPort=8331"
 unset MAVEN_OPTS
@@ -20,12 +21,38 @@ before() {
        -DarchetypeGroupId=io.yawp \
        -DarchetypeArtifactId=yawp \
        -DarchetypeVersion=$VERSION \
-       -DgroupId=yawpapp \
-       -DartifactId=yawpapp \
+       -DgroupId=yawpsmoke \
+       -DartifactId=yawpsmoke \
        -Dversion=1.0-SNAPSHOT \
        --batch-mode
 
-    cd yawpapp
+    cd yawpsmoke
+
+    if is_postgresql; then
+        init_postgresql
+    else
+        init_appengine
+    fi
+}
+
+is_postgresql() {
+    [ -n "$POSTGRESQL" ] && [ "$POSTGRESQL" == "postgresql" ]
+}
+
+init_postgresql() {
+    echo "driver set to postgresql"
+    change_to_postgresql
+    dropdb yawpsmoke_test || true
+    dropdb yawpsmoke_development || true
+}
+
+init_appengine() {
+    echo "driver set to appengine"
+}
+
+change_to_postgresql() {
+    sed -i '' -e "s/<artifactId>yawp<\/artifactId>/<artifactId>yawp-postgresql<\/artifactId>/g" pom.xml
+    sed -i '' -e "s/<artifactId>yawp-testing<\/artifactId>/<artifactId>yawp-testing-postgresql<\/artifactId>/g" pom.xml
 }
 
 after() {
@@ -47,7 +74,10 @@ run_scaffolds() {
 }
 
 run_smoke_tests() {
-    echo "running smoke tests"
+    echo "running smoke tests..."
+
+    echo "synchronizing datastore..."
+    mvn yawp:sync
 
     echo "stopping devserver..."
     mvn yawp:devserver_stop $MAVEN_ARGS
@@ -58,17 +88,37 @@ run_smoke_tests() {
     mvn yawp:devserver_wait $MAVEN_ARGS
     echo "done."
 
-    echo "calling endpoint"
-    curl -v -H "Content-type: application/json" -X POST -d "{}" http://localhost:8081/api/people; echo
-    curl -v http://localhost:8081/api/people/1; echo
-    curl -v http://localhost:8081/api/people/1/dummy; echo
+    echo "calling endpoint..."
+    ID=$(curl -f -sS -H "Content-type: application/json" -X POST -d "{}" http://localhost:8081/api/people | sed -e 's/^.*"id":"\([^"]*\)".*$/\1/')
+    echo "created person: $ID"
+
+    curl -f -v http://localhost:8081/api$ID; echo
+    curl -f -v http://localhost:8081/api$ID/dummy; echo
 
     echo "stopping devserver..."
     mvn yawp:devserver_stop $MAVEN_ARGS
     echo "done."
 
+    if is_postgresql; then
+        postgresql_last_check
+    else
+        appengine_last_check
+    fi
+}
+
+postgresql_last_check() {
+    echo "executing last specific postgresql driver check"
+    RESULT=$(psql -d yawpsmoke_development -c "select * from people" | grep people)
+    if [ -z "$RESULT" ]; then
+        exit 1
+    fi
+}
+
+appengine_last_check() {
+    echo "executing last specific appegine driver check"
     ls target/appengine-generated/local_db.bin
 }
+
 
 run() {
     run_scaffolds

@@ -35,12 +35,11 @@ public class JettyConfiguration {
         for (XmlLoader envXml : allEnvsXml) {
             DataSourceInfo ds = new DataSourceInfo();
 
-            ds.setEnv(parseEnv(envXml));
             ds.setName(parseName(envXml));
             ds.setDriverClassName(parseDriverClassName(envXml));
             ds.setUrl(parseUrl(envXml));
 
-            envs.put(ds.getEnv(), ds);
+            envs.put(parseEnv(envXml), ds);
         }
     }
 

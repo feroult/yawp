@@ -7,20 +7,28 @@ import static org.junit.Assert.assertEquals;
 import io.yawp.driver.postgresql.IdRefToKey;
 import io.yawp.driver.postgresql.Person;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
-import io.yawp.driver.postgresql.sql.SqlRunner;
+import io.yawp.driver.postgresql.tools.DatabaseSynchronizer;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class DatastoreTest extends DatastoreTestCase {
 
     private Datastore datastore;
+
+    @BeforeClass
+    public static void setUpClass() {
+        createDatabase();
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+        dropDatabase();
+    }
 
     @Before
     public void before() {
@@ -31,6 +39,15 @@ public class DatastoreTest extends DatastoreTestCase {
     @After
     public void after() {
         // truncate();
+    }
+
+    private static void createDatabase() {
+        DatabaseSynchronizer dbSynchronizer = new DatabaseSynchronizer();
+        dbSynchronizer.sync(yawp.getFeatures().getEndpointClazzes());
+    }
+
+    private static void dropDatabase() {
+        // TODO
     }
 
     private void truncate() {

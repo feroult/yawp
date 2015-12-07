@@ -8,6 +8,14 @@ import org.junit.Test;
 public class DatabaseSynchronizerTest extends DatastoreTestCase {
 
     @Test
+    public void testCreateDatabaseIfNecessary() {
+
+
+
+
+    }
+
+    @Test
     public void testCreateTables() {
         RepositoryFeatures features = new EndpointScanner(testPackage()).scan();
         DatabaseSynchronizer dbSynchronizer = new DatabaseSynchronizer();

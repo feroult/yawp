@@ -8,30 +8,23 @@ import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 
 public class DatastoreTestCase {
 
-    protected ConnectionManager connectionManager;
+    protected ConnectionManager connectionManager = new ConnectionManager();
 
     protected static Repository yawp;
 
     @BeforeClass
-    public static void setUpClass() throws Exception {
+    public static void setUpTestCase() throws Exception {
         configureEnvironment();
         createRepository();
-        syncTables();
     }
 
     @AfterClass
-    public static void tearDownClass() {
+    public static void tearDownTestCase() {
         InitialContextSetup.unregister();
-    }
-
-    @Before
-    public void setupTestCase() {
-        connectionManager = new ConnectionManager();
     }
 
     private static void configureEnvironment() {
@@ -41,11 +34,6 @@ public class DatastoreTestCase {
 
     private static void createRepository() {
         yawp = Repository.r().setFeatures(new EndpointScanner(testPackage()).scan());
-    }
-
-    private static void syncTables() {
-        DatabaseSynchronizer dbSynchronizer = new DatabaseSynchronizer();
-        dbSynchronizer.sync(yawp.getFeatures().getEndpointClazzes());
     }
 
     @SuppressWarnings("unused")

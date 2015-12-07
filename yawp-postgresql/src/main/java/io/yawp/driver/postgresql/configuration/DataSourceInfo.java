@@ -1,6 +1,7 @@
 package io.yawp.driver.postgresql.configuration;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.sql.DataSource;
 
@@ -11,9 +12,6 @@ public class DataSourceInfo {
     private String driverClassName;
 
     private String url;
-
-    private String env;
-
 
     public String getName() {
         return name;
@@ -39,14 +37,6 @@ public class DataSourceInfo {
         this.url = url;
     }
 
-    public String getEnv() {
-        return env;
-    }
-
-    public void setEnv(String env) {
-        this.env = env;
-    }
-
     public DataSource buildDatasource() {
         BasicDataSource ds = new BasicDataSource();
 
@@ -54,5 +44,20 @@ public class DataSourceInfo {
         ds.setUrl(url);
 
         return ds;
+    }
+
+    public DataSourceInfo getInitDatasource() {
+        DataSourceInfo dsInit = new DataSourceInfo();
+
+        dsInit.setName("jdbc/_yawp_init");
+        dsInit.setDriverClassName(getDriverClassName());
+        dsInit.setUrl(getInitDatabaseUrl());
+
+        return dsInit;
+    }
+
+    public String getInitDatabaseUrl() {
+        int endIndex = StringUtils.ordinalIndexOf(url, "/", 3) + 1;
+        return url.substring(0, endIndex) + "template1";
     }
 }

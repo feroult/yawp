@@ -9,7 +9,7 @@
         <Arg>
             <New class="org.apache.commons.dbcp2.BasicDataSource">
                 <Set name="driverClassName">org.postgresql.Driver</Set>
-                <Set name="url">jdbc:postgresql://localhost/yawp_test</Set>
+                <Set name="url">jdbc:postgresql://localhost/yawp_pg_driver_test</Set>
             </New>
         </Arg>
     </New>
@@ -20,7 +20,7 @@
         <Arg>
             <New class="org.apache.commons.dbcp2.BasicDataSource">
                 <Set name="driverClassName">org.postgresql.Driver</Set>
-                <Set name="url">jdbc:postgresql://localhost/yawp_development</Set>
+                <Set name="url">jdbc:postgresql://127.0.0.1:5432/yawp_pg_driver_development</Set>
             </New>
         </Arg>
     </New>
@@ -31,7 +31,7 @@
         <Arg>
             <New class="org.apache.commons.dbcp2.BasicDataSource">
                 <Set name="driverClassName">org.postgresql.Driver</Set>
-                <Set name="url">jdbc:postgresql://localhost/yawp_production</Set>
+                <Set name="url">jdbc:postgresql://localhost/yawp_pg_driver_production</Set>
             </New>
         </Arg>
     </New>

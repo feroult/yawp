@@ -165,6 +165,10 @@
 			return defaultAjax('PUT', actionOptions(action));
 		}
 
+		function _patch(action) {
+			return defaultAjax('PATCH', actionOptions(action));
+		}
+
 		function post(action) {
 			return defaultAjax('POST', actionOptions(action));
 		}
@@ -177,6 +181,7 @@
 			params : params,
 			get : get,
 			put : put,
+			_patch : _patch,
 			post : post,
 			_delete : _delete
 		};

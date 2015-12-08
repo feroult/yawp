@@ -54,4 +54,30 @@
 		});
 	});
 
+    t.asyncTest("all http verbs", function(assert) {
+        expect(5);
+
+        fx.parent('parent', {
+            id: '/parents/1',
+            name : 'xpto1'
+        });
+
+        yawp('/parents/1').get('all-http-verbs').done(function(ok) {
+            assert.equal(ok, "ok");
+            yawp('/parents/1').post('all-http-verbs').done(function(ok) {
+                assert.equal(ok, "ok");
+                yawp('/parents/1').put('all-http-verbs').done(function(ok) {
+                    assert.equal(ok, "ok");
+                    yawp('/parents/1')._patch('all-http-verbs').done(function(ok) {
+                        assert.equal(ok, "ok");
+                        yawp('/parents/1')._delete('all-http-verbs').done(function(ok) {
+                            assert.equal(ok, "ok");
+                            t.start();
+                        });
+                    });
+                });
+            });
+        });
+    });
+
 })(QUnit, yawp, yawp.fixtures);

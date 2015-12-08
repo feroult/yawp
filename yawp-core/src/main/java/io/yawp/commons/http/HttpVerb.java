@@ -1,7 +1,6 @@
 package io.yawp.commons.http;
 
-import io.yawp.commons.http.annotation.GET;
-import io.yawp.commons.http.annotation.PUT;
+import io.yawp.commons.http.annotation.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -9,7 +8,12 @@ import java.lang.reflect.Method;
 
 public enum HttpVerb {
 
-    GET(GET.class), POST, PUT(PUT.class), PATCH, DELETE, OPTIONS;
+    GET(GET.class),
+    POST(POST.class),
+    PUT(PUT.class),
+    PATCH(PATCH.class),
+    DELETE(DELETE.class),
+    OPTIONS;
 
     private Class<? extends Annotation> annotationClazz;
 

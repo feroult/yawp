@@ -3,8 +3,7 @@ package io.yawp.repository.actions;
 import static org.junit.Assert.assertEquals;
 
 import io.yawp.commons.http.HttpVerb;
-import io.yawp.commons.http.annotation.GET;
-import io.yawp.commons.http.annotation.PUT;
+import io.yawp.commons.http.annotation.*;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.parents.Child;
@@ -47,7 +46,11 @@ public class ActionKeyTest {
         public void rootCollectionParams(Map<String, String> params) {
         }
 
+        @GET("single-object")
+        @POST("single-object")
         @PUT("single-object")
+        @PATCH("single-object")
+        @DELETE("single-object")
         public void singleObject(IdRef<Child> id) {
         }
 
@@ -87,7 +90,11 @@ public class ActionKeyTest {
     @Test
     public void testParseMethodSingleObject() throws InvalidActionMethodException {
         List<ActionKey> keys = ActionKey.parseMethod(getMethod("singleObject", IdRef.class));
-        assertActionKey(HttpVerb.PUT, "single-object", false, keys.get(0));
+        assertActionKey(HttpVerb.GET, "single-object", false, keys.get(0));
+        assertActionKey(HttpVerb.POST, "single-object", false, keys.get(1));
+        assertActionKey(HttpVerb.PUT, "single-object", false, keys.get(2));
+        assertActionKey(HttpVerb.PATCH, "single-object", false, keys.get(3));
+        assertActionKey(HttpVerb.DELETE, "single-object", false, keys.get(4));
     }
 
     @Test

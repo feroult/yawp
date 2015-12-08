@@ -55,6 +55,10 @@ public class ServletTestCase extends EndpointTestCase {
         assertTrue(status == 200);
     }
 
+    protected String post(String uri) {
+        return post(uri, null, new HashMap<String, String>());
+    }
+    
     protected String post(String uri, String json) {
         return post(uri, json, new HashMap<String, String>());
     }

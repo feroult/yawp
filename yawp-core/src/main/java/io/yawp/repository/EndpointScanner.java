@@ -180,8 +180,8 @@ public final class EndpointScanner {
         }
 
         for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, method.getDeclaringClass().getSimpleName())) {
-            for (ActionKey ar : actionKeys) {
-                endpoint.addAction(ar, method);
+            for (ActionKey actionKey : actionKeys) {
+                endpoint.addAction(actionKey, method);
             }
         }
     }

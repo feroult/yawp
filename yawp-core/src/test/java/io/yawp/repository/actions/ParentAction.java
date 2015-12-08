@@ -1,7 +1,6 @@
 package io.yawp.repository.actions;
 
-import io.yawp.commons.http.annotation.GET;
-import io.yawp.commons.http.annotation.PUT;
+import io.yawp.commons.http.annotation.*;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.parents.Parent;
 
@@ -69,5 +68,14 @@ public class ParentAction extends Action<Parent> {
     public void atomicRollback() {
         yawp.save(new Parent("xpto"));
         throw new FakeException();
+    }
+
+    @GET("all-http-verbs")
+    @POST("all-http-verbs")
+    @PUT("all-http-verbs")
+    @PATCH("all-http-verbs")
+    @DELETE("all-http-verbs")
+    public String allHttpVerbs(IdRef<Parent> id) {
+        return "ok";
     }
 }

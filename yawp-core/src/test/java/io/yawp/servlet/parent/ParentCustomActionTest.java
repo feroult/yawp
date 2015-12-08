@@ -58,6 +58,17 @@ public class ParentCustomActionTest extends ParentServletTestCase {
     }
 
     @Test
+    public void testAllHttpVerbs() {
+        Parent parent = saveParent("xpto");
+
+        assertEquals("\"ok\"", get(uri("/parents/%s/all-http-verbs", parent)));
+        assertEquals("\"ok\"", post(uri("/parents/%s/all-http-verbs", parent)));
+        assertEquals("\"ok\"", put(uri("/parents/%s/all-http-verbs", parent)));
+        assertEquals("\"ok\"", patch(uri("/parents/%s/all-http-verbs", parent)));
+        assertEquals("\"ok\"", delete(uri("/parents/%s/all-http-verbs", parent)));
+    }
+
+    @Test
     public void testActionWithTransformer() {
         Parent parent = saveParent("xpto1");
 

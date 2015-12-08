@@ -35,7 +35,7 @@ public class EndpointFeatures<T> {
         return this.clazz;
     }
 
-    private <V> void assertInexistence(V key, Method method, Map<V, Method> map, String type) {
+    private <V> void assertNotDuplicated(Map<V, Method> map, V key, Method method, String type) {
         if (map.get(key) != null) {
             throw new RuntimeException("Trying to add two " + type + " with the same name '" + key + "' to io.yawp "
                     + clazz.getSimpleName() + ": one at " + map.get(key).getDeclaringClass().getSimpleName() + " and the other at "
@@ -43,13 +43,13 @@ public class EndpointFeatures<T> {
         }
     }
 
-    public void addAction(ActionKey actionRef, Method method) {
-        assertInexistence(actionRef, method, actions, "Actions");
-        actions.put(actionRef, method);
+    public void addAction(ActionKey actionKey, Method method) {
+        assertNotDuplicated(actions, actionKey, method, "Actions");
+        actions.put(actionKey, method);
     }
 
     public void addTransformer(String name, Method method) {
-        assertInexistence(name, method, transformers, "Transformers");
+        assertNotDuplicated(transformers, name, method, "Transformers");
         transformers.put(name, method);
     }
 

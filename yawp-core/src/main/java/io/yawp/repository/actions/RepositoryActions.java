@@ -72,12 +72,16 @@ public class RepositoryActions {
             Action<?> actionInstance = actionClazz.newInstance();
             actionInstance.setRepository(r);
 
-            Object[] arguments = ActionKey.getActionMethodParameters(method, id, params);
-            return method.invoke(actionInstance, arguments);
+            return method.invoke(actionInstance, createArguments(method, id, params));
 
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
             throw ThrownExceptionsUtils.handle(e);
         }
+    }
+
+    private static Object[] createArguments(Method method, IdRef<?> id, Map<String, String> params) {
+        ActionMethod actionMethod = new ActionMethod(method);
+        return actionMethod.createArguments(id, params);
     }
 
 }

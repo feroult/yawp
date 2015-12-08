@@ -1,6 +1,7 @@
 package io.yawp.repository.shields;
 
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.InvalidActionMethodException;
 
 import java.lang.reflect.Method;
@@ -32,7 +33,7 @@ public class ShieldInfo<T> {
 
         Method[] methods = shieldClazz.getDeclaredMethods();
         for (Method method : methods) {
-            List<ActionKey> actionKeys = parseActionKeys(method);
+            List<ActionKey> actionKeys = getActionKeysFor(method);
 
             for (ActionKey actionKey : actionKeys) {
                 actionMethods.put(actionKey, method);
@@ -40,9 +41,9 @@ public class ShieldInfo<T> {
         }
     }
 
-    private List<ActionKey> parseActionKeys(Method method) {
+    private List<ActionKey> getActionKeysFor(Method method) {
         try {
-            return ActionKey.parseMethod(method);
+            return ActionMethod.getActionKeysFor(method);
         } catch (InvalidActionMethodException e) {
             throw new RuntimeException("Invalid action method in shield: " + shieldClazz.getName() + "." + method.getName(), e);
         }

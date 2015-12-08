@@ -6,6 +6,7 @@ import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;
 
@@ -261,11 +262,15 @@ public abstract class ShieldBase<T> extends Feature {
 
     private void invokeCustomActionShield(Method method) {
         try {
-            Object[] arguments = ActionKey.getActionMethodParameters(method, id, params);
-            method.invoke(this, arguments);
+            method.invoke(this, createArguments(method));
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Object[] createArguments(Method method) {
+        ActionMethod actionMethod = new ActionMethod(method);
+        return actionMethod.createArguments(id, params);
     }
 
 }

@@ -3,6 +3,7 @@ package io.yawp.repository;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.InvalidActionMethodException;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
@@ -188,7 +189,7 @@ public final class EndpointScanner {
 
     private List<ActionKey> parseActionKeys(Class<?> objectClazz, Method method) {
         try {
-            return ActionKey.parseMethod(method);
+            return ActionMethod.getActionKeysFor(method);
         } catch (InvalidActionMethodException e) {
             throw new RuntimeException("Invalid Action: " + objectClazz.getName() + "." + method.getName(), e);
         }

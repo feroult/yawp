@@ -13,9 +13,10 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 
-public class ActionKeyTest {
+public class ActionMethodTest {
 
     private class FakeAction<T> {
     }
@@ -68,28 +69,40 @@ public class ActionKeyTest {
     }
 
     @Test(expected = InvalidActionMethodException.class)
-    public void testParseMethodInvalidParameters() throws InvalidActionMethodException {
-        ActionKey.parseMethod(getMethod("invalid1", String.class));
-        ActionKey.parseMethod(getMethod("invalid2", IdRef.class, String.class));
-        ActionKey.parseMethod(getMethod("invalid3", Map.class, String.class));
-        ActionKey.parseMethod(getMethod("invalid4", IdRef.class));
+    public void testParseMethodInvalidParameters1() throws InvalidActionMethodException {
+        getActionKeysFor("invalid1", String.class);
+    }
+
+    @Test(expected = InvalidActionMethodException.class)
+    public void testParseMethodInvalidParameters2() throws InvalidActionMethodException {
+        getActionKeysFor("invalid2", IdRef.class, String.class);
+    }
+
+    @Test(expected = InvalidActionMethodException.class)
+    public void testParseMethodInvalidParameters3() throws InvalidActionMethodException {
+        getActionKeysFor("invalid3", Map.class, String.class);
+    }
+
+    @Test(expected = InvalidActionMethodException.class)
+    public void testParseMethodInvalidParameters4() throws InvalidActionMethodException {
+        getActionKeysFor("invalid4", IdRef.class);
     }
 
     @Test
     public void testParseMethodRootCollection() throws InvalidActionMethodException {
-        List<ActionKey> keys = ActionKey.parseMethod(getMethod("rootCollection"));
+        List<ActionKey> keys = getActionKeysFor("rootCollection");
         assertActionKey(HttpVerb.GET, "root-collection", true, keys.get(0));
     }
 
     @Test
     public void testParseMethodRootCollectionParams() throws InvalidActionMethodException {
-        List<ActionKey> keys = ActionKey.parseMethod(getMethod("rootCollectionParams", Map.class));
+        List<ActionKey> keys = getActionKeysFor("rootCollectionParams", Map.class);
         assertActionKey(HttpVerb.PUT, "root-collection-params", true, keys.get(0));
     }
 
     @Test
     public void testParseMethodSingleObject() throws InvalidActionMethodException {
-        List<ActionKey> keys = ActionKey.parseMethod(getMethod("singleObject", IdRef.class));
+        List<ActionKey> keys = getActionKeysFor("singleObject", IdRef.class);
         assertActionKey(HttpVerb.GET, "single-object", false, keys.get(0));
         assertActionKey(HttpVerb.POST, "single-object", false, keys.get(1));
         assertActionKey(HttpVerb.PUT, "single-object", false, keys.get(2));
@@ -99,25 +112,30 @@ public class ActionKeyTest {
 
     @Test
     public void testParseMethodSingleObjectParams() throws InvalidActionMethodException {
-        List<ActionKey> keys = ActionKey.parseMethod(getMethod("singleObjectParams", IdRef.class, Map.class));
+        List<ActionKey> keys = getActionKeysFor("singleObjectParams", IdRef.class, Map.class);
         assertActionKey(HttpVerb.GET, "single-object-params", false, keys.get(0));
     }
 
     @Test
     public void testParseMethodParentRootCollection() throws InvalidActionMethodException {
-        List<ActionKey> keys = ActionKey.parseMethod(getMethod("parentRootCollection", IdRef.class));
+        List<ActionKey> keys = getActionKeysFor("parentRootCollection", IdRef.class);
         assertActionKey(HttpVerb.PUT, "parent-root-collection", true, keys.get(0));
     }
 
     @Test
     public void testParseMethodParentRootCollectionParams() throws InvalidActionMethodException {
-        List<ActionKey> keys = ActionKey.parseMethod(getMethod("parentRootCollectionParams", IdRef.class, Map.class));
+        List<ActionKey> keys = getActionKeysFor("parentRootCollectionParams", IdRef.class, Map.class);
         assertActionKey(HttpVerb.PUT, "parent-root-collection-params", true, keys.get(0));
     }
 
     private void assertActionKey(HttpVerb verb, String actionName, boolean overCollection, ActionKey actual) {
         ActionKey expected = new ActionKey(verb, actionName, overCollection);
         assertEquals(expected, actual);
+    }
+
+    private List<ActionKey> getActionKeysFor(String methodName, Class<?>... parameterTypes) throws InvalidActionMethodException {
+        Method method = getMethod(methodName, parameterTypes);
+        return ActionMethod.getActionKeysFor(method);
     }
 
     private Method getMethod(String methodName, Class<?>... parameterTypes) {

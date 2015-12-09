@@ -13,11 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 public class ActionParameters {
-
-
+    
     private enum ParameterType {
-        ID, PARENT_ID, PARAMS, JSON;
-
+        ID, PARENT_ID, PARAMS, JSON
     }
 
     private Method method;

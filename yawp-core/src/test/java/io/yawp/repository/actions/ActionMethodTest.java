@@ -75,6 +75,11 @@ public class ActionMethodTest {
         @POST("single-object-with-json-object")
         public void singleObjectWithJsonObject(IdRef<Child> id, BasicObject object) {
         }
+
+        @POST("single-object-with-json-string-and-params")
+        public void singleObjectWithJsonStringAndParams(IdRef<Child> id, BasicObject object, Map<String, String> params) {
+        }
+
     }
 
     @Test(expected = InvalidActionMethodException.class)
@@ -144,10 +149,15 @@ public class ActionMethodTest {
     }
 
     @Test
-    @Ignore
     public void testSingleObjectWithJsonObject() throws InvalidActionMethodException {
         List<ActionKey> keys = getActionKeysFor("singleObjectWithJsonObject", IdRef.class, BasicObject.class);
         assertActionKey(HttpVerb.POST, "single-object-with-json-object", false, keys.get(0));
+    }
+
+    @Test
+    public void testSingleObjectWithJsonStringAndParams() throws InvalidActionMethodException {
+        List<ActionKey> keys = getActionKeysFor("singleObjectWithJsonStringAndParams", IdRef.class, BasicObject.class, Map.class);
+        assertActionKey(HttpVerb.POST, "single-object-with-json-string-and-params", false, keys.get(0));
     }
 
     private void assertActionKey(HttpVerb verb, String actionName, boolean overCollection, ActionKey actual) {

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ActionParameters {
-    
+
     private enum ParameterType {
         ID, PARENT_ID, PARAMS, JSON
     }
@@ -58,20 +58,20 @@ public class ActionParameters {
         }
 
         if (size() == 1) {
-            return count(ParameterType.PARENT_ID) == 1 || count(ParameterType.PARAMS) == 1 || count(ParameterType.JSON) == 1;
+            return count(ParameterType.PARENT_ID) == 1 || count(ParameterType.JSON) == 1 || count(ParameterType.PARAMS) == 1;
         }
 
         if (size() == 2) {
             if (count(ParameterType.PARENT_ID) == 1) {
-                return count(ParameterType.PARAMS) == 1 || count(ParameterType.JSON) == 1;
-            }
-
-            if (count(ParameterType.PARAMS) == 1) {
-                return count(ParameterType.PARENT_ID) == 1 || count(ParameterType.JSON) == 1;
+                return count(ParameterType.JSON) == 1 || count(ParameterType.PARAMS) == 1;
             }
 
             if (count(ParameterType.JSON) == 1) {
                 return count(ParameterType.PARENT_ID) == 1 || count(ParameterType.PARAMS) == 1;
+            }
+
+            if (count(ParameterType.PARAMS) == 1) {
+                return count(ParameterType.PARENT_ID) == 1 || count(ParameterType.JSON) == 1;
             }
         }
 
@@ -107,11 +107,11 @@ public class ActionParameters {
         }
 
         if (size() == 1) {
-            return count(ParameterType.PARAMS) == 1 || count(ParameterType.JSON) == 1;
+            return count(ParameterType.JSON) == 1 || count(ParameterType.PARAMS) == 1;
         }
 
         if (size() == 2) {
-            return count(ParameterType.PARAMS) == 1 && count(ParameterType.JSON) == 1;
+            return count(ParameterType.JSON) == 1 && count(ParameterType.PARAMS) == 1;
         }
 
         return false;
@@ -123,7 +123,11 @@ public class ActionParameters {
         }
 
         if (size() == 2) {
-            return count(ParameterType.ID) == 1 && (count(ParameterType.PARAMS) == 1 || count(ParameterType.JSON) == 1);
+            return count(ParameterType.ID) == 1 && (count(ParameterType.JSON) == 1 || count(ParameterType.PARAMS) == 1);
+        }
+
+        if (size() == 3) {
+            return count(ParameterType.ID) == 1 && count(ParameterType.JSON) == 1 && count(ParameterType.PARAMS) == 1;
         }
 
         return false;
@@ -135,7 +139,7 @@ public class ActionParameters {
         }
 
         if (size() == 2) {
-            return count(ParameterType.PARENT_ID) == 1 && (count(ParameterType.PARAMS) == 1 || count(ParameterType.JSON) == 1);
+            return count(ParameterType.PARENT_ID) == 1 && (count(ParameterType.JSON) == 1 || count(ParameterType.PARAMS) == 1);
         }
 
         return false;

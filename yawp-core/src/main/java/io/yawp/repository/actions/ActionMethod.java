@@ -65,8 +65,8 @@ public class ActionMethod {
         return verb.hasAnnotation(method);
     }
 
-    public Object[] createArguments(IdRef<?> id, Map<String, String> params) {
-        return parameters.createArguments(id, params);
+    public Object[] createArguments(IdRef<?> id, String json, Map<String, String> params) {
+        return parameters.createArguments(id, json, params);
     }
 
     public boolean isAtomicCrossEntities() {
@@ -77,12 +77,12 @@ public class ActionMethod {
         return method.isAnnotationPresent(Atomic.class);
     }
 
-    public Object invoke(Repository r, IdRef<?> id, Map<String, String> params) {
+    public Object invoke(Repository r, IdRef<?> id, String json, Map<String, String> params) {
         try {
             Class<? extends Action<?>> actionClazz = (Class<? extends Action<?>>) method.getDeclaringClass();
             Action<?> actionInstance = actionClazz.newInstance();
             actionInstance.setRepository(r);
-            return method.invoke(actionInstance, createArguments(id, params));
+            return method.invoke(actionInstance, createArguments(id, json, params));
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
             throw ThrownExceptionsUtils.handle(e);
         }

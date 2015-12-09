@@ -94,10 +94,10 @@ public abstract class RestAction {
     }
 
     protected void beforeShield() {
-        if(objects == null) {
+        if (objects == null) {
             return;
         }
-        for(Object object : objects) {
+        for (Object object : objects) {
             RepositoryHooks.beforeShield(r, object);
         }
     }
@@ -246,6 +246,7 @@ public abstract class RestAction {
             shield.setEndpointClazz(endpointClazz);
             shield.setId(id);
             shield.setObjects(objects);
+            shield.setRequestJson(requestJson);
             shield.setParams(params);
             shield.setActionKey(customActionKey);
             shield.setActionMethods(shieldInfo.getActionMethods());

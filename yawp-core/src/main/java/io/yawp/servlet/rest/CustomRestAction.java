@@ -16,7 +16,7 @@ public class CustomRestAction extends RestAction {
 
     @Override
     public Object action() {
-        Object object = r.action(id, endpointClazz, customActionKey, params);
+        Object object = r.action(id, endpointClazz, customActionKey, requestJson, params);
 
         if (object == null) {
             return new JsonResponse(StatusObject.success().toJson());

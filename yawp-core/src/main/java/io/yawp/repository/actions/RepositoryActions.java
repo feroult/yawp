@@ -7,13 +7,13 @@ import java.util.Map;
 
 public class RepositoryActions {
 
-    public static Object execute(Repository r, ActionMethod actionMethod, IdRef<?> id, Map<String, String> params) {
+    public static Object execute(Repository r, ActionMethod actionMethod, IdRef<?> id, String json, Map<String, String> params) {
         boolean rollback = false;
         atomicBegin(r, actionMethod);
 
         try {
 
-            return actionMethod.invoke(r, id, params);
+            return actionMethod.invoke(r, id, json, params);
 
         } catch (Throwable t) {
             rollback = true;

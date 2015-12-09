@@ -121,11 +121,11 @@ public class Repository {
         return futureObject;
     }
 
-    public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
+    public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, String json, Map<String, String> params) {
         namespace.set(clazz);
         try {
             ActionMethod actionMethod = repositoryFeatures.get(clazz).getAction(actionKey);
-            return RepositoryActions.execute(this, actionMethod, id, params);
+            return RepositoryActions.execute(this, actionMethod, id, json, params);
         } finally {
             namespace.reset();
         }

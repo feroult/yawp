@@ -78,4 +78,9 @@ public class ParentAction extends Action<Parent> {
     public String allHttpVerbs(IdRef<Parent> id) {
         return "ok";
     }
+
+    @POST("with-json")
+    public String withJson(IdRef<Parent> id, String json) {
+        return "json xpto";
+    }
 }

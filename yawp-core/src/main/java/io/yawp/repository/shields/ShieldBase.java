@@ -33,6 +33,8 @@ public abstract class ShieldBase<T> extends Feature {
 
     private List<T> objects;
 
+    private String requestJson;
+
     private Map<String, String> params;
 
     private ActionKey actionKey;
@@ -239,6 +241,10 @@ public abstract class ShieldBase<T> extends Feature {
         return facade != null;
     }
 
+    public void setRequestJson(String requestJson) {
+        this.requestJson = requestJson;
+    }
+
     public final void setParams(Map<String, String> params) {
         this.params = params;
     }
@@ -272,7 +278,7 @@ public abstract class ShieldBase<T> extends Feature {
     private Object[] createArguments(Method method) {
         try {
             ActionMethod actionMethod = new ActionMethod(method);
-            return actionMethod.createArguments(id, params);
+            return actionMethod.createArguments(id, requestJson, params);
         } catch (InvalidActionMethodException e) {
             throw new RuntimeException(e);
         }

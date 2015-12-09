@@ -15,7 +15,7 @@ import java.util.Map;
 public class ActionParameters {
 
     private enum ParameterType {
-        ID, PARENT_ID, PARAMS, JSON
+        ID, PARENT_ID, JSON, PARAMS
     }
 
     private Method method;
@@ -79,23 +79,25 @@ public class ActionParameters {
         return false;
     }
 
-    public Object[] createArguments(IdRef<?> id, Map<String, String> params) {
-        if (size() == 0) {
-            return new Object[]{};
-        }
+    public Object[] createArguments(IdRef<?> id, String json, Map<String, String> params) {
+        List<Object> arguments = new ArrayList();
 
-        if (size() == 1) {
-            if (count(ParameterType.ID) == 1 || count(ParameterType.PARENT_ID) == 1) {
-                return new Object[]{id};
+        for (ParameterType type : order) {
+            switch (type) {
+                case ID:
+                case PARENT_ID:
+                    arguments.add(id);
+                    break;
+                case JSON:
+                    arguments.add(json);
+                    break;
+                case PARAMS:
+                    arguments.add(params);
+                    break;
             }
-            return new Object[]{params};
         }
 
-        if (size() == 2) {
-            return new Object[]{id, params};
-        }
-
-        return null;
+        return arguments.toArray();
     }
 
     private boolean isRootCollection() {

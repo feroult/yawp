@@ -22,8 +22,6 @@ public class ActionParameters {
 
     private Class<?> endpointClazz;
 
-    private final ObjectModel objectModel;
-
     private List<ParameterType> order = new ArrayList<>();
 
     private Map<ParameterType, Integer> count = new HashMap<>();
@@ -35,7 +33,6 @@ public class ActionParameters {
     public ActionParameters(Method method) throws InvalidActionMethodException {
         this.method = method;
         this.endpointClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
-        this.objectModel = new ObjectModel(endpointClazz);
 
         init();
 
@@ -225,8 +222,8 @@ public class ActionParameters {
             if (!isTypeOf(IdRef.class)) {
                 return false;
             }
-            // TODO fix w/ ancestor
-            return getGenericTypeAt(0).equals(objectModel.getParentClazz());
+            ObjectModel objectModel = new ObjectModel(endpointClazz);
+            return objectModel.isAncestor((Class<?>) getGenericTypeAt(0));
         }
 
         public boolean isParams() {

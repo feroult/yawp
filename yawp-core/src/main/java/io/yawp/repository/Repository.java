@@ -4,11 +4,11 @@ import io.yawp.driver.api.Driver;
 import io.yawp.driver.api.DriverFactory;
 import io.yawp.driver.api.TransactionDriver;
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.query.QueryBuilder;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -124,7 +124,7 @@ public class Repository {
     public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, Map<String, String> params) {
         namespace.set(clazz);
         try {
-            Method actionMethod = repositoryFeatures.get(clazz).getAction(actionKey);
+            ActionMethod actionMethod = repositoryFeatures.get(clazz).getAction(actionKey);
             return RepositoryActions.execute(this, actionMethod, id, params);
         } finally {
             namespace.reset();

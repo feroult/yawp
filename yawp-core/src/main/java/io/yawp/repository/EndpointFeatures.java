@@ -1,6 +1,7 @@
 package io.yawp.repository;
 
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.shields.Shield;
@@ -16,7 +17,7 @@ public class EndpointFeatures<T> {
 
     private Class<T> clazz;
 
-    private Map<ActionKey, Method> actions;
+    private Map<ActionKey, ActionMethod> actions;
 
     private Map<String, Method> transformers;
 
@@ -35,29 +36,18 @@ public class EndpointFeatures<T> {
         return this.clazz;
     }
 
-    private <V> void assertNotDuplicated(Map<V, Method> map, V key, Method method, String type) {
-        if (map.get(key) != null) {
-            throw new RuntimeException("Trying to add two " + type + " with the same name '" + key + "' to io.yawp "
-                    + clazz.getSimpleName() + ": one at " + map.get(key).getDeclaringClass().getSimpleName() + " and the other at "
-                    + method.getDeclaringClass().getSimpleName());
-        }
-    }
-
-    public void addAction(ActionKey actionKey, Method method) {
-        assertNotDuplicated(actions, actionKey, method, "Actions");
-        actions.put(actionKey, method);
+    public void addAction(ActionKey actionKey, Method method, ActionMethod actionMethod) {
+        assertActionNotDuplicated(actionKey, method);
+        actions.put(actionKey, actionMethod);
     }
 
     public void addTransformer(String name, Method method) {
-        assertNotDuplicated(transformers, name, method, "Transformers");
+        assertTransformerNotDuplicated(name, method);
         transformers.put(name, method);
     }
 
     public void addHook(Class<? extends Hook<? super T>> hook) {
         hooks.add(hook);
-    }
-
-    public void setShield(Class<? extends Shield<? super T>> shield) {
     }
 
     public void setShieldInfo(ShieldInfo<? super T> shieldInfo) {
@@ -68,12 +58,12 @@ public class EndpointFeatures<T> {
         return hooks;
     }
 
-    public Method getAction(ActionKey ref) {
-        return actions.get(ref);
+    public ActionMethod getAction(ActionKey key) {
+        return actions.get(key);
     }
 
-    public Class<?> getActionClazz(ActionKey ref) {
-        return getAction(ref).getDeclaringClass();
+    public Class<?> getActionClazz(ActionKey key) {
+        return actions.get(key).getMethod().getDeclaringClass();
     }
 
     public Method getTransformer(String name) {
@@ -106,6 +96,23 @@ public class EndpointFeatures<T> {
 
     public ShieldInfo<? super T> getShieldInfo() {
         return shieldInfo;
+    }
+
+    private void assertTransformerNotDuplicated(String key, Method method) {
+        if (transformers.get(key) != null) {
+            throw new RuntimeException("Trying to add two transformers with the same name '" + key + "' to io.yawp "
+                    + clazz.getSimpleName() + ": one at " + transformers.get(key).getDeclaringClass().getSimpleName() + " and the other at "
+                    + method.getDeclaringClass().getSimpleName());
+        }
+    }
+
+    private void assertActionNotDuplicated(ActionKey key, Method method) {
+        if (actions.get(key) != null) {
+            Method existingMethod = actions.get(key).getMethod();
+            throw new RuntimeException("Trying to add two actions with the same name '" + key + "' to io.yawp "
+                    + clazz.getSimpleName() + ": one at " + existingMethod.getDeclaringClass().getSimpleName() + " and the other at "
+                    + method.getDeclaringClass().getSimpleName());
+        }
     }
 
 }

@@ -1,8 +1,11 @@
 package io.yawp.repository.actions;
 
 import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.utils.ThrownExceptionsUtils;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.Repository;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,10 @@ public class ActionMethod {
         return actionMethod.getActionKeys();
     }
 
+    public Method getMethod() {
+        return method;
+    }
+
     private List<ActionKey> parseActionKeys() {
         List<ActionKey> actionKeys = new ArrayList<>();
 
@@ -62,4 +69,22 @@ public class ActionMethod {
         return parameters.createArguments(id, params);
     }
 
+    public boolean isAtomicCrossEntities() {
+        return method.getAnnotation(Atomic.class).cross();
+    }
+
+    public boolean isAtomic() {
+        return method.isAnnotationPresent(Atomic.class);
+    }
+
+    public Object invoke(Repository r, IdRef<?> id, Map<String, String> params) {
+        try {
+            Class<? extends Action<?>> actionClazz = (Class<? extends Action<?>>) method.getDeclaringClass();
+            Action<?> actionInstance = actionClazz.newInstance();
+            actionInstance.setRepository(r);
+            return method.invoke(actionInstance, createArguments(id, params));
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
+            throw ThrownExceptionsUtils.handle(e);
+        }
+    }
 }

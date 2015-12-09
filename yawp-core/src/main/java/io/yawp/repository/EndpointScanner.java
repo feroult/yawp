@@ -88,7 +88,6 @@ public final class EndpointScanner {
                 throwDuplicateShield(shieldClazz, objectClazz, endpoint);
             }
 
-            endpoint.setShield(shieldClazz);
             endpoint.setShieldInfo(shieldInfo);
         }
     }
@@ -174,7 +173,8 @@ public final class EndpointScanner {
 
     private void addAction(Class<?> objectClazz, Method method) {
 
-        List<ActionKey> actionKeys = parseActionKeys(objectClazz, method);
+        ActionMethod actionMethod = createActionMethod(objectClazz, method);
+        List<ActionKey> actionKeys = actionMethod.getActionKeys();
 
         if (actionKeys.isEmpty()) {
             return;
@@ -182,8 +182,16 @@ public final class EndpointScanner {
 
         for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, method.getDeclaringClass().getSimpleName())) {
             for (ActionKey actionKey : actionKeys) {
-                endpoint.addAction(actionKey, method);
+                endpoint.addAction(actionKey, method, actionMethod);
             }
+        }
+    }
+
+    private ActionMethod createActionMethod(Class<?> objectClazz, Method method) {
+        try {
+            return new ActionMethod(method);
+        } catch (InvalidActionMethodException e) {
+            throw new RuntimeException("Invalid Action: " + objectClazz.getName() + "." + method.getName(), e);
         }
     }
 

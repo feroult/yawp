@@ -1,22 +1,19 @@
 package io.yawp.repository.actions;
 
-import io.yawp.commons.utils.ThrownExceptionsUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Map;
 
 public class RepositoryActions {
 
-    public static Object execute(Repository r, Method method, IdRef<?> id, Map<String, String> params) {
+    public static Object execute(Repository r, ActionMethod actionMethod, IdRef<?> id, Map<String, String> params) {
         boolean rollback = false;
-        atomicBegin(r, method);
+        atomicBegin(r, actionMethod);
 
         try {
 
-            return invokeActionMethod(r, method, id, params);
+            return actionMethod.invoke(r, id, params);
 
         } catch (Throwable t) {
             rollback = true;
@@ -45,47 +42,13 @@ public class RepositoryActions {
         }
     }
 
-    private static void atomicBegin(Repository r, Method method) {
-        if (isAtomic(method)) {
-            if (isAtomicCrossEntities(method)) {
+    private static void atomicBegin(Repository r, ActionMethod actionMethod) {
+        if (actionMethod.isAtomic()) {
+            if (actionMethod.isAtomicCrossEntities()) {
                 r.beginX();
             } else {
                 r.begin();
             }
         }
     }
-
-    private static boolean isAtomicCrossEntities(Method method) {
-        return method.getAnnotation(Atomic.class).cross();
-    }
-
-    private static boolean isAtomic(Method method) {
-        return method.isAnnotationPresent(Atomic.class);
-    }
-
-    private static Object invokeActionMethod(Repository r, Method method, IdRef<?> id, Map<String, String> params) {
-        try {
-
-            @SuppressWarnings("unchecked")
-            Class<? extends Action<?>> actionClazz = (Class<? extends Action<?>>) method.getDeclaringClass();
-
-            Action<?> actionInstance = actionClazz.newInstance();
-            actionInstance.setRepository(r);
-
-            return method.invoke(actionInstance, createArguments(method, id, params));
-
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException e) {
-            throw ThrownExceptionsUtils.handle(e);
-        }
-    }
-
-    private static Object[] createArguments(Method method, IdRef<?> id, Map<String, String> params) {
-        try {
-            ActionMethod actionMethod = new ActionMethod(method);
-            return actionMethod.createArguments(id, params);
-        } catch (InvalidActionMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

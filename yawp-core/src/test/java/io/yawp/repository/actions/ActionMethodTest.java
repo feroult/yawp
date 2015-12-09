@@ -80,6 +80,13 @@ public class ActionMethodTest {
         public void singleObjectWithJsonStringAndParams(IdRef<Child> id, BasicObject object, Map<String, String> params) {
         }
 
+        @POST("parent-root-collection-json-object-and-params")
+        public void parentRootCollectionJsonObjectParams(Map<String, String> params, BasicObject object, IdRef<Parent> id) {
+        }
+
+        @POST("parent-root-collection-json-string-and-params")
+        public void parentRootCollectionJsonStringParams(String json, Map<String, String> params, IdRef<Parent> id) {
+        }
     }
 
     @Test(expected = InvalidActionMethodException.class)
@@ -158,6 +165,18 @@ public class ActionMethodTest {
     public void testSingleObjectWithJsonStringAndParams() throws InvalidActionMethodException {
         List<ActionKey> keys = getActionKeysFor("singleObjectWithJsonStringAndParams", IdRef.class, BasicObject.class, Map.class);
         assertActionKey(HttpVerb.POST, "single-object-with-json-string-and-params", false, keys.get(0));
+    }
+
+    @Test
+    public void testParentRootCollectionJsonObjectParams() throws InvalidActionMethodException {
+        List<ActionKey> keys = getActionKeysFor("parentRootCollectionJsonObjectParams", Map.class, BasicObject.class, IdRef.class);
+        assertActionKey(HttpVerb.POST, "parent-root-collection-json-object-and-params", true, keys.get(0));
+    }
+
+    @Test
+    public void testParentRootCollectionJsonStringParams() throws InvalidActionMethodException {
+        List<ActionKey> keys = getActionKeysFor("parentRootCollectionJsonStringParams", String.class, Map.class, IdRef.class);
+        assertActionKey(HttpVerb.POST, "parent-root-collection-json-string-and-params", true, keys.get(0));
     }
 
     private void assertActionKey(HttpVerb verb, String actionName, boolean overCollection, ActionKey actual) {

@@ -142,6 +142,10 @@ public class ActionParameters {
             return count(ParameterType.PARENT_ID) == 1 && (count(ParameterType.JSON) == 1 || count(ParameterType.PARAMS) == 1);
         }
 
+        if (size() == 3) {
+            return count(ParameterType.PARENT_ID) == 1 && count(ParameterType.JSON) == 1 && count(ParameterType.PARAMS) == 1;
+        }
+
         return false;
 
     }

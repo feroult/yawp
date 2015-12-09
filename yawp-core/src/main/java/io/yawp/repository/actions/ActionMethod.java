@@ -67,7 +67,7 @@ public class ActionMethod {
             }
 
             String value = verb.getAnnotationValue(method);
-            actionKeys.add(new ActionKey(verb, value, isOverCollection()));
+            actionKeys.add(new ActionKey(verb, value, parameters.isOverCollection()));
         }
         return actionKeys;
     }
@@ -77,47 +77,8 @@ public class ActionMethod {
     }
 
     public Object[] createArguments(IdRef<?> id, Map<String, String> params) {
-        if (parameterCount() == 0) {
-            return new Object[]{};
-        }
-        if (parameterCount() == 2) {
-            return new Object[]{id, params};
-        }
+        return parameters.createArguments(id, params);
 
-        if (isParamaterTypeOf(0, IdRef.class)) {
-            return new Object[]{id};
-        }
-
-        return new Object[]{params};
-    }
-
-
-    private boolean isOverCollection() {
-        if (parameterCount() == 0) {
-            return true;
-        }
-
-        if (isParamaterTypeOf(0, Map.class)) {
-            return true;
-        }
-
-        if (!isParamaterTypeOf(0, IdRef.class)) {
-            return false;
-        }
-
-        return objectModel.isAncestor(getParameterGenericType(0, 0));
-    }
-
-    private Class<?> getParameterGenericType(int parameterIndex, int parameterGenericTypeIndex) {
-        ParameterizedType parameterGenericTypes = (ParameterizedType) genericParameterTypes[parameterIndex];
-        return (Class<?>) parameterGenericTypes.getActualTypeArguments()[parameterGenericTypeIndex];
-    }
-
-
-    private ObjectModel getObjectModel(Method method) {
-        Class<?> objectClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
-        ObjectModel model = new ObjectModel(objectClazz);
-        return model;
     }
 
 
@@ -127,15 +88,6 @@ public class ActionMethod {
 
     private int parameterCount() {
         return parameterTypes.length;
-    }
-
-    private boolean isParameterIdRefOfType(int index, Class<?> clazz) {
-        Type[] genericTypes = method.getGenericParameterTypes();
-        return isParamaterTypeOf(index, IdRef.class) && getParameterType(genericTypes, index).equals(clazz);
-    }
-
-    private Type getParameterType(Type[] parameters, int index) {
-        return ((ParameterizedType) parameters[index]).getActualTypeArguments()[index];
     }
 
 }

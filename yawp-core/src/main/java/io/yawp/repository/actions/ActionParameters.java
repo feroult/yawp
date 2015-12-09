@@ -17,6 +17,7 @@ public class ActionParameters {
 
     private enum ParameterType {
         ID, PARENT_ID, PARAMS, JSON;
+
     }
 
     private Method method;
@@ -53,6 +54,54 @@ public class ActionParameters {
         return isRootCollection() || isSingleObject() || isParentCollection();
     }
 
+    public boolean isOverCollection() {
+        if (size() == 0) {
+            return true;
+        }
+
+        if (size() == 1) {
+            return count(ParameterType.PARENT_ID) == 1 || count(ParameterType.PARAMS) == 1 || count(ParameterType.JSON) == 1;
+        }
+
+        if (size() == 2) {
+            if (count(ParameterType.PARENT_ID) == 1) {
+                return count(ParameterType.PARAMS) == 1 || count(ParameterType.JSON) == 1;
+            }
+
+            if (count(ParameterType.PARAMS) == 1) {
+                return count(ParameterType.PARENT_ID) == 1 || count(ParameterType.JSON) == 1;
+            }
+
+            if (count(ParameterType.JSON) == 1) {
+                return count(ParameterType.PARENT_ID) == 1 || count(ParameterType.PARAMS) == 1;
+            }
+        }
+
+        if (size() == 3) {
+            return count(ParameterType.PARENT_ID) == 1 && count(ParameterType.PARAMS) == 1 && count(ParameterType.JSON) == 1;
+        }
+
+        return false;
+    }
+
+    public Object[] createArguments(IdRef<?> id, Map<String, String> params) {
+        if (size() == 0) {
+            return new Object[]{};
+        }
+
+        if (size() == 1) {
+            if (count(ParameterType.ID) == 1 || count(ParameterType.PARENT_ID) == 1) {
+                return new Object[]{id};
+            }
+            return new Object[]{params};
+        }
+
+        if (size() == 2) {
+            return new Object[]{id, params};
+        }
+
+        return null;
+    }
 
     private boolean isRootCollection() {
         if (size() == 0) {
@@ -170,6 +219,7 @@ public class ActionParameters {
             if (!isTypeOf(IdRef.class)) {
                 return false;
             }
+            // TODO fix w/ ancestor
             return getGenericTypeAt(0).equals(objectModel.getParentClazz());
         }
 

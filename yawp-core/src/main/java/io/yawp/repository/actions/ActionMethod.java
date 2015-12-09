@@ -16,12 +16,41 @@ public class ActionMethod {
 
     private Method method;
 
-    public ActionMethod(Method method) {
+    private Class<?> endpointClazz;
+
+    private Type[] parameterTypes;
+
+    private final ObjectModel objectModel;
+
+    private Type[] genericParameterTypes;
+
+    private ActionParameters parameters;
+
+    private final List<ActionKey> actionKeys;
+
+    public ActionMethod(Method method) throws InvalidActionMethodException {
+        this.parameters = new ActionParameters(method);
+
         this.method = method;
+        this.endpointClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
+        this.parameterTypes = method.getParameterTypes();
+        this.genericParameterTypes = method.getGenericParameterTypes();
+        this.objectModel = new ObjectModel(endpointClazz);
+        this.actionKeys = parseActionKeys();
+
     }
 
-    public boolean hasAnnotationFor(HttpVerb verb) {
-        return verb.hasAnnotation(method);
+    public List<ActionKey> getActionKeys() {
+        return actionKeys;
+    }
+
+    public static boolean isAction(Method method) {
+        for (HttpVerb verb : HttpVerb.values()) {
+            if (verb.hasAnnotation(method)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static List<ActionKey> getActionKeysFor(Method method) throws InvalidActionMethodException {
@@ -29,16 +58,12 @@ public class ActionMethod {
         return actionMethod.getActionKeys();
     }
 
-    public List<ActionKey> getActionKeys() throws InvalidActionMethodException {
+    private List<ActionKey> parseActionKeys() {
         List<ActionKey> actionKeys = new ArrayList<>();
 
         for (HttpVerb verb : HttpVerb.values()) {
             if (!hasAnnotationFor(verb)) {
                 continue;
-            }
-
-            if (!isValid()) {
-                throw new InvalidActionMethodException();
             }
 
             String value = verb.getAnnotationValue(method);
@@ -47,73 +72,47 @@ public class ActionMethod {
         return actionKeys;
     }
 
+    private boolean hasAnnotationFor(HttpVerb verb) {
+        return verb.hasAnnotation(method);
+    }
+
     public Object[] createArguments(IdRef<?> id, Map<String, String> params) {
-        if (method.getParameterTypes().length == 0) {
+        if (parameterCount() == 0) {
             return new Object[]{};
         }
-        if (method.getParameterTypes().length == 2) {
+        if (parameterCount() == 2) {
             return new Object[]{id, params};
         }
 
-        if (IdRef.class.equals(method.getParameterTypes()[0])) {
+        if (isParamaterTypeOf(0, IdRef.class)) {
             return new Object[]{id};
         }
 
         return new Object[]{params};
     }
 
-    private boolean isValid() {
-
-        if (rootCollection(method)) {
-            return true;
-        }
-
-        if (singleObject(method)) {
-            return true;
-        }
-
-        if (parentCollection(method)) {
-            return true;
-        }
-
-        return false;
-    }
 
     private boolean isOverCollection() {
-        Type[] parameters = method.getGenericParameterTypes();
-
-        if (parameters.length == 0) {
+        if (parameterCount() == 0) {
             return true;
         }
 
-        if (parameters[0].equals(Map.class)) {
+        if (isParamaterTypeOf(0, Map.class)) {
             return true;
         }
 
-        Class<?> objectClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
-        ParameterizedType pType = (ParameterizedType) parameters[0];
-        return !pType.getActualTypeArguments()[0].equals(objectClazz);
+        if (!isParamaterTypeOf(0, IdRef.class)) {
+            return false;
+        }
+
+        return objectModel.isAncestor(getParameterGenericType(0, 0));
     }
 
-
-    private boolean parentCollection(Method method) {
-        Type[] genericTypes = method.getGenericParameterTypes();
-        Type[] types = method.getParameterTypes();
-
-        ObjectModel model = getObjectModel(method);
-        Class<?> parentClazz = model.getParentClazz();
-
-        if (types.length == 1 && types[0].equals(IdRef.class) && getParameterType(genericTypes, 0).equals(parentClazz)) {
-            return true;
-        }
-
-        if (types.length == 2 && types[0].equals(IdRef.class) && getParameterType(genericTypes, 0).equals(parentClazz)
-                && types[1].equals(Map.class)) {
-            return true;
-        }
-
-        return false;
+    private Class<?> getParameterGenericType(int parameterIndex, int parameterGenericTypeIndex) {
+        ParameterizedType parameterGenericTypes = (ParameterizedType) genericParameterTypes[parameterIndex];
+        return (Class<?>) parameterGenericTypes.getActualTypeArguments()[parameterGenericTypeIndex];
     }
+
 
     private ObjectModel getObjectModel(Method method) {
         Class<?> objectClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
@@ -121,36 +120,18 @@ public class ActionMethod {
         return model;
     }
 
-    private boolean singleObject(Method method) {
-        Type[] genericTypes = method.getGenericParameterTypes();
-        Type[] types = method.getParameterTypes();
 
-        Class<?> objectClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
-
-        if (types.length == 1 && types[0].equals(IdRef.class) && getParameterType(genericTypes, 0).equals(objectClazz)) {
-            return true;
-        }
-
-        if (types.length == 2 && types[0].equals(IdRef.class) && getParameterType(genericTypes, 0).equals(objectClazz)
-                && types[1].equals(Map.class)) {
-            return true;
-        }
-
-        return false;
+    private boolean isParamaterTypeOf(int index, Class<?> clazz) {
+        return parameterTypes[index].equals(clazz);
     }
 
-    private boolean rootCollection(Method method) {
-        Type[] types = method.getParameterTypes();
+    private int parameterCount() {
+        return parameterTypes.length;
+    }
 
-        if (types.length == 0) {
-            return true;
-        }
-
-        if (types.length == 1 && types[0].equals(Map.class)) {
-            return true;
-        }
-
-        return false;
+    private boolean isParameterIdRefOfType(int index, Class<?> clazz) {
+        Type[] genericTypes = method.getGenericParameterTypes();
+        return isParamaterTypeOf(index, IdRef.class) && getParameterType(genericTypes, index).equals(clazz);
     }
 
     private Type getParameterType(Type[] parameters, int index) {

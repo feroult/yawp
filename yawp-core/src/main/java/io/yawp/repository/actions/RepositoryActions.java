@@ -80,8 +80,12 @@ public class RepositoryActions {
     }
 
     private static Object[] createArguments(Method method, IdRef<?> id, Map<String, String> params) {
-        ActionMethod actionMethod = new ActionMethod(method);
-        return actionMethod.createArguments(id, params);
+        try {
+            ActionMethod actionMethod = new ActionMethod(method);
+            return actionMethod.createArguments(id, params);
+        } catch (InvalidActionMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

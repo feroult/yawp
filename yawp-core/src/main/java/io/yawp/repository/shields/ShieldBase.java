@@ -7,6 +7,7 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
+import io.yawp.repository.actions.InvalidActionMethodException;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;
 
@@ -269,8 +270,12 @@ public abstract class ShieldBase<T> extends Feature {
     }
 
     private Object[] createArguments(Method method) {
-        ActionMethod actionMethod = new ActionMethod(method);
-        return actionMethod.createArguments(id, params);
+        try {
+            ActionMethod actionMethod = new ActionMethod(method);
+            return actionMethod.createArguments(id, params);
+        } catch (InvalidActionMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

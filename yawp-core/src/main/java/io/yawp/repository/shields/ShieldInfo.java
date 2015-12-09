@@ -33,6 +33,10 @@ public class ShieldInfo<T> {
 
         Method[] methods = shieldClazz.getDeclaredMethods();
         for (Method method : methods) {
+            if (!ActionMethod.isAction(method)) {
+                continue;
+            }
+
             List<ActionKey> actionKeys = getActionKeysFor(method);
 
             for (ActionKey actionKey : actionKeys) {

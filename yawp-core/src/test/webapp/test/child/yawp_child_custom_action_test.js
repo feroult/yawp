@@ -63,4 +63,20 @@
 		});
 	});
 
+
+	t.asyncTest("over collection with json and params", function(assert) {
+		expect(1);
+
+		var parent = fx.parent('parent');
+
+		var object = { id: '/basic_objects/1', stringValue:  'basic object' };
+
+		var params = { x: 'y' };
+
+		yawp('/children').from(parent).json(object).params(params).post('with-json-and-params').done(function(result) {
+		    assert.equal(result, 'basic object y - /basic_objects/1');
+			t.start();
+		});
+	});
+
 })(QUnit, yawp, yawp.fixtures);

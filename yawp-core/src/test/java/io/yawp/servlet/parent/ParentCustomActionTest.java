@@ -2,7 +2,9 @@ package io.yawp.servlet.parent;
 
 import static org.junit.Assert.assertEquals;
 
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.actions.FakeException;
+import io.yawp.repository.models.basic.Pojo;
 import io.yawp.repository.models.parents.Parent;
 
 import java.util.List;
@@ -109,10 +111,16 @@ public class ParentCustomActionTest extends ParentServletTestCase {
     }
 
     @Test
-    public void testOverObjectWithJson() {
+    public void testOverObjectWithJsonString() {
         Parent parent = saveParent("xpto");
-        String json = post(uri("/parents/%s/with-json", parent), "{ 'stringValue': 'json xpto' }");
+        String json = post(uri("/parents/%s/with-json-string", parent), "{ 'stringValue': 'json xpto' }");
         assertEquals("json xpto", from(json, String.class));
     }
 
+    @Test
+    public void testOverObjectWithJsonObject() {
+        Parent parent = saveParent("xpto");
+        String json = post(uri("/parents/%s/with-json-object", parent), "{ 'stringValue': 'pojo xpto' }");
+        assertEquals("pojo xpto", from(json, String.class));
+    }
 }

@@ -81,9 +81,14 @@ public class ParentAction extends Action<Parent> {
         return "ok";
     }
 
-    @POST("with-json")
-    public String withJson(IdRef<Parent> id, String json) {
+    @POST("with-json-string")
+    public String withJsonString(IdRef<Parent> id, String json) {
         Pojo pojo = JsonUtils.from(yawp, json, Pojo.class);
+        return pojo.getStringValue();
+    }
+
+    @POST("with-json-object")
+    public String withJsonObject(IdRef<Parent> id, Pojo pojo) {
         return pojo.getStringValue();
     }
 }

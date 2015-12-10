@@ -278,7 +278,7 @@ public abstract class ShieldBase<T> extends Feature {
     private Object[] createArguments(Method method) {
         try {
             ActionMethod actionMethod = new ActionMethod(method);
-            return actionMethod.createArguments(id, requestJson, params);
+            return actionMethod.createArguments(yawp, id, requestJson, params);
         } catch (InvalidActionMethodException e) {
             throw new RuntimeException(e);
         }

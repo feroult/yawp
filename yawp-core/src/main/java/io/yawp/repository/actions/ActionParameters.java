@@ -1,8 +1,10 @@
 package io.yawp.repository.actions;
 
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.ObjectModel;
+import io.yawp.repository.Repository;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -79,7 +81,7 @@ public class ActionParameters {
         return false;
     }
 
-    public Object[] createArguments(IdRef<?> id, String json, Map<String, String> params) {
+    public Object[] createArguments(Repository r, IdRef<?> id, String json, Map<String, String> params) {
         List<Object> arguments = new ArrayList();
 
         for (ParameterType type : order) {
@@ -89,7 +91,7 @@ public class ActionParameters {
                     arguments.add(id);
                     break;
                 case JSON:
-                    arguments.add(json);
+                    arguments.add(getJsonArgument(r, json));
                     break;
                 case PARAMS:
                     arguments.add(params);
@@ -98,6 +100,13 @@ public class ActionParameters {
         }
 
         return arguments.toArray();
+    }
+
+    private Object getJsonArgument(Repository r, String json) {
+        if (jsonClazz.equals(String.class)) {
+            return json;
+        }
+        return JsonUtils.from(r, json, jsonClazz);
     }
 
     private boolean isRootCollection() {

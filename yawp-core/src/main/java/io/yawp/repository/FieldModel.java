@@ -50,7 +50,7 @@ public class FieldModel {
     }
 
     public boolean isEnum(Object value) {
-        return value != null && value.getClass().isEnum();
+        return value != null && value instanceof Enum<?>;
     }
 
     public boolean isCollection(Object value) {
@@ -58,7 +58,7 @@ public class FieldModel {
     }
 
     public boolean isEnum() {
-        return field.getType().isEnum();
+        return Enum.class.isAssignableFrom(field.getType());
     }
 
     public boolean isIdRef() {

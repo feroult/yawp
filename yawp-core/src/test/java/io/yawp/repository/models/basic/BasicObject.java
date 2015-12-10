@@ -48,6 +48,9 @@ public class BasicObject {
 
     private IdRef<BasicObject> objectId;
 
+    @Index
+    private Status status;
+
     public BasicObject() {
 
     }
@@ -164,6 +167,14 @@ public class BasicObject {
 
     public void setObjectId(IdRef<BasicObject> objectId) {
         this.objectId = objectId;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public void assertObject(String stringValue, String textValue, int intValue, long longValue, double doubleValue, boolean booleanValue,

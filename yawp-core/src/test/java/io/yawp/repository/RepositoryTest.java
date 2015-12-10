@@ -6,6 +6,7 @@ import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.Pojo;
+import io.yawp.repository.models.basic.Status;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Parent;
@@ -147,5 +148,25 @@ public class RepositoryTest extends EndpointTestCase {
         yawp.save(new BasicObject("xpto"));
         yawp.commit();
         assertEquals("xpto", yawp(BasicObject.class).only().getStringValue());
+    }
+
+    @Test
+    public void testSaveWithEnum() {
+        BasicObject object = new BasicObject();
+        object.setStatus(Status.RUNNING);
+        yawp.save(object);
+
+        BasicObject retrievedObject = yawp(BasicObject.class).first();
+        assertEquals(Status.RUNNING, retrievedObject.getStatus());
+    }
+
+    @Test
+    public void testQueryWithEnum() {
+        BasicObject object = new BasicObject();
+        object.setStatus(Status.RUNNING);
+        yawp.save(object);
+
+        BasicObject retrievedObject = yawp(BasicObject.class).where("status", "=", Status.RUNNING).first();
+        assertEquals(Status.RUNNING, retrievedObject.getStatus());
     }
 }

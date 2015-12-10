@@ -1,21 +1,18 @@
 package io.yawp.repository.actions;
 
-import static org.junit.Assert.assertEquals;
-
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.annotation.*;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Parent;
+import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.AfterClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class ActionMethodTest {
 

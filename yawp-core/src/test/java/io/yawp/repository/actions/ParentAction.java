@@ -83,12 +83,17 @@ public class ParentAction extends Action<Parent> {
 
     @POST("with-json-string")
     public String withJsonString(IdRef<Parent> id, String json) {
-        Pojo pojo = JsonUtils.from(yawp, json, Pojo.class);
+        Pojo pojo = from(json, Pojo.class);
         return pojo.getStringValue();
     }
 
     @POST("with-json-object")
     public String withJsonObject(IdRef<Parent> id, Pojo pojo) {
         return pojo.getStringValue();
+    }
+
+    @POST("with-json-list")
+    public String withJsonList(IdRef<Parent> id, List<Pojo> pojos) {
+        return pojos.get(0).getStringValue() + ' ' + pojos.get(1).getStringValue();
     }
 }

@@ -102,9 +102,36 @@ public class ActionParameters {
         return arguments.toArray();
     }
 
+    private void init() throws InvalidActionMethodException {
+        Class<?>[] parameters = method.getParameterTypes();
+        Type[] genericParameterTypes = method.getGenericParameterTypes();
+
+        for (int i = 0; i < parameters.length; i++) {
+            ParameterInfo parameterInfo = new ParameterInfo(parameters[i], genericParameterTypes[i]);
+            ParameterType type = parameterInfo.getType();
+
+            order.add(type);
+            incrementCount(type);
+
+            if (type == ParameterType.JSON) {
+                defineJsonClazz(parameterInfo);
+            }
+        }
+    }
+
+    private void defineJsonClazz(ParameterInfo parameterInfo) {
+        jsonClazz = parameterInfo.getParameterClazz();
+        if (jsonClazz.equals(List.class)) {
+            jsonGenericType = parameterInfo.getGenericTypeAt(0);
+        }
+    }
+
     private Object getJsonArgument(Repository r, String json) {
         if (jsonClazz.equals(String.class)) {
             return json;
+        }
+        if (jsonClazz.equals(List.class)) {
+            return JsonUtils.fromList(r, json, (Class<?>) jsonGenericType);
         }
         return JsonUtils.from(r, json, jsonClazz);
     }
@@ -156,24 +183,6 @@ public class ActionParameters {
 
         return false;
 
-    }
-
-    private void init() throws InvalidActionMethodException {
-        Class<?>[] parameters = method.getParameterTypes();
-        Type[] genericParameterTypes = method.getGenericParameterTypes();
-
-        for (int i = 0; i < parameters.length; i++) {
-            ParameterInfo parameterInfo = new ParameterInfo(parameters[i], genericParameterTypes[i]);
-            ParameterType type = parameterInfo.getType();
-
-            order.add(type);
-            incrementCount(type);
-
-            if (type == ParameterType.JSON) {
-                jsonClazz = parameters[i];
-                jsonGenericType = genericParameterTypes[i];
-            }
-        }
     }
 
     private void incrementCount(ParameterType type) {
@@ -248,6 +257,14 @@ public class ActionParameters {
             return keyClazz.equals(String.class) && valueClazz.equals(String.class);
         }
 
+        public Class<?> getParameterClazz() {
+            return parameter;
+        }
+
+        public Type getGenericTypeAt(int index) {
+            return ((ParameterizedType) parameterGenerics).getActualTypeArguments()[index];
+        }
+
         private boolean isJson() {
             if (isTypeOf(IdRef.class)) {
                 return false;
@@ -262,10 +279,6 @@ public class ActionParameters {
 
         private boolean isTypeOf(Class<?> clazz) {
             return parameter.equals(clazz);
-        }
-
-        private Type getGenericTypeAt(int index) {
-            return ((ParameterizedType) parameterGenerics).getActualTypeArguments()[index];
         }
     }
 }

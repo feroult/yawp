@@ -20,19 +20,19 @@ public class ActionMethodTest {
     }
 
     private class TestAction extends FakeAction<Child> {
-        @PUT("invalid-1")
+        @PUT("invalid-wrong-params-types")
         public void invalid1(Map<String, Long> map) {
         }
 
-        @PUT("invalid-2")
+        @PUT("invalid-two-ids")
         public void invalid2(IdRef<Child> id, IdRef<Child> id2) {
         }
 
-        @PUT("invalid-3")
+        @PUT("invalid-two-params-maps")
         public void invalid3(Map<String, String> params, Map<String, String> params2) {
         }
 
-        @PUT("invalid-4")
+        @PUT("invalid-id-is-not-ancestor")
         public void invalid4(IdRef<BasicObject> id) {
         }
 

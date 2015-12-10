@@ -1,7 +1,9 @@
 package io.yawp.repository.actions;
 
 import io.yawp.commons.http.annotation.*;
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.models.basic.Pojo;
 import io.yawp.repository.models.parents.Parent;
 
 import java.util.List;
@@ -81,6 +83,7 @@ public class ParentAction extends Action<Parent> {
 
     @POST("with-json")
     public String withJson(IdRef<Parent> id, String json) {
-        return "json xpto";
+        Pojo pojo = JsonUtils.from(yawp, json, Pojo.class);
+        return pojo.getStringValue();
     }
 }

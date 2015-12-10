@@ -111,7 +111,7 @@ public class ParentCustomActionTest extends ParentServletTestCase {
     @Test
     public void testOverObjectWithJson() {
         Parent parent = saveParent("xpto");
-        String json = post(uri("/parents/%s/with-json", parent), "{ 'name': 'json xpto' }");
+        String json = post(uri("/parents/%s/with-json", parent), "{ 'stringValue': 'json xpto' }");
         assertEquals("json xpto", from(json, String.class));
     }
 

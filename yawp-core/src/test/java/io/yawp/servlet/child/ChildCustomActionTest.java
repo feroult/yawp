@@ -36,4 +36,14 @@ public class ChildCustomActionTest extends ChildServletTestCase {
         assertEquals(parent.getId(), children.get(0).getParentId());
         assertEquals(parent.getId(), children.get(1).getParentId());
     }
+
+    @Test
+    public void overCollectionWithJsonAndParams() {
+        saveParent();
+
+        String json = post(uri("/parents/%s/children/with-json-and-params", parent),
+                "{ 'id': '/basic_objects/1', 'stringValue':  'basic object' }", params("x", "y"));
+
+        assertEquals("basic object y - /basic_objects/1", from(json, String.class));
+    }
 }

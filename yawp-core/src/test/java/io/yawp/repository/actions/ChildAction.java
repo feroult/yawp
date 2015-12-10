@@ -1,8 +1,10 @@
 package io.yawp.repository.actions;
 
 import io.yawp.commons.http.annotation.GET;
+import io.yawp.commons.http.annotation.POST;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Parent;
 
@@ -38,6 +40,11 @@ public class ChildAction extends Action<Child> {
     public List<Child> childByKind(Map<String, String> params) {
         List<Child> children = yawp(Child.class).where("kindOfChild", "=", params.get("kindOfChild")).list();
         return children;
+    }
+
+    @POST
+    public String withJsonAndParams(IdRef<Parent> parentId, BasicObject object, Map<String, String> params) {
+        return object.getStringValue() + " " + params.get("x") + " - " + object.getId();
     }
 
 }

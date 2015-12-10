@@ -62,7 +62,10 @@ public class EndpointRouter {
         this.customActionKey = parseCustomActionKey();
         this.overCollection = parseOverCollection();
         this.endpointClazz = parseEndpointClazz();
-        this.objects = parseRequestJson();
+        
+        if (!isCustomAction()) {
+            this.objects = parseRequestJson();
+        }
     }
 
     private Class<?> parseEndpointClazz() {

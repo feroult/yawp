@@ -111,6 +111,17 @@
         });
     });
 
+    t.asyncTest("over collection with json object", function(assert) {
+        expect(1);
+
+        var json = { stringValue: 'json object' };
+
+        yawp('/parents').json(json).post('collection-with-json-object').done(function(result) {
+            assert.equal(result, 'json object');
+            t.start();
+        });
+    });
+
     t.asyncTest("over object with json list", function(assert) {
         expect(1);
 

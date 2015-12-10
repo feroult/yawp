@@ -87,6 +87,11 @@ public class ParentAction extends Action<Parent> {
         return pojo.getStringValue();
     }
 
+    @POST
+    public String collectionWithJsonObject(Pojo pojo) {
+        return pojo.getStringValue();
+    }
+
     @POST("with-json-object")
     public String withJsonObject(IdRef<Parent> id, Pojo pojo) {
         return pojo.getStringValue();

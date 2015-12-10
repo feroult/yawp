@@ -152,6 +152,11 @@
 			return options();
 		}
 
+		function json(object) {
+			options.setJson(object);
+			return this;
+		}
+
 		function params(params) {
 			options.addQueryParameters(params);
 			return this;
@@ -178,6 +183,7 @@
 		}
 
 		return {
+		    json: json,
 			params : params,
 			get : get,
 			put : put,
@@ -206,9 +212,13 @@
 			return ajaxOptions;
 		}
 
-		options.addQueryParameters = function(params) {
-			ajaxOptions.query = $.extend(ajaxOptions.query, params);
+		options.setJson = function(object) {
+			ajaxOptions.data = JSON.stringify(object);
 		};
+
+        options.addQueryParameters = function(params) {
+            ajaxOptions.query = $.extend(ajaxOptions.query, params);
+        };
 
 		options.addQueryParameter = function(key, value) {
 			if (!ajaxOptions.query) {

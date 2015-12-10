@@ -80,4 +80,51 @@
         });
     });
 
+    t.asyncTest("over object with json string", function(assert) {
+        expect(1);
+
+        var parent = fx.parent('parent', {
+            name : 'xpto'
+        });
+
+        var json = { stringValue: 'json string' };
+
+        yawp(parent).json(json).post('with-json-string').done(function(result) {
+            assert.equal(result, 'json string');
+            t.start();
+        });
+    });
+
+
+    t.asyncTest("over object with json object", function(assert) {
+        expect(1);
+
+        var parent = fx.parent('parent', {
+            name : 'xpto'
+        });
+
+        var json = { stringValue: 'json object' };
+
+        yawp(parent).json(json).post('with-json-object').done(function(result) {
+            assert.equal(result, 'json object');
+            t.start();
+        });
+    });
+
+    t.asyncTest("over object with json list", function(assert) {
+        expect(1);
+
+        var parent = fx.parent('parent', {
+            name : 'xpto'
+        });
+
+        var json = [ { stringValue: 'pojo' }, { stringValue: 'list' } ];
+
+        yawp(parent).json(json).post('with-json-list').done(function(result) {
+            assert.equal(result, 'pojo list');
+            t.start();
+        });
+    });
+
+
 })(QUnit, yawp, yawp.fixtures);

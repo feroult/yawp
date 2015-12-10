@@ -96,4 +96,5 @@ public class ParentAction extends Action<Parent> {
     public String withJsonList(IdRef<Parent> id, List<Pojo> pojos) {
         return pojos.get(0).getStringValue() + ' ' + pojos.get(1).getStringValue();
     }
+
 }

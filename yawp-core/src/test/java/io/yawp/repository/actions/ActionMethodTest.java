@@ -56,6 +56,14 @@ public class ActionMethodTest {
         public void singleObject(IdRef<Child> id) {
         }
 
+        @GET
+        @POST
+        @PUT
+        @PATCH
+        @DELETE
+        public void singleObjectWithoutName(IdRef<Child> id) {
+        }
+
         @GET("single-object-params")
         public void singleObjectParams(IdRef<Child> id, Map<String, String> params) {
         }
@@ -129,6 +137,16 @@ public class ActionMethodTest {
         assertActionKey(HttpVerb.PUT, "single-object", false, keys.get(2));
         assertActionKey(HttpVerb.PATCH, "single-object", false, keys.get(3));
         assertActionKey(HttpVerb.DELETE, "single-object", false, keys.get(4));
+    }
+
+    @Test
+    public void testSingleObjectWithoutName() throws InvalidActionMethodException {
+        List<ActionKey> keys = getActionKeysFor("singleObjectWithoutName", IdRef.class);
+        assertActionKey(HttpVerb.GET, "single-object-without-name", false, keys.get(0));
+        assertActionKey(HttpVerb.POST, "single-object-without-name", false, keys.get(1));
+        assertActionKey(HttpVerb.PUT, "single-object-without-name", false, keys.get(2));
+        assertActionKey(HttpVerb.PATCH, "single-object-without-name", false, keys.get(3));
+        assertActionKey(HttpVerb.DELETE, "single-object-without-name", false, keys.get(4));
     }
 
     @Test

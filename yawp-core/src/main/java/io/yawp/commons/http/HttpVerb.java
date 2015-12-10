@@ -1,6 +1,7 @@
 package io.yawp.commons.http;
 
 import io.yawp.commons.http.annotation.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -41,9 +42,19 @@ public enum HttpVerb {
         try {
             Annotation annotation = method.getAnnotation(annotationClazz);
             Method valueMethod = annotation.getClass().getMethod("value");
-            return (String) valueMethod.invoke(annotation);
+            String value = (String) valueMethod.invoke(annotation);
+
+            if (StringUtils.isEmpty(value)) {
+                return useMethodNameAsActionPath(method);
+            }
+
+            return value;
         } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String useMethodNameAsActionPath(Method method) {
+        return method.getName().replaceAll("(.)(\\p{Lu})", "$1-$2").toLowerCase();
     }
 }

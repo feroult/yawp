@@ -47,4 +47,10 @@ public class ChildAction extends Action<Child> {
         return object.getStringValue() + " " + params.get("x") + " - " + object.getId();
     }
 
+    public void notActionMethod(Child child, String s) {
+    }
+
+    private void notActionPrivateMethod(Child child, String s) {
+    }
+
 }

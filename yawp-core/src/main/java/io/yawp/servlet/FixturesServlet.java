@@ -1,6 +1,6 @@
 package io.yawp.servlet;
 
-import io.yawp.commons.http.ErrorResponse;
+import io.yawp.commons.http.ExceptionResponse;
 import io.yawp.driver.api.Driver;
 import io.yawp.repository.Repository;
 
@@ -24,7 +24,7 @@ public class FixturesServlet extends EndpointServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (!enableFixtures(req)) {
-            response(resp, new ErrorResponse(403));
+            response(resp, new ExceptionResponse(403));
             return;
         }
         super.service(req, resp);

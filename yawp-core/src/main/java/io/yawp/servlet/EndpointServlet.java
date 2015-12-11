@@ -81,7 +81,7 @@ public class EndpointServlet extends HttpServlet {
         try {
             httpResponse = execute(req.getMethod(), getUri(req), JsonUtils.readJson(req.getReader()), makeParams(req));
         } catch (HttpException e) {
-            httpResponse = e.createErrorResponse();
+            httpResponse = e.createResponse();
         }
 
         if (enableCrossDomain) {

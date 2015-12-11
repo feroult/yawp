@@ -33,12 +33,8 @@ public class HttpException extends RuntimeException {
         return text;
     }
 
-    public HttpResponse createErrorResponse() {
-        if (getHttpStatus() == 404 && Environment.isProduction()) {
-            return new ErrorResponse(getHttpStatus(), "Not Found");
-        }
-
-        return new ErrorResponse(getHttpStatus(), getText());
+    public HttpResponse createResponse() {
+        return new ExceptionResponse(getHttpStatus(), getText());
     }
 
     @Override

@@ -40,7 +40,7 @@ public class EndpointRouter {
     private EndpointRouter(Repository r, HttpVerb verb, String uri, String requestJson, Map<String, String> params) {
 
         if (isWelcome(uri)) {
-            throw new HttpException(200, "{ 'message': 'Welcome to YAWP!' }");
+            throw new HttpException(200, "Welcome to YAWP!");
         }
 
         this.verb = verb;

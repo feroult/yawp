@@ -68,13 +68,13 @@ public class EndpointRouterTest extends ServletTestCase {
             get("");
             assertTrue(false);
         } catch (HttpException e) {
-            assertEquals("{ 'message': 'Welcome to YAWP!' }", e.getText());
+            assertEquals("Welcome to YAWP!", e.getText());
         }
         try {
             get("/");
             assertTrue(false);
         } catch (HttpException e) {
-            assertEquals("{ 'message': 'Welcome to YAWP!' }", e.getText());
+            assertEquals("Welcome to YAWP!", e.getText());
         }
     }
 

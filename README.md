@@ -33,21 +33,24 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 
 3. Using a browser, go to `http://localhost:8080/api/` to check if everything is OK.
 
-5. Follow the guidelines to start developing your API. You may find
-   the following resources handy:
+5. Follow the guidelines to start developing your API:
     * [Todo App List Tutorial](http://yawp.io/guides/tutorials/todo-list-app)
     * [YAWP! Guides](http://yawp.io/guides)
     * [The API Documentation](http://yawp.io/guides/api/models)    
 
 ## Contributing
 
-Everyone willing to contribute with YAWP! is welcome.  To start developing you
+Everyone willing to contribute with YAWP! is welcome. To start developing you
 will need an environment with:
 
-    * JDK 1.7 or newer;
-    * Maven 1.3 or newer;
-    * PostgreSQL 9.4 or newer;
+    * JDK 1.7+
+    * Maven 1.3+
+    * PostgreSQL 9.4+
 
 ## IRC
 
 Feel free to contact the developers at the IRC channel __#yawp__ at __chat.freenode.net__
+
+## License
+
+YAWP! is released under the [MIT license](https://opensource.org/licenses/MIT).

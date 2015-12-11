@@ -124,7 +124,6 @@ appengine_last_check() {
     ls target/appengine-generated/local_db.bin
 }
 
-
 run() {
     run_scaffolds
     run_smoke_tests

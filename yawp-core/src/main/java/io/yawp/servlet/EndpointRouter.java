@@ -38,6 +38,11 @@ public class EndpointRouter {
     private List<?> objects;
 
     private EndpointRouter(Repository r, HttpVerb verb, String uri, String requestJson, Map<String, String> params) {
+
+        if (isWelcome(uri)) {
+            throw new HttpException(200, "{ 'message': 'Welcome to YAWP!' }");
+        }
+
         this.verb = verb;
         this.uri = uri;
         this.r = r;
@@ -52,6 +57,10 @@ public class EndpointRouter {
         }
     }
 
+    private boolean isWelcome(String uri) {
+        return uri.equals("") || uri.equals("/");
+    }
+
     public static EndpointRouter parse(Repository r, HttpVerb verb, String uri, String requestJson, Map<String, String> params) {
         return new EndpointRouter(r, verb, uri, requestJson, params);
     }
@@ -62,7 +71,7 @@ public class EndpointRouter {
         this.customActionKey = parseCustomActionKey();
         this.overCollection = parseOverCollection();
         this.endpointClazz = parseEndpointClazz();
-        
+
         if (!isCustomAction()) {
             this.objects = parseRequestJson();
         }

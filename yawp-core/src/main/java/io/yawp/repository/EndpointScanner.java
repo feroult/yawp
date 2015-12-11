@@ -151,7 +151,9 @@ public final class EndpointScanner {
             }
 
             for (Method method : actionClazz.getDeclaredMethods()) {
-                addAction(objectClazz, method);
+            	if(method.getAnnotations() != null && method.getAnnotations().length > 0) {
+            		addAction(objectClazz, method);
+            	}
             }
         }
     }

@@ -1,4 +1,4 @@
-# YAWP!
+# Welcome to YAWP!
 
 A very simple and elegant domain specific language / framework in Java that helps you to create amazing APIs.
 

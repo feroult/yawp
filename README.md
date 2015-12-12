@@ -1,12 +1,17 @@
 # YAWP!
 
-Simple, Elegant and Powerful APIs
+A very simple and elegant domain specific language / framework in Java that helps you to create amazing APIs.
 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
 
 ## Introduction
 
-__YAWP!__'s main purpose is to help developers create meaningful APIs to support their REST based applications. It supports Google App Engine and PostgreSQL environments.
+__YAWP!__'s main purpose is to help developers to easily create meaningful APIs to
+back their REST based applications. It natively supports the Google Appengine Platform,
+so you can bootstrap your API very quickly with a free (to start) auto-scalable
+environment. Later, if you change your mind, there are no lock-ins with Google
+and you can move freely to any cloud platform you want without needing to
+rewrite your code.
 
 You create your POJOs and __YAWP!__
 

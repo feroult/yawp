@@ -48,9 +48,9 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 Everyone willing to contribute with YAWP! is welcome. To start developing you
 will need an environment with:
 
-    * JDK 1.7+
-    * Maven 1.3+
-    * PostgreSQL 9.4+
+* JDK 1.7+
+* Maven 1.3+
+* PostgreSQL 9.4+
 
 ## IRC
 

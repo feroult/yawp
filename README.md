@@ -39,6 +39,7 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 3. Using a browser, go to `http://localhost:8080/api/` to check if everything is OK.
 
 5. Follow the guidelines to start developing your API:
+    * [Your First API](http://yawp.io/guides/getting-started/your-first-api)
     * [Todo App List Tutorial](http://yawp.io/guides/tutorials/todo-list-app)
     * [YAWP! Guides](http://yawp.io/guides)
     * [The API Documentation](http://yawp.io/guides/api/models)    

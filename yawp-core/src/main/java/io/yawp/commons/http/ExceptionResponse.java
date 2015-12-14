@@ -2,9 +2,8 @@ package io.yawp.commons.http;
 
 import io.yawp.commons.utils.Environment;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class ExceptionResponse extends HttpResponse {
 
@@ -39,19 +38,13 @@ public class ExceptionResponse extends HttpResponse {
             return;
         }
 
-        if (httpStatus >= 200 && httpStatus < 300) {
-            resp.getWriter().write(StatusObject.success(userText).toJson());
-        } else {
-            resp.getWriter().write(StatusObject.error(userText).toJson());
-        }
+        resp.getWriter().write(userText);
     }
 
     private String getUserText() {
-        String userText = text;
-
         if (httpStatus == 404 && Environment.isProduction()) {
-            userText = "Not Found";
+            return "";
         }
-        return userText;
+        return text;
     }
 }

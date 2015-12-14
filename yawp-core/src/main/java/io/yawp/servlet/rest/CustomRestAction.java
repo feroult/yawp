@@ -1,7 +1,6 @@
 package io.yawp.servlet.rest;
 
 import io.yawp.commons.http.JsonResponse;
-import io.yawp.commons.http.StatusObject;
 
 public class CustomRestAction extends RestAction {
 
@@ -19,7 +18,7 @@ public class CustomRestAction extends RestAction {
         Object object = r.action(id, endpointClazz, customActionKey, requestJson, params);
 
         if (object == null) {
-            return new JsonResponse(StatusObject.success().toJson());
+            return new JsonResponse("");
         }
 
         applyGetFacade(object);

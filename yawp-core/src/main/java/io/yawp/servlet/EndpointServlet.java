@@ -4,23 +4,21 @@ import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.JsonResponse;
-import io.yawp.commons.http.StatusObject;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.driver.api.DriverFactory;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EndpointServlet extends HttpServlet {
 
@@ -69,7 +67,7 @@ public class EndpointServlet extends HttpServlet {
 
     protected void response(HttpServletResponse resp, HttpResponse httpResponse) throws IOException {
         if (httpResponse == null) {
-            new JsonResponse(StatusObject.success().toString()).execute(resp);
+            new JsonResponse("").execute(resp);
         } else {
             httpResponse.execute(resp);
         }

@@ -137,5 +137,14 @@
         });
     });
 
+    t.asyncTest("error response", function(assert) {
+        expect(1);
+
+        yawp('/parents').put('with-exception').error(function(err) {
+            var result = err.responseJSON;
+            assert.equal(result.title, 'sample json exception body');
+            t.start();
+        });
+    });
 
 })(QUnit, yawp, yawp.fixtures);

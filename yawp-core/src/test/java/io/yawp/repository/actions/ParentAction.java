@@ -1,7 +1,7 @@
 package io.yawp.repository.actions;
 
+import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.annotation.*;
-import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.Pojo;
 import io.yawp.repository.models.parents.Parent;
@@ -100,6 +100,19 @@ public class ParentAction extends Action<Parent> {
     @POST("with-json-list")
     public String withJsonList(IdRef<Parent> id, List<Pojo> pojos) {
         return pojos.get(0).getStringValue() + ' ' + pojos.get(1).getStringValue();
+    }
+
+    @PUT
+    public void withException() {
+        throw new HttpException(400, json(new Message("sample json exception body")));
+    }
+
+    class Message {
+        private String title;
+
+        public Message(String title) {
+            this.title = title;
+        }
     }
 
 }

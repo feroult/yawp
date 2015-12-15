@@ -138,12 +138,15 @@
     });
 
     t.asyncTest("error response", function(assert) {
-        expect(1);
+        expect(2);
 
         yawp('/parents').put('with-exception').error(function(err) {
             var result = err.responseJSON;
             assert.equal(result.title, 'sample json exception body');
-            t.start();
+            yawp('/parents').put('with-exception').exception(function(result) {
+                assert.equal(result.title, 'sample json exception body');
+                t.start();
+            });
         });
     });
 

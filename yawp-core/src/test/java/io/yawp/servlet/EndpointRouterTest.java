@@ -4,8 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.EndpointTestCase;
+import io.yawp.commons.utils.ServletTestCase;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
@@ -15,7 +17,7 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
-public class EndpointRouterTest extends EndpointTestCase {
+public class EndpointRouterTest extends ServletTestCase {
 
     private class RepositoryFeaturesMock extends RepositoryFeatures {
 
@@ -58,6 +60,22 @@ public class EndpointRouterTest extends EndpointTestCase {
 
     private EndpointRouter parse(HttpVerb verb, String uri, String requestJson) {
         return EndpointRouter.parse(yawp, verb, uri, requestJson, null);
+    }
+
+    @Test
+    public void testWelcome() {
+        try {
+            get("");
+            assertTrue(false);
+        } catch (HttpException e) {
+            assertEquals("Welcome to YAWP!", e.getText());
+        }
+        try {
+            get("/");
+            assertTrue(false);
+        } catch (HttpException e) {
+            assertEquals("Welcome to YAWP!", e.getText());
+        }
     }
 
     @Test

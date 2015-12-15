@@ -49,4 +49,10 @@ public class ChildAction extends Action<Child> {
     
     public void xpto(Child c, String bla) {}
 
+    public void notActionMethod(Child child, String s) {
+    }
+
+    private void notActionPrivateMethod(Child child, String s) {
+    }
+
 }

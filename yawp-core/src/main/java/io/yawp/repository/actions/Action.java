@@ -9,7 +9,7 @@ public class Action<T> extends Feature {
         return JsonUtils.from(yawp, json, clazz);
     }
 
-    public String to(Object object) {
+    public String json(Object object) {
         return JsonUtils.to(object);
     }
 

@@ -1,12 +1,17 @@
-# YAWP!
+# Welcome to YAWP!
 
-Simple, Elegant and Powerful APIs
+A very simple and elegant domain specific language and framework in Java that helps you to create amazing APIs.
 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
 
 ## Introduction
 
-__YAWP!__'s main purpose is to help developers create meaningful APIs to support their REST based applications. It supports Google App Engine and PostgreSQL environments.
+__YAWP!__'s main purpose is to help developers to easily create meaningful APIs to
+back their REST based applications. It natively supports and abstracts the Google
+Appengine Platform, so you can bootstrap your API very quickly with a free
+(to start) auto-scalable environment. Later, if you change your mind, there are no
+lock-ins with Google and you can move freely to any cloud platform you want without
+losing data or having to rewrite your code.
 
 You create your POJOs and __YAWP!__
 
@@ -14,76 +19,44 @@ You create your POJOs and __YAWP!__
 
 Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 
-If you want a simple hands-on tutorial to start with, try the [Todo App List Tutorial](http://yawp.io/guides/tutorials/todo-list-app).
+## Getting Started
+
+1. At the command prompt, create a new YAWP! API application:
+
+        $ mvn archetype:generate \
+            -DarchetypeGroupId=io.yawp \
+            -DarchetypeArtifactId=yawp \
+            -DarchetypeVersion=LATES \
+            -DgroupId=yawpapp \
+            -DartifactId=yawpapp \
+            -Dversion=1.0-SNAPSHOT            
+
+2. Change directory to `yawpapp` and start the yawp development server:
+
+        $ cd yawpapp
+        $ mvn yawp:devserver
+
+3. Using a browser, go to `http://localhost:8080/api/` to check if everything is OK.
+
+5. Follow the guidelines to start developing your API:
+    * [Your First API](http://yawp.io/guides/getting-started/your-first-api)
+    * [Todo App List Tutorial](http://yawp.io/guides/tutorials/todo-list-app)
+    * [YAWP! Guides](http://yawp.io/guides)
+    * [The API Documentation](http://yawp.io/guides/api/models)    
+
+## Contributing
+
+Everyone willing to contribute with YAWP! is welcome. To start developing you
+will need an environment with:
+
+* JDK 1.7+
+* Maven 1.3+
+* PostgreSQL 9.4+
 
 ## IRC
 
-If you want to talk about yawp, go to channel __#yawp__ at __chat.freenode.net__
+Feel free to contact the developers at the IRC channel __#yawp__ at __chat.freenode.net__
 
-## How it Works
+## License
 
-From a single class annotation, it provides a full REST url schema with a fluent programatic API for Java and Javascript. You write your client side code the same way you do for your server side. It also provides a convenient way to organize your server side business logic.
-
-### REST Schema
-
-Annotate your POJO:
-```java
-@Endpoint(path = "/people")
-public class Person {
-    private IdRef<Person> id;
-    private String name;
-}
-```
-
-Then use one of HTTP, Java or Javascript APIs to access your resources:
-
-__HTTP__:
-
-| Verb        | Path           | Action                |
-| ----------- |--------------- | --------------------- |
-| GET         | /people        | List people           |
-| POST        | /people        | Create a person       |
-| GET         | /people/{id}   | Show a person         |
-| PUT/PATCH   | /people/{id}   | Update a person       |
-| DELETE      | /people/{id}   | Destroy a person      |
-
-__Javascript__:
-```javascript
-yawp('/people').list( function(people) {} );
-
-yawp('/people').create({ name : 'Janes' }).done( function(person) {} );
-
-yawp(personId).fetch( function(person) {} );
-
-yawp.update(person).done( function(person) {} );
-
-yawp.destroy(personId).done( function(personId) {} );
-```
-
-__Java__:
-```java
-List<Person> people = yawp(Person.class).list();
-
-yawp.save(new Person("Janes"));
-
-Person person = yawp(Person.class).fetch(personId);
-
-yawp.save(person);
-
-yawp.destroy(person.getId());
-```
-
-### Endpoint Features
-
-__YAWP!__ has special places to add custom server side business logic to your model, so you can create real world
-applications with more specific needs.
-
-The way __YAWP!__ deals with this is by allowing you to extend the default repository actions through
-[__Features__](http://yawp.io/guides/api/actions). You can create four kind of features for your objects: __Actions__, __Transformers__, __Shields__ and __Hooks__.
-
-## Credits
-
-* Fernando Ultremare - feroult@gmail.com
-* Luan Nico - luannico27@gmail.com
-* Guilherme Carreiro - karreiro@gmail.com
-* Paulo Victor Martins - paulovmr@gmail.com
+YAWP! is released under the [MIT license](https://opensource.org/licenses/MIT).

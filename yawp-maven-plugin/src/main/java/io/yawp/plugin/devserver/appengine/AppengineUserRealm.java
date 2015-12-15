@@ -23,8 +23,8 @@ public class AppengineUserRealm implements UserRealm {
 
     private LocalServiceTestHelper helper;
 
-    public AppengineUserRealm(LocalServiceTestHelper helper) {
-        this.helper = helper;
+
+    public AppengineUserRealm() {
     }
 
     @Override
@@ -92,4 +92,7 @@ public class AppengineUserRealm implements UserRealm {
         helper.setEnvIsLoggedIn(false);
     }
 
+    public void setHelper(LocalServiceTestHelper helper) {
+        this.helper = helper;
+    }
 }

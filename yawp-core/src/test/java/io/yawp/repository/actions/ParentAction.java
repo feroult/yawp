@@ -107,6 +107,11 @@ public class ParentAction extends Action<Parent> {
         throw new HttpException(400, json(new Message("sample json exception body")));
     }
 
+    @POST
+    @PUT
+    public void withVoidReturn() {
+    }
+
     class Message {
         private String title;
 

@@ -143,8 +143,20 @@
         yawp('/parents').put('with-exception').error(function(err) {
             var result = err.responseJSON;
             assert.equal(result.title, 'sample json exception body');
-            yawp('/parents').put('with-exception').catch(function(result) {
+            yawp('/parents').put('with-exception').exception(function(result) {
                 assert.equal(result.title, 'sample json exception body');
+                t.start();
+            });
+        });
+    });
+
+    t.asyncTest("action with PUT and void return type", function(assert) {
+        expect(2);
+
+        yawp('/parents').post('with-void-return').done(function(result) {
+            assert.ok(result);
+            yawp('/parents').put('with-void-return').done(function(result) {
+                assert.ok(result);
                 t.start();
             });
         });

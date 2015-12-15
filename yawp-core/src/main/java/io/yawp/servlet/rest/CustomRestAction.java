@@ -18,7 +18,7 @@ public class CustomRestAction extends RestAction {
         Object object = r.action(id, endpointClazz, customActionKey, requestJson, params);
 
         if (object == null) {
-            return new JsonResponse("");
+            return new JsonResponse();
         }
 
         applyGetFacade(object);

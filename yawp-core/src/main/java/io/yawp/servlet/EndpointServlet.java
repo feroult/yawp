@@ -67,7 +67,7 @@ public class EndpointServlet extends HttpServlet {
 
     protected void response(HttpServletResponse resp, HttpResponse httpResponse) throws IOException {
         if (httpResponse == null) {
-            new JsonResponse("").execute(resp);
+            new JsonResponse().execute(resp);
         } else {
             httpResponse.execute(resp);
         }

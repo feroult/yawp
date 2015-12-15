@@ -8,6 +8,10 @@ public class JsonResponse extends HttpResponse {
 
     private String json;
 
+    public JsonResponse() {
+        json = "{}";
+    }
+
     public JsonResponse(String json) {
         this.json = json;
     }

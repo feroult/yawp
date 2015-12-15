@@ -23,7 +23,7 @@
         });
 
         return $.extend(request, {
-            catch: function (fn) {
+            exception: function (fn) {
                 this.error(function (err) {
                     fn(err.responseJSON)
                 });

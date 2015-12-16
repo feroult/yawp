@@ -27,4 +27,12 @@ public class Feature {
             throw new RuntimeException(e);
         }
     }
+
+    public <T> IdRef<T> id(Class<T> clazz, Long id) {
+        return IdRef.create(yawp, clazz, id);
+    }
+
+    public <T> IdRef<T> id(Class<T> clazz, String name) {
+        return IdRef.create(yawp, clazz, name);
+    }
 }

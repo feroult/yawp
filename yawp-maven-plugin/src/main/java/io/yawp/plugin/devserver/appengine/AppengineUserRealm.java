@@ -83,8 +83,10 @@ public class AppengineUserRealm implements UserRealm {
     }
 
     private void helperLogin(String username) {
+        AppengineUser appengineUser = users.get(username);
         helper.setEnvAuthDomain(username);
         helper.setEnvEmail(username);
+        helper.setEnvIsAdmin(appengineUser.isAdmin());
         helper.setEnvIsLoggedIn(true);
     }
 

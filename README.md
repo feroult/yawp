@@ -1,6 +1,6 @@
 # Welcome to YAWP!
 
-A very simple and elegant domain specific language and framework in Java that helps you to create amazing APIs.
+A very simple and elegant domain specific language / framework in Java that helps you to create amazing APIs.
 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
 
@@ -26,7 +26,7 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
         $ mvn archetype:generate \
             -DarchetypeGroupId=io.yawp \
             -DarchetypeArtifactId=yawp \
-            -DarchetypeVersion=LATES \
+            -DarchetypeVersion=LATEST \
             -DgroupId=yawpapp \
             -DartifactId=yawpapp \
             -Dversion=1.0-SNAPSHOT            

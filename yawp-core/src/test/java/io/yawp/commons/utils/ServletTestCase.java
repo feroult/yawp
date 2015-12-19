@@ -144,7 +144,7 @@ public class ServletTestCase extends EndpointTestCase {
         }
         assertTrue(status == 200);
     }
-    
+
     protected String parseIds(String format, Object... objects) {
         List<String> longIds = new ArrayList<String>();
 

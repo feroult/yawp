@@ -1,6 +1,9 @@
 package io.yawp.repository;
 
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.query.QueryBuilder;
+
+import java.util.List;
 
 public class Feature {
 
@@ -35,4 +38,17 @@ public class Feature {
     public <T> IdRef<T> id(Class<T> clazz, String name) {
         return IdRef.create(yawp, clazz, name);
     }
+
+    public <T> T from(String json, Class<T> clazz) {
+        return JsonUtils.from(yawp, json, clazz);
+    }
+
+    public <T> List<T> fromList(String json, Class<T> clazz) {
+        return JsonUtils.fromList(yawp, json, clazz);
+    }
+
+    public String to(Object object) {
+        return JsonUtils.to(object);
+    }
+
 }

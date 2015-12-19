@@ -282,14 +282,6 @@ public class EndpointTestCaseBase extends Feature {
 
     // helpers
 
-    protected <T> T from(String json, Class<T> clazz) {
-        return JsonUtils.from(yawp, json, clazz);
-    }
-
-    protected <T> List<T> fromList(String json, Class<T> clazz) {
-        return JsonUtils.fromList(yawp, json, clazz);
-    }
-
     protected String parseIds(String format, Object... objects) {
         List<String> longIds = new ArrayList<String>();
 

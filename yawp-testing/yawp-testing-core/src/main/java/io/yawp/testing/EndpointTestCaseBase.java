@@ -80,22 +80,50 @@ public class EndpointTestCaseBase extends Feature {
         return servlet;
     }
 
+    // get
+
+    protected String get(String uri, String json, Map<String, String> params) {
+        return servlet().execute("GET", uri, json, params).getText();
+    }
+
     protected String get(String uri) {
-        return get(uri, new HashMap<String, String>());
+        return get(uri, null, new HashMap<String, String>());
+    }
+
+    protected String get(String uri, String json) {
+        return get(uri, json, new HashMap<String, String>());
     }
 
     protected String get(String uri, Map<String, String> params) {
-        return servlet().execute("GET", uri, null, params).getText();
+        return get(uri, null, params);
     }
 
-    protected void assertGetWithStatus(String uri, int status) {
+    protected void assertGetWithStatus(String uri, String json, Map<String, String> params, int status) {
         try {
-            get(uri);
+            get(uri, json, params);
         } catch (HttpException e) {
             assertEquals(status, e.getHttpStatus());
             return;
         }
         assertTrue(status == 200);
+    }
+
+    protected void assertGetWithStatus(String uri, int status) {
+        assertGetWithStatus(uri, null, new HashMap<String, String>(), status);
+    }
+
+    protected void assertGetWithStatus(String uri, String json, int status) {
+        assertGetWithStatus(uri, json, new HashMap<String, String>(), status);
+    }
+
+    protected void assertGetWithStatus(String uri, Map<String, String> params, int status) {
+        assertGetWithStatus(uri, null, params, status);
+    }
+
+    // post
+
+    protected String post(String uri, String json, Map<String, String> params) {
+        return servlet().execute("POST", uri, json, params).getText();
     }
 
     protected String post(String uri) {
@@ -106,18 +134,36 @@ public class EndpointTestCaseBase extends Feature {
         return post(uri, json, new HashMap<String, String>());
     }
 
-    protected String post(String uri, String json, Map<String, String> params) {
-        return servlet().execute("POST", uri, json, params).getText();
+    protected String post(String uri, Map<String, String> params) {
+        return post(uri, null, params);
     }
 
-    protected void assertPostWithStatus(String uri, String json, int status) {
+    protected void assertPostWithStatus(String uri, String json, Map<String, String> params, int status) {
         try {
-            post(uri, json);
+            post(uri, json, params);
         } catch (HttpException e) {
             assertEquals(status, e.getHttpStatus());
             return;
         }
         assertTrue(status == 200);
+    }
+
+    protected void assertPostWithStatus(String uri, int status) {
+        assertPostWithStatus(uri, null, new HashMap<String, String>(), status);
+    }
+
+    protected void assertPostWithStatus(String uri, String json, int status) {
+        assertPostWithStatus(uri, json, new HashMap<String, String>(), status);
+    }
+
+    protected void assertPostWithStatus(String uri, Map<String, String> params, int status) {
+        assertPostWithStatus(uri, null, params, status);
+    }
+
+    // put
+
+    protected String put(String uri, String json, Map<String, String> params) {
+        return servlet().execute("PUT", uri, json, params).getText();
     }
 
     protected String put(String uri) {
@@ -128,12 +174,8 @@ public class EndpointTestCaseBase extends Feature {
         return put(uri, json, new HashMap<String, String>());
     }
 
-    protected String patch(String uri) {
-        return patch(uri, null, new HashMap<String, String>());
-    }
-
-    protected String patch(String uri, String json) {
-        return patch(uri, json, new HashMap<String, String>());
+    protected String put(String uri, Map<String, String> params) {
+        return put(uri, null, params);
     }
 
     protected void assertPutWithStatus(String uri, String json, Map<String, String> params, int status) {
@@ -157,36 +199,88 @@ public class EndpointTestCaseBase extends Feature {
     protected void assertPutWithStatus(String uri, Map<String, String> params, int status) {
         assertPutWithStatus(uri, null, params, status);
     }
-
-    protected String put(String uri, Map<String, String> params) {
-        return servlet().execute("PUT", uri, null, params).getText();
-    }
-
-    protected String put(String uri, String json, Map<String, String> params) {
-        return servlet().execute("PUT", uri, json, params).getText();
-    }
-
-    protected String patch(String uri, Map<String, String> params) {
-        return servlet().execute("PATCH", uri, null, params).getText();
-    }
+    
+    // patch
 
     protected String patch(String uri, String json, Map<String, String> params) {
         return servlet().execute("PATCH", uri, json, params).getText();
     }
 
-    protected String delete(String uri) {
-        return servlet().execute("DELETE", uri, null, new HashMap<String, String>()).getText();
+    protected String patch(String uri) {
+        return patch(uri, null, new HashMap<String, String>());
     }
 
-    protected void assertDeleteWithStatus(String uri, int status) {
+    protected String patch(String uri, String json) {
+        return patch(uri, json, new HashMap<String, String>());
+    }
+
+    protected String patch(String uri, Map<String, String> params) {
+        return patch(uri, null, params);
+    }
+
+    protected void assertPatchWithStatus(String uri, String json, Map<String, String> params, int status) {
         try {
-            delete(uri);
+            patch(uri, json, params);
         } catch (HttpException e) {
             assertEquals(status, e.getHttpStatus());
             return;
         }
         assertTrue(status == 200);
     }
+
+    protected void assertPatchWithStatus(String uri, int status) {
+        assertPatchWithStatus(uri, null, new HashMap<String, String>(), status);
+    }
+
+    protected void assertPatchWithStatus(String uri, String json, int status) {
+        assertPatchWithStatus(uri, json, new HashMap<String, String>(), status);
+    }
+
+    protected void assertPatchWithStatus(String uri, Map<String, String> params, int status) {
+        assertPatchWithStatus(uri, null, params, status);
+    }
+
+    // delete
+
+    protected String delete(String uri, String json, Map<String, String> params) {
+        return servlet().execute("DELETE", uri, json, params).getText();
+    }
+
+    protected String delete(String uri) {
+        return delete(uri, null, new HashMap<String, String>());
+    }
+
+    protected String delete(String uri, String json) {
+        return delete(uri, json, new HashMap<String, String>());
+    }
+
+    protected String delete(String uri, Map<String, String> params) {
+        return delete(uri, null, params);
+    }
+
+    protected void assertDeleteWithStatus(String uri, String json, Map<String, String> params, int status) {
+        try {
+            delete(uri, json, params);
+        } catch (HttpException e) {
+            assertEquals(status, e.getHttpStatus());
+            return;
+        }
+        assertTrue(status == 200);
+    }
+
+    protected void assertDeleteWithStatus(String uri, int status) {
+        assertDeleteWithStatus(uri, null, new HashMap<String, String>(), status);
+    }
+
+    protected void assertDeleteWithStatus(String uri, String json, int status) {
+        assertDeleteWithStatus(uri, json, new HashMap<String, String>(), status);
+    }
+
+    protected void assertDeleteWithStatus(String uri, Map<String, String> params, int status) {
+        assertDeleteWithStatus(uri, null, params, status);
+    }
+
+    // helpers
 
     protected <T> T from(String json, Class<T> clazz) {
         return JsonUtils.from(yawp, json, clazz);

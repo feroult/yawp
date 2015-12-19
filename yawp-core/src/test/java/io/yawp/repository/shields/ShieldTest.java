@@ -309,6 +309,7 @@ public class ShieldTest extends ServletTestCase {
         assertPutWithStatus("/shielded_objects_with_defaults/1/something", 404);
     }
 
+
     @Test
     public void testBeforeShieldHook() {
         assertPostWithStatus("/shielded_objects", "{stringValue: 'none'}", 404);

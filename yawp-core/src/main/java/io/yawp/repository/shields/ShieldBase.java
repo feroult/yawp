@@ -29,17 +29,17 @@ public abstract class ShieldBase<T> extends Feature {
 
     private Class<?> endpointClazz;
 
-    private IdRef<?> id;
-
-    private List<T> objects;
-
-    private String requestJson;
-
-    private Map<String, String> params;
-
     private ActionKey actionKey;
 
     private Map<ActionKey, Method> actionMethods;
+
+    protected IdRef<?> id;
+
+    protected List<T> objects;
+
+    protected String requestJson;
+
+    protected Map<String, String> params;
 
     public abstract void always();
 

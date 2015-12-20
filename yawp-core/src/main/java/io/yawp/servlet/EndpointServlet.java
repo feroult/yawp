@@ -77,10 +77,7 @@ public class EndpointServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpResponse httpResponse;
         try {
-            RequestContext ctx = new RequestContext(req, resp);
-            httpResponse = execute(ctx);
-
-            //httpResponse = execute(req.getMethod(), getUri(req), JsonUtils.readJson(req.getReader()), makeParams(req));
+            httpResponse = execute(new RequestContext(req, resp));
         } catch (HttpException e) {
             httpResponse = e.createResponse();
         }

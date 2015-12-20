@@ -16,7 +16,7 @@ public class TestLoginManager {
         return getLoggedUsername() != null;
     }
 
-    private static String getLoggedUsername() {
+    public static String getLoggedUsername() {
         return loggedUsername.get();
     }
 

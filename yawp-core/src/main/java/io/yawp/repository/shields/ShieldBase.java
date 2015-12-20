@@ -65,16 +65,38 @@ public abstract class ShieldBase<T> extends Feature {
         return this;
     }
 
+
     public final ShieldBase<T> where(String field, String operator, Object value) {
-        return where(Condition.c(field, operator, value));
+        return or(Condition.c(field, operator, value));
     }
 
     public final ShieldBase<T> where(BaseCondition condition) {
+        return or(condition);
+    }
+
+    public final ShieldBase<T> or(String field, String operator, Object value) {
+        return or(Condition.c(field, operator, value));
+    }
+
+    public final ShieldBase<T> or(BaseCondition condition) {
         if (!lastAllow) {
             return this;
         }
 
-        getConditions().where(condition);
+        getConditions().or(condition);
+        return this;
+    }
+
+    public final ShieldBase<T> and(String field, String operator, Object value) {
+        return and(Condition.c(field, operator, value));
+    }
+
+    public final ShieldBase<T> and(BaseCondition condition) {
+        if (!lastAllow) {
+            return this;
+        }
+
+        getConditions().and(condition);
         return this;
     }
 

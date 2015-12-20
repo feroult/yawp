@@ -316,6 +316,30 @@ public class ShieldTest extends ServletTestCase {
         assertPostWithStatus("/shielded_objects", "{stringValue: 'apply beforeShield'}", 200);
     }
 
+    @Test
+    public void testTwoWhereClausesWithAnd() {
+        saveObject(1l, "xpto", 100);
+        saveObject(2l, "xpto", 200);
+
+        login("kristen");
+        List<ShieldedObject> objects = fromList(get("/shielded_objects"), ShieldedObject.class);
+
+        assertEquals(0, objects.size());
+    }
+
+    @Test
+    public void testTwoWhereClausesWithOr() {
+        saveObject(1l, "xpto", 100);
+        saveObject(2l, "xpto", 200);
+
+        login("linda");
+        List<ShieldedObject> objects = fromList(get("/shielded_objects"), ShieldedObject.class);
+
+        assertEquals(2, objects.size());
+        assertEquals((Integer) 100, objects.get(0).getIntValue());
+        assertEquals((Integer) 200, objects.get(1).getIntValue());
+    }
+
     private void assertRestActionsStatus(int status) {
         assertGetWithStatus("/shielded_objects", status);
         assertGetWithStatus("/shielded_objects/1", status);

@@ -66,11 +66,11 @@ public class ShieldConditionsTest extends EndpointTestCase {
 
         object.setStringValue("xyz");
         object.setIntValue(1);
-        assertFalse(conditions.evaluate());
+        assertTrue(conditions.evaluate());
 
         object.setStringValue("xpto");
         object.setIntValue(2);
-        assertFalse(conditions.evaluate());
+        assertTrue(conditions.evaluate());
 
         object.setStringValue("xpto");
         object.setIntValue(1);
@@ -94,7 +94,7 @@ public class ShieldConditionsTest extends EndpointTestCase {
 
         ShieldConditions conditions = new ShieldConditions(yawp, Child.class, null, Arrays.asList(child));
         conditions.where(c("name", "=", "child"));
-        conditions.where(c("parent->name", "=", "parent"));
+        conditions.and(c("parent->name", "=", "parent"));
 
         assertFalse(conditions.evaluate());
     }
@@ -116,7 +116,7 @@ public class ShieldConditionsTest extends EndpointTestCase {
 
         ShieldConditions conditions = new ShieldConditions(yawp, Child.class, parent.getId(), null);
         conditions.where(c("name", "=", "child"));
-        conditions.where(c("parent->name", "=", "parent"));
+        conditions.and(c("parent->name", "=", "parent"));
 
         assertFalse(conditions.evaluate());
     }
@@ -139,8 +139,8 @@ public class ShieldConditionsTest extends EndpointTestCase {
 
         ShieldConditions conditions = new ShieldConditions(yawp, Grandchild.class, null, Arrays.asList(grandchild));
         conditions.where(c("name", "=", "granchild"));
-        conditions.where(c("parent->name", "=", "child"));
-        conditions.where(c("parent->parent->name", "=", "parent"));
+        conditions.and(c("parent->name", "=", "child"));
+        conditions.and(c("parent->parent->name", "=", "parent"));
 
         assertFalse(conditions.evaluate());
     }
@@ -152,8 +152,8 @@ public class ShieldConditionsTest extends EndpointTestCase {
 
         ShieldConditions conditions = new ShieldConditions(yawp, Grandchild.class, parent.getId(), null);
         conditions.where(c("name", "=", "granchild"));
-        conditions.where(c("parent->name", "=", "child"));
-        conditions.where(c("parent->parent->name", "=", "parent"));
+        conditions.and(c("parent->name", "=", "child"));
+        conditions.and(c("parent->parent->name", "=", "parent"));
 
         assertTrue(conditions.evaluate());
     }
@@ -165,8 +165,8 @@ public class ShieldConditionsTest extends EndpointTestCase {
 
         ShieldConditions conditions = new ShieldConditions(yawp, Grandchild.class, parent.getId(), null);
         conditions.where(c("name", "=", "granchild"));
-        conditions.where(c("parent->name", "=", "child"));
-        conditions.where(c("parent->parent->name", "=", "parent"));
+        conditions.and(c("parent->name", "=", "child"));
+        conditions.and(c("parent->parent->name", "=", "parent"));
 
         assertFalse(conditions.evaluate());
     }

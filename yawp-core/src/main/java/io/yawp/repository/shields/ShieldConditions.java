@@ -1,14 +1,16 @@
 package io.yawp.repository.shields;
 
-import static io.yawp.repository.query.condition.Condition.and;
-
 import io.yawp.repository.IdRef;
 import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.query.condition.BaseCondition;
+import io.yawp.repository.query.condition.Condition;
 
 import java.util.List;
+
+import static io.yawp.repository.query.condition.Condition.and;
+import static io.yawp.repository.query.condition.Condition.or;
 
 public class ShieldConditions {
 
@@ -30,8 +32,20 @@ public class ShieldConditions {
     }
 
     public void where(BaseCondition condition) {
+        or(condition);
+    }
+
+    public void or(BaseCondition condition) {
         if (this.condition != null) {
-            this.condition = and(this.condition, condition);
+            this.condition = Condition.or(this.condition, condition);
+            return;
+        }
+        this.condition = condition;
+    }
+
+    public void and(BaseCondition condition) {
+        if (this.condition != null) {
+            this.condition = Condition.and(this.condition, condition);
             return;
         }
         this.condition = condition;
@@ -111,7 +125,7 @@ public class ShieldConditions {
             Object existingObject;
             try {
                 existingObject = id.fetch();
-            } catch(NoResultException e) {
+            } catch (NoResultException e) {
                 return true;
             }
 

@@ -28,10 +28,6 @@ public abstract class ShieldBase<T> extends Feature {
 
     private boolean lastAllow = false;
 
-    private ShieldConditions conditions;
-
-    private Class<? super T> facade;
-
     private Class<?> endpointClazz;
 
     private ActionKey actionKey;
@@ -89,12 +85,6 @@ public abstract class ShieldBase<T> extends Feature {
 
     public final ShieldBase<T> or(BaseCondition condition) {
         return lastRule.or(condition);
-//        if (!lastAllow) {
-//            return this;
-//        }
-//
-//        getConditions().or(condition);
-//        return this;
     }
 
     public final ShieldBase<T> and(String field, String operator, Object value) {
@@ -103,22 +93,10 @@ public abstract class ShieldBase<T> extends Feature {
 
     public final ShieldBase<T> and(BaseCondition condition) {
         return lastRule.and(condition);
-//        if (!lastAllow) {
-//            return this;
-//        }
-//
-//        getConditions().and(condition);
-//        return this;
     }
 
     public final ShieldBase<T> facade(Class<? super T> facade) {
         return lastRule.facade(facade);
-//        if (!lastAllow) {
-//            return this;
-//        }
-//
-//        this.facade = facade;
-//        return this;
     }
 
     @Deprecated
@@ -292,18 +270,14 @@ public abstract class ShieldBase<T> extends Feature {
     }
 
     public boolean hasCondition() {
-
         for (AllowRule rule : rules) {
-            if (rule.isAllow()) {
-                if (rule.hasConditions()) {
-                    return true;
-                }
+            if (rule.isAllow() && rule.hasConditions()) {
+                return true;
             }
         }
 
         return false;
 
-        //return getConditions().getWhere() != null;
     }
 
     private ShieldConditions getConditions() {
@@ -324,13 +298,6 @@ public abstract class ShieldBase<T> extends Feature {
         }
 
         return conditions;
-
-//        if (conditions != null) {
-//            return conditions;
-//        }
-//
-//        conditions = new ShieldConditions(yawp, endpointClazz, id, objects);
-//        return conditions;
     }
 
     private void verifyConditions() {

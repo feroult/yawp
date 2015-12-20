@@ -36,7 +36,6 @@ public class RequestContext {
         this.params = parseParams();
     }
 
-
     public HttpServletRequest req() {
         return req;
     }
@@ -63,6 +62,14 @@ public class RequestContext {
 
     public Map<String, String> getParams() {
         return params;
+    }
+
+    public boolean hasParam(String key) {
+        return params.containsKey(key);
+    }
+
+    public String getParam(String key) {
+        return params.get(key);
     }
 
     private String parseMethod() {
@@ -92,4 +99,5 @@ public class RequestContext {
 
         return map;
     }
+
 }

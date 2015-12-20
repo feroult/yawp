@@ -25,7 +25,7 @@ public class Feature {
         return yawp.queryWithHooks(clazz);
     }
 
-    public boolean hasRequestContext() {
+    public boolean isOnRequest() {
         return requestContext != null;
     }
 

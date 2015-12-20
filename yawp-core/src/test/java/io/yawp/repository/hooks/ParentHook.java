@@ -7,7 +7,11 @@ public class ParentHook extends Hook<Parent> {
 
     @Override
     public void beforeQuery(QueryBuilder<Parent> q) {
-        super.beforeQuery(q);
+        if (!isOnRequest() || !requestContext.hasParam("name")) {
+            return;
+        }
+
+        q.where("name", "=", requestContext.getParam("name"));
     }
 
 }

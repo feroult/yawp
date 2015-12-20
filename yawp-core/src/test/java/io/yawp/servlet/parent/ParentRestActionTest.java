@@ -80,7 +80,6 @@ public class ParentRestActionTest extends ParentServletTestCase {
     }
 
     @Test
-    @Ignore
     public void testIndexWithHookAndParams() {
         saveParent("xpto1");
         saveParent("xpto2");

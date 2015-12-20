@@ -10,7 +10,7 @@ public class Feature {
 
     protected Repository yawp;
 
-    private RequestContext requestContext;
+    protected RequestContext requestContext;
 
     public void setRepository(Repository yawp) {
         this.yawp = yawp;
@@ -25,7 +25,7 @@ public class Feature {
         return yawp.queryWithHooks(clazz);
     }
 
-    public boolean isOnRequest() {
+    public boolean hasRequestContext() {
         return requestContext != null;
     }
 

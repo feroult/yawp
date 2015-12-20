@@ -1,27 +1,22 @@
 package io.yawp.testing;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import io.yawp.commons.http.HttpException;
+import io.yawp.commons.http.RequestContext;
+import io.yawp.commons.utils.Environment;
+import io.yawp.driver.api.testing.TestHelper;
+import io.yawp.driver.api.testing.TestHelperFactory;
+import io.yawp.repository.*;
+import io.yawp.servlet.EndpointServlet;
+import org.junit.After;
+import org.junit.Before;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.yawp.commons.http.HttpException;
-import io.yawp.commons.utils.Environment;
-import io.yawp.driver.api.testing.TestHelper;
-import io.yawp.driver.api.testing.TestHelperFactory;
-import io.yawp.repository.EndpointScanner;
-import io.yawp.repository.Feature;
-import io.yawp.repository.ObjectHolder;
-import io.yawp.repository.Repository;
-import io.yawp.repository.RepositoryFeatures;
-import io.yawp.servlet.EndpointServlet;
-
-import io.yawp.servlet.RequestContext;
-import org.junit.After;
-import org.junit.Before;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class EndpointTestCaseBase extends Feature {
 

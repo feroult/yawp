@@ -1,6 +1,5 @@
-package io.yawp.servlet;
+package io.yawp.commons.http;
 
-import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.JsonUtils;
 
 import javax.servlet.http.HttpServletRequest;

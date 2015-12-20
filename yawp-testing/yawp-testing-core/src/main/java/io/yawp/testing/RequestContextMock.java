@@ -1,6 +1,7 @@
 package io.yawp.testing;
 
-import io.yawp.servlet.RequestContext;
+
+import io.yawp.commons.http.RequestContext;
 
 import java.util.Map;
 

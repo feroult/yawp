@@ -1,20 +1,19 @@
 package io.yawp.commons.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import io.yawp.commons.http.HttpException;
+import io.yawp.commons.http.RequestContext;
 import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.Repository;
 import io.yawp.servlet.EndpointServlet;
+import org.junit.Before;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import io.yawp.servlet.RequestContext;
-import org.junit.Before;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ServletTestCase extends EndpointTestCase {
 

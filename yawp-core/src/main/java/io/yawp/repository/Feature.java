@@ -1,5 +1,6 @@
 package io.yawp.repository;
 
+import io.yawp.commons.http.RequestContext;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.query.QueryBuilder;
 
@@ -9,8 +10,11 @@ public class Feature {
 
     protected Repository yawp;
 
+    private RequestContext requestContext;
+
     public void setRepository(Repository yawp) {
         this.yawp = yawp;
+        this.requestContext = yawp.getRequestContext();
     }
 
     public <T> QueryBuilder<T> yawp(Class<T> clazz) {
@@ -19,6 +23,10 @@ public class Feature {
 
     public <T> QueryBuilder<T> yawpWithHooks(Class<T> clazz) {
         return yawp.queryWithHooks(clazz);
+    }
+
+    public boolean isOnRequest() {
+        return requestContext != null;
     }
 
     public <T extends Feature> T feature(Class<T> clazz) {

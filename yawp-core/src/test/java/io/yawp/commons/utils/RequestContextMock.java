@@ -1,6 +1,7 @@
 package io.yawp.commons.utils;
 
-import io.yawp.servlet.RequestContext;
+
+import io.yawp.commons.http.RequestContext;
 
 import java.util.Map;
 
@@ -9,7 +10,7 @@ public class RequestContextMock extends RequestContext {
     public RequestContextMock() {
         super();
     }
-    
+
     public static class Builder {
 
         private RequestContextMock mock = new RequestContextMock();

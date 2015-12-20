@@ -1,15 +1,15 @@
 package io.yawp.servlet;
 
 import io.yawp.commons.http.ExceptionResponse;
+import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.Driver;
 import io.yawp.repository.Repository;
-
-import java.io.IOException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 public class FixturesServlet extends EndpointServlet {
 

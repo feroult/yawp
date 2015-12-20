@@ -3,6 +3,7 @@ package io.yawp.servlet;
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.http.RequestContext;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.*;
 import io.yawp.repository.actions.ActionKey;

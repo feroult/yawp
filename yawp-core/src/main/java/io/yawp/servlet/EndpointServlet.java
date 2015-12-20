@@ -3,6 +3,7 @@ package io.yawp.servlet;
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.JsonResponse;
+import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.DriverFactory;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;

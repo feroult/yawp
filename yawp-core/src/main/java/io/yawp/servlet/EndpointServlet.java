@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 public class EndpointServlet extends HttpServlet {
@@ -88,31 +86,8 @@ public class EndpointServlet extends HttpServlet {
         response(resp, httpResponse);
     }
 
-    @SuppressWarnings("unchecked")
-    protected Map<String, String> makeParams(HttpServletRequest req) {
-        Map<String, String> map = new HashMap<String, String>();
-
-        Enumeration<String> e = req.getParameterNames();
-        while (e.hasMoreElements()) {
-            String name = e.nextElement();
-            map.put(name, req.getParameter(name));
-        }
-
-        return map;
-    }
-
-    private String getUri(HttpServletRequest req) {
-        return req.getRequestURI().substring(req.getServletPath().length());
-    }
-
-
     public HttpResponse execute(RequestContext ctx) {
-        return execute(ctx, ctx.getMethod(), ctx.getUri(), ctx.getJson(), ctx.getParams());
-    }
-
-
-    public HttpResponse execute(RequestContext ctx, String method, String uri, String requestJson, Map<String, String> params) {
-        Repository r = getRepository(params);
+        Repository r = getRepository(ctx.getParams());
 
         EndpointRouter router = EndpointRouter.parse(r, ctx);
 

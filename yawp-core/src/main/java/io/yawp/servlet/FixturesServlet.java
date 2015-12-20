@@ -23,15 +23,18 @@ public class FixturesServlet extends EndpointServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (!enableFixtures(req)) {
+        RequestContext ctx = new RequestContext(req, resp);
+
+        if (!enableFixtures(ctx)) {
             response(resp, new ExceptionResponse(403));
             return;
         }
+        
         super.service(req, resp);
     }
 
-    private boolean enableFixtures(HttpServletRequest req) {
-        Repository r = getRepository(makeParams(req));
+    private boolean enableFixtures(RequestContext ctx) {
+        Repository r = getRepository(ctx.getParams());
         Driver driver = r.getDriver();
 
         if (!driver.environment().isProduction()) {

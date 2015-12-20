@@ -77,7 +77,10 @@ public class EndpointServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpResponse httpResponse;
         try {
-            httpResponse = execute(req.getMethod(), getUri(req), JsonUtils.readJson(req.getReader()), makeParams(req));
+            RequestContext ctx = new RequestContext(req, resp);
+            httpResponse = execute(ctx);
+
+            //httpResponse = execute(req.getMethod(), getUri(req), JsonUtils.readJson(req.getReader()), makeParams(req));
         } catch (HttpException e) {
             httpResponse = e.createResponse();
         }
@@ -106,6 +109,12 @@ public class EndpointServlet extends HttpServlet {
     private String getUri(HttpServletRequest req) {
         return req.getRequestURI().substring(req.getServletPath().length());
     }
+
+
+    public HttpResponse execute(RequestContext ctx) {
+        return execute(ctx.getMethod(), ctx.getUri(), ctx.getJson(), ctx.getParams());
+    }
+
 
     public HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
         Repository r = getRepository(params);

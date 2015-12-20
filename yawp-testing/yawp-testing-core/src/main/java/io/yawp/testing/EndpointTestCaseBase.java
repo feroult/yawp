@@ -20,6 +20,7 @@ import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.servlet.EndpointServlet;
 
+import io.yawp.servlet.RequestContext;
 import org.junit.After;
 import org.junit.Before;
 
@@ -83,7 +84,7 @@ public class EndpointTestCaseBase extends Feature {
     // get
 
     protected String get(String uri, String json, Map<String, String> params) {
-        return servlet().execute("GET", uri, json, params).getText();
+        return servlet().execute(ctx("GET", uri, json, params)).getText();
     }
 
     protected String get(String uri) {
@@ -123,7 +124,7 @@ public class EndpointTestCaseBase extends Feature {
     // post
 
     protected String post(String uri, String json, Map<String, String> params) {
-        return servlet().execute("POST", uri, json, params).getText();
+        return servlet().execute(ctx("POST", uri, json, params)).getText();
     }
 
     protected String post(String uri) {
@@ -163,7 +164,7 @@ public class EndpointTestCaseBase extends Feature {
     // put
 
     protected String put(String uri, String json, Map<String, String> params) {
-        return servlet().execute("PUT", uri, json, params).getText();
+        return servlet().execute(ctx("PUT", uri, json, params)).getText();
     }
 
     protected String put(String uri) {
@@ -199,11 +200,11 @@ public class EndpointTestCaseBase extends Feature {
     protected void assertPutWithStatus(String uri, Map<String, String> params, int status) {
         assertPutWithStatus(uri, null, params, status);
     }
-    
+
     // patch
 
     protected String patch(String uri, String json, Map<String, String> params) {
-        return servlet().execute("PATCH", uri, json, params).getText();
+        return servlet().execute(ctx("PATCH", uri, json, params)).getText();
     }
 
     protected String patch(String uri) {
@@ -243,7 +244,7 @@ public class EndpointTestCaseBase extends Feature {
     // delete
 
     protected String delete(String uri, String json, Map<String, String> params) {
-        return servlet().execute("DELETE", uri, json, params).getText();
+        return servlet().execute(ctx("DELETE", uri, json, params)).getText();
     }
 
     protected String delete(String uri) {
@@ -281,6 +282,22 @@ public class EndpointTestCaseBase extends Feature {
     }
 
     // helpers
+
+    private RequestContext ctx(String method, String uri) {
+        return new RequestContextMock.Builder().method(method).uri(uri).build();
+    }
+
+    private RequestContext ctx(String method, String uri, String json) {
+        return new RequestContextMock.Builder().method(method).uri(uri).json(json).build();
+    }
+
+    private RequestContext ctx(String method, String uri, Map<String, String> params) {
+        return new RequestContextMock.Builder().method(method).uri(uri).params(params).build();
+    }
+
+    private RequestContext ctx(String method, String uri, String json, Map<String, String> params) {
+        return new RequestContextMock.Builder().method(method).uri(uri).json(json).params(params).build();
+    }
 
     protected String parseIds(String format, Object... objects) {
         List<String> longIds = new ArrayList<String>();

@@ -27,6 +27,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
         allow(isKurt()).where("stringValue", "=", "ok");
 
         chainnedWhereClausesTest();
+        allowWithoutWhereRemovesOtherWhere();
     }
 
     private void chainnedWhereClausesTest() {
@@ -34,6 +35,11 @@ public class ObjectShield extends Shield<ShieldedObject> {
         allow(isLinda()).where("intValue", "=", 200);
         allow(isKristen()).where("intValue", "=", 100);
         allow(isKristen()).and("intValue", "=", 200);
+    }
+
+    private void allowWithoutWhereRemovesOtherWhere() {
+        allow(isRichey()).where("intValue", "=", 100);
+        allow(isRichey());
     }
 
     @Override
@@ -119,6 +125,10 @@ public class ObjectShield extends Shield<ShieldedObject> {
 
     private boolean isKristen() {
         return is("kristen");
+    }
+
+    private boolean isRichey() {
+        return is("richey");
     }
 
     private boolean is(String username) {

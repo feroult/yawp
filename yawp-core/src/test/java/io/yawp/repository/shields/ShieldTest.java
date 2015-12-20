@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ShieldTest extends ServletTestCase {
@@ -317,6 +318,21 @@ public class ShieldTest extends ServletTestCase {
     }
 
     @Test
+    @Ignore
+    public void testAllowWithoutWhereRemovesOtherWhere() {
+        saveObject(1l, "xpto", 100);
+        saveObject(2l, "xpto", 200);
+
+        login("richey");
+        List<ShieldedObject> objects = fromList(get("/shielded_objects"), ShieldedObject.class);
+
+        assertEquals(2, objects.size());
+        assertEquals((Integer) 100, objects.get(0).getIntValue());
+        assertEquals((Integer) 200, objects.get(1).getIntValue());
+    }
+
+
+    @Test
     public void testTwoWhereClausesWithAnd() {
         saveObject(1l, "xpto", 100);
         saveObject(2l, "xpto", 200);
@@ -339,6 +355,7 @@ public class ShieldTest extends ServletTestCase {
         assertEquals((Integer) 100, objects.get(0).getIntValue());
         assertEquals((Integer) 200, objects.get(1).getIntValue());
     }
+
 
     private void assertRestActionsStatus(int status) {
         assertGetWithStatus("/shielded_objects", status);

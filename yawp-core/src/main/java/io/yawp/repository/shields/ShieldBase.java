@@ -13,11 +13,14 @@ import io.yawp.repository.query.condition.Condition;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public abstract class ShieldBase<T> extends Feature {
+
+    private List<AllowRule> rules = new ArrayList<>();
 
     private boolean allow = false;
 
@@ -60,6 +63,8 @@ public abstract class ShieldBase<T> extends Feature {
     }
 
     public final ShieldBase<T> allow(boolean allow) {
+        rules.add(new AllowRule(allow));
+
         this.allow = this.allow || allow;
         this.lastAllow = allow;
         return this;

@@ -112,14 +112,16 @@ public abstract class ShieldBase<T> extends Feature {
     }
 
     public final ShieldBase<T> facade(Class<? super T> facade) {
-        if (!lastAllow) {
-            return this;
-        }
-
-        this.facade = facade;
-        return this;
+        return lastRule.facade(facade);
+//        if (!lastAllow) {
+//            return this;
+//        }
+//
+//        this.facade = facade;
+//        return this;
     }
 
+    @Deprecated
     public final ShieldBase<T> removeFacade() {
         return facade(null);
     }
@@ -209,7 +211,9 @@ public abstract class ShieldBase<T> extends Feature {
 
     @SuppressWarnings("unchecked")
     private void applySetFacade() {
-        if (facade == null) {
+        Class<? super T> facadeX = getFacadeFromRules();
+
+        if (facadeX == null) {
             return;
         }
 
@@ -218,22 +222,37 @@ public abstract class ShieldBase<T> extends Feature {
             IdRef<T> existingObjectId = (IdRef<T>) objectHolder.getId();
 
             if (existingObjectId == null) {
-                FacadeUtils.set(object, facade);
+                FacadeUtils.set(object, facadeX);
                 continue;
             }
 
-            FacadeUtils.set(object, existingObjectId.fetch(), facade);
+            FacadeUtils.set(object, existingObjectId.fetch(), facadeX);
         }
 
     }
 
     @SuppressWarnings("unchecked")
     public void applyGetFacade(Object object) {
-        if (facade == null) {
+
+        Class<? super T> facadeX = getFacadeFromRules();
+
+        if (facadeX == null) {
             return;
         }
 
-        FacadeUtils.get((T) object, facade);
+        FacadeUtils.get((T) object, facadeX);
+    }
+
+    private Class<? super T> getFacadeFromRules() {
+        Class<? super T> facadeX = null;
+
+        for (AllowRule rule : rules) {
+            if (!rule.isAllow() || !rule.hasFacade()) {
+                continue;
+            }
+            facadeX = rule.getFacade();
+        }
+        return facadeX;
     }
 
     public void setEndpointClazz(Class<?> endpointClazz) {
@@ -323,7 +342,7 @@ public abstract class ShieldBase<T> extends Feature {
     }
 
     public boolean hasFacade() {
-        return facade != null;
+        return getFacadeFromRules() != null;
     }
 
     public void setRequestJson(String requestJson) {
@@ -389,6 +408,14 @@ public abstract class ShieldBase<T> extends Feature {
 
         public boolean hasConditions() {
             return conditions != null;
+        }
+
+        public Class<? super T> getFacade() {
+            return facade;
+        }
+
+        public boolean hasFacade() {
+            return facade != null;
         }
 
         public final ShieldBase<T> where(String field, String operator, Object value) {

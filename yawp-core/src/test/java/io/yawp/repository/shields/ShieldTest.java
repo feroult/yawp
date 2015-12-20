@@ -331,8 +331,8 @@ public class ShieldTest extends ServletTestCase {
         assertEquals((Integer) 200, objects.get(1).getIntValue());
     }
 
-
     @Test
+    @Ignore
     public void testTwoWhereClausesWithAnd() {
         saveObject(1l, "xpto", 100);
         saveObject(2l, "xpto", 200);

@@ -65,7 +65,7 @@ public abstract class ShieldBase<T> extends Feature {
     }
 
     public final ShieldBase<T> allow(boolean allow) {
-        AllowRule rule = new AllowRule(allow);
+        AllowRule rule = new AllowRule(allow, this);
         rules.add(rule);
         this.lastRule = rule;
 
@@ -76,37 +76,39 @@ public abstract class ShieldBase<T> extends Feature {
 
 
     public final ShieldBase<T> where(String field, String operator, Object value) {
-        return or(Condition.c(field, operator, value));
+        return lastRule.or(Condition.c(field, operator, value));
     }
 
     public final ShieldBase<T> where(BaseCondition condition) {
-        return or(condition);
+        return lastRule.or(condition);
     }
 
     public final ShieldBase<T> or(String field, String operator, Object value) {
-        return or(Condition.c(field, operator, value));
+        return lastRule.or(Condition.c(field, operator, value));
     }
 
     public final ShieldBase<T> or(BaseCondition condition) {
-        if (!lastAllow) {
-            return this;
-        }
-
-        getConditions().or(condition);
-        return this;
+        return lastRule.or(condition);
+//        if (!lastAllow) {
+//            return this;
+//        }
+//
+//        getConditions().or(condition);
+//        return this;
     }
 
     public final ShieldBase<T> and(String field, String operator, Object value) {
-        return and(Condition.c(field, operator, value));
+        return lastRule.and(Condition.c(field, operator, value));
     }
 
     public final ShieldBase<T> and(BaseCondition condition) {
-        if (!lastAllow) {
-            return this;
-        }
-
-        getConditions().and(condition);
-        return this;
+        return lastRule.and(condition);
+//        if (!lastAllow) {
+//            return this;
+//        }
+//
+//        getConditions().and(condition);
+//        return this;
     }
 
     public final ShieldBase<T> facade(Class<? super T> facade) {
@@ -248,23 +250,75 @@ public abstract class ShieldBase<T> extends Feature {
     }
 
     public BaseCondition getCondition() {
-        return conditions.getWhere();
+        if (!hasCondition()) {
+            return null;
+        }
+
+        BaseCondition where = null;
+
+        for (AllowRule rule : rules) {
+            if (!rule.isAllow() || !rule.hasConditions()) {
+                continue;
+            }
+
+            if (where == null) {
+                where = rule.getConditions().getWhere();
+                continue;
+            }
+
+            where = where.or(rule.getConditions().getWhere());
+        }
+
+        return where;
     }
 
     public boolean hasCondition() {
-        return getConditions().getWhere() != null;
+
+        for (AllowRule rule : rules) {
+            if (rule.isAllow()) {
+                if (rule.hasConditions()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+
+        //return getConditions().getWhere() != null;
     }
 
     private ShieldConditions getConditions() {
-        if (conditions != null) {
-            return conditions;
+        ShieldConditions conditions = null;
+
+        for (AllowRule rule : rules) {
+            if (!rule.isAllow() || !rule.hasConditions()) {
+                continue;
+            }
+
+            if (conditions == null) {
+                conditions = rule.getConditions();
+                continue;
+            }
+
+            conditions.or(rule.getConditions().getWhere());
+
         }
 
-        conditions = new ShieldConditions(yawp, endpointClazz, id, objects);
         return conditions;
+
+//        if (conditions != null) {
+//            return conditions;
+//        }
+//
+//        conditions = new ShieldConditions(yawp, endpointClazz, id, objects);
+//        return conditions;
     }
 
     private void verifyConditions() {
+        if (!hasCondition()) {
+            this.allow = true;
+            return;
+        }
         this.allow = getConditions().evaluate();
     }
 
@@ -318,47 +372,57 @@ public abstract class ShieldBase<T> extends Feature {
     public class AllowRule {
 
         private boolean allow;
+        private ShieldBase<T> shieldBase;
 
         private ShieldConditions conditions;
 
         private Class<? super T> facade;
 
-        public AllowRule(boolean allow) {
+        public AllowRule(boolean allow, ShieldBase<T> shieldBase) {
             this.allow = allow;
+            this.shieldBase = shieldBase;
         }
 
-        public final AllowRule where(String field, String operator, Object value) {
+        public boolean isAllow() {
+            return allow;
+        }
+
+        public boolean hasConditions() {
+            return conditions != null;
+        }
+
+        public final ShieldBase<T> where(String field, String operator, Object value) {
             return or(Condition.c(field, operator, value));
         }
 
-        public final AllowRule where(BaseCondition condition) {
+        public final ShieldBase<T> where(BaseCondition condition) {
             return or(condition);
         }
 
-        public final AllowRule or(String field, String operator, Object value) {
+        public final ShieldBase<T> or(String field, String operator, Object value) {
             return or(Condition.c(field, operator, value));
         }
 
-        public final AllowRule or(BaseCondition condition) {
+        public final ShieldBase<T> or(BaseCondition condition) {
             getConditions().or(condition);
-            return this;
+            return shieldBase;
         }
 
-        public final AllowRule and(String field, String operator, Object value) {
+        public final ShieldBase<T> and(String field, String operator, Object value) {
             return and(Condition.c(field, operator, value));
         }
 
-        public final AllowRule and(BaseCondition condition) {
+        public final ShieldBase<T> and(BaseCondition condition) {
             getConditions().and(condition);
-            return this;
+            return shieldBase;
         }
 
-        public final AllowRule facade(Class<? super T> facade) {
+        public final ShieldBase<T> facade(Class<? super T> facade) {
             this.facade = facade;
-            return this;
+            return shieldBase;
         }
 
-        public final AllowRule removeFacade() {
+        public final ShieldBase<T> removeFacade() {
             return facade(null);
         }
 
@@ -370,7 +434,6 @@ public abstract class ShieldBase<T> extends Feature {
             conditions = new ShieldConditions(yawp, endpointClazz, id, objects);
             return conditions;
         }
-
     }
 
 

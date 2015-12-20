@@ -1,5 +1,6 @@
 package io.yawp.servlet;
 
+import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.JsonUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,27 +16,27 @@ public class RequestContext {
 
     private HttpServletRequest req;
 
-    private String method;
+    protected String method;
 
-    private String uri;
+    protected String uri;
 
-    private String json;
+    protected String json;
 
-    private Map<String, String> params;
+    protected Map<String, String> params;
+
+    public RequestContext() {
+    }
 
     public RequestContext(HttpServletRequest req, HttpServletResponse resp) {
         this.req = req;
         this.resp = resp;
-
-        if (req == null) {
-            return;
-        }
 
         this.method = parseMethod();
         this.uri = parseUri();
         this.json = parseJson();
         this.params = parseParams();
     }
+
 
     public HttpServletRequest req() {
         return req;
@@ -47,6 +48,10 @@ public class RequestContext {
 
     public String getMethod() {
         return method;
+    }
+
+    public HttpVerb getHttpVerb() {
+        return HttpVerb.fromString(method);
     }
 
     public String getUri() {

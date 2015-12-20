@@ -6,38 +6,10 @@ import java.util.Map;
 
 public class RequestContextMock extends RequestContext {
 
-    private String method;
-
-    private String uri;
-
-    private String json;
-
-    private Map<String, String> params;
-
     public RequestContextMock() {
-        super(null, null);
+        super();
     }
-
-    @Override
-    public String getMethod() {
-        return method;
-    }
-
-    @Override
-    public String getUri() {
-        return uri;
-    }
-
-    @Override
-    public String getJson() {
-        return json;
-    }
-
-    @Override
-    public Map<String, String> getParams() {
-        return params;
-    }
-
+    
     public static class Builder {
 
         private RequestContextMock mock = new RequestContextMock();

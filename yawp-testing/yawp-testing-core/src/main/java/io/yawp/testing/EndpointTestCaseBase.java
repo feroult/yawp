@@ -283,19 +283,19 @@ public class EndpointTestCaseBase extends Feature {
 
     // helpers
 
-    private RequestContext ctx(String method, String uri) {
+    protected RequestContext ctx(String method, String uri) {
         return new RequestContextMock.Builder().method(method).uri(uri).build();
     }
 
-    private RequestContext ctx(String method, String uri, String json) {
+    protected RequestContext ctx(String method, String uri, String json) {
         return new RequestContextMock.Builder().method(method).uri(uri).json(json).build();
     }
 
-    private RequestContext ctx(String method, String uri, Map<String, String> params) {
+    protected RequestContext ctx(String method, String uri, Map<String, String> params) {
         return new RequestContextMock.Builder().method(method).uri(uri).params(params).build();
     }
 
-    private RequestContext ctx(String method, String uri, String json, Map<String, String> params) {
+    protected RequestContext ctx(String method, String uri, String json, Map<String, String> params) {
         return new RequestContextMock.Builder().method(method).uri(uri).json(json).params(params).build();
     }
 

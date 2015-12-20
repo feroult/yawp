@@ -2,9 +2,7 @@ package io.yawp.servlet;
 
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
-import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.JsonResponse;
-import io.yawp.commons.utils.JsonUtils;
 import io.yawp.driver.api.DriverFactory;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
@@ -109,14 +107,14 @@ public class EndpointServlet extends HttpServlet {
 
 
     public HttpResponse execute(RequestContext ctx) {
-        return execute(ctx.getMethod(), ctx.getUri(), ctx.getJson(), ctx.getParams());
+        return execute(ctx, ctx.getMethod(), ctx.getUri(), ctx.getJson(), ctx.getParams());
     }
 
 
-    public HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
+    public HttpResponse execute(RequestContext ctx, String method, String uri, String requestJson, Map<String, String> params) {
         Repository r = getRepository(params);
 
-        EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri, requestJson, params);
+        EndpointRouter router = EndpointRouter.parse(r, ctx);
 
         if (!router.isValid()) {
             throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");

@@ -29,12 +29,12 @@ public class FixturesServlet extends EndpointServlet {
             response(resp, new ExceptionResponse(403));
             return;
         }
-        
+
         super.service(req, resp);
     }
 
     private boolean enableFixtures(RequestContext ctx) {
-        Repository r = getRepository(ctx.getParams());
+        Repository r = getRepository(ctx);
         Driver driver = r.getDriver();
 
         if (!driver.environment().isProduction()) {

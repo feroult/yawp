@@ -8,6 +8,7 @@ import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.query.QueryBuilder;
+import io.yawp.servlet.RequestContext;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ public class Repository {
     private Driver driver;
 
     private TransactionDriver tx;
+    private RequestContext requestContext;
 
     public static Repository r() {
         return new Repository();
@@ -53,6 +55,11 @@ public class Repository {
 
     public Repository setFeatures(RepositoryFeatures repositoryFeatures) {
         this.repositoryFeatures = repositoryFeatures;
+        return this;
+    }
+
+    public Repository setRequestContext(RequestContext requestContext) {
+        this.requestContext = requestContext;
         return this;
     }
 

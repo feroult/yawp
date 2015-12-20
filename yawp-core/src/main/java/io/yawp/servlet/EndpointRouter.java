@@ -19,8 +19,6 @@ public class EndpointRouter {
 
     private RepositoryFeatures features;
 
-    private final RequestContext ctx;
-
     private String uri;
 
     private boolean overCollection;
@@ -46,7 +44,6 @@ public class EndpointRouter {
         }
 
         this.r = r;
-        this.ctx = ctx;
         this.verb = ctx.getHttpVerb();
         this.uri = ctx.getUri();
         this.requestJson = ctx.getJson();

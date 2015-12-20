@@ -10,7 +10,6 @@ import java.util.Map;
 
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.utils.Environment;
-import io.yawp.commons.utils.JsonUtils;
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.driver.api.testing.TestHelperFactory;
 import io.yawp.repository.EndpointScanner;
@@ -72,7 +71,7 @@ public class EndpointTestCaseBase extends Feature {
             private static final long serialVersionUID = 3374113392343671861L;
 
             @Override
-            protected Repository getRepository(Map<String, String> params) {
+            protected Repository getRepository(RequestContext ctx) {
                 return yawp;
             }
 

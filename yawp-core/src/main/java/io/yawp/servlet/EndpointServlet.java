@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Map;
 
 public class EndpointServlet extends HttpServlet {
 
@@ -87,7 +86,7 @@ public class EndpointServlet extends HttpServlet {
     }
 
     public HttpResponse execute(RequestContext ctx) {
-        Repository r = getRepository(ctx.getParams());
+        Repository r = getRepository(ctx);
 
         EndpointRouter router = EndpointRouter.parse(r, ctx);
 
@@ -98,7 +97,8 @@ public class EndpointServlet extends HttpServlet {
         return router.executeRestAction(enableHooks);
     }
 
-    protected Repository getRepository(Map<String, String> params) {
-        return Repository.r().setFeatures(features);
+    protected Repository getRepository(RequestContext ctx) {
+        return Repository.r().setFeatures(features).setRequestContext(ctx);
     }
+
 }

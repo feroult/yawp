@@ -3,6 +3,7 @@ package io.yawp.servlet;
 import io.yawp.commons.http.ExceptionResponse;
 import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.Driver;
+import io.yawp.driver.api.DriverFactory;
 import io.yawp.repository.Repository;
 
 import javax.servlet.ServletConfig;
@@ -23,9 +24,7 @@ public class FixturesServlet extends EndpointServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestContext ctx = new RequestContext(req, resp);
-
-        if (!enableFixtures(ctx)) {
+        if (!enableFixtures()) {
             response(resp, new ExceptionResponse(403));
             return;
         }
@@ -33,9 +32,8 @@ public class FixturesServlet extends EndpointServlet {
         super.service(req, resp);
     }
 
-    private boolean enableFixtures(RequestContext ctx) {
-        Repository r = getRepository(ctx);
-        Driver driver = r.getDriver();
+    private boolean enableFixtures() {
+        Driver driver = DriverFactory.getDriver();
 
         if (!driver.environment().isProduction()) {
             return true;

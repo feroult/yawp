@@ -22,6 +22,8 @@ public abstract class ShieldBase<T> extends Feature {
 
     private List<AllowRule> rules = new ArrayList<>();
 
+    private AllowRule lastRule;
+
     private boolean allow = false;
 
     private boolean lastAllow = false;
@@ -63,7 +65,9 @@ public abstract class ShieldBase<T> extends Feature {
     }
 
     public final ShieldBase<T> allow(boolean allow) {
-        rules.add(new AllowRule(allow));
+        AllowRule rule = new AllowRule(allow);
+        rules.add(rule);
+        this.lastRule = rule;
 
         this.allow = this.allow || allow;
         this.lastAllow = allow;
@@ -310,5 +314,64 @@ public abstract class ShieldBase<T> extends Feature {
             throw new RuntimeException(e);
         }
     }
+
+    public class AllowRule {
+
+        private boolean allow;
+
+        private ShieldConditions conditions;
+
+        private Class<? super T> facade;
+
+        public AllowRule(boolean allow) {
+            this.allow = allow;
+        }
+
+        public final AllowRule where(String field, String operator, Object value) {
+            return or(Condition.c(field, operator, value));
+        }
+
+        public final AllowRule where(BaseCondition condition) {
+            return or(condition);
+        }
+
+        public final AllowRule or(String field, String operator, Object value) {
+            return or(Condition.c(field, operator, value));
+        }
+
+        public final AllowRule or(BaseCondition condition) {
+            getConditions().or(condition);
+            return this;
+        }
+
+        public final AllowRule and(String field, String operator, Object value) {
+            return and(Condition.c(field, operator, value));
+        }
+
+        public final AllowRule and(BaseCondition condition) {
+            getConditions().and(condition);
+            return this;
+        }
+
+        public final AllowRule facade(Class<? super T> facade) {
+            this.facade = facade;
+            return this;
+        }
+
+        public final AllowRule removeFacade() {
+            return facade(null);
+        }
+
+        private ShieldConditions getConditions() {
+            if (conditions != null) {
+                return conditions;
+            }
+
+            conditions = new ShieldConditions(yawp, endpointClazz, id, objects);
+            return conditions;
+        }
+
+    }
+
 
 }

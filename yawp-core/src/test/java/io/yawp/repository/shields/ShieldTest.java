@@ -318,12 +318,11 @@ public class ShieldTest extends ServletTestCase {
     }
 
     @Test
-    @Ignore
-    public void testAllowWithoutWhereRemovesOtherWhere() {
+    public void testTwoWhereClauses() {
         saveObject(1l, "xpto", 100);
         saveObject(2l, "xpto", 200);
 
-        login("richey");
+        login("linda");
         List<ShieldedObject> objects = fromList(get("/shielded_objects"), ShieldedObject.class);
 
         assertEquals(2, objects.size());
@@ -333,22 +332,11 @@ public class ShieldTest extends ServletTestCase {
 
     @Test
     @Ignore
-    public void testTwoWhereClausesWithAnd() {
+    public void testAllowWithoutWhereRemovesOtherWhere() {
         saveObject(1l, "xpto", 100);
         saveObject(2l, "xpto", 200);
 
-        login("kristen");
-        List<ShieldedObject> objects = fromList(get("/shielded_objects"), ShieldedObject.class);
-
-        assertEquals(0, objects.size());
-    }
-
-    @Test
-    public void testTwoWhereClausesWithOr() {
-        saveObject(1l, "xpto", 100);
-        saveObject(2l, "xpto", 200);
-
-        login("linda");
+        login("richey");
         List<ShieldedObject> objects = fromList(get("/shielded_objects"), ShieldedObject.class);
 
         assertEquals(2, objects.size());

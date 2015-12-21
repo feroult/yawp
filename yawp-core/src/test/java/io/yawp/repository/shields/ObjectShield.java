@@ -26,16 +26,13 @@ public class ObjectShield extends Shield<ShieldedObject> {
     public void index(IdRef<?> parentId) {
         allow(isKurt()).where("stringValue", "=", "ok");
 
-        chainnedWhereClausesTest();
+        twoWhereClausesTest();
         allowWithoutWhereRemovesOtherWhere();
     }
 
-    private void chainnedWhereClausesTest() {
+    private void twoWhereClausesTest() {
         allow(isLinda()).where("intValue", "=", 100);
         allow(isLinda()).where("intValue", "=", 200);
-        // TODO: think about this and api
-//        allow(isKristen()).where("intValue", "=", 100);
-//        allow(isKristen()).and("intValue", "=", 200);
     }
 
     private void allowWithoutWhereRemovesOtherWhere() {

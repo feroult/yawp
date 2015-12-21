@@ -26,7 +26,7 @@ public class ShowRestAction extends RestAction {
         }
 
         if (hasShieldCondition()) {
-            query.and(shield.getCondition());
+            query.and(shield.getWhere());
         }
 
         try {

@@ -36,9 +36,9 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
         $ cd yawpapp
         $ mvn yawp:devserver
 
-3. Using a browser, go to `http://localhost:8080/api/` to check if everything is OK.
+3. Using a browser, go to `http://localhost:8080/api` to check if everything is OK.
 
-4. Using a scaffolder, you may also try to create a simple endpoint model:
+4. Using a scaffolder, create a simple endpoint model:
 
         $ mvn yawp:endpoint -Dmodel=people
 
@@ -52,7 +52,7 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
     ```
         $ curl http://localhost:8080/api/people
 
-4. Follow the guidelines to start developing your API:
+5. Follow the guidelines to start developing your API:
     * [Your First API](http://yawp.io/guides/getting-started/your-first-api)
     * [Todo App List Tutorial](http://yawp.io/guides/tutorials/todo-list-app)
     * [YAWP! Guides](http://yawp.io/guides)

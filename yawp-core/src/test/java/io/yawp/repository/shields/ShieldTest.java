@@ -331,7 +331,6 @@ public class ShieldTest extends ServletTestCase {
     }
 
     @Test
-    @Ignore
     public void testAllowWithoutWhereRemovesOtherWhere() {
         saveObject(1l, "xpto", 100);
         saveObject(2l, "xpto", 200);

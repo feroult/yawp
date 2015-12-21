@@ -7,7 +7,7 @@ import io.yawp.repository.query.condition.Condition;
 
 import java.util.List;
 
-public class AllowRule<T> {
+public class Rule<T> {
 
     private final Repository r;
 
@@ -17,11 +17,11 @@ public class AllowRule<T> {
 
     private final List<T> objects;
 
-    private ShieldConditions conditions;
+    private RuleConditions conditions;
 
     private Class<? super T> facade;
 
-    public AllowRule(Repository r, Class<?> endpointClazz, IdRef<?> id, List<T> objects) {
+    public Rule(Repository r, Class<?> endpointClazz, IdRef<?> id, List<T> objects) {
 
         this.r = r;
         this.endpointClazz = endpointClazz;
@@ -41,43 +41,43 @@ public class AllowRule<T> {
         return facade != null;
     }
 
-    public AllowRule where(String field, String operator, Object value) {
+    public Rule where(String field, String operator, Object value) {
         return or(Condition.c(field, operator, value));
     }
 
-    public AllowRule where(BaseCondition condition) {
+    public Rule where(BaseCondition condition) {
         return or(condition);
     }
 
-    public AllowRule or(String field, String operator, Object value) {
+    public Rule or(String field, String operator, Object value) {
         return or(Condition.c(field, operator, value));
     }
 
-    public AllowRule or(BaseCondition condition) {
+    public Rule or(BaseCondition condition) {
         getConditions().or(condition);
         return this;
     }
 
-    public AllowRule and(String field, String operator, Object value) {
+    public Rule and(String field, String operator, Object value) {
         return and(Condition.c(field, operator, value));
     }
 
-    public AllowRule and(BaseCondition condition) {
+    public Rule and(BaseCondition condition) {
         getConditions().and(condition);
         return this;
     }
 
-    public AllowRule facade(Class<? super T> facade) {
+    public Rule facade(Class<? super T> facade) {
         this.facade = facade;
         return this;
     }
 
-    public ShieldConditions getConditions() {
+    public RuleConditions getConditions() {
         if (conditions != null) {
             return conditions;
         }
 
-        conditions = new ShieldConditions(r, endpointClazz, id, objects);
+        conditions = new RuleConditions(r, endpointClazz, id, objects);
         return conditions;
     }
 }

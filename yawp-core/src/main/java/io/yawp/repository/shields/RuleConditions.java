@@ -12,7 +12,7 @@ import java.util.List;
 import static io.yawp.repository.query.condition.Condition.and;
 import static io.yawp.repository.query.condition.Condition.or;
 
-public class ShieldConditions {
+public class RuleConditions {
 
     private BaseCondition condition;
 
@@ -24,7 +24,7 @@ public class ShieldConditions {
 
     private List<?> objects;
 
-    public ShieldConditions(Repository r, Class<?> endpointClazz, IdRef<?> id, List<?> objects) {
+    public RuleConditions(Repository r, Class<?> endpointClazz, IdRef<?> id, List<?> objects) {
         this.r = r;
         this.endpointClazz = endpointClazz;
         this.id = id;

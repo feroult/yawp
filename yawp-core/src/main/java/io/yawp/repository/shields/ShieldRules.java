@@ -7,29 +7,26 @@ import java.util.List;
 
 public class ShieldRules<T> {
 
-    private List<AllowRule> rules = new ArrayList<>();
+    private List<Rule> rules = new ArrayList<>();
 
     private boolean merged;
 
-    private boolean hasCondition;
-
-    private ShieldConditions conditions;
+    private RuleConditions conditions;
 
     private Class<? super T> facade;
 
-    public void add(AllowRule rule) {
+    public void add(Rule rule) {
         rules.add(rule);
     }
 
     public boolean hasCondition() {
         merge();
-        return hasCondition;
+        return conditions != null;
     }
 
     public boolean evaluateConditions() {
         merge();
-
-        if (!hasCondition) {
+        if (conditions == null) {
             return true;
         }
 
@@ -56,14 +53,15 @@ public class ShieldRules<T> {
             return;
         }
 
-        for (AllowRule rule : rules) {
-            if (rule.hasConditions()) {
-                this.hasCondition = true;
+        boolean emptyCondition = false;
 
-                if (this.conditions == null) {
-                    this.conditions = rule.getConditions();
+        for (Rule rule : rules) {
+            if (!emptyCondition) {
+                if (rule.hasConditions()) {
+                    mergeConditions(rule);
                 } else {
-                    this.conditions.or(rule.getConditions().getWhere());
+                    this.conditions = null;
+                    emptyCondition = true;
                 }
             }
 
@@ -72,5 +70,13 @@ public class ShieldRules<T> {
         }
 
         merged = true;
+    }
+
+    private void mergeConditions(Rule rule) {
+        if (this.conditions == null) {
+            this.conditions = rule.getConditions();
+        } else {
+            this.conditions.or(rule.getConditions().getWhere());
+        }
     }
 }

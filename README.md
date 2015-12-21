@@ -42,7 +42,7 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 
         $ mvn yawp:endpoint -Dmodel=people
 
-    **_Output:_**
+    **Output:**
 
     ``` java
     @Endpoint(path = "/people")
@@ -53,7 +53,7 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
         String name;
     }    
     ```
-    **_Try it:_**
+    **Try it:**
 
         $ curl http://localhost:8080/api/people
 

@@ -42,13 +42,14 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 
         $ mvn yawp:endpoint -Dmodel=people
 
-    _Output_:
+    _*Output:*_
 
     ``` java
     @Endpoint(path = "/people")
     public class Person {
         @Id
-        IdRef<Person> id;        
+        IdRef<Person> id;
+
         String name;
     }    
     ```

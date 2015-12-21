@@ -42,7 +42,7 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 
         $ mvn yawp:endpoint -Dmodel=people
 
-    _*Output:*_
+    **_Output:_**
 
     ``` java
     @Endpoint(path = "/people")
@@ -53,6 +53,8 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
         String name;
     }    
     ```
+    **_Try it:_**
+
         $ curl http://localhost:8080/api/people
 
 5. Follow the guidelines to start developing your API:

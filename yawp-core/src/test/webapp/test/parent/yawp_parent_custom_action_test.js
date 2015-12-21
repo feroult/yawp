@@ -150,14 +150,17 @@
         });
     });
 
-    t.asyncTest("action with PUT and void return type", function(assert) {
-        expect(2);
+    t.asyncTest("action with void return type", function(assert) {
+        expect(3);
 
         yawp('/parents').post('with-void-return').done(function(result) {
             assert.ok(result);
             yawp('/parents').put('with-void-return').done(function(result) {
                 assert.ok(result);
-                t.start();
+                yawp('/parents').get('with-void-return').done(function(result) {
+                    assert.ok(result);
+                    t.start();
+                });
             });
         });
     });

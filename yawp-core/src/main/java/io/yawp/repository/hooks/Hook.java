@@ -4,6 +4,8 @@ import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.query.QueryBuilder;
 
+import java.util.Map;
+
 public class Hook<T> extends Feature {
 
     public void beforeShield(T object) {

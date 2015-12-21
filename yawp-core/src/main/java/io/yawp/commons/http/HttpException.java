@@ -1,7 +1,5 @@
 package io.yawp.commons.http;
 
-import io.yawp.commons.utils.Environment;
-
 import com.google.gson.JsonElement;
 
 public class HttpException extends RuntimeException {

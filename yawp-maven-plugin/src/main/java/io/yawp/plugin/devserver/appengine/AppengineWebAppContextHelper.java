@@ -62,8 +62,7 @@ public class AppengineWebAppContextHelper extends WebAppContextHelper {
     }
 
     private AppengineUserRealm createAppengineUserRealm() {
-        AppengineWebAppContext appengineWebApp = (AppengineWebAppContext) webapp;
-        return new AppengineUserRealm(appengineWebApp.getHelper());
+        return new AppengineUserRealm();
     }
 
     @Override

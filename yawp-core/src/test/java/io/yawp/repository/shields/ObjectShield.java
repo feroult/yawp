@@ -1,6 +1,7 @@
 package io.yawp.repository.shields;
 
 import io.yawp.commons.http.annotation.GET;
+import io.yawp.commons.http.annotation.POST;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.commons.utils.TestLoginManager;
 import io.yawp.repository.IdRef;
@@ -24,6 +25,19 @@ public class ObjectShield extends Shield<ShieldedObject> {
     @Override
     public void index(IdRef<?> parentId) {
         allow(isKurt()).where("stringValue", "=", "ok");
+
+        twoWhereClausesTest();
+        allowWithoutWhereRemovesOtherWhere();
+    }
+
+    private void twoWhereClausesTest() {
+        allow(isLinda()).where("intValue", "=", 100);
+        allow(isLinda()).where("intValue", "=", 200);
+    }
+
+    private void allowWithoutWhereRemovesOtherWhere() {
+        allow(isRichey()).where("intValue", "=", 100);
+        allow(isRichey());
     }
 
     @Override
@@ -72,6 +86,13 @@ public class ObjectShield extends Shield<ShieldedObject> {
         allow();
     }
 
+    @POST
+    public void multipleWheres() {
+        allow(true).where("lala", "=", "lala");
+        allow(true).where("xpto", "=", "lala");
+    }
+
+
     private boolean isRobert() {
         return is("robert");
     }
@@ -96,6 +117,18 @@ public class ObjectShield extends Shield<ShieldedObject> {
         return is("nat");
     }
 
+    private boolean isLinda() {
+        return is("linda");
+    }
+
+    private boolean isKristen() {
+        return is("kristen");
+    }
+
+    private boolean isRichey() {
+        return is("richey");
+    }
+
     private boolean is(String username) {
         return TestLoginManager.isLogged(username);
     }
@@ -105,8 +138,8 @@ public class ObjectShield extends Shield<ShieldedObject> {
     }
 
     private boolean hasAppliedBeforeShield(List<ShieldedObject> objects) {
-        for(ShieldedObject object : objects) {
-            if(!object.getStringValue().contains("applied beforeShield")) {
+        for (ShieldedObject object : objects) {
+            if (!object.getStringValue().contains("applied beforeShield")) {
                 return false;
             }
         }
@@ -139,5 +172,9 @@ public class ObjectShield extends Shield<ShieldedObject> {
             return false;
         }
         return object.getStringValue().equals("valid object");
+    }
+
+    private boolean isAdmin() {
+        return TestLoginManager.getLoggedUsername().contains("admin");
     }
 }

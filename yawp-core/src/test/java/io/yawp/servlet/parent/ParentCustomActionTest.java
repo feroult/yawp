@@ -1,15 +1,12 @@
 package io.yawp.servlet.parent;
 
-import static org.junit.Assert.assertEquals;
-
-import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.actions.FakeException;
-import io.yawp.repository.models.basic.Pojo;
 import io.yawp.repository.models.parents.Parent;
+import org.junit.Test;
 
 import java.util.List;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class ParentCustomActionTest extends ParentServletTestCase {
 
@@ -135,23 +132,5 @@ public class ParentCustomActionTest extends ParentServletTestCase {
         Parent parent = saveParent("xpto");
         String json = post(uri("/parents/%s/with-json-list", parent), "[{ 'stringValue': 'pojo' }, { 'stringValue': 'list' }]");
         assertEquals("pojo list", from(json, String.class));
-    }
-
-    @Test
-    public void xpto() {
-        int b = (int) 'á';
-        b = (int) '́';
-        //b = (int) '´';
-
-        char c = 769;
-
-        //int x = (int) 'é';
-
-        //int x = (int) 'é';
-
-        int x = (int) 'é';
-
-
-        System.out.println(x);
     }
 }

@@ -9,7 +9,6 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.InvalidActionMethodException;
 import io.yawp.repository.query.condition.BaseCondition;
-import io.yawp.repository.query.condition.Condition;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,27 +18,23 @@ import java.util.Map;
 
 public abstract class ShieldBase<T> extends Feature {
 
+    private ShieldRules<T> rules = new ShieldRules<>();
+
     private boolean allow = false;
 
-    private boolean lastAllow = false;
-
-    private ShieldConditions conditions;
-
-    private Class<? super T> facade;
-
     private Class<?> endpointClazz;
-
-    private IdRef<?> id;
-
-    private List<T> objects;
-
-    private String requestJson;
-
-    private Map<String, String> params;
 
     private ActionKey actionKey;
 
     private Map<ActionKey, Method> actionMethods;
+
+    protected IdRef<?> id;
+
+    protected List<T> objects;
+
+    protected String requestJson;
+
+    protected Map<String, String> params;
 
     public abstract void always();
 
@@ -55,40 +50,47 @@ public abstract class ShieldBase<T> extends Feature {
 
     public abstract void destroy(IdRef<T> id);
 
-    public final ShieldBase<T> allow() {
+    // initialize methods
+
+    public void setEndpointClazz(Class<?> endpointClazz) {
+        this.endpointClazz = endpointClazz;
+    }
+
+    public final void setId(IdRef<?> id) {
+        this.id = id;
+    }
+
+    public void setRequestJson(String requestJson) {
+        this.requestJson = requestJson;
+    }
+
+    public final void setParams(Map<String, String> params) {
+        this.params = params;
+    }
+
+    public final void setActionKey(ActionKey actionKey) {
+        this.actionKey = actionKey;
+    }
+
+    public final void setActionMethods(Map<ActionKey, Method> actionMethods) {
+        this.actionMethods = actionMethods;
+    }
+
+    // shield rules
+
+    public final Rule allow() {
         return allow(true);
     }
 
-    public final ShieldBase<T> allow(boolean allow) {
-        this.allow = this.allow || allow;
-        this.lastAllow = allow;
-        return this;
-    }
+    public final Rule allow(boolean allow) {
+        Rule rule = new Rule<T>(yawp, endpointClazz, id, objects);
 
-    public final ShieldBase<T> where(String field, String operator, Object value) {
-        return where(Condition.c(field, operator, value));
-    }
-
-    public final ShieldBase<T> where(BaseCondition condition) {
-        if (!lastAllow) {
-            return this;
+        if (allow) {
+            rules.add(rule);
+            this.allow = true;
         }
 
-        getConditions().where(condition);
-        return this;
-    }
-
-    public final ShieldBase<T> facade(Class<? super T> facade) {
-        if (!lastAllow) {
-            return this;
-        }
-
-        this.facade = facade;
-        return this;
-    }
-
-    public final ShieldBase<T> removeFacade() {
-        return facade(null);
+        return rule;
     }
 
     public final boolean isAction(Class<?>... actionClazzes) {
@@ -176,6 +178,8 @@ public abstract class ShieldBase<T> extends Feature {
 
     @SuppressWarnings("unchecked")
     private void applySetFacade() {
+        Class<? super T> facade = rules.getFacade();
+
         if (facade == null) {
             return;
         }
@@ -196,6 +200,8 @@ public abstract class ShieldBase<T> extends Feature {
 
     @SuppressWarnings("unchecked")
     public void applyGetFacade(Object object) {
+        Class<? super T> facade = rules.getFacade();
+
         if (facade == null) {
             return;
         }
@@ -203,58 +209,25 @@ public abstract class ShieldBase<T> extends Feature {
         FacadeUtils.get((T) object, facade);
     }
 
-    public void setEndpointClazz(Class<?> endpointClazz) {
-        this.endpointClazz = endpointClazz;
-    }
-
-    public final void setId(IdRef<?> id) {
-        this.id = id;
-    }
-
     @SuppressWarnings("unchecked")
     public final void setObjects(List<?> objects) {
         this.objects = (List<T>) objects;
     }
 
-    public BaseCondition getCondition() {
-        return conditions.getWhere();
+    public BaseCondition getWhere() {
+        return rules.getWhere();
     }
 
     public boolean hasCondition() {
-        return getConditions().getWhere() != null;
-    }
-
-    private ShieldConditions getConditions() {
-        if (conditions != null) {
-            return conditions;
-        }
-
-        conditions = new ShieldConditions(yawp, endpointClazz, id, objects);
-        return conditions;
-    }
-
-    private void verifyConditions() {
-        this.allow = getConditions().evaluate();
+        return rules.hasCondition();
     }
 
     public boolean hasFacade() {
-        return facade != null;
+        return rules.hasFacade();
     }
 
-    public void setRequestJson(String requestJson) {
-        this.requestJson = requestJson;
-    }
-
-    public final void setParams(Map<String, String> params) {
-        this.params = params;
-    }
-
-    public final void setActionKey(ActionKey actionKey) {
-        this.actionKey = actionKey;
-    }
-
-    public final void setActionMethods(Map<ActionKey, Method> actionMethods) {
-        this.actionMethods = actionMethods;
+    private void verifyConditions() {
+        this.allow = rules.evaluateConditions();
     }
 
     private void protectEachCustomAction() {

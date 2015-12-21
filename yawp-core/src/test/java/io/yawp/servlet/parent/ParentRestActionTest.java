@@ -7,6 +7,7 @@ import io.yawp.repository.models.parents.Parent;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ParentRestActionTest extends ParentServletTestCase {
@@ -76,6 +77,18 @@ public class ParentRestActionTest extends ParentServletTestCase {
         assertEquals(2, parents.size());
         assertEquals("xpto1", parents.get(0).getName());
         assertEquals("xpto2", parents.get(1).getName());
+    }
+
+    @Test
+    public void testIndexWithHookAndParams() {
+        saveParent("xpto1");
+        saveParent("xpto2");
+
+        String json = get("/parents", params("name", "xpto1"));
+        List<Parent> parents = fromList(json, Parent.class);
+
+        assertEquals(1, parents.size());
+        assertEquals("xpto1", parents.get(0).getName());
     }
 
     @Test

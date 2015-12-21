@@ -241,11 +241,15 @@ public class QueryBuilder<T> {
     }
 
     private List<T> postFilter(List<T> objects) {
-        if (condition == null || !condition.hasPostFilter()) {
+        if (!hasPostFilter()) {
             return objects;
         }
-
         return condition.applyPostFilter(objects);
+
+    }
+
+    private boolean hasPostFilter() {
+        return condition != null && condition.hasPostFilter();
     }
 
     @SuppressWarnings("unchecked")
@@ -266,7 +270,7 @@ public class QueryBuilder<T> {
     }
 
     public void sortList(List<?> objects) {
-        if (postOrders.size() == 0) {
+        if (!hasPostOrder()) {
             return;
         }
 
@@ -285,6 +289,10 @@ public class QueryBuilder<T> {
                 return 0;
             }
         });
+    }
+
+    private boolean hasPostOrder() {
+        return postOrders.size() != 0;
     }
 
     protected Class<T> getClazz() {
@@ -310,9 +318,15 @@ public class QueryBuilder<T> {
     }
 
     public List<IdRef<T>> ids() {
+        if (hasPostFilter() || hasPostOrder()) {
+            throw new RuntimeException("ids() cannot be used with post query filter or order. You may need to add @Index to your model attributes.");
+        }
+
         r.namespace().set(getClazz());
         try {
             List<IdRef<T>> ids = r.driver().query().ids(this);
+
+
             return ids;
         } finally {
             r.namespace().reset();

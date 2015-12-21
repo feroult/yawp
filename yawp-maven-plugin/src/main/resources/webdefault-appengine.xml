@@ -43,31 +43,12 @@
         </param-value>
     </context-param>
 
-    <!-- YAWP! Removed
-    <filter>
-      <filter-name>_ah_DevAppServerModulesFilter</filter-name>
-      <filter-class>
-        com.google.appengine.tools.development.DevAppServerModulesFilter
-      </filter-class>
-    </filter>
-
     <filter>
       <filter-name>_ah_StaticFileFilter</filter-name>
       <filter-class>
         com.google.appengine.tools.development.StaticFileFilter
       </filter-class>
-    </filter> -->
-
-    <!-- YAWP! Added -->
-    <servlet>
-        <servlet-name>default</servlet-name>
-        <servlet-class>org.mortbay.jetty.servlet.DefaultServlet</servlet-class>
-        <init-param>
-            <param-name>aliases</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </servlet>
-    <!-- end -->
+    </filter>
 
     <!-- ==================================================================== -->
     <!-- By default, the AbandonedTransactionDetector filter is mapped to all -->
@@ -116,12 +97,12 @@
       <!__ match both real and forwarded requests __>
       <dispatcher>FORWARD</dispatcher>
       <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
+    </filter-mapping> -->
 
     <filter-mapping>
       <filter-name>_ah_StaticFileFilter</filter-name>
       <url-pattern>/*</url-pattern>
-    </filter-mapping> -->
+    </filter-mapping>
 
     <filter-mapping>
         <filter-name>_ah_AbandonedTransactionDetector</filter-name>
@@ -151,12 +132,10 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- YAWP! Removed
     <servlet>
       <servlet-name>_ah_default</servlet-name>
       <servlet-class>com.google.appengine.tools.development.LocalResourceFileServlet</servlet-class>
     </servlet>
-    -->
 
     <servlet>
         <servlet-name>_ah_blobUpload</servlet-name>
@@ -551,25 +530,15 @@
     </servlet>
     -->
 
-    <!-- Servlet mappings -->
-    <!-- YAWP! Added -->
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/*</url-pattern>
-    </servlet-mapping>
-    <!-- end -->
-
     <servlet-mapping>
         <servlet-name>_ah_sessioncleanup</servlet-name>
         <url-pattern>/_ah/sessioncleanup</url-pattern>
     </servlet-mapping>
 
-    <!-- YAWP! Removed
     <servlet-mapping>
       <servlet-name>_ah_default</servlet-name>
       <url-pattern>/</url-pattern>
     </servlet-mapping>
-    -->
 
     <!-- The /_ah/ URL pattern is reserved for internal servlets. -->
     <servlet-mapping>

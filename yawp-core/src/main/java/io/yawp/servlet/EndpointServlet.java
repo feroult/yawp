@@ -2,9 +2,8 @@ package io.yawp.servlet;
 
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
-import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.JsonResponse;
-import io.yawp.commons.utils.JsonUtils;
+import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.DriverFactory;
 import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
@@ -16,9 +15,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 
 public class EndpointServlet extends HttpServlet {
 
@@ -77,7 +73,7 @@ public class EndpointServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpResponse httpResponse;
         try {
-            httpResponse = execute(req.getMethod(), getUri(req), JsonUtils.readJson(req.getReader()), makeParams(req));
+            httpResponse = execute(new RequestContext(req, resp));
         } catch (HttpException e) {
             httpResponse = e.createResponse();
         }
@@ -90,27 +86,10 @@ public class EndpointServlet extends HttpServlet {
         response(resp, httpResponse);
     }
 
-    @SuppressWarnings("unchecked")
-    protected Map<String, String> makeParams(HttpServletRequest req) {
-        Map<String, String> map = new HashMap<String, String>();
+    public HttpResponse execute(RequestContext ctx) {
+        Repository r = getRepository(ctx);
 
-        Enumeration<String> e = req.getParameterNames();
-        while (e.hasMoreElements()) {
-            String name = e.nextElement();
-            map.put(name, req.getParameter(name));
-        }
-
-        return map;
-    }
-
-    private String getUri(HttpServletRequest req) {
-        return req.getRequestURI().substring(req.getServletPath().length());
-    }
-
-    public HttpResponse execute(String method, String uri, String requestJson, Map<String, String> params) {
-        Repository r = getRepository(params);
-
-        EndpointRouter router = EndpointRouter.parse(r, HttpVerb.fromString(method), uri, requestJson, params);
+        EndpointRouter router = EndpointRouter.parse(r, ctx);
 
         if (!router.isValid()) {
             throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");
@@ -119,7 +98,8 @@ public class EndpointServlet extends HttpServlet {
         return router.executeRestAction(enableHooks);
     }
 
-    protected Repository getRepository(Map<String, String> params) {
-        return Repository.r().setFeatures(features);
+    protected Repository getRepository(RequestContext ctx) {
+        return Repository.r().setFeatures(features).setRequestContext(ctx);
     }
+
 }

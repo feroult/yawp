@@ -30,20 +30,21 @@ public class ExceptionResponse extends HttpResponse {
 
     @Override
     public void execute(HttpServletResponse resp) throws IOException {
+        resp.setContentType("application/json;charset=UTF-8");
+        resp.setCharacterEncoding("UTF-8");
         resp.setStatus(httpStatus);
 
-        String userText = getUserText();
-
-        if (userText == null) {
+        String json = getJson();
+        if (json == null) {
             return;
         }
 
-        resp.getWriter().write(userText);
+        resp.getWriter().write(json);
     }
 
-    private String getUserText() {
+    private String getJson() {
         if (httpStatus == 404 && Environment.isProduction()) {
-            return "";
+            return "{}";
         }
         return text;
     }

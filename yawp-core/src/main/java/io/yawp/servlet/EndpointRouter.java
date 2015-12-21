@@ -3,6 +3,7 @@ package io.yawp.servlet;
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.http.RequestContext;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.*;
 import io.yawp.repository.actions.ActionKey;
@@ -37,17 +38,17 @@ public class EndpointRouter {
 
     private List<?> objects;
 
-    private EndpointRouter(Repository r, HttpVerb verb, String uri, String requestJson, Map<String, String> params) {
+    private EndpointRouter(Repository r, RequestContext ctx) {
 
-        if (isWelcome(uri)) {
+        if (isWelcome(ctx.getUri())) {
             throw new HttpException(200, "Welcome to YAWP!");
         }
 
-        this.verb = verb;
-        this.uri = uri;
         this.r = r;
-        this.requestJson = requestJson;
-        this.params = params;
+        this.verb = ctx.getHttpVerb();
+        this.uri = ctx.getUri();
+        this.requestJson = ctx.getJson();
+        this.params = ctx.getParams();
         this.features = r.getFeatures();
 
         try {
@@ -61,8 +62,8 @@ public class EndpointRouter {
         return uri.equals("") || uri.equals("/");
     }
 
-    public static EndpointRouter parse(Repository r, HttpVerb verb, String uri, String requestJson, Map<String, String> params) {
-        return new EndpointRouter(r, verb, uri, requestJson, params);
+    public static EndpointRouter parse(Repository r, RequestContext ctx) {
+        return new EndpointRouter(r, ctx);
     }
 
     private void parseAll() {

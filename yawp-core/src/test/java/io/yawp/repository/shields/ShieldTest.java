@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ShieldTest extends ServletTestCase {
@@ -309,11 +310,39 @@ public class ShieldTest extends ServletTestCase {
         assertPutWithStatus("/shielded_objects_with_defaults/1/something", 404);
     }
 
+
     @Test
     public void testBeforeShieldHook() {
         assertPostWithStatus("/shielded_objects", "{stringValue: 'none'}", 404);
         assertPostWithStatus("/shielded_objects", "{stringValue: 'apply beforeShield'}", 200);
     }
+
+    @Test
+    public void testTwoWhereClauses() {
+        saveObject(1l, "xpto", 100);
+        saveObject(2l, "xpto", 200);
+
+        login("linda");
+        List<ShieldedObject> objects = fromList(get("/shielded_objects"), ShieldedObject.class);
+
+        assertEquals(2, objects.size());
+        assertEquals((Integer) 100, objects.get(0).getIntValue());
+        assertEquals((Integer) 200, objects.get(1).getIntValue());
+    }
+
+    @Test
+    public void testAllowWithoutWhereRemovesOtherWhere() {
+        saveObject(1l, "xpto", 100);
+        saveObject(2l, "xpto", 200);
+
+        login("richey");
+        List<ShieldedObject> objects = fromList(get("/shielded_objects"), ShieldedObject.class);
+
+        assertEquals(2, objects.size());
+        assertEquals((Integer) 100, objects.get(0).getIntValue());
+        assertEquals((Integer) 200, objects.get(1).getIntValue());
+    }
+
 
     private void assertRestActionsStatus(int status) {
         assertGetWithStatus("/shielded_objects", status);

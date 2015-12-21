@@ -33,7 +33,7 @@ public class IndexRestAction extends RestAction {
         }
 
         if (hasShieldCondition()) {
-            query.and(shield.getCondition());
+            query.and(shield.getWhere());
         }
 
         List<?> objects = query.list();

@@ -72,6 +72,8 @@ will need an environment with:
 * Maven 3.3+
 * PostgreSQL 9.4+
 
+Then follow the [travis-ci build script](../blob/master/.travis.yml) to get your build passing
+
 ## IRC
 
 Feel free to contact the developers at the IRC channel __#yawp__ at __chat.freenode.net__

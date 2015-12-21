@@ -42,6 +42,8 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 
         $ mvn yawp:endpoint -Dmodel=people
 
+    _Output_:
+
     ``` java
     @Endpoint(path = "/people")
     public class Person {

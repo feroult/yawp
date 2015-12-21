@@ -42,13 +42,13 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 
         $ mvn yawp:endpoint -Dmodel=person
 
-        ~~~ java
-        @Endpoint(path = "/people")
-        public class Person {
-            IdRef<Person> id;
-            String name;
-        }
-        ~~~
+~~~ java
+@Endpoint(path = "/people")
+public class Person {
+    IdRef<Person> id;
+    String name;
+}
+~~~
 
         $ curl http://localhost:8080/api/people
 

@@ -5,6 +5,7 @@ import io.yawp.commons.utils.FacadeUtils;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.ObjectHolder;
+import io.yawp.repository.Repository;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.InvalidActionMethodException;
@@ -20,13 +21,11 @@ import java.util.Map;
 
 public abstract class ShieldBase<T> extends Feature {
 
+    
+
     private List<AllowRule> rules = new ArrayList<>();
 
-    private AllowRule lastRule;
-
     private boolean allow = false;
-
-    private boolean lastAllow = false;
 
     private Class<?> endpointClazz;
 
@@ -56,52 +55,19 @@ public abstract class ShieldBase<T> extends Feature {
 
     public abstract void destroy(IdRef<T> id);
 
-    public final ShieldBase<T> allow() {
+    public final AllowRule allow() {
         return allow(true);
     }
 
-    public final ShieldBase<T> allow(boolean allow) {
-        AllowRule rule = new AllowRule(allow, this);
-        rules.add(rule);
-        this.lastRule = rule;
+    public final AllowRule allow(boolean allow) {
+        AllowRule rule = new AllowRule<T>(yawp, endpointClazz, id, objects);
 
-        this.allow = this.allow || allow;
-        this.lastAllow = allow;
-        return this;
-    }
+        if (allow) {
+            rules.add(rule);
+            this.allow = true;
+        }
 
-
-    public final ShieldBase<T> where(String field, String operator, Object value) {
-        return lastRule.or(Condition.c(field, operator, value));
-    }
-
-    public final ShieldBase<T> where(BaseCondition condition) {
-        return lastRule.or(condition);
-    }
-
-    public final ShieldBase<T> or(String field, String operator, Object value) {
-        return lastRule.or(Condition.c(field, operator, value));
-    }
-
-    public final ShieldBase<T> or(BaseCondition condition) {
-        return lastRule.or(condition);
-    }
-
-    public final ShieldBase<T> and(String field, String operator, Object value) {
-        return lastRule.and(Condition.c(field, operator, value));
-    }
-
-    public final ShieldBase<T> and(BaseCondition condition) {
-        return lastRule.and(condition);
-    }
-
-    public final ShieldBase<T> facade(Class<? super T> facade) {
-        return lastRule.facade(facade);
-    }
-
-    @Deprecated
-    public final ShieldBase<T> removeFacade() {
-        return facade(null);
+        return rule;
     }
 
     public final boolean isAction(Class<?>... actionClazzes) {
@@ -189,9 +155,9 @@ public abstract class ShieldBase<T> extends Feature {
 
     @SuppressWarnings("unchecked")
     private void applySetFacade() {
-        Class<? super T> facadeX = getFacadeFromRules();
+        Class<? super T> facade = getFacadeFromLastRule();
 
-        if (facadeX == null) {
+        if (facade == null) {
             return;
         }
 
@@ -200,37 +166,31 @@ public abstract class ShieldBase<T> extends Feature {
             IdRef<T> existingObjectId = (IdRef<T>) objectHolder.getId();
 
             if (existingObjectId == null) {
-                FacadeUtils.set(object, facadeX);
+                FacadeUtils.set(object, facade);
                 continue;
             }
 
-            FacadeUtils.set(object, existingObjectId.fetch(), facadeX);
+            FacadeUtils.set(object, existingObjectId.fetch(), facade);
         }
 
     }
 
     @SuppressWarnings("unchecked")
     public void applyGetFacade(Object object) {
+        Class<? super T> facade = getFacadeFromLastRule();
 
-        Class<? super T> facadeX = getFacadeFromRules();
-
-        if (facadeX == null) {
+        if (facade == null) {
             return;
         }
 
-        FacadeUtils.get((T) object, facadeX);
+        FacadeUtils.get((T) object, facade);
     }
 
-    private Class<? super T> getFacadeFromRules() {
-        Class<? super T> facadeX = null;
-
-        for (AllowRule rule : rules) {
-            if (!rule.isAllow() || !rule.hasFacade()) {
-                continue;
-            }
-            facadeX = rule.getFacade();
+    private Class<? super T> getFacadeFromLastRule() {
+        if (rules.size() == 0) {
+            return null;
         }
-        return facadeX;
+        return rules.get(rules.size() - 1).getFacade();
     }
 
     public void setEndpointClazz(Class<?> endpointClazz) {
@@ -254,7 +214,7 @@ public abstract class ShieldBase<T> extends Feature {
         BaseCondition where = null;
 
         for (AllowRule rule : rules) {
-            if (!rule.isAllow() || !rule.hasConditions()) {
+            if (!rule.hasConditions()) {
                 continue;
             }
 
@@ -271,20 +231,19 @@ public abstract class ShieldBase<T> extends Feature {
 
     public boolean hasCondition() {
         for (AllowRule rule : rules) {
-            if (rule.isAllow() && rule.hasConditions()) {
+            if (rule.hasConditions()) {
                 return true;
             }
         }
 
         return false;
-
     }
 
     private ShieldConditions getConditions() {
         ShieldConditions conditions = null;
 
         for (AllowRule rule : rules) {
-            if (!rule.isAllow() || !rule.hasConditions()) {
+            if (!rule.hasConditions()) {
                 continue;
             }
 
@@ -294,7 +253,6 @@ public abstract class ShieldBase<T> extends Feature {
             }
 
             conditions.or(rule.getConditions().getWhere());
-
         }
 
         return conditions;
@@ -302,14 +260,13 @@ public abstract class ShieldBase<T> extends Feature {
 
     private void verifyConditions() {
         if (!hasCondition()) {
-            this.allow = true;
             return;
         }
         this.allow = getConditions().evaluate();
     }
 
     public boolean hasFacade() {
-        return getFacadeFromRules() != null;
+        return getFacadeFromLastRule() != null;
     }
 
     public void setRequestJson(String requestJson) {
@@ -354,81 +311,5 @@ public abstract class ShieldBase<T> extends Feature {
             throw new RuntimeException(e);
         }
     }
-
-    public class AllowRule {
-
-        private boolean allow;
-        private ShieldBase<T> shieldBase;
-
-        private ShieldConditions conditions;
-
-        private Class<? super T> facade;
-
-        public AllowRule(boolean allow, ShieldBase<T> shieldBase) {
-            this.allow = allow;
-            this.shieldBase = shieldBase;
-        }
-
-        public boolean isAllow() {
-            return allow;
-        }
-
-        public boolean hasConditions() {
-            return conditions != null;
-        }
-
-        public Class<? super T> getFacade() {
-            return facade;
-        }
-
-        public boolean hasFacade() {
-            return facade != null;
-        }
-
-        public final ShieldBase<T> where(String field, String operator, Object value) {
-            return or(Condition.c(field, operator, value));
-        }
-
-        public final ShieldBase<T> where(BaseCondition condition) {
-            return or(condition);
-        }
-
-        public final ShieldBase<T> or(String field, String operator, Object value) {
-            return or(Condition.c(field, operator, value));
-        }
-
-        public final ShieldBase<T> or(BaseCondition condition) {
-            getConditions().or(condition);
-            return shieldBase;
-        }
-
-        public final ShieldBase<T> and(String field, String operator, Object value) {
-            return and(Condition.c(field, operator, value));
-        }
-
-        public final ShieldBase<T> and(BaseCondition condition) {
-            getConditions().and(condition);
-            return shieldBase;
-        }
-
-        public final ShieldBase<T> facade(Class<? super T> facade) {
-            this.facade = facade;
-            return shieldBase;
-        }
-
-        public final ShieldBase<T> removeFacade() {
-            return facade(null);
-        }
-
-        private ShieldConditions getConditions() {
-            if (conditions != null) {
-                return conditions;
-            }
-
-            conditions = new ShieldConditions(yawp, endpointClazz, id, objects);
-            return conditions;
-        }
-    }
-
 
 }

@@ -67,7 +67,7 @@ public class EndpointTestCaseBase extends Feature {
 
             @Override
             protected Repository getRepository(RequestContext ctx) {
-                return yawp;
+                return yawp.setRequestContext(ctx);
             }
 
         };

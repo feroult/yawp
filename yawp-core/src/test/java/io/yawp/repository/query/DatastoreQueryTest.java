@@ -572,10 +572,20 @@ public class DatastoreQueryTest extends EndpointTestCase {
     @Test
     public void testComposedObjectsParentFieldQuery() {
         ComposedSubClass child = new ComposedSubClass("xpto");
-        child = yawp.save(child);
+        yawp.save(child);
 
         ComposedSubClass retrievedObject = yawp(ComposedSubClass.class).where("name", "=", "xpto").only();
         assertEquals("xpto", retrievedObject.getName());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testIdsWithPostFilter() {
+        assertEquals(0, yawp(BasicObject.class).where("longValue", "=", 2l).ids().size());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testIdsWithPostOrder() {
+        assertEquals(0, yawp(BasicObject.class).sort("longValue").ids().size());
     }
 
     private void assertObjects(List<BasicObject> objects, String... strings) {

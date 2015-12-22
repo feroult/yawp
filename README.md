@@ -49,6 +49,8 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
     public class Person {
         @Id
         IdRef<Person> id;
+        
+        @Index
         String name;
     }    
     ```

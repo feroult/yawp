@@ -113,6 +113,11 @@ public class ParentAction extends Action<Parent> {
     public void withVoidReturn() {
     }
 
+    @GET
+    public String checkIfFixturesServletDisableShields() {
+        return "xpto";
+    }
+
     class Message {
         private String title;
 

@@ -1,5 +1,6 @@
 package io.yawp.repository.actions;
 
+import io.yawp.commons.utils.AbstractFeatureException;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
@@ -34,12 +35,20 @@ public class ActionParameters {
 
     public ActionParameters(Method method) throws InvalidActionMethodException {
         this.method = method;
-        this.endpointClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
+        setEndpointClazz(method);
 
         init();
 
         if (!isValid()) {
             throw new InvalidActionMethodException();
+        }
+    }
+
+    private void setEndpointClazz(Method method) {
+        try {
+            this.endpointClazz = ReflectionUtils.getFeatureEndpointClazz(method.getDeclaringClass());
+        } catch (AbstractFeatureException e) {
+            throw new RuntimeException(e);
         }
     }
 

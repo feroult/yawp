@@ -1,5 +1,7 @@
 package io.yawp.commons.utils;
 
+import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
+
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
@@ -67,7 +69,7 @@ public final class ReflectionUtils {
         return isBaseClass(clazz) || clazz.getPackage().getName().startsWith("java.") || clazz.getPackage().getName().startsWith("javax.");
     }
 
-    public static Class<?> getGenericParameter(Class<?> clazz) {
+    public static Class<?> getFeatureEndpointClazz(Class<?> clazz) throws AbstractFeatureException {
         Class<?>[] parameters = getGenericParameters(clazz);
         if (parameters.length == 0) {
             return null;
@@ -75,11 +77,11 @@ public final class ReflectionUtils {
         return parameters[0];
     }
 
-    public static Class<?>[] getGenericParameters(Class<?> clazz) {
+    private static Class<?>[] getGenericParameters(Class<?> clazz) throws AbstractFeatureException {
         return getGenericParametersInternal(clazz.getGenericSuperclass());
     }
 
-    public static Class<?> getGenericParameter(Field field) {
+    public static Class<?> getGenericParameter(Field field) throws AbstractFeatureException {
         Class<?>[] parameters = getGenericParameters(field);
         if (parameters.length == 0) {
             return null;
@@ -87,16 +89,21 @@ public final class ReflectionUtils {
         return parameters[0];
     }
 
-    public static Class<?>[] getGenericParameters(Field field) {
+    private static Class<?>[] getGenericParameters(Field field) throws AbstractFeatureException {
         return getGenericParametersInternal(field.getGenericType());
     }
 
-    private static Class<?>[] getGenericParametersInternal(Type genericFieldType) {
+    private static Class<?>[] getGenericParametersInternal(Type genericFieldType) throws AbstractFeatureException {
         if (genericFieldType instanceof ParameterizedType) {
             ParameterizedType aType = (ParameterizedType) genericFieldType;
             Type[] fieldArgTypes = aType.getActualTypeArguments();
             Class<?>[] clazzes = new Class<?>[fieldArgTypes.length];
             for (int i = 0; i < clazzes.length; i++) {
+
+                if (fieldArgTypes[i] instanceof TypeVariableImpl) {
+                    throw new AbstractFeatureException();
+                }
+
                 clazzes[i] = (Class<?>) fieldArgTypes[i];
             }
             return clazzes;

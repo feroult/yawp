@@ -1,5 +1,6 @@
 package io.yawp.repository;
 
+import io.yawp.commons.utils.AbstractFeatureException;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.actions.ActionKey;
@@ -79,7 +80,12 @@ public final class EndpointScanner {
     }
 
     private <T, V extends Shield<T>> void setShield(Class<V> shieldClazz) {
-        Class<T> objectClazz = getShieldObject(shieldClazz);
+        Class<T> objectClazz;
+        try {
+            objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(shieldClazz);
+        } catch (AbstractFeatureException e) {
+            return;
+        }
 
         ShieldInfo<T> shieldInfo = new ShieldInfo<T>(shieldClazz);
 
@@ -104,14 +110,20 @@ public final class EndpointScanner {
         Set<Class<? extends Hook>> clazzes = endpointsPackage.getSubTypesOf(Hook.class);
 
         for (Class<? extends Hook> hookClazz : clazzes) {
+            if (Modifier.isAbstract(hookClazz.getModifiers())) {
+                continue;
+            }
             addHook(hookClazz);
         }
     }
 
     private <T, V extends Hook<T>> void addHook(Class<V> hookClazz) {
-        Class<T> objectClazz = getHookObject(hookClazz);
-        for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, hookClazz.getSimpleName())) {
-            endpoint.addHook(hookClazz);
+        try {
+            Class<T> objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(hookClazz);
+            for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, hookClazz.getSimpleName())) {
+                endpoint.addHook(hookClazz);
+            }
+        } catch (AbstractFeatureException e) {
         }
     }
 
@@ -119,8 +131,14 @@ public final class EndpointScanner {
         Set<Class<? extends Transformer>> clazzes = endpointsPackage.getSubTypesOf(Transformer.class);
 
         for (Class<? extends Transformer> transformerClazz : clazzes) {
-            Class<?> objectClazz = ReflectionUtils.getGenericParameter(transformerClazz);
-            addTransformerForObject(objectClazz, transformerClazz);
+            if (Modifier.isAbstract(transformerClazz.getModifiers())) {
+                continue;
+            }
+            try {
+                Class<?> objectClazz = ReflectionUtils.getFeatureEndpointClazz(transformerClazz);
+                addTransformerForObject(objectClazz, transformerClazz);
+            } catch (AbstractFeatureException e) {
+            }
         }
     }
 
@@ -144,18 +162,23 @@ public final class EndpointScanner {
         Set<Class<? extends Action>> clazzes = endpointsPackage.getSubTypesOf(Action.class);
 
         for (Class<? extends Action> actionClazz : clazzes) {
-            Class<?> objectClazz = ReflectionUtils.getGenericParameter(actionClazz);
-
-            if (objectClazz == null) {
+            if (Modifier.isAbstract(actionClazz.getModifiers())) {
                 continue;
             }
-
-            for (Method method : actionClazz.getDeclaredMethods()) {
-                if (!ActionMethod.isAction(method)) {
-                    continue;
-                }
-                addAction(objectClazz, method);
+            try {
+                Class<?> objectClazz = ReflectionUtils.getFeatureEndpointClazz(actionClazz);
+                addActionMethods(objectClazz, actionClazz);
+            } catch (AbstractFeatureException e) {
             }
+        }
+    }
+
+    private void addActionMethods(Class<?> objectClazz, Class<? extends Action> actionClazz) {
+        for (Method method : actionClazz.getDeclaredMethods()) {
+            if (!ActionMethod.isAction(method)) {
+                continue;
+            }
+            addAction(objectClazz, method);
         }
     }
 
@@ -209,14 +232,6 @@ public final class EndpointScanner {
     public EndpointScanner enableHooks(boolean enableHooks) {
         this.enableHooks = enableHooks;
         return this;
-    }
-
-    private static <T> Class<T> getHookObject(Class<? extends Hook<T>> hook) {
-        return (Class<T>) ReflectionUtils.getGenericParameter(hook);
-    }
-
-    private static <T> Class<T> getShieldObject(Class<? extends Shield<T>> hook) {
-        return (Class<T>) ReflectionUtils.getGenericParameter(hook);
     }
 
 }

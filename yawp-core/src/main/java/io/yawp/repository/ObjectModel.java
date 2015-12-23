@@ -1,5 +1,6 @@
 package io.yawp.repository;
 
+import io.yawp.commons.utils.AbstractFeatureException;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.annotations.Id;
@@ -45,7 +46,11 @@ public class ObjectModel {
         if (parentField == null) {
             return null;
         }
-        return (Class<?>) ReflectionUtils.getGenericParameter(parentField);
+        try {
+            return ReflectionUtils.getGenericParameter(parentField);
+        } catch (AbstractFeatureException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public boolean hasParent() {

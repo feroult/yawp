@@ -9,7 +9,7 @@ import io.yawp.repository.models.parents.Parent;
 import java.util.List;
 import java.util.Map;
 
-public class ParentAction extends Action<Parent> {
+public class ParentAction extends AbstractAction<Parent> {
 
     @PUT("touched")
     public Parent touch(IdRef<Parent> id) {

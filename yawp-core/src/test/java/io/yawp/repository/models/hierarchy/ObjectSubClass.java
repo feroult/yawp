@@ -1,17 +1,17 @@
-package io.yawp.repository.models.basic;
+package io.yawp.repository.models.hierarchy;
 
 import io.yawp.repository.annotations.Endpoint;
 
 import org.apache.commons.lang3.StringUtils;
 
 @Endpoint(path = "/composed_subclasses")
-public class ComposedSubClass extends ComposedSuperClass<ComposedSubClass> {
+public class ObjectSubClass extends ObjectSuperClass<ObjectSubClass> {
 
-    public ComposedSubClass() {
+    public ObjectSubClass() {
         super(StringUtils.EMPTY);
     }
 
-    public ComposedSubClass(String name) {
+    public ObjectSubClass(String name) {
         super(name);
     }
 

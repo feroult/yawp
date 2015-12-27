@@ -1,10 +1,10 @@
-package io.yawp.repository.models.basic;
+package io.yawp.repository.models.hierarchy;
 
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 
-public class ComposedSuperClass<T> {
+public class ObjectSuperClass<T> {
 
     @Index
     protected String name;
@@ -12,7 +12,7 @@ public class ComposedSuperClass<T> {
     @Id
     private IdRef<T> id;
 
-    public ComposedSuperClass(String name) {
+    public ObjectSuperClass(String name) {
         this.name = name;
     }
 

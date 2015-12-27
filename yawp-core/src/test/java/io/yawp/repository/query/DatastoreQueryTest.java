@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
-import io.yawp.repository.models.basic.ComposedSubClass;
+import io.yawp.repository.models.hierarchy.ObjectSubClass;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Parent;
@@ -570,11 +570,11 @@ public class DatastoreQueryTest extends EndpointTestCase {
     }
 
     @Test
-    public void testComposedObjectsParentFieldQuery() {
-        ComposedSubClass child = new ComposedSubClass("xpto");
+    public void testHierarchySuperClassFieldQuery() {
+        ObjectSubClass child = new ObjectSubClass("xpto");
         yawp.save(child);
 
-        ComposedSubClass retrievedObject = yawp(ComposedSubClass.class).where("name", "=", "xpto").only();
+        ObjectSubClass retrievedObject = yawp(ObjectSubClass.class).where("name", "=", "xpto").only();
         assertEquals("xpto", retrievedObject.getName());
     }
 

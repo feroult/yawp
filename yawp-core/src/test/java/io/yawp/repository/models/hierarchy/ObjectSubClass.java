@@ -4,7 +4,7 @@ import io.yawp.repository.annotations.Endpoint;
 
 import org.apache.commons.lang3.StringUtils;
 
-@Endpoint(path = "/composed_subclasses")
+@Endpoint(path = "/hierarchy_subclasses")
 public class ObjectSubClass extends ObjectSuperClass<ObjectSubClass> {
 
     public ObjectSubClass() {

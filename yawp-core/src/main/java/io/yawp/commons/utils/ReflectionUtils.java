@@ -5,14 +5,8 @@ import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 
 public final class ReflectionUtils {
 
@@ -137,5 +131,36 @@ public final class ReflectionUtils {
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<Method> getUniqueMethodsRecursively(Class<?> clazz, Class<?> stopClazz) {
+        Set<String> uniqueNames = new HashSet<String>();
+        List<Method> methods = new ArrayList<>();
+
+
+        while (!isJavaClass(clazz) && clazz != stopClazz) {
+            methods.addAll(ReflectionUtils.getImmediateUniquePublicMethods(clazz, uniqueNames));
+            clazz = clazz.getSuperclass();
+        }
+
+        return methods;
+    }
+
+    private static List<Method> getImmediateUniquePublicMethods(Class<?> clazz, Set<String> uniqueNames) {
+        List<Method> methods = new ArrayList<>();
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (uniqueNames.contains(method.getName())) {
+                continue;
+            }
+            if (!Modifier.isPublic(method.getModifiers())) {
+                continue;
+            }
+            if (Modifier.isAbstract(method.getModifiers())) {
+                continue;
+            }
+            methods.add(method);
+            uniqueNames.add(method.getName());
+        }
+        return methods;
     }
 }

@@ -4,7 +4,6 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
-import io.yawp.repository.shields.Shield;
 import io.yawp.repository.shields.ShieldInfo;
 
 import java.lang.reflect.Method;
@@ -42,7 +41,9 @@ public class EndpointFeatures<T> {
     }
 
     public void addTransformer(String name, Method method) {
-        assertTransformerNotDuplicated(name, method);
+        if (!checkTransformerDuplication(name, method)) {
+            return;
+        }
         transformers.put(name, method);
     }
 
@@ -98,20 +99,25 @@ public class EndpointFeatures<T> {
         return shieldInfo;
     }
 
-    private void assertTransformerNotDuplicated(String key, Method method) {
-        if (transformers.get(key) != null) {
-            throw new RuntimeException("Trying to add two transformers with the same name '" + key + "' to io.yawp "
-                    + clazz.getSimpleName() + ": one at " + transformers.get(key).getDeclaringClass().getSimpleName() + " and the other at "
-                    + method.getDeclaringClass().getSimpleName());
+    private boolean checkTransformerDuplication(String key, Method method) {
+        Method existingMethod = transformers.get(key);
+        if (existingMethod != null) {
+            if (!method.equals(existingMethod)) {
+                throw new RuntimeException("Trying to add two transformers with the same name '" + key + "' to "
+                        + clazz.getName() + ": one at " + existingMethod.getDeclaringClass().getName() + " and the other at "
+                        + method.getDeclaringClass().getName());
+            }
+            return false;
         }
+        return true;
     }
 
     private void assertActionNotDuplicated(ActionKey key, Method method) {
         if (actions.get(key) != null) {
             Method existingMethod = actions.get(key).getMethod();
-            throw new RuntimeException("Trying to add two actions with the same name '" + key + "' to io.yawp "
-                    + clazz.getSimpleName() + ": one at " + existingMethod.getDeclaringClass().getSimpleName() + " and the other at "
-                    + method.getDeclaringClass().getSimpleName());
+            throw new RuntimeException("Trying to add two actions with the same name '" + key + "' to "
+                    + clazz.getName() + ": one at " + existingMethod.getDeclaringClass().getName() + " and the other at "
+                    + method.getDeclaringClass().getName());
         }
     }
 

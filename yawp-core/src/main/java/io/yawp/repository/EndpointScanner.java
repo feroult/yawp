@@ -11,18 +11,12 @@ import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.shields.Shield;
 import io.yawp.repository.shields.ShieldInfo;
 import io.yawp.repository.transformers.Transformer;
+import org.reflections.Reflections;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
-
-import org.reflections.Reflections;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public final class EndpointScanner {
@@ -143,19 +137,11 @@ public final class EndpointScanner {
     }
 
     private void addTransformerForObject(Class<?> objectClazz, Class<? extends Transformer> transformerClazz) {
-        for (Method method : transformerClazz.getDeclaredMethods()) {
-            if (!isValidTransformerMethod(method)) {
-                continue;
-            }
-
+        for (Method method : ReflectionUtils.getUniqueMethodsRecursively(transformerClazz, Transformer.class)) {
             for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, transformerClazz.getSimpleName())) {
                 endpoint.addTransformer(method.getName(), method);
             }
         }
-    }
-
-    private boolean isValidTransformerMethod(Method method) {
-        return !method.isSynthetic();
     }
 
     private void scanActions() {
@@ -182,11 +168,10 @@ public final class EndpointScanner {
         }
     }
 
-    // TODO should we think that an objectClazz has more than one endpoint?
     private <T> List<EndpointFeatures<? extends T>> getEndpoints(Class<T> objectClazz, String featureClazz) {
         List<EndpointFeatures<? extends T>> list = new ArrayList<>();
         for (Class<?> endpoint : endpoints.keySet()) {
-            if (objectClazz.isAssignableFrom(endpoint)) {
+            if (isEndpointInTheHierarchy(endpoint, objectClazz)) {
                 list.add((EndpointFeatures<T>) endpoints.get(endpoint));
             }
         }
@@ -195,6 +180,10 @@ public final class EndpointScanner {
                     + "' that is not an @Endpoint nor do any io.yawp inherits from it.");
         }
         return list;
+    }
+
+    private <T> boolean isEndpointInTheHierarchy(Class<?> endpoint, Class<T> objectClazz) {
+        return objectClazz.isAssignableFrom(endpoint);
     }
 
     private void addAction(Class<?> objectClazz, Method method) {

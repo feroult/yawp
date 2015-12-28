@@ -1,6 +1,6 @@
 package io.yawp.repository;
 
-import io.yawp.commons.utils.AbstractFeatureException;
+import io.yawp.commons.utils.ParameterizedEndpointException;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.annotations.Id;
@@ -9,7 +9,6 @@ import io.yawp.repository.annotations.ParentId;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +46,8 @@ public class ObjectModel {
             return null;
         }
         try {
-            return ReflectionUtils.getGenericParameter(parentField);
-        } catch (AbstractFeatureException e) {
+            return ReflectionUtils.getEndpointTypeFor(parentField);
+        } catch (ParameterizedEndpointException e) {
             throw new RuntimeException(e);
         }
     }

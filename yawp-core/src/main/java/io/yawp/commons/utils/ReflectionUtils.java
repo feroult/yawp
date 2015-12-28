@@ -63,7 +63,7 @@ public final class ReflectionUtils {
         return isBaseClass(clazz) || clazz.getPackage().getName().startsWith("java.") || clazz.getPackage().getName().startsWith("javax.");
     }
 
-    public static Class<?> getFeatureEndpointClazz(Class<?> clazz) throws AbstractFeatureException {
+    public static Class<?> getEndpointTypeFor(Class<?> clazz) throws ParameterizedEndpointException {
         Class<?>[] parameters = getGenericParameters(clazz);
         if (parameters.length == 0) {
             return null;
@@ -71,11 +71,7 @@ public final class ReflectionUtils {
         return parameters[0];
     }
 
-    private static Class<?>[] getGenericParameters(Class<?> clazz) throws AbstractFeatureException {
-        return getGenericParametersInternal(clazz.getGenericSuperclass());
-    }
-
-    public static Class<?> getGenericParameter(Field field) throws AbstractFeatureException {
+    public static Class<?> getEndpointTypeFor(Field field) throws ParameterizedEndpointException {
         Class<?>[] parameters = getGenericParameters(field);
         if (parameters.length == 0) {
             return null;
@@ -83,11 +79,15 @@ public final class ReflectionUtils {
         return parameters[0];
     }
 
-    private static Class<?>[] getGenericParameters(Field field) throws AbstractFeatureException {
+    private static Class<?>[] getGenericParameters(Class<?> clazz) throws ParameterizedEndpointException {
+        return getGenericParametersInternal(clazz.getGenericSuperclass());
+    }
+
+    private static Class<?>[] getGenericParameters(Field field) throws ParameterizedEndpointException {
         return getGenericParametersInternal(field.getGenericType());
     }
 
-    private static Class<?>[] getGenericParametersInternal(Type genericFieldType) throws AbstractFeatureException {
+    private static Class<?>[] getGenericParametersInternal(Type genericFieldType) throws ParameterizedEndpointException {
         if (genericFieldType instanceof ParameterizedType) {
             ParameterizedType aType = (ParameterizedType) genericFieldType;
             Type[] fieldArgTypes = aType.getActualTypeArguments();
@@ -95,7 +95,7 @@ public final class ReflectionUtils {
             for (int i = 0; i < clazzes.length; i++) {
 
                 if (fieldArgTypes[i] instanceof TypeVariableImpl) {
-                    throw new AbstractFeatureException();
+                    throw new ParameterizedEndpointException();
                 }
 
                 clazzes[i] = (Class<?>) fieldArgTypes[i];

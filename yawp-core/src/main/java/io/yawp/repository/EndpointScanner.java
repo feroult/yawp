@@ -1,6 +1,6 @@
 package io.yawp.repository;
 
-import io.yawp.commons.utils.AbstractFeatureException;
+import io.yawp.commons.utils.ParameterizedEndpointException;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.actions.ActionKey;
@@ -76,8 +76,8 @@ public final class EndpointScanner {
     private <T, V extends Shield<T>> void setShield(Class<V> shieldClazz) {
         Class<T> objectClazz;
         try {
-            objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(shieldClazz);
-        } catch (AbstractFeatureException e) {
+            objectClazz = (Class<T>) ReflectionUtils.getEndpointTypeFor(shieldClazz);
+        } catch (ParameterizedEndpointException e) {
             return;
         }
 
@@ -113,11 +113,11 @@ public final class EndpointScanner {
 
     private <T, V extends Hook<T>> void addHook(Class<V> hookClazz) {
         try {
-            Class<T> objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(hookClazz);
+            Class<T> objectClazz = (Class<T>) ReflectionUtils.getEndpointTypeFor(hookClazz);
             for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, hookClazz.getSimpleName())) {
                 endpoint.addHook(hookClazz);
             }
-        } catch (AbstractFeatureException e) {
+        } catch (ParameterizedEndpointException e) {
         }
     }
 
@@ -129,9 +129,9 @@ public final class EndpointScanner {
                 continue;
             }
             try {
-                Class<?> objectClazz = ReflectionUtils.getFeatureEndpointClazz(transformerClazz);
+                Class<?> objectClazz = ReflectionUtils.getEndpointTypeFor(transformerClazz);
                 addTransformerForObject(objectClazz, transformerClazz);
-            } catch (AbstractFeatureException e) {
+            } catch (ParameterizedEndpointException e) {
             }
         }
     }
@@ -152,9 +152,9 @@ public final class EndpointScanner {
                 continue;
             }
             try {
-                Class<?> objectClazz = ReflectionUtils.getFeatureEndpointClazz(actionClazz);
+                Class<?> objectClazz = ReflectionUtils.getEndpointTypeFor(actionClazz);
                 addActionMethods(objectClazz, actionClazz);
-            } catch (AbstractFeatureException e) {
+            } catch (ParameterizedEndpointException e) {
             }
         }
     }

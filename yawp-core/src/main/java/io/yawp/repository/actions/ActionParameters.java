@@ -1,6 +1,6 @@
 package io.yawp.repository.actions;
 
-import io.yawp.commons.utils.AbstractFeatureException;
+import io.yawp.commons.utils.ParameterizedEndpointException;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
@@ -46,8 +46,8 @@ public class ActionParameters {
 
     private void setEndpointClazz(Method method) {
         try {
-            this.endpointClazz = ReflectionUtils.getFeatureEndpointClazz(method.getDeclaringClass());
-        } catch (AbstractFeatureException e) {
+            this.endpointClazz = ReflectionUtils.getEndpointTypeFor(method.getDeclaringClass());
+        } catch (ParameterizedEndpointException e) {
             throw new RuntimeException(e);
         }
     }

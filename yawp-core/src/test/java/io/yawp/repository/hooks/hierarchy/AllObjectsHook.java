@@ -1,9 +1,8 @@
 package io.yawp.repository.hooks.hierarchy;
 
-import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.models.basic.HookedObject;
 
-public class AllObjectsHook extends Hook<Object> {
+public class AllObjectsHook extends AbstractHook<Object> {
 
     @Override
     public void afterSave(Object object) {

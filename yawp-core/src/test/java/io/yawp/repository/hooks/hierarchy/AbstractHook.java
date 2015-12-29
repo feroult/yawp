@@ -1,4 +1,4 @@
-package io.yawp.repository.hooks.parents;
+package io.yawp.repository.hooks.hierarchy;
 
 import io.yawp.repository.hooks.Hook;
 

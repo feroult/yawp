@@ -1,5 +1,6 @@
 package io.yawp.commons.utils;
 
+import io.yawp.repository.hooks.Hook;
 import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 import java.beans.IntrospectionException;
@@ -95,6 +96,7 @@ public final class ReflectionUtils {
             for (int i = 0; i < clazzes.length; i++) {
 
                 if (fieldArgTypes[i] instanceof TypeVariableImpl) {
+                    // clazz.getGenericInfo().getTypeParameters()[0].getBounds()[0]
                     throw new ParameterizedEndpointException();
                 }
 
@@ -163,4 +165,5 @@ public final class ReflectionUtils {
         }
         return methods;
     }
+
 }

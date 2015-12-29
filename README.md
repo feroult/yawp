@@ -40,7 +40,7 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 
 4. Using a scaffolder, create a simple endpoint model:
 
-        $ mvn yawp:endpoint -Dmodel=people
+        $ mvn yawp:endpoint -Dmodel=person
 
     **Output:**
 

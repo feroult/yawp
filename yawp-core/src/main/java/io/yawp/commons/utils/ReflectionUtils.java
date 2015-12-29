@@ -1,6 +1,5 @@
 package io.yawp.commons.utils;
 
-import io.yawp.repository.hooks.Hook;
 import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 import java.beans.IntrospectionException;

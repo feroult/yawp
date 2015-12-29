@@ -176,8 +176,8 @@ public final class EndpointScanner {
             }
         }
         if (list.isEmpty()) {
-            throw new RuntimeException("Tryed to create feature '" + featureClazz + "' with entity '" + objectClazz.getSimpleName()
-                    + "' that is not an @Endpoint nor do any io.yawp inherits from it.");
+            throw new RuntimeException("Tryed to create feature '" + featureClazz + "' with entity '" + objectClazz.getName()
+                    + "' that is not an @Endpoint nor a super class of one.");
         }
         return list;
     }

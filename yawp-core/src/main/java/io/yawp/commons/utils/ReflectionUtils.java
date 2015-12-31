@@ -71,8 +71,8 @@ public final class ReflectionUtils {
         return getFirstGenericTypeArgumentAsClazz(field.getGenericType());
     }
 
-    private static Class<?> getFirstGenericTypeArgumentAsClazz(Type type)  {
-        Type[] parameters = getTypeArguments(type);
+    private static Class<?> getFirstGenericTypeArgumentAsClazz(Type type) {
+        Type[] parameters = getGenericTypeArguments(type);
         if (parameters.length == 0) {
             return null;
         }
@@ -84,7 +84,7 @@ public final class ReflectionUtils {
         return (Class<?>) parameters[0];
     }
 
-    private static Type[] getTypeArguments(Type type) {
+    private static Type[] getGenericTypeArguments(Type type) {
         ParameterizedType parameterizedType = (ParameterizedType) type;
         return parameterizedType.getActualTypeArguments();
     }

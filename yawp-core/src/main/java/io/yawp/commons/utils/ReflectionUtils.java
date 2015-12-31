@@ -1,6 +1,5 @@
 package io.yawp.commons.utils;
 
-import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -66,8 +65,8 @@ public final class ReflectionUtils {
     public static Class<?> getFeatureEndpointClazz(Class<?> clazz) {
         Type superClassGenericType = getFirstGenericTypeArgument(clazz.getGenericSuperclass());
 
-        if (superClassGenericType instanceof TypeVariableImpl) {
-            return (Class<?>) getGenericTypeBound(clazz, ((TypeVariableImpl) superClassGenericType).getName());
+        if (superClassGenericType instanceof TypeVariable) {
+            return (Class<?>) getGenericTypeBound(clazz, ((TypeVariable) superClassGenericType).getName());
         }
 
         return (Class<?>) superClassGenericType;
@@ -92,11 +91,11 @@ public final class ReflectionUtils {
 
     private static Type getGenericTypeBound(Class<?> clazz, String name) {
         for (Type type : clazz.getTypeParameters()) {
-            if (!(type instanceof TypeVariableImpl)) {
+            if (!(type instanceof TypeVariable)) {
                 continue;
             }
 
-            TypeVariableImpl genericType = (TypeVariableImpl) type;
+            TypeVariable genericType = (TypeVariable) type;
 
             if (genericType.getName().equals(name)) {
                 if (genericType.getBounds().length > 0) {
@@ -105,6 +104,7 @@ public final class ReflectionUtils {
                 return null;
             }
         }
+
         return null;
     }
 

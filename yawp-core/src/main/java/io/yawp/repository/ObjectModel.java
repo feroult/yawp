@@ -1,6 +1,5 @@
 package io.yawp.repository;
 
-import io.yawp.commons.utils.ParameterizedEndpointException;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.annotations.Id;

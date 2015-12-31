@@ -1,6 +1,5 @@
 package io.yawp.repository;
 
-import io.yawp.commons.utils.ParameterizedEndpointException;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.actions.ActionKey;

@@ -64,6 +64,7 @@ public final class ReflectionUtils {
     }
 
     public static Class<?> getFeatureEndpointClazz(Class<?> clazz) {
+        // clazz.getGenericInfo().getTypeParameters()[0].getBounds()[0]
         return getFirstGenericTypeArgumentAsClazz(clazz.getGenericSuperclass());
     }
 

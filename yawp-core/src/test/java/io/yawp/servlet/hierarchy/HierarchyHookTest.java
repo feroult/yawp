@@ -30,7 +30,6 @@ public class HierarchyHookTest extends ServletTestCase {
         assertEquals("john more specific hook", object.getName());
     }
 
-
     @Test
     public void testAllObjectsHook() {
         String json = post("/hooked_objects", "{ stringValue: 'all_objects' }");

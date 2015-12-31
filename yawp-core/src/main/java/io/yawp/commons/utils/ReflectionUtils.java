@@ -63,47 +63,30 @@ public final class ReflectionUtils {
         return isBaseClass(clazz) || clazz.getPackage().getName().startsWith("java.") || clazz.getPackage().getName().startsWith("javax.");
     }
 
-    public static Class<?> getEndpointTypeFor(Class<?> clazz) throws ParameterizedEndpointException {
-        Class<?>[] parameters = getGenericParameters(clazz);
+    public static Class<?> getFeatureEndpointClazz(Class<?> clazz) {
+        return getFirstGenericTypeArgumentAsClazz(clazz.getGenericSuperclass());
+    }
+
+    public static Class<?> getIdRefEndpointClazz(Field field) {
+        return getFirstGenericTypeArgumentAsClazz(field.getGenericType());
+    }
+
+    private static Class<?> getFirstGenericTypeArgumentAsClazz(Type type)  {
+        Type[] parameters = getTypeArguments(type);
         if (parameters.length == 0) {
             return null;
         }
-        return parameters[0];
-    }
 
-    public static Class<?> getEndpointTypeFor(Field field) throws ParameterizedEndpointException {
-        Class<?>[] parameters = getGenericParameters(field);
-        if (parameters.length == 0) {
+        if (parameters[0] instanceof TypeVariableImpl) {
             return null;
         }
-        return parameters[0];
+
+        return (Class<?>) parameters[0];
     }
 
-    private static Class<?>[] getGenericParameters(Class<?> clazz) throws ParameterizedEndpointException {
-        return getGenericParametersInternal(clazz.getGenericSuperclass());
-    }
-
-    private static Class<?>[] getGenericParameters(Field field) throws ParameterizedEndpointException {
-        return getGenericParametersInternal(field.getGenericType());
-    }
-
-    private static Class<?>[] getGenericParametersInternal(Type genericFieldType) throws ParameterizedEndpointException {
-        if (genericFieldType instanceof ParameterizedType) {
-            ParameterizedType aType = (ParameterizedType) genericFieldType;
-            Type[] fieldArgTypes = aType.getActualTypeArguments();
-            Class<?>[] clazzes = new Class<?>[fieldArgTypes.length];
-            for (int i = 0; i < clazzes.length; i++) {
-
-                if (fieldArgTypes[i] instanceof TypeVariableImpl) {
-                    // clazz.getGenericInfo().getTypeParameters()[0].getBounds()[0]
-                    throw new ParameterizedEndpointException();
-                }
-
-                clazzes[i] = (Class<?>) fieldArgTypes[i];
-            }
-            return clazzes;
-        }
-        return new Class<?>[]{};
+    private static Type[] getTypeArguments(Type type) {
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+        return parameterizedType.getActualTypeArguments();
     }
 
     public static Field getFieldWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {

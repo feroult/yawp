@@ -45,11 +45,7 @@ public class ObjectModel {
         if (parentField == null) {
             return null;
         }
-        try {
-            return ReflectionUtils.getEndpointTypeFor(parentField);
-        } catch (ParameterizedEndpointException e) {
-            throw new RuntimeException(e);
-        }
+        return ReflectionUtils.getIdRefEndpointClazz(parentField);
     }
 
     public boolean hasParent() {

@@ -45,11 +45,7 @@ public class ActionParameters {
     }
 
     private void setEndpointClazz(Method method) {
-        try {
-            this.endpointClazz = ReflectionUtils.getEndpointTypeFor(method.getDeclaringClass());
-        } catch (ParameterizedEndpointException e) {
-            throw new RuntimeException(e);
-        }
+        this.endpointClazz = ReflectionUtils.getFeatureEndpointClazz(method.getDeclaringClass());
     }
 
     public int size() {

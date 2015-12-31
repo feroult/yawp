@@ -75,9 +75,9 @@ public final class EndpointScanner {
 
     private <T, V extends Shield<T>> void setShield(Class<V> shieldClazz) {
         Class<T> objectClazz;
-        try {
-            objectClazz = (Class<T>) ReflectionUtils.getEndpointTypeFor(shieldClazz);
-        } catch (ParameterizedEndpointException e) {
+        objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(shieldClazz);
+
+        if (objectClazz == null) {
             return;
         }
 
@@ -112,12 +112,14 @@ public final class EndpointScanner {
     }
 
     private <T, V extends Hook<T>> void addHook(Class<V> hookClazz) {
-        try {
-            Class<T> objectClazz = (Class<T>) ReflectionUtils.getEndpointTypeFor(hookClazz);
-            for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, hookClazz.getSimpleName())) {
-                endpoint.addHook(hookClazz);
-            }
-        } catch (ParameterizedEndpointException e) {
+        Class<T> objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(hookClazz);
+
+        if (objectClazz == null) {
+            return;
+        }
+
+        for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, hookClazz.getSimpleName())) {
+            endpoint.addHook(hookClazz);
         }
     }
 
@@ -128,11 +130,13 @@ public final class EndpointScanner {
             if (Modifier.isAbstract(transformerClazz.getModifiers())) {
                 continue;
             }
-            try {
-                Class<?> objectClazz = ReflectionUtils.getEndpointTypeFor(transformerClazz);
-                addTransformerForObject(objectClazz, transformerClazz);
-            } catch (ParameterizedEndpointException e) {
+            Class<?> objectClazz = ReflectionUtils.getFeatureEndpointClazz(transformerClazz);
+
+            if (objectClazz == null) {
+                continue;
             }
+
+            addTransformerForObject(objectClazz, transformerClazz);
         }
     }
 
@@ -151,11 +155,13 @@ public final class EndpointScanner {
             if (Modifier.isAbstract(actionClazz.getModifiers())) {
                 continue;
             }
-            try {
-                Class<?> objectClazz = ReflectionUtils.getEndpointTypeFor(actionClazz);
-                addActionMethods(objectClazz, actionClazz);
-            } catch (ParameterizedEndpointException e) {
+            Class<?> objectClazz = ReflectionUtils.getFeatureEndpointClazz(actionClazz);
+
+            if (objectClazz == null) {
+                continue;
             }
+
+            addActionMethods(objectClazz, actionClazz);
         }
     }
 

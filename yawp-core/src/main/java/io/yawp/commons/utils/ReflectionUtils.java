@@ -64,30 +64,48 @@ public final class ReflectionUtils {
     }
 
     public static Class<?> getFeatureEndpointClazz(Class<?> clazz) {
-        // clazz.getGenericInfo().getTypeParameters()[0].getBounds()[0]
-        return getFirstGenericTypeArgumentAsClazz(clazz.getGenericSuperclass());
+        Type superClassGenericType = getFirstGenericTypeArgument(clazz.getGenericSuperclass());
+
+        if (superClassGenericType instanceof TypeVariableImpl) {
+            return (Class<?>) getGenericTypeBound(clazz, ((TypeVariableImpl) superClassGenericType).getName());
+        }
+
+        return (Class<?>) superClassGenericType;
     }
 
     public static Class<?> getIdRefEndpointClazz(Field field) {
-        return getFirstGenericTypeArgumentAsClazz(field.getGenericType());
+        return (Class<?>) getFirstGenericTypeArgument(field.getGenericType());
     }
 
-    private static Class<?> getFirstGenericTypeArgumentAsClazz(Type type) {
+    private static Type getFirstGenericTypeArgument(Type type) {
         Type[] parameters = getGenericTypeArguments(type);
         if (parameters.length == 0) {
             return null;
         }
-
-        if (parameters[0] instanceof TypeVariableImpl) {
-            return null;
-        }
-
-        return (Class<?>) parameters[0];
+        return parameters[0];
     }
 
     private static Type[] getGenericTypeArguments(Type type) {
         ParameterizedType parameterizedType = (ParameterizedType) type;
         return parameterizedType.getActualTypeArguments();
+    }
+
+    private static Type getGenericTypeBound(Class<?> clazz, String name) {
+        for (Type type : clazz.getTypeParameters()) {
+            if (!(type instanceof TypeVariableImpl)) {
+                continue;
+            }
+
+            TypeVariableImpl genericType = (TypeVariableImpl) type;
+
+            if (genericType.getName().equals(name)) {
+                if (genericType.getBounds().length > 0) {
+                    return genericType.getBounds()[0];
+                }
+                return null;
+            }
+        }
+        return null;
     }
 
     public static Field getFieldWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {

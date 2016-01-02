@@ -49,4 +49,8 @@ public class FeatureTree<T extends Feature> {
     public Set<Class<? extends T>> getLeafs() {
         return leafs;
     }
+
+    public int size() {
+        return nodes.size();
+    }
 }

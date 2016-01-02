@@ -20,6 +20,7 @@ public class FeatureTreeTest {
 
         Set<Class<? extends Hook>> leafs = tree.getLeafs();
 
+        assertEquals(2, tree.size());
         assertEquals(1, leafs.size());
         assertTrue(leafs.contains(ObjectSuperClassHook.class));
     }
@@ -32,6 +33,7 @@ public class FeatureTreeTest {
 
         Set<Class<? extends Hook>> leafs = tree.getLeafs();
 
+        assertEquals(3, tree.size());
         assertEquals(2, leafs.size());
         assertTrue(leafs.contains(ObjectSuperClassHook.class));
         assertTrue(leafs.contains(AllObjectsHook.class));
@@ -45,6 +47,7 @@ public class FeatureTreeTest {
 
         Set<Class<? extends Hook>> leafs = tree.getLeafs();
 
+        assertEquals(2, tree.size());
         assertEquals(1, leafs.size());
         assertTrue(leafs.contains(ObjectSuperClassHook.class));
     }
@@ -57,6 +60,7 @@ public class FeatureTreeTest {
 
         Set<Class<? extends Hook>> leafs = tree.getLeafs();
 
+        assertEquals(2, tree.size());
         assertEquals(1, leafs.size());
         assertTrue(leafs.contains(ObjectSuperClassHook.class));
     }

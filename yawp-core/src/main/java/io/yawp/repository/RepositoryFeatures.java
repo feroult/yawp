@@ -2,7 +2,6 @@ package io.yawp.repository;
 
 import io.yawp.repository.actions.ActionKey;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -13,28 +12,36 @@ public class RepositoryFeatures {
 
     private Map<String, Class<?>> paths;
 
-    public RepositoryFeatures(Collection<EndpointFeatures<?>> endpoints) {
-        this.endpoints = new HashMap<>();
-        this.paths = new HashMap<>();
-        for (EndpointFeatures<?> endpoint : endpoints) {
-            this.endpoints.put(endpoint.getClazz(), endpoint);
-            String endpointPath = endpoint.getEndpointPath();
-            if (!endpointPath.isEmpty()) {
-                if (paths.get(endpointPath) != null) {
-                    throw new RuntimeException("Repeated io.yawp path " + endpointPath + " for class "
-                            + endpoint.getClazz().getSimpleName() + " (already found in class " + paths.get(endpointPath).getSimpleName()
-                            + ")");
-                }
-                if (!isValidEndpointPath(endpointPath)) {
-                    throw new RuntimeException("Invalid io.yawp path " + endpointPath + " for class " + endpoint.getClazz().getSimpleName());
-                }
-                paths.put(endpointPath, endpoint.getClazz());
-            }
-        }
-
+    protected RepositoryFeatures() {
     }
 
-    protected RepositoryFeatures() {
+    public RepositoryFeatures(Map<Class<?>, EndpointFeatures<?>> endpoints) {
+        this.endpoints = endpoints;
+        this.paths = validatePaths();
+    }
+
+    private HashMap<String, Class<?>> validatePaths() {
+        HashMap<String, Class<?>> map = new HashMap<>();
+        for (EndpointFeatures<?> endpoint : endpoints.values()) {
+            String endpointPath = endpoint.getEndpointPath();
+            if (endpointPath.isEmpty()) {
+                continue;
+            }
+            assertValidPath(map, endpoint, endpointPath);
+            map.put(endpointPath, endpoint.getClazz());
+        }
+        return map;
+    }
+
+    private void assertValidPath(HashMap<String, Class<?>> pathMap, EndpointFeatures<?> endpoint, String endpointPath) {
+        if (pathMap.get(endpointPath) != null) {
+            throw new RuntimeException("Repeated io.yawp path " + endpointPath + " for class "
+                    + endpoint.getClazz().getSimpleName() + " (already found in class " + paths.get(endpointPath).getSimpleName()
+                    + ")");
+        }
+        if (!isValidEndpointPath(endpointPath)) {
+            throw new RuntimeException("Invalid io.yawp path " + endpointPath + " for class " + endpoint.getClazz().getSimpleName());
+        }
     }
 
     protected boolean isValidEndpointPath(String endpointName) {

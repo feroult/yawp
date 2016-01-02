@@ -1,6 +1,8 @@
-package io.yawp.repository;
+package io.yawp.repository.scanner;
 
 import io.yawp.commons.utils.ReflectionUtils;
+import io.yawp.repository.EndpointFeatures;
+import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
@@ -50,7 +52,7 @@ public final class EndpointScanner {
         }
     }
 
-    private Collection<EndpointFeatures<?>> generateEndpointsMap() {
+    private Map<Class<?>, EndpointFeatures<?>> generateEndpointsMap() {
         scanEndpoints();
         scanActions();
         scanTransformers();
@@ -58,7 +60,7 @@ public final class EndpointScanner {
             scanHooks();
         }
         scanShields();
-        return endpoints.values();
+        return endpoints;
     }
 
     private void scanShields() {
@@ -100,17 +102,19 @@ public final class EndpointScanner {
     }
 
     private void scanHooks() {
+        Map<EndpointFeatures<?>, FeatureTree<Hook>> hookTrees = new HashMap<>();
+
         Set<Class<? extends Hook>> clazzes = endpointsPackage.getSubTypesOf(Hook.class);
 
         for (Class<? extends Hook> hookClazz : clazzes) {
             if (Modifier.isAbstract(hookClazz.getModifiers())) {
                 continue;
             }
-            addHook(hookClazz);
+            addHook(hookClazz, hookTrees);
         }
     }
 
-    private <T, V extends Hook<T>> void addHook(Class<V> hookClazz) {
+    private <T, V extends Hook<T>> void addHook(Class<V> hookClazz, Map<EndpointFeatures<?>, FeatureTree<Hook>> hookTrees) {
         Class<T> objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(hookClazz);
 
         if (objectClazz == null) {
@@ -119,6 +123,8 @@ public final class EndpointScanner {
 
         for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, hookClazz.getSimpleName())) {
             endpoint.addHook(hookClazz);
+
+
         }
     }
 

@@ -121,4 +121,19 @@ public class EndpointFeatures<T> {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EndpointFeatures<?> that = (EndpointFeatures<?>) o;
+
+        return clazz.equals(that.clazz);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return clazz.hashCode();
+    }
 }

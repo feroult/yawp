@@ -17,24 +17,23 @@ public class RepositoryFeatures {
 
     public RepositoryFeatures(Map<Class<?>, EndpointFeatures<?>> endpoints) {
         this.endpoints = endpoints;
-        this.paths = validatePaths();
+        this.paths = new HashMap<>();
+        initAndLoadPaths();
     }
 
-    private HashMap<String, Class<?>> validatePaths() {
-        HashMap<String, Class<?>> map = new HashMap<>();
+    private void initAndLoadPaths() {
         for (EndpointFeatures<?> endpoint : endpoints.values()) {
             String endpointPath = endpoint.getEndpointPath();
             if (endpointPath.isEmpty()) {
                 continue;
             }
-            assertValidPath(map, endpoint, endpointPath);
-            map.put(endpointPath, endpoint.getClazz());
+            assertIsValidPath(endpoint, endpointPath);
+            paths.put(endpointPath, endpoint.getClazz());
         }
-        return map;
     }
 
-    private void assertValidPath(HashMap<String, Class<?>> pathMap, EndpointFeatures<?> endpoint, String endpointPath) {
-        if (pathMap.get(endpointPath) != null) {
+    private void assertIsValidPath(EndpointFeatures<?> endpoint, String endpointPath) {
+        if (paths.get(endpointPath) != null) {
             throw new RuntimeException("Repeated io.yawp path " + endpointPath + " for class "
                     + endpoint.getClazz().getSimpleName() + " (already found in class " + paths.get(endpointPath).getSimpleName()
                     + ")");

@@ -35,12 +35,12 @@ public class RepositoryHooks {
     }
 
     private static void invokeHooks(Repository r, Class<?> targetClazz, Object argument, String methodName) {
-        for (Class<? extends Hook<?>> hookClazz : r.getEndpointFeatures(targetClazz).getHooks()) {
+        for (Class<? extends Hook> hookClazz : r.getEndpointFeatures(targetClazz).getHooks()) {
             invokeHookMethod(r, hookClazz, methodName, argument);
         }
     }
 
-    private static void invokeHookMethod(Repository r, Class<? extends Hook<?>> hookClazz, String methodName, Object argument) {
+    private static void invokeHookMethod(Repository r, Class<? extends Hook> hookClazz, String methodName, Object argument) {
         try {
             Hook<?> hook = hookClazz.newInstance();
             hook.setRepository(r);

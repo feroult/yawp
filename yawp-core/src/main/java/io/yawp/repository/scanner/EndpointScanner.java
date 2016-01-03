@@ -30,9 +30,12 @@ public final class EndpointScanner {
 
     private Map<Class<?>, EndpointFeatures<?>> endpoints;
 
+    private Map<Class<?>, EndpointTree<?>> endpointTrees;
+
     public EndpointScanner(String packagePrefix) {
         this.endpointsPackage = new Reflections(packagePrefix);
         this.endpoints = new HashMap<>();
+        this.endpointTrees = new HashMap<>();
         this.enableHooks = true;
     }
 
@@ -44,14 +47,6 @@ public final class EndpointScanner {
         return repositoryFeatures;
     }
 
-    private void scanEndpoints() {
-        Set<Class<?>> clazzes = endpointsPackage.getTypesAnnotatedWith(Endpoint.class);
-
-        for (Class<?> endpointClazz : clazzes) {
-            endpoints.put(endpointClazz, new EndpointFeatures<>(endpointClazz));
-        }
-    }
-
     private Map<Class<?>, EndpointFeatures<?>> generateEndpointsMap() {
         scanEndpoints();
         scanActions();
@@ -60,7 +55,26 @@ public final class EndpointScanner {
             scanHooks();
         }
         scanShields();
+
+        load();
+
         return endpoints;
+    }
+
+    private void load() {
+        for (Class<?> endpointClazz : endpointTrees.keySet()) {
+            EndpointFeatures<?> endpoint = endpoints.get(endpointClazz);
+            endpoint.setHooks(endpointTrees.get(endpointClazz).loadHooks());
+        }
+    }
+
+    private void scanEndpoints() {
+        Set<Class<?>> clazzes = endpointsPackage.getTypesAnnotatedWith(Endpoint.class);
+
+        for (Class<?> endpointClazz : clazzes) {
+            endpoints.put(endpointClazz, new EndpointFeatures<>(endpointClazz));
+            endpointTrees.put(endpointClazz, new EndpointTree());
+        }
     }
 
     private void scanShields() {
@@ -122,9 +136,8 @@ public final class EndpointScanner {
         }
 
         for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, hookClazz.getSimpleName())) {
-            endpoint.addHook(hookClazz);
-
-
+            //endpoint.addHook(hookClazz);
+            endpointTrees.get(endpoint.getClazz()).addHook(hookClazz);
         }
     }
 
@@ -207,6 +220,8 @@ public final class EndpointScanner {
         }
 
         for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, method.getDeclaringClass().getSimpleName())) {
+            
+
             for (ActionKey actionKey : actionKeys) {
                 endpoint.addAction(actionKey, method, actionMethod);
             }

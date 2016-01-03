@@ -7,10 +7,7 @@ import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.shields.ShieldInfo;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EndpointFeatures<T> {
 
@@ -20,7 +17,7 @@ public class EndpointFeatures<T> {
 
     private Map<String, Method> transformers;
 
-    private List<Class<? extends Hook<? super T>>> hooks;
+    private Set<Class<? extends Hook>> hooks;
 
     private ShieldInfo<? super T> shieldInfo;
 
@@ -28,7 +25,7 @@ public class EndpointFeatures<T> {
         this.clazz = clazz;
         this.actions = new HashMap<>();
         this.transformers = new HashMap<>();
-        this.hooks = new ArrayList<>();
+        this.hooks = new HashSet<>();
     }
 
     public Class<T> getClazz() {
@@ -55,7 +52,7 @@ public class EndpointFeatures<T> {
         this.shieldInfo = shieldInfo;
     }
 
-    public List<Class<? extends Hook<? super T>>> getHooks() {
+    public Set<Class<? extends Hook>> getHooks() {
         return hooks;
     }
 
@@ -135,5 +132,9 @@ public class EndpointFeatures<T> {
     @Override
     public int hashCode() {
         return clazz.hashCode();
+    }
+
+    public void setHooks(Set<Class<? extends Hook>> hooks) {
+        this.hooks = hooks;
     }
 }

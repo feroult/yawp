@@ -31,9 +31,9 @@ public final class EndpointScanner {
     private Map<Class<?>, EndpointFeatures<?>> endpoints;
 
     public EndpointScanner(String packagePrefix) {
-        endpointsPackage = new Reflections(packagePrefix);
-        endpoints = new HashMap<>();
-        enableHooks = true;
+        this.endpointsPackage = new Reflections(packagePrefix);
+        this.endpoints = new HashMap<>();
+        this.enableHooks = true;
     }
 
     public RepositoryFeatures scan() {

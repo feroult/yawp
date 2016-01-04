@@ -1,6 +1,5 @@
 package io.yawp.repository.scanner;
 
-import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;

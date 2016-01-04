@@ -21,7 +21,6 @@ public class HierarchyHookTest extends ServletTestCase {
     }
 
     @Test
-    @Ignore
     public void testMoreSpecificSubClassHook() {
         String json = post("/hierarchy_another-subclasses/1", "{ name: 'john' }");
 

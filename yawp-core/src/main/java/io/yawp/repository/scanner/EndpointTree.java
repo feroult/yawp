@@ -27,8 +27,7 @@ public class EndpointTree<T> {
     private FeatureTree<Transformer> transformerTree = new FeatureTree<>(Transformer.class);
 
     private FeatureTree<Shield> shieldTree = new FeatureTree<>(Shield.class);
-
-
+    
     public EndpointTree(Class<T> endpointClazz) {
         this.endpointClazz = endpointClazz;
     }

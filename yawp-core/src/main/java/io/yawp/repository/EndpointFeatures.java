@@ -118,12 +118,16 @@ public class EndpointFeatures<T> {
         }
     }
 
+    public void setActions(Map<ActionKey, ActionMethod> actions) {
+        this.actions = actions;
+    }
+
     public void setHooks(Set<Class<? extends Hook>> hooks) {
         this.hooks = hooks;
     }
 
-    public void setActions(Map<ActionKey, ActionMethod> actions) {
-        this.actions = actions;
+    public void setTransformers(Map<String, Method> transformers) {
+        this.transformers = transformers;
     }
 
     @Override

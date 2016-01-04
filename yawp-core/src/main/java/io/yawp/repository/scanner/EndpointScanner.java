@@ -68,6 +68,7 @@ public final class EndpointScanner {
             EndpointTree<?> tree = endpointTrees.get(endpointClazz);
             endpoint.setActions(tree.loadActions());
             endpoint.setHooks(tree.loadHooks());
+            endpoint.setTransformers(tree.loadTransformers());
         }
     }
 
@@ -76,7 +77,7 @@ public final class EndpointScanner {
 
         for (Class<?> endpointClazz : clazzes) {
             endpoints.put(endpointClazz, new EndpointFeatures<>(endpointClazz));
-            endpointTrees.put(endpointClazz, new EndpointTree());
+            endpointTrees.put(endpointClazz, new EndpointTree(endpointClazz));
         }
     }
 
@@ -92,8 +93,7 @@ public final class EndpointScanner {
     }
 
     private <T, V extends Shield<T>> void setShield(Class<V> shieldClazz) {
-        Class<T> objectClazz;
-        objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(shieldClazz);
+        Class<T> objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(shieldClazz);
 
         if (objectClazz == null) {
             return;
@@ -162,11 +162,16 @@ public final class EndpointScanner {
     }
 
     private void addTransformerForObject(Class<?> objectClazz, Class<? extends Transformer> transformerClazz) {
-        for (Method method : ReflectionUtils.getUniqueMethodsRecursively(transformerClazz, Transformer.class)) {
-            for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, transformerClazz.getSimpleName())) {
-                endpoint.addTransformer(method.getName(), method);
-            }
+        for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, transformerClazz.getSimpleName())) {
+            endpointTrees.get(endpoint.getClazz()).addTransformer(transformerClazz);
         }
+
+        // TODO: remove
+//        for (Method method : ReflectionUtils.getUniqueMethodsRecursively(transformerClazz, Transformer.class)) {
+//            for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, transformerClazz.getSimpleName())) {
+//                endpoint.addTransformer(method.getName(), method);
+//            }
+//        }
     }
 
     private void scanActions() {

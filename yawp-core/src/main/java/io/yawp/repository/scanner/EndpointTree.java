@@ -27,7 +27,7 @@ public class EndpointTree<T> {
     private FeatureTree<Transformer> transformerTree = new FeatureTree<>(Transformer.class);
 
     private FeatureTree<Shield> shieldTree = new FeatureTree<>(Shield.class);
-    
+
     public EndpointTree(Class<T> endpointClazz) {
         this.endpointClazz = endpointClazz;
     }
@@ -72,24 +72,36 @@ public class EndpointTree<T> {
         return map;
     }
 
-    public ShieldInfo<T> loadShieldx() {
-        Set<Class<? extends Shield>> shieldClazzes = shieldTree.getLeafs();
-        if (shieldClazzes.size() > 1) {
-            // TODO: throw duplicated shield
-        }
-        return new ShieldInfo<T>((Class<? extends Shield<? super T>>) shieldClazzes.iterator().next());
-    }
-
-    public <T> ShieldInfo<T> loadShield() {
+    public <TT> ShieldInfo<TT> loadShield() {
         Set<Class<? extends Shield>> shieldClazzes = shieldTree.getLeafs();
         if (shieldClazzes.size() == 0) {
             return null;
         }
 
         if (shieldClazzes.size() > 1) {
-            // TODO: throw duplicated shield
+            throwExceptionMultipleShields(shieldClazzes);
         }
-        return new ShieldInfo<T>((Class<? extends Shield<? super T>>) shieldClazzes.iterator().next());
+        return new ShieldInfo<TT>((Class<? extends Shield<? super TT>>) shieldClazzes.iterator().next());
+    }
+
+    private void throwExceptionMultipleShields(Set<Class<? extends Shield>> shieldClazzes) {
+        throw new RuntimeException(String.format("Trying to add multiple shields for endpoint '%s' -> %s",
+                endpointClazz.getName(),
+                createShieldsString(shieldClazzes)));
+    }
+
+    private String createShieldsString(Set<Class<? extends Shield>> shieldClazzes) {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (Class<? extends Shield> shieldClazz : shieldClazzes) {
+            if (!first) {
+                sb.append(", ");
+            } else {
+                first = false;
+            }
+            sb.append(shieldClazz.getName());
+        }
+        return sb.toString();
     }
 
     private void addTransformerMethods(Map<String, Method> map, Class<? extends Transformer> transformerClazz) {

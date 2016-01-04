@@ -4,17 +4,12 @@ import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.Action;
-import io.yawp.repository.actions.ActionKey;
-import io.yawp.repository.actions.ActionMethod;
-import io.yawp.repository.actions.InvalidActionMethodException;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.shields.Shield;
-import io.yawp.repository.shields.ShieldInfo;
 import io.yawp.repository.transformers.Transformer;
 import org.reflections.Reflections;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.logging.Logger;
@@ -48,20 +43,22 @@ public final class EndpointScanner {
     }
 
     private Map<Class<?>, EndpointFeatures<?>> generateEndpointsMap() {
-        scanEndpoints();
+        endpointsScan();
+        featuresScan();
+        featuresLoad();
+        return endpoints;
+    }
+
+    private void featuresScan() {
         scanActions();
         scanTransformers();
         if (enableHooks) {
             scanHooks();
+            scanShields();
         }
-        scanShields();
-
-        load();
-
-        return endpoints;
     }
 
-    private void load() {
+    private void featuresLoad() {
         for (Class<?> endpointClazz : endpointTrees.keySet()) {
             EndpointFeatures<?> endpoint = endpoints.get(endpointClazz);
 
@@ -73,141 +70,13 @@ public final class EndpointScanner {
         }
     }
 
-    private void scanEndpoints() {
+    private void endpointsScan() {
         Set<Class<?>> clazzes = endpointsPackage.getTypesAnnotatedWith(Endpoint.class);
 
         for (Class<?> endpointClazz : clazzes) {
             endpoints.put(endpointClazz, new EndpointFeatures<>(endpointClazz));
             endpointTrees.put(endpointClazz, new EndpointTree(endpointClazz));
         }
-    }
-
-    private void scanShields() {
-        Set<Class<? extends Shield>> clazzes = endpointsPackage.getSubTypesOf(Shield.class);
-
-        for (Class<? extends Shield> shieldClazz : clazzes) {
-            if (Modifier.isAbstract(shieldClazz.getModifiers())) {
-                continue;
-            }
-            setShield(shieldClazz);
-        }
-    }
-
-    private <T, V extends Shield<T>> void setShield(Class<V> shieldClazz) {
-        Class<T> objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(shieldClazz);
-
-        if (objectClazz == null) {
-            return;
-        }
-
-        ShieldInfo<T> shieldInfo = new ShieldInfo<T>(shieldClazz);
-
-        for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, shieldClazz.getSimpleName())) {
-
-            endpointTrees.get(endpoint.getClazz()).addShield(shieldClazz);
-
-            if (endpoint.getShieldInfo() != null) {
-                throwDuplicateShield(shieldClazz, objectClazz, endpoint);
-            }
-
-            endpoint.setShieldInfo(shieldInfo);
-        }
-    }
-
-    private <V extends Shield<T>, T> void throwDuplicateShield(Class<V> shieldClazz, Class<T> objectClazz, EndpointFeatures<? extends T> endpoint) {
-        ShieldInfo<?> existingShieldInfo = endpoint.getShieldInfo();
-
-        throw new RuntimeException("Trying to a second shield '" + shieldClazz.getName() + "' for endpoint '"
-                + objectClazz.getName() + "'. The shield '" + existingShieldInfo.getShieldClazz().getName()
-                + "' was already associated. Endpoints can have only one Shield.");
-    }
-
-    private void scanHooks() {
-        Map<EndpointFeatures<?>, FeatureTree<Hook>> hookTrees = new HashMap<>();
-
-        Set<Class<? extends Hook>> clazzes = endpointsPackage.getSubTypesOf(Hook.class);
-
-        for (Class<? extends Hook> hookClazz : clazzes) {
-            if (Modifier.isAbstract(hookClazz.getModifiers())) {
-                continue;
-            }
-            addHook(hookClazz, hookTrees);
-        }
-    }
-
-    private <T, V extends Hook<T>> void addHook(Class<V> hookClazz, Map<EndpointFeatures<?>, FeatureTree<Hook>> hookTrees) {
-        Class<T> objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(hookClazz);
-
-        if (objectClazz == null) {
-            return;
-        }
-
-        for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, hookClazz.getSimpleName())) {
-            //endpoint.addHook(hookClazz);
-            endpointTrees.get(endpoint.getClazz()).addHook(hookClazz);
-        }
-    }
-
-    private void scanTransformers() {
-        Set<Class<? extends Transformer>> clazzes = endpointsPackage.getSubTypesOf(Transformer.class);
-
-        for (Class<? extends Transformer> transformerClazz : clazzes) {
-            if (Modifier.isAbstract(transformerClazz.getModifiers())) {
-                continue;
-            }
-            Class<?> objectClazz = ReflectionUtils.getFeatureEndpointClazz(transformerClazz);
-
-            if (objectClazz == null) {
-                continue;
-            }
-
-            addTransformerForObject(objectClazz, transformerClazz);
-        }
-    }
-
-    private void addTransformerForObject(Class<?> objectClazz, Class<? extends Transformer> transformerClazz) {
-        for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, transformerClazz.getSimpleName())) {
-            endpointTrees.get(endpoint.getClazz()).addTransformer(transformerClazz);
-        }
-
-        // TODO: remove
-//        for (Method method : ReflectionUtils.getUniqueMethodsRecursively(transformerClazz, Transformer.class)) {
-//            for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, transformerClazz.getSimpleName())) {
-//                endpoint.addTransformer(method.getName(), method);
-//            }
-//        }
-    }
-
-    private void scanActions() {
-        Set<Class<? extends Action>> clazzes = endpointsPackage.getSubTypesOf(Action.class);
-
-        for (Class<? extends Action> actionClazz : clazzes) {
-            if (Modifier.isAbstract(actionClazz.getModifiers())) {
-                continue;
-            }
-            Class<?> objectClazz = ReflectionUtils.getFeatureEndpointClazz(actionClazz);
-
-            if (objectClazz == null) {
-                continue;
-            }
-
-            addActionMethods(objectClazz, actionClazz);
-        }
-    }
-
-    private void addActionMethods(Class<?> objectClazz, Class<? extends Action> actionClazz) {
-
-        for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, actionClazz.getSimpleName())) {
-            endpointTrees.get(endpoint.getClazz()).addAction(actionClazz);
-        }
-
-        // TODO: remove
-//        for (Method method : actionClazz.getDeclaredMethods()) {
-//            if (!ActionMethod.isAction(method)) {
-//                continue;
-//            }
-//            addAction(objectClazz, method);
-//        }
     }
 
     private <T> List<EndpointFeatures<? extends T>> getEndpoints(Class<T> objectClazz, String featureClazz) {
@@ -228,37 +97,100 @@ public final class EndpointScanner {
         return objectClazz.isAssignableFrom(endpoint);
     }
 
-    private void addAction(Class<?> objectClazz, Method method) {
+    private void scanActions() {
+        Set<Class<? extends Action>> clazzes = endpointsPackage.getSubTypesOf(Action.class);
 
-        ActionMethod actionMethod = createActionMethod(objectClazz, method);
-        List<ActionKey> actionKeys = actionMethod.getActionKeys();
+        for (Class<? extends Action> actionClazz : clazzes) {
+            if (Modifier.isAbstract(actionClazz.getModifiers())) {
+                continue;
+            }
 
-        if (actionKeys.isEmpty()) {
+            addActionToEndpoints(actionClazz);
+        }
+    }
+
+    private void addActionToEndpoints(Class<? extends Action> actionClazz) {
+        Class<?> objectClazz = ReflectionUtils.getFeatureEndpointClazz(actionClazz);
+
+        if (objectClazz == null) {
             return;
         }
 
-        for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, method.getDeclaringClass().getSimpleName())) {
+        for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, actionClazz.getSimpleName())) {
+            endpointTrees.get(endpoint.getClazz()).addAction(actionClazz);
+        }
+    }
 
+    private void scanTransformers() {
+        Set<Class<? extends Transformer>> clazzes = endpointsPackage.getSubTypesOf(Transformer.class);
 
-            for (ActionKey actionKey : actionKeys) {
-                endpoint.addAction(actionKey, method, actionMethod);
+        for (Class<? extends Transformer> transformerClazz : clazzes) {
+            if (Modifier.isAbstract(transformerClazz.getModifiers())) {
+                continue;
             }
+
+            addTransformerToEndpoints(transformerClazz);
         }
     }
 
-    private ActionMethod createActionMethod(Class<?> objectClazz, Method method) {
-        try {
-            return new ActionMethod(method);
-        } catch (InvalidActionMethodException e) {
-            throw new RuntimeException("Invalid Action: " + objectClazz.getName() + "." + method.getName(), e);
+    private void addTransformerToEndpoints(Class<? extends Transformer> transformerClazz) {
+        Class<?> objectClazz = ReflectionUtils.getFeatureEndpointClazz(transformerClazz);
+
+        if (objectClazz == null) {
+            return;
+        }
+
+        for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, transformerClazz.getSimpleName())) {
+            endpointTrees.get(endpoint.getClazz()).addTransformer(transformerClazz);
         }
     }
 
-    private List<ActionKey> parseActionKeys(Class<?> objectClazz, Method method) {
-        try {
-            return ActionMethod.getActionKeysFor(method);
-        } catch (InvalidActionMethodException e) {
-            throw new RuntimeException("Invalid Action: " + objectClazz.getName() + "." + method.getName(), e);
+    private void scanHooks() {
+        Set<Class<? extends Hook>> clazzes = endpointsPackage.getSubTypesOf(Hook.class);
+
+        for (Class<? extends Hook> hookClazz : clazzes) {
+            if (Modifier.isAbstract(hookClazz.getModifiers())) {
+                continue;
+            }
+
+            addHookToEndpoints(hookClazz);
+        }
+    }
+
+    private <T, V extends Hook<T>> void addHookToEndpoints(Class<V> hookClazz) {
+        Class<T> objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(hookClazz);
+
+        if (objectClazz == null) {
+            return;
+        }
+
+        for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, hookClazz.getSimpleName())) {
+            endpointTrees.get(endpoint.getClazz()).addHook(hookClazz);
+        }
+    }
+
+
+    private void scanShields() {
+        Set<Class<? extends Shield>> clazzes = endpointsPackage.getSubTypesOf(Shield.class);
+
+        for (Class<? extends Shield> shieldClazz : clazzes) {
+            if (Modifier.isAbstract(shieldClazz.getModifiers())) {
+                continue;
+            }
+
+            addShieldToEndpoints(shieldClazz);
+        }
+    }
+
+    private <T, V extends Shield<T>> void addShieldToEndpoints(Class<V> shieldClazz) {
+        Class<T> objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(shieldClazz);
+
+        if (objectClazz == null) {
+            return;
+        }
+
+        for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, shieldClazz.getSimpleName())) {
+            endpointTrees.get(endpoint.getClazz()).addShield(shieldClazz);
         }
     }
 

@@ -2,7 +2,7 @@ package io.yawp.commons.utils;
 
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.driver.api.testing.TestHelperFactory;
-import io.yawp.repository.scanner.EndpointScanner;
+import io.yawp.repository.scanner.RepositoryScanner;
 import io.yawp.repository.Feature;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
@@ -17,7 +17,7 @@ public class EndpointTestCase extends Feature {
     private TestHelper helper;
 
     static {
-        features = new EndpointScanner("io.yawp").scan();
+        features = new RepositoryScanner("io.yawp").scan();
     }
 
     @Before

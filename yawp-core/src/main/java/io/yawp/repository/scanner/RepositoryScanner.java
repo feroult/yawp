@@ -15,9 +15,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public final class EndpointScanner {
+public final class RepositoryScanner {
 
-    private final static Logger LOGGER = Logger.getLogger(EndpointScanner.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(RepositoryScanner.class.getName());
 
     private boolean enableHooks;
 
@@ -27,7 +27,7 @@ public final class EndpointScanner {
 
     private Map<Class<?>, EndpointTree<?>> endpointTrees;
 
-    public EndpointScanner(String packagePrefix) {
+    public RepositoryScanner(String packagePrefix) {
         this.endpointsPackage = new Reflections(packagePrefix);
         this.endpoints = new HashMap<>();
         this.endpointTrees = new HashMap<>();
@@ -194,7 +194,7 @@ public final class EndpointScanner {
         }
     }
 
-    public EndpointScanner enableHooks(boolean enableHooks) {
+    public RepositoryScanner enableHooks(boolean enableHooks) {
         this.enableHooks = enableHooks;
         return this;
     }

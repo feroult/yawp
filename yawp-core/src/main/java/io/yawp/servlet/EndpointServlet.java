@@ -5,7 +5,7 @@ import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.JsonResponse;
 import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.DriverFactory;
-import io.yawp.repository.scanner.EndpointScanner;
+import io.yawp.repository.scanner.RepositoryScanner;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 
@@ -58,7 +58,7 @@ public class EndpointServlet extends HttpServlet {
     }
 
     private void scanEndpoints(String packagePrefix) {
-        features = new EndpointScanner(packagePrefix).enableHooks(enableHooks).scan();
+        features = new RepositoryScanner(packagePrefix).enableHooks(enableHooks).scan();
     }
 
     protected void response(HttpServletResponse resp, HttpResponse httpResponse) throws IOException {

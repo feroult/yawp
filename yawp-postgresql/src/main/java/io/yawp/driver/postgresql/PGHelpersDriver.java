@@ -5,7 +5,7 @@ import io.yawp.driver.api.HelpersDriver;
 import io.yawp.driver.postgresql.configuration.InitialContextSetup;
 import io.yawp.driver.postgresql.configuration.WebConfiguration;
 import io.yawp.driver.postgresql.tools.DatabaseSynchronizer;
-import io.yawp.repository.EndpointScanner;
+import io.yawp.repository.tools.scanner.RepositoryScanner;
 import io.yawp.repository.RepositoryFeatures;
 
 import java.io.File;
@@ -28,7 +28,7 @@ public class PGHelpersDriver implements HelpersDriver {
 
     private Set<Class<?>> scanEndpointClazzes() {
         WebConfiguration webConfiguration = new WebConfiguration(getWebConfigFile());
-        RepositoryFeatures features = new EndpointScanner(webConfiguration.getPackagePrefix()).scan();
+        RepositoryFeatures features = new RepositoryScanner(webConfiguration.getPackagePrefix()).scan();
         return features.getEndpointClazzes();
     }
 

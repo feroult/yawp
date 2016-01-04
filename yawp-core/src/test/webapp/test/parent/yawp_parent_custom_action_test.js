@@ -165,4 +165,22 @@
         });
     });
 
+
+    t.asyncTest("check if fixtures servlet disable shields", function(assert) {
+        expect(1);
+
+        yawp.config(function(c) {
+           c.baseUrl('/fixtures');
+        });
+
+        yawp('/parents').get('check-if-fixtures-servlet-disable-shields').done(function(result) {
+            assert.equal(result, "xpto");
+            yawp.config(function(c) {
+               c.baseUrl('/api');
+            });
+
+            t.start();
+        });
+    });
+
 })(QUnit, yawp, yawp.fixtures);

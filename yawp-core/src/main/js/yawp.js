@@ -1,4 +1,4 @@
-(function ($) {
+(function () {
 
     var baseUrl = '/api';
 
@@ -12,23 +12,88 @@
         callback(c);
     }
 
-    function defaultAjax(type, options) {
-        var request = $.ajax({
-            type: type,
-            url: baseUrl + options.url + (options.query ? '?' + $.param(options.query) : ''),
-            data: options.data,
-            async: options.async,
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json'
-        });
+    function extend() {
+        var result = arguments[0] || {};
 
-        return $.extend(request, {
-            exception: function (fn) {
-                this.error(function (err) {
-                    fn(err.responseJSON)
-                });
+        for (var i = 1, l = arguments.length; i < l; i++) {
+            var obj = arguments[i];
+            for (var attrname in obj) {
+                result[attrname] = obj[attrname];
             }
-        });
+        }
+
+        return result;
+    }
+
+	function toUrlParam(jsonParams) {
+		return Object.keys(jsonParams).map(function(k) {
+		    return encodeURIComponent(k) + '=' + encodeURIComponent(jsonParams[k])
+		}).join('&')
+	}
+
+    function defaultAjax(type, options) {
+        var fail
+            ,done
+			,exception
+			,then
+			,error
+            ,request
+            ,url;
+
+        url = baseUrl + options.url + (options.query ? '?' + toUrlParam(options.query) : '');
+
+		var callbacks = {
+            fail: function (callback) {
+                fail = callback;
+                return callbacks;
+            },
+            done: function (callback) {
+                done = callback;
+                return callbacks;
+            },
+			exception: function (callback) {
+                exception = callback;
+                return callbacks;
+            },
+			then: function (callback) {
+                then = callback;
+                return callbacks;
+            },
+			error: function (callback) {
+                error = callback;
+                return callbacks;
+            }
+        };
+
+        request = new XMLHttpRequest();
+        request.onreadystatechange = function() {
+        	if (request.readyState === 4) {
+				if(request.status === 200) {
+					if(done) {
+						done(JSON.parse(request.responseText));
+					}
+					if(then) {
+						then(JSON.parse(request.responseText));
+					}
+				} else {
+					if(fail) {
+						fail(request);
+					}
+					if(error) {
+						error(extend({}, request, {responseJSON:JSON.parse(request.responseText)}));
+					}
+					if(exception) {
+						exception(JSON.parse(request.responseText));
+					}
+				}
+            }
+        };
+
+        request.open(type, url, true);
+        request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+        request.send(options.data);
+
+        return callbacks;
     }
 
     function extractId(object) {
@@ -45,7 +110,7 @@
             if (arguments.length === 1) {
                 q.where = data;
             } else {
-                q.where = $.makeArray(arguments);
+                q.where = [].slice.call(arguments);
             }
             return this;
         }
@@ -77,7 +142,7 @@
 
         function url(decode) {
             setupQuery();
-            var url = baseUrl + options().url + (options().query ? '?' + $.param(options().query) : '');
+            var url = baseUrl + options().url + (options().query ? '?' + toUrlParam(options().query) : '');
             if (decode) {
                 return decodeURIComponent(url);
             }
@@ -223,7 +288,7 @@
         };
 
         options.addQueryParameters = function (params) {
-            ajaxOptions.query = $.extend(ajaxOptions.query, params);
+            ajaxOptions.query = extend(ajaxOptions.query, params);
         };
 
         options.addQueryParameter = function (key, value) {
@@ -249,7 +314,7 @@
             return this;
         }
 
-        return $.extend({
+        return extend({
             from: from,
             transform: transform,
             sync: sync
@@ -278,6 +343,6 @@
         destroy: destroy
     };
 
-    window.yawp = $.extend(yawp, api);
+    window.yawp = extend(yawp, api);
 
-})(jQuery);
+})();

@@ -34,13 +34,17 @@ public class ActionParameters {
 
     public ActionParameters(Method method) throws InvalidActionMethodException {
         this.method = method;
-        this.endpointClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
+        setEndpointClazz(method);
 
         init();
 
         if (!isValid()) {
             throw new InvalidActionMethodException();
         }
+    }
+
+    private void setEndpointClazz(Method method) {
+        this.endpointClazz = ReflectionUtils.getFeatureEndpointClazz(method.getDeclaringClass());
     }
 
     public int size() {

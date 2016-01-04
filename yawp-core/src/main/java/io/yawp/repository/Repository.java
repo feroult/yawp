@@ -165,8 +165,8 @@ public class Repository {
         return (EndpointFeatures<T>) repositoryFeatures.get(endpoint);
     }
 
-    public EndpointFeatures<?> getEndpointFeatures(String endpointName) {
-        return repositoryFeatures.get(endpointName);
+    public EndpointFeatures<?> getEndpointFeatures(String endpointPath) {
+        return repositoryFeatures.get(endpointPath);
     }
 
     public RepositoryFeatures getFeatures() {

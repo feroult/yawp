@@ -107,11 +107,8 @@ public abstract class RestAction {
     public abstract Object action();
 
     public HttpResponse execute() {
-        beforeShield();
 
-        if (hasShield()) {
-            shield();
-        }
+        executeShield();
 
         Object object = action();
 
@@ -120,6 +117,18 @@ public abstract class RestAction {
         }
 
         return new JsonResponse(JsonUtils.to(object));
+    }
+
+    private void executeShield() {
+        if (!enableHooks) {
+            return;
+        }
+
+        beforeShield();
+
+        if (hasShield()) {
+            shield();
+        }
     }
 
     protected QueryBuilder<?> query() {

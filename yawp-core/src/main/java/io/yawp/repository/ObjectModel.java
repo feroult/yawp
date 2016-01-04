@@ -8,7 +8,6 @@ import io.yawp.repository.annotations.ParentId;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +44,7 @@ public class ObjectModel {
         if (parentField == null) {
             return null;
         }
-        return (Class<?>) ReflectionUtils.getGenericParameter(parentField);
+        return ReflectionUtils.getIdRefEndpointClazz(parentField);
     }
 
     public boolean hasParent() {

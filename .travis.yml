@@ -21,10 +21,8 @@ after_success:
 notifications:
   email:
     recipients:
-      - fernando@dextra-sw.com
-      - guilherme.gomes@dextra-sw.com
+      - feroult@gmail.com
       - leonardo.cabral@dextra-sw.com
       - luan.nico@dextra-sw.com
-      - paulo.martins@dextra-sw.com
     on_success: change
     on_failure: always

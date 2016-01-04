@@ -1,20 +1,17 @@
 package io.yawp.servlet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import io.yawp.commons.http.HttpException;
-import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.ServletTestCase;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
-
-import java.util.ArrayList;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static org.junit.Assert.*;
 
 public class EndpointRouterTest extends ServletTestCase {
 
@@ -23,7 +20,7 @@ public class EndpointRouterTest extends ServletTestCase {
         private RepositoryFeatures features;
 
         public RepositoryFeaturesMock(RepositoryFeatures features) {
-            super(new ArrayList<EndpointFeatures<?>>());
+            super(new HashMap<Class<?>, EndpointFeatures<?>>());
             this.features = features;
         }
 

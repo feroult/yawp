@@ -114,7 +114,7 @@ public class EndpointTree<T> {
         Map<String, Method> addToCache = new HashMap<>();
         cache.put(transformerClazz, addToCache);
 
-        for (Method method : ReflectionUtils.getMethodsRecursively(transformerClazz, Transformer.class)) {
+        for (Method method : ReflectionUtils.getPublicMethodsRecursively(transformerClazz, Transformer.class)) {
             String name = method.getName();
 
             if (isTransformerOverriden(name, addToCache)) {
@@ -150,7 +150,7 @@ public class EndpointTree<T> {
         Map<ActionKey, ActionMethod> addToCache = new HashMap<>();
         cache.put(actionClazz, addToCache);
 
-        for (Method method : ReflectionUtils.getMethodsRecursively(actionClazz, Action.class)) {
+        for (Method method : ReflectionUtils.getPublicMethodsRecursively(actionClazz, Action.class)) {
             //for (Method method : actionClazz.getDeclaredMethods()) {
             if (!ActionMethod.isAction(method)) {
                 continue;

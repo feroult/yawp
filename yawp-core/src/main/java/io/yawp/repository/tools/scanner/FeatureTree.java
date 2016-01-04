@@ -1,4 +1,4 @@
-package io.yawp.repository.scanner;
+package io.yawp.repository.tools.scanner;
 
 import io.yawp.repository.Feature;
 

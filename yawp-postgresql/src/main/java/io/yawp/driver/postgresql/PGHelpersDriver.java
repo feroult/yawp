@@ -5,7 +5,7 @@ import io.yawp.driver.api.HelpersDriver;
 import io.yawp.driver.postgresql.configuration.InitialContextSetup;
 import io.yawp.driver.postgresql.configuration.WebConfiguration;
 import io.yawp.driver.postgresql.tools.DatabaseSynchronizer;
-import io.yawp.repository.scanner.RepositoryScanner;
+import io.yawp.repository.tools.scanner.RepositoryScanner;
 import io.yawp.repository.RepositoryFeatures;
 
 import java.io.File;

@@ -1,10 +1,10 @@
-package io.yawp.repository.scanner;
+package io.yawp.repository.tools.scanner;
 
 import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.hooks.hierarchy.AbstractHook;
 import io.yawp.repository.hooks.hierarchy.AllObjectsHook;
 import io.yawp.repository.hooks.hierarchy.ObjectSuperClassHook;
-import io.yawp.repository.scanner.FeatureTree;
+import io.yawp.repository.tools.scanner.FeatureTree;
 import org.junit.Test;
 
 import java.util.Set;

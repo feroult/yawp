@@ -5,7 +5,7 @@ import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.JsonResponse;
 import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.DriverFactory;
-import io.yawp.repository.scanner.RepositoryScanner;
+import io.yawp.repository.tools.scanner.RepositoryScanner;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 

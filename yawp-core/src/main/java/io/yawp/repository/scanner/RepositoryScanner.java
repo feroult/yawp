@@ -23,33 +23,29 @@ public final class RepositoryScanner {
 
     private Reflections endpointsPackage;
 
-    private Map<Class<?>, EndpointFeatures<?>> endpoints;
-
-    private Map<Class<?>, EndpointTree<?>> endpointTrees;
+    private Map<Class<?>, EndpointTree<?>> trees;
 
     public RepositoryScanner(String packagePrefix) {
         this.endpointsPackage = new Reflections(packagePrefix);
-        this.endpoints = new HashMap<>();
-        this.endpointTrees = new HashMap<>();
+        this.trees = new HashMap<>();
         this.enableHooks = true;
     }
 
     public RepositoryFeatures scan() {
         long start = System.currentTimeMillis();
-        RepositoryFeatures repositoryFeatures = new RepositoryFeatures(generateEndpointsMap());
+        RepositoryFeatures repositoryFeatures = new RepositoryFeatures(scanAndLoadAll());
         long elapsed = System.currentTimeMillis() - start;
         LOGGER.info("Yawp! started in " + elapsed + " ms");
         return repositoryFeatures;
     }
 
-    private Map<Class<?>, EndpointFeatures<?>> generateEndpointsMap() {
-        endpointsScan();
-        featuresScan();
-        featuresLoad();
-        return endpoints;
+    private Map<Class<?>, EndpointFeatures<?>> scanAndLoadAll() {
+        scanEndpoints();
+        scanFeatures();
+        return loadAll();
     }
 
-    private void featuresScan() {
+    private void scanFeatures() {
         scanActions();
         scanTransformers();
         if (enableHooks) {
@@ -58,43 +54,49 @@ public final class RepositoryScanner {
         }
     }
 
-    private void featuresLoad() {
-        for (Class<?> endpointClazz : endpointTrees.keySet()) {
-            EndpointFeatures<?> endpoint = endpoints.get(endpointClazz);
+    private Map<Class<?>, EndpointFeatures<?>> loadAll() {
+        Map<Class<?>, EndpointFeatures<?>> endpoints = new HashMap<>();
 
-            EndpointTree<?> tree = endpointTrees.get(endpointClazz);
-            endpoint.setActions(tree.loadActions());
-            endpoint.setHooks(tree.loadHooks());
-            endpoint.setTransformers(tree.loadTransformers());
-            endpoint.setShieldInfo(tree.loadShield());
+        for (Class<?> endpointClazz : trees.keySet()) {
+            endpoints.put(endpointClazz, loadEndpoint(endpointClazz));
         }
+
+        return endpoints;
     }
 
-    private void endpointsScan() {
+    private EndpointFeatures<?> loadEndpoint(Class<?> endpointClazz) {
+        EndpointTree<?> tree = trees.get(endpointClazz);
+
+        EndpointFeatures<?> endpoint = new EndpointFeatures<>(endpointClazz);
+        endpoint.setActions(tree.loadActions());
+        endpoint.setHooks(tree.loadHooks());
+        endpoint.setTransformers(tree.loadTransformers());
+        endpoint.setShieldInfo(tree.loadShield());
+        return endpoint;
+    }
+
+    private void scanEndpoints() {
         Set<Class<?>> clazzes = endpointsPackage.getTypesAnnotatedWith(Endpoint.class);
 
         for (Class<?> endpointClazz : clazzes) {
-            endpoints.put(endpointClazz, new EndpointFeatures<>(endpointClazz));
-            endpointTrees.put(endpointClazz, new EndpointTree(endpointClazz));
+            trees.put(endpointClazz, new EndpointTree(endpointClazz));
         }
     }
 
-    private <T> List<EndpointFeatures<? extends T>> getEndpoints(Class<T> objectClazz, String featureClazz) {
-        List<EndpointFeatures<? extends T>> list = new ArrayList<>();
-
-        for (Class<?> endpointClazz : endpointTrees.keySet()) {
-            if (isEndpointInTheHierarchy(endpointClazz, objectClazz)) {
-                list.add((EndpointFeatures<T>) endpoints.get(endpointClazz));
+    private List<Class<?>> findEndpointsInHierarchy(Class<?> parameterClazz, Class<?> featureClazz) {
+        List<Class<?>> clazzes = new ArrayList<>();
+        for (Class<?> endpointClazz : trees.keySet()) {
+            if (isEndpointInTheHierarchy(endpointClazz, parameterClazz)) {
+                clazzes.add(endpointClazz);
             }
         }
-
-        if (list.isEmpty()) {
-            throw new RuntimeException("Tryed to create feature '" + featureClazz + "' with entity '" + objectClazz.getName()
+        if (clazzes.isEmpty()) {
+            throw new RuntimeException("Tryed to create feature '" + featureClazz.getName() + "' with entity '" + parameterClazz.getName()
                     + "' that is not an @Endpoint nor a super class of one.");
         }
-        
-        return list;
+        return clazzes;
     }
+
 
     private <T> boolean isEndpointInTheHierarchy(Class<?> endpoint, Class<T> objectClazz) {
         return objectClazz.isAssignableFrom(endpoint);
@@ -113,14 +115,14 @@ public final class RepositoryScanner {
     }
 
     private void addActionToEndpoints(Class<? extends Action> actionClazz) {
-        Class<?> objectClazz = ReflectionUtils.getFeatureEndpointClazz(actionClazz);
+        Class<?> parameterClazz = ReflectionUtils.getFeatureEndpointClazz(actionClazz);
 
-        if (objectClazz == null) {
+        if (parameterClazz == null) {
             return;
         }
 
-        for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, actionClazz.getSimpleName())) {
-            endpointTrees.get(endpoint.getClazz()).addAction(actionClazz);
+        for (Class<?> endpointClazz : findEndpointsInHierarchy(parameterClazz, actionClazz)) {
+            trees.get(endpointClazz).addAction(actionClazz);
         }
     }
 
@@ -137,14 +139,14 @@ public final class RepositoryScanner {
     }
 
     private void addTransformerToEndpoints(Class<? extends Transformer> transformerClazz) {
-        Class<?> objectClazz = ReflectionUtils.getFeatureEndpointClazz(transformerClazz);
+        Class<?> parameterClazz = ReflectionUtils.getFeatureEndpointClazz(transformerClazz);
 
-        if (objectClazz == null) {
+        if (parameterClazz == null) {
             return;
         }
 
-        for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, transformerClazz.getSimpleName())) {
-            endpointTrees.get(endpoint.getClazz()).addTransformer(transformerClazz);
+        for (Class<?> endpointClazz : findEndpointsInHierarchy(parameterClazz, transformerClazz)) {
+            trees.get(endpointClazz).addTransformer(transformerClazz);
         }
     }
 
@@ -161,17 +163,16 @@ public final class RepositoryScanner {
     }
 
     private <T, V extends Hook<T>> void addHookToEndpoints(Class<V> hookClazz) {
-        Class<T> objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(hookClazz);
+        Class<T> parameterClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(hookClazz);
 
-        if (objectClazz == null) {
+        if (parameterClazz == null) {
             return;
         }
 
-        for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, hookClazz.getSimpleName())) {
-            endpointTrees.get(endpoint.getClazz()).addHook(hookClazz);
+        for (Class<?> endpointClazz : findEndpointsInHierarchy(parameterClazz, hookClazz)) {
+            trees.get(endpointClazz).addHook(hookClazz);
         }
     }
-
 
     private void scanShields() {
         Set<Class<? extends Shield>> clazzes = endpointsPackage.getSubTypesOf(Shield.class);
@@ -186,14 +187,14 @@ public final class RepositoryScanner {
     }
 
     private <T, V extends Shield<T>> void addShieldToEndpoints(Class<V> shieldClazz) {
-        Class<T> objectClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(shieldClazz);
+        Class<T> parameterClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(shieldClazz);
 
-        if (objectClazz == null) {
+        if (parameterClazz == null) {
             return;
         }
 
-        for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, shieldClazz.getSimpleName())) {
-            endpointTrees.get(endpoint.getClazz()).addShield(shieldClazz);
+        for (Class<?> endpointClazz : findEndpointsInHierarchy(parameterClazz, shieldClazz)) {
+            trees.get(endpointClazz).addShield(shieldClazz);
         }
     }
 

@@ -7,7 +7,10 @@ import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.shields.ShieldInfo;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class EndpointFeatures<T> {
 
@@ -32,24 +35,16 @@ public class EndpointFeatures<T> {
         return this.clazz;
     }
 
-    public void addAction(ActionKey actionKey, Method method, ActionMethod actionMethod) {
-        assertActionNotDuplicated(actionKey, method);
-        actions.put(actionKey, actionMethod);
+    public Endpoint getEndpointAnnotation() {
+        return clazz.getAnnotation(Endpoint.class);
     }
 
-    public void addTransformer(String name, Method method) {
-        if (!checkTransformerDuplication(name, method)) {
-            return;
+    public String getEndpointPath() {
+        Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
+        if (endpoint == null) {
+            throw new RuntimeException("The class " + clazz.getName() + " was used as an entity but was not annotated with @Endpoint.");
         }
-        transformers.put(name, method);
-    }
-
-    public void addHook(Class<? extends Hook<? super T>> hook) {
-        hooks.add(hook);
-    }
-
-    public Set<Class<? extends Hook>> getHooks() {
-        return hooks;
+        return endpoint.path();
     }
 
     public ActionMethod getAction(ActionKey key) {
@@ -60,72 +55,41 @@ public class EndpointFeatures<T> {
         return actions.get(key).getMethod().getDeclaringClass();
     }
 
-    public Method getTransformer(String name) {
-        return transformers.get(name);
-    }
-
-    public Endpoint getEndpointAnnotation() {
-        return clazz.getAnnotation(Endpoint.class);
-    }
-
-    public String getEndpointPath() {
-        Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
-        if (endpoint == null) {
-            throw new RuntimeException("The class " + clazz + " was used as an entity but was not annotated with @Endpoint.");
-        }
-        return endpoint.path();
-    }
-
     public boolean hasCustomAction(ActionKey actionKey) {
         return actions.containsKey(actionKey);
+    }
+
+    public Method getTransformer(String name) {
+        return transformers.get(name);
     }
 
     public boolean hasTranformer(String transformerName) {
         return transformers.containsKey(transformerName);
     }
 
-    public boolean hasShield() {
-        return shieldInfo != null;
+    public Set<Class<? extends Hook>> getHooks() {
+        return hooks;
     }
 
     public ShieldInfo<? super T> getShieldInfo() {
         return shieldInfo;
     }
 
-    private boolean checkTransformerDuplication(String key, Method method) {
-        Method existingMethod = transformers.get(key);
-        if (existingMethod != null) {
-            if (!method.equals(existingMethod)) {
-                throw new RuntimeException("Trying to add two transformers with the same name '" + key + "' to "
-                        + clazz.getName() + ": one at " + existingMethod.getDeclaringClass().getName() + " and the other at "
-                        + method.getDeclaringClass().getName());
-            }
-            return false;
-        }
-        return true;
-    }
-
-    private void assertActionNotDuplicated(ActionKey key, Method method) {
-        if (actions.get(key) != null) {
-            Method existingMethod = actions.get(key).getMethod();
-            throw new RuntimeException("Trying to add two actions with the same name '" + key + "' to "
-                    + clazz.getName() + ": one at " + existingMethod.getDeclaringClass().getName() + " and the other at "
-                    + method.getDeclaringClass().getName());
-        }
+    public boolean hasShield() {
+        return shieldInfo != null;
     }
 
     public void setActions(Map<ActionKey, ActionMethod> actions) {
         this.actions = actions;
     }
 
-    public void setHooks(Set<Class<? extends Hook>> hooks) {
-        this.hooks = hooks;
-    }
-
     public void setTransformers(Map<String, Method> transformers) {
         this.transformers = transformers;
     }
 
+    public void setHooks(Set<Class<? extends Hook>> hooks) {
+        this.hooks = hooks;
+    }
 
     public void setShieldInfo(ShieldInfo<? super T> shieldInfo) {
         this.shieldInfo = shieldInfo;

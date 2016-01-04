@@ -12,6 +12,13 @@ import static org.junit.Assert.assertEquals;
 public class HierarchyHookTest extends ServletTestCase {
 
     @Test
+    public void testAllObjectsHook() {
+        String json = post("/hooked_objects", "{ stringValue: 'all_objects' }");
+        HookedObject object = from(json, HookedObject.class);
+        assertEquals("xpto all objects", object.getStringValue());
+    }
+
+    @Test
     public void testSuperClassHook() {
         String json = post("/hierarchy_subclasses/1", "{ name: 'john' }");
 
@@ -27,12 +34,5 @@ public class HierarchyHookTest extends ServletTestCase {
         AnotherObjectSubClass object = from(json, AnotherObjectSubClass.class);
 
         assertEquals("john more specific hook", object.getName());
-    }
-
-    @Test
-    public void testAllObjectsHook() {
-        String json = post("/hooked_objects", "{ stringValue: 'all_objects' }");
-        HookedObject object = from(json, HookedObject.class);
-        assertEquals("xpto all objects", object.getStringValue());
     }
 }

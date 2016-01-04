@@ -4,7 +4,7 @@ import io.yawp.repository.models.hierarchy.ObjectSuperClass;
 
 import java.util.Map;
 
-public class ObjectSuperClassTranformer extends AbstractTransformer<ObjectSuperClass> {
+public class ObjectSuperClassTranformer<T extends ObjectSuperClass> extends AbstractTransformer<T> {
 
     public Map<String, Object> upperCase(ObjectSuperClass object) {
         Map<String, Object> map = asMap(object);

@@ -81,15 +81,18 @@ public final class RepositoryScanner {
 
     private <T> List<EndpointFeatures<? extends T>> getEndpoints(Class<T> objectClazz, String featureClazz) {
         List<EndpointFeatures<? extends T>> list = new ArrayList<>();
-        for (Class<?> endpoint : endpoints.keySet()) {
-            if (isEndpointInTheHierarchy(endpoint, objectClazz)) {
-                list.add((EndpointFeatures<T>) endpoints.get(endpoint));
+
+        for (Class<?> endpointClazz : endpointTrees.keySet()) {
+            if (isEndpointInTheHierarchy(endpointClazz, objectClazz)) {
+                list.add((EndpointFeatures<T>) endpoints.get(endpointClazz));
             }
         }
+
         if (list.isEmpty()) {
             throw new RuntimeException("Tryed to create feature '" + featureClazz + "' with entity '" + objectClazz.getName()
                     + "' that is not an @Endpoint nor a super class of one.");
         }
+        
         return list;
     }
 

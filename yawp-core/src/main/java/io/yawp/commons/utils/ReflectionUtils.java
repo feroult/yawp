@@ -139,7 +139,7 @@ public final class ReflectionUtils {
     public static List<Method> getPublicMethodsRecursively(Class<?> clazz, Class<?> stopClazz) {
         Set<String> uniqueNames = new HashSet<String>();
         List<Method> methods = new ArrayList<>();
-        
+
         while (!isJavaClass(clazz) && clazz != stopClazz) {
             methods.addAll(ReflectionUtils.getImmediatePublicMethods(clazz));
             clazz = clazz.getSuperclass();

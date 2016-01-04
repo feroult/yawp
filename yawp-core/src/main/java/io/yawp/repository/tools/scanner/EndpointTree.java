@@ -121,7 +121,7 @@ public class EndpointTree<T> {
                 continue;
             }
 
-            asseertTransformerNotDuplicated(map, name, method);
+            assertTransformerNotDuplicated(map, name, method);
             map.put(name, method);
             addToCache.put(name, method);
         }
@@ -131,9 +131,14 @@ public class EndpointTree<T> {
         return addToCache.containsKey(name);
     }
 
-    private void asseertTransformerNotDuplicated(Map<String, Method> map, String name, Method method) {
+    private void assertTransformerNotDuplicated(Map<String, Method> map, String name, Method method) {
         if (map.containsKey(name)) {
             Method existingMethod = map.get(name);
+
+            if (method.equals(existingMethod)) {
+                return;
+            }
+
             throw new RuntimeException("Trying to add two transformers with the same name '" + name + "' to "
                     + endpointClazz.getName() + ": one at " + existingMethod.getDeclaringClass().getName() + " and the other at "
                     + method.getDeclaringClass().getName());
@@ -178,6 +183,11 @@ public class EndpointTree<T> {
     private void assertActionNotDuplicated(Map<ActionKey, ActionMethod> map, ActionKey actionKey, Method method) {
         if (map.get(actionKey) != null) {
             Method existingMethod = map.get(actionKey).getMethod();
+
+            if (method.equals(existingMethod)) {
+                return;
+            }
+
             throw new RuntimeException("Trying to add two actions with the same name '" + actionKey + "' to "
                     + endpointClazz.getName() + ": one at " + existingMethod.getDeclaringClass().getName() + " and the other at "
                     + method.getDeclaringClass().getName());

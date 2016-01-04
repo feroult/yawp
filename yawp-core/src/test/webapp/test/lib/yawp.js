@@ -1,1 +1,1 @@
-../../../../main/js/yawp.js
+../../../../main/js/dist/yawp.min.js

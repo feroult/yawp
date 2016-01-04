@@ -4,6 +4,8 @@
   "description": "YAWP! Client",
   "main": "yawp-cli.js",
   "scripts": {
+	"build:webpack": "NODE_ENV=production webpack --config webpack.config.js",
+	"build": "npm run build:webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -11,5 +13,8 @@
     "url": "git@github.com:rsolci/yawp.git/tree/master/yawp-core/src/main/js"
   },
   "author": "rsolci",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^1.12.9"
+  }
 }

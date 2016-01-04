@@ -57,22 +57,22 @@ public final class RepositoryScanner {
     private Map<Class<?>, EndpointFeatures<?>> loadAll() {
         Map<Class<?>, EndpointFeatures<?>> endpoints = new HashMap<>();
 
+        ActionLoader actionLoader = new ActionLoader();
+        TransformerLoader transformerLoader = new TransformerLoader();
+
         for (Class<?> endpointClazz : trees.keySet()) {
-            endpoints.put(endpointClazz, loadEndpoint(endpointClazz));
+            EndpointTree<?> tree = trees.get(endpointClazz);
+            EndpointFeatures<?> endpoint = new EndpointFeatures<>(endpointClazz);
+
+            actionLoader.load(endpoint, tree);
+            endpoint.setHooks(tree.loadHooks());
+            transformerLoader.load(endpoint, tree);
+            endpoint.setShieldInfo(tree.loadShield());
+            
+            endpoints.put(endpointClazz, endpoint);
         }
 
         return endpoints;
-    }
-
-    private EndpointFeatures<?> loadEndpoint(Class<?> endpointClazz) {
-        EndpointTree<?> tree = trees.get(endpointClazz);
-
-        EndpointFeatures<?> endpoint = new EndpointFeatures<>(endpointClazz);
-        endpoint.setActions(tree.loadActions());
-        endpoint.setHooks(tree.loadHooks());
-        endpoint.setTransformers(tree.loadTransformers());
-        endpoint.setShieldInfo(tree.loadShield());
-        return endpoint;
     }
 
     private void scanEndpoints() {

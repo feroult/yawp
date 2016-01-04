@@ -136,25 +136,22 @@ public final class ReflectionUtils {
         }
     }
 
-    public static List<Method> getUniqueMethodsRecursively(Class<?> clazz, Class<?> stopClazz) {
+    public static List<Method> getMethodsRecursively(Class<?> clazz, Class<?> stopClazz) {
         Set<String> uniqueNames = new HashSet<String>();
         List<Method> methods = new ArrayList<>();
 
 
         while (!isJavaClass(clazz) && clazz != stopClazz) {
-            methods.addAll(ReflectionUtils.getImmediateUniquePublicMethods(clazz, uniqueNames));
+            methods.addAll(ReflectionUtils.getImmediatePublicMethods(clazz));
             clazz = clazz.getSuperclass();
         }
 
         return methods;
     }
 
-    private static List<Method> getImmediateUniquePublicMethods(Class<?> clazz, Set<String> uniqueNames) {
+    private static List<Method> getImmediatePublicMethods(Class<?> clazz) {
         List<Method> methods = new ArrayList<>();
         for (Method method : clazz.getDeclaredMethods()) {
-            if (uniqueNames.contains(method.getName())) {
-                continue;
-            }
             if (!Modifier.isPublic(method.getModifiers())) {
                 continue;
             }
@@ -162,7 +159,6 @@ public final class ReflectionUtils {
                 continue;
             }
             methods.add(method);
-            uniqueNames.add(method.getName());
         }
         return methods;
     }

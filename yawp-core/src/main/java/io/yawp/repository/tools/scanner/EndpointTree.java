@@ -48,11 +48,11 @@ public class EndpointTree<T> {
         shieldTree.add(shieldClazz);
     }
 
-    public Map<ActionKey, ActionMethod> loadActions() {
+    public Map<ActionKey, ActionMethod> loadActions(Map<Class<?>, Map<ActionKey, ActionMethod>> cache) {
         Map<ActionKey, ActionMethod> map = new HashMap<>();
 
         for (Class<? extends Action> actionClazz : actionTree.getLeafs()) {
-            addActionKeys(map, actionClazz);
+            addActionKeys(map, actionClazz, cache);
         }
 
         return map;
@@ -62,11 +62,11 @@ public class EndpointTree<T> {
         return hookTree.getLeafs();
     }
 
-    public Map<String, Method> loadTransformers() {
+    public Map<String, Method> loadTransformers(Map<Class<?>, Map<String, Method>> cache) {
         Map<String, Method> map = new HashMap<>();
 
         for (Class<? extends Transformer> transformerClazz : transformerTree.getLeafs()) {
-            addTransformerMethods(map, transformerClazz);
+            addTransformerMethods(map, transformerClazz, cache);
         }
 
         return map;
@@ -104,31 +104,54 @@ public class EndpointTree<T> {
         return sb.toString();
     }
 
-    private void addTransformerMethods(Map<String, Method> map, Class<? extends Transformer> transformerClazz) {
-        for (Method method : ReflectionUtils.getUniqueMethodsRecursively(transformerClazz, Transformer.class)) {
+    private void addTransformerMethods(Map<String, Method> map, Class<? extends Transformer> transformerClazz, Map<Class<?>, Map<String, Method>> cache) {
+
+        if (cache.containsKey(transformerClazz)) {
+            map.putAll(cache.get(transformerClazz));
+            return;
+        }
+
+        Map<String, Method> addToCache = new HashMap<>();
+        cache.put(transformerClazz, addToCache);
+
+        for (Method method : ReflectionUtils.getMethodsRecursively(transformerClazz, Transformer.class)) {
             String name = method.getName();
-            if (!checkTransformerDuplication(map, name, method)) {
+
+            if (isTransformerOverriden(name, addToCache)) {
                 continue;
             }
+
+            asseertTransformerNotDuplicated(map, name, method);
             map.put(name, method);
+            addToCache.put(name, method);
         }
     }
 
-    private boolean checkTransformerDuplication(Map<String, Method> map, String name, Method method) {
-        Method existingMethod = map.get(name);
-        if (existingMethod != null) {
-            if (!method.equals(existingMethod)) {
-                throw new RuntimeException("Trying to add two transformers with the same name '" + name + "' to "
-                        + endpointClazz.getName() + ": one at " + existingMethod.getDeclaringClass().getName() + " and the other at "
-                        + method.getDeclaringClass().getName());
-            }
-            return false;
-        }
-        return true;
+    private boolean isTransformerOverriden(String name, Map<String, Method> addToCache) {
+        return addToCache.containsKey(name);
     }
 
-    private void addActionKeys(Map<ActionKey, ActionMethod> map, Class<? extends Action> actionClazz) {
-        for (Method method : actionClazz.getDeclaredMethods()) {
+    private void asseertTransformerNotDuplicated(Map<String, Method> map, String name, Method method) {
+        if (map.containsKey(name)) {
+            Method existingMethod = map.get(name);
+            throw new RuntimeException("Trying to add two transformers with the same name '" + name + "' to "
+                    + endpointClazz.getName() + ": one at " + existingMethod.getDeclaringClass().getName() + " and the other at "
+                    + method.getDeclaringClass().getName());
+        }
+    }
+
+    private void addActionKeys(Map<ActionKey, ActionMethod> map, Class<? extends Action> actionClazz, Map<Class<?>, Map<ActionKey, ActionMethod>> cache) {
+
+        if (cache.containsKey(actionClazz)) {
+            map.putAll(cache.get(actionClazz));
+            return;
+        }
+
+        Map<ActionKey, ActionMethod> addToCache = new HashMap<>();
+        cache.put(actionClazz, addToCache);
+
+        for (Method method : ReflectionUtils.getMethodsRecursively(actionClazz, Action.class)) {
+            //for (Method method : actionClazz.getDeclaredMethods()) {
             if (!ActionMethod.isAction(method)) {
                 continue;
             }
@@ -137,10 +160,19 @@ public class EndpointTree<T> {
             List<ActionKey> actionKeys = actionMethod.getActionKeys();
 
             for (ActionKey actionKey : actionKeys) {
+                if (isActionOverriden(actionKey, addToCache)) {
+                    continue;
+                }
+
                 assertActionNotDuplicated(map, actionKey, method);
                 map.put(actionKey, actionMethod);
+                addToCache.put(actionKey, actionMethod);
             }
         }
+    }
+
+    private boolean isActionOverriden(ActionKey actionKey, Map<ActionKey, ActionMethod> addToCache) {
+        return addToCache.containsKey(actionKey);
     }
 
     private void assertActionNotDuplicated(Map<ActionKey, ActionMethod> map, ActionKey actionKey, Method method) {
@@ -151,7 +183,6 @@ public class EndpointTree<T> {
                     + method.getDeclaringClass().getName());
         }
     }
-
 
     private ActionMethod createActionMethod(Method method) {
         try {

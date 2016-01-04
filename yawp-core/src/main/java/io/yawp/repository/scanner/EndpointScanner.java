@@ -69,6 +69,7 @@ public final class EndpointScanner {
             endpoint.setActions(tree.loadActions());
             endpoint.setHooks(tree.loadHooks());
             endpoint.setTransformers(tree.loadTransformers());
+            endpoint.setShieldInfo(tree.loadShield());
         }
     }
 
@@ -102,6 +103,9 @@ public final class EndpointScanner {
         ShieldInfo<T> shieldInfo = new ShieldInfo<T>(shieldClazz);
 
         for (EndpointFeatures<? extends T> endpoint : getEndpoints(objectClazz, shieldClazz.getSimpleName())) {
+
+            endpointTrees.get(endpoint.getClazz()).addShield(shieldClazz);
+
             if (endpoint.getShieldInfo() != null) {
                 throwDuplicateShield(shieldClazz, objectClazz, endpoint);
             }

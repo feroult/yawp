@@ -48,10 +48,6 @@ public class EndpointFeatures<T> {
         hooks.add(hook);
     }
 
-    public void setShieldInfo(ShieldInfo<? super T> shieldInfo) {
-        this.shieldInfo = shieldInfo;
-    }
-
     public Set<Class<? extends Hook>> getHooks() {
         return hooks;
     }
@@ -128,6 +124,11 @@ public class EndpointFeatures<T> {
 
     public void setTransformers(Map<String, Method> transformers) {
         this.transformers = transformers;
+    }
+
+
+    public void setShieldInfo(ShieldInfo<? super T> shieldInfo) {
+        this.shieldInfo = shieldInfo;
     }
 
     @Override

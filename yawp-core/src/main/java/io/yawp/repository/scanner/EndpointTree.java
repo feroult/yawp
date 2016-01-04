@@ -6,6 +6,8 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.InvalidActionMethodException;
 import io.yawp.repository.hooks.Hook;
+import io.yawp.repository.shields.Shield;
+import io.yawp.repository.shields.ShieldInfo;
 import io.yawp.repository.transformers.Transformer;
 
 import java.lang.reflect.Method;
@@ -24,6 +26,9 @@ public class EndpointTree<T> {
 
     private FeatureTree<Transformer> transformerTree = new FeatureTree<>(Transformer.class);
 
+    private FeatureTree<Shield> shieldTree = new FeatureTree<>(Shield.class);
+
+
     public EndpointTree(Class<T> endpointClazz) {
         this.endpointClazz = endpointClazz;
     }
@@ -38,6 +43,10 @@ public class EndpointTree<T> {
 
     public void addTransformer(Class<? extends Transformer> transformerClazz) {
         transformerTree.add(transformerClazz);
+    }
+
+    public void addShield(Class<? extends Shield> shieldClazz) {
+        shieldTree.add(shieldClazz);
     }
 
     public Map<ActionKey, ActionMethod> loadActions() {
@@ -62,6 +71,26 @@ public class EndpointTree<T> {
         }
 
         return map;
+    }
+
+    public ShieldInfo<T> loadShieldx() {
+        Set<Class<? extends Shield>> shieldClazzes = shieldTree.getLeafs();
+        if (shieldClazzes.size() > 1) {
+            // TODO: throw duplicated shield
+        }
+        return new ShieldInfo<T>((Class<? extends Shield<? super T>>) shieldClazzes.iterator().next());
+    }
+
+    public <T> ShieldInfo<T> loadShield() {
+        Set<Class<? extends Shield>> shieldClazzes = shieldTree.getLeafs();
+        if (shieldClazzes.size() == 0) {
+            return null;
+        }
+
+        if (shieldClazzes.size() > 1) {
+            // TODO: throw duplicated shield
+        }
+        return new ShieldInfo<T>((Class<? extends Shield<? super T>>) shieldClazzes.iterator().next());
     }
 
     private void addTransformerMethods(Map<String, Method> map, Class<? extends Transformer> transformerClazz) {
@@ -111,6 +140,7 @@ public class EndpointTree<T> {
                     + method.getDeclaringClass().getName());
         }
     }
+
 
     private ActionMethod createActionMethod(Method method) {
         try {

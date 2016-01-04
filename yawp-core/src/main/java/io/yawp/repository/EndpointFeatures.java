@@ -118,6 +118,14 @@ public class EndpointFeatures<T> {
         }
     }
 
+    public void setHooks(Set<Class<? extends Hook>> hooks) {
+        this.hooks = hooks;
+    }
+
+    public void setActions(Map<ActionKey, ActionMethod> actions) {
+        this.actions = actions;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -134,7 +142,4 @@ public class EndpointFeatures<T> {
         return clazz.hashCode();
     }
 
-    public void setHooks(Set<Class<? extends Hook>> hooks) {
-        this.hooks = hooks;
-    }
 }

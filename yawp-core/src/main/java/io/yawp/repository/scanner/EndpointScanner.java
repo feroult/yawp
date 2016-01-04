@@ -64,7 +64,10 @@ public final class EndpointScanner {
     private void load() {
         for (Class<?> endpointClazz : endpointTrees.keySet()) {
             EndpointFeatures<?> endpoint = endpoints.get(endpointClazz);
-            endpoint.setHooks(endpointTrees.get(endpointClazz).loadHooks());
+
+            EndpointTree<?> tree = endpointTrees.get(endpointClazz);
+            endpoint.setActions(tree.loadActions());
+            endpoint.setHooks(tree.loadHooks());
         }
     }
 
@@ -184,12 +187,18 @@ public final class EndpointScanner {
     }
 
     private void addActionMethods(Class<?> objectClazz, Class<? extends Action> actionClazz) {
-        for (Method method : actionClazz.getDeclaredMethods()) {
-            if (!ActionMethod.isAction(method)) {
-                continue;
-            }
-            addAction(objectClazz, method);
+
+        for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, actionClazz.getSimpleName())) {
+            endpointTrees.get(endpoint.getClazz()).addAction(actionClazz);
         }
+
+        // TODO: remove
+//        for (Method method : actionClazz.getDeclaredMethods()) {
+//            if (!ActionMethod.isAction(method)) {
+//                continue;
+//            }
+//            addAction(objectClazz, method);
+//        }
     }
 
     private <T> List<EndpointFeatures<? extends T>> getEndpoints(Class<T> objectClazz, String featureClazz) {
@@ -220,7 +229,7 @@ public final class EndpointScanner {
         }
 
         for (EndpointFeatures<?> endpoint : getEndpoints(objectClazz, method.getDeclaringClass().getSimpleName())) {
-            
+
 
             for (ActionKey actionKey : actionKeys) {
                 endpoint.addAction(actionKey, method, actionMethod);

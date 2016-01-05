@@ -3,8 +3,10 @@ package io.yawp.repository;
 import io.yawp.commons.http.RequestContext;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.query.QueryBuilder;
+import org.apache.commons.beanutils.PropertyUtils;
 
 import java.util.List;
+import java.util.Map;
 
 public class Feature {
 
@@ -59,4 +61,13 @@ public class Feature {
         return JsonUtils.to(object);
     }
 
+    protected Map<String, Object> asMap(Object object) {
+        try {
+            Map<String, Object> map = PropertyUtils.describe(object);
+            map.remove("class");
+            return map;
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

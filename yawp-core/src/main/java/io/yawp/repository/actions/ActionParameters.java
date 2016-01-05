@@ -9,6 +9,7 @@ import io.yawp.repository.Repository;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -239,7 +240,11 @@ public class ActionParameters {
             if (!isTypeOf(IdRef.class)) {
                 return false;
             }
-            return getGenericTypeAt(0).equals(endpointClazz);
+            Type genericType = getGenericTypeAt(0);
+            if (genericType instanceof WildcardType) {
+                return true;
+            }
+            return genericType.equals(endpointClazz);
         }
 
         public boolean isParentId() {
@@ -247,7 +252,11 @@ public class ActionParameters {
                 return false;
             }
             ObjectModel objectModel = new ObjectModel(endpointClazz);
-            return objectModel.isAncestor((Class<?>) getGenericTypeAt(0));
+            Type genericType = getGenericTypeAt(0);
+            if (genericType instanceof WildcardType) {
+                return false;
+            }
+            return objectModel.isAncestor((Class<?>) genericType);
         }
 
         public boolean isParams() {

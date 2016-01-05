@@ -6,6 +6,6 @@ public class ObjectSuperClassHook<T extends ObjectSuperClass> extends AbstractHo
 
     @Override
     public void beforeSave(ObjectSuperClass object) {
-        object.setName(object.getName().toUpperCase());
+        object.setName(object.getName() + " + superclass hook");
     }
 }

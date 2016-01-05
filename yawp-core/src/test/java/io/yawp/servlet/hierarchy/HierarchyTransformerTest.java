@@ -16,7 +16,7 @@ public class HierarchyTransformerTest extends ServletTestCase {
         String json = get("/hierarchy_subclasses/1", params("t", "allObjectsUpperCase"));
         ObjectSubClass object = from(json, ObjectSubClass.class);
 
-        assertEquals("JOHN", object.getName());
+        assertEquals("JOHN + SUPERCLASS HOOK", object.getName());
     }
 
     @Test
@@ -26,7 +26,7 @@ public class HierarchyTransformerTest extends ServletTestCase {
         String json = get("/hierarchy_subclasses/1", params("t", "upperCase"));
         ObjectSubClass object = from(json, ObjectSubClass.class);
 
-        assertEquals("JOHN", object.getName());
+        assertEquals("JOHN + SUPERCLASS HOOK", object.getName());
     }
 
     @Test
@@ -36,7 +36,7 @@ public class HierarchyTransformerTest extends ServletTestCase {
         String json = get("/hierarchy_another-subclasses/1", params("t", "upperCase"));
         AnotherObjectSubClass object = from(json, AnotherObjectSubClass.class);
 
-        assertEquals("john more specific hook + transformer", object.getName());
+        assertEquals("john + more specific hook + transformer", object.getName());
     }
 
 }

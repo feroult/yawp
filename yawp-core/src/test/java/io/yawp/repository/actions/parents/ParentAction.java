@@ -3,6 +3,7 @@ package io.yawp.repository.actions.parents;
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.annotation.*;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.actions.Action;
 import io.yawp.repository.actions.Atomic;
 import io.yawp.repository.models.basic.Pojo;
 import io.yawp.repository.models.parents.Parent;
@@ -10,7 +11,7 @@ import io.yawp.repository.models.parents.Parent;
 import java.util.List;
 import java.util.Map;
 
-public class ParentAction extends AbstractAction<Parent> {
+public class ParentAction extends Action<Parent> {
 
     @PUT("touched")
     public Parent touch(IdRef<Parent> id) {

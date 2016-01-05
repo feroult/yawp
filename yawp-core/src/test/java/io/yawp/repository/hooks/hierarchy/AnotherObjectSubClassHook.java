@@ -6,6 +6,6 @@ public class AnotherObjectSubClassHook extends ObjectSuperClassHook<AnotherObjec
 
     @Override
     public void beforeSave(AnotherObjectSubClass object) {
-        object.setName(object.getName() + " more specific hook");
+        object.setName(object.getName() + " + more specific hook");
     }
 }

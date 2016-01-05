@@ -13,11 +13,11 @@ public class HierarchyActionTest extends ServletTestCase {
 
     @Test
     public void testAllObjectsAction() {
-        post("/basic_objects/1", "{ stringValue: 'xpto' }");
+        post("/hierarchy_subclasses/1", "{ name: 'john' }");
+        post("/hierarchy_another-subclasses/1", "{ name: 'john' }");
 
-        String s = from(get("/basic_objects/1/all-objects"), String.class);
-
-        assertEquals("xpto all objects action", s);
+        assertEquals("john + superclass hook + all objects action", from(get("/hierarchy_subclasses/1/all-objects"), String.class));
+        assertEquals("john + more specific hook + all objects action", from(get("/hierarchy_another-subclasses/1/all-objects"), String.class));
     }
 
     @Test
@@ -26,7 +26,16 @@ public class HierarchyActionTest extends ServletTestCase {
 
         String s = from(get("/hierarchy_subclasses/1/superclass-action"), String.class);
 
-        assertEquals("JOHN superclass action", s);
+        assertEquals("john + superclass hook + superclass action", s);
+    }
+
+    @Test
+    public void testMoreSpecificSubClassAction() {
+        post("/hierarchy_another-subclasses/1", "{ name: 'john' }");
+
+        String s = from(get("/hierarchy_another-subclasses/1/superclass-action"), String.class);
+
+        assertEquals("john + more specific hook + action", s);
     }
 
 }

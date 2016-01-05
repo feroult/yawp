@@ -24,7 +24,7 @@ public class HierarchyHookTest extends ServletTestCase {
 
         ObjectSubClass object = from(json, ObjectSubClass.class);
 
-        assertEquals("JOHN", object.getName());
+        assertEquals("john + superclass hook", object.getName());
     }
 
     @Test
@@ -33,6 +33,6 @@ public class HierarchyHookTest extends ServletTestCase {
 
         AnotherObjectSubClass object = from(json, AnotherObjectSubClass.class);
 
-        assertEquals("john more specific hook", object.getName());
+        assertEquals("john + more specific hook", object.getName());
     }
 }

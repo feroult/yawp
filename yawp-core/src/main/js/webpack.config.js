@@ -4,7 +4,7 @@ var webpack = require('webpack');
 module.exports = {
 	devtool: 'source-map',
 	entry: [
-		'./yawp-cli'
+		'./yawp'
 	],
 	output: {
 		path: path.join(__dirname, 'dist'),

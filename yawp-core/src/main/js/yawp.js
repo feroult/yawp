@@ -1,4 +1,4 @@
-(function () {
+module.exports = (function () {
 
     var baseUrl = '/api';
 
@@ -343,6 +343,6 @@
         destroy: destroy
     };
 
-    window.yawp = extend(yawp, api);
-
+	return extend(yawp, api);
+	
 })();

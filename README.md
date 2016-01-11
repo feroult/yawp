@@ -3,6 +3,7 @@
 A very simple and elegant domain specific language / framework in Java that helps you to create amazing APIs.
 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
+[![Code Climate](https://codeclimate.com/github/feroult/yawp/badges/gpa.svg)](https://codeclimate.com/github/feroult/yawp)
 
 ## Introduction
 

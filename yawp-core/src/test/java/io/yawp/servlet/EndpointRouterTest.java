@@ -186,6 +186,7 @@ public class EndpointRouterTest extends ServletTestCase {
 
         assertTrue(parse("POST", "/children", "{}").tryToAdjustIds());
         assertTrue(parse("POST", "/children", "[{}, {}]").tryToAdjustIds());
+        assertTrue(parse("POST", "/children", "{parentId: '/parents/1'}").tryToAdjustIds());
         assertTrue(parse("POST", "/children", "{id: '/parents/1/children/1'}").tryToAdjustIds());
         assertTrue(parse("POST", "/children", "[{id: '/parents/1/children/1'}, {id: '/parents/2/children/2'}]").tryToAdjustIds());
         assertTrue(parse("POST", "/children", "[{id: '/parents/1/children/1'}, {}]").tryToAdjustIds());

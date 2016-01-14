@@ -236,7 +236,7 @@ public class EndpointRouter {
             IdRef<?> parentIdInObject = forceParentIdInObjectIfNecessary(object, idInObject);
 
             if (idInObject == null) {
-                if (parentIdInObject != null && !parentIdInObject.equals(id)) {
+                if (parentIdInObject != null && id != null && !parentIdInObject.equals(id)) {
                     return false;
                 }
                 continue;

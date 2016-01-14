@@ -25,6 +25,23 @@
 		});
 	});
 
+    t.asyncTest("create (with root path)", function(assert) {
+        expect(2);
+
+        var parent = fx.parent('parent');
+
+        var child = {
+            name : 'xpto',
+            parentId : parent.id
+        };
+
+        yawp('/children').create(child).done(function(retrievedChild) {
+            assert.equal(retrievedChild.name, 'xpto');
+            assert.equal(retrievedChild.parentId, parent.id);
+            t.start();
+        });
+    });
+
 	t.asyncTest("create array", function(assert) {
 		expect(5);
 

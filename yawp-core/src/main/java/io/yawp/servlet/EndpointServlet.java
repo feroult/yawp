@@ -5,9 +5,9 @@ import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.JsonResponse;
 import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.DriverFactory;
-import io.yawp.repository.tools.scanner.RepositoryScanner;
 import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
+import io.yawp.repository.tools.scanner.RepositoryScanner;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -23,6 +23,7 @@ public class EndpointServlet extends HttpServlet {
     private RepositoryFeatures features;
 
     private boolean enableHooks = true;
+
     private boolean enableCrossDomain = false;
 
     public EndpointServlet() {
@@ -37,6 +38,10 @@ public class EndpointServlet extends HttpServlet {
     }
 
     private void setWithHooks(String enableHooksParameter) {
+        if (!enableHooks) {
+            return;
+        }
+
         boolean enableHooks = enableHooksParameter == null || Boolean.valueOf(enableHooksParameter);
         setWithHooks(enableHooks);
     }

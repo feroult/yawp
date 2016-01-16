@@ -40,6 +40,10 @@ public class AppengineTransationDriver implements TransactionDriver {
 
     @Override
     public void rollback() {
+        if (tx == null) {
+            return;
+        }
+
         if (!tx.isActive()) {
             tx = null;
             return;
@@ -51,6 +55,10 @@ public class AppengineTransationDriver implements TransactionDriver {
 
     @Override
     public void commit() {
+        if (tx == null) {
+            return;
+        }
+
         tx.commit();
         tx = null;
     }

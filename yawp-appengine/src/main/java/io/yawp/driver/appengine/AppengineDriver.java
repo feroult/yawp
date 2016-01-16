@@ -35,7 +35,7 @@ public class AppengineDriver implements Driver {
 
     @Override
     public TransactionDriver transaction() {
-        return new AppengineTransationDriver();
+        return new AppengineTransationDriver(new AppengineEnvironmentDriver());
     }
 
     @Override

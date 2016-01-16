@@ -11,6 +11,12 @@ public class AppengineTransationDriver implements TransactionDriver {
 
     private Transaction tx;
 
+    private AppengineEnvironmentDriver environment;
+
+    public AppengineTransationDriver(AppengineEnvironmentDriver environment) {
+        this.environment = environment;
+    }
+
     private DatastoreService datastore() {
         return DatastoreServiceFactory.getDatastoreService();
     }
@@ -23,6 +29,10 @@ public class AppengineTransationDriver implements TransactionDriver {
 
     @Override
     public TransactionDriver beginX() {
+        if (!environment.isProduction()) {
+            return this;
+        }
+
         TransactionOptions options = TransactionOptions.Builder.withXG(true);
         tx = datastore().beginTransaction(options);
         return this;

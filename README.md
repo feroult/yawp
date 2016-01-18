@@ -1,5 +1,7 @@
 # YAWP! Framework
 
+[![Join the chat at https://gitter.im/feroult/yawp](https://badges.gitter.im/feroult/yawp.svg)](https://gitter.im/feroult/yawp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A very simple and elegant domain specific language / framework in Java that helps you to create amazing APIs.
 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)

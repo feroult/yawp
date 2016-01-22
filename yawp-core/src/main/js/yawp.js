@@ -89,7 +89,7 @@ module.exports = (function () {
 			}
 		};
 
-		request.open(type, url, true);
+		request.open(type, url, options.async);
 		request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
 		request.send(options.data);
 
@@ -276,8 +276,9 @@ module.exports = (function () {
 		}
 
 		var ajaxOptions = {
-			url: normalize(baseArg)
-		}
+			url: normalize(baseArg),
+			async: true
+		};
 
 		function options() {
 			return ajaxOptions;

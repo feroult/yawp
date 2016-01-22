@@ -45,22 +45,27 @@ module.exports = (function () {
 		var callbacks = {
 			fail: function (callback) {
 				fail = callback;
+				request.onreadystatechange();
 				return callbacks;
 			},
 			done: function (callback) {
 				done = callback;
+				request.onreadystatechange();
 				return callbacks;
 			},
 			exception: function (callback) {
 				exception = callback;
+				request.onreadystatechange();
 				return callbacks;
 			},
 			then: function (callback) {
 				then = callback;
+				request.onreadystatechange();
 				return callbacks;
 			},
 			error: function (callback) {
 				error = callback;
+				request.onreadystatechange();
 				return callbacks;
 			}
 		};

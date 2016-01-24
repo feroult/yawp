@@ -8,6 +8,6 @@ import io.yawp.repository.annotations.Id;
 public class $endpoint.name {
 
     @Id
-    IdRef<$endpoint.name>id;
+    IdRef<$endpoint.name> id;
 
 }

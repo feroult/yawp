@@ -9,11 +9,8 @@ public class RepositoryPipes {
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
             Pipe pipe = createPipeInstance(r, pipeClazz);
-            pipe.init(object);
-
-//            r.driver().tasks().saveToPipe(pipe);
-//            r.driver().async().saveToPipe(pipe);
-//            r.driver().pipeline().saveToPipe(pipe);
+            pipe.configure(object);
+            r.driver().pipes().save(pipe, object);
         }
 
     }
@@ -22,6 +19,7 @@ public class RepositoryPipes {
         try {
             Pipe pipe = pipeClazz.newInstance();
             pipe.setRepository(r);
+
             return pipe;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);

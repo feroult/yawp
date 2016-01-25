@@ -18,4 +18,6 @@ public interface Driver {
 
     HelpersDriver helpers();
 
+    PipesDriver pipes();
+
 }

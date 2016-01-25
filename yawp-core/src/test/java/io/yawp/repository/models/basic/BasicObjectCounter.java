@@ -10,7 +10,7 @@ public class BasicObjectCounter {
     @Id
     private IdRef<BasicObjectCounter> id;
 
-    private Integer count;
+    private Integer count = 0;
 
     public IdRef<BasicObjectCounter> getId() {
         return id;
@@ -22,6 +22,10 @@ public class BasicObjectCounter {
 
     public Integer getCount() {
         return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
     }
 
     public void inc() {

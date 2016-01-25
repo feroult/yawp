@@ -4,6 +4,7 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
+import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.shields.ShieldInfo;
 
 import java.lang.reflect.Method;
@@ -24,11 +25,14 @@ public class EndpointFeatures<T> {
 
     private ShieldInfo<? super T> shieldInfo;
 
+    private Set<Class<? extends Pipe>> pipes;
+
     public EndpointFeatures(Class<T> clazz) {
         this.clazz = clazz;
         this.actions = new HashMap<>();
         this.transformers = new HashMap<>();
         this.hooks = new HashSet<>();
+        this.pipes = new HashSet<>();
     }
 
     public Class<T> getClazz() {
@@ -75,6 +79,10 @@ public class EndpointFeatures<T> {
         return shieldInfo;
     }
 
+    public Set<Class<? extends Pipe>> getPipes() {
+        return pipes;
+    }
+
     public boolean hasShield() {
         return shieldInfo != null;
     }
@@ -93,6 +101,10 @@ public class EndpointFeatures<T> {
 
     public void setShieldInfo(ShieldInfo<? super T> shieldInfo) {
         this.shieldInfo = shieldInfo;
+    }
+
+    public void setPipes(Set<Class<? extends Pipe>> pipes) {
+        this.pipes = pipes;
     }
 
     @Override

@@ -6,6 +6,7 @@ import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
+import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.shields.Shield;
 import io.yawp.repository.transformers.Transformer;
 import org.reflections.Reflections;
@@ -31,6 +32,11 @@ public final class RepositoryScanner {
         this.enableHooks = true;
     }
 
+    public RepositoryScanner enableHooks(boolean enableHooks) {
+        this.enableHooks = enableHooks;
+        return this;
+    }
+
     public RepositoryFeatures scan() {
         long start = System.currentTimeMillis();
         RepositoryFeatures repositoryFeatures = new RepositoryFeatures(scanAndLoadAll());
@@ -48,6 +54,7 @@ public final class RepositoryScanner {
     private void scanFeatures() {
         scanActions();
         scanTransformers();
+        scanPipes();
         if (enableHooks) {
             scanHooks();
             scanShields();
@@ -65,10 +72,11 @@ public final class RepositoryScanner {
             EndpointFeatures<?> endpoint = new EndpointFeatures<>(endpointClazz);
 
             actionLoader.load(endpoint, tree);
-            endpoint.setHooks(tree.loadHooks());
             transformerLoader.load(endpoint, tree);
+            endpoint.setHooks(tree.loadHooks());
             endpoint.setShieldInfo(tree.loadShield());
-            
+            endpoint.setPipes(tree.loadPipes());
+
             endpoints.put(endpointClazz, endpoint);
         }
 
@@ -198,9 +206,28 @@ public final class RepositoryScanner {
         }
     }
 
-    public RepositoryScanner enableHooks(boolean enableHooks) {
-        this.enableHooks = enableHooks;
-        return this;
+    private void scanPipes() {
+        Set<Class<? extends Pipe>> clazzes = endpointsPackage.getSubTypesOf(Pipe.class);
+
+        for (Class<? extends Pipe> pipeClazz : clazzes) {
+            if (Modifier.isAbstract(pipeClazz.getModifiers())) {
+                continue;
+            }
+
+            addPipeToEndpoints(pipeClazz);
+        }
+    }
+
+    private <T, V extends Pipe<T, ?>> void addPipeToEndpoints(Class<V> pipeClazz) {
+        Class<T> parameterClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(pipeClazz);
+
+        if (parameterClazz == null) {
+            return;
+        }
+
+        for (Class<?> endpointClazz : findEndpointsInHierarchy(parameterClazz, pipeClazz)) {
+            trees.get(endpointClazz).addPipe(pipeClazz);
+        }
     }
 
 }

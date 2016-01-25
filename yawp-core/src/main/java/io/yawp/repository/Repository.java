@@ -8,6 +8,7 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
+import io.yawp.repository.pipes.RepositoryPipes;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.List;
@@ -121,6 +122,8 @@ public class Repository {
 
     private void saveInternal(Object object) {
         driver().persistence().save(object);
+        // TODO: pipes - Deal with transactions. Pipes should be transactional with saving.
+        RepositoryPipes.save(this, object);
     }
 
     private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {

@@ -6,6 +6,7 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.InvalidActionMethodException;
 import io.yawp.repository.hooks.Hook;
+import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.shields.Shield;
 import io.yawp.repository.shields.ShieldInfo;
 import io.yawp.repository.transformers.Transformer;
@@ -28,6 +29,8 @@ public class EndpointTree<T> {
 
     private FeatureTree<Shield> shieldTree = new FeatureTree<>(Shield.class);
 
+    private FeatureTree<Pipe> pipeTree = new FeatureTree<>(Pipe.class);
+
     public EndpointTree(Class<T> endpointClazz) {
         this.endpointClazz = endpointClazz;
     }
@@ -36,16 +39,20 @@ public class EndpointTree<T> {
         actionTree.add(actionClazz);
     }
 
-    public void addHook(Class<? extends Hook> hookClazz) {
-        hookTree.add(hookClazz);
-    }
-
     public void addTransformer(Class<? extends Transformer> transformerClazz) {
         transformerTree.add(transformerClazz);
     }
 
+    public void addHook(Class<? extends Hook> hookClazz) {
+        hookTree.add(hookClazz);
+    }
+
     public void addShield(Class<? extends Shield> shieldClazz) {
         shieldTree.add(shieldClazz);
+    }
+
+    public void addPipe(Class<? extends Pipe> pipeClazz) {
+        pipeTree.add(pipeClazz);
     }
 
     public Map<ActionKey, ActionMethod> loadActions(Map<Class<?>, Map<ActionKey, ActionMethod>> cache) {
@@ -58,10 +65,6 @@ public class EndpointTree<T> {
         return map;
     }
 
-    public Set<Class<? extends Hook>> loadHooks() {
-        return hookTree.getLeafs();
-    }
-
     public Map<String, Method> loadTransformers(Map<Class<?>, Map<String, Method>> cache) {
         Map<String, Method> map = new HashMap<>();
 
@@ -70,6 +73,10 @@ public class EndpointTree<T> {
         }
 
         return map;
+    }
+
+    public Set<Class<? extends Hook>> loadHooks() {
+        return hookTree.getLeafs();
     }
 
     public <TT> ShieldInfo<TT> loadShield() {
@@ -82,6 +89,10 @@ public class EndpointTree<T> {
             throwExceptionMultipleShields(shieldClazzes);
         }
         return new ShieldInfo<TT>((Class<? extends Shield<? super TT>>) shieldClazzes.iterator().next());
+    }
+
+    public Set<Class<? extends Pipe>> loadPipes() {
+        return pipeTree.getLeafs();
     }
 
     private void throwExceptionMultipleShields(Set<Class<? extends Shield>> shieldClazzes) {

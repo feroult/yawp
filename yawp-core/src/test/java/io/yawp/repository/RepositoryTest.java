@@ -4,9 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.commons.utils.JsonUtils;
-import io.yawp.repository.models.basic.BasicObject;
-import io.yawp.repository.models.basic.Pojo;
-import io.yawp.repository.models.basic.Status;
+import io.yawp.repository.models.basic.*;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Parent;
@@ -169,4 +167,35 @@ public class RepositoryTest extends EndpointTestCase {
         BasicObject retrievedObject = yawp(BasicObject.class).where("status", "=", Status.RUNNING).first();
         assertEquals(Status.RUNNING, retrievedObject.getStatus());
     }
+
+    @Test
+    public void testSaveForNotEndpointObjects() {
+        NoEndpointObject object = new NoEndpointObject("xpto");
+        yawp.save(object);
+
+        NoEndpointObject retrievedObject = yawp(NoEndpointObject.class).only();
+        assertEquals("xpto", retrievedObject.getName());
+    }
+
+
+    @Test
+    public void testNotEndpointObjectsWithDifferentParents() {
+        IdRef<BasicObject> parentId1 = id(BasicObject.class, 1L);
+        NoEndpointObject child1 = new NoEndpointObject("xpto1");
+        child1.setParentId(parentId1);
+        yawp.save(child1);
+
+        IdRef<HookedObject> parentId2 = id(HookedObject.class, 1L);
+        NoEndpointObject child2 = new NoEndpointObject("xpto2");
+        child2.setParentId(parentId2);
+        yawp.save(child2);
+
+        NoEndpointObject retrievedObject1 = yawp(NoEndpointObject.class).from(parentId1).only();
+        assertEquals("xpto1", retrievedObject1.getName());
+
+        NoEndpointObject retrievedObject2 = yawp(NoEndpointObject.class).from(parentId2).only();
+        assertEquals("xpto2", retrievedObject2.getName());
+    }
+
+
 }

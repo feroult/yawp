@@ -29,9 +29,9 @@ public class AppengineTransationDriver implements TransactionDriver {
 
     @Override
     public TransactionDriver beginX() {
-        if (!environment.isProduction()) {
-            return this;
-        }
+//        if (!environment.isProduction()) {
+//            return this;
+//        }
 
         TransactionOptions options = TransactionOptions.Builder.withXG(true);
         tx = datastore().beginTransaction(options);

@@ -4,6 +4,7 @@ import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.BasicObjectCounter;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -25,7 +26,7 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
     }
 
     @Test
-    public void testIncrementAndDecrement() {
+    public void testDecrement() {
         if (pipesDriverNotImplemented()) {
             return;
         }
@@ -58,7 +59,7 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
 
 
     @Test
-    public void testCountByAttributeIncrementAndDecrement() {
+    public void testCountByAttributeDecrement() {
         if (pipesDriverNotImplemented()) {
             return;
         }
@@ -75,6 +76,29 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
 
         assertEquals((Integer) 2, counter.getCount());
         assertEquals((Integer) 1, counter.getCountGroupA());
+        assertEquals((Integer) 0, counter.getCountGroupB());
+    }
+
+    @Test
+    @Ignore
+    public void testCountByAttributeDecrementByUpdate() {
+        if (pipesDriverNotImplemented()) {
+            return;
+        }
+
+        BasicObject objectInGroupB = new BasicObject("group-b");
+
+        yawp.save(new BasicObject("group-a"));
+        yawp.save(objectInGroupB);
+        yawp.save(new BasicObject("xpto"));
+
+        objectInGroupB.setStringValue("group-a");
+        yawp.save(objectInGroupB);
+
+        BasicObjectCounter counter = yawp(BasicObjectCounter.class).only();
+
+        assertEquals((Integer) 3, counter.getCount());
+        assertEquals((Integer) 2, counter.getCountGroupA());
         assertEquals((Integer) 0, counter.getCountGroupB());
     }
 

@@ -35,6 +35,13 @@ public class EndpointFeatures<T> {
         this.pipes = new HashSet<>();
     }
 
+    private void assertValidPathOrKind() {
+        Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
+        if (endpoint == null) {
+            throw new RuntimeException("The class " + clazz.getName() + " was used as an entity but was not annotated with @Endpoint.");
+        }
+    }
+
     public Class<T> getClazz() {
         return this.clazz;
     }
@@ -45,9 +52,6 @@ public class EndpointFeatures<T> {
 
     public String getEndpointPath() {
         Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
-        if (endpoint == null) {
-            throw new RuntimeException("The class " + clazz.getName() + " was used as an entity but was not annotated with @Endpoint.");
-        }
         return endpoint.path();
     }
 

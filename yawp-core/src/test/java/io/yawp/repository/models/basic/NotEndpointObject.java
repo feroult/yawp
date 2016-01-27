@@ -1,18 +1,18 @@
 package io.yawp.repository.models.basic;
 
 import io.yawp.repository.IdRef;
+import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
-import io.yawp.repository.annotations.Kind;
 import io.yawp.repository.annotations.ParentId;
 
-@Kind("not_endpoint_object_kind")
+@Endpoint(kind = "not_endpoint_object_kind")
 public class NotEndpointObject {
 
     @Id
     private IdRef<NotEndpointObject> id;
 
     @ParentId
-    private IdRef<?> parentId;
+    private IdRef<BasicObject> parentId;
 
     private String name;
 
@@ -31,11 +31,11 @@ public class NotEndpointObject {
         this.id = id;
     }
 
-    public IdRef<?> getParentId() {
+    public IdRef<BasicObject> getParentId() {
         return parentId;
     }
 
-    public void setParentId(IdRef<?> parentId) {
+    public void setParentId(IdRef<BasicObject> parentId) {
         this.parentId = parentId;
     }
 

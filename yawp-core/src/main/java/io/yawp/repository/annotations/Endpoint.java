@@ -9,10 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface Endpoint {
 
-    String path();
+    String path() default "";
 
-    @Deprecated boolean index() default true;
-
-    @Deprecated boolean update() default true;
-
+    String kind() default "";
 }

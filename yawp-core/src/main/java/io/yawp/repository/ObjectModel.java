@@ -48,7 +48,7 @@ public class ObjectModel {
     }
 
     public boolean hasParent() {
-        return getParentClazz() != null;
+        return getParentField() != null;
     }
 
     public ObjectModel getParentModel() {

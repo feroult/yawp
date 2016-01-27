@@ -171,30 +171,12 @@ public class RepositoryTest extends EndpointTestCase {
     @Test
     public void testSaveForNotEndpointObjects() {
         NotEndpointObject object = new NotEndpointObject("xpto");
+        object.setParentId(id(BasicObject.class, 1L));
         yawp.save(object);
 
         NotEndpointObject retrievedObject = yawp(NotEndpointObject.class).only();
         assertEquals("xpto", retrievedObject.getName());
-    }
-
-
-    @Test
-    public void testNotEndpointObjectsWithDifferentParents() {
-        IdRef<BasicObject> parentId1 = id(BasicObject.class, 1L);
-        NotEndpointObject child1 = new NotEndpointObject("xpto1");
-        child1.setParentId(parentId1);
-        yawp.save(child1);
-
-        IdRef<HookedObject> parentId2 = id(HookedObject.class, 1L);
-        NotEndpointObject child2 = new NotEndpointObject("xpto2");
-        child2.setParentId(parentId2);
-        yawp.save(child2);
-
-        NotEndpointObject retrievedObject1 = yawp(NotEndpointObject.class).from(parentId1).only();
-        assertEquals("xpto1", retrievedObject1.getName());
-
-        NotEndpointObject retrievedObject2 = yawp(NotEndpointObject.class).from(parentId2).only();
-        assertEquals("xpto2", retrievedObject2.getName());
+        assertEquals(id(BasicObject.class, 1L), retrievedObject.getParentId());
     }
 
 

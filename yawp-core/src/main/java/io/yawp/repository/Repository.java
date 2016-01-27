@@ -123,7 +123,7 @@ public class Repository {
     private void saveInternal(Object object) {
         driver().persistence().save(object);
         // TODO: pipes - Deal with transactions. Pipes should be transactional with saving.
-        RepositoryPipes.save(this, object);
+        //RepositoryPipes.save(this, object);
     }
 
     private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {

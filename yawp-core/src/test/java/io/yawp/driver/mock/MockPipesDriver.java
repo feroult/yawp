@@ -34,7 +34,7 @@ public class MockPipesDriver implements PipesDriver {
 
         for (IdRef<?> sinkId : sinks) {
             Object sink = fetchOrCreateSink(sinkId);
-            pipe.reflux(sink, sinkId);
+            pipe.reflux(sink, sourceId);
             r.driver().persistence().save(sink);
         }
     }

@@ -34,13 +34,8 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
         yawp.save(createObjectWithId(object1Id, "xpto"));
         yawp.save(new BasicObject("xpto"));
 
-        BasicObjectCounter counter;
-
-        counter = yawp(BasicObjectCounter.class).only();
-        assertEquals((Integer) 2, counter.getCount());
-
         yawp.destroy(object1Id);
-        counter = yawp(BasicObjectCounter.class).only();
+        BasicObjectCounter counter = yawp(BasicObjectCounter.class).only();
         assertEquals((Integer) 1, counter.getCount());
     }
 
@@ -59,6 +54,28 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
         assertEquals((Integer) 3, counter.getCount());
         assertEquals((Integer) 1, counter.getCountGroupA());
         assertEquals((Integer) 1, counter.getCountGroupB());
+    }
+
+
+    @Test
+    public void testCountByAttributeIncrementAndDecrement() {
+        if (pipesDriverNotImplemented()) {
+            return;
+        }
+
+        IdRef<BasicObject> objectInGroupBId = id(BasicObject.class, 1L);
+
+        yawp.save(new BasicObject("group-a"));
+        yawp.save(createObjectWithId(objectInGroupBId, "group-b"));
+        yawp.save(new BasicObject("xpto"));
+
+        yawp.destroy(objectInGroupBId);
+
+        BasicObjectCounter counter = yawp(BasicObjectCounter.class).only();
+
+        assertEquals((Integer) 2, counter.getCount());
+        assertEquals((Integer) 1, counter.getCountGroupA());
+        assertEquals((Integer) 0, counter.getCountGroupB());
     }
 
     private BasicObject createObjectWithId(IdRef<BasicObject> object1Id, String name) {

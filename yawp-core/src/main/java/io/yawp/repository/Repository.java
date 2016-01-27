@@ -122,6 +122,7 @@ public class Repository {
 
     private void saveInternal(Object object) {
         driver().persistence().save(object);
+        
         // TODO: pipes - Deal with transactions. Pipes should be transactional with saving.
         RepositoryPipes.save(this, object);
     }
@@ -155,11 +156,12 @@ public class Repository {
     public void destroy(IdRef<?> id) {
         namespace.set(id.getClazz());
         try {
+            // TODO: pipes - Deal with transactions. Pipes should be transactional with saving.
+            RepositoryPipes.destroy(this, id);
+
             RepositoryHooks.beforeDestroy(this, id);
             driver().persistence().destroy(id);
             RepositoryHooks.afterDestroy(this, id);
-            // TODO: pipes - Deal with transactions. Pipes should be transactional with saving.
-            RepositoryPipes.destroy(this, id);
         } finally {
             namespace.reset();
         }

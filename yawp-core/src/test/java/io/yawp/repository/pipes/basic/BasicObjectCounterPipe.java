@@ -33,6 +33,16 @@ public class BasicObjectCounterPipe extends Pipe<BasicObject, BasicObjectCounter
     @Override
     public void reflux(BasicObjectCounter counter, IdRef<BasicObject> objectId) {
         counter.dec();
+
+        BasicObject object = objectId.fetch();
+
+        if (isGroup(object, "group-a")) {
+            counter.decGroupA();
+        }
+
+        if (isGroup(object, "group-b")) {
+            counter.decGroupB();
+        }
     }
 
     private boolean isGroup(BasicObject object, String groupName) {

@@ -1,5 +1,6 @@
 package io.yawp.commons.utils;
 
+import io.yawp.driver.api.DriverNotImplementedException;
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.driver.api.testing.TestHelperFactory;
 import io.yawp.repository.tools.scanner.RepositoryScanner;
@@ -42,4 +43,15 @@ public class EndpointTestCase extends Feature {
         helper.tearDown();
         TestLoginManager.logout();
     }
+
+    protected boolean pipesDriverNotImplemented() {
+        // TODO: pipes - remove this
+        try {
+            yawp.driver().pipes();
+            return false;
+        } catch (DriverNotImplementedException e) {
+            return true;
+        }
+    }
+
 }

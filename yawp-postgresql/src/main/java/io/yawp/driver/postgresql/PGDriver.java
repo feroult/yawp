@@ -48,7 +48,7 @@ public class PGDriver implements Driver {
 
     @Override
     public PipesDriver pipes() {
-        return null;
+        throw new DriverNotImplementedException();
     }
 
 }

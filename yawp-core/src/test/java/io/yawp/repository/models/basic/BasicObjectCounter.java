@@ -11,6 +11,8 @@ public class BasicObjectCounter {
     private IdRef<BasicObjectCounter> id;
 
     private Integer count = 0;
+    private Integer countGroupA = 0;
+    private Integer countGroupB = 0;
 
     public IdRef<BasicObjectCounter> getId() {
         return id;
@@ -28,11 +30,43 @@ public class BasicObjectCounter {
         this.count = count;
     }
 
+    public Integer getCountGroupA() {
+        return countGroupA;
+    }
+
+    public Integer getCountGroupB() {
+        return countGroupB;
+    }
+
+    public void setCountGroupA(Integer countGroupA) {
+        this.countGroupA = countGroupA;
+    }
+
+    public void setCountGroupB(Integer countGroupB) {
+        this.countGroupB = countGroupB;
+    }
+
     public void inc() {
         count++;
     }
 
     public void dec() {
         count--;
+    }
+
+    public void incGroupA() {
+        countGroupA++;
+    }
+
+    public void decGroupA() {
+        countGroupA--;
+    }
+
+    public void incGroupB() {
+        countGroupB++;
+    }
+
+    public void decGroupB() {
+        countGroupB--;
     }
 }

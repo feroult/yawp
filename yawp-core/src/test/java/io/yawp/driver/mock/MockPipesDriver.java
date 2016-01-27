@@ -21,9 +21,20 @@ public class MockPipesDriver implements PipesDriver {
     public void save(Pipe pipe, Object object) {
         Set<IdRef<?>> sinks = pipe.getSinks();
 
-        for (IdRef<?> id : sinks) {
-            Object sink = fetchOrCreateSink(id);
+        for (IdRef<?> sinkId : sinks) {
+            Object sink = fetchOrCreateSink(sinkId);
             pipe.flux(object, sink);
+            r.driver().persistence().save(sink);
+        }
+    }
+
+    @Override
+    public void destroy(Pipe pipe, IdRef<?> sourceId) {
+        Set<IdRef<?>> sinks = pipe.getSinks();
+
+        for (IdRef<?> sinkId : sinks) {
+            Object sink = fetchOrCreateSink(sinkId);
+            pipe.reflux(sink, sinkId);
             r.driver().persistence().save(sink);
         }
     }

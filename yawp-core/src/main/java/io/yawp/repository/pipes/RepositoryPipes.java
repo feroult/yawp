@@ -1,20 +1,36 @@
 package io.yawp.repository.pipes;
 
+import io.yawp.driver.api.DriverNotImplementedException;
+import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 
 public class RepositoryPipes {
 
     public static void save(Repository r, Object object) {
-        Class<?> endpointClazz = object.getClass();
+        try {
+            Class<?> endpointClazz = object.getClass();
 
-        if (!isEnpointObject(r, endpointClazz)) {
-            return;
+            for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
+                Pipe pipe = createPipeInstance(r, pipeClazz);
+                pipe.configure(object);
+                r.driver().pipes().save(pipe, object);
+            }
+        } catch (DriverNotImplementedException e) {
+            // TODO: pipes - remove this
         }
+    }
 
-        for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
-            Pipe pipe = createPipeInstance(r, pipeClazz);
-            pipe.configure(object);
-            r.driver().pipes().save(pipe, object);
+    public static void destroy(Repository r, IdRef<?> id) {
+        try {
+            Class<?> endpointClazz = id.getClazz();
+
+            for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
+                Pipe pipe = createPipeInstance(r, pipeClazz);
+                pipe.configure(id);
+                r.driver().pipes().destroy(pipe, id);
+            }
+        } catch (DriverNotImplementedException e) {
+            // TODO: pipes - remove this
         }
     }
 
@@ -27,10 +43,6 @@ public class RepositoryPipes {
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static boolean isEnpointObject(Repository r, Class<?> endpointClazz) {
-        return r.getEndpointFeatures(endpointClazz) != null;
     }
 
 }

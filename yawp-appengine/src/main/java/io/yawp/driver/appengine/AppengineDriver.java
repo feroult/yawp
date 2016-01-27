@@ -2,6 +2,7 @@ package io.yawp.driver.appengine;
 
 import io.yawp.driver.api.*;
 import io.yawp.repository.Repository;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class AppengineDriver implements Driver {
 
@@ -44,6 +45,6 @@ public class AppengineDriver implements Driver {
 
     @Override
     public PipesDriver pipes() {
-        return null;
+        throw new DriverNotImplementedException();
     }
 }

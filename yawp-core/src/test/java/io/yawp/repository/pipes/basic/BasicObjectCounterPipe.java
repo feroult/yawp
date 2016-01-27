@@ -4,6 +4,7 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.BasicObjectCounter;
 import io.yawp.repository.pipes.Pipe;
+import io.yawp.repository.pipes.PipeFlow;
 import io.yawp.repository.pipes.Sink;
 import io.yawp.repository.pipes.Source;
 
@@ -19,12 +20,44 @@ public class BasicObjectCounterPipe extends Pipe<BasicObject, BasicObjectCounter
         addSink(id(BasicObjectCounter.class, 1L));
     }
 
+//
+//    public void add() {
+//        counter.inc();
+//    }
+//
+//    public void update() {
+//
+//
+//    }
+//
+//    public void remove() {
+//        counter.dec();
+//    }
+
     @Override
-    public void flux(BasicObject object, BasicObjectCounter counter) {
+    public void flux(final BasicObject object, final BasicObjectCounter counter) {
 
 
-        Source<BasicObject> source = new Source<>();
+        final Source<BasicObject> source = new Source<>();
         Sink<BasicObjectCounter> sink = new Sink<>(counter);
+
+
+        addFlow(new PipeFlow() {
+            @Override
+            public boolean isActive() {
+                return isGroup(object, "group-a");
+            }
+
+            @Override
+            public void flux() {
+                counter.incGroupA();
+            }
+
+            @Override
+            public void reflux() {
+                counter.decGroupB();
+            }
+        });
 
 
         //sink.to("count").inc();
@@ -38,6 +71,7 @@ public class BasicObjectCounterPipe extends Pipe<BasicObject, BasicObjectCounter
         if (sourceAdded()) {
             counter.inc();
         }
+
 
         sink.added().inc();
 
@@ -54,6 +88,10 @@ public class BasicObjectCounterPipe extends Pipe<BasicObject, BasicObjectCounter
             //sink.remember("group").as("group-a").incGroupA();
             counter.incGroupB();
         }
+    }
+
+    private void addFlow(PipeFlow fluxReflux) {
+
     }
 
     @Override

@@ -29,12 +29,12 @@ public class MockPipesDriver implements PipesDriver {
     }
 
     @Override
-    public void destroy(Pipe pipe, IdRef<?> sourceId) {
+    public void destroy(Pipe pipe, Object object) {
         Set<IdRef<?>> sinks = pipe.getSinks();
 
         for (IdRef<?> sinkId : sinks) {
             Object sink = fetchOrCreateSink(sinkId);
-            pipe.reflux(sink, sourceId);
+            pipe.reflux(object, sink);
             r.driver().persistence().save(sink);
         }
     }

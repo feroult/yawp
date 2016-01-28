@@ -20,14 +20,14 @@ public class RepositoryPipes {
         }
     }
 
-    public static void destroy(Repository r, IdRef<?> id) {
+    public static void destroy(Repository r, Object object) {
         try {
-            Class<?> endpointClazz = id.getClazz();
+            Class<?> endpointClazz = object.getClass();
 
             for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
                 Pipe pipe = createPipeInstance(r, pipeClazz);
-                pipe.configure(id);
-                r.driver().pipes().destroy(pipe, id);
+                pipe.configure(object);
+                r.driver().pipes().destroy(pipe, object);
             }
         } catch (DriverNotImplementedException e) {
             // TODO: pipes - remove this

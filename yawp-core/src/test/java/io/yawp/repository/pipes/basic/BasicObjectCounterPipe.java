@@ -1,12 +1,8 @@
 package io.yawp.repository.pipes.basic;
 
-import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.BasicObjectCounter;
 import io.yawp.repository.pipes.Pipe;
-import io.yawp.repository.pipes.PipeFlow;
-import io.yawp.repository.pipes.Sink;
-import io.yawp.repository.pipes.Source;
 
 public class BasicObjectCounterPipe extends Pipe<BasicObject, BasicObjectCounter> {
 
@@ -16,98 +12,21 @@ public class BasicObjectCounterPipe extends Pipe<BasicObject, BasicObjectCounter
     }
 
     @Override
-    public void configure(IdRef<BasicObject> sourceId) {
-        addSink(id(BasicObjectCounter.class, 1L));
-    }
-
-//
-//    public void add() {
-//        counter.inc();
-//    }
-//
-//    public void update() {
-//
-//
-//    }
-//
-//    public void remove() {
-//        counter.dec();
-//    }
-
-    @Override
     public void flux(final BasicObject object, final BasicObjectCounter counter) {
-
-
-        final Source<BasicObject> source = new Source<>();
-        Sink<BasicObjectCounter> sink = new Sink<>(counter);
-
-
-        addFlow(new PipeFlow() {
-            @Override
-            public boolean isActive() {
-                return isGroup(object, "group-a");
-            }
-
-            @Override
-            public void flux() {
-                counter.incGroupA();
-            }
-
-            @Override
-            public void reflux() {
-                counter.decGroupB();
-            }
-        });
-
-
-        //sink.to("count").inc();
-
-
-        //sink.flow("inc");
-
-
-        //sink.
-
-        if (sourceAdded()) {
-            counter.inc();
-        }
-
-
-        sink.added().inc();
-
-
-        //addedInSink(object, "group", "group-a");
+        counter.inc();
 
         if (isGroup(object, "group-a")) {
-            if (!rememberInSink("group", "group-a")) {
-                counter.incGroupA();
-            }
+            counter.incGroupA();
         }
 
         if (isGroup(object, "group-b")) {
-            //sink.remember("group").as("group-a").incGroupA();
             counter.incGroupB();
         }
     }
 
-    private void addFlow(PipeFlow fluxReflux) {
-
-    }
-
     @Override
-    public void reflux(BasicObjectCounter counter, IdRef<BasicObject> objectId) {
-
-        Sink<BasicObjectCounter> sink = new Sink<>(counter);
-
-        if (sourceRemoved()) {
-            counter.dec();
-        }
-
-        //sink.removed().dec();
-
+    public void reflux(BasicObject object, BasicObjectCounter counter) {
         counter.dec();
-
-        BasicObject object = objectId.fetch();
 
         if (isGroup(object, "group-a")) {
             counter.decGroupA();
@@ -116,18 +35,6 @@ public class BasicObjectCounterPipe extends Pipe<BasicObject, BasicObjectCounter
         if (isGroup(object, "group-b")) {
             counter.decGroupB();
         }
-    }
-
-    private boolean rememberInSink(String group, String s) {
-        return false;
-    }
-
-    private boolean sourceRemoved() {
-        return false;
-    }
-
-    private boolean sourceAdded() {
-        return false;
     }
 
     private boolean isGroup(BasicObject object, String groupName) {

@@ -12,11 +12,9 @@ public abstract class Pipe<T, S> extends Feature {
 
     public abstract void configure(T source);
 
-    public abstract void configure(IdRef<T> sourceId);
-
     public abstract void flux(T source, S sink);
 
-    public abstract void reflux(S sink, IdRef<T> sourceId);
+    public abstract void reflux(T source, S sink);
 
     protected void addSink(IdRef<S> id) {
         sinks.add(id);

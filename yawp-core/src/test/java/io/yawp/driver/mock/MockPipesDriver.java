@@ -18,7 +18,7 @@ public class MockPipesDriver implements PipesDriver {
     }
 
     @Override
-    public void save(Pipe pipe, Object object) {
+    public void flux(Pipe pipe, Object object) {
         Set<IdRef<?>> sinks = pipe.getSinks();
 
         for (IdRef<?> sinkId : sinks) {
@@ -29,7 +29,7 @@ public class MockPipesDriver implements PipesDriver {
     }
 
     @Override
-    public void destroy(Pipe pipe, Object object) {
+    public void reflux(Pipe pipe, Object object) {
         Set<IdRef<?>> sinks = pipe.getSinks();
 
         for (IdRef<?> sinkId : sinks) {

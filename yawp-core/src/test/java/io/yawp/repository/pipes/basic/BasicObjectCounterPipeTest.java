@@ -64,7 +64,7 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
             return;
         }
 
-        IdRef<BasicObject> objectInGroupBId = id(BasicObject.class, 1L);
+        IdRef<BasicObject> objectInGroupBId = id(BasicObject.class, 100L);
 
         yawp.save(new BasicObject("group-a"));
         yawp.save(createObjectWithId(objectInGroupBId, "group-b"));
@@ -80,7 +80,6 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
     }
 
     @Test
-    @Ignore
     public void testCountByAttributeDecrementByUpdate() {
         if (pipesDriverNotImplemented()) {
             return;

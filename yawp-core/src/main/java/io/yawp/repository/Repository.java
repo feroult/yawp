@@ -9,6 +9,7 @@ import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.pipes.RepositoryPipes;
+import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.List;
@@ -121,10 +122,27 @@ public class Repository {
     }
 
     private void saveInternal(Object object) {
+        refluxPipes(object);
         driver().persistence().save(object);
+        fluxPipes(object);
+    }
 
+    private void refluxPipes(Object object) {
+        ObjectHolder objectHolder = new ObjectHolder(object);
+        if (!objectHolder.hasId()) {
+            return;
+        }
+        // TODO: pipes - Deal with transactions, load existing object only one time (shield may load it too)
+        try {
+            Object existingObject = objectHolder.getId().fetch();
+            RepositoryPipes.reflux(this, existingObject);
+        } catch (NoResultException e) {
+        }
+    }
+
+    private void fluxPipes(Object object) {
         // TODO: pipes - Deal with transactions. Pipes should be transactional with saving.
-        RepositoryPipes.save(this, object);
+        RepositoryPipes.flux(this, object);
     }
 
     private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
@@ -157,7 +175,7 @@ public class Repository {
         namespace.set(id.getClazz());
         try {
             // TODO: pipes - Deal with transactions. Pipes should be transactional with saving.
-            RepositoryPipes.destroy(this, id.fetch());
+            RepositoryPipes.reflux(this, id.fetch());
 
             RepositoryHooks.beforeDestroy(this, id);
             driver().persistence().destroy(id);

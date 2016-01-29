@@ -4,7 +4,7 @@ import io.yawp.repository.pipes.Pipe;
 
 public interface PipesDriver {
 
-    void save(Pipe pipe, Object object);
+    void flux(Pipe pipe, Object object);
 
-    void destroy(Pipe pipe, Object source);
+    void reflux(Pipe pipe, Object source);
 }

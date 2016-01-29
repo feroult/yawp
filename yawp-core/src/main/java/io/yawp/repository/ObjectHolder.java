@@ -47,6 +47,10 @@ public class ObjectHolder {
         }
     }
 
+    public boolean hasId() {
+        return getId() != null;
+    }
+
     public void setParentId(IdRef<?> parentId) {
         Field parentIdField = model.getParentField();
         if (parentIdField == null) {
@@ -78,5 +82,4 @@ public class ObjectHolder {
             throw new RuntimeException(e);
         }
     }
-
 }

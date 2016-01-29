@@ -1,33 +1,32 @@
 package io.yawp.repository.pipes;
 
 import io.yawp.driver.api.DriverNotImplementedException;
-import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 
 public class RepositoryPipes {
 
-    public static void save(Repository r, Object object) {
+    public static void flux(Repository r, Object object) {
         try {
             Class<?> endpointClazz = object.getClass();
 
             for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
                 Pipe pipe = createPipeInstance(r, pipeClazz);
                 pipe.configure(object);
-                r.driver().pipes().save(pipe, object);
+                r.driver().pipes().flux(pipe, object);
             }
         } catch (DriverNotImplementedException e) {
             // TODO: pipes - remove this
         }
     }
 
-    public static void destroy(Repository r, Object object) {
+    public static void reflux(Repository r, Object object) {
         try {
             Class<?> endpointClazz = object.getClass();
 
             for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
                 Pipe pipe = createPipeInstance(r, pipeClazz);
                 pipe.configure(object);
-                r.driver().pipes().destroy(pipe, object);
+                r.driver().pipes().reflux(pipe, object);
             }
         } catch (DriverNotImplementedException e) {
             // TODO: pipes - remove this

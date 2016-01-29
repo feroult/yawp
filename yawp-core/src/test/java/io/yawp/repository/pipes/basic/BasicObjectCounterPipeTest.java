@@ -21,7 +21,6 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
         yawp.save(new BasicObject("xpto"));
 
         BasicObjectCounter counter = yawp(BasicObjectCounter.class).only();
-
         assertEquals((Integer) 2, counter.getCount());
     }
 
@@ -35,8 +34,14 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
         yawp.save(createObjectWithId(object1Id, "xpto"));
         yawp.save(new BasicObject("xpto"));
 
+        BasicObjectCounter counter;
+
+        counter = yawp(BasicObjectCounter.class).only();
+        assertEquals((Integer) 2, counter.getCount());
+        
         yawp.destroy(object1Id);
-        BasicObjectCounter counter = yawp(BasicObjectCounter.class).only();
+
+        counter = yawp(BasicObjectCounter.class).only();
         assertEquals((Integer) 1, counter.getCount());
     }
 
@@ -70,10 +75,16 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
         yawp.save(createObjectWithId(objectInGroupBId, "group-b"));
         yawp.save(new BasicObject("xpto"));
 
+        BasicObjectCounter counter;
+
+        counter = yawp(BasicObjectCounter.class).only();
+        assertEquals((Integer) 3, counter.getCount());
+        assertEquals((Integer) 1, counter.getCountGroupA());
+        assertEquals((Integer) 1, counter.getCountGroupB());
+
         yawp.destroy(objectInGroupBId);
 
-        BasicObjectCounter counter = yawp(BasicObjectCounter.class).only();
-
+        counter = yawp(BasicObjectCounter.class).only();
         assertEquals((Integer) 2, counter.getCount());
         assertEquals((Integer) 1, counter.getCountGroupA());
         assertEquals((Integer) 0, counter.getCountGroupB());
@@ -91,11 +102,17 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
         yawp.save(objectInGroupB);
         yawp.save(new BasicObject("xpto"));
 
+        BasicObjectCounter counter;
+
+        counter = yawp(BasicObjectCounter.class).only();
+        assertEquals((Integer) 3, counter.getCount());
+        assertEquals((Integer) 1, counter.getCountGroupA());
+        assertEquals((Integer) 1, counter.getCountGroupB());
+
         objectInGroupB.setStringValue("group-a");
         yawp.save(objectInGroupB);
 
-        BasicObjectCounter counter = yawp(BasicObjectCounter.class).only();
-
+        counter = yawp(BasicObjectCounter.class).only();
         assertEquals((Integer) 3, counter.getCount());
         assertEquals((Integer) 2, counter.getCountGroupA());
         assertEquals((Integer) 0, counter.getCountGroupB());

@@ -21,7 +21,12 @@
         }
     }
 
+    function skip() {
+
+    }
+
     t.moduledef = moduledef;
+    t.skip = skip;
 
     t.isPhantomJS = function() {
         return navigator.userAgent.indexOf("PhantomJS") > 0;

@@ -16,7 +16,7 @@ import org.apache.commons.collections.map.LRUMap;
 
 public class MockStore {
 
-    private static Map<NamespacedIdRef, Object> store = new LinkedHashMap<NamespacedIdRef, Object>();
+    private static Map<NamespacedIdRef, Object> store = new LinkedHashMap<>();
 
     private static long nextId = 1;
 

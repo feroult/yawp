@@ -4,12 +4,15 @@ import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.BasicObjectCounter;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 
 public class BasicObjectCounterPipeTest extends EndpointTestCase {
+
+    private String[] groups = new String[]{"group-a", "group-b"};
 
     @Test
     public void testOnlyIncrement() {
@@ -30,16 +33,15 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
             return;
         }
 
-        IdRef<BasicObject> object1Id = id(BasicObject.class, 1L);
-        yawp.save(createObjectWithId(object1Id, "xpto"));
+        IdRef<BasicObject> object100Id = saveObjectInGroup(100L, "xpto");
         yawp.save(new BasicObject("xpto"));
 
         BasicObjectCounter counter;
 
         counter = yawp(BasicObjectCounter.class).only();
         assertEquals((Integer) 2, counter.getCount());
-        
-        yawp.destroy(object1Id);
+
+        yawp.destroy(object100Id);
 
         counter = yawp(BasicObjectCounter.class).only();
         assertEquals((Integer) 1, counter.getCount());
@@ -69,10 +71,8 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
             return;
         }
 
-        IdRef<BasicObject> objectInGroupBId = id(BasicObject.class, 100L);
-
         yawp.save(new BasicObject("group-a"));
-        yawp.save(createObjectWithId(objectInGroupBId, "group-b"));
+        IdRef<BasicObject> objectInGroupBId = saveObjectInGroup(100L, "group-b");
         yawp.save(new BasicObject("xpto"));
 
         BasicObjectCounter counter;
@@ -118,10 +118,18 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
         assertEquals((Integer) 0, counter.getCountGroupB());
     }
 
-    private BasicObject createObjectWithId(IdRef<BasicObject> object1Id, String name) {
-        BasicObject object1 = new BasicObject(name);
-        object1.setId(object1Id);
-        return object1;
+    private IdRef<BasicObject> saveObjectInGroup(long idAsLong, String group) {
+        IdRef<BasicObject> id = id(BasicObject.class, idAsLong);
+        BasicObject object = new BasicObject();
+        object.setId(id);
+        object.setStringValue(group);
+        yawp.save(object);
+        return id;
+    }
+
+    private int random(int minimum, int maximum) {
+        Random rand = new Random();
+        return minimum + rand.nextInt((maximum - minimum) + 1);
     }
 
 }

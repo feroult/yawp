@@ -11,10 +11,10 @@ import io.yawp.driver.postgresql.datastore.FalsePredicateException;
 import io.yawp.driver.postgresql.datastore.Key;
 import io.yawp.driver.postgresql.datastore.Query;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
-import io.yawp.repository.FieldModel;
+import io.yawp.repository.models.FieldModel;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectHolder;
-import io.yawp.repository.ObjectModel;
+import io.yawp.repository.models.ObjectHolder;
+import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.QueryBuilder;
 

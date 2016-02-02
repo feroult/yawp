@@ -4,7 +4,7 @@ import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.driver.postgresql.datastore.Key;
 import io.yawp.driver.postgresql.datastore.KeyFactory;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectModel;
+import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.Repository;
 
 public class IdRefToKey {

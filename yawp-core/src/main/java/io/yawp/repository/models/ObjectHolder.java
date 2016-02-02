@@ -1,4 +1,6 @@
-package io.yawp.repository;
+package io.yawp.repository.models;
+
+import io.yawp.repository.IdRef;
 
 import java.lang.reflect.Field;
 

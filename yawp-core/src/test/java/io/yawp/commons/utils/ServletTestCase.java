@@ -2,7 +2,7 @@ package io.yawp.commons.utils;
 
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.RequestContext;
-import io.yawp.repository.ObjectHolder;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.Repository;
 import io.yawp.servlet.EndpointServlet;
 import org.junit.Before;

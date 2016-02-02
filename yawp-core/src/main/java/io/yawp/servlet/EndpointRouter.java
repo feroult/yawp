@@ -7,6 +7,7 @@ import io.yawp.commons.http.RequestContext;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.*;
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.servlet.rest.RestAction;
 import org.apache.commons.lang3.StringUtils;
 

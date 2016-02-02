@@ -9,6 +9,10 @@ public class RepositoryPipes {
         try {
             Class<?> endpointClazz = object.getClass();
 
+            if (r.getFeatures() == null) {
+                return;
+            }
+
             for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
                 Pipe pipe = createPipeInstance(r, pipeClazz);
                 pipe.configure(object);
@@ -22,6 +26,10 @@ public class RepositoryPipes {
     public static void reflux(Repository r, Object object) {
         try {
             Class<?> endpointClazz = object.getClass();
+
+            if (r.getFeatures() == null) {
+                return;
+            }
 
             for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
                 Pipe pipe = createPipeInstance(r, pipeClazz);

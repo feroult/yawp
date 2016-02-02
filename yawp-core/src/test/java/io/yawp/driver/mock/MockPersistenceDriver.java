@@ -3,7 +3,7 @@ package io.yawp.driver.mock;
 import io.yawp.driver.api.PersistenceDriver;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectHolder;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.Repository;
 
 import java.util.concurrent.Future;

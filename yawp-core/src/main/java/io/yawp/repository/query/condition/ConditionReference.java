@@ -2,8 +2,8 @@ package io.yawp.repository.query.condition;
 
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectHolder;
-import io.yawp.repository.ObjectModel;
+import io.yawp.repository.models.ObjectHolder;
+import io.yawp.repository.models.ObjectModel;
 
 public class ConditionReference {
 

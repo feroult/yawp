@@ -3,8 +3,7 @@ package io.yawp.commons.config;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Map;
 
 public class Config {
@@ -15,24 +14,18 @@ public class Config {
 
     private Map<String, FeaturesConfig> features;
 
-    private Map<String, RepositoryConfig> repositories;
-
     public static Config load() {
-        return loadYamlFrom(file(DEFAULT_CONFIG));
+        return loadYamlFrom(stream(DEFAULT_CONFIG));
     }
 
-    private static String file(String uri) {
-        return Config.class.getResource(uri).getFile();
+    private static InputStream stream(String uri) {
+        return Config.class.getResourceAsStream(uri);
     }
 
-    private static Config loadYamlFrom(String file) {
-        try {
-            Constructor constructor = new Constructor(Config.class);
-            Yaml yaml = new Yaml(constructor);
-            return (Config) yaml.load(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+    private static Config loadYamlFrom(InputStream stream) {
+        Constructor constructor = new Constructor(Config.class);
+        Yaml yaml = new Yaml(constructor);
+        return (Config) yaml.load(stream);
     }
 
     public Map<String, FeaturesConfig> getFeatures() {
@@ -43,23 +36,8 @@ public class Config {
         this.features = features;
     }
 
-    public Map<String, RepositoryConfig> getRepositories() {
-        return repositories;
-    }
-
-    public void setRepositories(Map<String, RepositoryConfig> repositories) {
-        this.repositories = repositories;
-    }
-
     public FeaturesConfig getDefaultFeatures() {
         return features.get(DEFAULT_KEY);
     }
 
-    public RepositoryConfig getDefaultRepository() {
-        return repositories.get(DEFAULT_KEY);
-    }
-
-    public FeaturesConfig getDefaultRepositoryFeatures() {
-        return features.get(repositories.get(DEFAULT_KEY).getFeatures());
-    }
 }

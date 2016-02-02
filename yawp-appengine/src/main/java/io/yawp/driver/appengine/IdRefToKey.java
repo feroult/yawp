@@ -2,7 +2,7 @@ package io.yawp.driver.appengine;
 
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectModel;
+import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.Repository;
 
 import com.google.appengine.api.datastore.Key;

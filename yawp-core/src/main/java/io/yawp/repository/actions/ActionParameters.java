@@ -3,7 +3,7 @@ package io.yawp.repository.actions;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectModel;
+import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.Repository;
 
 import java.lang.reflect.Method;

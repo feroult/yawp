@@ -2,7 +2,7 @@ package io.yawp.driver.mock;
 
 import io.yawp.driver.api.PipesDriver;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectHolder;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.Repository;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.query.NoResultException;

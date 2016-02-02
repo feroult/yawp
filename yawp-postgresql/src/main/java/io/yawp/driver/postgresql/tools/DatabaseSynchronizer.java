@@ -4,7 +4,7 @@ import io.yawp.driver.postgresql.configuration.DataSourceInfo;
 import io.yawp.driver.postgresql.configuration.JettyConfiguration;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
-import io.yawp.repository.ObjectModel;
+import io.yawp.repository.models.ObjectModel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

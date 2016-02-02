@@ -5,7 +5,7 @@ import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.driver.postgresql.IdRefToKey;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
-import io.yawp.repository.FieldModel;
+import io.yawp.repository.models.FieldModel;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Namespace;
 import io.yawp.repository.Repository;

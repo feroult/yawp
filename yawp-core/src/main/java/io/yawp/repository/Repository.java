@@ -8,6 +8,7 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.pipes.RepositoryPipes;
 import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.query.QueryBuilder;
@@ -15,7 +16,7 @@ import io.yawp.repository.query.QueryBuilder;
 import java.util.List;
 import java.util.Map;
 
-public class Repository {
+public class Repository implements RepositoryApi {
 
     private RepositoryFeatures repositoryFeatures;
 
@@ -43,29 +44,35 @@ public class Repository {
         this.namespace = new Namespace(ns, driver().namespace());
     }
 
+    @Override
     public Repository namespace(String ns) {
         namespace.setNs(ns);
         return this;
     }
 
+    @Override
     public Namespace namespace() {
         return namespace;
     }
 
+    @Override
     public String currentNamespace() {
         return namespace.getNs();
     }
 
+    @Override
     public Repository setFeatures(RepositoryFeatures repositoryFeatures) {
         this.repositoryFeatures = repositoryFeatures;
         return this;
     }
 
+    @Override
     public Repository setRequestContext(RequestContext requestContext) {
         this.requestContext = requestContext;
         return this;
     }
 
+    @Override
     public Driver driver() {
         if (driver != null) {
             return driver;
@@ -74,10 +81,12 @@ public class Repository {
         return driver;
     }
 
+    @Override
     public AsyncRepository async() {
         return new AsyncRepository(this);
     }
 
+    @Override
     public <T> T saveWithHooks(T object) {
         namespace.set(object.getClass());
         try {
@@ -90,6 +99,7 @@ public class Repository {
         return object;
     }
 
+    @Override
     public <T> T save(T object) {
         namespace.set(object.getClass());
         try {
@@ -151,6 +161,7 @@ public class Repository {
         return futureObject;
     }
 
+    @Override
     public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, String json, Map<String, String> params) {
         namespace.set(clazz);
         try {
@@ -161,16 +172,19 @@ public class Repository {
         }
     }
 
+    @Override
     public <T> QueryBuilder<T> queryWithHooks(Class<T> clazz) {
         QueryBuilder<T> q = QueryBuilder.q(clazz, this);
         RepositoryHooks.beforeQuery(this, q, clazz);
         return q;
     }
 
+    @Override
     public <T> QueryBuilder<T> query(Class<T> clazz) {
         return QueryBuilder.q(clazz, this);
     }
 
+    @Override
     public void destroy(IdRef<?> id) {
         namespace.set(id.getClazz());
         try {
@@ -185,43 +199,48 @@ public class Repository {
         }
     }
 
+    @Override
     public Class<?> getClazzByKind(String kind) {
         return repositoryFeatures.getClazzByKind(kind);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> EndpointFeatures<T> getEndpointFeatures(Class<T> endpoint) {
         return (EndpointFeatures<T>) repositoryFeatures.getByClazz(endpoint);
     }
 
+    @Override
     public EndpointFeatures<?> getEndpointFeatures(String endpointPath) {
         return repositoryFeatures.getByPath(endpointPath);
     }
 
+    @Override
     public RepositoryFeatures getFeatures() {
         return repositoryFeatures;
     }
 
-    public Driver getDriver() {
-        return driver();
-    }
-
+    @Override
     public <T> IdRef<T> parseId(Class<T> clazz, String idString) {
         return IdRef.parse(clazz, this, idString);
     }
 
+    @Override
     public <T> List<IdRef<T>> parseIds(Class<T> clazz, List<String> idsString) {
         return IdRef.parse(clazz, this, idsString);
     }
 
+    @Override
     public void begin() {
         tx = driver().transaction().begin();
     }
 
+    @Override
     public void beginX() {
         tx = driver().transaction().beginX();
     }
 
+    @Override
     public void rollback() {
         if (tx == null) {
             throw new RuntimeException("No transaction in progress");
@@ -231,6 +250,7 @@ public class Repository {
         tx = null;
     }
 
+    @Override
     public void commit() {
         if (tx == null) {
             throw new RuntimeException("No transaction in progress");
@@ -239,14 +259,17 @@ public class Repository {
         tx = null;
     }
 
+    @Override
     public boolean isTransationInProgress() {
         return tx != null;
     }
 
+    @Override
     public TransactionDriver currentTransaction() {
         return this.tx;
     }
 
+    @Override
     public RequestContext getRequestContext() {
         return requestContext;
     }

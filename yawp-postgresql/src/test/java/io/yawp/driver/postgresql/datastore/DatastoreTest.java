@@ -12,7 +12,7 @@ import io.yawp.driver.postgresql.datastore.models.Parent;
 import io.yawp.driver.postgresql.configuration.InitialContextSetup;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.tools.DatabaseSynchronizer;
-import io.yawp.repository.ObjectModel;
+import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.Arrays;

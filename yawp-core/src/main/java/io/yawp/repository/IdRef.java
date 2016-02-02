@@ -2,6 +2,7 @@ package io.yawp.repository;
 
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.QueryBuilder;
 import org.apache.commons.lang3.StringUtils;
 

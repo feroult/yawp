@@ -6,6 +6,7 @@ import io.yawp.commons.utils.Environment;
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.driver.api.testing.TestHelperFactory;
 import io.yawp.repository.*;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.tools.scanner.RepositoryScanner;
 import io.yawp.servlet.EndpointServlet;
 import org.junit.After;

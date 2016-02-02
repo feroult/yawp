@@ -1,6 +1,7 @@
 package io.yawp.repository;
 
 import io.yawp.commons.config.Config;
+import io.yawp.commons.config.FeaturesConfig;
 import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.Driver;
 import io.yawp.driver.api.TransactionDriver;
@@ -37,8 +38,9 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
 
         synchronized (yawp) {
             Config config = Config.load();
-            RepositoryScanner scanner = new RepositoryScanner(config.getDefaultFeatures().getPackagePrefix());
-            scanner.enableHooks(config.getDefaultFeatures().isEnableHooks());
+            FeaturesConfig featuresConfig = config.getDefaultFeatures();
+            RepositoryScanner scanner = new RepositoryScanner(featuresConfig.getPackagePrefix());
+            scanner.enableHooks(featuresConfig.isEnableHooks());
             features = scanner.scan();
         }
     }

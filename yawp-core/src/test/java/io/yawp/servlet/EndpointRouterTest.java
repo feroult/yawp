@@ -8,7 +8,6 @@ import io.yawp.repository.actions.ActionKey;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
@@ -35,13 +34,13 @@ public class EndpointRouterTest extends ServletTestCase {
         }
 
         @Override
-        public EndpointFeatures<?> get(String endpointPath) {
-            return features.get(endpointPath);
+        public EndpointFeatures<?> getByPath(String endpointPath) {
+            return features.getByPath(endpointPath);
         }
 
         @Override
-        public EndpointFeatures<?> get(Class<?> clazz) {
-            return features.get(clazz);
+        public EndpointFeatures<?> getByClazz(Class<?> clazz) {
+            return features.getByClazz(clazz);
         }
     }
 

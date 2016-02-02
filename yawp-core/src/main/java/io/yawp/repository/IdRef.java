@@ -4,12 +4,15 @@ import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.QueryBuilder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class IdRef<T> implements Comparable<IdRef<T>> {
+public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
+
+    private static final long serialVersionUID = 6880768661363604972L;
 
     private Repository r;
 
@@ -195,7 +198,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
     }
 
     private static Class<?> getIdRefClazz(Repository r, String endpointPath) {
-        return r.getFeatures().get(endpointPath).getClazz();
+        return r.getFeatures().getByPath(endpointPath).getClazz();
     }
 
     private static boolean isActionOrCollection(Repository r, HttpVerb verb, String[] parts, int i) {
@@ -322,7 +325,7 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
         if (parentId != null) {
             sb.append(parentId.toString());
         }
-        sb.append(r.getFeatures().get(clazz).getEndpointPath());
+        sb.append(r.getFeatures().getByClazz(clazz).getEndpointPath());
         sb.append("/");
         sb.append(id != null ? id : name);
         return sb.toString();

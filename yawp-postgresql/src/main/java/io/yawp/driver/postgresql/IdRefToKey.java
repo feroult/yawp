@@ -8,6 +8,7 @@ import io.yawp.repository.ObjectModel;
 import io.yawp.repository.Repository;
 
 public class IdRefToKey {
+
     public static Key toKey(Repository r, IdRef<?> id) {
         return convertWithinRightNamespace(r, id.getClazz(), id);
     }
@@ -21,6 +22,7 @@ public class IdRefToKey {
                 return KeyFactory.createKey(parent, kind, id.getName());
             }
             return KeyFactory.createKey(parent, kind, id.getId());
+
         } finally {
             r.namespace().reset();
         }
@@ -37,9 +39,16 @@ public class IdRefToKey {
         }
 
         if (model.hasParent()) {
-            idRef.setParentId(toIdRef(r, key.getParent(), model.getParentModel()));
+            idRef.setParentId(toIdRef(r, key.getParent(), createParentModel(r, key)));
         }
         return idRef;
     }
 
+    private static ObjectModel createParentModel(Repository r, Key key) {
+        String parentKind = key.getParent().getKind();
+        Class<?> parentClazz = r.getClazzByKind(parentKind);
+        return new ObjectModel(parentClazz);
+    }
+
 }
+

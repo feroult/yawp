@@ -83,9 +83,9 @@ public class EndpointRouter {
 
         if (isOverCollection()) {
             if (isCustomAction()) {
-                return features.get("/" + parts[parts.length - 2]).getClazz();
+                return features.getByPath("/" + parts[parts.length - 2]).getClazz();
             }
-            return features.get("/" + parts[parts.length - 1]).getClazz();
+            return features.getByPath("/" + parts[parts.length - 1]).getClazz();
         }
 
         return id.getClazz();

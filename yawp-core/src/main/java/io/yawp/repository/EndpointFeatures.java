@@ -1,5 +1,6 @@
 package io.yawp.repository;
 
+import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.annotations.Endpoint;
@@ -54,6 +55,11 @@ public class EndpointFeatures<T> {
         Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
         return endpoint.path();
     }
+
+    public String getEndpointKind() {
+        return KindResolver.getKindFromClass(clazz);
+    }
+
 
     public ActionMethod getAction(ActionKey key) {
         return actions.get(key);

@@ -154,7 +154,7 @@ public class Repository {
     public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, String json, Map<String, String> params) {
         namespace.set(clazz);
         try {
-            ActionMethod actionMethod = repositoryFeatures.get(clazz).getAction(actionKey);
+            ActionMethod actionMethod = repositoryFeatures.getByClazz(clazz).getAction(actionKey);
             return RepositoryActions.execute(this, actionMethod, id, json, params);
         } finally {
             namespace.reset();
@@ -185,13 +185,17 @@ public class Repository {
         }
     }
 
+    public Class<?> getClazzByKind(String kind) {
+        return repositoryFeatures.getClazzByKind(kind);
+    }
+
     @SuppressWarnings("unchecked")
     public <T> EndpointFeatures<T> getEndpointFeatures(Class<T> endpoint) {
-        return (EndpointFeatures<T>) repositoryFeatures.get(endpoint);
+        return (EndpointFeatures<T>) repositoryFeatures.getByClazz(endpoint);
     }
 
     public EndpointFeatures<?> getEndpointFeatures(String endpointPath) {
-        return repositoryFeatures.get(endpointPath);
+        return repositoryFeatures.getByPath(endpointPath);
     }
 
     public RepositoryFeatures getFeatures() {

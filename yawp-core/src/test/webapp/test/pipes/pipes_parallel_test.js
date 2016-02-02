@@ -25,7 +25,7 @@
         }
 
         const groups = ['group-a', 'group-b'];
-        const MAX = 20;
+        const MAX = 10;
         var count = 0;
 
         function saveObjectsInParallel(callback) {
@@ -37,7 +37,7 @@
                             callback();
                         }
                     });
-                }, i * randomInt(1, 20));
+                }, i * randomInt(1, 50));
             }
         }
 

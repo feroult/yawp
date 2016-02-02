@@ -102,7 +102,7 @@ public abstract class ShieldBase<T> extends Feature {
     }
 
     private Class<?> currentActionClazz() {
-        return yawp.getFeatures().get(endpointClazz).getActionClazz(actionKey);
+        return yawp.getFeatures().getByClazz(endpointClazz).getActionClazz(actionKey);
     }
 
     public final boolean requestHasAnyObject() {

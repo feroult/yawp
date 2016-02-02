@@ -4,6 +4,7 @@ import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.BasicObjectCounter;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Random;

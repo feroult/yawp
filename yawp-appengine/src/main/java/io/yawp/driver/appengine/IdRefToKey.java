@@ -40,9 +40,15 @@ public class IdRefToKey {
         }
 
         if (model.hasParent()) {
-            idRef.setParentId(toIdRef(r, key.getParent(), model.getParentModel()));
+            idRef.setParentId(toIdRef(r, key.getParent(), createParentModel(r, key)));
         }
         return idRef;
+    }
+
+    private static ObjectModel createParentModel(Repository r, Key key) {
+        String parentKind = key.getParent().getKind();
+        Class<?> parentClazz = r.getClazzByKind(parentKind);
+        return new ObjectModel(parentClazz);
     }
 
 }

@@ -13,7 +13,7 @@ public class Config {
 
     private static final String DEFAULT_KEY = "default";
 
-    private Map<String, FeatureConfig> features;
+    private Map<String, FeaturesConfig> features;
 
     private Map<String, RepositoryConfig> repositories;
 
@@ -35,11 +35,11 @@ public class Config {
         }
     }
 
-    public Map<String, FeatureConfig> getFeatures() {
+    public Map<String, FeaturesConfig> getFeatures() {
         return features;
     }
 
-    public void setFeatures(Map<String, FeatureConfig> features) {
+    public void setFeatures(Map<String, FeaturesConfig> features) {
         this.features = features;
     }
 
@@ -51,7 +51,7 @@ public class Config {
         this.repositories = repositories;
     }
 
-    public FeatureConfig getDefaultFeatures() {
+    public FeaturesConfig getDefaultFeatures() {
         return features.get(DEFAULT_KEY);
     }
 
@@ -59,7 +59,7 @@ public class Config {
         return repositories.get(DEFAULT_KEY);
     }
 
-    public FeatureConfig getDefaultRepositoryFeatures() {
+    public FeaturesConfig getDefaultRepositoryFeatures() {
         return features.get(repositories.get(DEFAULT_KEY).getFeatures());
     }
 }

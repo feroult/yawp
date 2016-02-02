@@ -1,6 +1,6 @@
 package io.yawp.commons.config;
 
-public class FeatureConfig {
+public class FeaturesConfig {
 
     private String packagePrefix;
 

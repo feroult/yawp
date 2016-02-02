@@ -1,0 +1,8 @@
+features:
+  default:
+    packagePrefix: io.yawp
+
+repositories:
+  default:
+    features: default
+    enableHooks: true

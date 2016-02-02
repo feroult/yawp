@@ -6,7 +6,7 @@ import io.yawp.commons.utils.JsonUtils;
 public class PatchRestAction extends UpdateRestAction {
 
     @Override
-    protected void beforeShield() {
+    protected void beforeShieldHooks() {
         assert !isRequestBodyJsonArray();
         FacadeUtils.copyOtherProperties(id.fetch(), getObject(), JsonUtils.getProperties(requestJson));
     }

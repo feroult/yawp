@@ -19,28 +19,41 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
     private static RepositoryFeatures features;
 
     public static <T> QueryBuilder<T> yawp(Class<T> clazz) {
-        yawp.init();
+        init();
         return yawp.get().query(clazz);
     }
 
-    private void init() {
+    private static void init() {
         if (yawp.get() != null) {
             return;
         }
-        safeLoadFeatures();
+        if (features == null) {
+            safeLoadFeaturesFromConfig();
+        }
         yawp.set(Repository.r().setFeatures(features));
     }
 
-    private void safeLoadFeatures() {
-        if (features != null) {
+    public static void init(String packagePrefix, boolean enableHooks) {
+        if (yawp.get() != null) {
             return;
         }
+        if (features == null) {
+            safeLoadFeatures(packagePrefix, enableHooks);
+        }
+        yawp.set(Repository.r().setFeatures(features));
+    }
 
+    private static void safeLoadFeaturesFromConfig() {
+        Config config = Config.load();
+        FeaturesConfig featuresConfig = config.getDefaultFeatures();
+
+        safeLoadFeatures(featuresConfig.getPackagePrefix(), featuresConfig.isEnableHooks());
+    }
+
+    private static void safeLoadFeatures(String packagePrefix, boolean enableHooks) {
         synchronized (yawp) {
-            Config config = Config.load();
-            FeaturesConfig featuresConfig = config.getDefaultFeatures();
-            RepositoryScanner scanner = new RepositoryScanner(featuresConfig.getPackagePrefix());
-            scanner.enableHooks(featuresConfig.isEnableHooks());
+            RepositoryScanner scanner = new RepositoryScanner(packagePrefix);
+            scanner.enableHooks(enableHooks);
             features = scanner.scan();
         }
     }

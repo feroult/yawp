@@ -6,8 +6,7 @@ import io.yawp.commons.http.JsonResponse;
 import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.DriverFactory;
 import io.yawp.repository.Repository;
-import io.yawp.repository.RepositoryFeatures;
-import io.yawp.repository.tools.scanner.RepositoryScanner;
+import io.yawp.repository.Yawp;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -20,7 +19,7 @@ public class EndpointServlet extends HttpServlet {
 
     private static final long serialVersionUID = 8155293897299089610L;
 
-    private RepositoryFeatures features;
+    //private RepositoryFeatures features;
 
     private boolean enableHooks = true;
 
@@ -34,7 +33,7 @@ public class EndpointServlet extends HttpServlet {
         super.init(config);
         setWithHooks(config.getInitParameter("enableHooks"));
         setCrossDomain(config.getInitParameter("enableCrossDomain"));
-        scanEndpoints(config.getInitParameter("packagePrefix"));
+        initYawp(config.getInitParameter("packagePrefix"));
     }
 
     private void setWithHooks(String enableHooksParameter) {
@@ -59,11 +58,12 @@ public class EndpointServlet extends HttpServlet {
     }
 
     protected EndpointServlet(String packagePrefix) {
-        scanEndpoints(packagePrefix);
+        initYawp(packagePrefix);
     }
 
-    private void scanEndpoints(String packagePrefix) {
-        features = new RepositoryScanner(packagePrefix).enableHooks(enableHooks).scan();
+    private void initYawp(String packagePrefix) {
+        Yawp.init(packagePrefix, true);
+        //features = new RepositoryScanner(packagePrefix).enableHooks(enableHooks).scan();
     }
 
     protected void response(HttpServletResponse resp, HttpResponse httpResponse) throws IOException {
@@ -104,7 +104,8 @@ public class EndpointServlet extends HttpServlet {
     }
 
     protected Repository getRepository(RequestContext ctx) {
-        return Repository.r().setFeatures(features).setRequestContext(ctx);
+        return Yawp.yawp.setRequestContext(ctx);
+        //return Repository.r().setFeatures(features).setRequestContext(ctx);
     }
 
 }

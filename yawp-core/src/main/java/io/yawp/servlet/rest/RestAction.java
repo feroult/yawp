@@ -94,7 +94,7 @@ public abstract class RestAction {
         this.requestBodyJsonArray = requestBodyJsonArray;
     }
 
-    protected void beforeShield() {
+    protected void beforeShieldHooks() {
         if (objects == null) {
             return;
         }
@@ -121,7 +121,11 @@ public abstract class RestAction {
     }
 
     private void executeShield() {
-        beforeShield();
+        if(!enableHooks) {
+            return;
+        }
+
+        beforeShieldHooks();
 
         if (hasShield()) {
             shield();

@@ -45,7 +45,7 @@ public class AppenginePipesDriver implements PipesDriver {
         payload.setPipeClazz(pipe.getClass());
         payload.setSource(object);
         payload.setSinkId(sinkId);
-        payload.setVersionMarker(marker);
+        payload.setVersionMarkerJson(marker);
         return payload;
     }
 

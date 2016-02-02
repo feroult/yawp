@@ -3,16 +3,13 @@ package io.yawp.repository;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.QueryBuilder;
+import org.apache.commons.lang3.StringUtils;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 
-public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
-
-    private static final long serialVersionUID = 6880768661363604972L;
+public class IdRef<T> implements Comparable<IdRef<T>> {
 
     private Repository r;
 
@@ -330,5 +327,6 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
         sb.append(id != null ? id : name);
         return sb.toString();
     }
+
 
 }

@@ -62,7 +62,7 @@ public class EndpointServlet extends HttpServlet {
     }
 
     private void initYawp(String packagePrefix) {
-        Yawp.init(packagePrefix, true);
+        Yawp.init(packagePrefix);
         //features = new RepositoryScanner(packagePrefix).enableHooks(enableHooks).scan();
     }
 

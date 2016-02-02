@@ -32,21 +32,21 @@ public class EndpointTestCaseBase extends Feature {
     public void setUp() {
         Environment.setIfEmpty(Environment.DEFAULT_TEST_ENVIRONMENT);
 
-        yawp = Repository.r().setFeatures(getFeatures());
+        yawp = initYawp();
         helper = testHelperDriver(yawp);
         helper.setUp();
     }
 
     protected String getAppPackage() {
-        return "io.yawp";
+        return null;
     }
 
-    private RepositoryFeatures getFeatures() {
-        if (features != null) {
-            return features;
+    private Repository initYawp() {
+        String appPackage = getAppPackage();
+        if (appPackage != null) {
+            Yawp.init(appPackage);
         }
-        features = new RepositoryScanner(getAppPackage()).scan();
-        return features;
+        return Yawp.yawp();
     }
 
     private TestHelper testHelperDriver(Repository r) {

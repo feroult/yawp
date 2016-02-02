@@ -34,9 +34,9 @@ public class DatabaseSynchronizerTest extends DatastoreTestCase {
 
     @Test
     public void testCreateTables() {
-        RepositoryFeatures features = new RepositoryScanner(testPackage()).scan();
+//        RepositoryFeatures features = new RepositoryScanner(testPackage()).scan();
         DatabaseSynchronizer dbSynchronizer = new DatabaseSynchronizer();
-        dbSynchronizer.sync(features.getEndpointClazzes());
+        dbSynchronizer.sync(yawp.getFeatures().getEndpointClazzes());
     }
 
 }

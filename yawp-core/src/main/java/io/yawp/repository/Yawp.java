@@ -23,6 +23,11 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
         return yawp.get().query(clazz);
     }
 
+    public static Repository yawp() {
+        init();
+        return yawp.get();
+    }
+
     private static void init() {
         if (yawp.get() != null) {
             return;
@@ -33,12 +38,12 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
         yawp.set(Repository.r().setFeatures(features));
     }
 
-    public static void init(String packagePrefix, boolean enableHooks) {
+    public static void init(String packagePrefix) {
         if (yawp.get() != null) {
             return;
         }
         if (features == null) {
-            safeLoadFeatures(packagePrefix, enableHooks);
+            safeLoadFeatures(packagePrefix, true);
         }
         yawp.set(Repository.r().setFeatures(features));
     }
@@ -50,6 +55,7 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
         safeLoadFeatures(featuresConfig.getPackagePrefix(), featuresConfig.isEnableHooks());
     }
 
+    @SuppressWarnings("deprecation")
     private static void safeLoadFeatures(String packagePrefix, boolean enableHooks) {
         synchronized (yawp) {
             RepositoryScanner scanner = new RepositoryScanner(packagePrefix);

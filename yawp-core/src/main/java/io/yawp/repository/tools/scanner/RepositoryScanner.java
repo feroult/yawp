@@ -26,6 +26,7 @@ public final class RepositoryScanner {
 
     private Map<Class<?>, EndpointTree<?>> trees;
 
+    @Deprecated
     public RepositoryScanner(String packagePrefix) {
         this.endpointsPackage = new Reflections(packagePrefix);
         this.trees = new HashMap<>();
@@ -41,7 +42,7 @@ public final class RepositoryScanner {
         long start = System.currentTimeMillis();
         RepositoryFeatures repositoryFeatures = new RepositoryFeatures(scanAndLoadAll());
         long elapsed = System.currentTimeMillis() - start;
-        LOGGER.info("Yawp! started in " + elapsed + " ms");
+        LOGGER.info("YAWP! started in " + elapsed + " ms");
         return repositoryFeatures;
     }
 

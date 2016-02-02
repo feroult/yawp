@@ -3,6 +3,7 @@ package io.yawp.servlet;
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.utils.ServletTestCase;
 import io.yawp.repository.EndpointFeatures;
+import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
 import org.junit.Before;
@@ -13,6 +14,8 @@ import java.util.HashMap;
 import static org.junit.Assert.*;
 
 public class EndpointRouterTest extends ServletTestCase {
+
+    private Repository yawp;
 
     private class RepositoryFeaturesMock extends RepositoryFeatures {
 
@@ -46,7 +49,8 @@ public class EndpointRouterTest extends ServletTestCase {
 
     @Before
     public void before() {
-        yawp.setFeatures(new RepositoryFeaturesMock(yawp.getFeatures()));
+        yawp = Repository.r().setFeatures(new RepositoryFeaturesMock(super.yawp.getFeatures()));
+        //yawp.setFeatures(new RepositoryFeaturesMock(yawp.getFeatures()));
     }
 
     private EndpointRouter parse(String uri) {

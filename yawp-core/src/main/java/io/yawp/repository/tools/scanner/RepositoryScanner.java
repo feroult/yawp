@@ -26,6 +26,9 @@ public final class RepositoryScanner {
 
     private Map<Class<?>, EndpointTree<?>> trees;
 
+    /**
+     * @deprecated in 2.0 it will be internal
+     */
     @Deprecated
     public RepositoryScanner(String packagePrefix) {
         this.endpointsPackage = new Reflections(packagePrefix);
@@ -33,6 +36,9 @@ public final class RepositoryScanner {
         this.enableHooks = true;
     }
 
+    /**
+     * @deprecated it will be removed in 2.0
+     */
     @Deprecated
     public RepositoryScanner enableHooks(boolean enableHooks) {
         this.enableHooks = enableHooks;

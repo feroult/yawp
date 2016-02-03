@@ -19,8 +19,6 @@ public class EndpointServlet extends HttpServlet {
 
     private static final long serialVersionUID = 8155293897299089610L;
 
-    //private RepositoryFeatures features;
-
     private boolean enableHooks = true;
 
     private boolean enableCrossDomain = false;
@@ -61,9 +59,12 @@ public class EndpointServlet extends HttpServlet {
         initYawp(packagePrefix);
     }
 
+    /**
+     * @deprecated in 2.0, yawp will be configured only by yawp.yml
+     */
+    @Deprecated
     private void initYawp(String packagePrefix) {
         Yawp.init(packagePrefix);
-        //features = new RepositoryScanner(packagePrefix).enableHooks(enableHooks).scan();
     }
 
     protected void response(HttpServletResponse resp, HttpResponse httpResponse) throws IOException {
@@ -105,7 +106,6 @@ public class EndpointServlet extends HttpServlet {
 
     protected Repository getRepository(RequestContext ctx) {
         return Yawp.yawp.setRequestContext(ctx);
-        //return Repository.r().setFeatures(features).setRequestContext(ctx);
     }
 
 }

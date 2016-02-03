@@ -7,6 +7,10 @@ import io.yawp.plugin.base.PluginAbstractMojo;
 
 public abstract class ScaffolderAbstractMojo extends PluginAbstractMojo {
 
+    /**
+     * @deprecated it will be removed in 2.0
+     */
+    @Deprecated
     @Parameter(property = "yawp.package")
     private String yawpPackage;
 

@@ -43,7 +43,7 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
             return;
         }
         if (features == null) {
-            safeLoadFeatures(packagePrefix, true);
+            safeLoadFeatures(packagePrefix);
         }
         yawp.set(Repository.r().setFeatures(features));
     }
@@ -52,14 +52,14 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
         Config config = Config.load();
         FeaturesConfig featuresConfig = config.getDefaultFeatures();
 
-        safeLoadFeatures(featuresConfig.getPackagePrefix(), featuresConfig.isEnableHooks());
+        safeLoadFeatures(featuresConfig.getPackagePrefix());
     }
 
     @SuppressWarnings("deprecation")
-    private static void safeLoadFeatures(String packagePrefix, boolean enableHooks) {
+    private static void safeLoadFeatures(String packagePrefix) {
         synchronized (yawp) {
             RepositoryScanner scanner = new RepositoryScanner(packagePrefix);
-            scanner.enableHooks(enableHooks);
+            scanner.enableHooks(true);
             features = scanner.scan();
         }
     }

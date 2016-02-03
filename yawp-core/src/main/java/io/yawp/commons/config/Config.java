@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class Config {
 
-    private static final String DEFAULT_CONFIG = "/yawp.yml";
+    private static final String DEFAULT_CONFIG = "yawp.yml";
 
     private static final String DEFAULT_KEY = "default";
 
@@ -19,7 +19,7 @@ public class Config {
     }
 
     private static InputStream stream(String uri) {
-        return Config.class.getResourceAsStream(uri);
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(uri);
     }
 
     private static Config loadYamlFrom(InputStream stream) {

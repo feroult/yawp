@@ -33,6 +33,7 @@ public final class RepositoryScanner {
         this.enableHooks = true;
     }
 
+    @Deprecated
     public RepositoryScanner enableHooks(boolean enableHooks) {
         this.enableHooks = enableHooks;
         return this;

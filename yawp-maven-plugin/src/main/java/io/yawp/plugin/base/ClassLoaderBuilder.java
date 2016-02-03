@@ -23,6 +23,9 @@ public class ClassLoaderBuilder {
 
     public void addRuntime(PluginAbstractMojo mojo) {
         try {
+            if (mojo.getProject() == null) {
+                return;
+            }
             add(mojo.getProject().getRuntimeClasspathElements());
         } catch (DependencyResolutionRequiredException e) {
             throw new RuntimeException(e);

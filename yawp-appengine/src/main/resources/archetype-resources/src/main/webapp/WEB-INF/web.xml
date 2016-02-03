@@ -6,11 +6,6 @@
     <servlet>
         <servlet-name>EndpointServlet</servlet-name>
         <servlet-class>io.yawp.servlet.EndpointServlet</servlet-class>
-
-        <init-param>
-            <param-name>packagePrefix</param-name>
-            <param-value>${package}</param-value>
-        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>EndpointServlet</servlet-name>
@@ -24,11 +19,6 @@
     <servlet>
         <servlet-name>EndpointFixturesServlet</servlet-name>
         <servlet-class>io.yawp.servlet.FixturesServlet</servlet-class>
-
-        <init-param>
-            <param-name>packagePrefix</param-name>
-            <param-value>${package}</param-value>
-        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>EndpointFixturesServlet</servlet-name>

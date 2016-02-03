@@ -1,5 +1,6 @@
 package io.yawp.plugin.base;
 
+import java.net.URLClassLoader;
 import java.util.List;
 
 import io.yawp.commons.utils.Environment;
@@ -91,5 +92,13 @@ public abstract class PluginAbstractMojo extends AbstractMojo {
 
     public String getAppDir() {
         return appDir;
+    }
+
+    protected URLClassLoader configureRuntimeClassLoader() {
+        ClassLoaderBuilder builder = new ClassLoaderBuilder();
+        builder.addRuntime(this);
+        URLClassLoader classLoader = builder.build();
+        Thread.currentThread().setContextClassLoader(classLoader);
+        return classLoader;
     }
 }

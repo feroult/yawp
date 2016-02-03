@@ -1,4 +1,3 @@
 features:
   default:
     packagePrefix: io.yawp
-    enableHooks: true

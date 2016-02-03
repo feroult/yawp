@@ -11,6 +11,5 @@ public class ConfigTest {
     public void testConfigPackage() {
         Config config = Config.load();
         assertEquals("io.yawp", config.getDefaultFeatures().getPackagePrefix());
-        assertTrue(config.getDefaultFeatures().isEnableHooks());
     }
 }

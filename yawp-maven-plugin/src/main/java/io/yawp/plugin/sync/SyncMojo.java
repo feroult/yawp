@@ -28,11 +28,4 @@ public class SyncMojo extends PluginAbstractMojo {
         driver.helpers().sync();
     }
 
-    private URLClassLoader configureRuntimeClassLoader() {
-        ClassLoaderBuilder builder = new ClassLoaderBuilder();
-        builder.addRuntime(this);
-        URLClassLoader classLoader = builder.build();
-        Thread.currentThread().setContextClassLoader(classLoader);
-        return classLoader;
-    }
 }

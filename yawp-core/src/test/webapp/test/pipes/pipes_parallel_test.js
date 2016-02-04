@@ -10,7 +10,7 @@
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    t.skip('parallel changes', function (assert) {
+    t.asyncTest('parallel changes', function (assert) {
         expect(3);
 
         function saveObject(id, group, callback) {

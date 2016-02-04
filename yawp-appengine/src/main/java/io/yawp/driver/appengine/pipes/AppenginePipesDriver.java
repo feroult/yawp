@@ -30,8 +30,8 @@ public class AppenginePipesDriver implements PipesDriver {
         Set<IdRef<?>> sinks = pipe.getSinks();
 
         for (IdRef<?> sinkId : sinks) {
-            Payload payload = createPayload(pipe, object, sinkId, marker);
-            queue.add(TaskOptions.Builder.withPayload(new PipeQueue(payload)));
+            Payload payload = createPayload(pipe, object, sinkId, marker, true);
+            queue.add(TaskOptions.Builder.withPayload(new ForkTask(payload)));
         }
     }
 
@@ -40,12 +40,13 @@ public class AppenginePipesDriver implements PipesDriver {
         return QueueFactory.getDefaultQueue();
     }
 
-    private Payload createPayload(Pipe pipe, Object object, IdRef<?> sinkId, VersionMarker marker) {
+    private Payload createPayload(Pipe pipe, Object object, IdRef<?> sinkId, VersionMarker marker, boolean present) {
         Payload payload = new Payload();
         payload.setPipeClazz(pipe.getClass());
         payload.setSource(object);
         payload.setSinkId(sinkId);
         payload.setVersionMarkerJson(marker);
+        payload.setPresent(present);
         return payload;
     }
 

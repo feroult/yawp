@@ -27,4 +27,8 @@ public class VersionMarker {
     public void increment() {
         version++;
     }
+
+    public Long getVersion() {
+        return version;
+    }
 }

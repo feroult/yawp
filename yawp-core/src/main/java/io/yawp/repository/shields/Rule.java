@@ -41,33 +41,33 @@ public class Rule<T> {
         return facade != null;
     }
 
-    public Rule where(String field, String operator, Object value) {
+    public Rule<T> where(String field, String operator, Object value) {
         return or(Condition.c(field, operator, value));
     }
 
-    public Rule where(BaseCondition condition) {
+    public Rule<T> where(BaseCondition condition) {
         return or(condition);
     }
 
-    public Rule or(String field, String operator, Object value) {
+    public Rule<T> or(String field, String operator, Object value) {
         return or(Condition.c(field, operator, value));
     }
 
-    public Rule or(BaseCondition condition) {
+    public Rule<T> or(BaseCondition condition) {
         getConditions().or(condition);
         return this;
     }
 
-    public Rule and(String field, String operator, Object value) {
+    public Rule<T> and(String field, String operator, Object value) {
         return and(Condition.c(field, operator, value));
     }
 
-    public Rule and(BaseCondition condition) {
+    public Rule<T> and(BaseCondition condition) {
         getConditions().and(condition);
         return this;
     }
 
-    public Rule facade(Class<? super T> facade) {
+    public Rule<T> facade(Class<? super T> facade) {
         this.facade = facade;
         return this;
     }

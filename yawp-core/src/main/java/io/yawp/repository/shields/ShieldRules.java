@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ShieldRules<T> {
 
-    private List<Rule> rules = new ArrayList<>();
+    private List<Rule<T>> rules = new ArrayList<>();
 
     private boolean merged;
 
@@ -15,7 +15,7 @@ public class ShieldRules<T> {
 
     private Class<? super T> facade;
 
-    public void add(Rule rule) {
+    public void add(Rule<T> rule) {
         rules.add(rule);
     }
 
@@ -55,7 +55,7 @@ public class ShieldRules<T> {
 
         boolean emptyCondition = false;
 
-        for (Rule rule : rules) {
+        for (Rule<T> rule : rules) {
             if (!emptyCondition) {
                 if (rule.hasConditions()) {
                     mergeConditions(rule);
@@ -72,7 +72,7 @@ public class ShieldRules<T> {
         merged = true;
     }
 
-    private void mergeConditions(Rule rule) {
+    private void mergeConditions(Rule<T> rule) {
         if (this.conditions == null) {
             this.conditions = rule.getConditions();
         } else {

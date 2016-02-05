@@ -7,7 +7,7 @@ import com.google.appengine.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.appengine.repackaged.org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
-public abstract class PipeBaseTask implements DeferredTask {
+public abstract class BaseTask implements DeferredTask {
 
     protected static final String INDEX_PREFIX = "__yawp-pipe-index-";
 
@@ -19,17 +19,21 @@ public abstract class PipeBaseTask implements DeferredTask {
 
     protected transient MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
 
-    protected Payload payload;
-
     protected transient String sinkId;
 
-    public PipeBaseTask(Payload payload) {
-        this.payload = payload;
-        this.sinkId = payload.getSinkUri();
+    protected transient String indexCacheKey;
+
+    public BaseTask(String sinkUri) {
+        this.sinkId = sinkUri;
+        this.indexCacheKey = INDEX_PREFIX + sinkId;
     }
 
     protected String createIndexHash(Integer index) {
         return String.format("%s-%s", hash("" + index), sinkId);
+    }
+
+    protected String createLockCacheKey(Integer index) {
+        return String.format("%s-%s-%d", LOCK_PREFIX, sinkId, index);
     }
 
     private String hash(String string) {
@@ -39,5 +43,4 @@ public abstract class PipeBaseTask implements DeferredTask {
         returnValue = StringUtils.removeEnd(returnValue, "\r\n");
         return returnValue.replaceAll("=", "").replaceAll("/", "-").replaceAll("\\+", "\\_");
     }
-
 }

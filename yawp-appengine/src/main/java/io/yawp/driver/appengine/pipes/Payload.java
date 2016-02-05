@@ -3,8 +3,9 @@ package io.yawp.driver.appengine.pipes;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.pipes.Pipe;
-import io.yawp.repository.pipes.VersionMarker;
+import io.yawp.repository.pipes.SourceMarker;
 
 import java.io.Serializable;
 
@@ -20,7 +21,7 @@ public class Payload implements Serializable {
 
     private String sinkUri;
 
-    private String versionMarkerJson;
+    private String sourceMarkerJson;
 
     private boolean present;
 
@@ -28,7 +29,9 @@ public class Payload implements Serializable {
 
     private transient IdRef<?> sinkId;
 
-    private transient VersionMarker versionMarker;
+    private transient SourceMarker sourceMarker;
+
+    private IdRef<?> sourceId;
 
     public Class<? extends Pipe> getPipeClazz() {
         return pipeClazz;
@@ -45,7 +48,7 @@ public class Payload implements Serializable {
         return source;
     }
 
-    public void setSource(Object source) {
+    public void setSourceJson(Object source) {
         this.sourceJson = JsonUtils.to(source);
     }
 
@@ -56,19 +59,19 @@ public class Payload implements Serializable {
         return sinkId;
     }
 
-    public void setSinkId(IdRef<?> sinkId) {
+    public void setSinkUri(IdRef<?> sinkId) {
         this.sinkUri = sinkId.getUri();
     }
 
-    public VersionMarker getVersionMarker() {
-        if (versionMarker == null) {
-            versionMarker = JsonUtils.from(yawp(), versionMarkerJson, VersionMarker.class);
+    public SourceMarker getSourceMarker() {
+        if (sourceMarker == null) {
+            sourceMarker = JsonUtils.from(yawp(), sourceMarkerJson, SourceMarker.class);
         }
-        return versionMarker;
+        return sourceMarker;
     }
 
-    public void setVersionMarkerJson(VersionMarker versionMarker) {
-        this.versionMarkerJson = JsonUtils.to(versionMarker);
+    public void setSourceMarkerJson(SourceMarker sourceMarkerJson) {
+        this.sourceMarkerJson = JsonUtils.to(sourceMarkerJson);
     }
 
     public boolean isPresent() {
@@ -81,5 +84,9 @@ public class Payload implements Serializable {
 
     public String getSinkUri() {
         return sinkUri;
+    }
+
+    public IdRef<?> getSourceId() {
+        return new ObjectHolder(getSource()).getId();
     }
 }

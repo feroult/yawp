@@ -1,4 +1,4 @@
-package io.yawp.driver.appengine.pipes;
+package io.yawp.driver.appengine;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -6,11 +6,13 @@ import com.google.appengine.api.taskqueue.Queue;
 import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
 import io.yawp.driver.api.PipesDriver;
+import io.yawp.driver.appengine.pipes.ForkTask;
+import io.yawp.driver.appengine.pipes.Payload;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.Repository;
 import io.yawp.repository.pipes.Pipe;
-import io.yawp.repository.pipes.VersionMarker;
+import io.yawp.repository.pipes.SourceMarker;
 import io.yawp.repository.query.NoResultException;
 
 import java.util.Set;
@@ -25,12 +27,12 @@ public class AppenginePipesDriver implements PipesDriver {
 
     @Override
     public void flux(Pipe pipe, Object object) {
-        VersionMarker marker = saveVersionMarker(object);
+        SourceMarker sourceMarker = saveSourceMarker(object);
         Queue queue = getPipeQueue();
         Set<IdRef<?>> sinks = pipe.getSinks();
 
         for (IdRef<?> sinkId : sinks) {
-            Payload payload = createPayload(pipe, object, sinkId, marker, true);
+            Payload payload = createPayload(pipe, object, sinkId, sourceMarker, true);
             queue.add(TaskOptions.Builder.withPayload(new ForkTask(payload)));
         }
     }
@@ -40,22 +42,22 @@ public class AppenginePipesDriver implements PipesDriver {
         return QueueFactory.getDefaultQueue();
     }
 
-    private Payload createPayload(Pipe pipe, Object object, IdRef<?> sinkId, VersionMarker marker, boolean present) {
+    private Payload createPayload(Pipe pipe, Object object, IdRef<?> sinkId, SourceMarker marker, boolean present) {
         Payload payload = new Payload();
         payload.setPipeClazz(pipe.getClass());
-        payload.setSource(object);
-        payload.setSinkId(sinkId);
-        payload.setVersionMarkerJson(marker);
+        payload.setSourceJson(object);
+        payload.setSinkUri(sinkId);
+        payload.setSourceMarkerJson(marker);
         payload.setPresent(present);
         return payload;
     }
 
-    private IdRef<VersionMarker> createVersionMarkerId(ObjectHolder objectHolder) {
+    private IdRef<SourceMarker> createVersionMarkerId(ObjectHolder objectHolder) {
         IdRef<?> objectId = objectHolder.getId();
         if (objectId.getId() != null) {
-            return objectId.createChildId(VersionMarker.class, objectId.getId());
+            return objectId.createChildId(SourceMarker.class, objectId.getId());
         }
-        return objectId.createChildId(VersionMarker.class, objectId.getName());
+        return objectId.createChildId(SourceMarker.class, objectId.getName());
     }
 
     @Override
@@ -69,22 +71,22 @@ public class AppenginePipesDriver implements PipesDriver {
         }
     }
 
-    private VersionMarker saveVersionMarker(Object object) {
+    private SourceMarker saveSourceMarker(Object object) {
         ObjectHolder objectHolder = new ObjectHolder(object);
-        IdRef<VersionMarker> markerId = createVersionMarkerId(objectHolder);
+        IdRef<SourceMarker> markerId = createVersionMarkerId(objectHolder);
 
-        VersionMarker marker;
+        SourceMarker sourceMarker;
 
         try {
-            marker = markerId.fetch();
-            marker.increment();
+            sourceMarker = markerId.fetch();
+            sourceMarker.increment();
         } catch (NoResultException e) {
-            marker = new VersionMarker();
-            marker.setId(markerId);
-            marker.setParentId(objectHolder.getId());
+            sourceMarker = new SourceMarker();
+            sourceMarker.setId(markerId);
+            sourceMarker.setParentId(objectHolder.getId());
         }
-        r.save(marker);
-        return marker;
+        r.save(sourceMarker);
+        return sourceMarker;
     }
 
     private Object fetchOrCreateSink(IdRef<?> id) {

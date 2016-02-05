@@ -1,7 +1,6 @@
 package io.yawp.driver.appengine;
 
 import io.yawp.driver.api.*;
-import io.yawp.driver.appengine.pipes.AppenginePipesDriver;
 import io.yawp.repository.Repository;
 
 public class AppengineDriver implements Driver {

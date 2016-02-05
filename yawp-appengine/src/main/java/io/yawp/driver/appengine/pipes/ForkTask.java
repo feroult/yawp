@@ -15,20 +15,26 @@ public class ForkTask implements DeferredTask {
 
     private transient String indexCacheKey;
 
-    private transient MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+    private transient MemcacheService memcache;
 
     public ForkTask(Payload payload) {
         this.payload = payload;
-        this.sinkUri = payload.getSinkUri();
-        this.indexCacheKey = createIndexCacheKey(sinkUri);
     }
 
     @Override
     public void run() {
+        init();
+
         if (!fork()) {
             // requeue
             throw new IllegalStateException();
         }
+    }
+
+    private void init() {
+        this.sinkUri = payload.getSinkUri();
+        this.indexCacheKey = createIndexCacheKey(sinkUri);
+        this.memcache = MemcacheServiceFactory.getMemcacheService();
     }
 
     private boolean fork() {

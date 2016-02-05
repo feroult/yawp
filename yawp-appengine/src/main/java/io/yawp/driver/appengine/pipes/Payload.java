@@ -15,7 +15,7 @@ public class Payload implements Serializable {
 
     private static final long serialVersionUID = 8871524196612530063L;
 
-    private Class<? extends Pipe> pipeClazz;
+    private String pipeClazzName;
 
     private String sourceJson;
 
@@ -24,6 +24,8 @@ public class Payload implements Serializable {
     private String sourceMarkerJson;
 
     private boolean present;
+
+    private transient Class<? extends Pipe> pipeClazz;
 
     private transient Object source;
 
@@ -34,11 +36,14 @@ public class Payload implements Serializable {
     private IdRef<?> sourceId;
 
     public Class<? extends Pipe> getPipeClazz() {
+        if (pipeClazz == null) {
+            pipeClazz = classForName(pipeClazzName);
+        }
         return pipeClazz;
     }
 
     public void setPipeClazz(Class<? extends Pipe> pipeClazz) {
-        this.pipeClazz = pipeClazz;
+        this.pipeClazzName = pipeClazz.getName();
     }
 
     public Object getSource() {
@@ -88,5 +93,13 @@ public class Payload implements Serializable {
 
     public IdRef<?> getSourceId() {
         return new ObjectHolder(getSource()).getId();
+    }
+
+    private Class<? extends Pipe> classForName(String pipeClazzName) {
+        try {
+            return (Class<? extends Pipe>) Class.forName(pipeClazzName);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

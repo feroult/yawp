@@ -21,11 +21,11 @@ public class JoinTask implements DeferredTask {
 
     private transient String lockCacheKey;
 
-    private transient MemcacheService memcache = MemcacheServiceFactory.getMemcacheService();
+    private transient MemcacheService memcache;
 
-    private transient Map<IdRef<SinkMarker>, SinkMarker> sinkMarkerCache = new HashMap<>();
+    private transient Map<IdRef<SinkMarker>, SinkMarker> sinkMarkerCache;
 
-    private transient Set<IdRef<SinkMarker>> sinkMarkersToSave = new HashSet<>();
+    private transient Set<IdRef<SinkMarker>> sinkMarkersToSave;
 
     public JoinTask(String sinkUri, Integer index) {
         this.sinkUri = sinkUri;
@@ -34,7 +34,16 @@ public class JoinTask implements DeferredTask {
 
     @Override
     public void run() {
+        init();
         join();
+    }
+
+    private void init() {
+        this.memcache = MemcacheServiceFactory.getMemcacheService();
+        this.lockCacheKey = CacheHelper.createLockCacheKey(sinkUri, index);
+        this.sinkMarkerCache = new HashMap<>();
+        this.sinkMarkersToSave = new HashSet<>();
+
     }
 
     private void join() {

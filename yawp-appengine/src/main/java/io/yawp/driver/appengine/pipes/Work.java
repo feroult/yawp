@@ -1,6 +1,5 @@
 package io.yawp.driver.appengine.pipes;
 
-import com.google.common.hash.Sink;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
@@ -9,8 +8,6 @@ import io.yawp.repository.annotations.Json;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.pipes.SinkMarker;
 import io.yawp.repository.pipes.SourceMarker;
-
-import static io.yawp.repository.Yawp.yawp;
 
 @Endpoint(kind = "__yawp_pipe_works")
 public class Work {
@@ -29,13 +26,20 @@ public class Work {
         this.payload = payload;
     }
 
-    public <T, S> void flow(Object sink) {
+    public <T, S> void execute(Object sink, SinkMarker sinkMarker) {
         Pipe<T, S> pipe = createPipeInstance();
+
         if (payload.isPresent()) {
+            if (sinkMarker.isPresent()) {
+                pipe.reflux((T) sinkMarker.getSource(), (S) sink);
+            }
             pipe.flux((T) payload.getSource(), (S) sink);
         } else {
             pipe.reflux((T) payload.getSource(), (S) sink);
         }
+
+        sinkMarker.setVersion(payload.getSourceMarker().getVersion());
+        sinkMarker.setPresent(payload.isPresent());
     }
 
     private <T, S> Pipe<T, S> createPipeInstance() {
@@ -68,5 +72,9 @@ public class Work {
 
     public Long getSourceVersion() {
         return payload.getSourceMarker().getVersion();
+    }
+
+    public IdRef<Work> getId() {
+        return id;
     }
 }

@@ -3,6 +3,7 @@ package io.yawp.repository.pipes;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
+import io.yawp.repository.annotations.Json;
 import io.yawp.repository.annotations.ParentId;
 
 @Endpoint(kind = "__yawp_pipes_sink_markers")
@@ -13,6 +14,9 @@ public class SinkMarker {
 
     @ParentId
     private IdRef<?> parentId;
+
+    @Json
+    private Object source;
 
     private Long version = 1L;
 
@@ -42,4 +46,7 @@ public class SinkMarker {
         this.present = present;
     }
 
+    public Object getSource() {
+        return source;
+    }
 }

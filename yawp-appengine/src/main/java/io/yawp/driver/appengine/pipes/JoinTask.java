@@ -8,9 +8,7 @@ import io.yawp.repository.pipes.SinkMarker;
 import io.yawp.repository.pipes.SourceMarker;
 import io.yawp.repository.query.NoResultException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static io.yawp.driver.appengine.pipes.CacheHelper.*;
 import static io.yawp.repository.Yawp.yawp;
@@ -27,6 +25,8 @@ public class JoinTask implements DeferredTask {
 
     private transient Map<IdRef<SinkMarker>, SinkMarker> sinkMarkerCache = new HashMap<>();
 
+    private transient Set<IdRef<SinkMarker>> sinkMarkersToSave = new HashSet<>();
+
     public JoinTask(String sinkUri, Integer index) {
         this.sinkUri = sinkUri;
         this.index = index;
@@ -42,22 +42,53 @@ public class JoinTask implements DeferredTask {
         memcache.increment(createLockCacheKey(sinkUri, index), -1 * POW_2_15);
 
         busyWaitForWriters(20, 250);
-        processWorks();
+        execute();
     }
 
-    private void processWorks() {
+    private void execute() {
         List<Work> works = listWorks();
 
         yawp.begin();
+        boolean changed = executeWorks(works);
+        commitIfChanged(changed);
 
+        destroyWorks(works);
+    }
+
+    private boolean executeWorks(List<Work> works) {
         Object sink = fetchSink();
 
+        boolean changed = false;
+
         for (Work work : works) {
-            flowIfLastVersion(work);
+            if (executeIfLastVersion(work, sink)) {
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
+    private void destroyWorks(List<Work> works) {
+        for (Work work : works) {
+            yawp.destroy(work.getId());
         }
     }
 
-    private boolean flowIfLastVersion(Work work) {
+    private void commitIfChanged(boolean changed) {
+        if (!changed) {
+            yawp.rollback();
+            return;
+        }
+
+        for (IdRef<SinkMarker> id : sinkMarkersToSave) {
+            yawp.save(sinkMarkerCache.get(id));
+        }
+
+        // TODO: destroy empty sinks?
+        yawp.commit();
+    }
+
+    private boolean executeIfLastVersion(Work work, Object sink) {
         SourceMarker sourceVersion = work.getSourceMarker();
 
         IdRef<SinkMarker> sinkMarkerId = work.createSinkMarkerId();
@@ -67,7 +98,12 @@ public class JoinTask implements DeferredTask {
             return false;
         }
 
-        return false;
+        work.execute(sink, sinkMarker);
+
+        sinkMarkerCache.put(sinkMarkerId, sinkMarker);
+        sinkMarkersToSave.add(sinkMarkerId);
+
+        return true;
     }
 
     private SinkMarker fetchSinkMarker(IdRef<SinkMarker> sinkMarkerId) {

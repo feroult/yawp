@@ -26,7 +26,8 @@ public class ForkTask implements DeferredTask {
     @Override
     public void run() {
         if (!fork()) {
-            // TODO: requeue
+            // requeue
+            throw new IllegalStateException();
         }
     }
 

@@ -31,7 +31,7 @@
         function saveObjectsInParallel(callback) {
             for (var i = 0; i < MAX; i++) {
                 setTimeout(function () {
-                    saveObject(randomInt(1, 1), groups[randomInt(0, 1)], function () {
+                    saveObject(randomInt(1, 3), groups[randomInt(0, 1)], function () {
                         count++;
                         if (count >= MAX) {
                             callback();
@@ -43,14 +43,15 @@
 
         function assertCounter() {
             yawp('/basic_objects_counter/1').fetch(function (counter) {
-                if (!counter) {
-                    setTimeout(assertCounter, 50);
-                    return;
-                }
-
                 assert.equal(counter.count, 3);
                 assert.equal(counter.countGroupA, 1);
                 assert.equal(counter.countGroupB, 2);
+                t.start();
+            }).fail(function (response) {
+                if (response.status == 404) {
+                    setTimeout(assertCounter, 1000);
+                    return;
+                }
                 t.start();
             });
         }

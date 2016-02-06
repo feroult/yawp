@@ -32,9 +32,6 @@ public class Work {
     public <T, S> void execute(Object sink, SinkMarker sinkMarker) {
         Pipe<T, S> pipe = createPipeInstance();
 
-
-        System.out.println("present? " + payload.isPresent());
-
         if (payload.isPresent()) {
             if (sinkMarker.isPresent()) {
                 pipe.reflux((T) sinkMarker.getSource(), (S) sink);

@@ -49,7 +49,6 @@ public class JoinTask implements DeferredTask {
     }
 
     private void join() {
-        System.out.println("Join: " + sinkUri);
         memcache.increment(createIndexCacheKey(sinkUri), 1);
         memcache.increment(createLockCacheKey(sinkUri, index), -1 * POW_2_15);
 
@@ -62,7 +61,6 @@ public class JoinTask implements DeferredTask {
 
         yawp.begin();
         Object sink = fetchOrCreateSink();
-        System.out.println(JsonUtils.to(sink));
         boolean changed = executeWorks(sink, works);
         commitIfChanged(sink, changed);
 
@@ -72,7 +70,6 @@ public class JoinTask implements DeferredTask {
     private boolean executeWorks(Object sink, List<Work> works) {
         boolean changed = false;
 
-        System.out.println(String.format("executing %d works", works.size()));
         for (Work work : works) {
             if (executeIfLastVersion(work, sink)) {
                 changed = true;
@@ -98,7 +95,6 @@ public class JoinTask implements DeferredTask {
         }
 
         yawp.save(sink);
-        System.out.println(JsonUtils.to(sink));
 
         // TODO: destroy empty sinks?
         yawp.commit();
@@ -110,7 +106,6 @@ public class JoinTask implements DeferredTask {
         IdRef<SinkMarker> sinkMarkerId = work.createSinkMarkerId();
         SinkMarker sinkMarker = fetchSinkMarker(sinkMarkerId);
 
-        System.out.println(String.format("sourceId: %s, sink version: %d, source version: %d", work.getSourceMarker().getParentId(), sinkMarker.getVersion(), work.getSourceVersion()));
         if (sinkMarker.getVersion() >= work.getSourceVersion()) {
             return false;
         }

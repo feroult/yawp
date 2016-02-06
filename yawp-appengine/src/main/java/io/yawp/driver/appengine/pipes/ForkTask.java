@@ -37,8 +37,6 @@ public class ForkTask implements DeferredTask {
     }
 
     private boolean fork() {
-        System.out.println("Fork: " + sinkUri);
-
         Integer index = getIndexSemaphore();
         String lockCacheKey = createLockCacheKey(sinkUri, index);
 

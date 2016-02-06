@@ -44,8 +44,8 @@
         function assertCounter() {
             yawp('/basic_objects_counter/1').fetch(function (counter) {
                 assert.equal(counter.count, 3);
-                assert.equal(counter.countGroupA, 1);
-                assert.equal(counter.countGroupB, 2);
+                assert.equal(counter.countGroupA, 2);
+                assert.equal(counter.countGroupB, 1);
                 t.start();
             }).fail(function (response) {
                 if (response.status == 404) {
@@ -59,7 +59,7 @@
         function organizeObjects() {
             saveObject(1, 'group-a', function () {
                 saveObject(2, 'group-b', function () {
-                    saveObject(3, 'group-b', function () {
+                    saveObject(3, 'group-a', function () {
                         assertCounter();
                     });
                 });

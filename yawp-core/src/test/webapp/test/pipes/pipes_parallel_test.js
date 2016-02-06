@@ -43,6 +43,11 @@
 
         function assertCounter() {
             yawp('/basic_objects_counter/1').fetch(function (counter) {
+                if (!counter) {
+                    setTimeout(assertCounter, 50);
+                    return;
+                }
+
                 assert.equal(counter.count, 3);
                 assert.equal(counter.countGroupA, 1);
                 assert.equal(counter.countGroupB, 2);

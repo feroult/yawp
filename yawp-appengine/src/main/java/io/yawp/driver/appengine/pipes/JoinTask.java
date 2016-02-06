@@ -3,7 +3,6 @@ package io.yawp.driver.appengine.pipes;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.DeferredTask;
-import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.pipes.SinkMarker;
@@ -16,6 +15,10 @@ import static io.yawp.driver.appengine.pipes.CacheHelper.*;
 import static io.yawp.repository.Yawp.yawp;
 
 public class JoinTask implements DeferredTask {
+
+    private static final int BUSY_WAIT_TIMES = 20;
+
+    private static final int BUSY_WAIT_SLEEP = 250;
 
     private String sinkUri;
 
@@ -52,7 +55,7 @@ public class JoinTask implements DeferredTask {
         memcache.increment(createIndexCacheKey(sinkUri), 1);
         memcache.increment(createLockCacheKey(sinkUri, index), -1 * POW_2_15);
 
-        busyWaitForWriters(20, 250);
+        busyWaitForWriters(BUSY_WAIT_TIMES, BUSY_WAIT_SLEEP);
         execute();
     }
 

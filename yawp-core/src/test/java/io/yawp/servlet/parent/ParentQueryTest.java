@@ -8,6 +8,7 @@ import io.yawp.repository.models.parents.Job;
 import io.yawp.repository.models.parents.Parent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class ParentQueryTest extends ParentServletTestCase {
         }
 
         assertEquals(10, results.size());
-        results.sort(new Comparator<Parent>() {
+        Collections.sort(results, new Comparator<Parent>() {
             @Override
             public int compare(Parent o1, Parent o2) {
                 return o1.getName().compareTo(o2.getName());

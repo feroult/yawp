@@ -43,7 +43,7 @@ public class QueryBuilder<T> {
     }
 
     public <N> QueryTransformer<T, N> transform(String transformName) {
-        return new QueryTransformer<T, N>(this, transformName);
+        return new QueryTransformer<>(this, transformName);
     }
 
     public QueryBuilder<T> and(String field, String operator, Object value) {
@@ -141,6 +141,10 @@ public class QueryBuilder<T> {
 
         if (options.getLimit() != null) {
             limit(options.getLimit());
+        }
+
+        if (options.getCursor() != null) {
+            cursor(options.getCursor());
         }
 
         return this;

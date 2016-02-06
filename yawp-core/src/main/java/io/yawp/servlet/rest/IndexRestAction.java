@@ -3,7 +3,9 @@ package io.yawp.servlet.rest;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.QueryOptions;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class IndexRestAction extends RestAction {
 
@@ -17,15 +19,19 @@ public class IndexRestAction extends RestAction {
     }
 
     @Override
-    public List<?> action() {
+    public Object action() {
         QueryBuilder<?> query = query();
 
         if (id != null) {
             query.from(id);
         }
 
+
+        boolean returnCursor = false;
         if (params.containsKey(QUERY_OPTIONS)) {
-            query.options(QueryOptions.parse(params.get(QUERY_OPTIONS)));
+            QueryOptions options = QueryOptions.parse(params.get(QUERY_OPTIONS));
+            query.options(options);
+            returnCursor = options.returnCursor();
         }
 
         if (hasTransformer()) {
@@ -38,6 +44,13 @@ public class IndexRestAction extends RestAction {
 
         List<?> objects = query.list();
         applyGetFacade(objects);
+
+        if (returnCursor) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("results", objects);
+            result.put("cursor", query.getCursor());
+            return result;
+        }
         return objects;
     }
 

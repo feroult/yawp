@@ -27,12 +27,21 @@ public class AppenginePipesDriver implements PipesDriver {
 
     @Override
     public void flux(Pipe pipe, Object object) {
+        enqueueObjectToPipe(pipe, object, true);
+    }
+
+    @Override
+    public void reflux(Pipe pipe, Object object) {
+        enqueueObjectToPipe(pipe, object, false);
+    }
+
+    private void enqueueObjectToPipe(Pipe pipe, Object object, boolean present) {
         SourceMarker sourceMarker = saveSourceMarker(object);
         Queue queue = getPipeQueue();
         Set<IdRef<?>> sinks = pipe.getSinks();
 
         for (IdRef<?> sinkId : sinks) {
-            Payload payload = createPayload(pipe, object, sinkId, sourceMarker, true);
+            Payload payload = createPayload(pipe, object, sinkId, sourceMarker, present);
             queue.add(TaskOptions.Builder.withPayload(new ForkTask(payload)));
         }
     }
@@ -60,17 +69,6 @@ public class AppenginePipesDriver implements PipesDriver {
         return objectId.createChildId(SourceMarker.class, objectId.getName());
     }
 
-    @Override
-    public void reflux(Pipe pipe, Object object) {
-        Set<IdRef<?>> sinks = pipe.getSinks();
-
-        for (IdRef<?> sinkId : sinks) {
-            Object sink = fetchOrCreateSink(sinkId);
-            pipe.reflux(object, sink);
-            r.driver().persistence().save(sink);
-        }
-    }
-
     private SourceMarker saveSourceMarker(Object object) {
         ObjectHolder objectHolder = new ObjectHolder(object);
         IdRef<SourceMarker> markerId = createVersionMarkerId(objectHolder);
@@ -87,24 +85,5 @@ public class AppenginePipesDriver implements PipesDriver {
         }
         r.save(sourceMarker);
         return sourceMarker;
-    }
-
-    private Object fetchOrCreateSink(IdRef<?> id) {
-        try {
-            return id.fetch();
-        } catch (NoResultException e) {
-            return createSink(id);
-        }
-    }
-
-    private Object createSink(IdRef<?> id) {
-        try {
-            Object sink = id.getClazz().newInstance();
-            ObjectHolder holder = new ObjectHolder(sink);
-            holder.setId(id);
-            return sink;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

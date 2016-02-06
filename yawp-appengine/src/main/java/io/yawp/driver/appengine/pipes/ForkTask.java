@@ -24,7 +24,6 @@ public class ForkTask implements DeferredTask {
     @Override
     public void run() {
         init();
-
         if (!fork()) {
             // requeue
             throw new IllegalStateException();
@@ -38,6 +37,8 @@ public class ForkTask implements DeferredTask {
     }
 
     private boolean fork() {
+        System.out.println("Fork: " + sinkUri);
+
         Integer index = getIndexSemaphore();
         String lockCacheKey = createLockCacheKey(sinkUri, index);
 

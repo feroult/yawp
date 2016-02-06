@@ -36,4 +36,7 @@ public class SourceMarker {
         return version;
     }
 
+    public IdRef<?> getParentId() {
+        return parentId;
+    }
 }

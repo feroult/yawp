@@ -16,10 +16,13 @@ public class Work {
     private IdRef<Work> id;
 
     @Index(normalize = false)
-    private final String indexHash;
+    private String indexHash;
 
     @Json
-    private final Payload payload;
+    private Payload payload;
+
+    public Work() {
+    }
 
     public Work(String indexHash, Payload payload) {
         this.indexHash = indexHash;
@@ -29,14 +32,19 @@ public class Work {
     public <T, S> void execute(Object sink, SinkMarker sinkMarker) {
         Pipe<T, S> pipe = createPipeInstance();
 
+
+        System.out.println("present? " + payload.isPresent());
+
         if (payload.isPresent()) {
             if (sinkMarker.isPresent()) {
                 pipe.reflux((T) sinkMarker.getSource(), (S) sink);
             }
             pipe.flux((T) payload.getSource(), (S) sink);
+            sinkMarker.setSource(payload.getSource());
         } else {
             pipe.reflux((T) payload.getSource(), (S) sink);
         }
+
 
         sinkMarker.setVersion(payload.getSourceMarker().getVersion());
         sinkMarker.setPresent(payload.isPresent());

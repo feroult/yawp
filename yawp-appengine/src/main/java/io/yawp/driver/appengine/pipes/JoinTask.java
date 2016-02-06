@@ -3,7 +3,9 @@ package io.yawp.driver.appengine.pipes;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.DeferredTask;
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.pipes.SinkMarker;
 import io.yawp.repository.pipes.SourceMarker;
 import io.yawp.repository.query.NoResultException;
@@ -47,6 +49,7 @@ public class JoinTask implements DeferredTask {
     }
 
     private void join() {
+        System.out.println("Join: " + sinkUri);
         memcache.increment(createIndexCacheKey(sinkUri), 1);
         memcache.increment(createLockCacheKey(sinkUri, index), -1 * POW_2_15);
 
@@ -58,17 +61,18 @@ public class JoinTask implements DeferredTask {
         List<Work> works = listWorks();
 
         yawp.begin();
-        boolean changed = executeWorks(works);
-        commitIfChanged(changed);
+        Object sink = fetchOrCreateSink();
+        System.out.println(JsonUtils.to(sink));
+        boolean changed = executeWorks(sink, works);
+        commitIfChanged(sink, changed);
 
         destroyWorks(works);
     }
 
-    private boolean executeWorks(List<Work> works) {
-        Object sink = fetchSink();
-
+    private boolean executeWorks(Object sink, List<Work> works) {
         boolean changed = false;
 
+        System.out.println(String.format("executing %d works", works.size()));
         for (Work work : works) {
             if (executeIfLastVersion(work, sink)) {
                 changed = true;
@@ -83,7 +87,7 @@ public class JoinTask implements DeferredTask {
         }
     }
 
-    private void commitIfChanged(boolean changed) {
+    private void commitIfChanged(Object sink, boolean changed) {
         if (!changed) {
             yawp.rollback();
             return;
@@ -92,6 +96,9 @@ public class JoinTask implements DeferredTask {
         for (IdRef<SinkMarker> id : sinkMarkersToSave) {
             yawp.save(sinkMarkerCache.get(id));
         }
+
+        yawp.save(sink);
+        System.out.println(JsonUtils.to(sink));
 
         // TODO: destroy empty sinks?
         yawp.commit();
@@ -103,6 +110,7 @@ public class JoinTask implements DeferredTask {
         IdRef<SinkMarker> sinkMarkerId = work.createSinkMarkerId();
         SinkMarker sinkMarker = fetchSinkMarker(sinkMarkerId);
 
+        System.out.println(String.format("sourceId: %s, sink version: %d, source version: %d", work.getSourceMarker().getParentId(), sinkMarker.getVersion(), work.getSourceVersion()));
         if (sinkMarker.getVersion() >= work.getSourceVersion()) {
             return false;
         }
@@ -139,11 +147,27 @@ public class JoinTask implements DeferredTask {
     }
 
     private List<Work> listWorks() {
-        return yawp(Work.class).where("index", "=", createIndexHash(sinkUri, index)).order("id").list();
+        return yawp(Work.class).where("indexHash", "=", createIndexHash(sinkUri, index)).order("id").list();
     }
 
-    private Object fetchSink() {
-        return IdRef.parse(yawp(), sinkUri).fetch();
+    private Object fetchOrCreateSink() {
+        IdRef<?> sinkId = IdRef.parse(yawp(), sinkUri);
+        try {
+            return sinkId.fetch();
+        } catch (NoResultException e) {
+            try {
+                // TODO: Pipes - pipe must provide an api to init sinks
+                Object sink = sinkId.getClazz().newInstance();
+                ObjectHolder objectHolder = new ObjectHolder(sink);
+                objectHolder.setId(sinkId);
+                if (sinkId.getParentClazz() != null) {
+                    objectHolder.setParentId(sinkId.getParentId());
+                }
+                return sink;
+            } catch (InstantiationException | IllegalAccessException e1) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void busyWaitForWriters(int times, int sleep) {

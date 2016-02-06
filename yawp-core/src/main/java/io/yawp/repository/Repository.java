@@ -132,27 +132,18 @@ public class Repository implements RepositoryApi {
     }
 
     private void saveInternal(Object object) {
-        refluxPipes(object);
         driver().persistence().save(object);
         fluxPipes(object);
-    }
-
-    private void refluxPipes(Object object) {
-        ObjectHolder objectHolder = new ObjectHolder(object);
-        if (!objectHolder.hasId()) {
-            return;
-        }
-        // TODO: pipes - Deal with transactions, load existing object only one time (shield may load it too)
-        try {
-            Object existingObject = objectHolder.getId().fetch();
-            RepositoryPipes.reflux(this, existingObject);
-        } catch (NoResultException e) {
-        }
     }
 
     private void fluxPipes(Object object) {
         // TODO: pipes - Deal with transactions. Pipes should be transactional with saving.
         RepositoryPipes.flux(this, object);
+    }
+
+    private void refluxPipes(IdRef<?> id) {
+        // TODO: pipes - Deal with transactions, load existing object only one time (shield may load it too)
+        RepositoryPipes.reflux(this, id);
     }
 
     private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
@@ -188,8 +179,7 @@ public class Repository implements RepositoryApi {
     public void destroy(IdRef<?> id) {
         namespace.set(id.getClazz());
         try {
-            // TODO: pipes - Deal with transactions. Pipes should be transactional with saving.
-            RepositoryPipes.reflux(this, id.fetch());
+            refluxPipes(id);
 
             RepositoryHooks.beforeDestroy(this, id);
             driver().persistence().destroy(id);

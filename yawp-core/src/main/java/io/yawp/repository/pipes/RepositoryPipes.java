@@ -1,6 +1,7 @@
 package io.yawp.repository.pipes;
 
 import io.yawp.driver.api.DriverNotImplementedException;
+import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 
 public class RepositoryPipes {
@@ -9,7 +10,7 @@ public class RepositoryPipes {
         try {
             Class<?> endpointClazz = object.getClass();
 
-            if (r.getFeatures() == null) {
+            if (!hasPipes(r, endpointClazz)) {
                 return;
             }
 
@@ -23,13 +24,16 @@ public class RepositoryPipes {
         }
     }
 
-    public static void reflux(Repository r, Object object) {
+    public static void reflux(Repository r, IdRef<?> id) {
         try {
-            Class<?> endpointClazz = object.getClass();
+            Class<?> endpointClazz = id.getClazz();
 
-            if (r.getFeatures() == null) {
+            if (!hasPipes(r, endpointClazz)) {
                 return;
             }
+
+            // TODO: pipes deal with NoResultException?
+            Object object = id.fetch();
 
             for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
                 Pipe pipe = createPipeInstance(r, pipeClazz);
@@ -39,6 +43,10 @@ public class RepositoryPipes {
         } catch (DriverNotImplementedException e) {
             // TODO: pipes - remove this
         }
+    }
+
+    private static boolean hasPipes(Repository r, Class<?> endpointClazz) {
+        return r.getFeatures() != null && r.getEndpointFeatures(endpointClazz).getPipes().size() != 0;
     }
 
     private static Pipe createPipeInstance(Repository r, Class<? extends Pipe> pipeClazz) {

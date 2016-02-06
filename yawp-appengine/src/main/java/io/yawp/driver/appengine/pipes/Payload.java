@@ -48,7 +48,7 @@ public class Payload implements Serializable {
 
     public Object getSource() {
         if (source == null) {
-            source = JsonUtils.from(yawp(), sourceJson, ReflectionUtils.getFeatureEndpointClazz(pipeClazz));
+            source = JsonUtils.from(yawp(), sourceJson, ReflectionUtils.getFeatureEndpointClazz(getPipeClazz()));
         }
         return source;
     }

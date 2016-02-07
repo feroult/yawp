@@ -45,6 +45,7 @@
         }
 
         function saveOrDestroyObject(id, group, callback) {
+
             var save = randomInt(0, 1);
 
             if (save) {
@@ -53,6 +54,7 @@
                 destroyObject(id, callback);
             }
         }
+
         const groups = ['group-a', 'group-b'];
         const MAX = 10;
 
@@ -70,6 +72,7 @@
                 }, i * randomInt(50, 150));
             }
         }
+
         const MAX_RETRIES = 15;
 
         var retries = 0;
@@ -90,17 +93,14 @@
                 assert.equal(counter.countGroupA, 2);
                 assert.equal(counter.countGroupB, 1);
                 t.start();
-            }).fail(function (response) {
-                if (response.status == 404) {
-                    if (retries >= MAX_RETRIES) {
-                        t.start();
-                        return;
-                    }
-                    retries++;
-                    setTimeout(assertCounter, 1000);
+            }).fail(function () {
+                if (retries >= MAX_RETRIES) {
+                    t.start();
                     return;
                 }
-                t.start();
+                retries++;
+                setTimeout(assertCounter, 1000);
+                return
             });
         }
 

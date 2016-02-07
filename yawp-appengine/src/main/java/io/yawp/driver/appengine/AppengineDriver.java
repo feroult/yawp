@@ -13,6 +13,11 @@ public class AppengineDriver implements Driver {
     }
 
     @Override
+    public String name() {
+        return "appengine";
+    }
+
+    @Override
     public PersistenceDriver persistence() {
         return new AppenginePersistenceDriver(r);
     }

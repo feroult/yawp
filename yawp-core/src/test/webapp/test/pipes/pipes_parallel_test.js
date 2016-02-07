@@ -11,15 +11,23 @@
     }
 
     t.asyncTest('parallel changes', function (assert) {
+
         expect(3);
+
+        function skip() {
+            t.ok(1);
+            t.ok(1);
+            t.ok(1);
+            t.start();
+        }
 
         function saveObject(id, group, callback) {
             var object = {
-                id: '/basic_objects/' + id,
-                stringValue: group
+                id: '/piped_objects/' + id,
+                group: group
             };
 
-            yawp('/basic_objects').create(object).done(function () {
+            yawp('/piped_objects').create(object).done(function () {
                 callback();
             }).fail(function () {
                 callback()
@@ -27,7 +35,7 @@
         }
 
         function destroyObject(id, callback) {
-            var objectId = '/basic_objects/' + id;
+            var objectId = '/piped_objects/' + id;
 
             yawp(objectId).destroy().done(function () {
                 callback();
@@ -45,9 +53,9 @@
                 destroyObject(id, callback);
             }
         }
-
         const groups = ['group-a', 'group-b'];
         const MAX = 10;
+
         var count = 0;
 
         function saveObjectsInParallel(callback) {
@@ -62,12 +70,12 @@
                 }, i * randomInt(50, 150));
             }
         }
-
         const MAX_RETRIES = 10;
+
         var retries = 0;
 
         function assertCounter() {
-            yawp('/basic_objects_counter/1').fetch(function (counter) {
+            yawp('/piped_object_counters/1').fetch(function (counter) {
                 if (counter.count != 3 || counter.countGroupA != 2 || counter.countGroupB != 1) {
                     if (retries >= MAX_RETRIES) {
                         t.start();
@@ -91,6 +99,7 @@
             });
         }
 
+
         function organizeObjects(callback) {
             saveObject(1, 'group-a', function () {
                 saveObject(2, 'group-b', function () {
@@ -101,12 +110,18 @@
             });
         }
 
-        saveObjectsInParallel(function () {
-            organizeObjects(function () {
-                assertCounter();
+        yawp().fetch(function (welcome) {
+            if (welcome.driver == "postgresql") {
+                skip();
+                return;
+            }
+
+            saveObjectsInParallel(function () {
+                organizeObjects(function () {
+                    assertCounter();
+                });
             });
         });
     });
-
 
 })(QUnit, yawp, yawp.fixtures);

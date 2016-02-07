@@ -123,7 +123,6 @@ public class JoinTask implements DeferredTask {
         IdRef<SinkMarker> sinkMarkerId = work.createSinkMarkerId();
         SinkMarker sinkMarker = getFromCacheOrFetchSinkMarker(sinkMarkerId);
 
-        logVersions(work, sinkMarker);
         if (sinkMarker.getVersion() >= work.getSourceVersion()) {
             return false;
         }
@@ -132,12 +131,8 @@ public class JoinTask implements DeferredTask {
 
         sinkMarkerCache.put(sinkMarkerId, sinkMarker);
         sinkMarkersToSave.add(sinkMarkerId);
-
+        
         return true;
-    }
-
-    private void logVersions(Work work, SinkMarker sinkMarker) {
-        System.out.print(String.format("versions - sink: %d, source: %d --- ", sinkMarker.getVersion(), work.getSourceVersion()));
     }
 
     private SinkMarker getFromCacheOrFetchSinkMarker(IdRef<SinkMarker> sinkMarkerId) {

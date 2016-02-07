@@ -17,6 +17,11 @@ public class PGDriver implements Driver {
     }
 
     @Override
+    public String name() {
+        return "postgresql";
+    }
+
+    @Override
     public PersistenceDriver persistence() {
         return new PGPersistenceDriver(r, connectionManager);
     }

@@ -1,6 +1,7 @@
 package io.yawp.servlet;
 
 import io.yawp.commons.http.HttpException;
+import io.yawp.commons.utils.Environment;
 import io.yawp.commons.utils.ServletTestCase;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.Repository;
@@ -63,17 +64,28 @@ public class EndpointRouterTest extends ServletTestCase {
 
     @Test
     public void testWelcome() {
+        String version = Environment.version();
+        String driver = yawp.driver().name();
+
         try {
             get("");
             assertTrue(false);
         } catch (HttpException e) {
-            assertEquals("Welcome to YAWP!", e.getText());
+            Welcome welcome = from(e.getText(), Welcome.class);
+
+            assertEquals("Welcome to YAWP!", welcome.getMessage());
+            assertEquals(version, welcome.getVersion());
+            assertEquals(driver, welcome.getDriver());
         }
         try {
             get("/");
             assertTrue(false);
         } catch (HttpException e) {
-            assertEquals("Welcome to YAWP!", e.getText());
+            Welcome welcome = from(e.getText(), Welcome.class);
+
+            assertEquals("Welcome to YAWP!", welcome.getMessage());
+            assertEquals(version, welcome.getVersion());
+            assertEquals(driver, welcome.getDriver());
         }
     }
 

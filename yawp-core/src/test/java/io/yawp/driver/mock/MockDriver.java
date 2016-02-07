@@ -13,6 +13,11 @@ public class MockDriver implements Driver {
     }
 
     @Override
+    public String name() {
+        return "mock";
+    }
+
+    @Override
     public PersistenceDriver persistence() {
         return new MockPersistenceDriver(r);
     }

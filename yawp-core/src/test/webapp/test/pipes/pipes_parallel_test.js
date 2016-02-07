@@ -70,7 +70,7 @@
                 }, i * randomInt(50, 150));
             }
         }
-        const MAX_RETRIES = 10;
+        const MAX_RETRIES = 15;
 
         var retries = 0;
 
@@ -92,6 +92,11 @@
                 t.start();
             }).fail(function (response) {
                 if (response.status == 404) {
+                    if (retries >= MAX_RETRIES) {
+                        t.start();
+                        return;
+                    }
+                    retries++;
                     setTimeout(assertCounter, 1000);
                     return;
                 }

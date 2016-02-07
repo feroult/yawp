@@ -8,9 +8,7 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
-import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.pipes.RepositoryPipes;
-import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.List;
@@ -132,8 +130,33 @@ public class Repository implements RepositoryApi {
     }
 
     private void saveInternal(Object object) {
+        boolean newTransaction = beginTransactionForPipes(object);
         driver().persistence().save(object);
         fluxPipes(object);
+        if (newTransaction) {
+            commit();
+        }
+    }
+
+    private boolean beginTransactionForPipes(Object object) {
+        Class<?> endpointClazz = object.getClass();
+        return beginTransactionForPipes(endpointClazz);
+    }
+
+    private boolean beginTransactionForPipes(IdRef<?> id) {
+        Class<?> endpointClazz = id.getClazz();
+        return beginTransactionForPipes(endpointClazz);
+    }
+
+    private boolean beginTransactionForPipes(Class<?> endpointClazz) {
+        if (!RepositoryPipes.hasPipes(this, endpointClazz)) {
+            return false;
+        }
+        if (isTransationInProgress()) {
+            return false;
+        }
+        begin();
+        return true;
     }
 
     private void fluxPipes(Object object) {
@@ -179,10 +202,15 @@ public class Repository implements RepositoryApi {
     public void destroy(IdRef<?> id) {
         namespace.set(id.getClazz());
         try {
-            refluxPipes(id);
-
             RepositoryHooks.beforeDestroy(this, id);
+
+            boolean newTransaction = beginTransactionForPipes(id);
+            refluxPipes(id);
             driver().persistence().destroy(id);
+            if (newTransaction) {
+                commit();
+            }
+
             RepositoryHooks.afterDestroy(this, id);
         } finally {
             namespace.reset();

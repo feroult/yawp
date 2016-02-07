@@ -1,5 +1,6 @@
 package io.yawp.driver.appengine.pipes;
 
+import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
@@ -8,6 +9,8 @@ import io.yawp.repository.annotations.Json;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.pipes.SinkMarker;
 import io.yawp.repository.pipes.SourceMarker;
+
+import static io.yawp.repository.Yawp.yawp;
 
 @Endpoint(kind = "__yawp_pipe_works")
 public class Work {
@@ -37,14 +40,17 @@ public class Work {
                 pipe.reflux((T) sinkMarker.getSource(), (S) sink);
             }
             pipe.flux((T) payload.getSource(), (S) sink);
-            sinkMarker.setSource(payload.getSource());
+            rememberSourceInSinkMarker(sinkMarker);
         } else {
             pipe.reflux((T) payload.getSource(), (S) sink);
         }
 
-
         sinkMarker.setVersion(payload.getSourceMarker().getVersion());
         sinkMarker.setPresent(payload.isPresent());
+    }
+
+    private void rememberSourceInSinkMarker(SinkMarker sinkMarker) {
+        sinkMarker.setSourceJson(ReflectionUtils.getFeatureEndpointClazz(payload.getPipeClazz()), payload.getSourceJson());
     }
 
     private <T, S> Pipe<T, S> createPipeInstance() {
@@ -61,12 +67,12 @@ public class Work {
 
         IdRef<SinkMarker> sinkMarkerId;
         if (sourceId.getId() != null) {
-            sinkMarkerId = sourceId.createChildId(SinkMarker.class, sourceId.getId());
+            sinkMarkerId = IdRef.create(yawp(), SinkMarker.class, sourceId.getId());
+            sinkMarkerId.setParentId(sinkId.createChildId(sourceId.getClazz(), sourceId.getId()));
         } else {
-            sinkMarkerId = sourceId.createChildId(SinkMarker.class, sourceId.getName());
+            sinkMarkerId = IdRef.create(yawp(), SinkMarker.class, sourceId.getName());
+            sinkMarkerId.setParentId(sinkId.createChildId(sourceId.getClazz(), sourceId.getName()));
         }
-
-        sinkMarkerId.setParentId(sinkId);
 
         return sinkMarkerId;
     }

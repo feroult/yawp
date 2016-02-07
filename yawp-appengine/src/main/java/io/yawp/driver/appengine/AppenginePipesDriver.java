@@ -9,8 +9,8 @@ import io.yawp.driver.api.PipesDriver;
 import io.yawp.driver.appengine.pipes.ForkTask;
 import io.yawp.driver.appengine.pipes.Payload;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.Repository;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.pipes.SourceMarker;
 import io.yawp.repository.query.NoResultException;
@@ -53,6 +53,7 @@ public class AppenginePipesDriver implements PipesDriver {
 
     private Payload createPayload(Pipe pipe, Object object, IdRef<?> sinkId, SourceMarker marker, boolean present) {
         Payload payload = new Payload();
+        payload.setNs(r.namespace().getNs());
         payload.setPipeClazz(pipe.getClass());
         payload.setSourceJson(object);
         payload.setSinkUri(sinkId);
@@ -61,7 +62,7 @@ public class AppenginePipesDriver implements PipesDriver {
         return payload;
     }
 
-    private IdRef<SourceMarker> createVersionMarkerId(ObjectHolder objectHolder) {
+    private IdRef<SourceMarker> createSourceMarkerId(ObjectHolder objectHolder) {
         IdRef<?> objectId = objectHolder.getId();
         if (objectId.getId() != null) {
             return objectId.createChildId(SourceMarker.class, objectId.getId());
@@ -71,7 +72,7 @@ public class AppenginePipesDriver implements PipesDriver {
 
     private SourceMarker saveSourceMarker(Object object) {
         ObjectHolder objectHolder = new ObjectHolder(object);
-        IdRef<SourceMarker> markerId = createVersionMarkerId(objectHolder);
+        IdRef<SourceMarker> markerId = createSourceMarkerId(objectHolder);
 
         SourceMarker sourceMarker;
 

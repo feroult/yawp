@@ -180,9 +180,6 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
     private static void validateParentId(IdRef<?> id, String path) {
         Class<?> parentClazz = id.getParentClazz();
         if (parentClazz == null) {
-            if (id.getParentId() != null) {
-                throw new RuntimeException("Invalid parent structure for id: " + path);
-            }
             return;
         }
 

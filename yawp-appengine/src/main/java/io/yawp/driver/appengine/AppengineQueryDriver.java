@@ -195,6 +195,10 @@ public class AppengineQueryDriver implements QueryDriver {
                 continue;
             }
 
+            if(fieldModel.isTransient()) {
+                continue;
+            }
+
             safeSetObjectProperty(entity, object, fieldModel);
         }
 

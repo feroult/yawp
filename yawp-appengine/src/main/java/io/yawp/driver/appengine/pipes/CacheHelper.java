@@ -6,16 +6,16 @@ import org.apache.commons.lang3.StringUtils;
 
 public class CacheHelper {
 
-    private static final String INDEX_PREFIX = "__yawp-pipe-index-";
+    private static final String INDEX_PREFIX = "__yawp-pipe-index";
 
-    private static final String LOCK_PREFIX = "__yawp-pipe-lock-";
+    private static final String LOCK_PREFIX = "__yawp-pipe-lock";
 
     public static final long POW_2_16 = (long) Math.pow(2, 16);
 
     public static final long POW_2_15 = (long) Math.pow(2, 15);
 
     public static String createIndexCacheKey(String sinkUri) {
-        return INDEX_PREFIX + sinkUri;
+        return String.format("%s-%s", INDEX_PREFIX, sinkUri);
     }
 
     public static String createIndexHash(String sinkUri, Integer index) {
@@ -33,5 +33,6 @@ public class CacheHelper {
         returnValue = StringUtils.removeEnd(returnValue, "\r\n");
         return returnValue.replaceAll("=", "").replaceAll("/", "-").replaceAll("\\+", "\\_");
     }
+
 
 }

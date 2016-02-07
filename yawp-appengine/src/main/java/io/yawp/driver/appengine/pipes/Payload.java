@@ -15,6 +15,8 @@ public class Payload implements Serializable {
 
     private static final long serialVersionUID = 8871524196612530063L;
 
+    private String ns;
+
     private String pipeClazzName;
 
     private String sourceJson;
@@ -35,9 +37,17 @@ public class Payload implements Serializable {
 
     private IdRef<?> sourceId;
 
+    public String getNs() {
+        return ns;
+    }
+
+    public void setNs(String ns) {
+        this.ns = ns;
+    }
+
     public Class<? extends Pipe> getPipeClazz() {
         if (pipeClazz == null) {
-            pipeClazz = classForName(pipeClazzName);
+            pipeClazz = clazzForName(pipeClazzName);
         }
         return pipeClazz;
     }
@@ -46,15 +56,20 @@ public class Payload implements Serializable {
         this.pipeClazzName = pipeClazz.getName();
     }
 
+    public String getSourceJson() {
+        return sourceJson;
+    }
+
+    public void setSourceJson(Object source) {
+        this.sourceJson = JsonUtils.to(source);
+        this.source = null;
+    }
+
     public Object getSource() {
         if (source == null) {
             source = JsonUtils.from(yawp(), sourceJson, ReflectionUtils.getFeatureEndpointClazz(getPipeClazz()));
         }
         return source;
-    }
-
-    public void setSourceJson(Object source) {
-        this.sourceJson = JsonUtils.to(source);
     }
 
     public IdRef<?> getSinkId() {
@@ -66,6 +81,7 @@ public class Payload implements Serializable {
 
     public void setSinkUri(IdRef<?> sinkId) {
         this.sinkUri = sinkId.getUri();
+        this.sinkId = null;
     }
 
     public SourceMarker getSourceMarker() {
@@ -77,6 +93,7 @@ public class Payload implements Serializable {
 
     public void setSourceMarkerJson(SourceMarker sourceMarkerJson) {
         this.sourceMarkerJson = JsonUtils.to(sourceMarkerJson);
+        this.sourceMarker = null;
     }
 
     public boolean isPresent() {
@@ -95,9 +112,9 @@ public class Payload implements Serializable {
         return new ObjectHolder(getSource()).getId();
     }
 
-    private Class<? extends Pipe> classForName(String pipeClazzName) {
+    private Class<? extends Pipe> clazzForName(String clazzName) {
         try {
-            return (Class<? extends Pipe>) Class.forName(pipeClazzName);
+            return (Class<? extends Pipe>) Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

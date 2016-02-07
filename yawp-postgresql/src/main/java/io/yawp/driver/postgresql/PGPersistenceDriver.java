@@ -89,6 +89,10 @@ public class PGPersistenceDriver implements PersistenceDriver {
                 continue;
             }
 
+            if (fieldModel.isTransient()) {
+                continue;
+            }
+
             setEntityProperty(objectHolder, entity, fieldModel);
         }
     }

@@ -1,10 +1,13 @@
 package io.yawp.repository.pipes;
 
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
-import io.yawp.repository.annotations.Json;
 import io.yawp.repository.annotations.ParentId;
+import io.yawp.repository.annotations.Text;
+
+import static io.yawp.repository.Yawp.yawp;
 
 @Endpoint(kind = "__yawp_pipes_sink_markers")
 public class SinkMarker {
@@ -15,12 +18,16 @@ public class SinkMarker {
     @ParentId
     private IdRef<?> parentId;
 
-    @Json
-    private Object source;
+    private String sourceClazzName;
+
+    @Text
+    private String sourceJson;
 
     private Long version = 1L;
 
     private boolean present;
+
+    private transient Object source;
 
     public void setId(IdRef<SinkMarker> id) {
         this.id = id;
@@ -47,10 +54,24 @@ public class SinkMarker {
     }
 
     public Object getSource() {
+        if (source == null) {
+            source = JsonUtils.from(yawp(), sourceJson, clazzForName(sourceClazzName));
+        }
         return source;
     }
 
-    public void setSource(Object source) {
-        this.source = source;
+    public void setSourceJson(Class<?> endpointClazz, String sourceJson) {
+        this.sourceClazzName = endpointClazz.getName();
+        this.sourceJson = sourceJson;
+        this.source = null;
     }
+
+    private Class<? extends Pipe> clazzForName(String clazzName) {
+        try {
+            return (Class<? extends Pipe>) Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

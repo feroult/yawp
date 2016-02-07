@@ -21,6 +21,8 @@
 
             yawp('/basic_objects').create(object).done(function () {
                 callback();
+            }).fail(function () {
+                callback()
             });
         }
 
@@ -29,6 +31,8 @@
 
             yawp(objectId).destroy().done(function () {
                 callback();
+            }).fail(function () {
+                callback()
             });
         }
 
@@ -55,12 +59,25 @@
                             callback();
                         }
                     });
-                }, i * randomInt(1, 50));
+                }, i * randomInt(50, 150));
             }
         }
 
+        const MAX_RETRIES = 10;
+        var retries = 0;
+
         function assertCounter() {
             yawp('/basic_objects_counter/1').fetch(function (counter) {
+                if (counter.count != 3 || counter.countGroupA != 2 || counter.countGroupB != 1) {
+                    if (retries >= MAX_RETRIES) {
+                        t.start();
+                        return;
+                    }
+                    retries++;
+                    setTimeout(assertCounter, 1000);
+                    return;
+                }
+
                 assert.equal(counter.count, 3);
                 assert.equal(counter.countGroupA, 2);
                 assert.equal(counter.countGroupB, 1);

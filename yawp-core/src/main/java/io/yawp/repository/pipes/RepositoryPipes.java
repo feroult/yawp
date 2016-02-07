@@ -46,7 +46,7 @@ public class RepositoryPipes {
         }
     }
 
-    private static boolean hasPipes(Repository r, Class<?> endpointClazz) {
+    public static boolean hasPipes(Repository r, Class<?> endpointClazz) {
         return r.getFeatures() != null && r.getEndpointFeatures(endpointClazz).getPipes().size() != 0;
     }
 

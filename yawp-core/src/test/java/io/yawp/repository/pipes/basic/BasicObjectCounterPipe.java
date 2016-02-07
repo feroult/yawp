@@ -13,6 +13,8 @@ public class BasicObjectCounterPipe extends Pipe<BasicObject, BasicObjectCounter
 
     @Override
     public void flux(BasicObject object, BasicObjectCounter counter) {
+        System.out.println(String.format("flux: %s - group: %s", object.getId(), object.getStringValue()));
+
         counter.inc();
 
         if (isGroup(object, "group-a")) {
@@ -26,6 +28,8 @@ public class BasicObjectCounterPipe extends Pipe<BasicObject, BasicObjectCounter
 
     @Override
     public void reflux(BasicObject object, BasicObjectCounter counter) {
+        System.out.print(String.format("REflux: %s - group: %s --- ", object.getId(), object.getStringValue()));
+
         counter.dec();
 
         if (isGroup(object, "group-a")) {

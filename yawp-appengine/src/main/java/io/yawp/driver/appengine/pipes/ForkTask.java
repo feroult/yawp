@@ -3,6 +3,7 @@ package io.yawp.driver.appengine.pipes;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.*;
+import io.yawp.repository.Repository;
 
 import static io.yawp.driver.appengine.pipes.CacheHelper.*;
 import static io.yawp.repository.Yawp.yawp;
@@ -10,6 +11,8 @@ import static io.yawp.repository.Yawp.yawp;
 public class ForkTask implements DeferredTask {
 
     private Payload payload;
+
+    private transient Repository r;
 
     private transient String sinkUri;
 
@@ -31,6 +34,7 @@ public class ForkTask implements DeferredTask {
     }
 
     private void init() {
+        this.r = yawp().namespace(payload.getNs());
         this.sinkUri = payload.getSinkUri();
         this.indexCacheKey = createIndexCacheKey(sinkUri);
         this.memcache = MemcacheServiceFactory.getMemcacheService();
@@ -66,7 +70,7 @@ public class ForkTask implements DeferredTask {
 
     private TaskOptions createForkTask(Integer index) {
         long now = System.currentTimeMillis();
-        return TaskOptions.Builder.withPayload(new JoinTask(sinkUri, index))
+        return TaskOptions.Builder.withPayload(new JoinTask(payload.getNs(), sinkUri, index))
                 .taskName(taskName(index, now)).etaMillis(now + 1000);
     }
 
@@ -96,6 +100,6 @@ public class ForkTask implements DeferredTask {
 
     private void saveWork(String indexHash) {
         Work work = new Work(indexHash, payload);
-        yawp.save(work);
+        r.save(work);
     }
 }

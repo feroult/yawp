@@ -56,17 +56,21 @@
             });
         }
 
-        function organizeObjects() {
+        function organizeObjects(callback) {
             saveObject(1, 'group-a', function () {
                 saveObject(2, 'group-b', function () {
                     saveObject(3, 'group-a', function () {
-                        assertCounter();
+                        callback();
                     });
                 });
             });
         }
 
-        saveObjectsInParallel(organizeObjects);
+        saveObjectsInParallel(function () {
+            organizeObjects(function () {
+                assertCounter();
+            });
+        });
     });
 
 

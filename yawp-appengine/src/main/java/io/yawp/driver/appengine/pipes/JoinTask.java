@@ -61,8 +61,6 @@ public class JoinTask implements DeferredTask {
         this.indexHash = CacheHelper.createIndexHash(sinkUri, index);
         this.sinkMarkerCache = new HashMap<>();
         this.sinkMarkersToSave = new HashSet<>();
-
-        System.out.println("join: " + indexHash);
     }
 
     private void join() {

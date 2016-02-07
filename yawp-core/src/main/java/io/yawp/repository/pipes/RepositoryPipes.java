@@ -3,6 +3,7 @@ package io.yawp.repository.pipes;
 import io.yawp.driver.api.DriverNotImplementedException;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
+import io.yawp.repository.query.NoResultException;
 
 public class RepositoryPipes {
 
@@ -32,7 +33,6 @@ public class RepositoryPipes {
                 return;
             }
 
-            // TODO: pipes deal with NoResultException?
             Object object = id.fetch();
 
             for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
@@ -42,6 +42,7 @@ public class RepositoryPipes {
             }
         } catch (DriverNotImplementedException e) {
             // TODO: pipes - remove this
+        } catch (NoResultException e) {
         }
     }
 

@@ -24,6 +24,24 @@
             });
         }
 
+        function destroyObject(id, callback) {
+            var objectId = '/basic_objects/' + id;
+
+            yawp(objectId).destroy().done(function () {
+                callback();
+            });
+        }
+
+        function saveOrDestroyObject(id, group, callback) {
+            var save = randomInt(0, 1);
+
+            if (save) {
+                saveObject(id, group, callback);
+            } else {
+                destroyObject(id, callback);
+            }
+        }
+
         const groups = ['group-a', 'group-b'];
         const MAX = 10;
         var count = 0;
@@ -31,7 +49,7 @@
         function saveObjectsInParallel(callback) {
             for (var i = 0; i < MAX; i++) {
                 setTimeout(function () {
-                    saveObject(randomInt(1, 3), groups[randomInt(0, 1)], function () {
+                    saveOrDestroyObject(randomInt(1, 3), groups[randomInt(0, 1)], function () {
                         count++;
                         if (count >= MAX) {
                             callback();

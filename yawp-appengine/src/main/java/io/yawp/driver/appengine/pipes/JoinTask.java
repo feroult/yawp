@@ -154,7 +154,6 @@ public class JoinTask implements DeferredTask {
             return sinkId.fetch();
         } catch (NoResultException e) {
             try {
-                // TODO: Pipes - pipe must provide an api to init sinks
                 Object sink = sinkId.getClazz().newInstance();
                 ObjectHolder objectHolder = new ObjectHolder(sink);
                 objectHolder.setId(sinkId);

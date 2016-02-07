@@ -11,7 +11,9 @@ public class BasicObjectCounter {
     private IdRef<BasicObjectCounter> id;
 
     private Integer count = 0;
+
     private Integer countGroupA = 0;
+
     private Integer countGroupB = 0;
 
     public IdRef<BasicObjectCounter> getId() {

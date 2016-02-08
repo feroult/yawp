@@ -25,7 +25,7 @@ public class RepositoryPipes {
         }
     }
 
-    public static void reflux(Repository r, IdRef<?> id) {
+    public static void reflux(Repository r, IdRef<?> id, StringBuilder sb) {
         try {
             Class<?> endpointClazz = id.getClazz();
 
@@ -38,7 +38,7 @@ public class RepositoryPipes {
             for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
                 Pipe pipe = createPipeInstance(r, pipeClazz);
                 pipe.configure(object);
-                r.driver().pipes().reflux(pipe, object);
+                r.driver().pipes().reflux(pipe, object, sb);
             }
         } catch (DriverNotImplementedException e) {
             // TODO: pipes - remove this

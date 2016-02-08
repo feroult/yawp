@@ -164,9 +164,9 @@ public class Repository implements RepositoryApi {
         RepositoryPipes.flux(this, object);
     }
 
-    private void refluxPipes(IdRef<?> id) {
+    private void refluxPipes(IdRef<?> id, StringBuilder sb) {
         // TODO: pipes - Deal with transactions, load existing object only one time (shield may load it too)
-        RepositoryPipes.reflux(this, id);
+        RepositoryPipes.reflux(this, id, sb);
     }
 
     private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
@@ -200,19 +200,29 @@ public class Repository implements RepositoryApi {
 
     @Override
     public void destroy(IdRef<?> id) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("destroy -> " + id + " -- " + java.lang.System.identityHashCode(this) + " -- thread " + Thread.currentThread().getName() + " -- ");
+
         namespace.set(id.getClazz());
         try {
             RepositoryHooks.beforeDestroy(this, id);
 
             boolean newTransaction = beginTransactionForPipes(id);
-            refluxPipes(id);
+            refluxPipes(id, sb);
             driver().persistence().destroy(id);
             if (newTransaction) {
+                sb.append(" -- before commit -- ");
                 commit();
+                sb.append(" -- commit ok -- ");
             }
 
             RepositoryHooks.afterDestroy(this, id);
+        } catch (Throwable t) {
+            sb.append(" -- exception -> " + t.getMessage() + " -- ");
+            throw t;
         } finally {
+            sb.append(" -- finally -- ");
+            System.out.println(sb.toString());
             namespace.reset();
         }
     }
@@ -263,9 +273,11 @@ public class Repository implements RepositoryApi {
         if (tx == null) {
             throw new RuntimeException("No transaction in progress");
         }
-
-        tx.rollback();
-        tx = null;
+        try {
+            tx.rollback();
+        } finally {
+            tx = null;
+        }
     }
 
     @Override
@@ -273,8 +285,11 @@ public class Repository implements RepositoryApi {
         if (tx == null) {
             throw new RuntimeException("No transaction in progress");
         }
-        tx.commit();
-        tx = null;
+        try {
+            tx.commit();
+        } finally {
+            tx = null;
+        }
     }
 
     @Override

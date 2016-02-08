@@ -63,7 +63,7 @@
         function saveObjectsInParallel(callback) {
             for (var i = 0; i < MAX; i++) {
                 setTimeout(function () {
-                    saveOrDestroyObject(randomInt(1, 5), groups[randomInt(0, 1)], function () {
+                    saveOrDestroyObject(randomInt(1, 3), groups[randomInt(0, 1)], function () {
                         count++;
                         if (count >= MAX) {
                             callback();
@@ -79,7 +79,7 @@
 
         function assertCounter() {
             yawp('/piped_object_counters/1').fetch(function (counter) {
-                if (counter.count != 5 || counter.countGroupA != 3 || counter.countGroupB != 2) {
+                if (counter.count != 3 || counter.countGroupA != 2 || counter.countGroupB != 1) {
                     if (retries >= MAX_RETRIES) {
                         t.start();
                         return;
@@ -89,9 +89,9 @@
                     return;
                 }
 
-                assert.equal(counter.count, 5);
-                assert.equal(counter.countGroupA, 3);
-                assert.equal(counter.countGroupB, 2);
+                assert.equal(counter.count, 3);
+                assert.equal(counter.countGroupA, 2);
+                assert.equal(counter.countGroupB, 1);
                 t.start();
             }).fail(function () {
                 if (retries >= MAX_RETRIES) {
@@ -109,11 +109,12 @@
             saveObject(1, 'group-a', function () {
                 saveObject(2, 'group-b', function () {
                     saveObject(3, 'group-a', function () {
-                        saveObject(4, 'group-b', function () {
-                            saveObject(5, 'group-a', function () {
-                                callback();
-                            });
-                        });
+                        callback();
+                        //saveObject(4, 'group-b', function () {
+                        //    saveObject(5, 'group-a', function () {
+                        //        callback();
+                        //    });
+                        //});
                     });
                 });
             });

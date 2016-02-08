@@ -105,7 +105,7 @@ public class EndpointServlet extends HttpServlet {
     }
 
     protected Repository getRepository(RequestContext ctx) {
-        return Yawp.yawp.setRequestContext(ctx);
+        return Yawp.yawp().setRequestContext(ctx);
     }
 
 }

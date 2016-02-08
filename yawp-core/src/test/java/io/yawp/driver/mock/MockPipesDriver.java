@@ -29,7 +29,7 @@ public class MockPipesDriver implements PipesDriver {
     }
 
     @Override
-    public void reflux(Pipe pipe, Object object) {
+    public void reflux(Pipe pipe, Object object, StringBuilder sb) {
         Set<IdRef<?>> sinks = pipe.getSinks();
 
         for (IdRef<?> sinkId : sinks) {

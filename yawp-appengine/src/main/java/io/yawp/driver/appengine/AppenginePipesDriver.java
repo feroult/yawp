@@ -27,16 +27,16 @@ public class AppenginePipesDriver implements PipesDriver {
 
     @Override
     public void flux(Pipe pipe, Object object) {
-        enqueueObjectToPipe(pipe, object, true, new StringBuilder());
+        enqueueObjectToPipe(pipe, object, true);
     }
 
     @Override
-    public void reflux(Pipe pipe, Object object, StringBuilder sb) {
-        enqueueObjectToPipe(pipe, object, false, sb);
+    public void reflux(Pipe pipe, Object object) {
+        enqueueObjectToPipe(pipe, object, false);
     }
 
-    private void enqueueObjectToPipe(Pipe pipe, Object object, boolean present, StringBuilder sb) {
-        SourceMarker sourceMarker = saveSourceMarker(object, present, sb);
+    private void enqueueObjectToPipe(Pipe pipe, Object object, boolean present) {
+        SourceMarker sourceMarker = saveSourceMarker(object, present);
         Queue queue = getPipeQueue();
         Set<IdRef<?>> sinks = pipe.getSinks();
 
@@ -70,7 +70,7 @@ public class AppenginePipesDriver implements PipesDriver {
         return objectId.createChildId(SourceMarker.class, objectId.getName());
     }
 
-    private SourceMarker saveSourceMarker(Object object, boolean present, StringBuilder sb) {
+    private SourceMarker saveSourceMarker(Object object, boolean present) {
         ObjectHolder objectHolder = new ObjectHolder(object);
         IdRef<SourceMarker> markerId = createSourceMarkerId(objectHolder);
 
@@ -84,13 +84,8 @@ public class AppenginePipesDriver implements PipesDriver {
             sourceMarker.setId(markerId);
             sourceMarker.setParentId(objectHolder.getId());
         }
-        r.save(sourceMarker);
-        // TODO: remove this (also present)
 
-        if (!present) {
-            sb.append(" -- version " + sourceMarker.getVersion() + " -- ");
-        }
-        //System.out.println(String.format("marker -> %s, %b, %d", markerId, present, sourceMarker.getVersion()));
+        r.save(sourceMarker);
         return sourceMarker;
     }
 }

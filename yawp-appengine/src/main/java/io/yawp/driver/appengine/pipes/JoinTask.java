@@ -125,7 +125,7 @@ public class JoinTask implements DeferredTask {
             return false;
         }
 
-        work.execute(sink, sinkMarker, indexHash);
+        work.execute(sink, sinkMarker);
 
         sinkMarkerCache.put(sinkMarkerId, sinkMarker);
         sinkMarkersToSave.add(sinkMarkerId);

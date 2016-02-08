@@ -164,9 +164,9 @@ public class Repository implements RepositoryApi {
         RepositoryPipes.flux(this, object);
     }
 
-    private void refluxPipes(IdRef<?> id, StringBuilder sb) {
+    private void refluxPipes(IdRef<?> id) {
         // TODO: pipes - Deal with transactions, load existing object only one time (shield may load it too)
-        RepositoryPipes.reflux(this, id, sb);
+        RepositoryPipes.reflux(this, id);
     }
 
     private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
@@ -200,29 +200,19 @@ public class Repository implements RepositoryApi {
 
     @Override
     public void destroy(IdRef<?> id) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("destroy -> " + id + " -- " + java.lang.System.identityHashCode(this) + " -- thread " + Thread.currentThread().getName() + " -- ");
-
         namespace.set(id.getClazz());
         try {
             RepositoryHooks.beforeDestroy(this, id);
 
             boolean newTransaction = beginTransactionForPipes(id);
-            refluxPipes(id, sb);
+            refluxPipes(id);
             driver().persistence().destroy(id);
             if (newTransaction) {
-                sb.append(" -- before commit -- ");
                 commit();
-                sb.append(" -- commit ok -- ");
             }
 
             RepositoryHooks.afterDestroy(this, id);
-        } catch (Throwable t) {
-            sb.append(" -- exception -> " + t.getMessage() + " -- ");
-            throw t;
         } finally {
-            sb.append(" -- finally -- ");
-            System.out.println(sb.toString());
             namespace.reset();
         }
     }

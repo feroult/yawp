@@ -6,6 +6,6 @@ public interface PipesDriver {
 
     void flux(Pipe pipe, Object object);
 
-    void reflux(Pipe pipe, Object object, StringBuilder sb);
+    void reflux(Pipe pipe, Object object);
 
 }

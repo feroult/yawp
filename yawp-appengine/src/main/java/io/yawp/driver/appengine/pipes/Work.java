@@ -6,9 +6,6 @@ import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
-import io.yawp.repository.models.FieldModel;
-import io.yawp.repository.models.ObjectHolder;
-import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.pipes.SinkMarker;
 import io.yawp.repository.pipes.SourceMarker;
@@ -35,10 +32,8 @@ public class Work {
         this.payload = payload;
     }
 
-    public <T, S> void execute(Object sink, SinkMarker sinkMarker, String indexHash) {
+    public <T, S> void execute(Object sink, SinkMarker sinkMarker) {
         Pipe<T, S> pipe = createPipeInstance();
-
-        logWork(sink, sinkMarker, indexHash);
 
         if (payload.isPresent()) {
             if (sinkMarker.isPresent()) {
@@ -52,25 +47,6 @@ public class Work {
 
         sinkMarker.setVersion(payload.getSourceMarker().getVersion());
         sinkMarker.setPresent(payload.isPresent());
-    }
-
-    private void logWork(Object sink, SinkMarker sinkMarker, String indexHash) {
-        Class<?> endpointClazz = ReflectionUtils.getFeatureEndpointClazz(payload.getPipeClazz());
-        ObjectHolder holder = new ObjectHolder(payload.getSource());
-        ObjectModel model = new ObjectModel(endpointClazz);
-        FieldModel group = model.getFieldModel("group");
-
-        System.out.print(String.format("%s -> id: %s -- version: new=%d, old=%d -- ", indexHash, holder.getId(), payload.getSourceMarker().getVersion(), sinkMarker.getVersion()));
-
-        if (payload.isPresent()) {
-            if (sinkMarker.isPresent()) {
-                System.out.print(String.format("reflux: %s -- ", group.getValue(sinkMarker.getSource())));
-            }
-            System.out.println(String.format("flux: %s", group.getValue(payload.getSource())));
-
-        } else {
-            System.out.println(String.format("reflux: %s", group.getValue(payload.getSource())));
-        }
     }
 
     private void rememberSourceInSinkMarker(SinkMarker sinkMarker) {

@@ -37,7 +37,7 @@ public class ReloadPipeServlet extends HttpServlet {
 
     private void error(HttpServletResponse resp) throws IOException {
         PrintWriter writer = resp.getWriter();
-        writer.println("use servlet?pipe=pipe-class-name");
+        writer.println("use servlet?pipe=pipe=class-name");
         resp.setStatus(403);
     }
 

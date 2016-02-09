@@ -12,6 +12,13 @@ public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
     }
 
     @Override
+    public void clear(PipedObjectCounter sink) {
+        sink.setCount(0);
+        sink.setCountGroupA(0);
+        sink.setCountGroupB(0);
+    }
+
+    @Override
     public void flux(PipedObject object, PipedObjectCounter counter) {
         counter.inc();
 

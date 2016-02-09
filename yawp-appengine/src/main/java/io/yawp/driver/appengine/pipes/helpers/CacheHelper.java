@@ -1,4 +1,4 @@
-package io.yawp.driver.appengine.pipes;
+package io.yawp.driver.appengine.pipes.helpers;
 
 import com.google.appengine.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.appengine.repackaged.org.apache.commons.codec.digest.DigestUtils;

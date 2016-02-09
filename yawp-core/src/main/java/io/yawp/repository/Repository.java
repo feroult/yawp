@@ -131,10 +131,16 @@ public class Repository implements RepositoryApi {
 
     private void saveInternal(Object object) {
         boolean newTransaction = beginTransactionForPipes(object);
-        driver().persistence().save(object);
-        fluxPipes(object);
-        if (newTransaction) {
-            commit();
+        try {
+            driver().persistence().save(object);
+            fluxPipes(object);
+            if (newTransaction) {
+                commit();
+            }
+        } finally {
+            if (newTransaction && isTransationInProgress()) {
+                rollback();
+            }
         }
     }
 
@@ -203,17 +209,25 @@ public class Repository implements RepositoryApi {
         namespace.set(id.getClazz());
         try {
             RepositoryHooks.beforeDestroy(this, id);
+            destroyInternal(id);
+            RepositoryHooks.afterDestroy(this, id);
+        } finally {
+            namespace.reset();
+        }
+    }
 
-            boolean newTransaction = beginTransactionForPipes(id);
+    private void destroyInternal(IdRef<?> id) {
+        boolean newTransaction = beginTransactionForPipes(id);
+        try {
             refluxPipes(id);
             driver().persistence().destroy(id);
             if (newTransaction) {
                 commit();
             }
-
-            RepositoryHooks.afterDestroy(this, id);
         } finally {
-            namespace.reset();
+            if (newTransaction && isTransationInProgress()) {
+                rollback();
+            }
         }
     }
 

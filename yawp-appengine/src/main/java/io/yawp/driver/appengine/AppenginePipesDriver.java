@@ -1,14 +1,15 @@
 package io.yawp.driver.appengine;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.taskqueue.Queue;
-import com.google.appengine.api.taskqueue.QueueFactory;
 import com.google.appengine.api.taskqueue.TaskOptions;
+import com.google.appengine.tools.pipeline.PipelineService;
+import com.google.appengine.tools.pipeline.PipelineServiceFactory;
 import io.yawp.driver.api.PipesDriver;
 import io.yawp.driver.appengine.pipes.ForkTask;
 import io.yawp.driver.appengine.pipes.Payload;
-import io.yawp.driver.appengine.pipes.ReloadTask;
+import io.yawp.driver.appengine.pipes.helpers.QueueHelper;
+import io.yawp.driver.appengine.pipes.tools.ReloadPipeJob;
+import io.yawp.driver.appengine.pipes.tools.ReloadPipeTask;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
@@ -37,25 +38,26 @@ public class AppenginePipesDriver implements PipesDriver {
     }
 
     @Override
-    public void reload(Class<?> pipeClazz) {
-        Queue queue = getPipeQueue();
-        queue.add(TaskOptions.Builder.withPayload(new ReloadTask(pipeClazz)));
+    public void reload(Class<? extends Pipe> pipeClazz) {
+//        Queue queue = QueueHelper.getPipeQueue();
+//        queue.add(TaskOptions.Builder.withPayload(new ReloadPipeTask(pipeClazz)));
+        PipelineService service = PipelineServiceFactory.newPipelineService();
+        try {
+            service.startNewPipeline(new ReloadPipeJob(), pipeClazz);
+        } catch(Throwable t){
+            t.printStackTrace();;
+        }
     }
 
     private void enqueueObjectToPipe(Pipe pipe, Object object, boolean present) {
         SourceMarker sourceMarker = saveSourceMarker(object, present);
-        Queue queue = getPipeQueue();
+        Queue queue = QueueHelper.getPipeQueue();
         Set<IdRef<?>> sinks = pipe.getSinks();
 
         for (IdRef<?> sinkId : sinks) {
             Payload payload = createPayload(pipe, object, sinkId, sourceMarker, present);
             queue.add(TaskOptions.Builder.withPayload(new ForkTask(payload)));
         }
-    }
-
-    private Queue getPipeQueue() {
-        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        return QueueFactory.getDefaultQueue();
     }
 
     private Payload createPayload(Pipe pipe, Object object, IdRef<?> sinkId, SourceMarker marker, boolean present) {

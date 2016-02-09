@@ -1,10 +1,7 @@
 package io.yawp.plugin.devserver.appengine;
 
 import com.google.appengine.tools.development.LocalServerEnvironment;
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
-import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
+import com.google.appengine.tools.development.testing.*;
 import com.google.apphosting.api.ApiProxy;
 import com.google.apphosting.api.ApiProxy.Environment;
 import com.google.apphosting.utils.config.AppEngineWebXml;
@@ -71,7 +68,7 @@ public class AppengineWebAppContext extends WebAppContext {
     }
 
     private LocalServiceTestHelper createHelper() {
-        LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), createDatastoreServiceTestConfig(), createTaskQueueTestConfig()) {
+        LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), createDatastoreServiceTestConfig(), createTaskQueueTestConfig(), new LocalModulesServiceTestConfig()) {
             @Override
             protected LocalServerEnvironment newLocalServerEnvironment() {
                 return new TestLocalServerEnvironment(mojo, super.newLocalServerEnvironment());

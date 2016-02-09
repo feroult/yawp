@@ -8,6 +8,6 @@ public interface PipesDriver {
 
     void reflux(Pipe pipe, Object object);
 
-    void reload(Class<?> pipeClazz);
+    void reload(Class<? extends Pipe> pipeClazz);
 
 }

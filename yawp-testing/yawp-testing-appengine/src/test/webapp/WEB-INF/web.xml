@@ -49,4 +49,22 @@
         <servlet-name>DeleteAllServlet</servlet-name>
         <url-pattern>/_yawp/delete_all</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ReloadPipeServlet</servlet-name>
+        <servlet-class>io.yawp.repository.tools.ReloadPipeServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReloadPipeServlet</servlet-name>
+        <url-pattern>/_yawp/reload-pipe</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>PipelineServlet</servlet-name>
+        <servlet-class>com.google.appengine.tools.pipeline.impl.servlets.PipelineServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PipelineServlet</servlet-name>
+        <url-pattern>/_ah/pipeline/*</url-pattern>
+    </servlet-mapping>
 </web-app>

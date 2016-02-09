@@ -40,7 +40,7 @@ public class MockPipesDriver implements PipesDriver {
     }
 
     @Override
-    public void reload(Class<?> pipeClazz) {
+    public void reload(Class<? extends Pipe> pipeClazz) {
 
     }
 

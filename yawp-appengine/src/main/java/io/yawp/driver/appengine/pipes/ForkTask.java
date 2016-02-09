@@ -3,9 +3,10 @@ package io.yawp.driver.appengine.pipes;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.*;
+import io.yawp.driver.appengine.pipes.helpers.QueueHelper;
 import io.yawp.repository.Repository;
 
-import static io.yawp.driver.appengine.pipes.CacheHelper.*;
+import static io.yawp.driver.appengine.pipes.helpers.CacheHelper.*;
 import static io.yawp.repository.Yawp.yawp;
 
 public class ForkTask implements DeferredTask {
@@ -64,7 +65,7 @@ public class ForkTask implements DeferredTask {
     }
 
     private void enqueue(TaskOptions taskOptions) {
-        Queue queue = QueueFactory.getDefaultQueue();
+        Queue queue = QueueHelper.getPipeQueue();
         queue.add(taskOptions);
     }
 

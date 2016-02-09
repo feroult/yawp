@@ -12,6 +12,8 @@ public abstract class Pipe<T, S> extends Feature {
 
     public abstract void configure(T source);
 
+    public abstract void clear(S sink);
+
     public abstract void flux(T source, S sink);
 
     public abstract void reflux(T source, S sink);

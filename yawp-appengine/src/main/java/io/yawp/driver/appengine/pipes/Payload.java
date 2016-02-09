@@ -47,7 +47,7 @@ public class Payload implements Serializable {
 
     public Class<? extends Pipe> getPipeClazz() {
         if (pipeClazz == null) {
-            pipeClazz = clazzForName(pipeClazzName);
+            pipeClazz = (Class<? extends Pipe>) ReflectionUtils.clazzForName(pipeClazzName);
         }
         return pipeClazz;
     }
@@ -110,13 +110,5 @@ public class Payload implements Serializable {
 
     public IdRef<?> getSourceId() {
         return new ObjectHolder(getSource()).getId();
-    }
-
-    private Class<? extends Pipe> clazzForName(String clazzName) {
-        try {
-            return (Class<? extends Pipe>) Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

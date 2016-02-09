@@ -1,6 +1,7 @@
 package io.yawp.repository.pipes;
 
 import io.yawp.commons.utils.JsonUtils;
+import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
@@ -55,7 +56,7 @@ public class SinkMarker {
 
     public Object getSource() {
         if (source == null) {
-            source = JsonUtils.from(yawp(), sourceJson, clazzForName(sourceClazzName));
+            source = JsonUtils.from(yawp(), sourceJson, ReflectionUtils.clazzForName(sourceClazzName));
         }
         return source;
     }
@@ -64,14 +65,6 @@ public class SinkMarker {
         this.sourceClazzName = endpointClazz.getName();
         this.sourceJson = sourceJson;
         this.source = null;
-    }
-
-    private Class<? extends Pipe> clazzForName(String clazzName) {
-        try {
-            return (Class<? extends Pipe>) Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }

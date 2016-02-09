@@ -39,6 +39,11 @@ public class MockPipesDriver implements PipesDriver {
         }
     }
 
+    @Override
+    public void reload(Class<?> pipeClazz) {
+
+    }
+
     private Object fetchOrCreateSink(IdRef<?> id) {
         try {
             return id.fetch();

@@ -8,6 +8,7 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import io.yawp.driver.api.PipesDriver;
 import io.yawp.driver.appengine.pipes.ForkTask;
 import io.yawp.driver.appengine.pipes.Payload;
+import io.yawp.driver.appengine.pipes.ReloadTask;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
@@ -33,6 +34,12 @@ public class AppenginePipesDriver implements PipesDriver {
     @Override
     public void reflux(Pipe pipe, Object object) {
         enqueueObjectToPipe(pipe, object, false);
+    }
+
+    @Override
+    public void reload(Class<?> pipeClazz) {
+        Queue queue = getPipeQueue();
+        queue.add(TaskOptions.Builder.withPayload(new ReloadTask(pipeClazz)));
     }
 
     private void enqueueObjectToPipe(Pipe pipe, Object object, boolean present) {

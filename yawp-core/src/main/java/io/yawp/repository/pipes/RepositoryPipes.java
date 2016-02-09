@@ -8,41 +8,37 @@ import io.yawp.repository.query.NoResultException;
 public class RepositoryPipes {
 
     public static void flux(Repository r, Object object) {
-        try {
-            Class<?> endpointClazz = object.getClass();
+        Class<?> endpointClazz = object.getClass();
 
-            if (!hasPipes(r, endpointClazz)) {
-                return;
-            }
+        if (!hasPipes(r, endpointClazz)) {
+            return;
+        }
 
-            for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
-                Pipe pipe = createPipeInstance(r, pipeClazz);
-                pipe.configure(object);
-                r.driver().pipes().flux(pipe, object);
-            }
-        } catch (DriverNotImplementedException e) {
-            // TODO: pipes - remove this
+        for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
+            Pipe pipe = createPipeInstance(r, pipeClazz);
+            pipe.configure(object);
+            r.driver().pipes().flux(pipe, object);
         }
     }
 
     public static void reflux(Repository r, IdRef<?> id) {
+        Class<?> endpointClazz = id.getClazz();
+
+        if (!hasPipes(r, endpointClazz)) {
+            return;
+        }
+
+        Object object;
         try {
-            Class<?> endpointClazz = id.getClazz();
-
-            if (!hasPipes(r, endpointClazz)) {
-                return;
-            }
-
-            Object object = id.fetch();
-
-            for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
-                Pipe pipe = createPipeInstance(r, pipeClazz);
-                pipe.configure(object);
-                r.driver().pipes().reflux(pipe, object);
-            }
-        } catch (DriverNotImplementedException e) {
-            // TODO: pipes - remove this
+            object = id.fetch();
         } catch (NoResultException e) {
+            return;
+        }
+
+        for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
+            Pipe pipe = createPipeInstance(r, pipeClazz);
+            pipe.configure(object);
+            r.driver().pipes().reflux(pipe, object);
         }
     }
 

@@ -29,7 +29,6 @@ public class FlushSourceJob extends Job2<Void, Class<? extends Pipe>, String> {
     }
 
     private Value<Void> execute() {
-        System.out.println("flush source job: " + sourceId);
         flushSource();
         return null;
     }

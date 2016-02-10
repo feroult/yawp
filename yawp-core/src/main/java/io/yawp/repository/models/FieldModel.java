@@ -5,7 +5,9 @@ import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
 
+import java.beans.Transient;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Date;
 
@@ -106,4 +108,7 @@ public class FieldModel {
         return String.class.isAssignableFrom(field.getType());
     }
 
+    public boolean isTransient() {
+        return Modifier.isTransient(field.getModifiers()) || field.isAnnotationPresent(Transient.class);
+    }
 }

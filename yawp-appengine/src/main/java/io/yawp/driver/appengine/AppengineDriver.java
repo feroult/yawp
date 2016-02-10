@@ -1,7 +1,6 @@
 package io.yawp.driver.appengine;
 
 import io.yawp.driver.api.*;
-import io.yawp.driver.appengine.pipes.AppenginePipesDriver;
 import io.yawp.repository.Repository;
 
 public class AppengineDriver implements Driver {
@@ -11,6 +10,11 @@ public class AppengineDriver implements Driver {
     @Override
     public void init(Repository r) {
         this.r = r;
+    }
+
+    @Override
+    public String name() {
+        return "appengine";
     }
 
     @Override
@@ -45,7 +49,7 @@ public class AppengineDriver implements Driver {
 
     @Override
     public PipesDriver pipes() {
-        throw new DriverNotImplementedException();
-        //return new AppenginePipesDriver(r);
+        //throw new DriverNotImplementedException();
+        return new AppenginePipesDriver(r);
     }
 }

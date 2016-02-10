@@ -4,6 +4,7 @@ import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.RequestContext;
+import io.yawp.commons.utils.Environment;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.*;
 import io.yawp.repository.actions.ActionKey;
@@ -40,9 +41,8 @@ public class EndpointRouter {
     private List<?> objects;
 
     private EndpointRouter(Repository r, RequestContext ctx) {
-
         if (isWelcome(ctx.getUri())) {
-            throw new HttpException(200, "Welcome to YAWP!");
+            welcome(r);
         }
 
         this.r = r;
@@ -61,6 +61,14 @@ public class EndpointRouter {
 
     private boolean isWelcome(String uri) {
         return uri.equals("") || uri.equals("/");
+    }
+
+    private void welcome(Repository r) {
+        Welcome welcome = new Welcome();
+        welcome.setMessage("Welcome to YAWP!");
+        welcome.setVersion(Environment.version());
+        welcome.setDriver(r.driver().name());
+        throw new HttpException(200, JsonUtils.to(welcome));
     }
 
     public static EndpointRouter parse(Repository r, RequestContext ctx) {

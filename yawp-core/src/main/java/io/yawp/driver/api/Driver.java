@@ -6,6 +6,8 @@ public interface Driver {
 
     void init(Repository r);
 
+    String name();
+
     PersistenceDriver persistence();
 
     QueryDriver query();
@@ -19,5 +21,4 @@ public interface Driver {
     HelpersDriver helpers();
 
     PipesDriver pipes();
-
 }

@@ -28,7 +28,6 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 
     public AppenginePersistenceDriver(Repository r) {
         this.r = r;
-
     }
 
     private DatastoreService datastore() {
@@ -95,6 +94,10 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 
         for (FieldModel fieldModel : fieldModels) {
             if (fieldModel.isId()) {
+                continue;
+            }
+
+            if (fieldModel.isTransient()) {
                 continue;
             }
 

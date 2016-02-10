@@ -8,9 +8,7 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
-import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.pipes.RepositoryPipes;
-import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.List;
@@ -132,27 +130,49 @@ public class Repository implements RepositoryApi {
     }
 
     private void saveInternal(Object object) {
-        refluxPipes(object);
-        driver().persistence().save(object);
-        fluxPipes(object);
+        boolean newTransaction = beginTransactionForPipes(object);
+        try {
+            driver().persistence().save(object);
+            fluxPipes(object);
+            if (newTransaction) {
+                commit();
+            }
+        } finally {
+            if (newTransaction && isTransationInProgress()) {
+                rollback();
+            }
+        }
     }
 
-    private void refluxPipes(Object object) {
-        ObjectHolder objectHolder = new ObjectHolder(object);
-        if (!objectHolder.hasId()) {
-            return;
+    private boolean beginTransactionForPipes(Object object) {
+        Class<?> endpointClazz = object.getClass();
+        return beginTransactionForPipes(endpointClazz);
+    }
+
+    private boolean beginTransactionForPipes(IdRef<?> id) {
+        Class<?> endpointClazz = id.getClazz();
+        return beginTransactionForPipes(endpointClazz);
+    }
+
+    private boolean beginTransactionForPipes(Class<?> endpointClazz) {
+        if (!RepositoryPipes.hasPipes(this, endpointClazz)) {
+            return false;
         }
-        // TODO: pipes - Deal with transactions, load existing object only one time (shield may load it too)
-        try {
-            Object existingObject = objectHolder.getId().fetch();
-            RepositoryPipes.reflux(this, existingObject);
-        } catch (NoResultException e) {
+        if (isTransationInProgress()) {
+            return false;
         }
+        begin();
+        return true;
     }
 
     private void fluxPipes(Object object) {
         // TODO: pipes - Deal with transactions. Pipes should be transactional with saving.
         RepositoryPipes.flux(this, object);
+    }
+
+    private void refluxPipes(IdRef<?> id) {
+        // TODO: pipes - Deal with transactions, load existing object only one time (shield may load it too)
+        RepositoryPipes.reflux(this, id);
     }
 
     private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
@@ -188,14 +208,26 @@ public class Repository implements RepositoryApi {
     public void destroy(IdRef<?> id) {
         namespace.set(id.getClazz());
         try {
-            // TODO: pipes - Deal with transactions. Pipes should be transactional with saving.
-            RepositoryPipes.reflux(this, id.fetch());
-
             RepositoryHooks.beforeDestroy(this, id);
-            driver().persistence().destroy(id);
+            destroyInternal(id);
             RepositoryHooks.afterDestroy(this, id);
         } finally {
             namespace.reset();
+        }
+    }
+
+    private void destroyInternal(IdRef<?> id) {
+        boolean newTransaction = beginTransactionForPipes(id);
+        try {
+            refluxPipes(id);
+            driver().persistence().destroy(id);
+            if (newTransaction) {
+                commit();
+            }
+        } finally {
+            if (newTransaction && isTransationInProgress()) {
+                rollback();
+            }
         }
     }
 
@@ -245,9 +277,11 @@ public class Repository implements RepositoryApi {
         if (tx == null) {
             throw new RuntimeException("No transaction in progress");
         }
-
-        tx.rollback();
-        tx = null;
+        try {
+            tx.rollback();
+        } finally {
+            tx = null;
+        }
     }
 
     @Override
@@ -255,8 +289,11 @@ public class Repository implements RepositoryApi {
         if (tx == null) {
             throw new RuntimeException("No transaction in progress");
         }
-        tx.commit();
-        tx = null;
+        try {
+            tx.commit();
+        } finally {
+            tx = null;
+        }
     }
 
     @Override

@@ -10,58 +10,137 @@
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
-    t.skip('parallel changes', function (assert) {
+    t.asyncTest('parallel changes', function (assert) {
+
         expect(3);
+
+        function skip() {
+            t.ok(1);
+            t.ok(1);
+            t.ok(1);
+            t.start();
+        }
 
         function saveObject(id, group, callback) {
             var object = {
-                id: '/basic_objects/' + id,
-                stringValue: group
+                id: '/piped_objects/' + id,
+                group: group
             };
 
-            yawp('/basic_objects').create(object).done(function () {
+            yawp('/piped_objects').create(object).done(function () {
                 callback();
+            }).fail(function () {
+                callback()
             });
         }
 
+        function destroyObject(id, callback) {
+            var objectId = '/piped_objects/' + id;
+
+            yawp(objectId).destroy().done(function () {
+                callback();
+            }).fail(function () {
+                callback()
+            });
+        }
+
+        function saveOrDestroyObject(id, group, callback) {
+
+            var save = randomInt(0, 1);
+
+            if (save) {
+                saveObject(id, group, callback);
+            } else {
+                destroyObject(id, callback);
+            }
+        }
+
         const groups = ['group-a', 'group-b'];
-        const MAX = 10;
+        const MAX = 100;
+
         var count = 0;
 
         function saveObjectsInParallel(callback) {
             for (var i = 0; i < MAX; i++) {
                 setTimeout(function () {
-                    saveObject(randomInt(1, 1), groups[randomInt(0, 1)], function () {
+                    saveOrDestroyObject(randomInt(1, 10), groups[randomInt(0, 1)], function () {
                         count++;
                         if (count >= MAX) {
                             callback();
                         }
                     });
-                }, i * randomInt(1, 50));
+                }, i * randomInt(100, 200));
             }
         }
 
+        const MAX_RETRIES = 15;
+
+        var retries = 0;
+
         function assertCounter() {
-            yawp('/basic_objects_counter/1').fetch(function (counter) {
-                assert.equal(counter.count, 3);
-                assert.equal(counter.countGroupA, 1);
-                assert.equal(counter.countGroupB, 2);
+            yawp('/piped_object_counters/1').fetch(function (counter) {
+                if (counter.count != 10 || counter.countGroupA != 6 || counter.countGroupB != 4) {
+                    if (retries >= MAX_RETRIES) {
+                        t.start();
+                        return;
+                    }
+                    retries++;
+                    setTimeout(assertCounter, 1000);
+                    return;
+                }
+
+                assert.equal(counter.count, 10);
+                assert.equal(counter.countGroupA, 6);
+                assert.equal(counter.countGroupB, 4);
                 t.start();
+            }).fail(function () {
+                if (retries >= MAX_RETRIES) {
+                    t.start();
+                    return;
+                }
+                retries++;
+                setTimeout(assertCounter, 1000);
+                return
             });
         }
 
-        function organizeObjects() {
+
+        function organizeObjects(callback) {
             saveObject(1, 'group-a', function () {
                 saveObject(2, 'group-b', function () {
-                    saveObject(3, 'group-b', function () {
-                        assertCounter();
+                    saveObject(3, 'group-a', function () {
+                        saveObject(4, 'group-b', function () {
+                            saveObject(5, 'group-a', function () {
+                                saveObject(6, 'group-a', function () {
+                                    saveObject(7, 'group-b', function () {
+                                        saveObject(8, 'group-a', function () {
+                                            saveObject(9, 'group-a', function () {
+                                                saveObject(10, 'group-b', function () {
+                                                    callback();
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
                     });
                 });
             });
         }
 
-        saveObjectsInParallel(organizeObjects);
-    });
+        yawp().fetch(function (welcome) {
+            if (welcome.driver == "postgresql") {
+                skip();
+                return;
+            }
 
+            saveObjectsInParallel(function () {
+                organizeObjects(function () {
+                    assertCounter();
+                });
+            });
+        });
+    });
 
 })(QUnit, yawp, yawp.fixtures);

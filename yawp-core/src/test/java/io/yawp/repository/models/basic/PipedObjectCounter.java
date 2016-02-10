@@ -4,21 +4,23 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 
-@Endpoint(path = "/basic_objects_counter")
-public class BasicObjectCounter {
+@Endpoint(path = "/piped_object_counters")
+public class PipedObjectCounter {
 
     @Id
-    private IdRef<BasicObjectCounter> id;
+    private IdRef<PipedObjectCounter> id;
 
     private Integer count = 0;
+
     private Integer countGroupA = 0;
+
     private Integer countGroupB = 0;
 
-    public IdRef<BasicObjectCounter> getId() {
+    public IdRef<PipedObjectCounter> getId() {
         return id;
     }
 
-    public void setId(IdRef<BasicObjectCounter> id) {
+    public void setId(IdRef<PipedObjectCounter> id) {
         this.id = id;
     }
 

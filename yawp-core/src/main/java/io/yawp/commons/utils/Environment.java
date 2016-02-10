@@ -3,6 +3,10 @@ package io.yawp.commons.utils;
 import io.yawp.driver.api.DriverFactory;
 import io.yawp.driver.api.EnvironmentDriver;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Properties;
+
 public class Environment {
 
     public static final String DEFAULT_DEVELOPMENT_ENVIRONMENT = "development";
@@ -67,5 +71,15 @@ public class Environment {
 
     public static String getAppDir() {
         return System.getProperty(YAWP_APP_DIR);
+    }
+
+    public static String version() {
+        try {
+            Properties properties = new Properties();
+            properties.load(Environment.class.getResourceAsStream("/yawp.properties"));
+            return properties.getProperty("version");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -39,6 +39,11 @@
             <artifactId>appengine-api-labs</artifactId>
             <version>${appengine.target.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.appengine.tools</groupId>
+            <artifactId>appengine-pipeline</artifactId>
+            <version>0.2.13</version>
+        </dependency>
 
         <!-- Development dependencies -->
         <dependency>

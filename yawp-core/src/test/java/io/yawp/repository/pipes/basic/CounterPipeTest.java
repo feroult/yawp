@@ -2,16 +2,16 @@ package io.yawp.repository.pipes.basic;
 
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.models.basic.BasicObject;
-import io.yawp.repository.models.basic.BasicObjectCounter;
-import org.junit.Ignore;
+import io.yawp.repository.models.basic.PipedObject;
+import io.yawp.repository.models.basic.PipedObjectCounter;
 import org.junit.Test;
 
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 
-public class BasicObjectCounterPipeTest extends EndpointTestCase {
+public class CounterPipeTest extends EndpointTestCase {
 
     private String[] groups = new String[]{"group-a", "group-b"};
 
@@ -21,10 +21,11 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
             return;
         }
 
-        yawp.save(new BasicObject("xpto"));
-        yawp.save(new BasicObject("xpto"));
+        yawp.save(new PipedObject("xpto"));
+        yawp.save(new PipedObject("xpto"));
+        awaitAsync(20, TimeUnit.SECONDS);
 
-        BasicObjectCounter counter = yawp(BasicObjectCounter.class).only();
+        PipedObjectCounter counter = yawp(PipedObjectCounter.class).only();
         assertEquals((Integer) 2, counter.getCount());
     }
 
@@ -34,19 +35,22 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
             return;
         }
 
-        IdRef<BasicObject> object100Id = saveObjectInGroup(100L, "xpto");
-        yawp.save(new BasicObject("xpto"));
+        IdRef<PipedObject> object100Id = saveObjectInGroup(100L, "xpto");
+        yawp.save(new PipedObject("xpto"));
+        awaitAsync(20, TimeUnit.SECONDS);
 
-        BasicObjectCounter counter;
+        PipedObjectCounter counter;
 
-        counter = yawp(BasicObjectCounter.class).only();
+        counter = yawp(PipedObjectCounter.class).only();
         assertEquals((Integer) 2, counter.getCount());
 
         yawp.destroy(object100Id);
+        awaitAsync(20, TimeUnit.SECONDS);
 
-        counter = yawp(BasicObjectCounter.class).only();
+        counter = yawp(PipedObjectCounter.class).only();
         assertEquals((Integer) 1, counter.getCount());
     }
+
 
     @Test
     public void testCountByAttributeOnlyIncrement() {
@@ -54,11 +58,12 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
             return;
         }
 
-        yawp.save(new BasicObject("group-a"));
-        yawp.save(new BasicObject("group-b"));
-        yawp.save(new BasicObject("xpto"));
+        yawp.save(new PipedObject("group-a"));
+        yawp.save(new PipedObject("group-b"));
+        yawp.save(new PipedObject("xpto"));
+        awaitAsync(20, TimeUnit.SECONDS);
 
-        BasicObjectCounter counter = yawp(BasicObjectCounter.class).only();
+        PipedObjectCounter counter = yawp(PipedObjectCounter.class).only();
 
         assertEquals((Integer) 3, counter.getCount());
         assertEquals((Integer) 1, counter.getCountGroupA());
@@ -72,20 +77,22 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
             return;
         }
 
-        yawp.save(new BasicObject("group-a"));
-        IdRef<BasicObject> objectInGroupBId = saveObjectInGroup(100L, "group-b");
-        yawp.save(new BasicObject("xpto"));
+        yawp.save(new PipedObject("group-a"));
+        IdRef<PipedObject> objectInGroupBId = saveObjectInGroup(100L, "group-b");
+        yawp.save(new PipedObject("xpto"));
+        awaitAsync(20, TimeUnit.SECONDS);
 
-        BasicObjectCounter counter;
+        PipedObjectCounter counter;
 
-        counter = yawp(BasicObjectCounter.class).only();
+        counter = yawp(PipedObjectCounter.class).only();
         assertEquals((Integer) 3, counter.getCount());
         assertEquals((Integer) 1, counter.getCountGroupA());
         assertEquals((Integer) 1, counter.getCountGroupB());
 
         yawp.destroy(objectInGroupBId);
+        awaitAsync(20, TimeUnit.SECONDS);
 
-        counter = yawp(BasicObjectCounter.class).only();
+        counter = yawp(PipedObjectCounter.class).only();
         assertEquals((Integer) 2, counter.getCount());
         assertEquals((Integer) 1, counter.getCountGroupA());
         assertEquals((Integer) 0, counter.getCountGroupB());
@@ -97,33 +104,35 @@ public class BasicObjectCounterPipeTest extends EndpointTestCase {
             return;
         }
 
-        BasicObject objectInGroupB = new BasicObject("group-b");
+        PipedObject objectInGroupB = new PipedObject("group-b");
 
-        yawp.save(new BasicObject("group-a"));
+        yawp.save(new PipedObject("group-a"));
         yawp.save(objectInGroupB);
-        yawp.save(new BasicObject("xpto"));
+        yawp.save(new PipedObject("xpto"));
+        awaitAsync(20, TimeUnit.SECONDS);
 
-        BasicObjectCounter counter;
+        PipedObjectCounter counter;
 
-        counter = yawp(BasicObjectCounter.class).only();
+        counter = yawp(PipedObjectCounter.class).only();
         assertEquals((Integer) 3, counter.getCount());
         assertEquals((Integer) 1, counter.getCountGroupA());
         assertEquals((Integer) 1, counter.getCountGroupB());
 
-        objectInGroupB.setStringValue("group-a");
+        objectInGroupB.setGroup("group-a");
         yawp.save(objectInGroupB);
+        awaitAsync(20, TimeUnit.SECONDS);
 
-        counter = yawp(BasicObjectCounter.class).only();
+        counter = yawp(PipedObjectCounter.class).only();
         assertEquals((Integer) 3, counter.getCount());
         assertEquals((Integer) 2, counter.getCountGroupA());
         assertEquals((Integer) 0, counter.getCountGroupB());
     }
 
-    private IdRef<BasicObject> saveObjectInGroup(long idAsLong, String group) {
-        IdRef<BasicObject> id = id(BasicObject.class, idAsLong);
-        BasicObject object = new BasicObject();
+    private IdRef<PipedObject> saveObjectInGroup(long idAsLong, String group) {
+        IdRef<PipedObject> id = id(PipedObject.class, idAsLong);
+        PipedObject object = new PipedObject();
         object.setId(id);
-        object.setStringValue(group);
+        object.setGroup(group);
         yawp.save(object);
         return id;
     }

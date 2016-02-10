@@ -9,6 +9,8 @@ import io.yawp.repository.Yawp;
 import org.junit.After;
 import org.junit.Before;
 
+import java.util.concurrent.TimeUnit;
+
 public class EndpointTestCase extends Feature {
 
     private TestHelper helper;
@@ -44,6 +46,10 @@ public class EndpointTestCase extends Feature {
         } catch (DriverNotImplementedException e) {
             return true;
         }
+    }
+
+    protected void awaitAsync(long timeout, TimeUnit unit) {
+        helper.awaitAsync(timeout, unit);
     }
 
 }

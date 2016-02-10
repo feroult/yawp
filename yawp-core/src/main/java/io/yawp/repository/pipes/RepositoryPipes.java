@@ -1,44 +1,49 @@
 package io.yawp.repository.pipes;
 
 import io.yawp.driver.api.DriverNotImplementedException;
+import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
+import io.yawp.repository.query.NoResultException;
 
 public class RepositoryPipes {
 
     public static void flux(Repository r, Object object) {
-        try {
-            Class<?> endpointClazz = object.getClass();
+        Class<?> endpointClazz = object.getClass();
 
-            if (r.getFeatures() == null) {
-                return;
-            }
+        if (!hasPipes(r, endpointClazz)) {
+            return;
+        }
 
-            for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
-                Pipe pipe = createPipeInstance(r, pipeClazz);
-                pipe.configure(object);
-                r.driver().pipes().flux(pipe, object);
-            }
-        } catch (DriverNotImplementedException e) {
-            // TODO: pipes - remove this
+        for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
+            Pipe pipe = createPipeInstance(r, pipeClazz);
+            pipe.configure(object);
+            r.driver().pipes().flux(pipe, object);
         }
     }
 
-    public static void reflux(Repository r, Object object) {
-        try {
-            Class<?> endpointClazz = object.getClass();
+    public static void reflux(Repository r, IdRef<?> id) {
+        Class<?> endpointClazz = id.getClazz();
 
-            if (r.getFeatures() == null) {
-                return;
-            }
-
-            for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
-                Pipe pipe = createPipeInstance(r, pipeClazz);
-                pipe.configure(object);
-                r.driver().pipes().reflux(pipe, object);
-            }
-        } catch (DriverNotImplementedException e) {
-            // TODO: pipes - remove this
+        if (!hasPipes(r, endpointClazz)) {
+            return;
         }
+
+        Object object;
+        try {
+            object = id.fetch();
+        } catch (NoResultException e) {
+            return;
+        }
+
+        for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
+            Pipe pipe = createPipeInstance(r, pipeClazz);
+            pipe.configure(object);
+            r.driver().pipes().reflux(pipe, object);
+        }
+    }
+
+    public static boolean hasPipes(Repository r, Class<?> endpointClazz) {
+        return r.getFeatures() != null && r.getEndpointFeatures(endpointClazz).getPipes().size() != 0;
     }
 
     private static Pipe createPipeInstance(Repository r, Class<? extends Pipe> pipeClazz) {

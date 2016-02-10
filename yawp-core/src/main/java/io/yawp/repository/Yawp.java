@@ -28,6 +28,16 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
         return yawp.get();
     }
 
+    public static <T extends Feature> T feature(Class<T> clazz) {
+        try {
+            T feature = clazz.newInstance();
+            feature.setRepository(yawp());
+            return feature;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static void init() {
         if (yawp.get() != null) {
             return;
@@ -48,7 +58,11 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
         yawp.set(Repository.r().setFeatures(features));
     }
 
-    private static void safeLoadFeaturesFromConfig() {
+    private static synchronized void safeLoadFeaturesFromConfig() {
+        if (features != null) {
+            return;
+        }
+
         Config config = Config.load();
         FeaturesConfig featuresConfig = config.getDefaultFeatures();
 
@@ -56,12 +70,14 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
     }
 
     @SuppressWarnings("deprecation")
-    private static void safeLoadFeatures(String packagePrefix) {
-        synchronized (yawp) {
-            RepositoryScanner scanner = new RepositoryScanner(packagePrefix);
-            scanner.enableHooks(true);
-            features = scanner.scan();
+    private static synchronized void safeLoadFeatures(String packagePrefix) {
+        if (features != null) {
+            return;
         }
+
+        RepositoryScanner scanner = new RepositoryScanner(packagePrefix);
+        scanner.enableHooks(true);
+        features = scanner.scan();
     }
 
     @Override

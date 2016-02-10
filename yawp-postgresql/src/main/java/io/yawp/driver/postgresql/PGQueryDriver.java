@@ -103,6 +103,10 @@ public class PGQueryDriver implements QueryDriver {
                 continue;
             }
 
+            if(fieldModel.isTransient()) {
+                continue;
+            }
+
             safeSetObjectProperty(entity, object, fieldModel);
         }
 

@@ -39,7 +39,7 @@ public class IdRefToKey {
             idRef = IdRef.create(r, objectClass, key.getId());
         }
 
-        if (model.hasParent()) {
+        if (key.getParent() != null) {
             idRef.setParentId(toIdRef(r, key.getParent(), createParentModel(r, key)));
         }
         return idRef;

@@ -63,7 +63,11 @@ public final class ReflectionUtils {
     }
 
     public static Class<?> getFeatureEndpointClazz(Class<?> clazz) {
-        Type superClassGenericType = getFirstGenericTypeArgument(clazz.getGenericSuperclass());
+        return getFeatureTypeArgumentAt(clazz, 0);
+    }
+
+    public static Class<?> getFeatureTypeArgumentAt(Class<?> clazz, int index) {
+        Type superClassGenericType = getGenericTypeArgumentAt(clazz.getGenericSuperclass(), index);
 
         if (superClassGenericType instanceof TypeVariable) {
             return (Class<?>) getGenericTypeBound(clazz, ((TypeVariable) superClassGenericType).getName());
@@ -73,15 +77,15 @@ public final class ReflectionUtils {
     }
 
     public static Class<?> getIdRefEndpointClazz(Field field) {
-        return (Class<?>) getFirstGenericTypeArgument(field.getGenericType());
+        return (Class<?>) getGenericTypeArgumentAt(field.getGenericType(), 0);
     }
 
-    private static Type getFirstGenericTypeArgument(Type type) {
+    private static Type getGenericTypeArgumentAt(Type type, int index) {
         Type[] parameters = getGenericTypeArguments(type);
-        if (parameters.length == 0) {
+        if (parameters.length <= index) {
             return null;
         }
-        return parameters[0];
+        return parameters[index];
     }
 
     private static Type[] getGenericTypeArguments(Type type) {
@@ -162,4 +166,11 @@ public final class ReflectionUtils {
         return methods;
     }
 
+    public static Class<?> clazzForName(String clazzName) {
+        try {
+            return Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

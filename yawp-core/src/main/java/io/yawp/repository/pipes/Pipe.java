@@ -10,9 +10,10 @@ public abstract class Pipe<T, S> extends Feature {
 
     private Set<IdRef<S>> sinks = new HashSet<>();
 
-    public abstract void configure(T source);
+    public void clear(S sink) {
+    }
 
-    public abstract void clear(S sink);
+    public abstract void configure(T source);
 
     public abstract void flux(T source, S sink);
 

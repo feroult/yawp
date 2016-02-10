@@ -9,6 +9,7 @@ import io.yawp.repository.Repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class PGTestHelper implements TestHelper {
 
@@ -45,6 +46,11 @@ public class PGTestHelper implements TestHelper {
 
     @Override
     public void tearDown() {
+    }
+
+    @Override
+    public void awaitAsync(long timeout, TimeUnit unit) {
+
     }
 
     public boolean isUserTest() {

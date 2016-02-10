@@ -12,6 +12,13 @@ public class PipedObject {
 
     private String group;
 
+    public PipedObject() {
+    }
+
+    public PipedObject(String group) {
+        this.group = group;
+    }
+
     public IdRef<PipedObject> getId() {
         return id;
     }

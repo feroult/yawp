@@ -4,7 +4,6 @@ import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.PipedObject;
 import io.yawp.repository.models.basic.PipedObjectCounter;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Random;
@@ -100,7 +99,6 @@ public class CounterPipeTest extends EndpointTestCase {
     }
 
     @Test
-    @Ignore
     public void testCountByAttributeDecrementByUpdate() {
         if (pipesDriverNotImplemented()) {
             return;
@@ -111,6 +109,7 @@ public class CounterPipeTest extends EndpointTestCase {
         yawp.save(new PipedObject("group-a"));
         yawp.save(objectInGroupB);
         yawp.save(new PipedObject("xpto"));
+        awaitAsync(20, TimeUnit.SECONDS);
 
         PipedObjectCounter counter;
 
@@ -121,6 +120,7 @@ public class CounterPipeTest extends EndpointTestCase {
 
         objectInGroupB.setGroup("group-a");
         yawp.save(objectInGroupB);
+        awaitAsync(20, TimeUnit.SECONDS);
 
         counter = yawp(PipedObjectCounter.class).only();
         assertEquals((Integer) 3, counter.getCount());

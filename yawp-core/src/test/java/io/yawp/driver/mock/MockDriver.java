@@ -49,7 +49,7 @@ public class MockDriver implements Driver {
 
     @Override
     public PipesDriver pipes() {
-        return new MockPipesDriver(r);
+        throw new DriverNotImplementedException();
     }
 
 }

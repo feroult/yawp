@@ -69,7 +69,7 @@
                             callback();
                         }
                     });
-                }, i * randomInt(30, 100));
+                }, i * randomInt(100, 200));
             }
         }
 

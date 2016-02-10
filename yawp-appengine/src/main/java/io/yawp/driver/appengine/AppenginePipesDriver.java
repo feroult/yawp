@@ -8,8 +8,7 @@ import io.yawp.driver.api.PipesDriver;
 import io.yawp.driver.appengine.pipes.ForkTask;
 import io.yawp.driver.appengine.pipes.Payload;
 import io.yawp.driver.appengine.pipes.helpers.QueueHelper;
-import io.yawp.driver.appengine.pipes.tools.ReloadPipeJob;
-import io.yawp.driver.appengine.pipes.tools.ReloadPipeTask;
+import io.yawp.driver.appengine.pipes.tools.reload.ReloadPipeJob;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
@@ -39,13 +38,11 @@ public class AppenginePipesDriver implements PipesDriver {
 
     @Override
     public void reload(Class<? extends Pipe> pipeClazz) {
-//        Queue queue = QueueHelper.getPipeQueue();
-//        queue.add(TaskOptions.Builder.withPayload(new ReloadPipeTask(pipeClazz)));
         PipelineService service = PipelineServiceFactory.newPipelineService();
         try {
             service.startNewPipeline(new ReloadPipeJob(), pipeClazz);
-        } catch(Throwable t){
-            t.printStackTrace();;
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 

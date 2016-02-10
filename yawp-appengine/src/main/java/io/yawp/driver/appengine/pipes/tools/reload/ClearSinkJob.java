@@ -1,4 +1,4 @@
-package io.yawp.driver.appengine.pipes.tools;
+package io.yawp.driver.appengine.pipes.tools.reload;
 
 import com.google.appengine.tools.pipeline.Job2;
 import com.google.appengine.tools.pipeline.Value;
@@ -38,11 +38,11 @@ public class ClearSinkJob extends Job2<Void, Class<? extends Pipe>, String> {
     private Value<Void> execute() {
         System.out.println("clear sink job: " + sinkId);
         destroySinkMarkers();
-        initSink();
+        clearSink();
         return null;
     }
 
-    private void initSink() {
+    private void clearSink() {
         Pipe pipe = createPipeInstance();
         Object sink = sinkId.fetch();
         pipe.clear(sink);
@@ -60,7 +60,7 @@ public class ClearSinkJob extends Job2<Void, Class<? extends Pipe>, String> {
     private void destroySinkMarkers() {
         List<IdRef<SinkMarker>> ids = r.query(SinkMarker.class).from(sinkId).ids();
         for (IdRef<SinkMarker> id : ids) {
-            if (!id.getParentClazz().equals(sourceClazz)) {
+            if (!id.getParentId().getClazz().equals(sourceClazz)) {
                 continue;
             }
             r.destroy(id);

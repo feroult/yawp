@@ -16,6 +16,10 @@ public class AppengineHelpersDriver implements HelpersDriver {
         Query query = new Query();
         PreparedQuery pq = datastore.prepare(query);
         for (Entity entity : pq.asIterable()) {
+            String kind = entity.getKind();
+            if (kind.startsWith("__") && !kind.contains("yawp")) {
+                continue;
+            }
             datastore.delete(entity.getKey());
         }
     }

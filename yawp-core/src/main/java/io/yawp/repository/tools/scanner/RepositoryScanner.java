@@ -22,7 +22,11 @@ public final class RepositoryScanner {
 
     private boolean enableHooks;
 
+    private String packagePrefix;
+
     private Reflections endpointsPackage;
+
+    private Reflections yawpPackage;
 
     private Map<Class<?>, EndpointTree<?>> trees;
 
@@ -31,7 +35,9 @@ public final class RepositoryScanner {
      */
     @Deprecated
     public RepositoryScanner(String packagePrefix) {
+        this.packagePrefix = packagePrefix;
         this.endpointsPackage = new Reflections(packagePrefix);
+        this.yawpPackage = new Reflections("io.yawp");
         this.trees = new HashMap<>();
         this.enableHooks = true;
     }
@@ -49,7 +55,7 @@ public final class RepositoryScanner {
         long start = System.currentTimeMillis();
         RepositoryFeatures repositoryFeatures = new RepositoryFeatures(scanAndLoadAll());
         long elapsed = System.currentTimeMillis() - start;
-        LOGGER.info("YAWP! started in " + elapsed + " ms");
+        LOGGER.info("YAWP! started in " + elapsed + " ms - package: " + packagePrefix);
         return repositoryFeatures;
     }
 
@@ -92,11 +98,18 @@ public final class RepositoryScanner {
     }
 
     private void scanEndpoints() {
-        Set<Class<?>> clazzes = endpointsPackage.getTypesAnnotatedWith(Endpoint.class);
+        Set<Class<?>> userClazzes = endpointsPackage.getTypesAnnotatedWith(Endpoint.class);
 
-        for (Class<?> endpointClazz : clazzes) {
+        for (Class<?> endpointClazz : userClazzes) {
             trees.put(endpointClazz, new EndpointTree(endpointClazz));
         }
+
+        Set<Class<?>> yawpClazzes = yawpPackage.getTypesAnnotatedWith(Endpoint.class);
+
+        for (Class<?> endpointClazz : yawpClazzes) {
+            trees.put(endpointClazz, new EndpointTree(endpointClazz));
+        }
+
     }
 
     private List<Class<?>> findEndpointsInHierarchy(Class<?> parameterClazz, Class<?> featureClazz) {

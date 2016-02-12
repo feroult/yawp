@@ -128,6 +128,50 @@ public class CounterPipeTest extends EndpointTestCase {
         assertEquals((Integer) 0, counter.getCountGroupB());
     }
 
+    @Test
+    public void testTwoSinks() {
+        if (pipesDriverNotImplemented()) {
+            return;
+        }
+
+        IdRef<PipedObjectCounter> idSink1 = id(PipedObjectCounter.class, 1L);
+        IdRef<PipedObjectCounter> idSink2 = id(PipedObjectCounter.class, 2L);
+
+        PipedObject objectA = new PipedObject("group-a", idSink1);
+        PipedObject objectB = new PipedObject("group-b", idSink2);
+
+        yawp.save(objectA);
+        yawp.save(objectB);
+        awaitAsync(20, TimeUnit.SECONDS);
+
+        PipedObjectCounter counterSink1;
+        PipedObjectCounter counterSink2;
+
+        counterSink1 = idSink1.fetch();
+        assertEquals((Integer) 1, counterSink1.getCount());
+        assertEquals((Integer) 1, counterSink1.getCountGroupA());
+        assertEquals((Integer) 0, counterSink1.getCountGroupB());
+
+        counterSink2 = idSink2.fetch();
+        assertEquals((Integer) 1, counterSink2.getCount());
+        assertEquals((Integer) 0, counterSink2.getCountGroupA());
+        assertEquals((Integer) 1, counterSink2.getCountGroupB());
+
+        objectA.setCounterId(idSink2);
+        yawp.save(objectA);
+        awaitAsync(20, TimeUnit.SECONDS);
+
+        counterSink1 = idSink1.fetch();
+        assertEquals((Integer) 0, counterSink1.getCount());
+        assertEquals((Integer) 0, counterSink1.getCountGroupA());
+        assertEquals((Integer) 0, counterSink1.getCountGroupB());
+
+        counterSink2 = idSink2.fetch();
+        assertEquals((Integer) 2, counterSink2.getCount());
+        assertEquals((Integer) 1, counterSink2.getCountGroupA());
+        assertEquals((Integer) 1, counterSink2.getCountGroupB());
+    }
+
     private IdRef<PipedObject> saveObjectInGroup(long idAsLong, String group) {
         IdRef<PipedObject> id = id(PipedObject.class, idAsLong);
         PipedObject object = new PipedObject();

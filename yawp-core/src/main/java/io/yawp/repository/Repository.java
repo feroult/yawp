@@ -132,6 +132,7 @@ public class Repository implements RepositoryApi {
     private void saveInternal(Object object) {
         boolean newTransaction = beginTransactionForPipes(object);
         try {
+            refluxOldPipes(object);
             driver().persistence().save(object);
             fluxPipes(object);
             if (newTransaction) {
@@ -166,13 +167,15 @@ public class Repository implements RepositoryApi {
     }
 
     private void fluxPipes(Object object) {
-        // TODO: pipes - Deal with transactions. Pipes should be transactional with saving.
         RepositoryPipes.flux(this, object);
     }
 
     private void refluxPipes(IdRef<?> id) {
-        // TODO: pipes - Deal with transactions, load existing object only one time (shield may load it too)
         RepositoryPipes.reflux(this, id);
+    }
+
+    private void refluxOldPipes(Object object) {
+        RepositoryPipes.refluxOld(this, object);
     }
 
     private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {

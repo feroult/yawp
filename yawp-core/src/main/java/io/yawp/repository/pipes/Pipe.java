@@ -26,4 +26,12 @@ public abstract class Pipe<T, S> extends Feature {
     public Set<IdRef<S>> getSinks() {
         return sinks;
     }
+
+    public void removeSinks(Set sinks) {
+        this.sinks.removeAll(sinks);
+    }
+
+    public boolean hasSinks() {
+        return sinks.size() != 0;
+    }
 }

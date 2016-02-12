@@ -8,7 +8,7 @@ public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
 
     @Override
     public void configure(PipedObject object) {
-        addSink(id(PipedObjectCounter.class, 1L));
+        addSink(object.getCounterId());
     }
 
     @Override

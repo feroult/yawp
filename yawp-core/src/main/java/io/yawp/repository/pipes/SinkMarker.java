@@ -34,6 +34,10 @@ public class SinkMarker {
         this.id = id;
     }
 
+    public IdRef<?> getParentId() {
+        return parentId;
+    }
+
     public void setParentId(IdRef<?> parentId) {
         this.parentId = parentId;
     }
@@ -66,5 +70,4 @@ public class SinkMarker {
         this.sourceJson = sourceJson;
         this.source = null;
     }
-
 }

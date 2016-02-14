@@ -16,7 +16,7 @@ import static com.google.appengine.tools.pipeline.JobInfo.State.*;
 
 public class ClearPipelineTask implements DeferredTask {
 
-    private final static Logger LOGGER = Logger.getLogger(ClearPipelineTask.class.getName());
+    private final static Logger logger = Logger.getLogger(ClearPipelineTask.class.getName());
 
     private static final int RELOAD_PIPELINE_WAIT_MILLIS = 10000;
 
@@ -45,7 +45,7 @@ public class ClearPipelineTask implements DeferredTask {
         PipelineService service = PipelineServiceFactory.newPipelineService();
         State state = getJobInfo(service);
         if (state == COMPLETED_SUCCESSFULLY) {
-            LOGGER.info("Cleanig pipeline: " + pipelineId);
+            logger.info("Cleanig pipeline: " + pipelineId);
             service.deletePipelineRecords(pipelineId);
             return;
         }

@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public final class RepositoryScanner {
 
-    private final static Logger LOGGER = Logger.getLogger(RepositoryScanner.class.getName());
+    private final static Logger logger = Logger.getLogger(RepositoryScanner.class.getName());
 
     private boolean enableHooks;
 
@@ -55,7 +55,7 @@ public final class RepositoryScanner {
         long start = System.currentTimeMillis();
         RepositoryFeatures repositoryFeatures = new RepositoryFeatures(scanAndLoadAll());
         long elapsed = System.currentTimeMillis() - start;
-        LOGGER.info("YAWP! started in " + elapsed + " ms - package: " + packagePrefix);
+        logger.info("YAWP! started in " + elapsed + " ms - package: " + packagePrefix);
         return repositoryFeatures;
     }
 

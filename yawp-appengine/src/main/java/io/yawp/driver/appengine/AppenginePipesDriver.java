@@ -45,7 +45,7 @@ public class AppenginePipesDriver implements PipesDriver {
     }
 
     private void enqueueObjectToPipe(Pipe pipe, Object object, boolean present) {
-        SourceMarker sourceMarker = saveSourceMarker(object, present);
+        SourceMarker sourceMarker = saveSourceMarker(object);
         Queue queue = QueueHelper.getPipeQueue();
         Set<IdRef<?>> sinks = pipe.getSinks();
 
@@ -74,7 +74,7 @@ public class AppenginePipesDriver implements PipesDriver {
         return objectId.createChildId(SourceMarker.class, objectId.getName());
     }
 
-    private SourceMarker saveSourceMarker(Object object, boolean present) {
+    private SourceMarker saveSourceMarker(Object object) {
         ObjectHolder objectHolder = new ObjectHolder(object);
         IdRef<SourceMarker> markerId = createSourceMarkerId(objectHolder);
 

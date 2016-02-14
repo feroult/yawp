@@ -10,10 +10,14 @@ import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.pipes.SinkMarker;
 import io.yawp.repository.pipes.SourceMarker;
 
+import java.util.logging.Logger;
+
 import static io.yawp.repository.Yawp.yawp;
 
 @Endpoint(kind = "__yawp_pipe_works")
 public class Work {
+
+    private final static Logger logger = Logger.getLogger(Work.class.getName());
 
     @Id
     private IdRef<Work> id;
@@ -35,18 +39,38 @@ public class Work {
     public <T, S> void execute(Object sink, SinkMarker sinkMarker) {
         Pipe<T, S> pipe = createPipeInstance();
 
-        if (payload.isPresent()) {
-            if (sinkMarker.isPresent()) {
-                pipe.reflux((T) sinkMarker.getSource(), (S) sink);
-            }
-            pipe.flux((T) payload.getSource(), (S) sink);
-            rememberSourceInSinkMarker(sinkMarker);
-        } else {
-            pipe.reflux((T) payload.getSource(), (S) sink);
+        if (sinkMarker.isPresent()) {
+            logger.info(String.format("REFLUX %s (present=%b souceVersion=%d, sinkVersion=%d)", sinkMarker.getParentId(), payload.isPresent(), payload.getSourceMarker().getVersion(), sinkMarker.getVersion()));
+            pipe.reflux((T) sinkMarker.getSource(), (S) sink);
         }
 
-        sinkMarker.setVersion(payload.getSourceMarker().getVersion());
+        if (payload.isPresent()) {
+            logger.info(String.format("FLUX %s (souceVersion=%d, sinkVersion=%d)", sinkMarker.getParentId(), payload.getSourceMarker().getVersion(), sinkMarker.getVersion()));
+            pipe.flux((T) payload.getSource(), (S) sink);
+            rememberSourceInSinkMarker(sinkMarker);
+        }
+
         sinkMarker.setPresent(payload.isPresent());
+        sinkMarker.setVersion(payload.getSourceMarker().getVersion());
+
+//        //
+//
+//
+//        if (payload.isPresent()) {
+//            if (sinkMarker.isPresent()) {
+//                logger.info(String.format("PRESENT REFLUX %s (souceVersion=%d, sinkVersion=%d)", sinkMarker.getParentId(), payload.getSourceMarker().getVersion(), sinkMarker.getVersion()));
+//                pipe.reflux((T) sinkMarker.getSource(), (S) sink);
+//            }
+//            logger.info(String.format("PRESENT FLUX %s (souceVersion=%d, sinkVersion=%d)", sinkMarker.getParentId(), payload.getSourceMarker().getVersion(), sinkMarker.getVersion()));
+//            pipe.flux((T) payload.getSource(), (S) sink);
+//            rememberSourceInSinkMarker(sinkMarker);
+//        } else {
+//            logger.info(String.format("NOT PRESENT reflux %s (souceVersion=%d, sinkVersion=%d)", sinkMarker.getParentId(), payload.getSourceMarker().getVersion(), sinkMarker.getVersion()));
+//            pipe.reflux((T) payload.getSource(), (S) sink);
+//        }
+//
+//        sinkMarker.setVersion(payload.getSourceMarker().getVersion());
+//        sinkMarker.setPresent(payload.isPresent());
     }
 
     private void rememberSourceInSinkMarker(SinkMarker sinkMarker) {

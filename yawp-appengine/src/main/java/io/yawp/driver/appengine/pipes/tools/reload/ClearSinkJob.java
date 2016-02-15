@@ -1,9 +1,9 @@
 package io.yawp.driver.appengine.pipes.tools.reload;
 
-import com.google.appengine.tools.pipeline.FutureValue;
 import com.google.appengine.tools.pipeline.Job3;
 import com.google.appengine.tools.pipeline.Value;
 import io.yawp.commons.utils.ReflectionUtils;
+import io.yawp.driver.appengine.pipes.tools.WaiterJob;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.pipes.Pipe;
@@ -17,7 +17,7 @@ import static io.yawp.repository.Yawp.yawp;
 
 public class ClearSinkJob extends Job3<Void, Class<? extends Pipe>, String, String> {
 
-    private static final int BATCH_SIZE = 20;
+    private static final int BATCH_SIZE = 100;
 
     private transient Repository r;
 
@@ -44,7 +44,7 @@ public class ClearSinkJob extends Job3<Void, Class<? extends Pipe>, String, Stri
     }
 
     private Value<Void> execute() {
-        List<FutureValue<Void>> jobs = new LinkedList<>();
+        List<Value<Void>> jobs = new LinkedList<>();
 
         List<IdRef<SinkMarker>> markerIds = sinkMarkerIds();
 
@@ -56,8 +56,7 @@ public class ClearSinkJob extends Job3<Void, Class<? extends Pipe>, String, Stri
 
         destroySinkMarkers(markerIds);
 
-        waitFor(futureList(jobs));
-        return null;
+        return futureCall(new WaiterJob(), futureList(jobs));
     }
 
     private void destroySinkMarkers(List<IdRef<SinkMarker>> markerIds) {

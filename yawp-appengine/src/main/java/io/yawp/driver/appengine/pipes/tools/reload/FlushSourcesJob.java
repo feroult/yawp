@@ -1,9 +1,9 @@
 package io.yawp.driver.appengine.pipes.tools.reload;
 
-import com.google.appengine.tools.pipeline.FutureValue;
 import com.google.appengine.tools.pipeline.Job2;
 import com.google.appengine.tools.pipeline.Value;
 import io.yawp.commons.utils.ReflectionUtils;
+import io.yawp.driver.appengine.pipes.tools.WaiterJob;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.query.QueryBuilder;
@@ -15,7 +15,7 @@ import static io.yawp.repository.Yawp.yawp;
 
 public class FlushSourcesJob extends Job2<Void, Class<? extends Pipe>, String> {
 
-    private static final int BATCH_SIZE = 20;
+    private static final int BATCH_SIZE = 100;
 
     private transient Class<? extends Pipe> pipeClazz;
 
@@ -36,7 +36,7 @@ public class FlushSourcesJob extends Job2<Void, Class<? extends Pipe>, String> {
     }
 
     private Value<Void> execute() {
-        List<FutureValue<Void>> jobs = new LinkedList<>();
+        List<Value<Void>> jobs = new LinkedList<>();
 
         List<? extends IdRef<?>> ids = sourceIds();
 
@@ -48,8 +48,7 @@ public class FlushSourcesJob extends Job2<Void, Class<? extends Pipe>, String> {
             jobs.add(futureCall(new FlushSourceJob(), immediate(pipeClazz), immediate(id.getUri())));
         }
 
-        waitFor(futureList(jobs));
-        return null;
+        return futureCall(new WaiterJob(), futureList(jobs));
     }
 
     private List<? extends IdRef<?>> sourceIds() {

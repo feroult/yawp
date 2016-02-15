@@ -3,12 +3,7 @@ package io.yawp.driver.appengine.pipes.tools.reload;
 import com.google.appengine.tools.pipeline.Job1;
 import com.google.appengine.tools.pipeline.JobSetting;
 import com.google.appengine.tools.pipeline.Value;
-import io.yawp.repository.IdRef;
 import io.yawp.repository.pipes.Pipe;
-
-import java.util.List;
-
-import static io.yawp.repository.Yawp.yawp;
 
 public class ReloadPipeJob extends Job1<Void, Class<? extends Pipe>> {
 
@@ -28,11 +23,6 @@ public class ReloadPipeJob extends Job1<Void, Class<? extends Pipe>> {
 
     private Value<Void> execute() {
         JobSetting.WaitForSetting waitClearSinks = waitFor(futureCall(new ClearSinksJob(), immediate(pipeClazz), null));
-        waitFor(futureCall(new FlushSourcesJob(), immediate(pipeClazz), null, waitClearSinks));
-        return null;
-    }
-
-    private List<? extends IdRef<?>> sinkIds() {
-        return yawp(sinkClazz).ids();
+        return futureCall(new FlushSourcesJob(), immediate(pipeClazz), null, waitClearSinks);
     }
 }

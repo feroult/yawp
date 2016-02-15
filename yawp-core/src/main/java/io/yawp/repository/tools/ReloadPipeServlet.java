@@ -2,7 +2,6 @@ package io.yawp.repository.tools;
 
 import io.yawp.driver.api.Driver;
 import io.yawp.driver.api.DriverFactory;
-import io.yawp.repository.Yawp;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,11 +19,6 @@ public class ReloadPipeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (!enable()) {
-            forbidden(resp);
-            return;
-        }
-
         resp.setContentType("text/plain");
 
         if (req.getParameter(PIPE_PARAM) == null) {
@@ -50,10 +44,5 @@ public class ReloadPipeServlet extends HttpServlet {
         feature(ReloadPipe.class).now(pipeClazzName);
         writer.println("ok");
     }
-
-    private void forbidden(HttpServletResponse resp) {
-        resp.setStatus(403);
-        return;
-    }
-
+    
 }

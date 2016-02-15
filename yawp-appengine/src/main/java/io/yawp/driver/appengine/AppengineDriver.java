@@ -49,7 +49,6 @@ public class AppengineDriver implements Driver {
 
     @Override
     public PipesDriver pipes() {
-        //throw new DriverNotImplementedException();
         return new AppenginePipesDriver(r);
     }
 }

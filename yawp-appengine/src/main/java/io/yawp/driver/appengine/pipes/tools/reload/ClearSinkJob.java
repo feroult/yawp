@@ -17,7 +17,7 @@ import static io.yawp.repository.Yawp.yawp;
 
 public class ClearSinkJob extends Job3<Void, Class<? extends Pipe>, String, String> {
 
-    private static final int BATCH_SIZE = 10;
+    private static final int BATCH_SIZE = 20;
 
     private transient Repository r;
 

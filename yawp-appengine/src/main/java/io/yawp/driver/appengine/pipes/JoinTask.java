@@ -12,14 +12,11 @@ import io.yawp.repository.pipes.SourceMarker;
 import io.yawp.repository.query.NoResultException;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 import static io.yawp.driver.appengine.pipes.helpers.CacheHelper.POW_2_15;
 import static io.yawp.repository.Yawp.yawp;
 
 public class JoinTask implements DeferredTask {
-
-    private final static Logger logger = Logger.getLogger(JoinTask.class.getName());
 
     private static final int BUSY_WAIT_TIMES = 20;
 
@@ -54,9 +51,7 @@ public class JoinTask implements DeferredTask {
     @Override
     public void run() {
         init();
-        logger.info(String.format("join init: sink=%s, indexHash=%s", sinkUri, indexHash));
         join();
-        logger.info(String.format("join finished: sink=%s, indexHash=%s", sinkUri, indexHash));
     }
 
     private void init() {

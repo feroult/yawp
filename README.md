@@ -16,7 +16,7 @@ bootstrap your API very quickly with a free (to start) auto-scalable environment
 If scalability is not an issue or you'd rather do-it-yourself, you can use the
 PostgreSQL persistence driver to deploy your code on different platforms.
 
-You create your POJOs and __YAWP!__
+It is that simple, you create your POJOs and __YAWP!__
 
 ## Guides
 

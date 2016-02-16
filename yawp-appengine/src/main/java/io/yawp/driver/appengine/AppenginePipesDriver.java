@@ -9,6 +9,7 @@ import io.yawp.driver.appengine.pipes.ForkTask;
 import io.yawp.driver.appengine.pipes.Payload;
 import io.yawp.driver.appengine.pipes.helpers.QueueHelper;
 import io.yawp.driver.appengine.pipes.tools.reload.ReloadPipeJob;
+import io.yawp.driver.appengine.pipes.tools.utils.ClearPipelineTask;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
@@ -40,7 +41,7 @@ public class AppenginePipesDriver implements PipesDriver {
     public void reload(Class<? extends Pipe> pipeClazz) {
         PipelineService service = PipelineServiceFactory.newPipelineService();
         String pipelineId = service.startNewPipeline(new ReloadPipeJob(), pipeClazz);
-        //ClearPipelineTask.enqueue(pipelineId);
+        ClearPipelineTask.enqueue(pipelineId);
     }
 
     private void enqueueObjectToPipe(Pipe pipe, Object object, boolean present) {

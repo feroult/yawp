@@ -1,16 +1,15 @@
 package io.yawp.driver.appengine.pipes.tools.reload;
 
+import com.google.appengine.tools.pipeline.FutureValue;
 import com.google.appengine.tools.pipeline.Job3;
 import com.google.appengine.tools.pipeline.Value;
 import io.yawp.commons.utils.ReflectionUtils;
-import io.yawp.driver.appengine.pipes.tools.WaiterJob;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.pipes.SinkMarker;
 import io.yawp.repository.query.QueryBuilder;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import static io.yawp.repository.Yawp.yawp;
@@ -44,23 +43,22 @@ public class ClearSinkJob extends Job3<Void, Class<? extends Pipe>, String, Stri
     }
 
     private Value<Void> execute() {
-        List<Value<Void>> jobs = new LinkedList<>();
+        List<? extends IdRef<?>> markerIds = sinkMarkerIds();
 
-        List<IdRef<SinkMarker>> markerIds = sinkMarkerIds();
-
+        FutureValue<Void> waitForClearSink = null;
         if (cursor != null) {
-            jobs.add(futureCall(new ClearSinkJob(), immediate(pipeClazz), immediate(sinkId.getUri()), immediate(cursor)));
+            waitForClearSink = futureCall(new ClearSinkJob(), immediate(pipeClazz), immediate(sinkId.getUri()), immediate(cursor));
         } else {
             clearSink();
         }
 
         destroySinkMarkers(markerIds);
 
-        return futureCall(new WaiterJob(), futureList(jobs));
+        return waitForClearSink;
     }
 
-    private void destroySinkMarkers(List<IdRef<SinkMarker>> markerIds) {
-        for (IdRef<SinkMarker> id : markerIds) {
+    private void destroySinkMarkers(List<? extends IdRef<?>> markerIds) {
+        for (IdRef<?> id : markerIds) {
             if (!id.getParentId().getClazz().equals(sourceClazz)) {
                 continue;
             }
@@ -83,12 +81,12 @@ public class ClearSinkJob extends Job3<Void, Class<? extends Pipe>, String, Stri
         }
     }
 
-    private List<IdRef<SinkMarker>> sinkMarkerIds() {
-        QueryBuilder<SinkMarker> q = r.query(SinkMarker.class).from(sinkId).order("id").limit(BATCH_SIZE);
+    private List<? extends IdRef<?>> sinkMarkerIds() {
+        QueryBuilder<?> q = r.query(SinkMarker.class).from(sinkId).order("id").limit(BATCH_SIZE);
         if (cursor != null) {
             q.cursor(cursor);
         }
-        List<IdRef<SinkMarker>> ids = q.ids();
+        List<? extends IdRef<?>> ids = q.ids();
         if (ids.size() < BATCH_SIZE) {
             cursor = null;
         } else {

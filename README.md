@@ -8,12 +8,13 @@ A very simple and elegant domain specific language / framework in Java that help
 
 ## Introduction
 
-__YAWP!__'s main purpose is to help developers to easily create meaningful APIs to
-back their REST based applications. It natively supports and abstracts the Google
-Appengine Platform, so you can bootstrap your API very quickly with a free
-(to start) auto-scalable environment. Later, if you change your mind, there are no
-lock-ins with Google and you can move freely to any cloud platform you want without
-losing data or having to rewrite your code.
+__YAWP!__'s main purpose is to help developers to easily create meaningful and
+scalable APIs to back their REST based applications. It natively supports and
+implements effective usage patterns for the Google Appengine Platform, so you can
+bootstrap your API very quickly with a free (to start) auto-scalable environment.
+Later, if scalability is not an issue or you'd rather do-it-yourself, YAWP! provides
+a convenience persistence driver to deploy your existing code along with a
+PostgreSQL database.
 
 You create your POJOs and __YAWP!__
 

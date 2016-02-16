@@ -12,9 +12,9 @@ __YAWP!__'s main purpose is to help developers to easily create meaningful and
 scalable APIs to back their REST based applications. It natively supports and
 implements effective usage patterns for the Google Appengine Platform, so you can
 bootstrap your API very quickly with a free (to start) auto-scalable environment.
-Later, if scalability is not an issue or you'd rather do-it-yourself, YAWP! provides
-a convenience persistence driver to deploy your existing code along with a
-PostgreSQL database.
+
+If scalability is not an issue or you'd rather do-it-yourself, you can use the
+PostgreSQL persistence driver to deploy your code on different platforms.
 
 You create your POJOs and __YAWP!__
 

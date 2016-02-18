@@ -1,5 +1,6 @@
 package io.yawp.repository.pipes.basic;
 
+import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.PipedObject;
 import io.yawp.repository.models.basic.PipedObjectCounter;
 import io.yawp.repository.pipes.Pipe;
@@ -7,12 +8,12 @@ import io.yawp.repository.pipes.Pipe;
 public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
 
     @Override
-    public void configure(PipedObject object) {
-        addSink(object.getCounterId());
+    public IdRef<PipedObjectCounter> sinkId(PipedObject object) {
+        return object.getCounterId();
     }
 
     @Override
-    public void clear(PipedObjectCounter sink) {
+    public void drain(PipedObjectCounter sink) {
         sink.setCount(0);
         sink.setCountGroupA(0);
         sink.setCountGroupB(0);

@@ -14,7 +14,7 @@ import java.util.List;
 
 import static io.yawp.repository.Yawp.yawp;
 
-public class ClearSinksJob extends Job2<Void, Class<? extends Pipe>, String> {
+public class DrainSinksJob extends Job2<Void, Class<? extends Pipe>, String> {
 
     private static final int BATCH_SIZE = 100;
 
@@ -45,11 +45,11 @@ public class ClearSinksJob extends Job2<Void, Class<? extends Pipe>, String> {
         List<? extends IdRef<?>> ids = sinkIds();
 
         if (cursor != null) {
-            jobs.add(futureCall(new ClearSinksJob(), immediate(pipeClazz), immediate(cursor)));
+            jobs.add(futureCall(new DrainSinksJob(), immediate(pipeClazz), immediate(cursor)));
         }
 
         for (IdRef<?> id : ids) {
-            jobs.add(futureCall(new ClearSinkJob(), immediate(pipeClazz), immediate(id.getUri()), null));
+            jobs.add(futureCall(new DrainSinkJob(), immediate(pipeClazz), immediate(id.getUri()), null));
         }
 
         return futureCall(new WaiterJob(), futureList(jobs));

@@ -22,7 +22,7 @@ public class ReloadPipeJob extends Job1<Void, Class<? extends Pipe>> {
     }
 
     private Value<Void> execute() {
-        JobSetting.WaitForSetting waitClearSinks = waitFor(futureCall(new ClearSinksJob(), immediate(pipeClazz), null));
+        JobSetting.WaitForSetting waitClearSinks = waitFor(futureCall(new DrainSinksJob(), immediate(pipeClazz), null));
         return futureCall(new FlushSourcesJob(), immediate(pipeClazz), null, waitClearSinks);
     }
 }

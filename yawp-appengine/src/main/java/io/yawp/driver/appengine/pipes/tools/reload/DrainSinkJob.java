@@ -14,7 +14,7 @@ import java.util.List;
 
 import static io.yawp.repository.Yawp.yawp;
 
-public class ClearSinkJob extends Job3<Void, Class<? extends Pipe>, String, String> {
+public class DrainSinkJob extends Job3<Void, Class<? extends Pipe>, String, String> {
 
     private static final int BATCH_SIZE = 100;
 
@@ -47,7 +47,7 @@ public class ClearSinkJob extends Job3<Void, Class<? extends Pipe>, String, Stri
 
         FutureValue<Void> waitForClearSink = null;
         if (cursor != null) {
-            waitForClearSink = futureCall(new ClearSinkJob(), immediate(pipeClazz), immediate(sinkId.getUri()), immediate(cursor));
+            waitForClearSink = futureCall(new DrainSinkJob(), immediate(pipeClazz), immediate(sinkId.getUri()), immediate(cursor));
         } else {
             clearSink();
         }
@@ -69,7 +69,7 @@ public class ClearSinkJob extends Job3<Void, Class<? extends Pipe>, String, Stri
     private void clearSink() {
         Pipe pipe = createPipeInstance();
         Object sink = sinkId.fetch();
-        pipe.clear(sink);
+        pipe.drain(sink);
         r.save(sink);
     }
 

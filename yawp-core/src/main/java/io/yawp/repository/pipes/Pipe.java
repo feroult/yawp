@@ -7,6 +7,12 @@ import io.yawp.repository.query.QueryBuilder;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Pipe API
+ *
+ * @param <T> The source endpoint model type.
+ * @param <S> The sink endpoint model type.
+ */
 public abstract class Pipe<T, S> extends Feature {
 
     private Set<IdRef<S>> sinks = new HashSet<>();

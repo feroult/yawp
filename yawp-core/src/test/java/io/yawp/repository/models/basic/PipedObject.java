@@ -17,11 +17,11 @@ public class PipedObject {
     private String group;
 
     public PipedObject() {
-        this.counterId = yawp.parseId(PipedObjectCounter.class, "/piped_object_counters/1");
+        this(null);
     }
 
     public PipedObject(String group) {
-        this.group = group;
+        this(group, yawp.parseId(PipedObjectCounter.class, "/piped_object_counters/1"));
     }
 
     public PipedObject(String group, IdRef<PipedObjectCounter> counterId) {

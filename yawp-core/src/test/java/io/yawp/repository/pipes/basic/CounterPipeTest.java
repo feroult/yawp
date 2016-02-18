@@ -172,6 +172,29 @@ public class CounterPipeTest extends EndpointTestCase {
         assertEquals((Integer) 1, counterSink2.getCountGroupB());
     }
 
+    @Test
+    public void testPipeReflow() {
+        if (pipesDriverNotImplemented()) {
+            return;
+        }
+
+        yawp.save(new PipedObject("xpto"));
+        yawp.save(new PipedObject("xpto"));
+        awaitAsync(20, TimeUnit.SECONDS);
+
+        PipedObjectCounter counter;
+
+        counter = yawp(PipedObjectCounter.class).only();
+        assertEquals((Integer) 2, counter.getCount());
+
+        counter.setCount(-1);
+        yawp.save(counter);
+        awaitAsync(20, TimeUnit.SECONDS);
+
+        counter = yawp(PipedObjectCounter.class).only();
+        assertEquals((Integer) 2, counter.getCount());
+    }
+
     private IdRef<PipedObject> saveObjectInGroup(long idAsLong, String group) {
         IdRef<PipedObject> id = id(PipedObject.class, idAsLong);
         PipedObject object = new PipedObject();

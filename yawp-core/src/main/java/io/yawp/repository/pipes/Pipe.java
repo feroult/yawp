@@ -9,6 +9,11 @@ import java.util.Set;
 
 /**
  * Pipe API
+ * <p/>
+ * The Pipe API is used to create an asynchronous information flow from
+ * one endpoint model (source) to another (sink). It can be used to
+ * create a variety of aggregation models without creating scalability
+ * bottle-necks since many sources can be flowed to the same sink.
  *
  * @param <T> The source endpoint model type.
  * @param <S> The sink endpoint model type.

@@ -75,9 +75,10 @@ public abstract class Pipe<T, S> extends Feature {
     }
 
     /**
-     * Override this method to decide if a sink needs to be reloaded after
+     * Override this method to decide if a sink needs to be reflowed after
      * it is created or updated.
-     * The sink will be reloaded asynchronously by fluxing all sources
+     * <p/>
+     * The sink will be reflowed asynchronously by fluxing all sources
      * returned from {@link #sourcesQuery(Object)}.
      *
      * @param newSink The sink object containing its new data.
@@ -85,7 +86,7 @@ public abstract class Pipe<T, S> extends Feature {
      *                It will be null if the sink is being created.
      * @return Whether the sink needs to be reloaded.
      */
-    public boolean reloadSinkWhen(T newSink, S oldSink) {
+    public boolean reflowCondition(S newSink, S oldSink) {
         return false;
     }
 

@@ -10,7 +10,7 @@ public class RepositoryPipes {
     public static void flux(Repository r, Object object) {
         Class<?> endpointClazz = object.getClass();
 
-        if (!hasPipes(r, endpointClazz)) {
+        if (!isPipeSource(r, endpointClazz)) {
             return;
         }
 
@@ -24,11 +24,11 @@ public class RepositoryPipes {
     public static void reflux(Repository r, IdRef<?> id) {
         Class<?> endpointClazz = id.getClazz();
 
-        if (!hasPipes(r, endpointClazz)) {
+        if (!isPipeSource(r, endpointClazz)) {
             return;
         }
 
-        // Load existing object only one time? Sshield may load it too.
+        // TODO: Pipes - Think about... Shield may have already loaded this object.
         Object object;
         try {
             object = id.fetch();
@@ -43,18 +43,28 @@ public class RepositoryPipes {
         }
     }
 
-    public static void refluxOld(Repository r, Object object) {
+    public static void updateExisting(Repository r, Object object) {
         Class<?> endpointClazz = object.getClass();
 
-        if (!hasPipes(r, endpointClazz)) {
+        if (!isPipeSourceOrSink(r, endpointClazz)) {
             return;
         }
 
         Object oldObject;
 
         try {
+            // TODO: Pipes - Think about... Shield may have already loaded this object.
             oldObject = fetchOldObject(object);
         } catch (NoResultException e) {
+            return;
+        }
+
+        refluxOld(r, endpointClazz, object, oldObject);
+        reflowSink(r, endpointClazz, object, oldObject);
+    }
+
+    private static void refluxOld(Repository r, Class<?> endpointClazz, Object object, Object oldObject) {
+        if (!isPipeSource(r, endpointClazz)) {
             return;
         }
 
@@ -66,6 +76,12 @@ public class RepositoryPipes {
             }
 
             r.driver().pipes().reflux(oldPipe, object);
+        }
+    }
+
+    private static void reflowSink(Repository r, Class<?> endpointClazz, Object object, Object oldObject) {
+        if (!isPipeSink(r, endpointClazz)) {
+            return;
         }
     }
 
@@ -90,10 +106,6 @@ public class RepositoryPipes {
         return objectHolder.getId().fetch();
     }
 
-    public static boolean hasPipes(Repository r, Class<?> endpointClazz) {
-        return r.getFeatures() != null && r.getEndpointFeatures(endpointClazz).getPipes().size() != 0;
-    }
-
     private static Pipe createPipeInstance(Repository r, Class<? extends Pipe> pipeClazz) {
         try {
             Pipe pipe = pipeClazz.newInstance();
@@ -103,5 +115,17 @@ public class RepositoryPipes {
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean isPipeSourceOrSink(Repository r, Class<?> endpointClazz) {
+        return isPipeSource(r, endpointClazz) || isPipeSink(r, endpointClazz);
+    }
+
+    public static boolean isPipeSource(Repository r, Class<?> endpointClazz) {
+        return r.getFeatures() != null && r.getEndpointFeatures(endpointClazz).getPipes().size() != 0;
+    }
+
+    public static boolean isPipeSink(Repository r, Class<?> endpointClazz) {
+        return false;
     }
 }

@@ -130,9 +130,9 @@ public class Repository implements RepositoryApi {
     }
 
     private void saveInternal(Object object) {
-        boolean newTransaction = beginTransactionForPipes(object);
+        boolean newTransaction = beginTransactionForPipesOnSave(object);
         try {
-            refluxOldPipes(object);
+            updateExistingPipes(object);
             driver().persistence().save(object);
             fluxPipes(object);
             if (newTransaction) {
@@ -145,20 +145,27 @@ public class Repository implements RepositoryApi {
         }
     }
 
-    private boolean beginTransactionForPipes(Object object) {
+    private boolean beginTransactionForPipesOnSave(Object object) {
         Class<?> endpointClazz = object.getClass();
+
+        if (!RepositoryPipes.isPipeSourceOrSink(this, endpointClazz)) {
+            return false;
+        }
+
         return beginTransactionForPipes(endpointClazz);
     }
 
-    private boolean beginTransactionForPipes(IdRef<?> id) {
+    private boolean beginTransactionForPipesOnDestroy(IdRef<?> id) {
         Class<?> endpointClazz = id.getClazz();
+
+        if (!RepositoryPipes.isPipeSource(this, endpointClazz)) {
+            return false;
+        }
+
         return beginTransactionForPipes(endpointClazz);
     }
 
     private boolean beginTransactionForPipes(Class<?> endpointClazz) {
-        if (!RepositoryPipes.hasPipes(this, endpointClazz)) {
-            return false;
-        }
         if (isTransationInProgress()) {
             return false;
         }
@@ -174,8 +181,8 @@ public class Repository implements RepositoryApi {
         RepositoryPipes.reflux(this, id);
     }
 
-    private void refluxOldPipes(Object object) {
-        RepositoryPipes.refluxOld(this, object);
+    private void updateExistingPipes(Object object) {
+        RepositoryPipes.updateExisting(this, object);
     }
 
     private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
@@ -220,10 +227,11 @@ public class Repository implements RepositoryApi {
     }
 
     private void destroyInternal(IdRef<?> id) {
-        boolean newTransaction = beginTransactionForPipes(id);
+        boolean newTransaction = beginTransactionForPipesOnDestroy(id);
         try {
             refluxPipes(id);
             driver().persistence().destroy(id);
+            // TODO: Pipes - cleanup sinks
             if (newTransaction) {
                 commit();
             }

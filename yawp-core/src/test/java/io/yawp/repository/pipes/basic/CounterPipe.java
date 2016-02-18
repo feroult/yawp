@@ -13,13 +13,6 @@ public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
     }
 
     @Override
-    public void drain(PipedObjectCounter sink) {
-        sink.setCount(0);
-        sink.setCountGroupA(0);
-        sink.setCountGroupB(0);
-    }
-
-    @Override
     public void flux(PipedObject object, PipedObjectCounter counter) {
         counter.inc();
 
@@ -43,6 +36,18 @@ public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
         if (isGroup(object, "group-b")) {
             counter.decGroupB();
         }
+    }
+
+    @Override
+    public void drain(PipedObjectCounter sink) {
+        sink.setCount(0);
+        sink.setCountGroupA(0);
+        sink.setCountGroupB(0);
+    }
+
+    @Override
+    public boolean reflowCondition(PipedObjectCounter newCounter, PipedObjectCounter oldCounter) {
+        return newCounter.getCount().equals(-1);
     }
 
     private boolean isGroup(PipedObject object, String groupName) {

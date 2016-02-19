@@ -83,6 +83,8 @@ public class RepositoryPipes {
         if (!isPipeSink(r, endpointClazz)) {
             return;
         }
+
+        System.out.println("reflow sink: " + endpointClazz);
     }
 
     private static Pipe createOldPipeInstance(Repository r, Class<? extends Pipe> pipeClazz, Object object, Object oldObject) {
@@ -126,6 +128,6 @@ public class RepositoryPipes {
     }
 
     public static boolean isPipeSink(Repository r, Class<?> endpointClazz) {
-        return false;
+        return r.getEndpointFeatures(endpointClazz).getPipesSink().size() != 0;
     }
 }

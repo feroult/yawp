@@ -12,10 +12,7 @@ import io.yawp.repository.shields.ShieldInfo;
 import io.yawp.repository.transformers.Transformer;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class EndpointTree<T> {
 
@@ -30,6 +27,8 @@ public class EndpointTree<T> {
     private FeatureTree<Shield> shieldTree = new FeatureTree<>(Shield.class);
 
     private FeatureTree<Pipe> pipeTree = new FeatureTree<>(Pipe.class);
+
+    private List<Class<? extends Pipe>> pipesSink = new ArrayList<>();
 
     public EndpointTree(Class<T> endpointClazz) {
         this.endpointClazz = endpointClazz;
@@ -53,6 +52,10 @@ public class EndpointTree<T> {
 
     public void addPipe(Class<? extends Pipe> pipeClazz) {
         pipeTree.add(pipeClazz);
+    }
+
+    public void addPipeSink(Class<? extends Pipe> pipeClazz) {
+        pipesSink.add(pipeClazz);
     }
 
     public Map<ActionKey, ActionMethod> loadActions(Map<Class<?>, Map<ActionKey, ActionMethod>> cache) {
@@ -93,6 +96,10 @@ public class EndpointTree<T> {
 
     public Set<Class<? extends Pipe>> loadPipes() {
         return pipeTree.getLeafs();
+    }
+
+    public List<Class<? extends Pipe>> loadPipesSink() {
+        return pipesSink;
     }
 
     private void throwExceptionMultipleShields(Set<Class<? extends Shield>> shieldClazzes) {

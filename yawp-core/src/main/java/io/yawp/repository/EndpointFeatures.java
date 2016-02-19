@@ -9,10 +9,7 @@ import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.shields.ShieldInfo;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class EndpointFeatures<T> {
 
@@ -27,6 +24,8 @@ public class EndpointFeatures<T> {
     private ShieldInfo<? super T> shieldInfo;
 
     private Set<Class<? extends Pipe>> pipes;
+
+    private List<Class<? extends Pipe>> pipesSink;
 
     public EndpointFeatures(Class<T> clazz) {
         this.clazz = clazz;
@@ -93,6 +92,10 @@ public class EndpointFeatures<T> {
         return pipes;
     }
 
+    public List<Class<? extends Pipe>> getPipesSink() {
+        return pipesSink;
+    }
+
     public boolean hasShield() {
         return shieldInfo != null;
     }
@@ -117,6 +120,10 @@ public class EndpointFeatures<T> {
         this.pipes = pipes;
     }
 
+    public void setPipesSink(List<Class<? extends Pipe>> pipesSink) {
+        this.pipesSink = pipesSink;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -125,12 +132,10 @@ public class EndpointFeatures<T> {
         EndpointFeatures<?> that = (EndpointFeatures<?>) o;
 
         return clazz.equals(that.clazz);
-
     }
 
     @Override
     public int hashCode() {
         return clazz.hashCode();
     }
-
 }

@@ -90,6 +90,7 @@ public final class RepositoryScanner {
             endpoint.setHooks(tree.loadHooks());
             endpoint.setShieldInfo(tree.loadShield());
             endpoint.setPipes(tree.loadPipes());
+            endpoint.setPipesSink(tree.loadPipesSink());
 
             endpoints.put(endpointClazz, endpoint);
         }
@@ -239,16 +240,19 @@ public final class RepositoryScanner {
         }
     }
 
-    private <T, V extends Pipe<T, ?>> void addPipeToEndpoints(Class<V> pipeClazz) {
-        Class<T> parameterClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(pipeClazz);
+    private <T, S, V extends Pipe<T, S>> void addPipeToEndpoints(Class<V> pipeClazz) {
+        Class<T> sourceClazz = (Class<T>) ReflectionUtils.getFeatureEndpointClazz(pipeClazz);
 
-        if (parameterClazz == null) {
+        if (sourceClazz == null) {
             return;
         }
 
-        for (Class<?> endpointClazz : findEndpointsInHierarchy(parameterClazz, pipeClazz)) {
+        for (Class<?> endpointClazz : findEndpointsInHierarchy(sourceClazz, pipeClazz)) {
             trees.get(endpointClazz).addPipe(pipeClazz);
         }
+
+        Class<S> sinkClazz = (Class<S>) ReflectionUtils.getFeatureTypeArgumentAt(pipeClazz, 1);
+        trees.get(sinkClazz).addPipeSink(pipeClazz);
     }
 
 }

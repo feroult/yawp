@@ -175,7 +175,7 @@ public class CounterPipeTest extends EndpointTestCase {
 
     @Test
     @Ignore
-    public void testPipeReflow() {
+    public void testSinkReflow() {
         if (pipesDriverNotImplemented()) {
             return;
         }

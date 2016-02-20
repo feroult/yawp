@@ -84,8 +84,15 @@ public class RepositoryPipes {
             return;
         }
 
-        System.out.println("reflow sink: " + endpointClazz);
+        for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipesSink()) {
+            Pipe pipe = createPipeInstance(r, pipeClazz);
+            if (!pipe.reflowCondition(object, oldObject)) {
+                continue;
+            }
+            System.out.println("reflow sink: " + endpointClazz);
+        }
     }
+
 
     private static Pipe createOldPipeInstance(Repository r, Class<? extends Pipe> pipeClazz, Object object, Object oldObject) {
         Pipe oldPipe = createPipeInstance(r, pipeClazz);

@@ -92,7 +92,7 @@ public abstract class Pipe<T, S> extends Feature {
 
     /**
      * Override this method to define a query for source objects to be fluxed
-     * when the specified sink is reloaded.
+     * when the specified sink is reflowed.
      *
      * @param sink The sink object.
      * @return The {@link QueryBuilder<T>} to query for sources.

@@ -28,13 +28,18 @@ public class AppenginePipesDriver implements PipesDriver {
     }
 
     @Override
-    public void flux(Pipe pipe, Object object) {
-        enqueueObjectToPipe(pipe, object, true);
+    public void flux(Pipe pipe, Object source) {
+        enqueueObjectToPipe(pipe, source, true);
     }
 
     @Override
-    public void reflux(Pipe pipe, Object object) {
-        enqueueObjectToPipe(pipe, object, false);
+    public void reflux(Pipe pipe, Object source) {
+        enqueueObjectToPipe(pipe, source, false);
+    }
+
+    @Override
+    public void reflow(Pipe pipe, Object sink) {
+        System.out.println("reflow sink: " + sink.getClass());
     }
 
     @Override
@@ -44,22 +49,22 @@ public class AppenginePipesDriver implements PipesDriver {
         ClearPipelineTask.enqueue(pipelineId);
     }
 
-    private void enqueueObjectToPipe(Pipe pipe, Object object, boolean present) {
-        SourceMarker sourceMarker = saveSourceMarker(object);
+    private void enqueueObjectToPipe(Pipe pipe, Object source, boolean present) {
+        SourceMarker sourceMarker = saveSourceMarker(source);
         Queue queue = QueueHelper.getPipeQueue();
         Set<IdRef<?>> sinks = pipe.getSinks();
 
         for (IdRef<?> sinkId : sinks) {
-            Payload payload = createPayload(pipe, object, sinkId, sourceMarker, present);
+            Payload payload = createPayload(pipe, source, sinkId, sourceMarker, present);
             queue.add(TaskOptions.Builder.withPayload(new ForkTask(payload)));
         }
     }
 
-    private Payload createPayload(Pipe pipe, Object object, IdRef<?> sinkId, SourceMarker marker, boolean present) {
+    private Payload createPayload(Pipe pipe, Object source, IdRef<?> sinkId, SourceMarker marker, boolean present) {
         Payload payload = new Payload();
         payload.setNs(r.namespace().getNs());
         payload.setPipeClazz(pipe.getClass());
-        payload.setSourceJson(object);
+        payload.setSourceJson(source);
         payload.setSinkUri(sinkId);
         payload.setSourceMarkerJson(marker);
         payload.setPresent(present);
@@ -74,8 +79,8 @@ public class AppenginePipesDriver implements PipesDriver {
         return objectId.createChildId(SourceMarker.class, objectId.getName());
     }
 
-    private SourceMarker saveSourceMarker(Object object) {
-        ObjectHolder objectHolder = new ObjectHolder(object);
+    private SourceMarker saveSourceMarker(Object source) {
+        ObjectHolder objectHolder = new ObjectHolder(source);
         IdRef<SourceMarker> markerId = createSourceMarkerId(objectHolder);
 
         SourceMarker sourceMarker;

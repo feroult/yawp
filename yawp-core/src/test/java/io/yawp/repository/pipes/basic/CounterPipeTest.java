@@ -4,7 +4,6 @@ import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.PipedObject;
 import io.yawp.repository.models.basic.PipedObjectCounter;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Random;
@@ -174,7 +173,7 @@ public class CounterPipeTest extends EndpointTestCase {
     }
 
     @Test
-    @Ignore
+    //@Ignore
     public void testSinkReflow() {
         if (pipesDriverNotImplemented()) {
             return;

@@ -7,8 +7,8 @@ import io.yawp.repository.query.NoResultException;
 
 public class RepositoryPipes {
 
-    public static void flux(Repository r, Object object) {
-        Class<?> endpointClazz = object.getClass();
+    public static void flux(Repository r, Object source) {
+        Class<?> endpointClazz = source.getClass();
 
         if (!isPipeSource(r, endpointClazz)) {
             return;
@@ -16,8 +16,8 @@ public class RepositoryPipes {
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
             Pipe pipe = createPipeInstance(r, pipeClazz);
-            pipe.configure(object);
-            r.driver().pipes().flux(pipe, object);
+            pipe.configure(source);
+            r.driver().pipes().flux(pipe, source);
         }
     }
 
@@ -28,18 +28,18 @@ public class RepositoryPipes {
             return;
         }
 
-        // TODO: Pipes - Think about... Shield may have already loaded this object.
-        Object object;
+        // TODO: Pipes - Think about... Shield may have already loaded this source.
+        Object source;
         try {
-            object = id.fetch();
+            source = id.fetch();
         } catch (NoResultException e) {
             return;
         }
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
             Pipe pipe = createPipeInstance(r, pipeClazz);
-            pipe.configure(object);
-            r.driver().pipes().reflux(pipe, object);
+            pipe.configure(source);
+            r.driver().pipes().reflux(pipe, source);
         }
     }
 
@@ -63,33 +63,34 @@ public class RepositoryPipes {
         reflowSink(r, endpointClazz, object, oldObject);
     }
 
-    private static void refluxOld(Repository r, Class<?> endpointClazz, Object object, Object oldObject) {
+    private static void refluxOld(Repository r, Class<?> endpointClazz, Object source, Object oldSource) {
         if (!isPipeSource(r, endpointClazz)) {
             return;
         }
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
-            Pipe oldPipe = createOldPipeInstance(r, pipeClazz, object, oldObject);
+            Pipe oldPipe = createOldPipeInstance(r, pipeClazz, source, oldSource);
 
             if (!oldPipe.hasSinks()) {
                 continue;
             }
 
-            r.driver().pipes().reflux(oldPipe, object);
+            r.driver().pipes().reflux(oldPipe, source);
         }
     }
 
-    private static void reflowSink(Repository r, Class<?> endpointClazz, Object object, Object oldObject) {
+    private static void reflowSink(Repository r, Class<?> endpointClazz, Object sink, Object oldSink) {
         if (!isPipeSink(r, endpointClazz)) {
             return;
         }
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipesSink()) {
             Pipe pipe = createPipeInstance(r, pipeClazz);
-            if (!pipe.reflowCondition(object, oldObject)) {
+            if (!pipe.reflowCondition(sink, oldSink)) {
                 continue;
             }
-            System.out.println("reflow sink: " + endpointClazz);
+
+            r.driver().pipes().reflow(pipe, sink);
         }
     }
 

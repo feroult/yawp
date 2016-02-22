@@ -64,6 +64,7 @@ public class ReflowFluxTask implements DeferredTask {
 
     private void init() {
         this.r = yawp();
+        this.pipe = createPipeInstance();
         this.sink = JsonUtils.from(r, sinkJson, sinkClazz);
         this.sinkId = new ObjectHolder(sink).getId();
     }
@@ -76,10 +77,10 @@ public class ReflowFluxTask implements DeferredTask {
             enqueueNextBatch(q.getCursor());
         }
 
-        fluxSourcesToPipe(sources);
+        fluxSources(sources);
     }
 
-    private void fluxSourcesToPipe(List<?> sources) {
+    private void fluxSources(List<?> sources) {
         Queue queue = QueueHelper.getPipeQueue();
 
         for (Object source : sources) {
@@ -100,7 +101,7 @@ public class ReflowFluxTask implements DeferredTask {
         queue.add(TaskOptions.Builder.withPayload(new ReflowFluxTask(pipe, sink, nextCursor)));
     }
 
-    private QueryBuilder prepareQuery() {
+    private QueryBuilder<?> prepareQuery() {
         QueryBuilder q = pipe.sourcesQuery(sink);
 
         if (q == null) {
@@ -124,7 +125,9 @@ public class ReflowFluxTask implements DeferredTask {
 
     private Pipe createPipeInstance() {
         try {
-            return pipeClazz.newInstance();
+            Pipe pipe = pipeClazz.newInstance();
+            pipe.setRepository(yawp());
+            return pipe;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }

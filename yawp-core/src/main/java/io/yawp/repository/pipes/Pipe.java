@@ -95,9 +95,9 @@ public abstract class Pipe<T, S> extends Feature {
      * when the specified sink is reflowed.
      *
      * @param sink The sink object.
-     * @return The {@link QueryBuilder<T>} to query for sources.
+     * @return The {@link QueryBuilder<S>} to query for sources.
      */
-    public QueryBuilder<T> sourcesQuery(T sink) {
+    public QueryBuilder<T> sourcesQuery(S sink) {
         return null;
     }
 

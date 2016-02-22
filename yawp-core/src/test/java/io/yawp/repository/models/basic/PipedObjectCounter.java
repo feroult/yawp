@@ -3,6 +3,7 @@ package io.yawp.repository.models.basic;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
+import io.yawp.repository.annotations.Index;
 
 @Endpoint(path = "/piped_object_counters")
 public class PipedObjectCounter {
@@ -15,6 +16,9 @@ public class PipedObjectCounter {
     private Integer countGroupA = 0;
 
     private Integer countGroupB = 0;
+
+    @Index
+    private boolean active = false;
 
     public IdRef<PipedObjectCounter> getId() {
         return id;
@@ -70,5 +74,13 @@ public class PipedObjectCounter {
 
     public void decGroupB() {
         countGroupB--;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

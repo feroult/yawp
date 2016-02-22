@@ -4,8 +4,6 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 
-import static io.yawp.repository.Yawp.yawp;
-
 @Endpoint(path = "/piped_objects")
 public class PipedObject {
 
@@ -21,7 +19,7 @@ public class PipedObject {
     }
 
     public PipedObject(String group) {
-        this(group, yawp.parseId(PipedObjectCounter.class, "/piped_object_counters/1"));
+        this(group, null);
     }
 
     public PipedObject(String group, IdRef<PipedObjectCounter> counterId) {

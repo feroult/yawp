@@ -4,12 +4,22 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.PipedObject;
 import io.yawp.repository.models.basic.PipedObjectCounter;
 import io.yawp.repository.pipes.Pipe;
+import io.yawp.repository.query.QueryBuilder;
+
+import java.util.List;
 
 public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
 
     @Override
     public IdRef<PipedObjectCounter> sinkId(PipedObject object) {
-        return object.getCounterId();
+        if (object.getCounterId() != null) {
+            return object.getCounterId();
+        }
+        List<IdRef<PipedObjectCounter>> ids = yawp(PipedObjectCounter.class).where("active", "=", true).ids();
+        if (ids.size() == 0) {
+            return null;
+        }
+        return ids.get(0);
     }
 
     @Override
@@ -39,6 +49,11 @@ public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
     }
 
     @Override
+    public boolean reflowCondition(PipedObjectCounter newCounter, PipedObjectCounter oldCounter) {
+        return oldCounter != null && !oldCounter.isActive() && newCounter.isActive();
+    }
+
+    @Override
     public void drain(PipedObjectCounter sink) {
         sink.setCount(0);
         sink.setCountGroupA(0);
@@ -46,8 +61,8 @@ public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
     }
 
     @Override
-    public boolean reflowCondition(PipedObjectCounter newCounter, PipedObjectCounter oldCounter) {
-        return newCounter.getCount().equals(-1);
+    public QueryBuilder<PipedObject> sourcesQuery(PipedObjectCounter counter) {
+        return yawp(PipedObject.class).where("counterId", "=", counter.getId());
     }
 
     private boolean isGroup(PipedObject object, String groupName) {

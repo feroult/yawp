@@ -7,6 +7,7 @@ import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.ParentId;
 import io.yawp.repository.annotations.Text;
+import io.yawp.repository.models.ObjectHolder;
 
 import static io.yawp.repository.Yawp.yawp;
 
@@ -63,6 +64,12 @@ public class SinkMarker {
             source = JsonUtils.from(yawp(), sourceJson, ReflectionUtils.clazzForName(sourceClazzName));
         }
         return source;
+    }
+
+    public IdRef<?> getSourceId() {
+        Object source = getSource();
+        ObjectHolder objectHolder = new ObjectHolder(source);
+        return objectHolder.getId();
     }
 
     public void setSourceJson(Class<?> endpointClazz, String sourceJson) {

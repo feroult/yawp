@@ -4,7 +4,7 @@ import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.PipedObject;
 import io.yawp.repository.models.basic.PipedObjectCounter;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Random;
@@ -15,6 +15,14 @@ import static org.junit.Assert.assertEquals;
 public class CounterPipeTest extends EndpointTestCase {
 
     private String[] groups = new String[]{"group-a", "group-b"};
+
+    @Before
+    public void before() {
+        PipedObjectCounter counter = new PipedObjectCounter();
+        counter.setId(id(PipedObjectCounter.class, 1L));
+        counter.setActive(true);
+        yawp.save(counter);
+    }
 
     @Test
     public void testOnlyIncrement() {
@@ -174,27 +182,35 @@ public class CounterPipeTest extends EndpointTestCase {
     }
 
     @Test
-    @Ignore
     public void testSinkReflow() {
         if (pipesDriverNotImplemented()) {
             return;
         }
 
-        yawp.save(new PipedObject("xpto"));
-        yawp.save(new PipedObject("xpto"));
-        awaitAsync(20, TimeUnit.SECONDS);
+        IdRef<PipedObjectCounter> counterId = turnDefaultCounterInactive();
+
+        yawp.save(new PipedObject("xpto", counterId));
+        yawp.save(new PipedObject("xpto", counterId));
 
         PipedObjectCounter counter;
 
         counter = yawp(PipedObjectCounter.class).only();
-        assertEquals((Integer) 2, counter.getCount());
+        assertEquals((Integer) 0, counter.getCount());
 
-        counter.setCount(-1);
+        counter.setActive(true);
         yawp.save(counter);
         awaitAsync(20, TimeUnit.SECONDS);
 
         counter = yawp(PipedObjectCounter.class).only();
         assertEquals((Integer) 2, counter.getCount());
+    }
+
+    private IdRef<PipedObjectCounter> turnDefaultCounterInactive() {
+        IdRef<PipedObjectCounter> counterId = id(PipedObjectCounter.class, 1L);
+        PipedObjectCounter counter = counterId.fetch();
+        counter.setActive(false);
+        yawp.save(counter);
+        return counterId;
     }
 
     private IdRef<PipedObject> saveObjectInGroup(long idAsLong, String group) {

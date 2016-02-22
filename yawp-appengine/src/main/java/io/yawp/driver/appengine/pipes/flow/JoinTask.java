@@ -1,9 +1,8 @@
-package io.yawp.driver.appengine.pipes;
+package io.yawp.driver.appengine.pipes.flow;
 
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.DeferredTask;
-import io.yawp.driver.appengine.pipes.helpers.CacheHelper;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
@@ -14,7 +13,7 @@ import io.yawp.repository.query.NoResultException;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static io.yawp.driver.appengine.pipes.helpers.CacheHelper.POW_2_15;
+import static io.yawp.driver.appengine.pipes.flow.CacheHelper.POW_2_15;
 import static io.yawp.repository.Yawp.yawp;
 
 public class JoinTask implements DeferredTask {

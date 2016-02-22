@@ -1,4 +1,4 @@
-package io.yawp.driver.appengine.pipes.tools.utils;
+package io.yawp.driver.appengine.pipes.utils;
 
 import com.google.appengine.tools.pipeline.Job1;
 import com.google.appengine.tools.pipeline.Value;

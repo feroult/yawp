@@ -1,4 +1,4 @@
-package io.yawp.driver.appengine.pipes.helpers;
+package io.yawp.driver.appengine.pipes.utils;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;

@@ -36,6 +36,10 @@ public class ObjectModel {
         return ReflectionUtils.getFieldWithAnnotation(clazz, ParentId.class);
     }
 
+    public String getIdFieldName() {
+        return getIdField().getName();
+    }
+
     public boolean isIdRef(Field field) {
         return IdRef.class.isAssignableFrom(field.getType());
     }

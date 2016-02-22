@@ -1,4 +1,4 @@
-package io.yawp.driver.appengine.pipes.tools.utils;
+package io.yawp.driver.appengine.pipes.utils;
 
 import com.google.appengine.api.taskqueue.DeferredTask;
 import com.google.appengine.api.taskqueue.Queue;
@@ -7,7 +7,6 @@ import com.google.appengine.tools.pipeline.JobInfo;
 import com.google.appengine.tools.pipeline.NoSuchObjectException;
 import com.google.appengine.tools.pipeline.PipelineService;
 import com.google.appengine.tools.pipeline.PipelineServiceFactory;
-import io.yawp.driver.appengine.pipes.helpers.QueueHelper;
 
 import java.util.logging.Logger;
 

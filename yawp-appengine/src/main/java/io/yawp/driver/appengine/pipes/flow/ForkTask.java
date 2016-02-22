@@ -1,12 +1,12 @@
-package io.yawp.driver.appengine.pipes;
+package io.yawp.driver.appengine.pipes.flow;
 
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.*;
-import io.yawp.driver.appengine.pipes.helpers.QueueHelper;
+import io.yawp.driver.appengine.pipes.utils.QueueHelper;
 import io.yawp.repository.Repository;
 
-import static io.yawp.driver.appengine.pipes.helpers.CacheHelper.*;
+import static io.yawp.driver.appengine.pipes.flow.CacheHelper.*;
 import static io.yawp.repository.Yawp.yawp;
 
 public class ForkTask implements DeferredTask {

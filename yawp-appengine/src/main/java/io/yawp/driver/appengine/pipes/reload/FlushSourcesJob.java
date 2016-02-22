@@ -1,9 +1,9 @@
-package io.yawp.driver.appengine.pipes.tools.reload;
+package io.yawp.driver.appengine.pipes.reload;
 
 import com.google.appengine.tools.pipeline.Job2;
 import com.google.appengine.tools.pipeline.Value;
 import io.yawp.commons.utils.ReflectionUtils;
-import io.yawp.driver.appengine.pipes.tools.utils.WaiterJob;
+import io.yawp.driver.appengine.pipes.utils.WaiterJob;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.pipes.Pipe;
@@ -14,7 +14,7 @@ import java.util.List;
 
 import static io.yawp.repository.Yawp.yawp;
 
-public class DrainSinksJob extends Job2<Void, Class<? extends Pipe>, String> {
+public class FlushSourcesJob extends Job2<Void, Class<? extends Pipe>, String> {
 
     private static final int BATCH_SIZE = 100;
 
@@ -22,7 +22,7 @@ public class DrainSinksJob extends Job2<Void, Class<? extends Pipe>, String> {
 
     private transient Class<? extends Pipe> pipeClazz;
 
-    private transient Class<?> sinkClazz;
+    private transient Class<?> sourceClazz;
 
     private transient String cursor;
 
@@ -35,28 +35,28 @@ public class DrainSinksJob extends Job2<Void, Class<? extends Pipe>, String> {
     private void init(Class<? extends Pipe> pipeClazz, String cursor) {
         this.r = yawp();
         this.pipeClazz = pipeClazz;
-        this.sinkClazz = ReflectionUtils.getFeatureTypeArgumentAt(pipeClazz, 1);
+        this.sourceClazz = ReflectionUtils.getFeatureEndpointClazz(pipeClazz);
         this.cursor = cursor;
     }
 
     private Value<Void> execute() {
         List<Value<Void>> jobs = new LinkedList<>();
 
-        List<? extends IdRef<?>> ids = sinkIds();
+        List<? extends IdRef<?>> ids = sourceIds();
 
         if (cursor != null) {
-            jobs.add(futureCall(new DrainSinksJob(), immediate(pipeClazz), immediate(cursor)));
+            jobs.add(futureCall(new FlushSourcesJob(), immediate(pipeClazz), immediate(cursor)));
         }
 
         for (IdRef<?> id : ids) {
-            jobs.add(futureCall(new DrainSinkJob(), immediate(pipeClazz), immediate(id.getUri()), null));
+            jobs.add(futureCall(new FlushSourceJob(), immediate(pipeClazz), immediate(id.getUri())));
         }
 
         return futureCall(new WaiterJob(), futureList(jobs));
     }
 
-    private List<? extends IdRef<?>> sinkIds() {
-        QueryBuilder<?> q = r.query(sinkClazz).order("id").limit(BATCH_SIZE);
+    private List<? extends IdRef<?>> sourceIds() {
+        QueryBuilder<?> q = r.query(sourceClazz).order("id").limit(BATCH_SIZE);
         if (cursor != null) {
             q.cursor(cursor);
         }

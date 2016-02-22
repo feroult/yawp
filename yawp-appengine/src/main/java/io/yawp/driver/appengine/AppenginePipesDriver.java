@@ -5,11 +5,13 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.tools.pipeline.PipelineService;
 import com.google.appengine.tools.pipeline.PipelineServiceFactory;
 import io.yawp.driver.api.PipesDriver;
-import io.yawp.driver.appengine.pipes.ForkTask;
-import io.yawp.driver.appengine.pipes.Payload;
-import io.yawp.driver.appengine.pipes.helpers.QueueHelper;
-import io.yawp.driver.appengine.pipes.tools.reload.ReloadPipeJob;
-import io.yawp.driver.appengine.pipes.tools.utils.ClearPipelineTask;
+import io.yawp.driver.appengine.pipes.flow.ForkTask;
+import io.yawp.driver.appengine.pipes.flow.Payload;
+import io.yawp.driver.appengine.pipes.utils.QueueHelper;
+import io.yawp.driver.appengine.pipes.reflow.ReflowFluxTask;
+import io.yawp.driver.appengine.pipes.reflow.ReflowRefluxTask;
+import io.yawp.driver.appengine.pipes.reload.ReloadPipeJob;
+import io.yawp.driver.appengine.pipes.utils.ClearPipelineTask;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
@@ -39,7 +41,9 @@ public class AppenginePipesDriver implements PipesDriver {
 
     @Override
     public void reflow(Pipe pipe, Object sink) {
-        System.out.println("reflow sink: " + sink.getClass());
+        Queue queue = QueueHelper.getPipeQueue();
+        queue.add(TaskOptions.Builder.withPayload(new ReflowFluxTask(pipe, sink)));
+        queue.add(TaskOptions.Builder.withPayload(new ReflowRefluxTask(pipe, sink)));
     }
 
     @Override

@@ -1,4 +1,4 @@
-package io.yawp.driver.appengine.pipes;
+package io.yawp.driver.appengine.pipes.flow;
 
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;

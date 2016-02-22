@@ -116,4 +116,13 @@ public abstract class Pipe<T, S> extends Feature {
     public final boolean hasSinks() {
         return sinks.size() != 0;
     }
+
+    public final boolean containsSink(IdRef<S> sinkId) {
+        return sinks.contains(sinkId);
+    }
+
+    public final void forceSink(IdRef<S> sinkId) {
+        sinks = new HashSet<>();
+        sinks.add(sinkId);
+    }
 }

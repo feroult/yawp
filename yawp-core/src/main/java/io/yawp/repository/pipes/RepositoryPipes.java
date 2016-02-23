@@ -16,7 +16,6 @@ public class RepositoryPipes {
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
             Pipe pipe = createPipeInstance(r, pipeClazz);
-            pipe.configure(source);
             r.driver().pipes().flux(pipe, source);
         }
     }
@@ -38,7 +37,6 @@ public class RepositoryPipes {
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
             Pipe pipe = createPipeInstance(r, pipeClazz);
-            pipe.configure(source);
             r.driver().pipes().reflux(pipe, source);
         }
     }
@@ -69,13 +67,8 @@ public class RepositoryPipes {
         }
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
-            Pipe oldPipe = createOldPipeInstance(r, pipeClazz, source, oldSource);
-
-            if (!oldPipe.hasSinks()) {
-                continue;
-            }
-
-            r.driver().pipes().reflux(oldPipe, source);
+            Pipe pipe = createPipeInstance(r, pipeClazz);
+            r.driver().pipes().refluxOld(pipe, source, oldSource);
         }
     }
 
@@ -92,18 +85,6 @@ public class RepositoryPipes {
 
             r.driver().pipes().reflow(pipe, sink);
         }
-    }
-
-
-    private static Pipe createOldPipeInstance(Repository r, Class<? extends Pipe> pipeClazz, Object object, Object oldObject) {
-        Pipe oldPipe = createPipeInstance(r, pipeClazz);
-        oldPipe.configure(oldObject);
-
-        Pipe newPipe = createPipeInstance(r, pipeClazz);
-        newPipe.configure(object);
-
-        oldPipe.removeSinks(newPipe.getSinks());
-        return oldPipe;
     }
 
     private static Object fetchOldObject(Object object) {

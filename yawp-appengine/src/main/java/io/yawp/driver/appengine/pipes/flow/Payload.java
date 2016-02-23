@@ -21,6 +21,8 @@ public class Payload implements Serializable {
 
     private String sourceJson;
 
+    private String oldSourceJson;
+
     private String sinkUri;
 
     private String sourceMarkerJson;
@@ -30,6 +32,8 @@ public class Payload implements Serializable {
     private transient Class<? extends Pipe> pipeClazz;
 
     private transient Object source;
+
+    private transient Object oldSource;
 
     private transient IdRef<?> sinkId;
 
@@ -72,6 +76,18 @@ public class Payload implements Serializable {
         return source;
     }
 
+    public void setOldSourceJson(Object oldSource) {
+        this.oldSourceJson = JsonUtils.to(oldSource);
+        this.oldSource = null;
+    }
+
+    public Object getOldSource() {
+        if (oldSource == null) {
+            oldSource = JsonUtils.from(yawp(), oldSourceJson, ReflectionUtils.getFeatureEndpointClazz(getPipeClazz()));
+        }
+        return oldSource;
+    }
+
     public IdRef<?> getSinkId() {
         if (sinkId == null) {
             sinkId = IdRef.parse(yawp(), sinkUri);
@@ -110,5 +126,9 @@ public class Payload implements Serializable {
 
     public IdRef<?> getSourceId() {
         return new ObjectHolder(getSource()).getId();
+    }
+
+    public boolean isRefluxOld() {
+        return !isPresent() && getOldSource() != null;
     }
 }

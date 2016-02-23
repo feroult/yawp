@@ -5,21 +5,19 @@ import com.google.appengine.api.taskqueue.TaskOptions;
 import com.google.appengine.tools.pipeline.PipelineService;
 import com.google.appengine.tools.pipeline.PipelineServiceFactory;
 import io.yawp.driver.api.PipesDriver;
-import io.yawp.driver.appengine.pipes.flow.ForkTask;
+import io.yawp.driver.appengine.pipes.flow.FanoutTask;
 import io.yawp.driver.appengine.pipes.flow.Payload;
-import io.yawp.driver.appengine.pipes.utils.QueueHelper;
 import io.yawp.driver.appengine.pipes.reflow.ReflowFluxTask;
 import io.yawp.driver.appengine.pipes.reflow.ReflowRefluxTask;
 import io.yawp.driver.appengine.pipes.reload.ReloadPipeJob;
 import io.yawp.driver.appengine.pipes.utils.ClearPipelineTask;
+import io.yawp.driver.appengine.pipes.utils.QueueHelper;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.pipes.SourceMarker;
 import io.yawp.repository.query.NoResultException;
-
-import java.util.Set;
 
 public class AppenginePipesDriver implements PipesDriver {
 
@@ -31,12 +29,17 @@ public class AppenginePipesDriver implements PipesDriver {
 
     @Override
     public void flux(Pipe pipe, Object source) {
-        enqueueObjectToPipe(pipe, source, true);
+        enqueueFanoutTask(pipe, source, null, true);
     }
 
     @Override
     public void reflux(Pipe pipe, Object source) {
-        enqueueObjectToPipe(pipe, source, false);
+        enqueueFanoutTask(pipe, source, null, false);
+    }
+
+    @Override
+    public void refluxOld(Pipe pipe, Object source, Object oldSource) {
+        enqueueFanoutTask(pipe, source, oldSource, false);
     }
 
     @Override
@@ -53,24 +56,20 @@ public class AppenginePipesDriver implements PipesDriver {
         ClearPipelineTask.enqueue(pipelineId);
     }
 
-    private void enqueueObjectToPipe(Pipe pipe, Object source, boolean present) {
+    private void enqueueFanoutTask(Pipe pipe, Object source, Object oldSource, boolean present) {
         SourceMarker sourceMarker = saveSourceMarker(source);
         Queue queue = QueueHelper.getPipeQueue();
-        Set<IdRef<?>> sinks = pipe.getSinks();
-
-        for (IdRef<?> sinkId : sinks) {
-            Payload payload = createPayload(pipe, source, sinkId, sourceMarker, present);
-            queue.add(TaskOptions.Builder.withPayload(new ForkTask(payload)));
-        }
+        Payload payload = createPayload(pipe, source, sourceMarker, oldSource, present);
+        queue.add(TaskOptions.Builder.withPayload(new FanoutTask(payload)));
     }
 
-    private Payload createPayload(Pipe pipe, Object source, IdRef<?> sinkId, SourceMarker marker, boolean present) {
+    private Payload createPayload(Pipe pipe, Object source, SourceMarker marker, Object oldSource, boolean present) {
         Payload payload = new Payload();
         payload.setNs(r.namespace().getNs());
         payload.setPipeClazz(pipe.getClass());
         payload.setSourceJson(source);
-        payload.setSinkUri(sinkId);
         payload.setSourceMarkerJson(marker);
+        payload.setOldSourceJson(oldSource);
         payload.setPresent(present);
         return payload;
     }

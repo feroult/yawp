@@ -6,6 +6,7 @@ import com.google.appengine.tools.pipeline.PipelineService;
 import com.google.appengine.tools.pipeline.PipelineServiceFactory;
 import io.yawp.driver.api.PipesDriver;
 import io.yawp.driver.appengine.pipes.flow.FanoutTask;
+import io.yawp.driver.appengine.pipes.flow.ForkTask;
 import io.yawp.driver.appengine.pipes.flow.Payload;
 import io.yawp.driver.appengine.pipes.reflow.ReflowFluxTask;
 import io.yawp.driver.appengine.pipes.reflow.ReflowRefluxTask;
@@ -19,6 +20,8 @@ import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.pipes.SourceMarker;
 import io.yawp.repository.query.NoResultException;
 
+import java.util.Set;
+
 public class AppenginePipesDriver implements PipesDriver {
 
     private Repository r;
@@ -29,17 +32,17 @@ public class AppenginePipesDriver implements PipesDriver {
 
     @Override
     public void flux(Pipe pipe, Object source) {
-        enqueueFanoutTask(pipe, source, null, true);
+        enqueue(pipe, source, null, true);
     }
 
     @Override
     public void reflux(Pipe pipe, Object source) {
-        enqueueFanoutTask(pipe, source, null, false);
+        enqueue(pipe, source, null, false);
     }
 
     @Override
     public void refluxOld(Pipe pipe, Object source, Object oldSource) {
-        enqueueFanoutTask(pipe, source, oldSource, false);
+        enqueue(pipe, source, oldSource, false);
     }
 
     @Override
@@ -56,10 +59,28 @@ public class AppenginePipesDriver implements PipesDriver {
         ClearPipelineTask.enqueue(pipelineId);
     }
 
-    private void enqueueFanoutTask(Pipe pipe, Object source, Object oldSource, boolean present) {
+    private void enqueue(Pipe pipe, Object source, Object oldSource, boolean present) {
         SourceMarker sourceMarker = saveSourceMarker(source);
-        Queue queue = QueueHelper.getPipeQueue();
         Payload payload = createPayload(pipe, source, sourceMarker, oldSource, present);
+
+        if (!pipe.hasSinks()) {
+            fanout(payload);
+        } else {
+            fork(pipe, payload);
+        }
+    }
+
+    private void fork(Pipe pipe, Payload payload) {
+        Queue queue = QueueHelper.getPipeQueue();
+        Set<IdRef<?>> sinkIds = pipe.getSinks();
+        for (IdRef<?> sinkId : sinkIds) {
+            payload.setSinkUri(sinkId);
+            queue.add(TaskOptions.Builder.withPayload(new ForkTask(payload)));
+        }
+    }
+
+    private void fanout(Payload payload) {
+        Queue queue = QueueHelper.getPipeQueue();
         queue.add(TaskOptions.Builder.withPayload(new FanoutTask(payload)));
     }
 

@@ -70,6 +70,14 @@ public class ReflowFluxTask implements DeferredTask {
     }
 
     private void fluxSourcesToSink() {
+        if (isReflowFromQuery()) {
+            reflowFromQuery();
+        } else {
+            reflowFromList();
+        }
+    }
+
+    private void reflowFromQuery() {
         QueryBuilder q = prepareQuery();
         List<?> sources = q.list();
 
@@ -77,6 +85,11 @@ public class ReflowFluxTask implements DeferredTask {
             enqueueNextBatch(q.getCursor());
         }
 
+        fluxSources(sources);
+    }
+
+    private void reflowFromList() {
+        List sources = pipe.sources(sink);
         fluxSources(sources);
     }
 
@@ -121,6 +134,10 @@ public class ReflowFluxTask implements DeferredTask {
     private void orderById(QueryBuilder q) {
         ObjectModel model = new ObjectHolder(sink).getModel();
         q.order(model.getIdFieldName());
+    }
+
+    private boolean isReflowFromQuery() {
+        return pipe.isReflowFromQuery(sink);
     }
 
     private Pipe createPipeInstance() {

@@ -5,6 +5,7 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,6 +26,10 @@ public abstract class Pipe<T, S> extends Feature {
     /**
      * Override this method to configure multiple sinks for a given source.
      * Call {@link #addSink(IdRef<S>)} for each sink you want to pipe the source.
+     * <p/>
+     * <b>Note:</b> the sinkIds should be retrieved in a strong consistent way
+     * (ancestor query or key fetch in GAE), otherwise the pipe may become
+     * inconsistent.
      *
      * @param source The source that needs to be piped to a sink.
      */
@@ -37,6 +42,10 @@ public abstract class Pipe<T, S> extends Feature {
 
     /**
      * Override this method when you have only one sink for each source.
+     * <p/>
+     * <b>Note:</b> the sinkId should be retrieved in a strong consistent way
+     * (ancestor query or key fetch in GAE), otherwise the pipe may become
+     * inconsistent.
      *
      * @param source The source that needs to be piped to a sink.
      * @return The sinkId for the given source.
@@ -93,11 +102,31 @@ public abstract class Pipe<T, S> extends Feature {
     /**
      * Override this method to define a query for source objects to be fluxed
      * when the specified sink is reflowed.
+     * <p/>
+     * <b>Note:</b> this query should be strong consistent (ancestor query
+     * in GAE), otherwise the pipe may become inconsistent.
+     * <p/>
+     * This method has precedence over {@link #sources(S)}.
      *
      * @param sink The sink object.
      * @return The {@link QueryBuilder<S>} to query for sources.
      */
     public QueryBuilder<T> sourcesQuery(S sink) {
+        return null;
+    }
+
+    /**
+     * Override this method to return a list of source objects to be fluxed
+     * when the specified sink is reflowed.
+     * <p/>
+     * <b>Note:</b> the sources should be retrieved in a strong consistent way
+     * (ancestor query or key fetch in GAE), otherwise the pipe may become
+     * inconsistent.
+     *
+     * @param sink The sink object.
+     * @return The {@link QueryBuilder<S>} to query for sources.
+     */
+    public List<T> sources(S sink) {
         return null;
     }
 
@@ -124,5 +153,9 @@ public abstract class Pipe<T, S> extends Feature {
     public final void forceSink(IdRef<S> sinkId) {
         sinks = new HashSet<>();
         sinks.add(sinkId);
+    }
+
+    public final boolean isReflowFromQuery(S sink) {
+        return sourcesQuery(sink) != null;
     }
 }

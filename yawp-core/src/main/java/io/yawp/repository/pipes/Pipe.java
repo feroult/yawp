@@ -23,9 +23,14 @@ public abstract class Pipe<T, S> extends Feature {
 
     private Set<IdRef<S>> sinks = new HashSet<>();
 
+    private Set<T> sources = new HashSet<>();
+
+    private QueryBuilder<T> sourcesQuery;
+
     /**
-     * Override this method to configure multiple sinks for a given source.
-     * Call {@link #addSink(IdRef<S>)} for each sink you want to pipe the source.
+     * Override this method to configure one or multiple sinks for a given source.
+     * <p/>
+     * Call {@link #addSinkId(IdRef<S>)} for each sink you want to pipe the source.
      * <p/>
      * <b>Note:</b> the sinkIds should be retrieved in a strong consistent way
      * (ancestor query or key fetch in GAE), otherwise the pipe may become
@@ -33,25 +38,20 @@ public abstract class Pipe<T, S> extends Feature {
      *
      * @param source The source that needs to be piped to a sink.
      */
-    public void configure(T source) {
-        IdRef<S> sinkId = sinkId(source);
-        if (sinkId != null) {
-            addSink(sinkId);
-        }
-    }
+    public abstract void configureSinks(T source);
 
     /**
-     * Override this method when you have only one sink for each source.
+     * Call this method from {@link #configureSinks(T)} to add a sink id for
+     * a given source.
      * <p/>
-     * <b>Note:</b> the sinkId should be retrieved in a strong consistent way
+     * <b>Note:</b> the sink id should be retrieved in a strong consistent way
      * (ancestor query or key fetch in GAE), otherwise the pipe may become
      * inconsistent.
      *
-     * @param source The source that needs to be piped to a sink.
-     * @return The sinkId for the given source.
+     * @param id The sink id.
      */
-    public IdRef<S> sinkId(T source) {
-        return null;
+    public final void addSinkId(IdRef<S> id) {
+        sinks.add(id);
     }
 
     /**
@@ -63,6 +63,7 @@ public abstract class Pipe<T, S> extends Feature {
      * @param sink   The sink object.
      */
     public abstract void flux(T source, S sink);
+
 
     /**
      * Override this method to reflux source information from the sink.
@@ -76,19 +77,11 @@ public abstract class Pipe<T, S> extends Feature {
 
 
     /**
-     * Override this method to empty the sink before it is reloaded.
-     *
-     * @param sink The sink object.
-     */
-    public void drain(S sink) {
-    }
-
-    /**
      * Override this method to decide if a sink needs to be reflowed after
      * it is created or updated.
      * <p/>
      * The sink will be reflowed asynchronously by fluxing all sources
-     * returned from {@link #sourcesQuery(Object)}.
+     * configured in {@link #configureSources(S)}.
      *
      * @param newSink The sink object containing its new data.
      * @param oldSink The sink object containing its previous data.
@@ -100,38 +93,68 @@ public abstract class Pipe<T, S> extends Feature {
     }
 
     /**
-     * Override this method to define a query for source objects to be fluxed
-     * when the specified sink is reflowed.
+     * Override this method to define configure one or multiple source objects
+     * to be fluxed when the specified sink is reflowed.
      * <p/>
-     * <b>Note:</b> this query should be strong consistent (ancestor query
-     * in GAE), otherwise the pipe may become inconsistent.
+     * Call {@link #addSource(T)}, {@link #addSources(List<T>)} or
+     * {@link #addSourcesQuery(QueryBuilder<T>)} to specify which sources should be
+     * reflowed to the sink.
      * <p/>
-     * This method has precedence over {@link #sources(S)}.
+     * <b>Note:</b> the sources should be retrieved in a strong consistent way
+     * (ancestor query in GAE), otherwise the pipe may become inconsistent.
      *
      * @param sink The sink object.
-     * @return The {@link QueryBuilder<S>} to query for sources.
      */
-    public QueryBuilder<T> sourcesQuery(S sink) {
-        return null;
+    public void configureSources(S sink) {
     }
 
     /**
-     * Override this method to return a list of source objects to be fluxed
-     * when the specified sink is reflowed.
+     * Call this method from {@link #configureSources(S)} to add
+     * source object to be fluxed when the specified sink is reflowed.
+     * <p/>
+     * <b>Note:</b> the source should be retrieved in a strong consistent way
+     * (ancestor query or key fetch in GAE), otherwise the pipe may become
+     * inconsistent.
+     *
+     * @param source The source object.
+     */
+    public void addSource(T source) {
+        sources.add(source);
+    }
+
+    /**
+     * Call this method from {@link #configureSources(S)} to add a list of
+     * source objects to be fluxed when the specified sink is reflowed.
      * <p/>
      * <b>Note:</b> the sources should be retrieved in a strong consistent way
      * (ancestor query or key fetch in GAE), otherwise the pipe may become
      * inconsistent.
      *
-     * @param sink The sink object.
-     * @return The {@link QueryBuilder<S>} to query for sources.
+     * @param sources The list of source objects.
      */
-    public List<T> sources(S sink) {
-        return null;
+    public void addSources(List<T> sources) {
+        sources.addAll(sources);
     }
 
-    public final void addSink(IdRef<S> id) {
-        sinks.add(id);
+    /**
+     * Call this method from {@link #configureSources(S)} to add a query for
+     * source objects to be fluxed when the specified sink is reflowed.
+     * <p/>
+     * <b>Note:</b> this query should be strong consistent (ancestor query
+     * in GAE), otherwise the pipe may become inconsistent.
+     *
+     * @param query The {@link QueryBuilder<T>} to query for sources.
+     */
+    public void addSourcesQuery(QueryBuilder<T> query) {
+        sourcesQuery = query;
+    }
+
+    /**
+     * Override this method to empty the sink before it is reloaded.
+     *
+     * @param sink The sink object.
+     */
+    public void drain(S sink) {
     }
 
     public final Set<IdRef<S>> getSinks() {
@@ -156,6 +179,16 @@ public abstract class Pipe<T, S> extends Feature {
     }
 
     public final boolean isReflowFromQuery(S sink) {
-        return sourcesQuery(sink) != null;
+        // TODO: pumps
+        configureSources(sink);
+        return sourcesQuery != null;
+    }
+
+    public QueryBuilder<T> getSourcesQuery() {
+        return sourcesQuery;
+    }
+
+    public Set<T> getSources() {
+        return sources;
     }
 }

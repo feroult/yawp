@@ -50,7 +50,7 @@ public class FlushSourceJob extends Job2<Void, Class<? extends Pipe>, String> {
     private Pipe getPipe(Object source) {
         Pipe pipe = createPipeInstance();
         pipe.setRepository(r);
-        pipe.configure(source);
+        pipe.configureSinks(source);
         return pipe;
     }
 

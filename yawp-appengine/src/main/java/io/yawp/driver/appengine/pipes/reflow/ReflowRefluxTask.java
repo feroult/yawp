@@ -87,7 +87,7 @@ public class ReflowRefluxTask implements DeferredTask {
             Object source = sinkMarker.getSourceId().fetch();
 
             Pipe pipe = createPipeInstance();
-            pipe.configure(source);
+            pipe.configureSinks(source);
 
             if (pipe.containsSink(sinkId)) {
                 continue;

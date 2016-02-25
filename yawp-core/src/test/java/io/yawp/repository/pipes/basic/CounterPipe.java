@@ -4,22 +4,17 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.PipedObject;
 import io.yawp.repository.models.basic.PipedObjectCounter;
 import io.yawp.repository.pipes.Pipe;
-import io.yawp.repository.query.QueryBuilder;
 
 import java.util.List;
 
 public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
 
     @Override
-    public IdRef<PipedObjectCounter> sinkId(PipedObject object) {
-        if (object.getCounterId() != null) {
-            return object.getCounterId();
+    public void configureSinks(PipedObject object) {
+        IdRef<PipedObjectCounter> counterId = getCounterId(object);
+        if (counterId != null) {
+            addSinkId(counterId);
         }
-        List<IdRef<PipedObjectCounter>> ids = yawp(PipedObjectCounter.class).where("active", "=", true).ids();
-        if (ids.size() == 0) {
-            return null;
-        }
-        return ids.get(0);
     }
 
     @Override
@@ -54,15 +49,26 @@ public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
     }
 
     @Override
+    public void configureSources(PipedObjectCounter counter) {
+        addSourcesQuery(yawp(PipedObject.class).where("counterId", "=", counter.getId()));
+    }
+
+    @Override
     public void drain(PipedObjectCounter sink) {
         sink.setCount(0);
         sink.setCountGroupA(0);
         sink.setCountGroupB(0);
     }
 
-    @Override
-    public QueryBuilder<PipedObject> sourcesQuery(PipedObjectCounter counter) {
-        return yawp(PipedObject.class).where("counterId", "=", counter.getId());
+    private IdRef<PipedObjectCounter> getCounterId(PipedObject object) {
+        if (object.getCounterId() != null) {
+            return object.getCounterId();
+        }
+        List<IdRef<PipedObjectCounter>> ids = yawp(PipedObjectCounter.class).where("active", "=", true).ids();
+        if (ids.size() == 0) {
+            return null;
+        }
+        return ids.get(0);
     }
 
     private boolean isGroup(PipedObject object, String groupName) {

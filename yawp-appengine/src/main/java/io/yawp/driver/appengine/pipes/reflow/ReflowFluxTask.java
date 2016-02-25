@@ -12,7 +12,9 @@ import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.query.QueryBuilder;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import static io.yawp.repository.Yawp.yawp;
@@ -70,6 +72,8 @@ public class ReflowFluxTask implements DeferredTask {
     }
 
     private void fluxSourcesToSink() {
+        pipe.configureSources(sink);
+
         if (isReflowFromQuery()) {
             reflowFromQuery();
         } else {
@@ -89,16 +93,16 @@ public class ReflowFluxTask implements DeferredTask {
     }
 
     private void reflowFromList() {
-        List sources = pipe.sources(sink);
+        Set<?> sources = pipe.getSources();
         fluxSources(sources);
     }
 
-    private void fluxSources(List<?> sources) {
+    private void fluxSources(Collection<?> sources) {
         Queue queue = QueueHelper.getPipeQueue();
 
         for (Object source : sources) {
             Pipe pipe = createPipeInstance();
-            pipe.configure(source);
+            pipe.configureSinks(source);
 
             if (!pipe.containsSink(sinkId)) {
                 continue;
@@ -115,7 +119,7 @@ public class ReflowFluxTask implements DeferredTask {
     }
 
     private QueryBuilder<?> prepareQuery() {
-        QueryBuilder q = pipe.sourcesQuery(sink);
+        QueryBuilder q = pipe.getSourcesQuery();
 
         if (q == null) {
             throw new IllegalStateException("Trying to reflow a pipe without overriding sourcesQuery(S sink): " + pipeClazz);

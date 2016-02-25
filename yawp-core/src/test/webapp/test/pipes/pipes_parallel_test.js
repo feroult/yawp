@@ -24,7 +24,8 @@
         function saveObject(id, group, callback) {
             var object = {
                 id: '/piped_objects/' + id,
-                group: group
+                group: group,
+                counterId: '/piped_object_counters/1'
             };
 
             yawp('/piped_objects').create(object).done(function () {

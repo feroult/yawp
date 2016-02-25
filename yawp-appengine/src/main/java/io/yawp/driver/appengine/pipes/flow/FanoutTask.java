@@ -55,16 +55,16 @@ public class FanoutTask implements DeferredTask {
     }
 
     private Set<IdRef<?>> getAddedSinkIds() {
-        pipe.configure(source);
+        pipe.configureSinks(source);
         return pipe.getSinks();
     }
 
     public Set<IdRef<?>> getRemovedSinkIds() {
         Pipe oldPipe = createPipeInstance();
-        oldPipe.configure(payload.getOldSource());
+        oldPipe.configureSinks(payload.getOldSource());
 
         Pipe newPipe = createPipeInstance();
-        newPipe.configure(payload.getSource());
+        newPipe.configureSinks(payload.getSource());
 
         oldPipe.removeSinks(newPipe.getSinks());
         return oldPipe.getSinks();

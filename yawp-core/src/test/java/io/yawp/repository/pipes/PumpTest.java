@@ -17,7 +17,8 @@ public class PumpTest extends EndpointTestCase {
         pump.addObject(new BasicObject("xpto1"));
         pump.addObjects(Arrays.asList(new BasicObject("xpto2"), new BasicObject("xpto3")));
 
-        assertBasicPump(pump);
+        assertList(pump.more(), "xpto1", "xpto2");
+        assertList(pump.more(), "xpto3");
     }
 
     @Test
@@ -29,20 +30,15 @@ public class PumpTest extends EndpointTestCase {
         Pump<BasicObject> pump = new Pump<>(2);
         pump.addQuery(yawp(BasicObject.class));
 
-        assertBasicPump(pump);
+        assertList(pump.more(), "xpto1", "xpto2");
+        assertList(pump.more(), "xpto3");
     }
 
-    private void assertBasicPump(Pump<BasicObject> pump) {
-        List<BasicObject> list;
-
-        list = pump.more();
-        assertEquals(2, list.size());
-        assertEquals("xpto1", list.get(0).getStringValue());
-        assertEquals("xpto2", list.get(1).getStringValue());
-
-        list = pump.more();
-        assertEquals(1, list.size());
-        assertEquals("xpto3", list.get(0).getStringValue());
+    private void assertList(List<BasicObject> list, String ... values) {
+        assertEquals(values.length, list.size());
+        for(int i = 0; i < values.length; i++) {
+            assertEquals(values[i], list.get(i).getStringValue());
+        }
     }
 
 }

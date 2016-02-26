@@ -59,6 +59,8 @@ public class Pump<T> {
             q.cursor(cursor);
         }
         q.limit(batchSize);
-        return q.list();
+        List<T> list = q.list();
+        cursor = q.getCursor();
+        return list;
     }
 }

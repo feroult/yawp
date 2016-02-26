@@ -295,6 +295,10 @@ public class QueryBuilder<T> {
         });
     }
 
+    public boolean hasPreOrder() {
+        return preOrders.size() != 0;
+    }
+
     private boolean hasPostOrder() {
         return postOrders.size() != 0;
     }
@@ -351,5 +355,4 @@ public class QueryBuilder<T> {
 
         return ids.get(0);
     }
-
 }

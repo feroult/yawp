@@ -1,11 +1,5 @@
 package io.yawp.repository.query;
 
-import static io.yawp.repository.query.condition.Condition.and;
-import static io.yawp.repository.query.condition.Condition.c;
-import static io.yawp.repository.query.condition.Condition.or;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
@@ -14,33 +8,20 @@ import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Parent;
 import io.yawp.repository.query.condition.BaseCondition;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.junit.Test;
+import static io.yawp.repository.models.basic.BasicObject.saveManyBasicObjects;
+import static io.yawp.repository.models.basic.BasicObject.saveOneObject;
+import static io.yawp.repository.query.condition.Condition.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DatastoreQueryTest extends EndpointTestCase {
-
-    private void saveManyBasicObjects(int n, String stringValue) {
-        for (int i = 0; i < n; i++) {
-            saveOneObject(stringValue, i);
-        }
-    }
-
-    private IdRef<BasicObject> saveOneObject(String stringValue, int i) {
-        BasicObject object = new BasicObject();
-        object.setStringValue(stringValue);
-        object.setIntValue(i + 1);
-        yawp.save(object);
-        return object.getId();
-    }
-
-    public void saveManyBasicObjects(int n) {
-        saveManyBasicObjects(n, "xpto");
-    }
 
     private BasicObject setId(BasicObject basicObject, long id) {
         basicObject.setId(IdRef.create(yawp, BasicObject.class, id));
@@ -405,7 +386,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
     @Test
     public void testOnlyId() {
-        Long firstId = saveOneObject("xpto", 10).asLong();
+        Long firstId = saveOneObject("xpto", 10).getId().asLong();
 
         IdRef<BasicObject> id = yawp(BasicObject.class).where("stringValue", "=", "xpto").onlyId();
         assertEquals(firstId, id.asLong());

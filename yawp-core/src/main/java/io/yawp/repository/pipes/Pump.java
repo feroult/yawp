@@ -15,6 +15,8 @@ public class Pump<T> {
 
     private List<QueryBuilder<T>> queries = new ArrayList<>();
 
+    private String cursor;
+
     public Pump(int batchSize) {
         this.batchSize = batchSize;
     }
@@ -35,7 +37,7 @@ public class Pump<T> {
         if (objects.size() > 0) {
             return moreFromList();
         }
-        return null;
+        return moreFromQuery();
     }
 
     private List<T> moreFromList() {
@@ -49,5 +51,14 @@ public class Pump<T> {
         objectsIndex = toIndex;
 
         return objects.subList(fromIndex, toIndex);
+    }
+
+    private List<T> moreFromQuery() {
+        QueryBuilder<T> q = queries.get(0);
+        if (cursor != null) {
+            q.cursor(cursor);
+        }
+        q.limit(batchSize);
+        return q.list();
     }
 }

@@ -14,7 +14,7 @@ public class ObjectPumpTest extends PumpTestCase<BasicObject> {
     public void testBasicList() {
         List<BasicObject> list = saveManyBasicObjects(3);
 
-        ObjectPump<BasicObject> pump = new ObjectPump<>(2);
+        ObjectPump<BasicObject> pump = new ObjectPump<>(BasicObject.class, 2);
 
         pumpTestBasicList(pump, list);
     }
@@ -22,7 +22,7 @@ public class ObjectPumpTest extends PumpTestCase<BasicObject> {
     @Test
     public void testBasicQuery() {
         saveManyBasicObjects(3);
-        ObjectPump<BasicObject> pump = new ObjectPump<>(2);
+        ObjectPump<BasicObject> pump = new ObjectPump<>(BasicObject.class, 2);
 
         pumpTestBasicQuery(pump);
     }
@@ -31,7 +31,7 @@ public class ObjectPumpTest extends PumpTestCase<BasicObject> {
     public void testMultipleQueries() {
         saveManyBasicObjects(11);
 
-        ObjectPump<BasicObject> pump = new ObjectPump<>(2);
+        ObjectPump<BasicObject> pump = new ObjectPump<>(BasicObject.class, 2);
 
         pumpTestMultipleQueries(pump);
     }
@@ -41,7 +41,7 @@ public class ObjectPumpTest extends PumpTestCase<BasicObject> {
         saveManyBasicObjects(11);
         List<BasicObject> list = saveManyBasicObjects(5, 11);
 
-        ObjectPump<BasicObject> pump = new ObjectPump<>(2);
+        ObjectPump<BasicObject> pump = new ObjectPump<>(BasicObject.class, 2);
 
         pumpTestListAndMultipleQueries(pump, list);
     }

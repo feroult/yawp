@@ -3,15 +3,18 @@ package io.yawp.repository.pipes.pump;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.query.QueryBuilder;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class IdPump<T> extends Pump<IdRef<T>> {
 
-    private List<QueryBuilder<T>> queries = new ArrayList<>();
+    private transient List<QueryBuilder<T>> queries = new ArrayList<>();
 
-    public IdPump(int batchSize) {
-        super(batchSize);
+    public IdPump(Class<T> clazz, int batchSize) {
+        super(IdRef.class, batchSize);
     }
 
     @Override
@@ -32,5 +35,14 @@ public class IdPump<T> extends Pump<IdRef<T>> {
     @Override
     protected int getQueriesSize() {
         return queries.size();
+    }
+
+    // Serialization
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        queries = new ArrayList<>();
     }
 }

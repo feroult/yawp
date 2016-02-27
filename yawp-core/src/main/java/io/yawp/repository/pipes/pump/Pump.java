@@ -1,12 +1,21 @@
 package io.yawp.repository.pipes.pump;
 
+import io.yawp.commons.utils.JsonUtils;
+import io.yawp.repository.Yawp;
 import io.yawp.repository.query.QueryBuilder;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Pump<T> {
-    protected Class<T> clazz;
+public abstract class Pump<T> implements Serializable {
+
+    private static final long serialVersionUID = -1147341944765139597L;
+
+    protected Class<?> clazz;
 
     protected int defaultBatchSize;
 
@@ -18,7 +27,8 @@ public abstract class Pump<T> {
 
     private String cursor;
 
-    public Pump(int batchSize) {
+    public Pump(Class<?> clazz, int batchSize) {
+        this.clazz = clazz;
         this.defaultBatchSize = batchSize;
     }
 
@@ -104,6 +114,43 @@ public abstract class Pump<T> {
 
     private boolean hasMoreObjects() {
         return objectsIndex < objects.size();
+    }
+
+    // Pumps may be serialized to be processed by asynchronous queues
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeObject(clazz);
+        out.writeInt(defaultBatchSize);
+        out.writeInt(objectsIndex);
+        out.writeInt(queryIndex);
+        out.writeObject(cursor);
+        writeObjects(out);
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        clazz = (Class<T>) in.readObject();
+        defaultBatchSize = in.readInt();
+        objectsIndex = in.readInt();
+        queryIndex = in.readInt();
+        cursor = (String) in.readObject();
+        objects = readObjects(in);
+    }
+
+    private List<T> readObjects(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        List<String> jsonList = (List<String>) in.readObject();
+        List<T> objects = new ArrayList<>();
+        for (String json : jsonList) {
+            objects.add((T) JsonUtils.from(Yawp.yawp(), json, clazz));
+        }
+        return objects;
+    }
+
+    private void writeObjects(ObjectOutputStream out) throws IOException {
+        List<String> jsonList = new ArrayList<>();
+        for (Object object : objects) {
+            jsonList.add(JsonUtils.to(object));
+        }
+        out.writeObject(jsonList);
     }
 
 }

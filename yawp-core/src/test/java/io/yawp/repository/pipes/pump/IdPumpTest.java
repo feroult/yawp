@@ -15,7 +15,7 @@ public class IdPumpTest extends PumpTestCase<IdRef<BasicObject>> {
     public void testBasicList() {
         List<IdRef<BasicObject>> list = getIds(saveManyBasicObjects(3));
 
-        IdPump<BasicObject> pump = new IdPump<>(2);
+        IdPump<BasicObject> pump = new IdPump<>(BasicObject.class, 2);
 
         pumpTestBasicList(pump, list);
     }
@@ -24,7 +24,7 @@ public class IdPumpTest extends PumpTestCase<IdRef<BasicObject>> {
     public void testBasicQuery() {
         saveManyBasicObjects(3);
 
-        IdPump<BasicObject> pump = new IdPump<>(2);
+        IdPump<BasicObject> pump = new IdPump<>(BasicObject.class, 2);
 
         pumpTestBasicQuery(pump);
     }
@@ -33,7 +33,7 @@ public class IdPumpTest extends PumpTestCase<IdRef<BasicObject>> {
     public void testMultipleQueries() {
         saveManyBasicObjects(11);
 
-        IdPump<BasicObject> pump = new IdPump<>(2);
+        IdPump<BasicObject> pump = new IdPump<>(BasicObject.class, 2);
 
         pumpTestMultipleQueries(pump);
     }
@@ -43,7 +43,7 @@ public class IdPumpTest extends PumpTestCase<IdRef<BasicObject>> {
         saveManyBasicObjects(11);
         List<IdRef<BasicObject>> list = getIds(saveManyBasicObjects(5, 11));
 
-        IdPump<BasicObject> pump = new IdPump<>(2);
+        IdPump<BasicObject> pump = new IdPump<>(BasicObject.class, 2);
 
         pumpTestListAndMultipleQueries(pump, list);
     }

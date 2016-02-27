@@ -2,15 +2,18 @@ package io.yawp.repository.pipes.pump;
 
 import io.yawp.repository.query.QueryBuilder;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ObjectPump<T> extends Pump<T> {
 
-    private List<QueryBuilder<T>> queries = new ArrayList<>();
+    private transient List<QueryBuilder<T>> queries = new ArrayList<>();
 
-    public ObjectPump(int batchSize) {
-        super(batchSize);
+    public ObjectPump(Class<T> clazz, int batchSize) {
+        super(clazz, batchSize);
     }
 
     @Override
@@ -32,4 +35,14 @@ public class ObjectPump<T> extends Pump<T> {
     protected int getQueriesSize() {
         return queries.size();
     }
+
+    // Serialization
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        queries = new ArrayList<>();
+    }
+
 }

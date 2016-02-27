@@ -1,4 +1,4 @@
-package io.yawp.repository.pipes;
+package io.yawp.repository.pipes.pump;
 
 import io.yawp.repository.models.basic.BasicObject;
 import org.junit.Test;

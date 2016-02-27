@@ -1,22 +1,21 @@
-package io.yawp.repository.pipes;
+package io.yawp.repository.pipes.pump;
 
-import io.yawp.repository.IdRef;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class IdPump<T> extends Pump<IdRef<T>> {
+public class ObjectPump<T> extends Pump<T> {
 
     private List<QueryBuilder<T>> queries = new ArrayList<>();
 
-    public IdPump(int batchSize) {
+    public ObjectPump(int batchSize) {
         super(batchSize);
     }
 
     @Override
-    protected List<IdRef<T>> executeQueryAt(int queryIndex) {
-        return queries.get(queryIndex).ids();
+    protected List<T> executeQueryAt(int queryIndex) {
+        return queries.get(queryIndex).list();
     }
 
     @Override

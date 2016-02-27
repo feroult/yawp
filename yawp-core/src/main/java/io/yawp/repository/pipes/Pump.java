@@ -1,6 +1,5 @@
 package io.yawp.repository.pipes;
 
-import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.ArrayList;
@@ -36,10 +35,6 @@ public class Pump<T> {
     }
 
     public void addQuery(QueryBuilder<T> query) {
-        if (!query.hasPreOrder()) {
-            ObjectModel model = new ObjectModel(clazz);
-            query.order(model.getIdFieldName());
-        }
         queries.add(query);
     }
 

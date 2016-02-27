@@ -186,17 +186,26 @@ public class BasicObject {
         assertEquals(stringValue, getStringValue());
     }
 
-    public static List<BasicObject> saveManyBasicObjects(int n, String stringValue) {
+    public static List<BasicObject> saveManyBasicObjects(int n, int start, String stringValue) {
         List<BasicObject> objects = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            objects.add(saveOneObject(stringValue, i));
+            objects.add(saveOneObject(stringValue, i + start));
         }
         return objects;
+    }
+
+    public static List<BasicObject> saveManyBasicObjects(int n, String stringValue) {
+        return saveManyBasicObjects(n, 0, stringValue);
+    }
+
+    public static List<BasicObject> saveManyBasicObjects(int n, int start) {
+        return saveManyBasicObjects(n, start, "xpto");
     }
 
     public static List<BasicObject> saveManyBasicObjects(int n) {
         return saveManyBasicObjects(n, "xpto");
     }
+
 
     public static BasicObject saveOneObject(String stringValue, int i) {
         BasicObject object = new BasicObject();

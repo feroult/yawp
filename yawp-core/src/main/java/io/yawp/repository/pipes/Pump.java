@@ -44,13 +44,19 @@ public class Pump<T> {
     }
 
     public List<T> more() {
-        if (objects.size() > 0) {
-            return moreFromList();
+        if (hasMoreObjects()) {
+            List<T> list = moreFromList();
+            if (list.size() < defaultBatchSize && hasMoreQueries()) {
+                list.addAll(moreFromQuery(defaultBatchSize - list.size()));
+            }
+            return list;
         }
         return moreFromQuery(defaultBatchSize);
     }
 
     private List<T> moreFromList() {
+        List<T> list = new ArrayList<>();
+
         int fromIndex = objectsIndex;
         int toIndex = objectsIndex + defaultBatchSize;
 
@@ -60,7 +66,8 @@ public class Pump<T> {
 
         objectsIndex = toIndex;
 
-        return objects.subList(fromIndex, toIndex);
+        list.addAll(objects.subList(fromIndex, toIndex));
+        return list;
     }
 
     private List<T> moreFromQuery(int batchSize) {
@@ -74,7 +81,7 @@ public class Pump<T> {
         if (list.size() < batchSize) {
             queryIndex++;
             cursor = null;
-            if (queryIndex < queries.size()) {
+            if (hasMoreQueries()) {
                 list.addAll(moreFromQuery(defaultBatchSize - list.size()));
             }
         }
@@ -82,6 +89,14 @@ public class Pump<T> {
     }
 
     public boolean hasMore() {
-        return objectsIndex < objects.size() || queryIndex < queries.size();
+        return hasMoreObjects() || hasMoreQueries();
+    }
+
+    private boolean hasMoreQueries() {
+        return queryIndex < queries.size();
+    }
+
+    private boolean hasMoreObjects() {
+        return objectsIndex < objects.size();
     }
 }

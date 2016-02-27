@@ -21,8 +21,6 @@ public abstract class Pump<T> implements Serializable {
 
     private List<T> objects = new ArrayList<>();
 
-    private int objectsIndex = 0;
-
     protected int queryIndex = 0;
 
     private String cursor;
@@ -63,16 +61,16 @@ public abstract class Pump<T> implements Serializable {
     private List<T> moreFromList() {
         List<T> list = new ArrayList<>();
 
-        int fromIndex = objectsIndex;
-        int toIndex = objectsIndex + defaultBatchSize;
+        int fromIndex = 0;
+        int toIndex = defaultBatchSize;
 
         if (toIndex >= objects.size()) {
             toIndex = objects.size();
         }
 
-        objectsIndex = toIndex;
-
-        list.addAll(objects.subList(fromIndex, toIndex));
+        List<T> subList = objects.subList(fromIndex, toIndex);
+        list.addAll(subList);
+        subList.clear();
         return list;
     }
 
@@ -113,7 +111,7 @@ public abstract class Pump<T> implements Serializable {
     }
 
     private boolean hasMoreObjects() {
-        return objectsIndex < objects.size();
+        return objects.size() != 0;
     }
 
     // Pumps may be serialized to be processed by asynchronous queues
@@ -121,7 +119,6 @@ public abstract class Pump<T> implements Serializable {
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeObject(clazz);
         out.writeInt(defaultBatchSize);
-        out.writeInt(objectsIndex);
         out.writeInt(queryIndex);
         out.writeObject(cursor);
         writeObjects(out);
@@ -130,7 +127,6 @@ public abstract class Pump<T> implements Serializable {
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         clazz = (Class<T>) in.readObject();
         defaultBatchSize = in.readInt();
-        objectsIndex = in.readInt();
         queryIndex = in.readInt();
         cursor = (String) in.readObject();
         objects = readObjects(in);

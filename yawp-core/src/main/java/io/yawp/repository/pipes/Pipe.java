@@ -8,7 +8,6 @@ import io.yawp.repository.pipes.pump.IdPump;
 import io.yawp.repository.pipes.pump.ObjectPump;
 import io.yawp.repository.query.QueryBuilder;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -29,18 +28,11 @@ public abstract class Pipe<T, S> extends Feature {
 
     private Class<T> sourceClazz;
 
-    private Class<T> sinkClazz;
-
-    private IdPump<S> sinkPump;
+    private Class<S> sinkClazz;
 
     private ObjectPump<T> sourcePump;
 
-    private Set<IdRef<S>> sinks = new HashSet<>();
-
-    private Set<T> sources = new HashSet<>();
-
-    private QueryBuilder<T> sourcesQuery;
-
+    private IdPump<S> sinkPump;
 
     public static Pipe newInstance(Repository r, Class<? extends Pipe> pipeClazz) {
         try {
@@ -58,8 +50,9 @@ public abstract class Pipe<T, S> extends Feature {
 
     public final void init(Class<T> sourceClazz, Class<S> sinkClazz) {
         this.sourceClazz = sourceClazz;
-        this.sinkPump = new IdPump<>(sinkClazz, BATCH_SIZE);
+        this.sinkClazz = sinkClazz;
         this.sourcePump = new ObjectPump<>(sourceClazz, BATCH_SIZE);
+        this.sinkPump = new IdPump<>(sinkClazz, BATCH_SIZE);
     }
 
     /**
@@ -87,7 +80,6 @@ public abstract class Pipe<T, S> extends Feature {
      */
     public final void addSinkId(IdRef<S> id) {
         sinkPump.add(id);
-        sinks.add(id);
     }
 
 
@@ -156,7 +148,6 @@ public abstract class Pipe<T, S> extends Feature {
      */
     public void addSource(T source) {
         sourcePump.add(source);
-        sources.add(source);
     }
 
     /**
@@ -185,7 +176,6 @@ public abstract class Pipe<T, S> extends Feature {
      */
     public void addSourcesQuery(QueryBuilder<T> query) {
         sourcePump.addQuery(query);
-        sourcesQuery = query;
     }
 
     /**
@@ -196,36 +186,17 @@ public abstract class Pipe<T, S> extends Feature {
     public void drain(S sink) {
     }
 
-    public final Set<IdRef<S>> getSinks() {
+    public final Set<IdRef<S>> allSinks() {
         return sinkPump.all();
-        //return sinks;
     }
 
     public final boolean hasSinks() {
-        return sinks.size() != 0;
-    }
-
-    public final boolean containsSink(IdRef<S> sinkId) {
-        return sinks.contains(sinkId);
+        return sinkPump.hasMore();
     }
 
     public final void forceSink(IdRef<S> sinkId) {
-        sinks = new HashSet<>();
-        sinks.add(sinkId);
-    }
-
-    public final boolean isReflowFromQuery(S sink) {
-        // TODO: pumps
-        configureSources(sink);
-        return sourcesQuery != null;
-    }
-
-    public QueryBuilder<T> getSourcesQuery() {
-        return sourcesQuery;
-    }
-
-    public Set<T> getSources() {
-        return sources;
+        sinkPump = new IdPump<>(sinkClazz, BATCH_SIZE);
+        sinkPump.add(sinkId);
     }
 
     public ObjectPump<T> getSourcePump() {

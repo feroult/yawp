@@ -72,7 +72,7 @@ public class AppenginePipesDriver implements PipesDriver {
 
     private void fork(Pipe pipe, Payload payload) {
         Queue queue = QueueHelper.getPipeQueue();
-        Set<IdRef<?>> sinkIds = pipe.getSinks();
+        Set<IdRef<?>> sinkIds = pipe.allSinks();
         for (IdRef<?> sinkId : sinkIds) {
             payload.setSinkUri(sinkId);
             queue.add(TaskOptions.Builder.withPayload(new ForkTask(payload)));

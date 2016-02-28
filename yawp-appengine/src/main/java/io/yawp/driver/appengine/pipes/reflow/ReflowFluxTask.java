@@ -13,6 +13,7 @@ import io.yawp.repository.pipes.pump.ObjectPump;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import static io.yawp.repository.Yawp.yawp;
@@ -99,7 +100,9 @@ public class ReflowFluxTask implements DeferredTask {
             Pipe pipe = newPipeInstance();
             pipe.configureSinks(source);
 
-            if (!pipe.containsSink(sinkId)) {
+            Set sinks = pipe.allSinks();
+
+            if (!sinks.contains(sinkId)) {
                 continue;
             }
 

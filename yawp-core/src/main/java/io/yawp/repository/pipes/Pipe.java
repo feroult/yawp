@@ -82,6 +82,19 @@ public abstract class Pipe<T, S> extends Feature {
         sinkPump.add(id);
     }
 
+    /**
+     * Call this method from {@link #configureSinks(T)} to add list of sink ids
+     * for a given source.
+     * <p/>
+     * <b>Note:</b> the sink ids should be retrieved in a strong consistent way
+     * (ancestor query or key fetch in GAE), otherwise the pipe may become
+     * inconsistent.
+     *
+     * @param ids The sink ids.
+     */
+    public final void addSinkIds(List<IdRef<S>> ids) {
+        sinkPump.addAll(ids);
+    }
 
     /**
      * Override this method to flux information from the source to sink.

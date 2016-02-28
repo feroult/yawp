@@ -9,7 +9,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public abstract class Pump<T> implements Serializable {
 
@@ -100,6 +102,14 @@ public abstract class Pump<T> implements Serializable {
             q.cursor(cursor);
         }
         q.limit(batchSize);
+    }
+
+    public Set<T> all() {
+        Set<T> all = new HashSet<>();
+        while (hasMore()) {
+            all.addAll(more());
+        }
+        return all;
     }
 
     public boolean hasMore() {

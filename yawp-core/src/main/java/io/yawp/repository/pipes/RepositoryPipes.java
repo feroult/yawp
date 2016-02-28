@@ -15,7 +15,7 @@ public class RepositoryPipes {
         }
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
-            Pipe pipe = createPipeInstance(r, pipeClazz);
+            Pipe pipe = Pipe.newInstance(r, pipeClazz);
             r.driver().pipes().flux(pipe, source);
         }
     }
@@ -36,7 +36,7 @@ public class RepositoryPipes {
         }
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
-            Pipe pipe = createPipeInstance(r, pipeClazz);
+            Pipe pipe = Pipe.newInstance(r, pipeClazz);
             r.driver().pipes().reflux(pipe, source);
         }
     }
@@ -67,7 +67,7 @@ public class RepositoryPipes {
         }
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
-            Pipe pipe = createPipeInstance(r, pipeClazz);
+            Pipe pipe = Pipe.newInstance(r, pipeClazz);
             r.driver().pipes().refluxOld(pipe, source, oldSource);
         }
     }
@@ -78,7 +78,7 @@ public class RepositoryPipes {
         }
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipesSink()) {
-            Pipe pipe = createPipeInstance(r, pipeClazz);
+            Pipe pipe = Pipe.newInstance(r, pipeClazz);
             if (!pipe.reflowCondition(sink, oldSink)) {
                 continue;
             }
@@ -95,17 +95,6 @@ public class RepositoryPipes {
         }
 
         return objectHolder.getId().fetch();
-    }
-
-    private static Pipe createPipeInstance(Repository r, Class<? extends Pipe> pipeClazz) {
-        try {
-            Pipe pipe = pipeClazz.newInstance();
-            pipe.setRepository(r);
-
-            return pipe;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static boolean isPipeSourceOrSink(Repository r, Class<?> endpointClazz) {

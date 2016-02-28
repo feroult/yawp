@@ -8,13 +8,11 @@ import io.yawp.driver.appengine.pipes.utils.QueueHelper;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
-import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.pipes.Pipe;
-import io.yawp.repository.query.QueryBuilder;
+import io.yawp.repository.pipes.pump.ObjectPump;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import static io.yawp.repository.Yawp.yawp;
@@ -31,7 +29,7 @@ public class ReflowFluxTask implements DeferredTask {
 
     private String sinkJson;
 
-    private String cursor;
+    private ObjectPump<?> sourcePump;
 
     private transient Repository r;
 
@@ -45,11 +43,11 @@ public class ReflowFluxTask implements DeferredTask {
         this(pipe, sink, null);
     }
 
-    public ReflowFluxTask(Pipe pipe, Object sink, String cursor) {
+    public ReflowFluxTask(Pipe pipe, Object sink, ObjectPump<?> sourcePump) {
         this.pipeClazz = pipe.getClass();
         this.sinkClazz = sink.getClass();
         this.sinkJson = JsonUtils.to(sink);
-        this.cursor = cursor;
+        this.sourcePump = sourcePump;
     }
 
     @Override
@@ -69,31 +67,28 @@ public class ReflowFluxTask implements DeferredTask {
         this.pipe = createPipeInstance();
         this.sink = JsonUtils.from(r, sinkJson, sinkClazz);
         this.sinkId = new ObjectHolder(sink).getId();
+        initSourcePump();
+    }
+
+    private void initSourcePump() {
+        if (sourcePump != null) {
+            return;
+        }
+        pipe.configureSources(sink);
+        sourcePump = pipe.getSourcePump();
     }
 
     private void fluxSourcesToSink() {
-        pipe.configureSources(sink);
-
-        if (isReflowFromQuery()) {
-            reflowFromQuery();
-        } else {
-            reflowFromList();
-        }
-    }
-
-    private void reflowFromQuery() {
-        QueryBuilder q = prepareQuery();
-        List<?> sources = q.list();
-
-        if (sources.size() == BATCH_SIZE) {
-            enqueueNextBatch(q.getCursor());
+        if (!sourcePump.hasMore()) {
+            return;
         }
 
-        fluxSources(sources);
-    }
+        List<?> sources = sourcePump.more();
 
-    private void reflowFromList() {
-        Set<?> sources = pipe.getSources();
+        if (sourcePump.hasMore()) {
+            enqueueNextBatch();
+        }
+
         fluxSources(sources);
     }
 
@@ -113,44 +108,12 @@ public class ReflowFluxTask implements DeferredTask {
         }
     }
 
-    private void enqueueNextBatch(String nextCursor) {
+    private void enqueueNextBatch() {
         Queue queue = QueueHelper.getPipeQueue();
-        queue.add(TaskOptions.Builder.withPayload(new ReflowFluxTask(pipe, sink, nextCursor)));
-    }
-
-    private QueryBuilder<?> prepareQuery() {
-        QueryBuilder q = pipe.getSourcesQuery();
-
-        if (q == null) {
-            throw new IllegalStateException("Trying to reflow a pipe without overriding sourcesQuery(S sink): " + pipeClazz);
-        }
-
-        orderById(q);
-
-        if (cursor != null) {
-            q.cursor(cursor);
-        }
-
-        q.limit(BATCH_SIZE);
-        return q;
-    }
-
-    private void orderById(QueryBuilder q) {
-        ObjectModel model = new ObjectHolder(sink).getModel();
-        q.order(model.getIdFieldName());
-    }
-
-    private boolean isReflowFromQuery() {
-        return pipe.isReflowFromQuery(sink);
+        queue.add(TaskOptions.Builder.withPayload(new ReflowFluxTask(pipe, sink, sourcePump)));
     }
 
     private Pipe createPipeInstance() {
-        try {
-            Pipe pipe = pipeClazz.newInstance();
-            pipe.setRepository(yawp());
-            return pipe;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        return Pipe.newInstance(r, pipeClazz);
     }
 }

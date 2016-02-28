@@ -34,7 +34,7 @@ public class FanoutTask implements DeferredTask {
 
     private void init() {
         this.r = yawp().namespace(payload.getNs());
-        this.pipe = createPipeInstance();
+        this.pipe = newPipeInstance();
         this.source = payload.getSource();
     }
 
@@ -60,23 +60,18 @@ public class FanoutTask implements DeferredTask {
     }
 
     public Set<IdRef<?>> getRemovedSinkIds() {
-        Pipe oldPipe = createPipeInstance();
+        Pipe oldPipe = newPipeInstance();
         oldPipe.configureSinks(payload.getOldSource());
 
-        Pipe newPipe = createPipeInstance();
+        Pipe newPipe = newPipeInstance();
         newPipe.configureSinks(payload.getSource());
 
-        oldPipe.removeSinks(newPipe.getSinks());
-        return oldPipe.getSinks();
+        Set oldSinks = oldPipe.getSinks();
+        oldSinks.removeAll(newPipe.getSinks());
+        return oldSinks;
     }
 
-    private Pipe createPipeInstance() {
-        try {
-            Pipe pipe = payload.getPipeClazz().newInstance();
-            pipe.setRepository(r);
-            return pipe;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+    private Pipe newPipeInstance() {
+        return Pipe.newInstance(r, payload.getPipeClazz());
     }
 }

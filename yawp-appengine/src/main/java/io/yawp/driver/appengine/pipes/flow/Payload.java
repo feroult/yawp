@@ -49,6 +49,7 @@ public class Payload implements Serializable {
         this.ns = ns;
     }
 
+    // TODO: Pipes - remove
     public Class<? extends Pipe> getPipeClazz() {
         if (pipeClazz == null) {
             pipeClazz = (Class<? extends Pipe>) ReflectionUtils.clazzForName(pipeClazzName);
@@ -56,6 +57,7 @@ public class Payload implements Serializable {
         return pipeClazz;
     }
 
+    // TODO: Pipes - remove
     public void setPipeClazz(Class<? extends Pipe> pipeClazz) {
         this.pipeClazzName = pipeClazz.getName();
     }
@@ -131,4 +133,6 @@ public class Payload implements Serializable {
     public boolean isRefluxOld() {
         return !isPresent() && getOldSource() != null;
     }
+
+
 }

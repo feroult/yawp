@@ -1,7 +1,11 @@
 package io.yawp.repository.pipes;
 
+import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.Repository;
+import io.yawp.repository.pipes.pump.IdPump;
+import io.yawp.repository.pipes.pump.ObjectPump;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.HashSet;
@@ -21,11 +25,42 @@ import java.util.Set;
  */
 public abstract class Pipe<T, S> extends Feature {
 
+    private static final int BATCH_SIZE = 30;
+
+    private Class<T> sourceClazz;
+
+    private Class<T> sinkClazz;
+
+    private IdPump<S> sinkPump;
+
+    private ObjectPump<T> sourcePump;
+
     private Set<IdRef<S>> sinks = new HashSet<>();
 
     private Set<T> sources = new HashSet<>();
 
     private QueryBuilder<T> sourcesQuery;
+
+
+    public static Pipe newInstance(Repository r, Class<? extends Pipe> pipeClazz) {
+        try {
+            Class<?> sourceClazz = ReflectionUtils.getFeatureEndpointClazz(pipeClazz);
+            Class<?> sinkClazz = ReflectionUtils.getFeatureTypeArgumentAt(pipeClazz, 1);
+
+            Pipe pipe = pipeClazz.newInstance();
+            pipe.setRepository(r);
+            pipe.init(sourceClazz, sinkClazz);
+            return pipe;
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public final void init(Class<T> sourceClazz, Class<S> sinkClazz) {
+        this.sourceClazz = sourceClazz;
+        this.sinkPump = new IdPump<>(sinkClazz, BATCH_SIZE);
+        this.sourcePump = new ObjectPump<>(sourceClazz, BATCH_SIZE);
+    }
 
     /**
      * Override this method to configure one or multiple sinks for a given source.
@@ -51,8 +86,10 @@ public abstract class Pipe<T, S> extends Feature {
      * @param id The sink id.
      */
     public final void addSinkId(IdRef<S> id) {
+        sinkPump.add(id);
         sinks.add(id);
     }
+
 
     /**
      * Override this method to flux information from the source to sink.
@@ -74,7 +111,6 @@ public abstract class Pipe<T, S> extends Feature {
      * @param sink   The sink object.
      */
     public abstract void reflux(T source, S sink);
-
 
     /**
      * Override this method to decide if a sink needs to be reflowed after
@@ -119,6 +155,7 @@ public abstract class Pipe<T, S> extends Feature {
      * @param source The source object.
      */
     public void addSource(T source) {
+        sourcePump.add(source);
         sources.add(source);
     }
 
@@ -133,6 +170,7 @@ public abstract class Pipe<T, S> extends Feature {
      * @param sources The list of source objects.
      */
     public void addSources(List<T> sources) {
+        sourcePump.addAll(sources);
         sources.addAll(sources);
     }
 
@@ -146,6 +184,7 @@ public abstract class Pipe<T, S> extends Feature {
      * @param query The {@link QueryBuilder<T>} to query for sources.
      */
     public void addSourcesQuery(QueryBuilder<T> query) {
+        sourcePump.addQuery(query);
         sourcesQuery = query;
     }
 
@@ -158,11 +197,8 @@ public abstract class Pipe<T, S> extends Feature {
     }
 
     public final Set<IdRef<S>> getSinks() {
-        return sinks;
-    }
-
-    public final void removeSinks(Set sinks) {
-        this.sinks.removeAll(sinks);
+        return sinkPump.all();
+        //return sinks;
     }
 
     public final boolean hasSinks() {
@@ -190,5 +226,9 @@ public abstract class Pipe<T, S> extends Feature {
 
     public Set<T> getSources() {
         return sources;
+    }
+
+    public ObjectPump<T> getSourcePump() {
+        return sourcePump;
     }
 }

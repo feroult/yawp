@@ -54,6 +54,9 @@ public class Work {
 
     private <T, S> Pipe<T, S> createPipeInstance() {
         try {
+
+            //Pipe.newInstance(r, payload.getPipeClazz());
+
             return payload.getPipeClazz().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);

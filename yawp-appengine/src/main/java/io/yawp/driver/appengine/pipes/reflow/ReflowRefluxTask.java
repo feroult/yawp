@@ -64,7 +64,7 @@ public class ReflowRefluxTask implements DeferredTask {
 
     private void init() {
         this.r = yawp();
-        this.pipe = createPipeInstance();
+        this.pipe = newPipeInstance();
         this.sink = JsonUtils.from(r, sinkJson, sinkClazz);
         this.sinkId = new ObjectHolder(sink).getId();
     }
@@ -86,7 +86,7 @@ public class ReflowRefluxTask implements DeferredTask {
         for (SinkMarker sinkMarker : sinkMarkers) {
             Object source = sinkMarker.getSourceId().fetch();
 
-            Pipe pipe = createPipeInstance();
+            Pipe pipe = newPipeInstance();
             pipe.configureSinks(source);
 
             if (pipe.containsSink(sinkId)) {
@@ -118,13 +118,7 @@ public class ReflowRefluxTask implements DeferredTask {
         q.order(model.getIdFieldName());
     }
 
-    private Pipe createPipeInstance() {
-        try {
-            Pipe pipe = pipeClazz.newInstance();
-            pipe.setRepository(yawp());
-            return pipe;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+    private Pipe newPipeInstance() {
+        return Pipe.newInstance(r, pipeClazz);
     }
 }

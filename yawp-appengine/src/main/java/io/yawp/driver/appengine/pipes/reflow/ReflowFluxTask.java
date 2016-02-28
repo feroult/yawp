@@ -64,7 +64,7 @@ public class ReflowFluxTask implements DeferredTask {
 
     private void init() {
         this.r = yawp();
-        this.pipe = createPipeInstance();
+        this.pipe = newPipeInstance();
         this.sink = JsonUtils.from(r, sinkJson, sinkClazz);
         this.sinkId = new ObjectHolder(sink).getId();
         initSourcePump();
@@ -96,7 +96,7 @@ public class ReflowFluxTask implements DeferredTask {
         Queue queue = QueueHelper.getPipeQueue();
 
         for (Object source : sources) {
-            Pipe pipe = createPipeInstance();
+            Pipe pipe = newPipeInstance();
             pipe.configureSinks(source);
 
             if (!pipe.containsSink(sinkId)) {
@@ -113,7 +113,7 @@ public class ReflowFluxTask implements DeferredTask {
         queue.add(TaskOptions.Builder.withPayload(new ReflowFluxTask(pipe, sink, sourcePump)));
     }
 
-    private Pipe createPipeInstance() {
+    private Pipe newPipeInstance() {
         return Pipe.newInstance(r, pipeClazz);
     }
 }

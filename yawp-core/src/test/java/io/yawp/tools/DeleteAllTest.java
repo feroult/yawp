@@ -1,12 +1,11 @@
-package io.yawp.repository.tools;
-
-import static org.junit.Assert.assertEquals;
+package io.yawp.tools;
 
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.parents.Parent;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class DeleteAllTest extends EndpointTestCase {
 

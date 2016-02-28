@@ -7,7 +7,7 @@ import io.yawp.driver.api.Driver;
 import io.yawp.driver.api.TransactionDriver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.QueryBuilder;
-import io.yawp.repository.tools.scanner.RepositoryScanner;
+import io.yawp.repository.scanner.RepositoryScanner;
 
 import java.util.List;
 import java.util.Map;

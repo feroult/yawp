@@ -1,4 +1,4 @@
-package io.yawp.repository.tools;
+package io.yawp.tools;
 
 import io.yawp.driver.api.Driver;
 import io.yawp.driver.api.DriverFactory;

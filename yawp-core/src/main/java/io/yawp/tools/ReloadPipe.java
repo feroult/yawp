@@ -1,4 +1,4 @@
-package io.yawp.repository.tools;
+package io.yawp.tools;
 
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.Feature;

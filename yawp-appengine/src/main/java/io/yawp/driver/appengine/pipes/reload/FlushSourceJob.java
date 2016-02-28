@@ -36,8 +36,8 @@ public class FlushSourceJob extends Job2<Void, Class<? extends Pipe>, String> {
     private void flushSource() {
         try {
             r.begin();
+            Pipe pipe = newPipeInstance();
             Object source = sourceId.fetch();
-            Pipe pipe = getPipe(source);
             r.driver().pipes().flux(pipe, source);
             r.commit();
         } finally {
@@ -47,19 +47,8 @@ public class FlushSourceJob extends Job2<Void, Class<? extends Pipe>, String> {
         }
     }
 
-    private Pipe getPipe(Object source) {
-        Pipe pipe = createPipeInstance();
-        pipe.setRepository(r);
-        pipe.configureSinks(source);
-        return pipe;
-    }
-
-    private Pipe createPipeInstance() {
-        try {
-            return pipeClazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+    private Pipe newPipeInstance() {
+        return Pipe.newInstance(r, pipeClazz);
     }
 
 }

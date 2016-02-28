@@ -67,18 +67,14 @@ public class DrainSinkJob extends Job3<Void, Class<? extends Pipe>, String, Stri
     }
 
     private void clearSink() {
-        Pipe pipe = createPipeInstance();
+        Pipe pipe = newPipeInstance();
         Object sink = sinkId.fetch();
         pipe.drain(sink);
         r.save(sink);
     }
 
-    private Pipe createPipeInstance() {
-        try {
-            return pipeClazz.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+    private Pipe newPipeInstance() {
+        return Pipe.newInstance(r, pipeClazz);
     }
 
     private List<? extends IdRef<?>> sinkMarkerIds() {

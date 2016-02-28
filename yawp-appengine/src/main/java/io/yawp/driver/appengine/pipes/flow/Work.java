@@ -33,7 +33,7 @@ public class Work {
     }
 
     public <T, S> void execute(Object sink, SinkMarker sinkMarker) {
-        Pipe<T, S> pipe = createPipeInstance();
+        Pipe<T, S> pipe = newPipeInstance();
 
         if (sinkMarker.isPresent()) {
             pipe.reflux((T) sinkMarker.getSource(), (S) sink);
@@ -52,15 +52,8 @@ public class Work {
         sinkMarker.setSourceJson(ReflectionUtils.getFeatureEndpointClazz(payload.getPipeClazz()), payload.getSourceJson());
     }
 
-    private <T, S> Pipe<T, S> createPipeInstance() {
-        try {
-
-            //Pipe.newInstance(r, payload.getPipeClazz());
-
-            return payload.getPipeClazz().newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+    private <T, S> Pipe<T, S> newPipeInstance() {
+        return Pipe.newInstance(yawp(), payload.getPipeClazz());
     }
 
     public IdRef<SinkMarker> createSinkMarkerId() {

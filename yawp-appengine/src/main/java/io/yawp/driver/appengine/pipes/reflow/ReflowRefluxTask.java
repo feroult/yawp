@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import static io.yawp.repository.Yawp.yawp;
 
 public class ReflowRefluxTask implements DeferredTask {
+    
     private final static Logger logger = Logger.getLogger(ReflowFluxTask.class.getName());
 
     private static final int BATCH_SIZE = 20;

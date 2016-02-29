@@ -3,7 +3,6 @@ package io.yawp.repository.actions;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.Feature;
 
-
 /**
  * Action API
  * <p/>

@@ -28,7 +28,7 @@ public abstract class Transformer<T> extends Feature {
      * Override this method to transform all rest responses for
      * the parametrized endpoint model.
      *
-     * @param object The endpoint model object to me transformed.
+     * @param object The endpoint model object to be transformed.
      * @return The transformed object for the response.
      */
     public Object defaults(T object) {
@@ -40,7 +40,7 @@ public abstract class Transformer<T> extends Feature {
      * the parametrized endpoint model.
      * This method has priority over {@link #defaults(T)}.
      *
-     * @param object The endpoint model object to me transformed.
+     * @param object The endpoint model object to be transformed.
      * @return The transformed object for the response.
      */
     public Object index(T object) {
@@ -52,7 +52,7 @@ public abstract class Transformer<T> extends Feature {
      * the parametrized endpoint model.
      * This method has priority over {@link #defaults(T)}.
      *
-     * @param object The endpoint model object to me transformed.
+     * @param object The endpoint model object to be transformed.
      * @return The transformed object for the response.
      */
     public Object show(T object) {
@@ -64,7 +64,7 @@ public abstract class Transformer<T> extends Feature {
      * the parametrized endpoint model.
      * This method has priority over {@link #defaults(T)}.
      *
-     * @param object The endpoint model object to me transformed.
+     * @param object The endpoint model object to be transformed.
      * @return The transformed object for the response.
      */
     public Object create(T object) {
@@ -76,7 +76,7 @@ public abstract class Transformer<T> extends Feature {
      * the parametrized endpoint model.
      * This method has priority over {@link #defaults(T)}.
      *
-     * @param object The endpoint model object to me transformed.
+     * @param object The endpoint model object to be transformed.
      * @return The transformed object for the response.
      */
     public Object update(T object) {
@@ -88,7 +88,7 @@ public abstract class Transformer<T> extends Feature {
      * for the parametrized endpoint model.
      * This method has priority over {@link #defaults(T)}.
      *
-     * @param object The endpoint model object to me transformed.
+     * @param object The endpoint model object to be transformed.
      * @return The transformed object for the response.
      */
     public Object custom(T object) {

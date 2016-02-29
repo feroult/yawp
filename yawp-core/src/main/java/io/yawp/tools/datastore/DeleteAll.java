@@ -32,7 +32,8 @@ public class DeleteAll extends Tool {
 
         String confirmTime = params.get(CONFIRM_PARAM);
         Long confirm = Long.parseLong(confirmTime);
-        if (confirm > System.currentTimeMillis() + 60 * 1000) {
+        long time = System.currentTimeMillis();
+        if (confirm > time || confirm < time - 60000) {
             return false;
         }
 

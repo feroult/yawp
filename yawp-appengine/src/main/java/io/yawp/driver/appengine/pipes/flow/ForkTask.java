@@ -6,10 +6,14 @@ import com.google.appengine.api.taskqueue.*;
 import io.yawp.driver.appengine.pipes.utils.QueueHelper;
 import io.yawp.repository.Repository;
 
+import java.util.logging.Logger;
+
 import static io.yawp.driver.appengine.pipes.flow.CacheHelper.*;
 import static io.yawp.repository.Yawp.yawp;
 
 public class ForkTask implements DeferredTask {
+
+    private final static Logger logger = Logger.getLogger(ForkTask.class.getName());
 
     private Payload payload;
 
@@ -28,6 +32,7 @@ public class ForkTask implements DeferredTask {
     @Override
     public void run() {
         init();
+        log();
         if (!fork()) {
             // requeue
             throw new IllegalStateException();
@@ -39,6 +44,10 @@ public class ForkTask implements DeferredTask {
         this.sinkUri = payload.getSinkUri();
         this.indexCacheKey = createIndexCacheKey(sinkUri);
         this.memcache = MemcacheServiceFactory.getMemcacheService();
+    }
+
+    private void log() {
+        logger.info(String.format("fork-task - pipe: %s, sinkId: %s", payload.getPipeClazz().getName(), sinkUri));
     }
 
     private boolean fork() {

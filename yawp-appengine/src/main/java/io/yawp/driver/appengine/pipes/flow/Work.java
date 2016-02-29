@@ -10,10 +10,14 @@ import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.pipes.SinkMarker;
 import io.yawp.repository.pipes.SourceMarker;
 
+import java.util.logging.Logger;
+
 import static io.yawp.repository.Yawp.yawp;
 
 @Endpoint(kind = "__yawp_pipe_works")
 public class Work {
+
+    private final static Logger logger = Logger.getLogger(Work.class.getName());
 
     @Id
     private IdRef<Work> id;
@@ -33,6 +37,8 @@ public class Work {
     }
 
     public <T, S> void execute(Object sink, SinkMarker sinkMarker) {
+        log();
+
         Pipe<T, S> pipe = newPipeInstance();
 
         if (sinkMarker.isPresent()) {
@@ -46,6 +52,10 @@ public class Work {
 
         sinkMarker.setPresent(payload.isPresent());
         sinkMarker.setVersion(payload.getSourceMarker().getVersion());
+    }
+
+    private void log() {
+        logger.info(String.format("join-work - pipe: %s, sourceId: %s", payload.getPipeClazz().getName(), payload.getSourceId().getUri()));
     }
 
     private void rememberSourceInSinkMarker(SinkMarker sinkMarker) {

@@ -53,6 +53,7 @@ public class JoinTask implements DeferredTask {
     @Override
     public void run() {
         init();
+        log();
         join();
     }
 
@@ -64,6 +65,10 @@ public class JoinTask implements DeferredTask {
         this.indexHash = CacheHelper.createIndexHash(sinkUri, index);
         this.sinkMarkerCache = new HashMap<>();
         this.sinkMarkersToSave = new HashSet<>();
+    }
+
+    private void log() {
+        logger.info(String.format("join-task - sinkId: %s", sinkUri));
     }
 
     private void join() {

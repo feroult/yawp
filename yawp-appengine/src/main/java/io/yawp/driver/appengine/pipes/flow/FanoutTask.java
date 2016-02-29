@@ -9,10 +9,13 @@ import io.yawp.repository.Repository;
 import io.yawp.repository.pipes.Pipe;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
 import static io.yawp.repository.Yawp.yawp;
 
 public class FanoutTask implements DeferredTask {
+
+    private final static Logger logger = Logger.getLogger(FanoutTask.class.getName());
 
     private Payload payload;
 
@@ -29,6 +32,7 @@ public class FanoutTask implements DeferredTask {
     @Override
     public void run() {
         init();
+        log();
         fanout();
     }
 
@@ -36,6 +40,10 @@ public class FanoutTask implements DeferredTask {
         this.r = yawp().namespace(payload.getNs());
         this.pipe = newPipeInstance();
         this.source = payload.getSource();
+    }
+
+    private void log() {
+        logger.info(String.format("fanout-task - pipe: %s", payload.getPipeClazz().getName()));
     }
 
     private void fanout() {

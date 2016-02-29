@@ -18,6 +18,10 @@ public class CounterPipeTest extends EndpointTestCase {
 
     @Before
     public void before() {
+        if (pipesDriverNotImplemented()) {
+            return;
+        }
+
         PipedObjectCounter counter = new PipedObjectCounter();
         counter.setId(id(PipedObjectCounter.class, 1L));
         counter.setActive(true);

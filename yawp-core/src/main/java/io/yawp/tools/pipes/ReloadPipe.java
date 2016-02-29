@@ -20,7 +20,7 @@ public class ReloadPipe extends Tool {
         pw.println("ok");
     }
 
-    private void reload(String pipeClazzName) {
+    public void reload(String pipeClazzName) {
         Class<? extends Pipe> pipeClazz = getPipeClazz(pipeClazzName);
         yawp.driver().pipes().reload(pipeClazz);
     }

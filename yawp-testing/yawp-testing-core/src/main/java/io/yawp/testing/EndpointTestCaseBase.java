@@ -35,7 +35,7 @@ public class EndpointTestCaseBase extends Feature {
         Environment.setIfEmpty(Environment.DEFAULT_TEST_ENVIRONMENT);
 
         yawp = initYawp();
-        helper = testHelperDriver(yawp);
+        helper = getTestHelper(yawp);
         helper.setUp();
     }
 
@@ -51,7 +51,14 @@ public class EndpointTestCaseBase extends Feature {
         return Yawp.yawp();
     }
 
-    protected TestHelper testHelperDriver(Repository r) {
+    /**
+     * Override this method to define a custom test helper for
+     * your tests.
+     *
+     * @param r The yawp repository reference.
+     * @return An implementation of {@link TestHelper}.
+     */
+    protected TestHelper getTestHelper(Repository r) {
         return TestHelperFactory.getTestHelper(r);
     }
 

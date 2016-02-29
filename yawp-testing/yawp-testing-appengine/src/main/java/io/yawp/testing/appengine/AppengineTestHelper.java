@@ -1,9 +1,6 @@
 package io.yawp.testing.appengine;
 
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
-import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
+import com.google.appengine.tools.development.testing.*;
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.repository.Repository;
 
@@ -21,7 +18,7 @@ public class AppengineTestHelper implements TestHelper {
 
     @Override
     public void setUp() {
-        helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), createDatastoreService(), createTaskQueueTestConfig());
+        helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), createDatastoreService(), createTaskQueueTestConfig(), new LocalModulesServiceTestConfig());
         Map<String, Object> envs = new HashMap<String, Object>();
         helper.setEnvAttributes(envs);
         helper.setUp();

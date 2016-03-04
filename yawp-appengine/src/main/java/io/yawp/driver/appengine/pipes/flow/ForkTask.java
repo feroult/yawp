@@ -19,7 +19,7 @@ public class ForkTask implements DeferredTask {
 
     private transient Repository r;
 
-    private transient String sinkUri;
+    private transient String sinkGroupUri;
 
     private transient String indexCacheKey;
 
@@ -41,24 +41,24 @@ public class ForkTask implements DeferredTask {
 
     private void init() {
         this.r = yawp().namespace(payload.getNs());
-        this.sinkUri = payload.getSinkUri();
-        this.indexCacheKey = createIndexCacheKey(sinkUri);
+        this.sinkGroupUri = payload.getSinkGroupUri();
+        this.indexCacheKey = createIndexCacheKey(sinkGroupUri);
         this.memcache = MemcacheServiceFactory.getMemcacheService();
     }
 
     private void log() {
-        logger.info(String.format("fork-task - pipe: %s, sinkId: %s", payload.getPipeClazz().getName(), sinkUri));
+        logger.info(String.format("fork-task - pipe: %s, sinkId: %s", payload.getPipeClazz().getName(), payload.getSinkUri()));
     }
 
     private boolean fork() {
         Integer index = getIndexSemaphore();
-        String lockCacheKey = createLockCacheKey(sinkUri, index);
+        String lockCacheKey = createLockCacheKey(sinkGroupUri, index);
 
         if (!tryToLock(lockCacheKey)) {
             return false;
         }
 
-        saveWork(createIndexHash(sinkUri, index));
+        saveWork(createIndexHash(sinkGroupUri, index));
 
         try {
 
@@ -80,12 +80,12 @@ public class ForkTask implements DeferredTask {
 
     private TaskOptions createForkTask(Integer index) {
         long now = System.currentTimeMillis();
-        return TaskOptions.Builder.withPayload(new JoinTask(payload.getNs(), sinkUri, index))
+        return TaskOptions.Builder.withPayload(new JoinTask(payload.getNs(), sinkGroupUri, index))
                 .taskName(taskName(index, now)).etaMillis(now + 1000);
     }
 
     private String taskName(Integer index, long now) {
-        return String.format("%s-%d-%d", sinkUri, now / 1000 / 30, index).replaceAll("/", "__");
+        return String.format("%s-%d-%d", sinkGroupUri, now / 1000 / 30, index).replaceAll("/", "__");
     }
 
     private Integer getIndexSemaphore() {

@@ -26,7 +26,7 @@ public class JoinTask implements DeferredTask {
 
     private String ns;
 
-    private String sinkUri;
+    private String sinkGroupUri;
 
     private Integer index;
 
@@ -40,35 +40,41 @@ public class JoinTask implements DeferredTask {
 
     private transient MemcacheService memcache;
 
+    private transient Map<IdRef<?>, Object> sinkCache;
+
+    private transient Set<IdRef<?>> sinksToSave;
+
     private transient Map<IdRef<SinkMarker>, SinkMarker> sinkMarkerCache;
 
     private transient Set<IdRef<SinkMarker>> sinkMarkersToSave;
 
-    public JoinTask(String ns, String sinkUri, Integer index) {
+    public JoinTask(String ns, String sinkGroupUri, Integer index) {
         this.ns = ns;
-        this.sinkUri = sinkUri;
+        this.sinkGroupUri = sinkGroupUri;
         this.index = index;
     }
 
     @Override
     public void run() {
         init();
-        log();
+        logSave();
         join();
     }
 
     private void init() {
         this.r = yawp().namespace(ns);
         this.memcache = MemcacheServiceFactory.getMemcacheService();
-        this.indexCacheKey = CacheHelper.createIndexCacheKey(sinkUri);
-        this.lockCacheKey = CacheHelper.createLockCacheKey(sinkUri, index);
-        this.indexHash = CacheHelper.createIndexHash(sinkUri, index);
+        this.indexCacheKey = CacheHelper.createIndexCacheKey(sinkGroupUri);
+        this.lockCacheKey = CacheHelper.createLockCacheKey(sinkGroupUri, index);
+        this.indexHash = CacheHelper.createIndexHash(sinkGroupUri, index);
+        this.sinkCache = new HashMap<>();
+        this.sinksToSave = new HashSet<>();
         this.sinkMarkerCache = new HashMap<>();
         this.sinkMarkersToSave = new HashSet<>();
     }
 
-    private void log() {
-        logger.info(String.format("join-task - sinkId: %s", sinkUri));
+    private void logSave() {
+        logger.info(String.format("join-task - sinkGroupId: %s", sinkGroupUri));
     }
 
     private void join() {
@@ -84,9 +90,10 @@ public class JoinTask implements DeferredTask {
 
         try {
             r.begin();
-            Object sink = fetchOrCreateSink();
-            boolean changed = executeWorks(sink, works);
-            commitIfChanged(sink, changed);
+            for (Work work : works) {
+                executeIfLastVersion(work);
+            }
+            commitIfChanged();
         } finally {
             if (r.isTransationInProgress()) {
                 r.rollback();
@@ -96,25 +103,14 @@ public class JoinTask implements DeferredTask {
         destroyWorks(works);
     }
 
-    private boolean executeWorks(Object sink, List<Work> works) {
-        boolean changed = false;
-
-        for (Work work : works) {
-            if (executeIfLastVersion(work, sink)) {
-                changed = true;
-            }
-        }
-        return changed;
-    }
-
     private void destroyWorks(List<Work> works) {
         for (Work work : works) {
             r.destroy(work.getId());
         }
     }
 
-    private void commitIfChanged(Object sink, boolean changed) {
-        if (!changed) {
+    private void commitIfChanged() {
+        if (sinksToSave.isEmpty()) {
             r.rollback();
             return;
         }
@@ -123,28 +119,64 @@ public class JoinTask implements DeferredTask {
             r.save(sinkMarkerCache.get(id));
         }
 
-        r.save(sink);
+        for (IdRef<?> sinkId : sinksToSave) {
+            logSave(sinkId);
+            r.save(sinkCache.get(sinkId));
+        }
 
         // TODO: destroy empty sinks?
         r.commit();
     }
 
-    private boolean executeIfLastVersion(Work work, Object sink) {
+    private void logSave(IdRef<?> sinkId) {
+        logger.info(String.format("join-task - saving sinkId: %s", sinkId.getUri()));
+    }
+
+    private void executeIfLastVersion(Work work) {
+
         SourceMarker sourceVersion = work.getSourceMarker();
 
         IdRef<SinkMarker> sinkMarkerId = work.createSinkMarkerId();
         SinkMarker sinkMarker = getFromCacheOrFetchSinkMarker(sinkMarkerId);
 
         if (sinkMarker.getVersion() >= work.getSourceVersion()) {
-            return false;
+            return;
         }
 
+        Object sink = getFromCacheOrFetchOrCreateSink(work.getSinkId());
         work.execute(sink, sinkMarker);
 
+        sinksToSave.add(work.getSinkId());
         sinkMarkerCache.put(sinkMarkerId, sinkMarker);
         sinkMarkersToSave.add(sinkMarkerId);
+    }
 
-        return true;
+    private Object getFromCacheOrFetchOrCreateSink(IdRef<?> sinkId) {
+        if (sinkCache.containsKey(sinkId)) {
+            return sinkCache.get(sinkId);
+        }
+
+        Object sink = fetchOrCreateSink(sinkId);
+        sinkCache.put(sinkId, sink);
+        return sink;
+    }
+
+    private Object fetchOrCreateSink(IdRef<?> sinkId) {
+        try {
+            return sinkId.fetch();
+        } catch (NoResultException e) {
+            try {
+                Object sink = sinkId.getClazz().newInstance();
+                ObjectHolder objectHolder = new ObjectHolder(sink);
+                objectHolder.setId(sinkId);
+                if (sinkId.getParentClazz() != null) {
+                    objectHolder.setParentId(sinkId.getParentId());
+                }
+                return sink;
+            } catch (InstantiationException | IllegalAccessException e1) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private SinkMarker getFromCacheOrFetchSinkMarker(IdRef<SinkMarker> sinkMarkerId) {
@@ -172,25 +204,6 @@ public class JoinTask implements DeferredTask {
 
     private List<Work> listWorks() {
         return r.query(Work.class).where("indexHash", "=", indexHash).order("id").list();
-    }
-
-    private Object fetchOrCreateSink() {
-        IdRef<?> sinkId = IdRef.parse(r, sinkUri);
-        try {
-            return sinkId.fetch();
-        } catch (NoResultException e) {
-            try {
-                Object sink = sinkId.getClazz().newInstance();
-                ObjectHolder objectHolder = new ObjectHolder(sink);
-                objectHolder.setId(sinkId);
-                if (sinkId.getParentClazz() != null) {
-                    objectHolder.setParentId(sinkId.getParentId());
-                }
-                return sink;
-            } catch (InstantiationException | IllegalAccessException e1) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     private void busyWaitForWriters(int times, int sleep) {

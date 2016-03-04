@@ -93,4 +93,8 @@ public class Work {
     public IdRef<Work> getId() {
         return id;
     }
+
+    public IdRef<?> getSinkId() {
+        return payload.getSinkId();
+    }
 }

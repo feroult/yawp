@@ -132,5 +132,11 @@ public class Payload implements Serializable {
         return !isPresent() && getOldSource() != null;
     }
 
-
+    public String getSinkGroupUri() {
+        IdRef<?> sinkGroupId = getSinkId();
+        while (sinkGroupId.getParentId() != null) {
+            sinkGroupId = sinkGroupId.getParentId();
+        }
+        return sinkGroupId.getUri();
+    }
 }

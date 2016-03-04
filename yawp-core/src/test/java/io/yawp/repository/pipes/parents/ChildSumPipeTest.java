@@ -5,7 +5,6 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.parents.ChildPipedObject;
 import io.yawp.repository.models.parents.ChildPipedObjectSum;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
@@ -15,7 +14,6 @@ import static org.junit.Assert.assertEquals;
 public class ChildSumPipeTest extends EndpointTestCase {
 
     @Test
-    @Ignore
     public void testSaveDifferentChildreen() {
         if (pipesDriverNotImplemented()) {
             return;

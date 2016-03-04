@@ -1,6 +1,7 @@
 package io.yawp.driver.postgresql.datastore;
 
 import io.yawp.commons.utils.JsonUtils;
+import io.yawp.commons.utils.NameGenerator;
 
 public class Key {
 
@@ -63,7 +64,7 @@ public class Key {
     }
 
     public void generate() {
-        this.name = NameGenerator.generate();
+        this.name = NameGenerator.generateFromUUID();
     }
 
 }

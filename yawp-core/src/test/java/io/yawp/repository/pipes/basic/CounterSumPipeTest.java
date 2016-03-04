@@ -1,4 +1,4 @@
-package io.yawp.repository.pipes;
+package io.yawp.repository.pipes.basic;
 
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.IdRef;

@@ -79,7 +79,7 @@
             };
 
             yawp.patch(counter).done(function () {
-                $.get('/_ah/yawp/pipes/reload?pipe=io.yawp.repository.pipes.CounterPipe', callback);
+                $.get('/_ah/yawp/pipes/reload?pipe=io.yawp.repository.pipes.basic.CounterPipe', callback);
             });
         }
 

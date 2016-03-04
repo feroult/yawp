@@ -1,7 +1,8 @@
-package io.yawp.repository.pipes;
+package io.yawp.repository.pipes.basic;
 
 import io.yawp.repository.models.basic.PipedObjectCounter;
 import io.yawp.repository.models.basic.PipedObjectCounterSum;
+import io.yawp.repository.pipes.Pipe;
 
 public class CounterSumPipe extends Pipe<PipedObjectCounter, PipedObjectCounterSum> {
 

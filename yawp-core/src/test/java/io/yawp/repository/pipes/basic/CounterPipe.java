@@ -1,4 +1,4 @@
-package io.yawp.repository.pipes;
+package io.yawp.repository.pipes.basic;
 
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.PipedObject;

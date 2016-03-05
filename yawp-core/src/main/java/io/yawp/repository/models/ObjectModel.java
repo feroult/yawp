@@ -110,6 +110,10 @@ public class ObjectModel {
         return new FieldModel(ReflectionUtils.getFieldRecursively(clazz, fieldName));
     }
 
+    public boolean isIdShuffled() {
+        return getIdField().getAnnotation(Id.class).shuffle();
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T createInstance() {
         try {
@@ -129,5 +133,4 @@ public class ObjectModel {
             throw new RuntimeException("Unexpected error: ", e);
         }
     }
-
 }

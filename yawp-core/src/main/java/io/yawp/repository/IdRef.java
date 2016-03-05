@@ -24,6 +24,8 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
 
     private IdRef<?> parentId;
 
+    private boolean shuffled;
+
     protected IdRef(Repository r, Class<T> clazz, Long id) {
         this.r = r;
         this.clazz = clazz;
@@ -244,6 +246,10 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
         return id;
     }
 
+    public boolean isShuffled() {
+        return model.isIdShuffled();
+    }
+
     public boolean isAncestorId(IdRef<?> childId) {
         IdRef<?> currentId = childId;
         while (currentId.getParentId() != null) {
@@ -325,5 +331,4 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
         sb.append(id != null ? id : name);
         return sb.toString();
     }
-
 }

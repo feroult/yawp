@@ -1,21 +1,21 @@
 package io.yawp.repository;
 
-import static io.yawp.commons.http.HttpVerb.GET;
-import static io.yawp.commons.http.HttpVerb.PUT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.commons.utils.JsonUtils;
+import io.yawp.repository.models.basic.ShuffledObject;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Job;
 import io.yawp.repository.models.parents.Parent;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import static io.yawp.commons.http.HttpVerb.GET;
+import static io.yawp.commons.http.HttpVerb.PUT;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class IdRefAsStringTest extends EndpointTestCase {
 
@@ -169,6 +169,12 @@ public class IdRefAsStringTest extends EndpointTestCase {
         assertEquals("/parents/a", IdRef.parse(yawp, GET, "/parents/a").toString());
         assertEquals("/parents/a/children/b", IdRef.parse(yawp, GET, "/parents/a/children/b").toString());
         assertEquals("/parents/a/children/b/grandchildren/c", IdRef.parse(yawp, GET, "/parents/a/children/b/grandchildren/c").toString());
+    }
+
+    @Test
+    public void testShuffledId() {
+        yawp.save(new ShuffledObject("/shuffled_objects/xpto"));
+        assertEquals("xpto", yawp(ShuffledObject.class).first().getId().asString());
     }
 
     private Parent saveParent(String name) {

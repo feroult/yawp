@@ -28,6 +28,11 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
         return yawp.get();
     }
 
+    public synchronized static void dispose() {
+        yawp.set(null);
+        features = null;
+    }
+
     public static <T extends Feature> T feature(Class<T> clazz) {
         try {
             T feature = clazz.newInstance();

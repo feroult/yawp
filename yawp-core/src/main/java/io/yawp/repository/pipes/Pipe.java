@@ -6,6 +6,7 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.pipes.pump.IdPump;
 import io.yawp.repository.pipes.pump.ObjectPump;
+import io.yawp.repository.pipes.pump.PumpGenerator;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.List;
@@ -94,6 +95,34 @@ public abstract class Pipe<T, S> extends Feature {
      */
     public final void addSinkIds(List<IdRef<S>> ids) {
         sinkPump.addAll(ids);
+    }
+
+    /**
+     * Call this method from {@link #configureSinks(T)} to add a query of sink ids
+     * for a given source.
+     * <p/>
+     * <b>Note:</b> the sink ids should be retrieved in a strong consistent way
+     * (ancestor query or key fetch in GAE), otherwise the pipe may become
+     * inconsistent.
+     *
+     * @param query The {@link QueryBuilder<S>} to query for sink ids.
+     */
+    public final void addSinkIdsQuery(QueryBuilder<S> query) {
+        sinkPump.addQuery(query);
+    }
+
+    /**
+     * Call this method from {@link #configureSinks(T)} to add a {@link PumpGenerator<IdRef<S>>}
+     * of sink ids for a given source.
+     * <p/>
+     * <b>Note:</b> the sink ids should be retrieved in a strong consistent way
+     * (ancestor query or key fetch in GAE), otherwise the pipe may become
+     * inconsistent.
+     *
+     * @param generator The generator.
+     */
+    public final void addSinkIdsGenerator(PumpGenerator<IdRef<S>> generator) {
+        sinkPump.addGenerator(generator);
     }
 
     /**
@@ -190,6 +219,22 @@ public abstract class Pipe<T, S> extends Feature {
     public void addSourcesQuery(QueryBuilder<T> query) {
         sourcePump.addQuery(query);
     }
+
+
+    /**
+     * Call this method from {@link #configureSources(S)} to add a {@link PumpGenerator<T>}
+     * of sources for a given sink.
+     * <p/>
+     * <b>Note:</b> the sources should be retrieved in a strong consistent way
+     * (ancestor query or key fetch in GAE), otherwise the pipe may become
+     * inconsistent.
+     *
+     * @param generator The generator.
+     */
+    public void addSourcesGenerator(PumpGenerator<T> generator) {
+        sourcePump.addGenerator(generator);
+    }
+
 
     /**
      * Override this method to empty the sink before it is reloaded.

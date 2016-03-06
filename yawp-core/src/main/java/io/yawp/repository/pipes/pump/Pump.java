@@ -27,6 +27,10 @@ public abstract class Pump<T> implements Serializable {
 
     private String cursor;
 
+    private List<PumpGenerator<T>> generators = new ArrayList<>();
+
+    private int generatorIndex = 0;
+
     public Pump(Class<?> clazz, int batchSize) {
         this.clazz = clazz;
         this.defaultBatchSize = batchSize;
@@ -40,13 +44,16 @@ public abstract class Pump<T> implements Serializable {
 
     protected abstract int getQueriesSize();
 
-
     public void add(T object) {
         objects.add(object);
     }
 
     public void addAll(List<T> newObjects) {
         objects.addAll(newObjects);
+    }
+
+    public void addGenerator(PumpGenerator<T> generator) {
+        generators.add(generator);
     }
 
     public List<T> more() {
@@ -57,7 +64,15 @@ public abstract class Pump<T> implements Serializable {
             }
             return list;
         }
-        return moreFromQuery(defaultBatchSize);
+        if (hasMoreQueries()) {
+            List<T> list = moreFromQuery(defaultBatchSize);
+            if (list.size() < defaultBatchSize && hasMoreGenerators()) {
+                list.addAll(moreFromGenerators(defaultBatchSize - list.size()));
+            }
+            return list;
+
+        }
+        return moreFromGenerators(defaultBatchSize);
     }
 
     private List<T> moreFromList() {
@@ -77,13 +92,24 @@ public abstract class Pump<T> implements Serializable {
     }
 
     private List<T> moreFromQuery(int batchSize) {
-        int queryIndex = this.queryIndex;
         List<T> list = executeQueryAt(batchSize, queryIndex);
         if (list.size() < batchSize) {
-            this.queryIndex++;
+            queryIndex++;
             cursor = null;
             if (hasMoreQueries()) {
                 list.addAll(moreFromQuery(defaultBatchSize - list.size()));
+            }
+        }
+        return list;
+    }
+
+    private List<T> moreFromGenerators(int batchSize) {
+        PumpGenerator<T> generator = generators.get(generatorIndex);
+        List<T> list = generator.more(batchSize);
+        if (list.size() < batchSize) {
+            generatorIndex++;
+            if (hasMoreGenerators()) {
+                list.addAll(moreFromGenerators(defaultBatchSize - list.size()));
             }
         }
         return list;
@@ -113,11 +139,18 @@ public abstract class Pump<T> implements Serializable {
     }
 
     public boolean hasMore() {
-        return hasMoreObjects() || hasMoreQueries();
+        return hasMoreObjects() || hasMoreQueries() || hasMoreGenerators();
     }
 
     protected boolean hasMoreQueries() {
         return queryIndex < getQueriesSize();
+    }
+
+    private boolean hasMoreGenerators() {
+        if (generatorIndex >= generators.size()) {
+            return false;
+        }
+        return generators.get(generatorIndex).hasMore();
     }
 
     private boolean hasMoreObjects() {
@@ -131,6 +164,8 @@ public abstract class Pump<T> implements Serializable {
         out.writeInt(defaultBatchSize);
         out.writeInt(queryIndex);
         out.writeObject(cursor);
+        out.writeObject(generators);
+        out.writeInt(generatorIndex);
         writeObjects(out);
     }
 
@@ -139,6 +174,8 @@ public abstract class Pump<T> implements Serializable {
         defaultBatchSize = in.readInt();
         queryIndex = in.readInt();
         cursor = (String) in.readObject();
+        generators = (List<PumpGenerator<T>>) in.readObject();
+        generatorIndex = in.readInt();
         objects = readObjects(in);
     }
 

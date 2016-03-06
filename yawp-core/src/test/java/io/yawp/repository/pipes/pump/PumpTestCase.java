@@ -78,6 +78,32 @@ public abstract class PumpTestCase<T> extends EndpointTestCase {
         assertFalse(pump.hasMore());
     }
 
+    protected void pumpTestLIstQueryAndGenerator(Pump<T> pump, List<T> list) {
+        pump.addAll(list);
+        pump.addQuery(yawp(BasicObject.class).where("intValue", ">=", 1).and("intValue", "<=", 5));
+
+        assertTrue(pump.hasMore());
+
+        assertList(pump.more(), 6, 7);
+        assertList(pump.more(), 8, 9);
+        assertList(pump.more(), 1, 2);
+        assertList(pump.more(), 3, 4);
+        assertList(pump.more(), 5, 10);
+        assertList(pump.more(), 11, 12);
+        assertList(pump.more(), 13);
+
+        assertFalse(pump.hasMore());
+    }
+
+    protected void pumpTestBasicGenerator(Pump<T> pump) {
+        assertTrue(pump.hasMore());
+
+        assertList(pump.more(), 1, 2);
+        assertList(pump.more(), 3);
+
+        assertFalse(pump.hasMore());
+    }
+
     private void addMultipleQueries(Pump<T> pump) {
         pump.addQuery(yawp(BasicObject.class).where("intValue", "<=", 3));
         pump.addQuery(yawp(BasicObject.class).where("intValue", ">", 3).and("intValue", "<=", 6));

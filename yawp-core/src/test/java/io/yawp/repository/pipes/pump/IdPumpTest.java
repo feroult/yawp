@@ -48,6 +48,28 @@ public class IdPumpTest extends PumpTestCase<IdRef<BasicObject>> {
         pumpTestListAndMultipleQueries(pump, list);
     }
 
+    @Test
+    public void testBasicGenerator() {
+        List<IdRef<BasicObject>> idsForGenerator = getIds(saveManyBasicObjects(3));
+
+        IdPump<BasicObject> pump = new IdPump<>(BasicObject.class, 2);
+        pump.addGenerator(new ListGenerator<IdRef<BasicObject>>(idsForGenerator));
+
+        pumpTestBasicGenerator(pump);
+    }
+
+    @Test
+    public void testListQueryAndGenerator() {
+        saveManyBasicObjects(5);
+        List<IdRef<BasicObject>> list = getIds(saveManyBasicObjects(4, 5));
+        List<IdRef<BasicObject>> idsForGenerator = getIds(saveManyBasicObjects(4, 9));
+
+        IdPump<BasicObject> pump = new IdPump<>(BasicObject.class, 2);
+        pump.addGenerator(new ListGenerator<IdRef<BasicObject>>(idsForGenerator));
+
+        pumpTestLIstQueryAndGenerator(pump, list);
+    }
+
     private List<IdRef<BasicObject>> getIds(List<BasicObject> objects) {
         List<IdRef<BasicObject>> ids = new ArrayList<>();
         for (BasicObject object : objects) {

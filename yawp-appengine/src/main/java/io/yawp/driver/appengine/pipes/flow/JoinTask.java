@@ -57,7 +57,7 @@ public class JoinTask implements DeferredTask {
     @Override
     public void run() {
         init();
-        logSave();
+        log();
         join();
     }
 
@@ -73,7 +73,7 @@ public class JoinTask implements DeferredTask {
         this.sinkMarkersToSave = new HashSet<>();
     }
 
-    private void logSave() {
+    private void log() {
         logger.info(String.format("join-task - sinkGroupId: %s", sinkGroupUri));
     }
 

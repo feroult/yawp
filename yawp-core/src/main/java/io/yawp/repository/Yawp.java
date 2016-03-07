@@ -28,9 +28,12 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
         return yawp.get();
     }
 
-    public synchronized static void dispose() {
-        yawp.set(null);
+    public static void destroyFeatures() {
         features = null;
+    }
+
+    public static void dispose() {
+        yawp.set(null);
     }
 
     public static <T extends Feature> T feature(Class<T> clazz) {

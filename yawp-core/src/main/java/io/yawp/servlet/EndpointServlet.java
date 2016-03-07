@@ -34,6 +34,12 @@ public class EndpointServlet extends HttpServlet {
         initYawp(config.getInitParameter("packagePrefix"));
     }
 
+    @Override
+    public void destroy() {
+        super.destroy();
+        Yawp.destroyFeatures();
+    }
+
     private void setWithHooks(String enableHooksParameter) {
         if (!enableHooks) {
             return;
@@ -64,6 +70,9 @@ public class EndpointServlet extends HttpServlet {
      */
     @Deprecated
     private void initYawp(String packagePrefix) {
+        if (packagePrefix == null) {
+            return;
+        }
         Yawp.init(packagePrefix);
     }
 
@@ -93,15 +102,19 @@ public class EndpointServlet extends HttpServlet {
     }
 
     public HttpResponse execute(RequestContext ctx) {
-        Repository r = getRepository(ctx);
+        try {
+            Repository r = getRepository(ctx);
+            EndpointRouter router = EndpointRouter.parse(r, ctx);
 
-        EndpointRouter router = EndpointRouter.parse(r, ctx);
+            if (!router.isValid()) {
+                throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");
+            }
 
-        if (!router.isValid()) {
-            throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");
+            return router.executeRestAction(enableHooks);
+
+        } finally {
+            Yawp.dispose();
         }
-
-        return router.executeRestAction(enableHooks);
     }
 
     protected Repository getRepository(RequestContext ctx) {

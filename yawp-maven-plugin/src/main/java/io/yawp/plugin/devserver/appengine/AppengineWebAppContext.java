@@ -7,7 +7,6 @@ import com.google.apphosting.api.ApiProxy.Environment;
 import com.google.apphosting.utils.config.AppEngineWebXml;
 import com.google.apphosting.utils.config.AppEngineWebXmlReader;
 import io.yawp.plugin.devserver.DevServerMojo;
-import io.yawp.repository.Yawp;
 import org.mortbay.jetty.webapp.WebAppContext;
 
 import javax.servlet.ServletContext;
@@ -60,7 +59,6 @@ public class AppengineWebAppContext extends WebAppContext {
         ApiProxy.setEnvironmentForCurrentThread(environment);
         helper.tearDown();
         environment = null;
-        Yawp.dispose();
         super.doStop();
     }
 

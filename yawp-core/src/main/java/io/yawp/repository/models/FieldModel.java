@@ -10,10 +10,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 public class FieldModel {
 
     private Field field;
+    private boolean list;
 
     public FieldModel(Field field) {
         this.field = field;
@@ -106,6 +108,10 @@ public class FieldModel {
 
     private boolean isString() {
         return String.class.isAssignableFrom(field.getType());
+    }
+
+    public boolean isList() {
+        return List.class.isAssignableFrom(field.getType());
     }
 
     public boolean isTransient() {

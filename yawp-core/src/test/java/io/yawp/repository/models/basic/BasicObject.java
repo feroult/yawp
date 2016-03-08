@@ -49,6 +49,9 @@ public class BasicObject {
     @Index
     private Status status;
 
+    @Index
+    private List<String> stringList;
+
     public BasicObject() {
 
     }
@@ -173,6 +176,14 @@ public class BasicObject {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public List<String> getStringList() {
+        return stringList;
+    }
+
+    public void setStringList(List<String> stringList) {
+        this.stringList = stringList;
     }
 
     public void assertObject(String stringValue, String textValue, int intValue, long longValue, double doubleValue, boolean booleanValue,

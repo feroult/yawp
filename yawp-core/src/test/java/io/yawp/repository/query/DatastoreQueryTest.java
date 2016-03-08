@@ -19,6 +19,7 @@ import static io.yawp.repository.models.basic.BasicObject.saveManyBasicObjects;
 import static io.yawp.repository.models.basic.BasicObject.saveOneObject;
 import static io.yawp.repository.query.condition.Condition.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class DatastoreQueryTest extends EndpointTestCase {
@@ -568,6 +569,43 @@ public class DatastoreQueryTest extends EndpointTestCase {
     public void testIdsWithPostOrder() {
         assertEquals(0, yawp(BasicObject.class).sort("longValue").ids().size());
     }
+
+    @Test
+    public void testListPropertyQuery() {
+        BasicObject object = new BasicObject("xpto");
+        object.setStringList(Arrays.asList("hello", "list"));
+        yawp.save(object);
+
+        BasicObject retrievedObject;
+
+        retrievedObject = yawp(BasicObject.class).where("stringList", "=", "hello").first();
+        assertEquals("xpto", retrievedObject.getStringValue());
+
+        retrievedObject = yawp(BasicObject.class).where("stringList", "<", "zello").first();
+        assertEquals("xpto", retrievedObject.getStringValue());
+
+        retrievedObject = yawp(BasicObject.class).where("stringList", "<", "aello").first();
+        assertNull(retrievedObject);
+
+        retrievedObject = yawp(BasicObject.class).where("stringList", "<=", "zello").first();
+        assertEquals("xpto", retrievedObject.getStringValue());
+
+        retrievedObject = yawp(BasicObject.class).where("stringList", "<=", "aello").first();
+        assertNull(retrievedObject);
+
+        retrievedObject = yawp(BasicObject.class).where("stringList", ">", "aello").first();
+        assertEquals("xpto", retrievedObject.getStringValue());
+
+        retrievedObject = yawp(BasicObject.class).where("stringList", ">", "zello").first();
+        assertNull(retrievedObject);
+
+        retrievedObject = yawp(BasicObject.class).where("stringList", ">=", "aello").first();
+        assertEquals("xpto", retrievedObject.getStringValue());
+
+        retrievedObject = yawp(BasicObject.class).where("stringList", ">=", "zello").first();
+        assertNull(retrievedObject);
+    }
+
 
     private void assertObjects(List<BasicObject> objects, String... strings) {
         assertEquals(strings.length, objects.size());

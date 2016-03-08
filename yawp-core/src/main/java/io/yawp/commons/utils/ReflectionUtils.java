@@ -80,17 +80,17 @@ public final class ReflectionUtils {
         return (Class<?>) getGenericTypeArgumentAt(field.getGenericType(), 0);
     }
 
+    private static Type[] getGenericTypeArguments(Type type) {
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+        return parameterizedType.getActualTypeArguments();
+    }
+
     private static Type getGenericTypeArgumentAt(Type type, int index) {
         Type[] parameters = getGenericTypeArguments(type);
         if (parameters.length <= index) {
             return null;
         }
         return parameters[index];
-    }
-
-    private static Type[] getGenericTypeArguments(Type type) {
-        ParameterizedType parameterizedType = (ParameterizedType) type;
-        return parameterizedType.getActualTypeArguments();
     }
 
     private static Type getGenericTypeBound(Class<?> clazz, String name) {
@@ -172,5 +172,13 @@ public final class ReflectionUtils {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Class<?> getListGenericType(Type type) {
+        Type firstArgument = ((ParameterizedType) type).getActualTypeArguments()[0];
+        if (!(firstArgument instanceof ParameterizedType)) {
+            return (Class<?>) firstArgument;
+        }
+        return (Class<?>) ((ParameterizedType) firstArgument).getRawType();
     }
 }

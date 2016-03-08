@@ -571,7 +571,7 @@ public class DatastoreQueryTest extends EndpointTestCase {
     }
 
     @Test
-    public void testListPropertyQuery() {
+    public void testListProperty() {
         BasicObject object = new BasicObject("xpto");
         object.setStringList(Arrays.asList("hello", "list"));
         yawp.save(object);
@@ -606,6 +606,20 @@ public class DatastoreQueryTest extends EndpointTestCase {
         assertNull(retrievedObject);
     }
 
+    @Test
+    public void testListOfIdsProperty() {
+        BasicObject object = new BasicObject("xpto");
+        object.setIdList(Arrays.asList(id(BasicObject.class, 10l), id(BasicObject.class, 20l)));
+        yawp.save(object);
+
+        BasicObject retrievedObject;
+
+        retrievedObject = yawp(BasicObject.class).where("idList", "=", id(BasicObject.class, 10l)).first();
+        assertEquals("xpto", retrievedObject.getStringValue());
+
+        retrievedObject = yawp(BasicObject.class).where("idList", "<", id(BasicObject.class, 999l)).first();
+        assertEquals("xpto", retrievedObject.getStringValue());
+    }
 
     private void assertObjects(List<BasicObject> objects, String... strings) {
         assertEquals(strings.length, objects.size());

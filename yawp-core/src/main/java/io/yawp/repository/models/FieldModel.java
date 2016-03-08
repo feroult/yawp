@@ -1,5 +1,6 @@
 package io.yawp.repository.models;
 
+import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
@@ -15,7 +16,6 @@ import java.util.List;
 public class FieldModel {
 
     private Field field;
-    private boolean list;
 
     public FieldModel(Field field) {
         this.field = field;
@@ -114,7 +114,17 @@ public class FieldModel {
         return List.class.isAssignableFrom(field.getType());
     }
 
+    public boolean isListOfIds() {
+        if (!isList()) {
+            return false;
+        }
+
+        Class<?> listGenericClazz = ReflectionUtils.getListGenericType(field.getGenericType());
+        return IdRef.class.isAssignableFrom(listGenericClazz);
+    }
+
     public boolean isTransient() {
         return Modifier.isTransient(field.getModifiers()) || field.isAnnotationPresent(Transient.class);
     }
+
 }

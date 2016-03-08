@@ -52,6 +52,9 @@ public class BasicObject {
     @Index
     private List<String> stringList;
 
+    @Index
+    private List<IdRef<BasicObject>> idList;
+
     public BasicObject() {
 
     }
@@ -186,6 +189,14 @@ public class BasicObject {
         this.stringList = stringList;
     }
 
+    public List<IdRef<BasicObject>> getIdList() {
+        return idList;
+    }
+
+    public void setIdList(List<IdRef<BasicObject>> idList) {
+        this.idList = idList;
+    }
+
     public void assertObject(String stringValue, String textValue, int intValue, long longValue, double doubleValue, boolean booleanValue,
                              String timestamp) {
         assertEquals(intValue, getIntValue());
@@ -216,7 +227,6 @@ public class BasicObject {
     public static List<BasicObject> saveManyBasicObjects(int n) {
         return saveManyBasicObjects(n, "xpto");
     }
-
 
     public static BasicObject saveOneObject(String stringValue, int i) {
         BasicObject object = new BasicObject();

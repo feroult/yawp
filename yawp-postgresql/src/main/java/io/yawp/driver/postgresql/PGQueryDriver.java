@@ -3,6 +3,7 @@ package io.yawp.driver.postgresql;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.DateUtils;
 import io.yawp.commons.utils.JsonUtils;
+import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.driver.api.QueryDriver;
 import io.yawp.driver.postgresql.datastore.Datastore;
 import io.yawp.driver.postgresql.datastore.Entity;
@@ -103,7 +104,7 @@ public class PGQueryDriver implements QueryDriver {
                 continue;
             }
 
-            if(fieldModel.isTransient()) {
+            if (fieldModel.isTransient()) {
                 continue;
             }
 
@@ -166,6 +167,10 @@ public class PGQueryDriver implements QueryDriver {
             return;
         }
 
+        if (fieldModel.isListOfIds()) {
+            setListOfIdsProperty(object, field, value);
+        }
+        
         field.set(object, value);
     }
 
@@ -204,4 +209,15 @@ public class PGQueryDriver implements QueryDriver {
         field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
     }
 
+    private <T> void setListOfIdsProperty(T object, Field field, Object value) throws IllegalAccessException {
+        List<String> uris = (List<String>) value;
+        List<IdRef<?>> ids = new ArrayList<>(uris.size());
+        Class<?> listGenericClazz = ReflectionUtils.getListGenericType(field.getGenericType());
+
+        for (String uri : uris) {
+            ids.add(r.parseId(listGenericClazz, uri));
+        }
+
+        field.set(object, ids);
+    }
 }

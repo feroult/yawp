@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -327,5 +328,9 @@ public class EndpointTestCaseBase extends Feature {
         Map<String, String> map = new HashMap<String, String>();
         map.put(key, value);
         return map;
+    }
+
+    protected void awaitAsync(long timeout, TimeUnit unit) {
+        helper.awaitAsync(timeout, unit);
     }
 }

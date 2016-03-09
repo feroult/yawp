@@ -81,6 +81,9 @@ public final class ReflectionUtils {
     }
 
     private static Type[] getGenericTypeArguments(Type type) {
+        if (!(type instanceof ParameterizedType)) {
+            return new Type[]{};
+        }
         ParameterizedType parameterizedType = (ParameterizedType) type;
         return parameterizedType.getActualTypeArguments();
     }

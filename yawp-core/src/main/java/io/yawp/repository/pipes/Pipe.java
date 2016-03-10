@@ -5,7 +5,6 @@ import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.pipes.pump.IdPump;
-import io.yawp.repository.pipes.pump.ObjectPump;
 import io.yawp.repository.pipes.pump.PumpGenerator;
 import io.yawp.repository.query.QueryBuilder;
 
@@ -31,7 +30,7 @@ public abstract class Pipe<T, S> extends Feature {
 
     private Class<S> sinkClazz;
 
-    private ObjectPump<T> sourcePump;
+    private IdPump<T> sourcePump;
 
     private IdPump<S> sinkPump;
 
@@ -52,7 +51,7 @@ public abstract class Pipe<T, S> extends Feature {
     public final void init(Class<T> sourceClazz, Class<S> sinkClazz) {
         this.sourceClazz = sourceClazz;
         this.sinkClazz = sinkClazz;
-        this.sourcePump = new ObjectPump<>(sourceClazz, BATCH_SIZE);
+        this.sourcePump = new IdPump<>(sourceClazz, BATCH_SIZE);
         this.sinkPump = new IdPump<>(sinkClazz, BATCH_SIZE);
     }
 
@@ -135,7 +134,6 @@ public abstract class Pipe<T, S> extends Feature {
      */
     public abstract void flux(T source, S sink);
 
-
     /**
      * Override this method to reflux source information from the sink.
      * This method will be invoked asynchronously when the source is updated
@@ -166,8 +164,8 @@ public abstract class Pipe<T, S> extends Feature {
      * Override this method to define configure one or multiple source objects
      * to be fluxed when the specified sink is reflowed.
      * <p/>
-     * Call {@link #addSource(T)}, {@link #addSources(List<T>)} or
-     * {@link #addSourcesQuery(QueryBuilder<T>)} to specify which sources should be
+     * Call {@link #addSourceId(IdRef<T>)}, {@link #addSourceIds(List<T>)} or
+     * {@link #addSourceIdsQuery(QueryBuilder<T>)} to specify which sources should be
      * reflowed to the sink.
      * <p/>
      * <b>Note:</b> the sources should be retrieved in a strong consistent way
@@ -180,21 +178,21 @@ public abstract class Pipe<T, S> extends Feature {
 
     /**
      * Call this method from {@link #configureSources(S)} to add
-     * source object to be fluxed when the specified sink is reflowed.
+     * source ids to be fluxed when the specified sink is reflowed.
      * <p/>
      * <b>Note:</b> the source should be retrieved in a strong consistent way
      * (ancestor query or key fetch in GAE), otherwise the pipe may become
      * inconsistent.
      *
-     * @param source The source object.
+     * @param source The source id.
      */
-    public void addSource(T source) {
+    public void addSourceId(IdRef<T> source) {
         sourcePump.add(source);
     }
 
     /**
      * Call this method from {@link #configureSources(S)} to add a list of
-     * source objects to be fluxed when the specified sink is reflowed.
+     * source ids to be fluxed when the specified sink is reflowed.
      * <p/>
      * <b>Note:</b> the sources should be retrieved in a strong consistent way
      * (ancestor query or key fetch in GAE), otherwise the pipe may become
@@ -202,28 +200,26 @@ public abstract class Pipe<T, S> extends Feature {
      *
      * @param sources The list of source objects.
      */
-    public void addSources(List<T> sources) {
+    public void addSourceIds(List<IdRef<T>> sources) {
         sourcePump.addAll(sources);
-        sources.addAll(sources);
     }
 
     /**
      * Call this method from {@link #configureSources(S)} to add a query for
-     * source objects to be fluxed when the specified sink is reflowed.
+     * source ids to be fluxed when the specified sink is reflowed.
      * <p/>
      * <b>Note:</b> this query should be strong consistent (ancestor query
      * in GAE), otherwise the pipe may become inconsistent.
      *
      * @param query The {@link QueryBuilder<T>} to query for sources.
      */
-    public void addSourcesQuery(QueryBuilder<T> query) {
+    public void addSourceIdsQuery(QueryBuilder<T> query) {
         sourcePump.addQuery(query);
     }
 
-
     /**
-     * Call this method from {@link #configureSources(S)} to add a {@link PumpGenerator<T>}
-     * of sources for a given sink.
+     * Call this method from {@link #configureSources(S)} to add a {@link PumpGenerator<IdRef<T>>}
+     * of source ids for a given sink.
      * <p/>
      * <b>Note:</b> the sources should be retrieved in a strong consistent way
      * (ancestor query or key fetch in GAE), otherwise the pipe may become
@@ -231,10 +227,9 @@ public abstract class Pipe<T, S> extends Feature {
      *
      * @param generator The generator.
      */
-    public void addSourcesGenerator(PumpGenerator<T> generator) {
+    public void addSourceIdsGenerator(PumpGenerator<IdRef<T>> generator) {
         sourcePump.addGenerator(generator);
     }
-
 
     /**
      * Override this method to empty the sink before it is reloaded.
@@ -257,7 +252,7 @@ public abstract class Pipe<T, S> extends Feature {
         sinkPump.add(sinkId);
     }
 
-    public ObjectPump<T> getSourcePump() {
+    public IdPump<T> getSourcePump() {
         return sourcePump;
     }
 }

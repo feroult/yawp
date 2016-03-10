@@ -9,9 +9,9 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.pipes.Pipe;
-import io.yawp.repository.pipes.pump.ObjectPump;
+import io.yawp.repository.pipes.pump.IdPump;
+import io.yawp.repository.query.NoResultException;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -30,7 +30,7 @@ public class ReflowFluxTask implements DeferredTask {
 
     private String sinkJson;
 
-    private ObjectPump<?> sourcePump;
+    private IdPump sourcePump;
 
     private transient Repository r;
 
@@ -44,7 +44,7 @@ public class ReflowFluxTask implements DeferredTask {
         this(pipe, sink, null);
     }
 
-    public ReflowFluxTask(Pipe pipe, Object sink, ObjectPump<?> sourcePump) {
+    public ReflowFluxTask(Pipe pipe, Object sink, IdPump<?> sourcePump) {
         this.pipeClazz = pipe.getClass();
         this.sinkClazz = sink.getClass();
         this.sinkJson = JsonUtils.to(sink);
@@ -84,19 +84,27 @@ public class ReflowFluxTask implements DeferredTask {
             return;
         }
 
-        List<?> sources = sourcePump.more();
+        List<IdRef<?>> sourceIds = sourcePump.more();
 
         if (sourcePump.hasMore()) {
             enqueueNextBatch();
         }
 
-        fluxSources(sources);
+        fluxSources(sourceIds);
     }
 
-    private void fluxSources(Collection<?> sources) {
+    private void fluxSources(List<IdRef<?>> sourceIds) {
         Queue queue = QueueHelper.getPipeQueue();
 
-        for (Object source : sources) {
+        for (IdRef<?> sourceId : sourceIds) {
+            Object source;
+
+            try {
+                source = sourceId.fetch();
+            } catch (NoResultException e) {
+                continue;
+            }
+
             Pipe pipe = newPipeInstance();
             pipe.configureSinks(source);
 

@@ -50,7 +50,7 @@ public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
 
     @Override
     public void configureSources(PipedObjectCounter counter) {
-        addSourcesQuery(yawp(PipedObject.class).where("counterId", "=", counter.getId()));
+        addSourceIdsQuery(yawp(PipedObject.class).where("counterId", "=", counter.getId()));
     }
 
     @Override

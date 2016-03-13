@@ -1,6 +1,6 @@
 # YAWP! Framework
 
-A very simple and elegant domain specific language / framework in Java that helps you to create amazing APIs.
+A very simple and elegant domain specific language / framework in Java that helps you to create amazing REST APIs.
 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/)

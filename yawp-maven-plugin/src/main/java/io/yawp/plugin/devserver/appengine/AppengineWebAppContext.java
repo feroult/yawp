@@ -6,7 +6,9 @@ import com.google.apphosting.api.ApiProxy;
 import com.google.apphosting.api.ApiProxy.Environment;
 import com.google.apphosting.utils.config.AppEngineWebXml;
 import com.google.apphosting.utils.config.AppEngineWebXmlReader;
+import com.google.apphosting.utils.config.WebXml;
 import io.yawp.plugin.devserver.DevServerMojo;
+import org.mortbay.jetty.handler.ContextHandler;
 import org.mortbay.jetty.webapp.WebAppContext;
 
 import javax.servlet.ServletContext;
@@ -20,6 +22,8 @@ public class AppengineWebAppContext extends WebAppContext {
     private static final String API_PROXY_LOCAL = "com.google.appengine.devappserver.ApiProxyLocal";
 
     private static final String APPENGINE_WEB_XML = "com.google.appengine.tools.development.appEngineWebXml";
+
+    private static final String WEB_XML = "com.google.appengine.tools.development.webXml";
 
     private final DevServerMojo mojo;
 
@@ -39,6 +43,7 @@ public class AppengineWebAppContext extends WebAppContext {
         this.environment = ApiProxy.getCurrentEnvironment();
         getServletContext().setAttribute(API_PROXY_LOCAL, ApiProxy.getDelegate());
         getServletContext().setAttribute(APPENGINE_WEB_XML, readAppengineWebXml(getServletContext()));
+        getServletContext().setAttribute(WEB_XML, readWebXml(getServletContext()));
         configureUserRealmAppengineHelper();
         super.doStart();
     }
@@ -65,6 +70,15 @@ public class AppengineWebAppContext extends WebAppContext {
     private AppEngineWebXml readAppengineWebXml(ServletContext servletContext) {
         AppEngineWebXmlReader reader = new AppEngineWebXmlReader(mojo.getAppDir());
         return reader.readAppEngineWebXml();
+    }
+
+    private WebXml readWebXml(ContextHandler.SContext servletContext) {
+        return new WebXml() {
+            @Override
+            public boolean matches(String url) {
+                return true;
+            }
+        };
     }
 
     private LocalServiceTestHelper createHelper() {

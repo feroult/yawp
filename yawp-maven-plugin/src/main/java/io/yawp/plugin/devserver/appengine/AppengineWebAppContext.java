@@ -1,5 +1,6 @@
 package io.yawp.plugin.devserver.appengine;
 
+import com.google.appengine.api.utils.SystemProperty;
 import com.google.appengine.tools.development.LocalServerEnvironment;
 import com.google.appengine.tools.development.testing.*;
 import com.google.apphosting.api.ApiProxy;
@@ -44,6 +45,7 @@ public class AppengineWebAppContext extends WebAppContext {
         getServletContext().setAttribute(API_PROXY_LOCAL, ApiProxy.getDelegate());
         getServletContext().setAttribute(APPENGINE_WEB_XML, readAppengineWebXml(getServletContext()));
         getServletContext().setAttribute(WEB_XML, readWebXml(getServletContext()));
+        SystemProperty.environment.set(SystemProperty.Environment.Value.Development);
         configureUserRealmAppengineHelper();
         super.doStart();
     }

@@ -5,6 +5,7 @@ import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.*;
 import io.yawp.driver.appengine.pipes.utils.QueueHelper;
 import io.yawp.repository.Repository;
+import io.yawp.repository.pipes.Pipe;
 
 import java.util.logging.Logger;
 
@@ -18,6 +19,8 @@ public class ForkTask implements DeferredTask {
     private Payload payload;
 
     private transient Repository r;
+
+    private transient Pipe pipe;
 
     private transient String sinkGroupUri;
 
@@ -41,6 +44,7 @@ public class ForkTask implements DeferredTask {
 
     private void init() {
         this.r = yawp().namespace(payload.getNs());
+        this.pipe = newPipeInstance();
         this.sinkGroupUri = payload.getSinkGroupUri();
         this.indexCacheKey = createIndexCacheKey(sinkGroupUri);
         this.memcache = MemcacheServiceFactory.getMemcacheService();
@@ -74,7 +78,7 @@ public class ForkTask implements DeferredTask {
     }
 
     private void enqueue(TaskOptions taskOptions) {
-        Queue queue = QueueHelper.getPipeQueue();
+        Queue queue = QueueHelper.getPipeQueue(pipe);
         queue.add(taskOptions);
     }
 
@@ -112,4 +116,9 @@ public class ForkTask implements DeferredTask {
         Work work = new Work(indexHash, payload);
         r.save(work);
     }
+
+    private Pipe newPipeInstance() {
+        return Pipe.newInstance(r, payload.getPipeClazz());
+    }
+
 }

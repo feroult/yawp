@@ -10,6 +10,11 @@ import java.util.List;
 public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
 
     @Override
+    public String getQueueName() {
+        return "default";
+    }
+
+    @Override
     public void configureSinks(PipedObject object) {
         IdRef<PipedObjectCounter> counterId = getCounterId(object);
         if (counterId != null) {

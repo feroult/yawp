@@ -34,6 +34,15 @@
         <url-pattern>/_ah/yawp/*</url-pattern>
     </servlet-mapping>
 
+    <!-- servlet>
+        <servlet-name>PipelineServlet</servlet-name>
+        <servlet-class>com.google.appengine.tools.pipeline.impl.servlets.PipelineServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PipelineServlet</servlet-name>
+        <url-pattern>/_ah/pipeline/*</url-pattern>
+    </servlet-mapping -->
+
     <!-- security-constraint>
         <web-resource-collection>
             <web-resource-name>${artifactId}-all</web-resource-name>
@@ -66,5 +75,10 @@
             <web-resource-name>${artifactId}-tests</web-resource-name>
             <url-pattern>/test/*</url-pattern>
         </web-resource-collection>
-    </security-constraint -->
+    </security-constraint>
+
+    <security-role>
+        <role-name>admin</role-name>
+    </security-role -->
+
 </web-app>

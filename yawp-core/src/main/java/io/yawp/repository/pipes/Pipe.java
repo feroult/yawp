@@ -56,6 +56,15 @@ public abstract class Pipe<T, S> extends Feature {
     }
 
     /**
+     * Override this method to specify a custom queue for this pipe.
+     *
+     * @return Queue name
+     */
+    public String getQueueName() {
+        return null;
+    }
+
+    /**
      * Override this method to configure one or multiple sinks for a given source.
      * <p/>
      * Call {@link #addSinkId(IdRef<S>)} for each sink you want to pipe the source.

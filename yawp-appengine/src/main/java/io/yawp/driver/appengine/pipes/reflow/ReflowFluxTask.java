@@ -94,7 +94,7 @@ public class ReflowFluxTask implements DeferredTask {
     }
 
     private void fluxSources(List<IdRef<?>> sourceIds) {
-        Queue queue = QueueHelper.getPipeQueue();
+        Queue queue = QueueHelper.getPipeQueue(pipe);
 
         for (IdRef<?> sourceId : sourceIds) {
             Object source;
@@ -120,7 +120,7 @@ public class ReflowFluxTask implements DeferredTask {
     }
 
     private void enqueueNextBatch() {
-        Queue queue = QueueHelper.getPipeQueue();
+        Queue queue = QueueHelper.getPipeQueue(pipe);
         queue.add(TaskOptions.Builder.withPayload(new ReflowFluxTask(pipe, sink, sourcePump)));
     }
 

@@ -27,7 +27,7 @@ public class ClearPipelineTask implements DeferredTask {
 
     public static void enqueue(String pipelineId) {
         long eta = System.currentTimeMillis() + RELOAD_PIPELINE_WAIT_MILLIS;
-        Queue queue = QueueHelper.getPipeQueue();
+        Queue queue = QueueHelper.getDefaultQueue();
         queue.add(TaskOptions.Builder.withPayload(new ClearPipelineTask(pipelineId)).etaMillis(eta));
     }
 

@@ -47,7 +47,7 @@ public class AppenginePipesDriver implements PipesDriver {
 
     @Override
     public void reflow(Pipe pipe, Object sink) {
-        Queue queue = QueueHelper.getPipeQueue();
+        Queue queue = QueueHelper.getPipeQueue(pipe);
         queue.add(TaskOptions.Builder.withPayload(new ReflowFluxTask(pipe, sink)));
         queue.add(TaskOptions.Builder.withPayload(new ReflowRefluxTask(pipe, sink)));
     }
@@ -64,14 +64,14 @@ public class AppenginePipesDriver implements PipesDriver {
         Payload payload = createPayload(pipe, source, sourceMarker, oldSource, present);
 
         if (!pipe.hasSinks()) {
-            fanout(payload);
+            fanout(pipe, payload);
         } else {
             fork(pipe, payload);
         }
     }
 
     private void fork(Pipe pipe, Payload payload) {
-        Queue queue = QueueHelper.getPipeQueue();
+        Queue queue = QueueHelper.getPipeQueue(pipe);
         Set<IdRef<?>> sinkIds = pipe.allSinks();
         for (IdRef<?> sinkId : sinkIds) {
             payload.setSinkUri(sinkId);
@@ -79,8 +79,8 @@ public class AppenginePipesDriver implements PipesDriver {
         }
     }
 
-    private void fanout(Payload payload) {
-        Queue queue = QueueHelper.getPipeQueue();
+    private void fanout(Pipe pipe, Payload payload) {
+        Queue queue = QueueHelper.getPipeQueue(pipe);
         queue.add(TaskOptions.Builder.withPayload(new FanoutTask(payload)));
     }
 

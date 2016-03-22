@@ -94,6 +94,7 @@ public class JoinTask implements DeferredTask {
                 executeIfLastVersion(work);
             }
             commitIfChanged();
+            memcache.delete(lockCacheKey);
         } finally {
             if (r.isTransationInProgress()) {
                 r.rollback();

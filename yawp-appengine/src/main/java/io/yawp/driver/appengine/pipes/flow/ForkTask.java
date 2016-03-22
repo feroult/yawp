@@ -66,7 +66,7 @@ public class ForkTask implements DeferredTask {
 
         try {
 
-            enqueue(createForkTask(index));
+            enqueue(createForkJoinTask(index));
 
         } catch (TaskAlreadyExistsException e) {
             // fan-in
@@ -82,7 +82,7 @@ public class ForkTask implements DeferredTask {
         queue.add(taskOptions);
     }
 
-    private TaskOptions createForkTask(Integer index) {
+    private TaskOptions createForkJoinTask(Integer index) {
         long now = System.currentTimeMillis();
         return TaskOptions.Builder.withPayload(new JoinTask(payload.getNs(), sinkGroupUri, index))
                 .taskName(taskName(index, now)).etaMillis(now + 1000);

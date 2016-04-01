@@ -1,7 +1,7 @@
 package io.yawp.driver.appengine.pipes.flow;
 
-import com.google.appengine.repackaged.org.apache.commons.codec.binary.Base64;
-import com.google.appengine.repackaged.org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class CacheHelper {
@@ -27,7 +27,7 @@ public class CacheHelper {
     }
 
     private static String hash(String string) {
-        byte[] shaArray = DigestUtils.sha(string);
+        byte[] shaArray = DigestUtils.sha1(string);
         byte[] encodedArray = new Base64().encode(shaArray);
         String returnValue = new String(encodedArray);
         returnValue = StringUtils.removeEnd(returnValue, "\r\n");

@@ -89,7 +89,7 @@ public class JoinTask implements DeferredTask {
         List<Work> works = listWorks();
 
         try {
-            r.begin();
+            r.beginX();
             for (Work work : works) {
                 executeIfLastVersion(work);
             }

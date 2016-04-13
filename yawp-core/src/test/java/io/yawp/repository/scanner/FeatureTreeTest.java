@@ -4,7 +4,6 @@ import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.hooks.hierarchy.AbstractHook;
 import io.yawp.repository.hooks.hierarchy.AllObjectsHook;
 import io.yawp.repository.hooks.hierarchy.ObjectSuperClassHook;
-import io.yawp.repository.scanner.FeatureTree;
 import org.junit.Test;
 
 import java.util.Set;
@@ -19,51 +18,51 @@ public class FeatureTreeTest {
         FeatureTree<Hook> tree = new FeatureTree<>(Hook.class);
         tree.add(ObjectSuperClassHook.class);
 
-        Set<Class<? extends Hook>> leafs = tree.getLeafs();
+        Set<Class<? extends Hook>> leaves = tree.getLeaves();
 
         assertEquals(2, tree.size());
-        assertEquals(1, leafs.size());
-        assertTrue(leafs.contains(ObjectSuperClassHook.class));
+        assertEquals(1, leaves.size());
+        assertTrue(leaves.contains(ObjectSuperClassHook.class));
     }
 
     @Test
-    public void testTwoLeafs() {
+    public void testTwoLeaves() {
         FeatureTree<Hook> tree = new FeatureTree<>(Hook.class);
         tree.add(ObjectSuperClassHook.class);
         tree.add(AllObjectsHook.class);
 
-        Set<Class<? extends Hook>> leafs = tree.getLeafs();
+        Set<Class<? extends Hook>> leaves = tree.getLeaves();
 
         assertEquals(3, tree.size());
-        assertEquals(2, leafs.size());
-        assertTrue(leafs.contains(ObjectSuperClassHook.class));
-        assertTrue(leafs.contains(AllObjectsHook.class));
+        assertEquals(2, leaves.size());
+        assertTrue(leaves.contains(ObjectSuperClassHook.class));
+        assertTrue(leaves.contains(AllObjectsHook.class));
     }
 
     @Test
-    public void testOneLeafsWithHierarchyBottomUp() {
+    public void testOneLeafWithHierarchyBottomUp() {
         FeatureTree<Hook> tree = new FeatureTree<>(Hook.class);
         tree.add(ObjectSuperClassHook.class);
         tree.add(AbstractHook.class);
 
-        Set<Class<? extends Hook>> leafs = tree.getLeafs();
+        Set<Class<? extends Hook>> leaves = tree.getLeaves();
 
         assertEquals(2, tree.size());
-        assertEquals(1, leafs.size());
-        assertTrue(leafs.contains(ObjectSuperClassHook.class));
+        assertEquals(1, leaves.size());
+        assertTrue(leaves.contains(ObjectSuperClassHook.class));
     }
 
     @Test
-    public void testOneLeafsWithHierarchyUpBottom() {
+    public void testOneLeafWithHierarchyUpBottom() {
         FeatureTree<Hook> tree = new FeatureTree<>(Hook.class);
         tree.add(AbstractHook.class);
         tree.add(ObjectSuperClassHook.class);
 
-        Set<Class<? extends Hook>> leafs = tree.getLeafs();
+        Set<Class<? extends Hook>> leaves = tree.getLeaves();
 
         assertEquals(2, tree.size());
-        assertEquals(1, leafs.size());
-        assertTrue(leafs.contains(ObjectSuperClassHook.class));
+        assertEquals(1, leaves.size());
+        assertTrue(leaves.contains(ObjectSuperClassHook.class));
     }
 
 }

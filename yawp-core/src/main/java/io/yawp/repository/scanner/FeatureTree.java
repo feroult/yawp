@@ -11,7 +11,7 @@ public class FeatureTree<T extends Feature> {
 
     private Set<Class<? extends T>> nodes = new HashSet<>();
 
-    private Set<Class<? extends T>> leafs = new HashSet<>();
+    private Set<Class<? extends T>> leaves = new HashSet<>();
 
     public FeatureTree(Class<T> stopclazz) {
         this.stopclazz = stopclazz;
@@ -33,7 +33,7 @@ public class FeatureTree<T extends Feature> {
         }
 
         if (nodes.contains(superclazz)) {
-            leafs.remove(superclazz);
+            leaves.remove(superclazz);
             return;
         }
 
@@ -41,15 +41,15 @@ public class FeatureTree<T extends Feature> {
     }
 
     private void addLeaf(Class<? extends T> clazz) {
-        leafs.add(clazz);
+        leaves.add(clazz);
     }
 
     private void addNode(Class<? extends T> clazz) {
         nodes.add(clazz);
     }
 
-    public Set<Class<? extends T>> getLeafs() {
-        return leafs;
+    public Set<Class<? extends T>> getLeaves() {
+        return leaves;
     }
 
     public int size() {

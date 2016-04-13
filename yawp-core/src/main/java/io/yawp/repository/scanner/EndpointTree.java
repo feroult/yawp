@@ -61,7 +61,7 @@ public class EndpointTree<T> {
     public Map<ActionKey, ActionMethod> loadActions(Map<Class<?>, Map<ActionKey, ActionMethod>> cache) {
         Map<ActionKey, ActionMethod> map = new HashMap<>();
 
-        for (Class<? extends Action> actionClazz : actionTree.getLeafs()) {
+        for (Class<? extends Action> actionClazz : actionTree.getLeaves()) {
             addActionKeys(map, actionClazz, cache);
         }
 
@@ -71,7 +71,7 @@ public class EndpointTree<T> {
     public Map<String, Method> loadTransformers(Map<Class<?>, Map<String, Method>> cache) {
         Map<String, Method> map = new HashMap<>();
 
-        for (Class<? extends Transformer> transformerClazz : transformerTree.getLeafs()) {
+        for (Class<? extends Transformer> transformerClazz : transformerTree.getLeaves()) {
             addTransformerMethods(map, transformerClazz, cache);
         }
 
@@ -79,11 +79,11 @@ public class EndpointTree<T> {
     }
 
     public Set<Class<? extends Hook>> loadHooks() {
-        return hookTree.getLeafs();
+        return hookTree.getLeaves();
     }
 
     public <TT> ShieldInfo<TT> loadShield() {
-        Set<Class<? extends Shield>> shieldClazzes = shieldTree.getLeafs();
+        Set<Class<? extends Shield>> shieldClazzes = shieldTree.getLeaves();
         if (shieldClazzes.size() == 0) {
             return null;
         }
@@ -95,7 +95,7 @@ public class EndpointTree<T> {
     }
 
     public Set<Class<? extends Pipe>> loadPipes() {
-        return pipeTree.getLeafs();
+        return pipeTree.getLeaves();
     }
 
     public List<Class<? extends Pipe>> loadPipesSink() {

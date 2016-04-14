@@ -1,8 +1,8 @@
 package io.yawp.repository.query;
 
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectModel;
 import io.yawp.repository.Repository;
+import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;
 import io.yawp.repository.query.condition.SimpleCondition;
@@ -43,7 +43,7 @@ public class QueryBuilder<T> {
     }
 
     public <N> QueryTransformer<T, N> transform(String transformName) {
-        return new QueryTransformer<T, N>(this, transformName);
+        return new QueryTransformer<>(this, transformName);
     }
 
     public QueryBuilder<T> and(String field, String operator, Object value) {
@@ -141,6 +141,10 @@ public class QueryBuilder<T> {
 
         if (options.getLimit() != null) {
             limit(options.getLimit());
+        }
+
+        if (options.getCursor() != null) {
+            cursor(options.getCursor());
         }
 
         return this;
@@ -291,6 +295,10 @@ public class QueryBuilder<T> {
         });
     }
 
+    public boolean hasPreOrder() {
+        return preOrders.size() != 0;
+    }
+
     private boolean hasPostOrder() {
         return postOrders.size() != 0;
     }
@@ -347,5 +355,4 @@ public class QueryBuilder<T> {
 
         return ids.get(0);
     }
-
 }

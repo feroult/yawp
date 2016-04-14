@@ -1,17 +1,15 @@
 package io.yawp.repository;
 
+import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
-import io.yawp.repository.shields.Shield;
+import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.shields.ShieldInfo;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class EndpointFeatures<T> {
 
@@ -21,42 +19,46 @@ public class EndpointFeatures<T> {
 
     private Map<String, Method> transformers;
 
-    private List<Class<? extends Hook<? super T>>> hooks;
+    private Set<Class<? extends Hook>> hooks;
 
     private ShieldInfo<? super T> shieldInfo;
+
+    private Set<Class<? extends Pipe>> pipes;
+
+    private List<Class<? extends Pipe>> pipesSink;
 
     public EndpointFeatures(Class<T> clazz) {
         this.clazz = clazz;
         this.actions = new HashMap<>();
         this.transformers = new HashMap<>();
-        this.hooks = new ArrayList<>();
+        this.hooks = new HashSet<>();
+        this.pipes = new HashSet<>();
+    }
+
+    private void assertValidPathOrKind() {
+        Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
+        if (endpoint == null) {
+            throw new RuntimeException("The class " + clazz.getName() + " was used as an entity but was not annotated with @Endpoint.");
+        }
     }
 
     public Class<T> getClazz() {
         return this.clazz;
     }
 
-    public void addAction(ActionKey actionKey, Method method, ActionMethod actionMethod) {
-        assertActionNotDuplicated(actionKey, method);
-        actions.put(actionKey, actionMethod);
+    public Endpoint getEndpointAnnotation() {
+        return clazz.getAnnotation(Endpoint.class);
     }
 
-    public void addTransformer(String name, Method method) {
-        assertTransformerNotDuplicated(name, method);
-        transformers.put(name, method);
+    public String getEndpointPath() {
+        Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
+        return endpoint.path();
     }
 
-    public void addHook(Class<? extends Hook<? super T>> hook) {
-        hooks.add(hook);
+    public String getEndpointKind() {
+        return KindResolver.getKindFromClass(clazz);
     }
 
-    public void setShieldInfo(ShieldInfo<? super T> shieldInfo) {
-        this.shieldInfo = shieldInfo;
-    }
-
-    public List<Class<? extends Hook<? super T>>> getHooks() {
-        return hooks;
-    }
 
     public ActionMethod getAction(ActionKey key) {
         return actions.get(key);
@@ -66,53 +68,74 @@ public class EndpointFeatures<T> {
         return actions.get(key).getMethod().getDeclaringClass();
     }
 
-    public Method getTransformer(String name) {
-        return transformers.get(name);
-    }
-
-    public Endpoint getEndpointAnnotation() {
-        return clazz.getAnnotation(Endpoint.class);
-    }
-
-    public String getEndpointPath() {
-        Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
-        if (endpoint == null) {
-            throw new RuntimeException("The class " + clazz + " was used as an entity but was not annotated with @Endpoint.");
-        }
-        return endpoint.path();
-    }
-
     public boolean hasCustomAction(ActionKey actionKey) {
         return actions.containsKey(actionKey);
+    }
+
+    public Method getTransformer(String name) {
+        return transformers.get(name);
     }
 
     public boolean hasTranformer(String transformerName) {
         return transformers.containsKey(transformerName);
     }
 
-    public boolean hasShield() {
-        return shieldInfo != null;
+    public Set<Class<? extends Hook>> getHooks() {
+        return hooks;
     }
 
     public ShieldInfo<? super T> getShieldInfo() {
         return shieldInfo;
     }
 
-    private void assertTransformerNotDuplicated(String key, Method method) {
-        if (transformers.get(key) != null) {
-            throw new RuntimeException("Trying to add two transformers with the same name '" + key + "' to io.yawp "
-                    + clazz.getSimpleName() + ": one at " + transformers.get(key).getDeclaringClass().getSimpleName() + " and the other at "
-                    + method.getDeclaringClass().getSimpleName());
-        }
+    public Set<Class<? extends Pipe>> getPipes() {
+        return pipes;
     }
 
-    private void assertActionNotDuplicated(ActionKey key, Method method) {
-        if (actions.get(key) != null) {
-            Method existingMethod = actions.get(key).getMethod();
-            throw new RuntimeException("Trying to add two actions with the same name '" + key + "' to io.yawp "
-                    + clazz.getSimpleName() + ": one at " + existingMethod.getDeclaringClass().getSimpleName() + " and the other at "
-                    + method.getDeclaringClass().getSimpleName());
-        }
+    public List<Class<? extends Pipe>> getPipesSink() {
+        return pipesSink;
     }
 
+    public boolean hasShield() {
+        return shieldInfo != null;
+    }
+
+    public void setActions(Map<ActionKey, ActionMethod> actions) {
+        this.actions = actions;
+    }
+
+    public void setTransformers(Map<String, Method> transformers) {
+        this.transformers = transformers;
+    }
+
+    public void setHooks(Set<Class<? extends Hook>> hooks) {
+        this.hooks = hooks;
+    }
+
+    public void setShieldInfo(ShieldInfo<? super T> shieldInfo) {
+        this.shieldInfo = shieldInfo;
+    }
+
+    public void setPipes(Set<Class<? extends Pipe>> pipes) {
+        this.pipes = pipes;
+    }
+
+    public void setPipesSink(List<Class<? extends Pipe>> pipesSink) {
+        this.pipesSink = pipesSink;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EndpointFeatures<?> that = (EndpointFeatures<?>) o;
+
+        return clazz.equals(that.clazz);
+    }
+
+    @Override
+    public int hashCode() {
+        return clazz.hashCode();
+    }
 }

@@ -2,7 +2,7 @@
 
     yawp.fixtures.config(function(c) {
         c.baseUrl('/fixtures');
-        c.resetUrl('/_yawp/delete_all');
+        c.resetUrl('/_ah/yawp/datastore/delete_all');
 
         c.bind('parent', '/parents');
         c.bind('job', '/jobs');
@@ -21,7 +21,12 @@
         }
     }
 
+    function skip() {
+
+    }
+
     t.moduledef = moduledef;
+    t.skip = skip;
 
     t.isPhantomJS = function() {
         return navigator.userAgent.indexOf("PhantomJS") > 0;

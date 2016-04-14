@@ -1,17 +1,20 @@
-# Welcome to YAWP!
+# YAWP! Framework
 
-A very simple and elegant domain specific language / framework in Java that helps you to create amazing APIs.
+A very simple and elegant domain specific language / framework in Java that helps you to create amazing REST APIs.
 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/)
+[![Join the chat at https://gitter.im/feroult/yawp](https://badges.gitter.im/feroult/yawp.svg)](https://gitter.im/feroult/yawp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Introduction
 
-__YAWP!__'s main purpose is to help developers to easily create meaningful APIs to
-back their REST based applications. It natively supports and abstracts the Google
-Appengine Platform, so you can bootstrap your API very quickly with a free
-(to start) auto-scalable environment. Later, if you change your mind, there are no
-lock-ins with Google and you can move freely to any cloud platform you want without
-losing data or having to rewrite your code.
+__YAWP!__'s main purpose is to help developers to easily create meaningful and
+scalable APIs to back their REST based applications. It natively supports and
+implements effective usage patterns for the Google Appengine Platform, so you can
+bootstrap your API very quickly with a free (to start) auto-scalable environment.
+
+If scalability is not an issue or you'd rather do-it-yourself, you can use the
+PostgreSQL persistence driver to deploy your code on different platforms.
 
 You create your POJOs and __YAWP!__
 
@@ -40,28 +43,25 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 
 4. Using a scaffolder, create a simple endpoint model:
 
-        $ mvn yawp:endpoint -Dmodel=people
+        $ mvn yawp:endpoint -Dmodel=person
 
-    **_Output:_**
+    **Output:**
 
     ``` java
     @Endpoint(path = "/people")
     public class Person {
         @Id
         IdRef<Person> id;
-
-        String name;
     }    
     ```
-    **_Try it:_**
+    **Try it:**
 
         $ curl http://localhost:8080/api/people
 
 5. Follow the guidelines to start developing your API:
     * [Your First API](http://yawp.io/guides/getting-started/your-first-api)
     * [Todo App List Tutorial](http://yawp.io/guides/tutorials/todo-list-app)
-    * [YAWP! Guides](http://yawp.io/guides)
-    * [The API Documentation](http://yawp.io/guides/api/models)    
+    * [API Documentation](http://yawp.io/guides/api/models)    
 
 ## Contributing
 
@@ -71,6 +71,8 @@ will need an environment with:
 * JDK 1.7+
 * Maven 3.3+
 * PostgreSQL 9.4+
+
+Then follow the [travis-ci build script](../master/.travis.yml) to get your build working.
 
 ## IRC
 

@@ -1,6 +1,7 @@
 package io.yawp.repository.query.condition;
 
 import java.util.Collection;
+import java.util.List;
 
 public enum WhereOperator {
 
@@ -12,6 +13,9 @@ public enum WhereOperator {
 
         @Override
         public boolean evaluate(Object objectValue, Object whereValue) {
+            if (isList(objectValue)) {
+                return listContains((List) objectValue, whereValue);
+            }
             return compareObjects(objectValue, whereValue) == 0;
         }
     },
@@ -23,6 +27,9 @@ public enum WhereOperator {
 
         @Override
         public boolean evaluate(Object objectValue, Object whereValue) {
+            if (isList(objectValue)) {
+                return listContainsGreaterThan((List) objectValue, whereValue);
+            }
             return compareObjects(objectValue, whereValue) > 0;
         }
 
@@ -35,6 +42,9 @@ public enum WhereOperator {
 
         @Override
         public boolean evaluate(Object objectValue, Object whereValue) {
+            if (isList(objectValue)) {
+                return listContainsGreaterThanOrEqual((List) objectValue, whereValue);
+            }
             return compareObjects(objectValue, whereValue) >= 0;
         }
     },
@@ -46,6 +56,9 @@ public enum WhereOperator {
 
         @Override
         public boolean evaluate(Object objectValue, Object whereValue) {
+            if (isList(objectValue)) {
+                return listContainsLessThan((List) objectValue, whereValue);
+            }
             return compareObjects(objectValue, whereValue) < 0;
         }
     },
@@ -57,6 +70,9 @@ public enum WhereOperator {
 
         @Override
         public boolean evaluate(Object objectValue, Object whereValue) {
+            if (isList(objectValue)) {
+                return listContainsLessThanOrEqual((List) objectValue, whereValue);
+            }
             return compareObjects(objectValue, whereValue) <= 0;
         }
     },
@@ -114,6 +130,53 @@ public enum WhereOperator {
             return NOT_EQUAL;
         }
         throw new RuntimeException("invalid filter operator " + operator);
+    }
+
+    private static boolean listContains(List list, Object whereValue) {
+        return list.contains(whereValue);
+    }
+
+    private static boolean listContainsGreaterThan(List list, Object whereValue) {
+        for (Object value : list) {
+            if (compareObjects(value, whereValue) > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean listContainsGreaterThanOrEqual(List list, Object whereValue) {
+        for (Object value : list) {
+            if (compareObjects(value, whereValue) >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean listContainsLessThan(List list, Object whereValue) {
+        for (Object value : list) {
+            if (compareObjects(value, whereValue) < 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean listContainsLessThanOrEqual(List list, Object whereValue) {
+        for (Object value : list) {
+            if (compareObjects(value, whereValue) <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isList(Object objectValue) {
+        if (objectValue == null) {
+            return false;
+        }
+        return List.class.isAssignableFrom(objectValue.getClass());
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

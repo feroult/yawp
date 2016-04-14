@@ -6,17 +6,17 @@ import io.yawp.driver.postgresql.datastore.Datastore;
 import io.yawp.driver.postgresql.datastore.Entity;
 import io.yawp.driver.postgresql.datastore.Key;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
-import io.yawp.repository.FieldModel;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.Repository;
-
-import java.util.List;
-import java.util.concurrent.Future;
-
+import io.yawp.repository.models.FieldModel;
+import io.yawp.repository.models.ObjectHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 public class PGPersistenceDriver implements PersistenceDriver {
 
@@ -89,6 +89,10 @@ public class PGPersistenceDriver implements PersistenceDriver {
                 continue;
             }
 
+            if (fieldModel.isTransient()) {
+                continue;
+            }
+
             setEntityProperty(objectHolder, entity, fieldModel);
         }
     }
@@ -134,9 +138,21 @@ public class PGPersistenceDriver implements PersistenceDriver {
             return value.toString();
         }
 
+        if (fieldModel.isListOfIds()) {
+            return convertToListOfUris((List<IdRef<?>>) value);
+        }
+
         return value;
     }
 
+    private List<String> convertToListOfUris(List<IdRef<?>> ids) {
+        List<String> uris = new ArrayList<>(ids.size());
+        for (IdRef<?> id : ids) {
+            uris.add(id.getUri());
+        }
+        return uris;
+    }
+    
     private Object normalizeValue(Object o) {
         if (o == null) {
             return null;

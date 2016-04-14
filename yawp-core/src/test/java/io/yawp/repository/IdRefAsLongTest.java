@@ -1,22 +1,22 @@
 package io.yawp.repository;
 
-import static io.yawp.commons.http.HttpVerb.GET;
-import static io.yawp.commons.http.HttpVerb.PUT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.commons.utils.JsonUtils;
+import io.yawp.repository.models.basic.ShuffledObject;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Job;
 import io.yawp.repository.models.parents.Parent;
+import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import static io.yawp.commons.http.HttpVerb.GET;
+import static io.yawp.commons.http.HttpVerb.PUT;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class IdRefAsLongTest extends EndpointTestCase {
 
@@ -210,6 +210,12 @@ public class IdRefAsLongTest extends EndpointTestCase {
         assertEquals(Parent.class, id.getAncestorId(1).getClazz());
     }
 
+    @Test
+    public void testShuffledId() {
+        yawp.save(new ShuffledObject("/shuffled_objects/1"));
+        assertEquals((Long) 1L, yawp(ShuffledObject.class).first().getId().asLong());
+    }
+
     private Parent saveParentWithJob() {
         Job job = new Job("haha");
         yawp.save(job);
@@ -221,5 +227,6 @@ public class IdRefAsLongTest extends EndpointTestCase {
 
         return parent;
     }
+
 
 }

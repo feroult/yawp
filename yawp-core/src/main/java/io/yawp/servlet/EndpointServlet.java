@@ -5,9 +5,8 @@ import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.JsonResponse;
 import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.DriverFactory;
-import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Repository;
-import io.yawp.repository.RepositoryFeatures;
+import io.yawp.repository.Yawp;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -20,9 +19,8 @@ public class EndpointServlet extends HttpServlet {
 
     private static final long serialVersionUID = 8155293897299089610L;
 
-    private RepositoryFeatures features;
-
     private boolean enableHooks = true;
+
     private boolean enableCrossDomain = false;
 
     public EndpointServlet() {
@@ -33,10 +31,20 @@ public class EndpointServlet extends HttpServlet {
         super.init(config);
         setWithHooks(config.getInitParameter("enableHooks"));
         setCrossDomain(config.getInitParameter("enableCrossDomain"));
-        scanEndpoints(config.getInitParameter("packagePrefix"));
+        initYawp(config.getInitParameter("packagePrefix"));
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        Yawp.destroyFeatures();
     }
 
     private void setWithHooks(String enableHooksParameter) {
+        if (!enableHooks) {
+            return;
+        }
+
         boolean enableHooks = enableHooksParameter == null || Boolean.valueOf(enableHooksParameter);
         setWithHooks(enableHooks);
     }
@@ -54,11 +62,18 @@ public class EndpointServlet extends HttpServlet {
     }
 
     protected EndpointServlet(String packagePrefix) {
-        scanEndpoints(packagePrefix);
+        initYawp(packagePrefix);
     }
 
-    private void scanEndpoints(String packagePrefix) {
-        features = new EndpointScanner(packagePrefix).enableHooks(enableHooks).scan();
+    /**
+     * @deprecated in 2.0, yawp will be configured only by yawp.yml
+     */
+    @Deprecated
+    private void initYawp(String packagePrefix) {
+        if (packagePrefix == null) {
+            return;
+        }
+        Yawp.init(packagePrefix);
     }
 
     protected void response(HttpServletResponse resp, HttpResponse httpResponse) throws IOException {
@@ -87,19 +102,23 @@ public class EndpointServlet extends HttpServlet {
     }
 
     public HttpResponse execute(RequestContext ctx) {
-        Repository r = getRepository(ctx);
+        try {
+            Repository r = getRepository(ctx);
+            EndpointRouter router = EndpointRouter.parse(r, ctx);
 
-        EndpointRouter router = EndpointRouter.parse(r, ctx);
+            if (!router.isValid()) {
+                throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");
+            }
 
-        if (!router.isValid()) {
-            throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");
+            return router.executeRestAction(enableHooks);
+
+        } finally {
+            Yawp.dispose();
         }
-
-        return router.executeRestAction(enableHooks);
     }
 
     protected Repository getRepository(RequestContext ctx) {
-        return Repository.r().setFeatures(features).setRequestContext(ctx);
+        return Yawp.yawp().setRequestContext(ctx);
     }
 
 }

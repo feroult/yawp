@@ -1,12 +1,6 @@
 package io.yawp.driver.postgresql;
 
-import io.yawp.driver.api.Driver;
-import io.yawp.driver.api.EnvironmentDriver;
-import io.yawp.driver.api.HelpersDriver;
-import io.yawp.driver.api.NamespaceDriver;
-import io.yawp.driver.api.PersistenceDriver;
-import io.yawp.driver.api.QueryDriver;
-import io.yawp.driver.api.TransactionDriver;
+import io.yawp.driver.api.*;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.repository.Repository;
 
@@ -20,6 +14,11 @@ public class PGDriver implements Driver {
     public void init(Repository r) {
         this.r = r;
         this.connectionManager = new ConnectionManager();
+    }
+
+    @Override
+    public String name() {
+        return "postgresql";
     }
 
     @Override
@@ -50,6 +49,11 @@ public class PGDriver implements Driver {
     @Override
     public HelpersDriver helpers() {
         return new PGHelpersDriver();
+    }
+
+    @Override
+    public PipesDriver pipes() {
+        throw new DriverNotImplementedException();
     }
 
 }

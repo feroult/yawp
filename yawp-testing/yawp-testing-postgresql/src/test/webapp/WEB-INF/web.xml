@@ -42,11 +42,11 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>DeleteAllServlet</servlet-name>
-        <servlet-class>io.yawp.repository.tools.DeleteAllServlet</servlet-class>
+        <servlet-name>ToolsServlet</servlet-name>
+        <servlet-class>io.yawp.tools.ToolsServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>DeleteAllServlet</servlet-name>
-        <url-pattern>/_yawp/delete_all</url-pattern>
+        <servlet-name>ToolsServlet</servlet-name>
+        <url-pattern>/_ah/yawp/*</url-pattern>
     </servlet-mapping>
 </web-app>

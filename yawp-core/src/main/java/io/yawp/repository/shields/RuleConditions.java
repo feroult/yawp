@@ -1,16 +1,13 @@
 package io.yawp.repository.shields;
 
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectHolder;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;
 
 import java.util.List;
-
-import static io.yawp.repository.query.condition.Condition.and;
-import static io.yawp.repository.query.condition.Condition.or;
 
 public class RuleConditions {
 

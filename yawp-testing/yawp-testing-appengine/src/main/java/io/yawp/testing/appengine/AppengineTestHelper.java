@@ -1,14 +1,12 @@
 package io.yawp.testing.appengine;
 
+import com.google.appengine.tools.development.testing.*;
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.repository.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
-import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
-import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
+import java.util.concurrent.TimeUnit;
 
 public class AppengineTestHelper implements TestHelper {
 
@@ -20,19 +18,32 @@ public class AppengineTestHelper implements TestHelper {
 
     @Override
     public void setUp() {
-        helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), createDatastoreService());
+        helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), createDatastoreService(), createTaskQueueTestConfig(), new LocalModulesServiceTestConfig());
         Map<String, Object> envs = new HashMap<String, Object>();
         helper.setEnvAttributes(envs);
         helper.setUp();
     }
 
-    private LocalDatastoreServiceTestConfig createDatastoreService() {
+    protected LocalDatastoreServiceTestConfig createDatastoreService() {
         return new LocalDatastoreServiceTestConfig().setDefaultHighRepJobPolicyUnappliedJobPercentage(0);
+    }
+
+    protected LocalTaskQueueTestConfig createTaskQueueTestConfig() {
+        LocalTaskQueueTestConfig config = new LocalTaskQueueTestConfig();
+        config.setShouldCopyApiProxyEnvironment(true);
+        config.setDisableAutoTaskExecution(false);
+        config.setCallbackClass(TestingTaskQueueCallback.class);
+        return config;
     }
 
     @Override
     public void tearDown() {
         helper.tearDown();
+    }
+
+    @Override
+    public void awaitAsync(long timeout, TimeUnit unit) {
+        AsyncHelper.awaitAsync(timeout, unit);
     }
 
     public void login(String username, String domain) {

@@ -30,6 +30,7 @@ public abstract class RestAction {
 
     protected Repository r;
 
+    // TODO: Remove this flag, it is used only for tests. Hooks are already disabled in the RepositoryScanner class.
     protected boolean enableHooks;
 
     protected Class<?> endpointClazz;
@@ -93,7 +94,7 @@ public abstract class RestAction {
         this.requestBodyJsonArray = requestBodyJsonArray;
     }
 
-    protected void beforeShield() {
+    protected void beforeShieldHooks() {
         if (objects == null) {
             return;
         }
@@ -107,11 +108,8 @@ public abstract class RestAction {
     public abstract Object action();
 
     public HttpResponse execute() {
-        beforeShield();
 
-        if (hasShield()) {
-            shield();
-        }
+        executeShield();
 
         Object object = action();
 
@@ -120,6 +118,18 @@ public abstract class RestAction {
         }
 
         return new JsonResponse(JsonUtils.to(object));
+    }
+
+    private void executeShield() {
+        if(!enableHooks) {
+            return;
+        }
+
+        beforeShieldHooks();
+
+        if (hasShield()) {
+            shield();
+        }
     }
 
     protected QueryBuilder<?> query() {

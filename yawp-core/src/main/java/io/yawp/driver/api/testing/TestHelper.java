@@ -2,6 +2,8 @@ package io.yawp.driver.api.testing;
 
 import io.yawp.repository.Repository;
 
+import java.util.concurrent.TimeUnit;
+
 public interface TestHelper {
 
     void init(Repository r);
@@ -10,4 +12,5 @@ public interface TestHelper {
 
     void tearDown();
 
+    void awaitAsync(long timeout, TimeUnit unit);
 }

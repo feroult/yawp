@@ -2,7 +2,6 @@ package io.yawp.repository;
 
 import io.yawp.repository.actions.ActionKey;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -13,28 +12,48 @@ public class RepositoryFeatures {
 
     private Map<String, Class<?>> paths;
 
-    public RepositoryFeatures(Collection<EndpointFeatures<?>> endpoints) {
-        this.endpoints = new HashMap<>();
-        this.paths = new HashMap<>();
-        for (EndpointFeatures<?> endpoint : endpoints) {
-            this.endpoints.put(endpoint.getClazz(), endpoint);
-            String endpointPath = endpoint.getEndpointPath();
-            if (!endpointPath.isEmpty()) {
-                if (paths.get(endpointPath) != null) {
-                    throw new RuntimeException("Repeated io.yawp path " + endpointPath + " for class "
-                            + endpoint.getClazz().getSimpleName() + " (already found in class " + paths.get(endpointPath).getSimpleName()
-                            + ")");
-                }
-                if (!isValidEndpointPath(endpointPath)) {
-                    throw new RuntimeException("Invalid io.yawp path " + endpointPath + " for class " + endpoint.getClazz().getSimpleName());
-                }
-                paths.put(endpointPath, endpoint.getClazz());
-            }
-        }
-
-    }
+    private Map<String, Class<?>> kinds;
 
     protected RepositoryFeatures() {
+    }
+
+    public RepositoryFeatures(Map<Class<?>, EndpointFeatures<?>> endpoints) {
+        this.endpoints = endpoints;
+        this.paths = new HashMap<>();
+        this.kinds = new HashMap<>();
+        initAndLoadPaths();
+    }
+
+    private void initAndLoadPaths() {
+        for (EndpointFeatures<?> endpoint : endpoints.values()) {
+            addKindToMap(endpoint);
+            addMapPathKind(endpoint);
+        }
+    }
+
+    private void addKindToMap(EndpointFeatures<?> endpoint) {
+        String kind = endpoint.getEndpointKind();
+        kinds.put(kind, endpoint.getClazz());
+    }
+
+    private void addMapPathKind(EndpointFeatures<?> endpoint) {
+        String endpointPath = endpoint.getEndpointPath();
+        if (endpointPath.isEmpty()) {
+            return;
+        }
+        assertIsValidPath(endpoint, endpointPath);
+        paths.put(endpointPath, endpoint.getClazz());
+    }
+
+    private void assertIsValidPath(EndpointFeatures<?> endpoint, String endpointPath) {
+        if (paths.get(endpointPath) != null) {
+            throw new RuntimeException("Repeated io.yawp path " + endpointPath + " for class "
+                    + endpoint.getClazz().getSimpleName() + " (already found in class " + paths.get(endpointPath).getSimpleName()
+                    + ")");
+        }
+        if (!isValidEndpointPath(endpointPath)) {
+            throw new RuntimeException("Invalid endpoint path " + endpointPath + " for class " + endpoint.getClazz().getSimpleName());
+        }
     }
 
     protected boolean isValidEndpointPath(String endpointName) {
@@ -54,25 +73,29 @@ public class RepositoryFeatures {
         return true;
     }
 
-    public EndpointFeatures<?> get(Class<?> clazz) {
+    public EndpointFeatures<?> getByClazz(Class<?> clazz) {
         return endpoints.get(clazz);
     }
 
-    public EndpointFeatures<?> get(String endpointPath) {
+    public EndpointFeatures<?> getByPath(String endpointPath) {
         Class<?> clazz = paths.get(endpointPath);
         if (clazz == null) {
             throw new EndpointNotFoundException(endpointPath);
         }
-        return get(clazz);
+        return getByClazz(clazz);
+    }
+
+    public Class<?> getClazzByKind(String kind) {
+        return kinds.get(kind);
     }
 
     public boolean hasCustomAction(String endpointPath, ActionKey actionKey) {
-        EndpointFeatures<?> endpointFeatures = get(endpointPath);
+        EndpointFeatures<?> endpointFeatures = getByPath(endpointPath);
         return endpointFeatures.hasCustomAction(actionKey);
     }
 
     public boolean hasCustomAction(Class<?> clazz, ActionKey actionKey) {
-        EndpointFeatures<?> endpointFeatures = get(clazz);
+        EndpointFeatures<?> endpointFeatures = getByClazz(clazz);
         return endpointFeatures.hasCustomAction(actionKey);
     }
 

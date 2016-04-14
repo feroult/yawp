@@ -1,30 +1,25 @@
 package io.yawp.commons.utils;
 
+import io.yawp.driver.api.DriverNotImplementedException;
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.driver.api.testing.TestHelperFactory;
-import io.yawp.repository.EndpointScanner;
 import io.yawp.repository.Feature;
 import io.yawp.repository.Repository;
-import io.yawp.repository.RepositoryFeatures;
-
+import io.yawp.repository.Yawp;
 import org.junit.After;
 import org.junit.Before;
 
+import java.util.concurrent.TimeUnit;
+
 public class EndpointTestCase extends Feature {
 
-    private static RepositoryFeatures features;
-
     private TestHelper helper;
-
-    static {
-        features = new EndpointScanner("io.yawp").scan();
-    }
 
     @Before
     public void setUp() {
         Environment.setIfEmpty(Environment.DEFAULT_TEST_ENVIRONMENT);
 
-        yawp = Repository.r().setFeatures(features);
+        yawp = Yawp.yawp();
         helper = testHelperDriver(yawp);
         helper.setUp();
     }
@@ -42,4 +37,19 @@ public class EndpointTestCase extends Feature {
         helper.tearDown();
         TestLoginManager.logout();
     }
+
+    protected boolean pipesDriverNotImplemented() {
+        // TODO: pipes - remove this
+        try {
+            yawp.driver().pipes();
+            return false;
+        } catch (DriverNotImplementedException e) {
+            return true;
+        }
+    }
+
+    protected void awaitAsync(long timeout, TimeUnit unit) {
+        helper.awaitAsync(timeout, unit);
+    }
+
 }

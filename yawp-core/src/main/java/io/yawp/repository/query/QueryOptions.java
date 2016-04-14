@@ -23,6 +23,10 @@ public class QueryOptions {
 
     private Integer limit;
 
+    public boolean returnCursor;
+
+    public String cursor;
+
     public static QueryOptions parse(String json) {
         return new QueryOptions(json);
     }
@@ -34,6 +38,24 @@ public class QueryOptions {
         this.preOrders = parseOrders(jsonObject.getAsJsonArray("order"));
         this.postOrders = parseOrders(jsonObject.getAsJsonArray("sort"));
         this.limit = parseLimit(jsonObject.get("limit"));
+        this.returnCursor = parseReturnCursor(jsonObject.get("cursor"));
+        this.cursor = parseCursor(jsonObject.get("cursor"));
+    }
+
+    private String parseCursor(JsonElement jsonElement) {
+        if (jsonElement == null || jsonElement.getAsString().isEmpty()) {
+            return null;
+        }
+
+        return jsonElement.getAsString();
+    }
+
+    private boolean parseReturnCursor(JsonElement jsonElement) {
+        if (jsonElement == null) {
+            return false;
+        }
+
+        return true;
     }
 
     private Integer parseLimit(JsonElement jsonElement) {
@@ -180,5 +202,13 @@ public class QueryOptions {
 
     public Integer getLimit() {
         return this.limit;
+    }
+
+    public boolean returnCursor() {
+        return this.returnCursor;
+    }
+
+    public String getCursor() {
+        return cursor;
     }
 }

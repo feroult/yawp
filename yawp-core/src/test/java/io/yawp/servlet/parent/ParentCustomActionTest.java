@@ -1,6 +1,6 @@
 package io.yawp.servlet.parent;
 
-import io.yawp.repository.actions.FakeException;
+import io.yawp.repository.actions.parents.FakeException;
 import io.yawp.repository.models.parents.Parent;
 import org.junit.Test;
 

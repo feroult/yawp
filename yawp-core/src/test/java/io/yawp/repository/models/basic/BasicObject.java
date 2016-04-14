@@ -1,18 +1,16 @@
 package io.yawp.repository.models.basic;
 
-import static org.junit.Assert.assertEquals;
-
 import io.yawp.commons.utils.DateUtils;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.annotations.Endpoint;
-import io.yawp.repository.annotations.Id;
-import io.yawp.repository.annotations.Index;
-import io.yawp.repository.annotations.Json;
-import io.yawp.repository.annotations.Text;
+import io.yawp.repository.annotations.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import static io.yawp.repository.Yawp.yawp;
+import static org.junit.Assert.assertEquals;
 
 @Endpoint(path = "/basic_objects")
 public class BasicObject {
@@ -50,6 +48,12 @@ public class BasicObject {
 
     @Index
     private Status status;
+
+    @Index
+    private List<String> stringList;
+
+    @Index
+    private List<IdRef<BasicObject>> idList;
 
     public BasicObject() {
 
@@ -177,6 +181,22 @@ public class BasicObject {
         this.status = status;
     }
 
+    public List<String> getStringList() {
+        return stringList;
+    }
+
+    public void setStringList(List<String> stringList) {
+        this.stringList = stringList;
+    }
+
+    public List<IdRef<BasicObject>> getIdList() {
+        return idList;
+    }
+
+    public void setIdList(List<IdRef<BasicObject>> idList) {
+        this.idList = idList;
+    }
+
     public void assertObject(String stringValue, String textValue, int intValue, long longValue, double doubleValue, boolean booleanValue,
                              String timestamp) {
         assertEquals(intValue, getIntValue());
@@ -186,6 +206,34 @@ public class BasicObject {
         assertEquals(DateUtils.toTimestamp(timestamp), getDateValue());
         assertEquals(textValue, getTextValue());
         assertEquals(stringValue, getStringValue());
+    }
+
+    public static List<BasicObject> saveManyBasicObjects(int n, int start, String stringValue) {
+        List<BasicObject> objects = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            objects.add(saveOneObject(stringValue, i + start));
+        }
+        return objects;
+    }
+
+    public static List<BasicObject> saveManyBasicObjects(int n, String stringValue) {
+        return saveManyBasicObjects(n, 0, stringValue);
+    }
+
+    public static List<BasicObject> saveManyBasicObjects(int n, int start) {
+        return saveManyBasicObjects(n, start, "xpto");
+    }
+
+    public static List<BasicObject> saveManyBasicObjects(int n) {
+        return saveManyBasicObjects(n, "xpto");
+    }
+
+    public static BasicObject saveOneObject(String stringValue, int i) {
+        BasicObject object = new BasicObject();
+        object.setStringValue(stringValue);
+        object.setIntValue(i + 1);
+        yawp.save(object);
+        return object;
     }
 
 }

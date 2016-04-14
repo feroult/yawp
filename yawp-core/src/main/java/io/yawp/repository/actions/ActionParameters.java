@@ -3,12 +3,13 @@ package io.yawp.repository.actions;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectModel;
+import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.Repository;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,13 +35,17 @@ public class ActionParameters {
 
     public ActionParameters(Method method) throws InvalidActionMethodException {
         this.method = method;
-        this.endpointClazz = ReflectionUtils.getGenericParameter(method.getDeclaringClass());
+        setEndpointClazz(method);
 
         init();
 
         if (!isValid()) {
             throw new InvalidActionMethodException();
         }
+    }
+
+    private void setEndpointClazz(Method method) {
+        this.endpointClazz = ReflectionUtils.getFeatureEndpointClazz(method.getDeclaringClass());
     }
 
     public int size() {
@@ -235,7 +240,11 @@ public class ActionParameters {
             if (!isTypeOf(IdRef.class)) {
                 return false;
             }
-            return getGenericTypeAt(0).equals(endpointClazz);
+            Type genericType = getGenericTypeAt(0);
+            if (genericType instanceof WildcardType) {
+                return true;
+            }
+            return genericType.equals(endpointClazz);
         }
 
         public boolean isParentId() {
@@ -243,7 +252,11 @@ public class ActionParameters {
                 return false;
             }
             ObjectModel objectModel = new ObjectModel(endpointClazz);
-            return objectModel.isAncestor((Class<?>) getGenericTypeAt(0));
+            Type genericType = getGenericTypeAt(0);
+            if (genericType instanceof WildcardType) {
+                return false;
+            }
+            return objectModel.isAncestor((Class<?>) genericType);
         }
 
         public boolean isParams() {

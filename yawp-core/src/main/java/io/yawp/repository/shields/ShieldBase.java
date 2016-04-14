@@ -4,7 +4,7 @@ import io.yawp.commons.http.HttpException;
 import io.yawp.commons.utils.FacadeUtils;
 import io.yawp.repository.Feature;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectHolder;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.InvalidActionMethodException;
@@ -78,12 +78,12 @@ public abstract class ShieldBase<T> extends Feature {
 
     // shield rules
 
-    public final Rule allow() {
+    public final Rule<T> allow() {
         return allow(true);
     }
 
-    public final Rule allow(boolean allow) {
-        Rule rule = new Rule<T>(yawp, endpointClazz, id, objects);
+    public final Rule<T> allow(boolean allow) {
+        Rule<T> rule = new Rule<T>(yawp, endpointClazz, id, objects);
 
         if (allow) {
             rules.add(rule);
@@ -102,7 +102,7 @@ public abstract class ShieldBase<T> extends Feature {
     }
 
     private Class<?> currentActionClazz() {
-        return yawp.getFeatures().get(endpointClazz).getActionClazz(actionKey);
+        return yawp.getFeatures().getByClazz(endpointClazz).getActionClazz(actionKey);
     }
 
     public final boolean requestHasAnyObject() {

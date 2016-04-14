@@ -5,31 +5,21 @@ import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.driver.postgresql.IdRefToKey;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.sql.SqlRunner;
-import io.yawp.repository.FieldModel;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Namespace;
 import io.yawp.repository.Repository;
+import io.yawp.repository.models.FieldModel;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.QueryOrder;
-import io.yawp.repository.query.condition.BaseCondition;
-import io.yawp.repository.query.condition.JoinedCondition;
-import io.yawp.repository.query.condition.LogicalOperator;
-import io.yawp.repository.query.condition.SimpleCondition;
-import io.yawp.repository.query.condition.WhereOperator;
+import io.yawp.repository.query.condition.*;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import java.util.*;
 
 public class Query {
 
@@ -224,6 +214,10 @@ public class Query {
             return whereSingleValueIsNull(actualFieldName);
         }
         String placeHolder = bindValue(actualValue);
+
+        if (isList(fieldName)) {
+            return String.format(":%s %s ANY(ARRAY(select * from json_array_elements_text(to_json(%s))))", placeHolder, filterOperatorAsText(whereOperator.reverse()), propertyLink(fieldName, actualFieldName, false));
+        }
         return String.format("%s %s :%s", propertyLink(fieldName, actualFieldName), filterOperatorAsText(whereOperator), placeHolder);
     }
 
@@ -235,18 +229,29 @@ public class Query {
         return whereOperator.equals(WhereOperator.EQUAL) && actualValue == null;
     }
 
-    private String propertyLink(String fieldName, String actualFieldName) {
+    private boolean isList(String fieldName) {
         FieldModel fieldModel = builder.getModel().getFieldModel(fieldName);
+        return fieldModel.isList();
+    }
+
+    private String propertyLink(String fieldName, String actualFieldName) {
+        return propertyLink(fieldName, actualFieldName, true);
+    }
+
+    private String propertyLink(String fieldName, String actualFieldName, boolean scalar) {
+        FieldModel fieldModel = builder.getModel().getFieldModel(fieldName);
+
+        String retrieveOperator = scalar ? ">>" : ">";
 
         if (fieldModel.isId()) {
             return "key";
         }
 
         if (fieldModel.isNumber()) {
-            return String.format("cast(properties->>'%s' as numeric)", actualFieldName);
+            return String.format("cast(properties-%s'%s' as numeric)", retrieveOperator, actualFieldName);
         }
 
-        return String.format("properties->>'%s'", actualFieldName);
+        return String.format("properties-%s'%s'", retrieveOperator, actualFieldName);
     }
 
     private String joinedWhere(JoinedCondition joinedCondition) throws FalsePredicateException {

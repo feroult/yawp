@@ -3,10 +3,10 @@ package io.yawp.plugin.scaffolding.mojo;
 import io.yawp.plugin.scaffolding.HookScaffolder;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.*;
 
-@Mojo(name = "hook")
+@Execute(phase = LifecyclePhase.COMPILE)
+@Mojo(name = "hook", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class HookMojo extends ScaffolderAbstractMojo {
 
     @Parameter(property = "name", required = true)
@@ -14,7 +14,7 @@ public class HookMojo extends ScaffolderAbstractMojo {
 
     @Override
     public void run() throws MojoExecutionException {
-        HookScaffolder scaffolder = new HookScaffolder(getLog(), yawpPackage, model, name);
+        HookScaffolder scaffolder = new HookScaffolder(getLog(), getYawpPackage(), model, name);
         scaffolder.createTo(baseDir);
     }
 

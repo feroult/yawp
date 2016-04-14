@@ -1,16 +1,11 @@
 package io.yawp.commons.utils;
 
+
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 
 public final class ReflectionUtils {
 
@@ -67,41 +62,57 @@ public final class ReflectionUtils {
         return isBaseClass(clazz) || clazz.getPackage().getName().startsWith("java.") || clazz.getPackage().getName().startsWith("javax.");
     }
 
-    public static Class<?> getGenericParameter(Class<?> clazz) {
-        Class<?>[] parameters = getGenericParameters(clazz);
-        if (parameters.length == 0) {
+    public static Class<?> getFeatureEndpointClazz(Class<?> clazz) {
+        return getFeatureTypeArgumentAt(clazz, 0);
+    }
+
+    public static Class<?> getFeatureTypeArgumentAt(Class<?> clazz, int index) {
+        Type superClassGenericType = getGenericTypeArgumentAt(clazz.getGenericSuperclass(), index);
+
+        if (superClassGenericType instanceof TypeVariable) {
+            return (Class<?>) getGenericTypeBound(clazz, ((TypeVariable) superClassGenericType).getName());
+        }
+
+        return (Class<?>) superClassGenericType;
+    }
+
+    public static Class<?> getIdRefEndpointClazz(Field field) {
+        return (Class<?>) getGenericTypeArgumentAt(field.getGenericType(), 0);
+    }
+
+    private static Type[] getGenericTypeArguments(Type type) {
+        if (!(type instanceof ParameterizedType)) {
+            return new Type[]{};
+        }
+        ParameterizedType parameterizedType = (ParameterizedType) type;
+        return parameterizedType.getActualTypeArguments();
+    }
+
+    private static Type getGenericTypeArgumentAt(Type type, int index) {
+        Type[] parameters = getGenericTypeArguments(type);
+        if (parameters.length <= index) {
             return null;
         }
-        return parameters[0];
+        return parameters[index];
     }
 
-    public static Class<?>[] getGenericParameters(Class<?> clazz) {
-        return getGenericParametersInternal(clazz.getGenericSuperclass());
-    }
-
-    public static Class<?> getGenericParameter(Field field) {
-        Class<?>[] parameters = getGenericParameters(field);
-        if (parameters.length == 0) {
-            return null;
-        }
-        return parameters[0];
-    }
-
-    public static Class<?>[] getGenericParameters(Field field) {
-        return getGenericParametersInternal(field.getGenericType());
-    }
-
-    private static Class<?>[] getGenericParametersInternal(Type genericFieldType) {
-        if (genericFieldType instanceof ParameterizedType) {
-            ParameterizedType aType = (ParameterizedType) genericFieldType;
-            Type[] fieldArgTypes = aType.getActualTypeArguments();
-            Class<?>[] clazzes = new Class<?>[fieldArgTypes.length];
-            for (int i = 0; i < clazzes.length; i++) {
-                clazzes[i] = (Class<?>) fieldArgTypes[i];
+    private static Type getGenericTypeBound(Class<?> clazz, String name) {
+        for (Type type : clazz.getTypeParameters()) {
+            if (!(type instanceof TypeVariable)) {
+                continue;
             }
-            return clazzes;
+
+            TypeVariable genericType = (TypeVariable) type;
+
+            if (genericType.getName().equals(name)) {
+                if (genericType.getBounds().length > 0) {
+                    return genericType.getBounds()[0];
+                }
+                return null;
+            }
         }
-        return new Class<?>[]{};
+
+        return null;
     }
 
     public static Field getFieldWithAnnotation(Class<?> clazz, Class<? extends Annotation> annotationClass) {
@@ -130,5 +141,47 @@ public final class ReflectionUtils {
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static List<Method> getPublicMethodsRecursively(Class<?> clazz, Class<?> stopClazz) {
+        Set<String> uniqueNames = new HashSet<String>();
+        List<Method> methods = new ArrayList<>();
+
+        while (!isJavaClass(clazz) && clazz != stopClazz) {
+            methods.addAll(ReflectionUtils.getImmediatePublicMethods(clazz));
+            clazz = clazz.getSuperclass();
+        }
+
+        return methods;
+    }
+
+    private static List<Method> getImmediatePublicMethods(Class<?> clazz) {
+        List<Method> methods = new ArrayList<>();
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (!Modifier.isPublic(method.getModifiers())) {
+                continue;
+            }
+            if (Modifier.isAbstract(method.getModifiers())) {
+                continue;
+            }
+            methods.add(method);
+        }
+        return methods;
+    }
+
+    public static Class<?> clazzForName(String clazzName) {
+        try {
+            return Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Class<?> getListGenericType(Type type) {
+        Type firstArgument = ((ParameterizedType) type).getActualTypeArguments()[0];
+        if (!(firstArgument instanceof ParameterizedType)) {
+            return (Class<?>) firstArgument;
+        }
+        return (Class<?>) ((ParameterizedType) firstArgument).getRawType();
     }
 }

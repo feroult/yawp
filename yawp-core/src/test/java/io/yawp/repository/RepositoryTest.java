@@ -4,9 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.commons.utils.JsonUtils;
-import io.yawp.repository.models.basic.BasicObject;
-import io.yawp.repository.models.basic.Pojo;
-import io.yawp.repository.models.basic.Status;
+import io.yawp.repository.models.basic.*;
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Parent;
@@ -169,4 +167,17 @@ public class RepositoryTest extends EndpointTestCase {
         BasicObject retrievedObject = yawp(BasicObject.class).where("status", "=", Status.RUNNING).first();
         assertEquals(Status.RUNNING, retrievedObject.getStatus());
     }
+
+    @Test
+    public void testSaveForNotEndpointObjects() {
+        NotEndpointObject object = new NotEndpointObject("xpto");
+        object.setParentId(id(BasicObject.class, 1L));
+        yawp.save(object);
+
+        NotEndpointObject retrievedObject = yawp(NotEndpointObject.class).only();
+        assertEquals("xpto", retrievedObject.getName());
+        assertEquals(id(BasicObject.class, 1L), retrievedObject.getParentId());
+    }
+
+
 }

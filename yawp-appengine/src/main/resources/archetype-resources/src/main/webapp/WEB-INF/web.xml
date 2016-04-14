@@ -6,11 +6,6 @@
     <servlet>
         <servlet-name>EndpointServlet</servlet-name>
         <servlet-class>io.yawp.servlet.EndpointServlet</servlet-class>
-
-        <init-param>
-            <param-name>packagePrefix</param-name>
-            <param-value>${package}</param-value>
-        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>EndpointServlet</servlet-name>
@@ -24,11 +19,6 @@
     <servlet>
         <servlet-name>EndpointFixturesServlet</servlet-name>
         <servlet-class>io.yawp.servlet.FixturesServlet</servlet-class>
-
-        <init-param>
-            <param-name>packagePrefix</param-name>
-            <param-value>${package}</param-value>
-        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>EndpointFixturesServlet</servlet-name>
@@ -36,13 +26,22 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>DeleteAllServlet</servlet-name>
-        <servlet-class>io.yawp.repository.tools.DeleteAllServlet</servlet-class>
+        <servlet-name>ToolsServlet</servlet-name>
+        <servlet-class>io.yawp.tools.ToolsServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>DeleteAllServlet</servlet-name>
-        <url-pattern>/fixtures/delete_all</url-pattern>
+        <servlet-name>ToolsServlet</servlet-name>
+        <url-pattern>/_ah/yawp/*</url-pattern>
     </servlet-mapping>
+
+    <!-- servlet>
+        <servlet-name>PipelineServlet</servlet-name>
+        <servlet-class>com.google.appengine.tools.pipeline.impl.servlets.PipelineServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PipelineServlet</servlet-name>
+        <url-pattern>/_ah/pipeline/*</url-pattern>
+    </servlet-mapping -->
 
     <!-- security-constraint>
         <web-resource-collection>
@@ -76,5 +75,10 @@
             <web-resource-name>${artifactId}-tests</web-resource-name>
             <url-pattern>/test/*</url-pattern>
         </web-resource-collection>
-    </security-constraint -->
+    </security-constraint>
+
+    <security-role>
+        <role-name>admin</role-name>
+    </security-role -->
+
 </web-app>

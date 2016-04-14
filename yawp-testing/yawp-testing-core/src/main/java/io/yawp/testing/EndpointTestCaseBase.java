@@ -5,7 +5,11 @@ import io.yawp.commons.http.RequestContext;
 import io.yawp.commons.utils.Environment;
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.driver.api.testing.TestHelperFactory;
-import io.yawp.repository.*;
+import io.yawp.repository.Feature;
+import io.yawp.repository.Repository;
+import io.yawp.repository.RepositoryFeatures;
+import io.yawp.repository.Yawp;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.servlet.EndpointServlet;
 import org.junit.After;
 import org.junit.Before;
@@ -14,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -30,24 +35,31 @@ public class EndpointTestCaseBase extends Feature {
     public void setUp() {
         Environment.setIfEmpty(Environment.DEFAULT_TEST_ENVIRONMENT);
 
-        yawp = Repository.r().setFeatures(getFeatures());
-        helper = testHelperDriver(yawp);
+        yawp = initYawp();
+        helper = getTestHelper(yawp);
         helper.setUp();
     }
 
     protected String getAppPackage() {
-        return "io.yawp";
+        return null;
     }
 
-    private RepositoryFeatures getFeatures() {
-        if (features != null) {
-            return features;
+    protected Repository initYawp() {
+        String appPackage = getAppPackage();
+        if (appPackage != null) {
+            Yawp.init(appPackage);
         }
-        features = new EndpointScanner(getAppPackage()).scan();
-        return features;
+        return Yawp.yawp();
     }
 
-    private TestHelper testHelperDriver(Repository r) {
+    /**
+     * Override this method to define a custom test helper for
+     * your tests.
+     *
+     * @param r The yawp repository reference.
+     * @return An implementation of {@link TestHelper}.
+     */
+    protected TestHelper getTestHelper(Repository r) {
         return TestHelperFactory.getTestHelper(r);
     }
 
@@ -316,5 +328,9 @@ public class EndpointTestCaseBase extends Feature {
         Map<String, String> map = new HashMap<String, String>();
         map.put(key, value);
         return map;
+    }
+
+    protected void awaitAsync(long timeout, TimeUnit unit) {
+        helper.awaitAsync(timeout, unit);
     }
 }

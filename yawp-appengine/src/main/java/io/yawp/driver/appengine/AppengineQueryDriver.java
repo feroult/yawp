@@ -1,49 +1,25 @@
 package io.yawp.driver.appengine;
 
+import com.google.appengine.api.datastore.*;
+import com.google.appengine.api.datastore.Query.*;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.DateUtils;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.driver.api.QueryDriver;
-import io.yawp.repository.FieldModel;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectHolder;
-import io.yawp.repository.ObjectModel;
 import io.yawp.repository.Repository;
+import io.yawp.repository.models.FieldModel;
+import io.yawp.repository.models.ObjectHolder;
+import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.QueryOrder;
-import io.yawp.repository.query.condition.BaseCondition;
-import io.yawp.repository.query.condition.JoinedCondition;
-import io.yawp.repository.query.condition.LogicalOperator;
-import io.yawp.repository.query.condition.SimpleCondition;
-import io.yawp.repository.query.condition.WhereOperator;
+import io.yawp.repository.query.condition.*;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
-import com.google.appengine.api.datastore.Cursor;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.FetchOptions;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.CompositeFilterOperator;
-import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
-import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.datastore.QueryResultList;
-import com.google.appengine.api.datastore.Text;
+import java.util.*;
 
 public class AppengineQueryDriver implements QueryDriver {
 
@@ -195,6 +171,10 @@ public class AppengineQueryDriver implements QueryDriver {
                 continue;
             }
 
+            if (fieldModel.isTransient()) {
+                continue;
+            }
+
             safeSetObjectProperty(entity, object, fieldModel);
         }
 
@@ -242,6 +222,10 @@ public class AppengineQueryDriver implements QueryDriver {
             return;
         }
 
+        if (fieldModel.isListOfIds()) {
+            setListOfIdsProperty(object, field, value);
+        }
+
         field.set(object, value);
     }
 
@@ -265,6 +249,18 @@ public class AppengineQueryDriver implements QueryDriver {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <T> void setEnumProperty(T object, Field field, Object value) throws IllegalAccessException {
         field.set(object, Enum.valueOf((Class) field.getType(), value.toString()));
+    }
+
+    private <T> void setListOfIdsProperty(T object, Field field, Object value) throws IllegalAccessException {
+        List<String> uris = (List<String>) value;
+        List<IdRef<?>> ids = new ArrayList<>(uris.size());
+        Class<?> listGenericClazz = ReflectionUtils.getListGenericType(field.getGenericType());
+
+        for (String uri : uris) {
+            ids.add(r.parseId(listGenericClazz, uri));
+        }
+
+        field.set(object, ids);
     }
 
     // Filter for query

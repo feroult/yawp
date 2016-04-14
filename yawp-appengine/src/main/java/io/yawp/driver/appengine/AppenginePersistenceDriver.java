@@ -1,24 +1,18 @@
 package io.yawp.driver.appengine;
 
+import com.google.appengine.api.datastore.*;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.driver.api.PersistenceDriver;
-import io.yawp.repository.FieldModel;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectHolder;
 import io.yawp.repository.Repository;
-
-import java.util.List;
-import java.util.concurrent.Future;
-
+import io.yawp.repository.models.FieldModel;
+import io.yawp.repository.models.ObjectHolder;
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.appengine.api.datastore.AsyncDatastoreService;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.Text;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 public class AppenginePersistenceDriver implements PersistenceDriver {
 
@@ -28,7 +22,6 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 
     public AppenginePersistenceDriver(Repository r) {
         this.r = r;
-
     }
 
     private DatastoreService datastore() {
@@ -98,6 +91,10 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
                 continue;
             }
 
+            if (fieldModel.isTransient()) {
+                continue;
+            }
+
             setEntityProperty(objectHolder, entity, fieldModel);
         }
     }
@@ -143,7 +140,19 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
             return new Text(value.toString());
         }
 
+        if (fieldModel.isListOfIds()) {
+            return convertToListOfUris((List<IdRef<?>>) value);
+        }
+
         return value;
+    }
+
+    private List<String> convertToListOfUris(List<IdRef<?>> ids) {
+        List<String> uris = new ArrayList<>(ids.size());
+        for (IdRef<?> id : ids) {
+            uris.add(id.getUri());
+        }
+        return uris;
     }
 
     private Object normalizeValue(Object o) {

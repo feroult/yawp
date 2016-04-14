@@ -7,10 +7,13 @@ public class DefaultKindResolver extends KindResolver {
     @Override
     public String getKind(Class<?> clazz) {
         Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
-        if (endpoint.path() == null) {
-            return clazz.getSimpleName();
+        if (!endpoint.kind().isEmpty()) {
+            return endpoint.kind();
         }
-        return endpoint.path().substring(1).replaceAll("-", "_");
+        if (!endpoint.path().isEmpty()) {
+            return endpoint.path().substring(1).replaceAll("-", "_");
+        }
+        return clazz.getSimpleName();
     }
 
     @Override

@@ -4,9 +4,11 @@ import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.RequestContext;
+import io.yawp.commons.utils.Environment;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.*;
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.servlet.rest.RestAction;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,9 +41,8 @@ public class EndpointRouter {
     private List<?> objects;
 
     private EndpointRouter(Repository r, RequestContext ctx) {
-
         if (isWelcome(ctx.getUri())) {
-            throw new HttpException(200, "Welcome to YAWP!");
+            welcome(r);
         }
 
         this.r = r;
@@ -60,6 +61,14 @@ public class EndpointRouter {
 
     private boolean isWelcome(String uri) {
         return uri.equals("") || uri.equals("/");
+    }
+
+    private void welcome(Repository r) {
+        Welcome welcome = new Welcome();
+        welcome.setMessage("Welcome to YAWP!");
+        welcome.setVersion(Environment.version());
+        welcome.setDriver(r.driver().name());
+        throw new HttpException(200, JsonUtils.to(welcome));
     }
 
     public static EndpointRouter parse(Repository r, RequestContext ctx) {
@@ -83,9 +92,9 @@ public class EndpointRouter {
 
         if (isOverCollection()) {
             if (isCustomAction()) {
-                return features.get("/" + parts[parts.length - 2]).getClazz();
+                return features.getByPath("/" + parts[parts.length - 2]).getClazz();
             }
-            return features.get("/" + parts[parts.length - 1]).getClazz();
+            return features.getByPath("/" + parts[parts.length - 1]).getClazz();
         }
 
         return id.getClazz();
@@ -236,7 +245,7 @@ public class EndpointRouter {
             IdRef<?> parentIdInObject = forceParentIdInObjectIfNecessary(object, idInObject);
 
             if (idInObject == null) {
-                if (parentIdInObject != null && !parentIdInObject.equals(id)) {
+                if (parentIdInObject != null && id != null && !parentIdInObject.equals(id)) {
                     return false;
                 }
                 continue;

@@ -44,7 +44,7 @@ public class AppengineWebAppContextHelper extends WebAppContextHelper {
 
     @Override
     protected WebAppContext createWebAppContext() {
-        return new AppengineWebAppContext(mojo.getAppDir(), "");
+        return new AppengineWebAppContext(mojo);
     }
 
     @Override

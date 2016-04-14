@@ -1,29 +1,29 @@
 package io.yawp.servlet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import io.yawp.commons.http.HttpException;
-import io.yawp.commons.http.HttpVerb;
+import io.yawp.commons.utils.Environment;
 import io.yawp.commons.utils.ServletTestCase;
 import io.yawp.repository.EndpointFeatures;
+import io.yawp.repository.Repository;
 import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
-
-import java.util.ArrayList;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
+
+import static org.junit.Assert.*;
+
 public class EndpointRouterTest extends ServletTestCase {
+
+    private Repository yawp;
 
     private class RepositoryFeaturesMock extends RepositoryFeatures {
 
         private RepositoryFeatures features;
 
         public RepositoryFeaturesMock(RepositoryFeatures features) {
-            super(new ArrayList<EndpointFeatures<?>>());
+            super(new HashMap<Class<?>, EndpointFeatures<?>>());
             this.features = features;
         }
 
@@ -38,19 +38,20 @@ public class EndpointRouterTest extends ServletTestCase {
         }
 
         @Override
-        public EndpointFeatures<?> get(String endpointPath) {
-            return features.get(endpointPath);
+        public EndpointFeatures<?> getByPath(String endpointPath) {
+            return features.getByPath(endpointPath);
         }
 
         @Override
-        public EndpointFeatures<?> get(Class<?> clazz) {
-            return features.get(clazz);
+        public EndpointFeatures<?> getByClazz(Class<?> clazz) {
+            return features.getByClazz(clazz);
         }
     }
 
     @Before
     public void before() {
-        yawp.setFeatures(new RepositoryFeaturesMock(yawp.getFeatures()));
+        yawp = Repository.r().setFeatures(new RepositoryFeaturesMock(super.yawp.getFeatures()));
+        //yawp.setFeatures(new RepositoryFeaturesMock(yawp.getFeatures()));
     }
 
     private EndpointRouter parse(String uri) {
@@ -63,17 +64,28 @@ public class EndpointRouterTest extends ServletTestCase {
 
     @Test
     public void testWelcome() {
+        String version = Environment.version();
+        String driver = yawp.driver().name();
+
         try {
             get("");
             assertTrue(false);
         } catch (HttpException e) {
-            assertEquals("Welcome to YAWP!", e.getText());
+            Welcome welcome = from(e.getText(), Welcome.class);
+
+            assertEquals("Welcome to YAWP!", welcome.getMessage());
+            assertEquals(version, welcome.getVersion());
+            assertEquals(driver, welcome.getDriver());
         }
         try {
             get("/");
             assertTrue(false);
         } catch (HttpException e) {
-            assertEquals("Welcome to YAWP!", e.getText());
+            Welcome welcome = from(e.getText(), Welcome.class);
+
+            assertEquals("Welcome to YAWP!", welcome.getMessage());
+            assertEquals(version, welcome.getVersion());
+            assertEquals(driver, welcome.getDriver());
         }
     }
 
@@ -189,6 +201,7 @@ public class EndpointRouterTest extends ServletTestCase {
 
         assertTrue(parse("POST", "/children", "{}").tryToAdjustIds());
         assertTrue(parse("POST", "/children", "[{}, {}]").tryToAdjustIds());
+        assertTrue(parse("POST", "/children", "{parentId: '/parents/1'}").tryToAdjustIds());
         assertTrue(parse("POST", "/children", "{id: '/parents/1/children/1'}").tryToAdjustIds());
         assertTrue(parse("POST", "/children", "[{id: '/parents/1/children/1'}, {id: '/parents/2/children/2'}]").tryToAdjustIds());
         assertTrue(parse("POST", "/children", "[{id: '/parents/1/children/1'}, {}]").tryToAdjustIds());

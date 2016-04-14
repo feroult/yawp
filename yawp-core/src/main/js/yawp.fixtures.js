@@ -7,7 +7,7 @@
 	// config
 
 	var baseUrl = '/fixtures';
-	var resetUrl = '/_yawp/delete_all';
+	var resetUrl = '/_ah/yawp/datastore/delete_all';
 	var lazyPropertyKeys = [ 'id' ]; // needed till harmony proxies
 
 	var api = {};

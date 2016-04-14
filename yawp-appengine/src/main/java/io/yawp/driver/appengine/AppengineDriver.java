@@ -1,12 +1,6 @@
 package io.yawp.driver.appengine;
 
-import io.yawp.driver.api.Driver;
-import io.yawp.driver.api.EnvironmentDriver;
-import io.yawp.driver.api.HelpersDriver;
-import io.yawp.driver.api.NamespaceDriver;
-import io.yawp.driver.api.PersistenceDriver;
-import io.yawp.driver.api.QueryDriver;
-import io.yawp.driver.api.TransactionDriver;
+import io.yawp.driver.api.*;
 import io.yawp.repository.Repository;
 
 public class AppengineDriver implements Driver {
@@ -16,6 +10,11 @@ public class AppengineDriver implements Driver {
     @Override
     public void init(Repository r) {
         this.r = r;
+    }
+
+    @Override
+    public String name() {
+        return "appengine";
     }
 
     @Override
@@ -35,7 +34,7 @@ public class AppengineDriver implements Driver {
 
     @Override
     public TransactionDriver transaction() {
-        return new AppengineTransationDriver();
+        return new AppengineTransationDriver(new AppengineEnvironmentDriver());
     }
 
     @Override
@@ -46,5 +45,10 @@ public class AppengineDriver implements Driver {
     @Override
     public HelpersDriver helpers() {
         return new AppengineHelpersDriver();
+    }
+
+    @Override
+    public PipesDriver pipes() {
+        return new AppenginePipesDriver(r);
     }
 }

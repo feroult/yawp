@@ -2,7 +2,7 @@ package io.yawp.driver.mock;
 
 import io.yawp.driver.mock.MockOperation.Type;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.ObjectHolder;
+import io.yawp.repository.models.ObjectHolder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import org.apache.commons.collections.map.LRUMap;
 
 public class MockStore {
 
-    private static Map<NamespacedIdRef, Object> store = new LinkedHashMap<NamespacedIdRef, Object>();
+    private static Map<NamespacedIdRef, Object> store = new LinkedHashMap<>();
 
     private static long nextId = 1;
 

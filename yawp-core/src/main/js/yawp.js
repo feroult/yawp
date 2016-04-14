@@ -1,283 +1,354 @@
-(function ($) {
+module.exports = (function () {
 
-    var baseUrl = '/api';
+	var baseUrl = '/api';
 
-    function config(callback) {
-        var c = {
-            baseUrl: function (url) {
-                baseUrl = url;
-            }
-        };
+	function config(callback) {
+		var c = {
+			baseUrl: function (url) {
+				baseUrl = url;
+			}
+		};
 
-        callback(c);
-    }
+		callback(c);
+	}
 
-    function defaultAjax(type, options) {
-        var request = $.ajax({
-            type: type,
-            url: baseUrl + options.url + (options.query ? '?' + $.param(options.query) : ''),
-            data: options.data,
-            async: options.async,
-            contentType: 'application/json;charset=UTF-8',
-            dataType: 'json'
-        });
+	function extend() {
+		var result = arguments[0] || {};
 
-        return $.extend(request, {
-            exception: function (fn) {
-                this.error(function (err) {
-                    fn(err.responseJSON)
-                });
-            }
-        });
-    }
+		for (var i = 1, l = arguments.length; i < l; i++) {
+			var obj = arguments[i];
+			for (var attrname in obj) {
+				result[attrname] = obj[attrname];
+			}
+		}
 
-    function extractId(object) {
-        if (object.id) {
-            return object.id;
-        }
-        throw 'use yawp(id) if your endpoint does not have a @Id field called id';
-    }
+		return result;
+	}
 
-    function query(options) {
-        var q = {};
+	function toUrlParam(jsonParams) {
+		return Object.keys(jsonParams).map(function(k) {
+			return encodeURIComponent(k) + '=' + encodeURIComponent(jsonParams[k])
+		}).join('&')
+	}
 
-        function where(data) {
-            if (arguments.length === 1) {
-                q.where = data;
-            } else {
-                q.where = $.makeArray(arguments);
-            }
-            return this;
-        }
+	function defaultAjax(type, options) {
+		var fail
+			,done
+			,exception
+			,then
+			,error
+			,request
+			,url;
 
-        function order(data) {
-            q.order = data;
-            return this;
-        }
+		url = baseUrl + options.url + (options.query ? '?' + toUrlParam(options.query) : '');
 
-        function sort(data) {
-            q.sort = data;
-            return this;
-        }
+		var callbacks = {
+			fail: function (callback) {
+				fail = callback;
+				request.onreadystatechange();
+				return callbacks;
+			},
+			done: function (callback) {
+				done = callback;
+				request.onreadystatechange();
+				return callbacks;
+			},
+			exception: function (callback) {
+				exception = callback;
+				request.onreadystatechange();
+				return callbacks;
+			},
+			then: function (callback) {
+				then = callback;
+				request.onreadystatechange();
+				return callbacks;
+			},
+			error: function (callback) {
+				error = callback;
+				request.onreadystatechange();
+				return callbacks;
+			}
+		};
 
-        function limit(data) {
-            q.limit = data;
-            return this;
-        }
+		request = new XMLHttpRequest();
+		request.onreadystatechange = function() {
+			if (request.readyState === 4) {
+				if(request.status === 200) {
+					if(done) {
+						done(JSON.parse(request.responseText));
+					}
+					if(then) {
+						then(JSON.parse(request.responseText));
+					}
+				} else {
+					if(fail) {
+						fail(request);
+					}
+					if(error) {
+						error(extend({}, request, {responseJSON:JSON.parse(request.responseText)}));
+					}
+					if(exception) {
+						exception(JSON.parse(request.responseText));
+					}
+				}
+			}
+		};
 
-        function fetch(callback) {
-            return defaultAjax('GET', options()).done(callback);
-        }
+		request.open(type, url, options.async);
+		request.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+		request.send(options.data);
 
-        function setupQuery() {
-            if (Object.keys(q).length > 0) {
-                options.addQueryParameter('q', JSON.stringify(q));
-            }
-        }
+		return callbacks;
+	}
 
-        function url(decode) {
-            setupQuery();
-            var url = baseUrl + options().url + (options().query ? '?' + $.param(options().query) : '');
-            if (decode) {
-                return decodeURIComponent(url);
-            }
-            return url;
-        }
+	function extractId(object) {
+		if (object.id) {
+			return object.id;
+		}
+		throw 'use yawp(id) if your endpoint does not have a @Id field called id';
+	}
 
-        function list(callback) {
-            setupQuery();
-            return defaultAjax('GET', options()).done(callback);
-        }
+	function query(options) {
+		var q = {};
 
-        function first(callback) {
-            limit(1);
+		function where(data) {
+			if (arguments.length === 1) {
+				q.where = data;
+			} else {
+				q.where = [].slice.call(arguments);
+			}
+			return this;
+		}
 
-            return list(function (objects) {
-                var object = objects.length == 0 ? null : objects[0];
-                if (callback) {
-                    callback(object);
-                }
-            });
-        }
+		function order(data) {
+			q.order = data;
+			return this;
+		}
 
-        function only(callback) {
-            return list(function (objects) {
-                if (objects.length != 1) {
-                    throw 'called only but got ' + objects.length + ' results';
-                }
-                if (callback) {
-                    callback(objects[0]);
-                }
-            });
-        }
+		function sort(data) {
+			q.sort = data;
+			return this;
+		}
 
-        return {
-            where: where,
-            order: order,
-            sort: sort,
-            limit: limit,
-            fetch: fetch,
-            list: list,
-            first: first,
-            only: only,
-            url: url
-        };
-    }
+		function limit(data) {
+			q.limit = data;
+			return this;
+		}
 
-    function repository(options) {
-        function create(object) {
-            options().data = JSON.stringify(object);
-            return defaultAjax('POST', options());
-        }
+		function fetch(callback) {
+			return defaultAjax('GET', options()).done(callback);
+		}
 
-        function update(object) {
-            options().data = JSON.stringify(object);
-            return defaultAjax('PUT', options());
-        }
+		function setupQuery() {
+			if (Object.keys(q).length > 0) {
+				options.addQueryParameter('q', JSON.stringify(q));
+			}
+		}
 
-        function patch(object) {
-            options().data = JSON.stringify(object);
-            return defaultAjax('PATCH', options());
-        }
+		function url(decode) {
+			setupQuery();
+			var url = baseUrl + options().url + (options().query ? '?' + toUrlParam(options().query) : '');
+			if (decode) {
+				return decodeURIComponent(url);
+			}
+			return url;
+		}
 
-        function destroy() {
-            return defaultAjax('DELETE', options());
-        }
+		function list(callback) {
+			setupQuery();
+			return defaultAjax('GET', options()).done(callback);
+		}
 
-        return {
-            create: create,
-            update: update,
-            patch: patch,
-            destroy: destroy
-        };
-    }
+		function first(callback) {
+			limit(1);
 
-    function actions(options) {
-        function actionOptions(action) {
-            options().url += '/' + action;
-            return options();
-        }
+			return list(function (objects) {
+				var object = objects.length == 0 ? null : objects[0];
+				if (callback) {
+					callback(object);
+				}
+			});
+		}
 
-        function json(object) {
-            options.setJson(object);
-            return this;
-        }
+		function only(callback) {
+			return list(function (objects) {
+				if (objects.length != 1) {
+					throw 'called only but got ' + objects.length + ' results';
+				}
+				if (callback) {
+					callback(objects[0]);
+				}
+			});
+		}
 
-        function params(params) {
-            options.addQueryParameters(params);
-            return this;
-        }
+		return {
+			where: where,
+			order: order,
+			sort: sort,
+			limit: limit,
+			fetch: fetch,
+			list: list,
+			first: first,
+			only: only,
+			url: url
+		};
+	}
 
-        function get(action) {
-            return defaultAjax('GET', actionOptions(action));
-        }
+	function repository(options) {
+		function create(object) {
+			options().data = JSON.stringify(object);
+			return defaultAjax('POST', options());
+		}
 
-        function put(action) {
-            return defaultAjax('PUT', actionOptions(action));
-        }
+		function update(object) {
+			options().data = JSON.stringify(object);
+			return defaultAjax('PUT', options());
+		}
 
-        function _patch(action) {
-            return defaultAjax('PATCH', actionOptions(action));
-        }
+		function patch(object) {
+			options().data = JSON.stringify(object);
+			return defaultAjax('PATCH', options());
+		}
 
-        function post(action) {
-            return defaultAjax('POST', actionOptions(action));
-        }
+		function destroy() {
+			return defaultAjax('DELETE', options());
+		}
 
-        function _delete(action) {
-            return defaultAjax('DELETE', actionOptions(action));
-        }
+		return {
+			create: create,
+			update: update,
+			patch: patch,
+			destroy: destroy
+		};
+	}
 
-        return {
-            json: json,
-            params: params,
-            get: get,
-            put: put,
-            _patch: _patch,
-            post: post,
-            _delete: _delete
-        };
-    }
+	function actions(options) {
+		function actionOptions(action) {
+			options().url += '/' + action;
+			return options();
+		}
 
-    function yawp(baseArg) {
-        function normalize(arg) {
-            if (!arg) {
-                return '';
-            }
-            if (arg instanceof Object) {
-                return extractId(arg);
-            }
-            return arg;
-        }
+		function json(object) {
+			options.setJson(object);
+			return this;
+		}
 
-        var ajaxOptions = {
-            url: normalize(baseArg)
-        }
+		function params(params) {
+			options.addQueryParameters(params);
+			return this;
+		}
 
-        function options() {
-            return ajaxOptions;
-        }
+		function get(action) {
+			return defaultAjax('GET', actionOptions(action));
+		}
 
-        options.setJson = function (object) {
-            ajaxOptions.data = JSON.stringify(object);
-        };
+		function put(action) {
+			return defaultAjax('PUT', actionOptions(action));
+		}
 
-        options.addQueryParameters = function (params) {
-            ajaxOptions.query = $.extend(ajaxOptions.query, params);
-        };
+		function _patch(action) {
+			return defaultAjax('PATCH', actionOptions(action));
+		}
 
-        options.addQueryParameter = function (key, value) {
-            if (!ajaxOptions.query) {
-                ajaxOptions.query = {};
-            }
-            ajaxOptions.query[key] = value;
-        };
+		function post(action) {
+			return defaultAjax('POST', actionOptions(action));
+		}
 
-        function from(parentBaseArg) {
-            var parentBase = normalize(parentBaseArg);
-            options().url = parentBase + options().url;
-            return this;
-        }
+		function _delete(action) {
+			return defaultAjax('DELETE', actionOptions(action));
+		}
 
-        function transform(t) {
-            options.addQueryParameter('t', t);
-            return this;
-        }
+		return {
+			json: json,
+			params: params,
+			get: get,
+			put: put,
+			_patch: _patch,
+			post: post,
+			_delete: _delete
+		};
+	}
 
-        function sync() {
-            ajaxOptions.async = false;
-            return this;
-        }
+	function yawp(baseArg) {
+		function normalize(arg) {
+			if (!arg) {
+				return '';
+			}
+			if (arg instanceof Object) {
+				return extractId(arg);
+			}
+			return arg;
+		}
 
-        return $.extend({
-            from: from,
-            transform: transform,
-            sync: sync
-        }, query(options), repository(options), actions(options));
-    }
+		var ajaxOptions = {
+			url: normalize(baseArg),
+			async: true
+		};
 
-    function update(object) {
-        var id = extractId(object);
-        return yawp(id).update(object);
-    }
+		function options() {
+			return ajaxOptions;
+		}
 
-    function patch(object) {
-        var id = extractId(object);
-        return yawp(id).patch(object);
-    }
+		options.setJson = function (object) {
+			ajaxOptions.data = JSON.stringify(object);
+		};
 
-    function destroy(object) {
-        var id = extractId(object);
-        return yawp(id).destroy(object);
-    }
+		options.addQueryParameters = function (params) {
+			ajaxOptions.query = extend(ajaxOptions.query, params);
+		};
 
-    var api = {
-        config: config,
-        update: update,
-        patch: patch,
-        destroy: destroy
-    };
+		options.addQueryParameter = function (key, value) {
+			if (!ajaxOptions.query) {
+				ajaxOptions.query = {};
+			}
+			ajaxOptions.query[key] = value;
+		};
 
-    window.yawp = $.extend(yawp, api);
+		function from(parentBaseArg) {
+			var parentBase = normalize(parentBaseArg);
+			options().url = parentBase + options().url;
+			return this;
+		}
 
-})(jQuery);
+		function transform(t) {
+			options.addQueryParameter('t', t);
+			return this;
+		}
+
+		function sync() {
+			ajaxOptions.async = false;
+			return this;
+		}
+
+		return extend({
+			from: from,
+			transform: transform,
+			sync: sync
+		}, query(options), repository(options), actions(options));
+	}
+
+	function update(object) {
+		var id = extractId(object);
+		return yawp(id).update(object);
+	}
+
+	function patch(object) {
+		var id = extractId(object);
+		return yawp(id).patch(object);
+	}
+
+	function destroy(object) {
+		var id = extractId(object);
+		return yawp(id).destroy(object);
+	}
+
+	var api = {
+		config: config,
+		update: update,
+		patch: patch,
+		destroy: destroy
+	};
+
+	return extend(yawp, api);
+	
+})();

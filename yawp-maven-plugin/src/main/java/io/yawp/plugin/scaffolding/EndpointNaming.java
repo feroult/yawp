@@ -1,11 +1,11 @@
 package io.yawp.plugin.scaffolding;
 
+import org.apache.commons.lang.WordUtils;
+import org.atteo.evo.inflector.English;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import org.apache.commons.lang.WordUtils;
-import org.atteo.evo.inflector.English;
 
 public class EndpointNaming {
 
@@ -18,6 +18,10 @@ public class EndpointNaming {
     private String transformer;
 
     private String hook;
+
+    private String pipe;
+
+    private String pipeSink;
 
     public EndpointNaming(String input) {
         loadCustomPlurals();
@@ -59,6 +63,16 @@ public class EndpointNaming {
 
     public EndpointNaming hook(String hook) {
         this.hook = hook;
+        return this;
+    }
+
+    public EndpointNaming pipe(String pipe) {
+        this.pipe = pipe;
+        return this;
+    }
+
+    public EndpointNaming pipeSink(String sink) {
+        this.pipeSink = sink;
         return this;
     }
 
@@ -122,4 +136,21 @@ public class EndpointNaming {
     public String getHookFilename() {
         return String.format("%s/%s.java", getPackageName(), getHookName());
     }
+
+    public String getPipeName() {
+        return String.format("%s%sPipe", getName(), capitalize(pipe));
+    }
+
+    public String getPipeSinkName() {
+        return capitalize(pipeSink);
+    }
+
+    public String getPipeSinkInstance() {
+        return WordUtils.uncapitalize(getPipeSinkName());
+    }
+
+    public String getPipeFilename() {
+        return String.format("%s/%s.java", getPackageName(), getPipeName());
+    }
+
 }

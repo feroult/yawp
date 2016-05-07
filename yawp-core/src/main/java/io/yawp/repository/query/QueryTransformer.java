@@ -4,7 +4,6 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.transformers.RepositoryTransformers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class QueryTransformer<F, T> {
@@ -73,13 +72,8 @@ public class QueryTransformer<F, T> {
     }
 
     public List<T> list() {
-        List<T> transformedList = new ArrayList<T>();
         List<F> list = query.executeQueryList();
-
-        for (F object : list) {
-            transformedList.add(RepositoryTransformers.<F, T>execute(query.getRepository(), object, transformName));
-        }
-
+        List<T> transformedList = RepositoryTransformers.execute(query.getRepository(), list, transformName);
         query.sortList(transformedList);
         return transformedList;
     }

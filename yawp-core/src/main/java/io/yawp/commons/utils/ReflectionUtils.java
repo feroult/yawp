@@ -1,8 +1,6 @@
 package io.yawp.commons.utils;
 
 
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
@@ -136,9 +134,11 @@ public final class ReflectionUtils {
             if (Map.class.isInstance(o)) {
                 return ((Map<?, ?>) o).get(property);
             }
-
-            return new PropertyDescriptor(property, o.getClass()).getReadMethod().invoke(o);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | IntrospectionException e) {
+            Field field = getFieldRecursively(o.getClass(), property);
+            field.setAccessible(true);
+            return field.get(o);
+            //return new PropertyDescriptor(property, o.getClass()).getReadMethod().invoke(o);
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }

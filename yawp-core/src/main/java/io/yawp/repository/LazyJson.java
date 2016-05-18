@@ -4,17 +4,24 @@ import com.google.gson.JsonObject;
 
 import io.yawp.commons.utils.JsonUtils;
 
-public class LazyJson {
+public class LazyJson<T> {
 
-	public String json;
-	public Class<?> clazz;
+	private String json;
+	private Class<T> clazz;
 
-	public void set(Object value) {
-		this.clazz = value.getClass();
+	@SuppressWarnings("unchecked")
+	public void set(T value) {
+		this.clazz = ((Class<T>) value.getClass());
 		this.json = JsonUtils.to(value);
 	}
 
-	public Object get() {
+	public static <T> LazyJson<T> from(T object) {
+		LazyJson<T> lazyJson = new LazyJson<T>();
+		lazyJson.set(object);
+		return lazyJson;
+	}
+
+	public T get() {
 		return JsonUtils.from(Yawp.yawp(), json, clazz);
 	}
 
@@ -23,16 +30,33 @@ public class LazyJson {
 		return "{json : '" + json + "', clazz: '" + clazz.getName() + "' }";
 	}
 
-	public static LazyJson parse(JsonObject object) {
+	@SuppressWarnings("unchecked")
+	public static <T> LazyJson<T> parse(JsonObject object) {
 		try {
-			LazyJson lazyJson = new LazyJson();
-			lazyJson.clazz = Class.forName(object.get("clazz").getAsString());
+			LazyJson<T> lazyJson = new LazyJson<T>();
+			lazyJson.clazz = ((Class<T>) Class.forName(object.get("clazz").getAsString()));
 			lazyJson.json = object.get("json").getAsString();
 			return lazyJson;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public String getJson() {
+		return json;
+	}
+
+	public void setJson(String json) {
+		this.json = json;
+	}
+
+	public Class<T> getClazz() {
+		return clazz;
+	}
+
+	public void setClazz(Class<T> clazz) {
+		this.clazz = clazz;
 	}
 
 }

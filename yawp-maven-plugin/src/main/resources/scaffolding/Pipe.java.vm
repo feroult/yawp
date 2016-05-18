@@ -1,0 +1,22 @@
+package ${yawpPackage}.models.${endpoint.packageName};
+
+import io.yawp.repository.pipes.Pipe;
+
+public class $endpoint.pipeName extends Pipe<$endpoint.name, $endpoint.pipeSinkName> {
+
+    @Override
+    public void configureSinks($endpoint.name $endpoint.instance) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void flux($endpoint.name $endpoint.instance, $endpoint.pipeSinkName $endpoint.pipeSinkInstance) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void reflux($endpoint.name $endpoint.instance, $endpoint.pipeSinkName $endpoint.pipeSinkInstance) {
+        // TODO Auto-generated method stub
+    }
+
+}

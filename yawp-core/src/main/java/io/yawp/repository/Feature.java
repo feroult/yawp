@@ -2,9 +2,11 @@ package io.yawp.repository;
 
 import io.yawp.commons.http.RequestContext;
 import io.yawp.commons.utils.JsonUtils;
+import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.query.QueryBuilder;
-import org.apache.commons.beanutils.PropertyUtils;
 
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -63,10 +65,14 @@ public class Feature {
 
     protected Map<String, Object> asMap(Object object) {
         try {
-            Map<String, Object> map = PropertyUtils.describe(object);
-            map.remove("class");
+            Map<String, Object> map = new HashMap<>();
+            List<Field> fields = ReflectionUtils.getFieldsRecursively(object.getClass());
+            for (Field field : fields) {
+                field.setAccessible(true);
+                map.put(field.getName(), field.get(object));
+            }
             return map;
-        } catch (ReflectiveOperationException e) {
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }

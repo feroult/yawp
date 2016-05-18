@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ParentCustomActionTest extends ParentServletTestCase {
 
@@ -74,7 +75,7 @@ public class ParentCustomActionTest extends ParentServletTestCase {
         String json = get(uri("/parents/%s/echo", parent), params("t", "upperCase"));
         Parent retrievedParent = from(json, Parent.class);
 
-        assertEquals("XPTO1", retrievedParent.getName());
+        assertTrue(retrievedParent.getName().startsWith("XPTO1"));
     }
 
     @Test
@@ -86,8 +87,15 @@ public class ParentCustomActionTest extends ParentServletTestCase {
         List<Parent> parents = fromList(json, Parent.class);
 
         assertEquals(2, parents.size());
-        assertEquals("XPTO1", parents.get(0).getName());
-        assertEquals("XPTO2", parents.get(1).getName());
+        String upperCaseName1 = parents.get(0).getName();
+        String upperCaseName2 = parents.get(1).getName();
+        assertTrue(upperCaseName1.startsWith("XPTO1"));
+        assertTrue(upperCaseName2.startsWith("XPTO2"));
+
+        // asserts if only one instance of the transformer was created
+        String random1 = upperCaseName1.substring(7);
+        String random2 = upperCaseName2.substring(7);
+        assertEquals(random1, random2);
     }
 
     @Test

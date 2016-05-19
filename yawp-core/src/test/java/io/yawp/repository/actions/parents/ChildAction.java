@@ -47,6 +47,8 @@ public class ChildAction extends Action<Child> {
     public String withJsonAndParams(IdRef<Parent> parentId, BasicObject object, Map<String, String> params) {
         return object.getStringValue() + " " + params.get("x") + " - " + object.getId();
     }
+    
+    public void xpto(Child c, String bla) {}
 
     public void notActionMethod(Child child, String s) {
     }

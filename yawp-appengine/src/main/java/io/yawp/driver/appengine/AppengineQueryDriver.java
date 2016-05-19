@@ -2,6 +2,7 @@ package io.yawp.driver.appengine;
 
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.datastore.Query.*;
+
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.DateUtils;
 import io.yawp.commons.utils.JsonUtils;
@@ -15,10 +16,12 @@ import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.condition.*;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 public class AppengineQueryDriver implements QueryDriver {
@@ -206,6 +209,11 @@ public class AppengineQueryDriver implements QueryDriver {
             setJsonProperty(r, object, field, value);
             return;
         }
+        
+        if (fieldModel.isSaveAsLazyJson()) {
+            setLazyJsonProperty(r, object, field, value);
+            return;
+        }
 
         if (fieldModel.isInt()) {
             setIntProperty(object, field, value);
@@ -244,6 +252,10 @@ public class AppengineQueryDriver implements QueryDriver {
     private <T> void setJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
         String json = ((Text) value).getValue();
         field.set(object, JsonUtils.from(r, json, field.getGenericType()));
+    }
+    
+    private <T> void setLazyJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
+    	setJsonProperty(r, object, field, value);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

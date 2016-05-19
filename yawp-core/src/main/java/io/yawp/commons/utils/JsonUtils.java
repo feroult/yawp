@@ -1,6 +1,8 @@
 package io.yawp.commons.utils;
 
 import io.yawp.repository.IdRef;
+import io.yawp.repository.LazyJson;
+import io.yawp.repository.LazyJsonAdapter;
 import io.yawp.repository.Repository;
 
 import java.io.BufferedReader;
@@ -23,6 +25,7 @@ public class JsonUtils {
         GsonBuilder builder = new GsonBuilder();
         builder.setDateFormat(DateUtils.TIMESTAMP_FORMAT);
         builder.registerTypeAdapter(IdRef.class, new IdRefJsonAdapter(r));
+        builder.registerTypeAdapter(LazyJson.class, new LazyJsonAdapter());
         return builder.create();
     }
 

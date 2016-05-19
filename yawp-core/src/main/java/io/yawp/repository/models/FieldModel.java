@@ -2,6 +2,7 @@ package io.yawp.repository.models;
 
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.LazyJson;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
@@ -81,6 +82,10 @@ public class FieldModel {
     public boolean isSaveAsText() {
         return field.getAnnotation(io.yawp.repository.annotations.Text.class) != null;
     }
+    
+    public boolean isSaveAsLazyJson() {
+		return LazyJson.class.isAssignableFrom(field.getType());
+	}
 
     private Index getIndex() {
         return field.getAnnotation(Index.class);

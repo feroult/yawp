@@ -1,8 +1,8 @@
 package io.yawp.repository;
 
-import com.google.gson.JsonObject;
-
 import io.yawp.commons.utils.JsonUtils;
+
+import com.google.gson.JsonObject;
 
 public class LazyJson<T> {
 
@@ -32,15 +32,16 @@ public class LazyJson<T> {
 
 	@SuppressWarnings("unchecked")
 	public static <T> LazyJson<T> parse(JsonObject object) {
+		//FIXME pass clazz as parameter
 		try {
 			LazyJson<T> lazyJson = new LazyJson<T>();
-			lazyJson.clazz = ((Class<T>) Class.forName(object.get("clazz").getAsString()));
+			lazyJson.clazz = (Class<T>) Class.forName(object.get("clazz").getAsString());
 			lazyJson.json = object.get("json").getAsString();
 			return lazyJson;
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 
 	public String getJson() {

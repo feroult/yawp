@@ -30,9 +30,7 @@ public class LazyJsonTest extends EndpointTestCase {
 
 	@Test
 	public void lazyJobInsert() {
-		Job job = new Job();
-		job.setName("doctor");
-		job = yawp.save(job);
+		Job job = basicJob();
 
 		LazyJob lazyJob = new LazyJob();
 		LazyJson<Job> lazyJosn = LazyJson.<Job> from(job);
@@ -43,6 +41,31 @@ public class LazyJsonTest extends EndpointTestCase {
 		Assert.assertEquals(JsonUtils.to(job), lazyJosn.getJson());
 		Assert.assertEquals(job.getId(), lazyJosn.get().getId());
 		Assert.assertEquals(job.getName(), lazyJosn.get().getName());
+	}
+
+	private Job basicJob() {
+		Job job = new Job();
+		job.setName("doctor");
+		job = yawp.save(job);
+		return job;
+	}
+
+	@Test
+	public void lazyFromJsont() {
+		Job job = basicJob();
+
+		LazyJob lazyJob = new LazyJob();
+		LazyJson<Job> lazyJosn = LazyJson.<Job> from(job);
+		lazyJob.setJob(lazyJosn);
+		lazyJob = yawp.save(lazyJob);
+
+		String lazyJsonReturnedFromDataStore = "{id:'" + lazyJob.getId().getUri() + "', job : " + lazyJosn.toString() + "}";
+		LazyJob lazyJobFetched = JsonUtils.from(yawp, lazyJsonReturnedFromDataStore, LazyJob.class);
+		
+		Assert.assertEquals(lazyJob.getId(), lazyJobFetched.getId());
+		Assert.assertEquals(lazyJob.getJob().getJson(), lazyJobFetched.getJob().getJson());
+		Assert.assertEquals(lazyJob.getJob().get().getId(), lazyJobFetched.getJob().get().getId());
+		Assert.assertEquals(lazyJob.getJob().get().getName(), lazyJobFetched.getJob().get().getName());
 
 	}
 

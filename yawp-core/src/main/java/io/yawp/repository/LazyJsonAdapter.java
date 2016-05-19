@@ -14,6 +14,7 @@ public class LazyJsonAdapter implements JsonSerializer<LazyJson<?>>, JsonDeseria
 
 	@Override
 	public LazyJson<?> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+		//FIXME try to find a way to get the class of it using the Type typeOfT
 		return LazyJson.parse(json.getAsJsonObject());
 	}
 

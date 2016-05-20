@@ -19,6 +19,23 @@
 		});
 	});
 
+    t.asyncTest("create with lazy json", function(assert) {
+        expect(2);
+
+        var parent = {
+            name : 'xpto',
+            job : {
+                name: 'job xpto'
+            }
+        };
+
+        yawp('/parents').create(parent).done(function(retrievedParent) {
+            assert.equal(retrievedParent.name, 'xpto');
+            assert.equal(retrievedParent.job.name, 'job xpto');
+            t.start();
+        });
+    });
+
 	t.asyncTest("create array", function(assert) {
 		expect(3);
 

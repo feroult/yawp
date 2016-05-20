@@ -5,6 +5,7 @@ import io.yawp.commons.utils.JsonUtils;
 import io.yawp.driver.api.PersistenceDriver;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.LazyJson;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.FieldModel;
 import io.yawp.repository.models.ObjectHolder;
@@ -129,6 +130,14 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 
         if (fieldModel.isSaveAsJson()) {
             return new Text(JsonUtils.to(value));
+        }
+
+        if (fieldModel.isSaveAsLazyJson()) {
+            String json = ((LazyJson) value).getJson();
+            if (json == null) {
+                return null;
+            }
+            return new Text(json);
         }
 
         if (fieldModel.isIdRef()) {

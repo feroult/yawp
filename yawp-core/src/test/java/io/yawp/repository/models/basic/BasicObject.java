@@ -2,6 +2,7 @@ package io.yawp.repository.models.basic;
 
 import io.yawp.commons.utils.DateUtils;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.LazyJson;
 import io.yawp.repository.annotations.*;
 
 import java.util.ArrayList;
@@ -54,6 +55,8 @@ public class BasicObject {
 
     @Index
     private List<IdRef<BasicObject>> idList;
+
+    private LazyJson<Pojo> lazyPojo = new LazyJson<>();
 
     public BasicObject() {
 
@@ -195,6 +198,14 @@ public class BasicObject {
 
     public void setIdList(List<IdRef<BasicObject>> idList) {
         this.idList = idList;
+    }
+
+    public Pojo getLazyPojo() {
+        return lazyPojo.get();
+    }
+
+    public void setLazyPojo(Pojo lazyPojo) {
+        this.lazyPojo.set(lazyPojo);
     }
 
     public void assertObject(String stringValue, String textValue, int intValue, long longValue, double doubleValue, boolean booleanValue,

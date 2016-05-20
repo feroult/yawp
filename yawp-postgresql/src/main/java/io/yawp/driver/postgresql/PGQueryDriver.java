@@ -12,6 +12,7 @@ import io.yawp.driver.postgresql.datastore.FalsePredicateException;
 import io.yawp.driver.postgresql.datastore.Key;
 import io.yawp.driver.postgresql.datastore.Query;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
+import io.yawp.repository.LazyJson;
 import io.yawp.repository.models.FieldModel;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.ObjectHolder;
@@ -140,6 +141,11 @@ public class PGQueryDriver implements QueryDriver {
             return;
         }
 
+        if (fieldModel.isSaveAsLazyJson()) {
+            setLazyJsonProperty(r, object, field, value);
+            return;
+        }
+
         if (fieldModel.isInt()) {
             setIntProperty(object, field, value);
             return;
@@ -170,7 +176,7 @@ public class PGQueryDriver implements QueryDriver {
         if (fieldModel.isListOfIds()) {
             setListOfIdsProperty(object, field, value);
         }
-        
+
         field.set(object, value);
     }
 
@@ -202,6 +208,12 @@ public class PGQueryDriver implements QueryDriver {
         // override
         String json = (String) value;
         field.set(object, JsonUtils.from(r, json, field.getGenericType()));
+    }
+
+    private <T> void setLazyJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
+        String json = (String) value;
+        Class<?> clazz = (Class<?>) ReflectionUtils.getGenericTypeArgumentAt(field.getGenericType(), 0);
+        field.set(object, LazyJson.create(clazz, json));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

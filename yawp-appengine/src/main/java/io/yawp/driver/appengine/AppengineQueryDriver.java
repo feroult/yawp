@@ -2,13 +2,13 @@ package io.yawp.driver.appengine;
 
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.datastore.Query.*;
-
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.utils.DateUtils;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.driver.api.QueryDriver;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.LazyJson;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.FieldModel;
 import io.yawp.repository.models.ObjectHolder;
@@ -16,12 +16,10 @@ import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.condition.*;
-
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 public class AppengineQueryDriver implements QueryDriver {
@@ -209,7 +207,7 @@ public class AppengineQueryDriver implements QueryDriver {
             setJsonProperty(r, object, field, value);
             return;
         }
-        
+
         if (fieldModel.isSaveAsLazyJson()) {
             setLazyJsonProperty(r, object, field, value);
             return;
@@ -253,9 +251,11 @@ public class AppengineQueryDriver implements QueryDriver {
         String json = ((Text) value).getValue();
         field.set(object, JsonUtils.from(r, json, field.getGenericType()));
     }
-    
+
     private <T> void setLazyJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
-    	setJsonProperty(r, object, field, value);
+        String json = ((Text) value).getValue();
+        Class<?> clazz = (Class<?>) ReflectionUtils.getGenericTypeArgumentAt(field.getGenericType(), 0);
+        field.set(object, LazyJson.create(clazz, json));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

@@ -78,20 +78,20 @@ public final class ReflectionUtils {
         return (Class<?>) getGenericTypeArgumentAt(field.getGenericType(), 0);
     }
 
+    public static Type getGenericTypeArgumentAt(Type type, int index) {
+        Type[] parameters = getGenericTypeArguments(type);
+        if (parameters.length <= index) {
+            return null;
+        }
+        return parameters[index];
+    }
+
     private static Type[] getGenericTypeArguments(Type type) {
         if (!(type instanceof ParameterizedType)) {
             return new Type[]{};
         }
         ParameterizedType parameterizedType = (ParameterizedType) type;
         return parameterizedType.getActualTypeArguments();
-    }
-
-    private static Type getGenericTypeArgumentAt(Type type, int index) {
-        Type[] parameters = getGenericTypeArguments(type);
-        if (parameters.length <= index) {
-            return null;
-        }
-        return parameters[index];
     }
 
     private static Type getGenericTypeBound(Class<?> clazz, String name) {

@@ -1,43 +1,49 @@
 package io.yawp.commons.utils;
 
+import com.google.gson.*;
+import io.yawp.commons.utils.json.CustomJsonWriter;
+import io.yawp.commons.utils.json.LazyJsonDeserializer;
+import io.yawp.commons.utils.json.IdRefJsonSerializerDeserializer;
+import io.yawp.commons.utils.json.LazyJsonTypeAdapterFactory;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.LazyJson;
-import io.yawp.repository.LazyJsonAdapter;
 import io.yawp.repository.Repository;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 public class JsonUtils {
 
     private static Gson buildGson(Repository r) {
         GsonBuilder builder = new GsonBuilder();
         builder.setDateFormat(DateUtils.TIMESTAMP_FORMAT);
-        builder.registerTypeAdapter(IdRef.class, new IdRefJsonAdapter(r));
-        builder.registerTypeAdapter(LazyJson.class, new LazyJsonAdapter());
+        builder.registerTypeAdapter(IdRef.class, new IdRefJsonSerializerDeserializer(r));
+        builder.registerTypeAdapter(LazyJson.class, new LazyJsonDeserializer());
+        builder.registerTypeAdapterFactory(new LazyJsonTypeAdapterFactory());
+
         return builder.create();
     }
 
     public static Object from(Repository r, String json, Type type) {
-        JsonElement jsonElement = (JsonElement) new JsonParser().parse(json);
+        JsonElement jsonElement = new JsonParser().parse(json);
         Gson gson = buildGson(r);
         return gson.fromJson(jsonElement, type);
     }
 
     public static String to(Object o) {
         Gson gson = buildGson(null);
-        return gson.toJson(o);
+        if (o == null) {
+            return gson.toJson(o);
+        }
+        StringWriter out = new StringWriter();
+        gson.toJson(o, o.getClass(), new CustomJsonWriter(out));
+        return out.toString();
     }
 
     @SuppressWarnings("unchecked")

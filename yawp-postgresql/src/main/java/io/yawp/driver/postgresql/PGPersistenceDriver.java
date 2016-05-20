@@ -8,6 +8,7 @@ import io.yawp.driver.postgresql.datastore.Key;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.LazyJson;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.FieldModel;
 import io.yawp.repository.models.ObjectHolder;
@@ -128,6 +129,14 @@ public class PGPersistenceDriver implements PersistenceDriver {
         if (fieldModel.isSaveAsJson()) {
             return JsonUtils.to(value);
         }
+        
+        if (fieldModel.isSaveAsLazyJson()) {
+            String json = ((LazyJson) value).getJson();
+            if (json == null) {
+                return null;
+            }
+            return json;
+        }
 
         if (fieldModel.isIdRef()) {
             IdRef<?> idRef = (IdRef<?>) value;
@@ -152,7 +161,7 @@ public class PGPersistenceDriver implements PersistenceDriver {
         }
         return uris;
     }
-    
+
     private Object normalizeValue(Object o) {
         if (o == null) {
             return null;

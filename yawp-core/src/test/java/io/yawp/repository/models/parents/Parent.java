@@ -1,6 +1,7 @@
 package io.yawp.repository.models.parents;
 
 import io.yawp.repository.IdRef;
+import io.yawp.repository.LazyJson;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.Index;
@@ -19,6 +20,8 @@ public class Parent {
 
     @Index
     private IdRef<Job> jobId;
+
+    private LazyJson<Job> job;
 
     @Json
     private List<IdRef<Job>> pastJobIds;

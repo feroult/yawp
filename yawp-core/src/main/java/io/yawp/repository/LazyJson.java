@@ -5,51 +5,50 @@ import io.yawp.commons.utils.JsonUtils;
 
 public final class LazyJson<T> {
 
-	private String json;
-	private transient Class<T> clazz;
+    private transient Class<T> clazz;
 
-	@SuppressWarnings("unchecked")
-	public void set(T value) {
-		this.clazz = ((Class<T>) value.getClass());
-		this.json = JsonUtils.to(value);
-	}
+    private transient T cache;
 
-	public static <T> LazyJson<T> from(T object) {
-		LazyJson<T> lazyJson = new LazyJson<T>();
-		lazyJson.set(object);
-		return lazyJson;
-	}
-	
-	public T get() {
-		return JsonUtils.from(Yawp.yawp(), json, clazz);
-	}
-	  
-	@Override
-	public String toString() {
-		return json;
-	}
+    private String json;
 
-	public static <T> LazyJson<T> parse(String object, Class<T> clazz) {
-		LazyJson<T> lazyJson = new LazyJson<T>();
-		lazyJson.clazz = clazz;
-		lazyJson.json = object;
-		return lazyJson;
-	}
+    @SuppressWarnings("unchecked")
+    public void set(T value) {
+        if (value == null) {
+            this.clazz = null;
+            this.cache = null;
+            this.json = null;
+            return;
+        }
+        this.clazz = ((Class<T>) value.getClass());
+        this.cache = value;
+        this.json = JsonUtils.to(value);
+    }
 
-	public String getJson() {
-		return json;
-	}
+    public T get() {
+        if (json == null) {
+            return null;
+        }
+        if (cache == null) {
+            cache = JsonUtils.from(Yawp.yawp(), json, clazz);
+        }
+        return cache;
+    }
 
-	public void setJson(String json) {
-		this.json = json;
-	}
+    public static <T> LazyJson<T> create(Class<T> clazz, String json) {
+        LazyJson<T> lazyJson = new LazyJson<T>();
+        lazyJson.clazz = clazz;
+        lazyJson.json = json;
+        return lazyJson;
+    }
 
-	public Class<T> getClazz() {
-		return clazz;
-	}
+    public static <T> LazyJson<T> create(T object) {
+        LazyJson<T> lazyJson = new LazyJson<T>();
+        lazyJson.set(object);
+        return lazyJson;
+    }
 
-	public void setClazz(Class<T> clazz) {
-		this.clazz = clazz;
-	}
+    public String getJson() {
+        return json;
+    }
 
 }

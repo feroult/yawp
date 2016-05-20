@@ -8,6 +8,7 @@ import io.yawp.repository.LazyJson;
 import java.io.IOException;
 
 public class LazyJsonTypeAdapterFactory extends CustomTypeAdapterFactory<LazyJson> {
+
     public LazyJsonTypeAdapterFactory() {
         super(LazyJson.class);
     }
@@ -19,8 +20,8 @@ public class LazyJsonTypeAdapterFactory extends CustomTypeAdapterFactory<LazyJso
             return;
         }
 
-        // This is done to avoid json parsing to JsonObject, since we already have the json as a String.
-        // Could not find any better GSON API. JsonWriter wont let me write string without scaping then.
+        // This is done to avoid json serialize/deserialize to JsonObject since we already have the json as a String.
+        // Could not find any better GSON API. JsonWriter wont let me write strings without escaping then.
         CustomJsonWriter customWriter = (CustomJsonWriter) out;
         customWriter.beginObject();
 		String substring = value.getJson().substring(1);//Remove { and  }

@@ -20,11 +20,14 @@ public class LazyJsonTypeAdapterFactory extends CustomTypeAdapterFactory<LazyJso
             return;
         }
 
+        String json = value.getJson();
+
         // This is done to avoid json serialize/deserialize to JsonObject since we already have the json as a String.
         // Could not find any better GSON API. JsonWriter wont let me write strings without escaping then.
         CustomJsonWriter customWriter = (CustomJsonWriter) out;
-        out.beginObject();
-        customWriter.write(value.getJson().substring(1));
+        customWriter.beginObject();
+        customWriter.write(json.substring(1, json.length() - 1)); // Remove { and  }
+        customWriter.endObject();
     }
 
 }

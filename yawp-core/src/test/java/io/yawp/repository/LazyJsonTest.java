@@ -56,7 +56,6 @@ public class LazyJsonTest extends EndpointTestCase {
     @Test
     public void testSaveAndLoad() {
         BasicObject object = new BasicObject();
-        object.setJsonList(Arrays.asList(new Pojo("xpto")));
         object.setLazyPojo(new Pojo("xpto"));
         yawp.save(object);
 

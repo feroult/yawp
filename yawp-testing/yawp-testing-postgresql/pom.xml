@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.yawp</groupId>
         <artifactId>yawp-testing-root</artifactId>
-        <version>1.6.1-SNAPSHOT</version>
+        <version>1.6.1</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -20,12 +20,12 @@
         <dependency>
             <groupId>io.yawp</groupId>
             <artifactId>yawp-postgresql</artifactId>
-            <version>1.6.1-SNAPSHOT</version>
+            <version>1.6.1</version>
         </dependency>
         <dependency>
             <groupId>io.yawp</groupId>
             <artifactId>yawp-testing-core</artifactId>
-            <version>1.6.1-SNAPSHOT</version>
+            <version>1.6.1</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -39,7 +39,7 @@
             <plugin>
                 <groupId>io.yawp</groupId>
                 <artifactId>yawp-maven-plugin</artifactId>
-                <version>1.6.1-SNAPSHOT</version>
+                <version>1.6.1</version>
                 <configuration>
                     <appDir>${basedir}/src/test/webapp/</appDir>
                 </configuration>
@@ -57,7 +57,7 @@
                 <dependency>
                     <groupId>io.yawp</groupId>
                     <artifactId>yawp-core</artifactId>
-                    <version>1.6.1-SNAPSHOT</version>
+                    <version>1.6.1</version>
                     <type>test-jar</type>
                 </dependency>
             </dependencies>

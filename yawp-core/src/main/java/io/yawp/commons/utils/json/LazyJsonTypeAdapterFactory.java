@@ -22,8 +22,10 @@ public class LazyJsonTypeAdapterFactory extends CustomTypeAdapterFactory<LazyJso
         // This is done to avoid json parsing to JsonObject, since we already have the json as a String.
         // Could not find any better GSON API. JsonWriter wont let me write string without scaping then.
         CustomJsonWriter customWriter = (CustomJsonWriter) out;
-        out.beginObject();
-        customWriter.write(value.getJson().substring(1));
+        customWriter.beginObject();
+		String substring = value.getJson().substring(1);//Remove { and  }
+        customWriter.write(substring.substring(0, substring.length()-1));
+        customWriter.endObject();
     }
 
 }

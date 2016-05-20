@@ -35,10 +35,10 @@
             t.start();
         });
     });
-    
+
     t.asyncTest("create with lazy json and array", function(assert) {
-        expect(2);
-        
+        expect(3);
+
         yawp('/jobs').create({name : 'job xpto'}).done(function(job){
         	var parent = {
             	name : 'xpto',
@@ -47,15 +47,16 @@
 	            },
 	            pastJobIds : [job.id]
 	        };
-	
+
 	        yawp('/parents').create(parent).done(function(retrievedParent) {
 	            assert.equal(retrievedParent.name, 'xpto');
 	            assert.equal(retrievedParent.job.name, 'job xpto');
+                assert.equal(retrievedParent.pastJobIds[0], job.id);
 	            t.start();
 	        });
         });
     });
-    
+
 	t.asyncTest("create array", function(assert) {
 		expect(3);
 

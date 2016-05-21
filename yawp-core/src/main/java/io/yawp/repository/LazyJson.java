@@ -2,7 +2,6 @@ package io.yawp.repository;
 
 import io.yawp.commons.utils.JsonUtils;
 
-
 public final class LazyJson<T> {
 
     private transient Class<T> clazz;
@@ -48,6 +47,9 @@ public final class LazyJson<T> {
     }
 
     public String getJson() {
+        if (cache != null) {
+            json = JsonUtils.to(cache);
+        }
         return json;
     }
 

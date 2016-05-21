@@ -1,12 +1,15 @@
 package io.yawp.repository;
 
+import static org.junit.Assert.assertEquals;
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.Pojo;
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import java.util.Arrays;
+
+
+import org.junit.Test;
 
 public class LazyJsonTest extends EndpointTestCase {
 
@@ -26,6 +29,16 @@ public class LazyJsonTest extends EndpointTestCase {
         LazyJson<Pojo> lazyJson = LazyJson.create(pojo);
 
         assertEquals("xpto", lazyJson.get().getStringValue());
+    }
+    
+    @Test
+    public void testGetCacheChangeJson() {
+        Pojo pojo = new Pojo("xpto");
+        LazyJson<Pojo> lazyJson = LazyJson.create(pojo);
+        
+        lazyJson.get().setStringValue("otpx");
+        
+        assertEquals(JsonUtils.to(new Pojo("otpx")), lazyJson.getJson());
     }
 
 

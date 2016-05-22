@@ -2,15 +2,18 @@ package io.yawp.repository;
 
 import io.yawp.commons.utils.JsonUtils;
 
-public final class LazyJson<T> {
+import java.io.Serializable;
 
-    private transient Class<T> clazz;
+public final class LazyJson<T> implements Serializable {
 
-    private transient T cache;
+    private static final long serialVersionUID = 6613992940340254518L;
+
+    private Class<T> clazz;
+
+    private T cache;
 
     private String json;
 
-    @SuppressWarnings("unchecked")
     public void set(T value) {
         if (value == null) {
             this.clazz = null;

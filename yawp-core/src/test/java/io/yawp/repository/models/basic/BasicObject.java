@@ -5,6 +5,7 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.LazyJson;
 import io.yawp.repository.annotations.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,7 +15,9 @@ import static io.yawp.repository.Yawp.yawp;
 import static org.junit.Assert.assertEquals;
 
 @Endpoint(path = "/basic_objects")
-public class BasicObject {
+public class BasicObject implements Serializable {
+
+    private static final long serialVersionUID = -2799031983422266407L;
 
     @Id
     private IdRef<BasicObject> id;

@@ -1,6 +1,10 @@
 package io.yawp.repository.models.basic;
 
-public class Pojo {
+import java.io.Serializable;
+
+public class Pojo implements Serializable {
+
+    private static final long serialVersionUID = 7597296508950375357L;
 
     private String stringValue;
 

@@ -6,11 +6,19 @@ import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.QueryBuilder;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.yawp.repository.Yawp.yawp;
 
-public class IdRef<T> implements Comparable<IdRef<T>> {
+public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
+
+    private static final long serialVersionUID = 2203539386465263956L;
 
     private Repository r;
 
@@ -23,8 +31,6 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
     private String name;
 
     private IdRef<?> parentId;
-
-    private boolean shuffled;
 
     protected IdRef(Repository r, Class<T> clazz, Long id) {
         this.r = r;
@@ -330,5 +336,26 @@ public class IdRef<T> implements Comparable<IdRef<T>> {
         sb.append("/");
         sb.append(id != null ? id : name);
         return sb.toString();
+    }
+
+    // Serializable
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeObject(getUri());
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        String uri = (String) in.readObject();
+
+        IdRef<T> idRef = (IdRef<T>) parse(yawp(), uri);
+        this.r = idRef.r;
+        this.clazz = idRef.clazz;
+        this.model = idRef.model;
+        this.id = idRef.id;
+        this.name = idRef.name;
+        this.parentId = idRef.parentId;
+    }
+
+    private void readObjectNoData() throws ObjectStreamException {
+
     }
 }

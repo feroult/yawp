@@ -18,7 +18,12 @@ public class AppengineTestHelper implements TestHelper {
 
     @Override
     public void setUp() {
-        helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), createDatastoreService(), createTaskQueueTestConfig(), new LocalModulesServiceTestConfig());
+        helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(),
+                createDatastoreService(),
+                createTaskQueueTestConfig(),
+                new LocalModulesServiceTestConfig(),
+                new LocalMemcacheServiceTestConfig());
+
         Map<String, Object> envs = new HashMap<String, Object>();
         helper.setEnvAttributes(envs);
         helper.setUp();

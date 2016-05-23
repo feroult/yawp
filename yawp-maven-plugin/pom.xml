@@ -18,5 +18,6 @@
 
     <modules>
         <module>yawp-maven-plugin-mojos</module>
+        <module>yawp-maven-plugin-devserver</module>
     </modules>
 </project>

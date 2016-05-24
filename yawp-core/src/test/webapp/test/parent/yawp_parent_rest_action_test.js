@@ -20,18 +20,22 @@
 	});
 
     t.asyncTest("create with lazy json", function(assert) {
-        expect(2);
+        expect(4);
 
         var parent = {
             name : 'xpto',
             job : {
-                name: 'job xpto'
-            }
+                name: 'job xpto1'
+            },
+			jobs: [ { name: 'job xpto2' }],
+            jobsMap: { '/jobs/1': { name: 'job xpto3' } }
         };
 
         yawp('/parents').create(parent).done(function(retrievedParent) {
             assert.equal(retrievedParent.name, 'xpto');
-            assert.equal(retrievedParent.job.name, 'job xpto');
+            assert.equal(retrievedParent.job.name, 'job xpto1');
+            assert.equal(retrievedParent.jobs[0].name, 'job xpto2');
+            assert.equal(retrievedParent.jobsMap['/jobs/1'].name, 'job xpto3');
             t.start();
         });
     });

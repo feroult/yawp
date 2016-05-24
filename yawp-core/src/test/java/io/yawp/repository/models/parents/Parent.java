@@ -8,6 +8,7 @@ import io.yawp.repository.annotations.Index;
 import io.yawp.repository.annotations.Json;
 
 import java.util.List;
+import java.util.Map;
 
 @Endpoint(path = "/parents")
 public class Parent {
@@ -22,6 +23,10 @@ public class Parent {
     private IdRef<Job> jobId;
 
     private LazyJson<Job> job;
+
+    private LazyJson<List<Job>> jobs;
+
+    private LazyJson<Map<IdRef<Job>, Job>> jobsMap;
 
     @Json
     private List<IdRef<Job>> pastJobIds;

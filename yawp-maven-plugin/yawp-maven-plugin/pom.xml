@@ -27,7 +27,7 @@
         </dependency>
         <dependency>
             <groupId>io.yawp</groupId>
-            <artifactId>yawp-maven-plugin-devserver</artifactId>
+            <artifactId>yawp-devserver-runtime</artifactId>
             <version>1.6.3-SNAPSHOT</version>
         </dependency>
 

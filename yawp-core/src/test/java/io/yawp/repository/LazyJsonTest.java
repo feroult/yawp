@@ -4,7 +4,6 @@ import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.Pojo;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -51,6 +50,10 @@ public class LazyJsonTest extends EndpointTestCase {
         String json = JsonUtils.to(object);
         BasicObject parsedObject = from(json, BasicObject.class);
 
+        // re-serialize / re-parse
+        json = JsonUtils.to(parsedObject);
+        parsedObject = from(json, BasicObject.class);
+
         assertEquals("xpto", parsedObject.getLazyPojo().getStringValue());
     }
 
@@ -61,6 +64,10 @@ public class LazyJsonTest extends EndpointTestCase {
 
         String json = JsonUtils.to(object);
         BasicObject parsedObject = from(json, BasicObject.class);
+
+        // re-serialize / re-parse
+        json = JsonUtils.to(parsedObject);
+        parsedObject = from(json, BasicObject.class);
 
         assertEquals("xpto", parsedObject.getLazyListPojo().get(0).getStringValue());
     }
@@ -74,11 +81,14 @@ public class LazyJsonTest extends EndpointTestCase {
         String json = JsonUtils.to(object);
         BasicObject parsedObject = from(json, BasicObject.class);
 
+        // re-serialize / re-parse
+        json = JsonUtils.to(parsedObject);
+        parsedObject = from(json, BasicObject.class);
+
         assertEquals("xpto", parsedObject.getLazyMapPojo().get(1l).getStringValue());
     }
 
     @Test
-    @Ignore
     public void testAsIdRefMapProperty() {
         BasicObject object = new BasicObject();
 
@@ -86,6 +96,10 @@ public class LazyJsonTest extends EndpointTestCase {
 
         String json = JsonUtils.to(object);
         BasicObject parsedObject = from(json, BasicObject.class);
+
+        // re-serialize / re-parse
+        json = JsonUtils.to(parsedObject);
+        parsedObject = from(json, BasicObject.class);
 
         assertEquals("xpto", parsedObject.getLazyIdRefMapPojo().get(id(BasicObject.class, 1l)).getStringValue());
     }

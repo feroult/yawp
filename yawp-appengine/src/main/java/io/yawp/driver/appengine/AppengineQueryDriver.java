@@ -20,6 +20,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class AppengineQueryDriver implements QueryDriver {
@@ -254,8 +256,8 @@ public class AppengineQueryDriver implements QueryDriver {
 
     private <T> void setLazyJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
         String json = ((Text) value).getValue();
-        Class<?> clazz = (Class<?>) ReflectionUtils.getGenericTypeArgumentAt(field.getGenericType(), 0);
-        field.set(object, LazyJson.$create(clazz, json));
+        Type type = ((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0];
+        field.set(object, LazyJson.$create(type, json));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

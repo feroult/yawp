@@ -55,6 +55,10 @@ final class ParameterizedTypeImpl implements ParameterizedType {
         this.owner = owner;
     }
 
+    public static ParameterizedType create(Type rawType, Type[] actualTypeArguments) {
+        return new ParameterizedTypeImpl(rawType, actualTypeArguments, null);
+    }
+
     public Type getRawType() {
         return rawType;
     }

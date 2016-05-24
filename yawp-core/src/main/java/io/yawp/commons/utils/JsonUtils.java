@@ -58,13 +58,23 @@ public class JsonUtils {
     @SuppressWarnings("unchecked")
     public static <T> List<T> fromList(Repository r, String json, Class<T> clazz) {
         ParameterizedTypeImpl type = new ParameterizedTypeImpl(List.class, new Type[]{clazz}, null);
-        return (List<T>) from(r, json, type);
+        return (List<T>) fromListRaw(r, json, clazz);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<?> fromListRaw(Repository r, String json, Type valueType) {
+        ParameterizedTypeImpl type = new ParameterizedTypeImpl(List.class, new Type[]{valueType}, null);
+        return (List<?>) from(r, json, type);
     }
 
     @SuppressWarnings("unchecked")
     public static <K, V> Map<K, V> fromMap(Repository r, String json, Class<K> keyClazz, Class<V> valueClazz) {
-        ParameterizedTypeImpl type = new ParameterizedTypeImpl(Map.class, new Type[]{keyClazz, valueClazz}, null);
-        return (Map<K, V>) from(r, json, type);
+        return (Map<K, V>) fromMapRaw(r, json, keyClazz, valueClazz);
+    }
+
+    public static Map<?, ?> fromMapRaw(Repository r, String json, Type keyType, Type valueType) {
+        ParameterizedTypeImpl type = new ParameterizedTypeImpl(Map.class, new Type[]{keyType, valueType}, null);
+        return (Map<?, ?>) from(r, json, type);
     }
 
     @SuppressWarnings("unchecked")
@@ -104,4 +114,6 @@ public class JsonUtils {
         }
         return properties;
     }
+
+
 }

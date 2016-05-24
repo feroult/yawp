@@ -65,6 +65,8 @@ public class BasicObject implements Serializable {
 
     private LazyJson<Map<Long, Pojo>> lazyMapPojo = new LazyJson<>();
 
+    private LazyJson<Map<IdRef<BasicObject>, Pojo>> lazyIdRefMapPojo = new LazyJson<>();
+
     public BasicObject() {
 
     }
@@ -229,6 +231,14 @@ public class BasicObject implements Serializable {
 
     public void setLazyMapPojo(Map<Long, Pojo> lazyMapPojo) {
         this.lazyMapPojo.set(lazyMapPojo);
+    }
+
+    public Map<IdRef<BasicObject>, Pojo> getLazyIdRefMapPojo() {
+        return lazyIdRefMapPojo.get();
+    }
+
+    public void setLazyIdRefMapPojo(Map<IdRef<BasicObject>, Pojo> lazyIdRefMapPojo) {
+        this.lazyIdRefMapPojo.set(lazyIdRefMapPojo);
     }
 
     public void assertObject(String stringValue, String textValue, int intValue, long longValue, double doubleValue, boolean booleanValue,

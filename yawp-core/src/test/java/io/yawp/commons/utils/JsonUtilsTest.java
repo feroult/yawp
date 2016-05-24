@@ -1,17 +1,18 @@
 package io.yawp.commons.utils;
 
-import static org.junit.Assert.assertEquals;
-
+import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
+import org.junit.Test;
 
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
-public class JsonUtilsTest {
+public class JsonUtilsTest extends EndpointTestCase {
 
     private static final String DATA_OBJECT_JSON = "{intValue : 1, longValue : 1, doubleValue : 1.1, booleanValue : true, dateValue : '2013/12/26 23:55:01', stringValue : object1, textValue: 'text'}";
 
@@ -72,12 +73,24 @@ public class JsonUtilsTest {
         map.put(2l, Arrays.asList(new BasicObject("xpto3"), new BasicObject("xpto4")));
 
         String json = JsonUtils.to(map);
-
         map = JsonUtils.fromMapList(null, json, Long.class, BasicObject.class);
 
         assertEquals("xpto1", map.get(1l).get(0).getStringValue());
         assertEquals("xpto2", map.get(1l).get(1).getStringValue());
         assertEquals("xpto3", map.get(2l).get(0).getStringValue());
         assertEquals("xpto4", map.get(2l).get(1).getStringValue());
+    }
+
+    @Test
+    public void testMapWithComplexKeyAndValue() {
+        Map<IdRef<BasicObject>, BasicObject> map = new HashMap<>();
+        map.put(id(BasicObject.class, 1l), new BasicObject("xpto"));
+
+        Type keyType = ParameterizedTypeImpl.create(IdRef.class, new Type[]{Long.class});
+
+        String json = JsonUtils.to(map);
+        map = (Map<IdRef<BasicObject>, BasicObject>) JsonUtils.fromMapRaw(yawp, json, keyType, BasicObject.class);
+
+        assertEquals("xpto", map.get(id(BasicObject.class, 1l)).getStringValue());
     }
 }

@@ -9,7 +9,6 @@ import io.yawp.repository.LazyJson;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
 
 public class LazyJsonDeserializer implements JsonDeserializer<LazyJson<?>> {
 
@@ -17,38 +16,23 @@ public class LazyJsonDeserializer implements JsonDeserializer<LazyJson<?>> {
     public LazyJson<?> deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
         Type rootType = ((ParameterizedType) type).getActualTypeArguments()[0];
 
-        if (!(rootType instanceof ParameterizedType)) {
-            return createObject(rootType, json);
+        if (isJsonArray(rootType)) {
+            return createList(rootType, json);
         }
 
-        ParameterizedType parameterizedType = (ParameterizedType) rootType;
+        return createObject(rootType, json);
+    }
 
-        if (List.class.isAssignableFrom((Class<?>) parameterizedType.getRawType())) {
-            return createList(parameterizedType, json);
-        }
-
-        if (Map.class.isAssignableFrom((Class<?>) parameterizedType.getRawType())) {
-            return createMap(parameterizedType, json);
-        }
-
-
-        throw new RuntimeException("Invalid LazyJson Type: " + type);
+    private boolean isJsonArray(Type rootType) {
+        return rootType instanceof ParameterizedType && List.class.isAssignableFrom((Class<?>) ((ParameterizedType) rootType).getRawType());
     }
 
     private LazyJson<?> createObject(Type rootType, JsonElement json) {
-        String jsonString = json.getAsJsonObject().toString();
-        return LazyJson.$create((Class<?>) rootType, jsonString);
+        return LazyJson.$create(rootType, json.getAsJsonObject().toString());
     }
 
-    private LazyJson<?> createList(ParameterizedType parameterizedType, JsonElement json) {
-        Class<?> clazz = (Class<?>) parameterizedType.getActualTypeArguments()[0];
-        return LazyJson.$createList(clazz, json.getAsJsonArray().toString());
-    }
-
-    private LazyJson<?> createMap(ParameterizedType parameterizedType, JsonElement json) {
-        Class<?> keyClazz = (Class<?>) parameterizedType.getActualTypeArguments()[0];
-        Class<?> clazz = (Class<?>) parameterizedType.getActualTypeArguments()[1];
-        return LazyJson.$createMap(keyClazz, clazz, json.getAsJsonObject().toString());
+    private LazyJson<?> createList(Type rootType, JsonElement json) {
+        return LazyJson.$create(rootType, json.getAsJsonArray().toString());
     }
 
 }

@@ -8,7 +8,7 @@ import com.google.apphosting.api.ApiProxy.Environment;
 import com.google.apphosting.utils.config.AppEngineWebXml;
 import com.google.apphosting.utils.config.AppEngineWebXmlReader;
 import com.google.apphosting.utils.config.WebXml;
-import io.yawp.plugin.devserver.base.MojoWrapper;
+import io.yawp.plugin.devserver.MojoWrapper;
 import org.mortbay.jetty.handler.ContextHandler;
 import org.mortbay.jetty.webapp.WebAppContext;
 

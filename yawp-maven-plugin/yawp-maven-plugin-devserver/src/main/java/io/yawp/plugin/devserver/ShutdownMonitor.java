@@ -1,8 +1,5 @@
 package io.yawp.plugin.devserver;
 
-import io.yawp.plugin.devserver.base.MojoWrapper;
-import org.apache.maven.plugin.logging.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -48,7 +45,8 @@ public class ShutdownMonitor extends Thread {
             }
 
             socket.close();
-            getLog().info("Stopping devserver...");
+            // TODO: using real logging
+            System.out.println("Stopping devserver...");
             shutdown();
 
         } catch (Exception e) {
@@ -69,10 +67,6 @@ public class ShutdownMonitor extends Thread {
         String msg = reader.readLine();
         accept.close();
         return msg != null && msg.equals(SHUTDOWN_MESSAGE);
-    }
-
-    private Log getLog() {
-        return mojo.getLog();
     }
 
 }

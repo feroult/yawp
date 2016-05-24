@@ -1,7 +1,7 @@
 /**
  * Copyright 2012 Google Inc. All Rights Reserved.
  */
-package io.yawp.plugin.devserver.appengine;
+package io.yawp.plugin.mojos.devserver;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;

@@ -1,7 +1,7 @@
 package io.yawp.plugin.devserver;
 
+import io.yawp.commons.utils.JsonUtils;
 import io.yawp.plugin.devserver.appengine.AppengineWebAppContextHelper;
-import io.yawp.plugin.devserver.base.MojoWrapper;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 
@@ -15,9 +15,8 @@ public class DevServer {
 
     private WebAppContextHelper helper;
 
-
-    public DevServer(MojoWrapper mojo) {
-        this.mojo = mojo;
+    public DevServer(String mojoJson) {
+        this.mojo = JsonUtils.from(null, mojoJson, MojoWrapper.class);
     }
 
     public void run() {
@@ -25,7 +24,6 @@ public class DevServer {
         startServer();
         startShutdownMonitor();
     }
-
 
     private void initHelper() {
         if (mojo.isAppengine()) {
@@ -36,8 +34,6 @@ public class DevServer {
     }
 
     protected void startServer() {
-        mojo.getLog().info("Starting webserver at: " + mojo.getAppDir());
-
         try {
             server = new Server();
             server.addConnector(createConnector());

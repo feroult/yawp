@@ -27,6 +27,7 @@ public class ClassLoaderBuilder {
             if (mojo.getProject() == null) {
                 return;
             }
+            add(mojo.getProject().getTestClasspathElements());
             add(mojo.getProject().getRuntimeClasspathElements());
         } catch (DependencyResolutionRequiredException e) {
             throw new RuntimeException(e);
@@ -34,13 +35,16 @@ public class ClassLoaderBuilder {
     }
 
     public void add(List<String> classpathElements) {
+        List<String> elements = classpathElements;
+        for (int i = 0; i < elements.size(); i++) {
+            String element = elements.get(i);
+            add(element);
+        }
+    }
+
+    public void add(String element) {
         try {
-            List<String> elements = classpathElements;
-            for (int i = 0; i < elements.size(); i++) {
-                String element = elements.get(i);
-                urls.add(new File(element).toURI().toURL());
-                System.out.println("jar: " + element);
-            }
+            urls.add(new File(element).toURI().toURL());
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

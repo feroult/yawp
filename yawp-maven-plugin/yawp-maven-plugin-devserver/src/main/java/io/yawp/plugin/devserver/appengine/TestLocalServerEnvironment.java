@@ -2,7 +2,7 @@ package io.yawp.plugin.devserver.appengine;
 
 
 import com.google.appengine.tools.development.LocalServerEnvironment;
-import io.yawp.plugin.devserver.base.MojoWrapper;
+import io.yawp.plugin.devserver.MojoWrapper;
 
 import java.io.File;
 

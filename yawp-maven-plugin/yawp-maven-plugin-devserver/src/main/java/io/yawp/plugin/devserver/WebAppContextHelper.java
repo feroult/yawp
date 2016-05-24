@@ -1,7 +1,5 @@
 package io.yawp.plugin.devserver;
 
-import io.yawp.plugin.devserver.base.MojoWrapper;
-import org.apache.maven.plugin.logging.Log;
 import org.mortbay.jetty.webapp.WebAppContext;
 import org.mortbay.resource.Resource;
 import org.mortbay.util.Scanner;
@@ -55,7 +53,8 @@ public class WebAppContextHelper {
     }
 
     private void configureClassloader() {
-        webapp.setClassLoader(mojo.getClassLoader());
+        // TODO: monitor
+        // webapp.setClassLoader(mojo.getClassLoader());
     }
 
     protected List<String> getCustomClasspathElements() {
@@ -63,7 +62,8 @@ public class WebAppContextHelper {
     }
 
     protected void configureHotDeploy() {
-        getLog().info("HotDeploy scanner: " + mojo.getHotDeployDir());
+        // TODO: using real logging
+        System.out.println("HotDeploy scanner: " + mojo.getHotDeployDir());
         Scanner scanner = new Scanner();
         scanner.setScanInterval(mojo.getFullScanSeconds());
         scanner.setScanDirs(Arrays.asList(new File(mojo.getHotDeployDir())));
@@ -79,7 +79,8 @@ public class WebAppContextHelper {
                 if (!webapp.isStarted()) {
                     return;
                 }
-                getLog().info(filename + " updated, reloading the webapp!");
+                // TODO: using real logging
+                System.out.println(filename + " updated, reloading the webapp!");
                 restart(webapp);
             }
 
@@ -89,10 +90,6 @@ public class WebAppContextHelper {
         });
         scanner.scan();
         scanner.start();
-    }
-
-    private Log getLog() {
-        return mojo.getLog();
     }
 
     private void restart(WebAppContext webapp) throws Exception {

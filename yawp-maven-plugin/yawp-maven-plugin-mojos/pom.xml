@@ -29,7 +29,6 @@
             <groupId>io.yawp</groupId>
             <artifactId>yawp-maven-plugin-devserver</artifactId>
             <version>1.6.3-SNAPSHOT</version>
-            <!--<scope>provided</scope>-->
         </dependency>
 
         <!-- Maven plugin dependencies -->

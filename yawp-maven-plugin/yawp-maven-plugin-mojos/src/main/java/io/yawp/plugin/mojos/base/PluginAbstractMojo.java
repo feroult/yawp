@@ -1,7 +1,6 @@
 package io.yawp.plugin.mojos.base;
 
 import io.yawp.commons.utils.Environment;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -16,10 +15,6 @@ import java.net.URLClassLoader;
 import java.util.List;
 
 public abstract class PluginAbstractMojo extends AbstractMojo {
-
-    private static final String YAWP_GROUP_ID = "io.yawp";
-
-    private static final String YAWP_ARTIFACT_ID = "yawp";
 
     @Component
     protected RepositorySystem repoSystem;
@@ -71,23 +66,6 @@ public abstract class PluginAbstractMojo extends AbstractMojo {
 
     public MavenProject getProject() {
         return project;
-    }
-
-    protected boolean isAppengine() {
-        if (project.getGroupId().equals(YAWP_GROUP_ID) && project.getArtifactId().equals(YAWP_ARTIFACT_ID)) {
-            return true;
-        }
-
-        for (Dependency dependency : project.getDependencies()) {
-            if (dependency.getGroupId().equals(YAWP_GROUP_ID) && dependency.getArtifactId().equals(YAWP_ARTIFACT_ID)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    protected boolean isPostgreSQL() {
-        return !isAppengine();
     }
 
     public String getAppDir() {

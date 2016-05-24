@@ -213,7 +213,7 @@ public class PGQueryDriver implements QueryDriver {
     private <T> void setLazyJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
         String json = (String) value;
         Class<?> clazz = (Class<?>) ReflectionUtils.getGenericTypeArgumentAt(field.getGenericType(), 0);
-        field.set(object, LazyJson.create(clazz, json));
+        field.set(object, LazyJson.$create(clazz, json));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

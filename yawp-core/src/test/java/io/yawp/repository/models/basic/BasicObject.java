@@ -61,6 +61,10 @@ public class BasicObject implements Serializable {
 
     private LazyJson<Pojo> lazyPojo = new LazyJson<>();
 
+    private LazyJson<List<Pojo>> lazyListPojo = new LazyJson<>();
+
+    private LazyJson<Map<Long, Pojo>> lazyMapPojo = new LazyJson<>();
+
     public BasicObject() {
 
     }
@@ -209,6 +213,22 @@ public class BasicObject implements Serializable {
 
     public void setLazyPojo(Pojo lazyPojo) {
         this.lazyPojo.set(lazyPojo);
+    }
+
+    public List<Pojo> getLazyListPojo() {
+        return lazyListPojo.get();
+    }
+
+    public void setLazyListPojo(List<Pojo> lazyListPojo) {
+        this.lazyListPojo.set(lazyListPojo);
+    }
+
+    public Map<Long, Pojo> getLazyMapPojo() {
+        return lazyMapPojo.get();
+    }
+
+    public void setLazyMapPojo(Map<Long, Pojo> lazyMapPojo) {
+        this.lazyMapPojo.set(lazyMapPojo);
     }
 
     public void assertObject(String stringValue, String textValue, int intValue, long longValue, double doubleValue, boolean booleanValue,

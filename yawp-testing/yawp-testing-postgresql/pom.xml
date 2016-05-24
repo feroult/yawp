@@ -32,6 +32,25 @@
             <artifactId>junit</artifactId>
             <version>4.11</version>
         </dependency>
+
+        <!-- devserver -->
+
+        <!-- Jetty dependencies -->
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-embedded</artifactId>
+            <version>6.1.26</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-naming</artifactId>
+            <version>6.1.26</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty-plus</artifactId>
+            <version>6.1.26</version>
+        </dependency>
     </dependencies>
 
     <build>

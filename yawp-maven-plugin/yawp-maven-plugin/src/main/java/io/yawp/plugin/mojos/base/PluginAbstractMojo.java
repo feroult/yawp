@@ -83,7 +83,7 @@ public abstract class PluginAbstractMojo extends AbstractMojo {
     protected URLClassLoader configureRuntimeClassLoader() {
         ClassLoaderBuilder builder = new ClassLoaderBuilder();
         builder.addRuntime(this);
-        URLClassLoader classLoader = builder.build();
+        URLClassLoader classLoader = builder.build(false);
         Thread.currentThread().setContextClassLoader(classLoader);
         return classLoader;
     }

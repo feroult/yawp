@@ -17,9 +17,11 @@ public class ClassLoaderBuilder {
         urls = new ArrayList<URL>();
     }
 
-    public URLClassLoader build() {
-        //return new URLClassLoader(urls.toArray(new URL[]{}), Thread.currentThread().getContextClassLoader());
-        return new URLClassLoader(urls.toArray(new URL[]{}));
+    public URLClassLoader build(boolean isolated) {
+        if (isolated) {
+            return new URLClassLoader(urls.toArray(new URL[]{}));
+        }
+        return new URLClassLoader(urls.toArray(new URL[]{}), Thread.currentThread().getContextClassLoader());
     }
 
     public void addRuntime(PluginAbstractMojo mojo) {

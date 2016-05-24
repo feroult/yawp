@@ -119,18 +119,6 @@
             <artifactId>appengine-api-stubs</artifactId>
             <version>${appengine.target.version}</version>
         </dependency>
-
-        <!-- PostgreSQL devserver dependencies -->
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.4-1203-jdbc41</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-dbcp2</artifactId>
-            <version>2.1.1</version>
-        </dependency>
     </dependencies>
 
     <build>

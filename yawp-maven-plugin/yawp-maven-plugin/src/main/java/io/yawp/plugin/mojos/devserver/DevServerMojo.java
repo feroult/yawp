@@ -31,7 +31,7 @@ public class DevServerMojo extends DevserverAbstractMojo {
 
     private static final String YAWP_ARTIFACT_ID = "yawp";
 
-    private static final String YAWP_DEVSERVER_ARTIFACT_ID = "yawp-maven-plugin-devserver";
+    private static final String YAWP_DEVSERVER_ARTIFACT_ID = "yawp-devserver-runtime";
 
     @Parameter(property = "yawp.address", defaultValue = "0.0.0.0")
     private String address;
@@ -117,7 +117,7 @@ public class DevServerMojo extends DevserverAbstractMojo {
         if (isAppengine()) {
             builder.add(getAppengineCustomClasspathElements());
         }
-        return builder.build();
+        return builder.build(true);
     }
 
 

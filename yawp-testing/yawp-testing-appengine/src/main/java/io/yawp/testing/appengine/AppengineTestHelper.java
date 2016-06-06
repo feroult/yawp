@@ -22,9 +22,10 @@ public class AppengineTestHelper implements TestHelper {
                 createDatastoreService(),
                 createTaskQueueTestConfig(),
                 new LocalModulesServiceTestConfig(),
-                new LocalMemcacheServiceTestConfig());
+                new LocalMemcacheServiceTestConfig(),
+                new LocalURLFetchServiceTestConfig());
 
-        Map<String, Object> envs = new HashMap<String, Object>();
+        Map<String, Object> envs = new HashMap<>();
         helper.setEnvAttributes(envs);
         helper.setUp();
     }

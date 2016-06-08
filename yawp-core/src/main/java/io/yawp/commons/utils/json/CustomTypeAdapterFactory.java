@@ -26,7 +26,6 @@ public abstract class CustomTypeAdapterFactory<T> implements TypeAdapterFactory 
     }
 
     private TypeAdapter<T> createAdapter(Gson gson, TypeToken<T> _type) {
-        final TypeToken<T> type = _type;
         final TypeAdapter<T> delegate = gson.getDelegateAdapter(this, _type);
         final TypeAdapter<JsonElement> elementAdapter = gson.getAdapter(JsonElement.class);
         return new TypeAdapter<T>() {

@@ -30,7 +30,7 @@ public class IdRefToKey {
     public static IdRef<?> toIdRef(Repository r, Key key, ObjectModel model) {
         Class<?> objectClass = model.getClazz();
 
-        IdRef<?> idRef = null;
+        IdRef<?> idRef;
 
         if (model.isIdShuffled()) {
             idRef = getIdRefFromShuffledKey(r, key, objectClass);

@@ -408,7 +408,7 @@ public class Query {
     }
 
     private String logicalOperatorAsText(LogicalOperator logicalOperator) {
-        String operator = null;
+        String operator;
         if (logicalOperator == LogicalOperator.AND) {
             operator = " and ";
         } else if (logicalOperator == LogicalOperator.OR) {

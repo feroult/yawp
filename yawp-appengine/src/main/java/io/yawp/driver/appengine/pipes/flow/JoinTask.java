@@ -134,9 +134,6 @@ public class JoinTask implements DeferredTask {
     }
 
     private void executeIfLastVersion(Work work) {
-
-        SourceMarker sourceVersion = work.getSourceMarker();
-
         IdRef<SinkMarker> sinkMarkerId = work.createSinkMarkerId();
         SinkMarker sinkMarker = getFromCacheOrFetchSinkMarker(sinkMarkerId);
 

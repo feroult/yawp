@@ -150,7 +150,7 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
 
             String endpointPath = "/" + parts[i];
 
-            IdRef<TT> currentIdRef = null;
+            IdRef<TT> currentIdRef;
 
             if (!isString(parts[i + 1])) {
                 Long asLong = Long.valueOf(parts[i + 1]);

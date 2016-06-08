@@ -83,8 +83,6 @@ public class ReflowRefluxTask implements DeferredTask {
     }
 
     private void refluxSources(List<SinkMarker> sinkMarkers) {
-        Queue queue = QueueHelper.getPipeQueue(pipe);
-
         for (SinkMarker sinkMarker : sinkMarkers) {
             Object source = sinkMarker.getSourceId().fetch();
 

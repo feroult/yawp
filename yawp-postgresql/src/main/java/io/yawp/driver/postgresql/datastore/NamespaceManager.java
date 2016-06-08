@@ -6,6 +6,8 @@ public class NamespaceManager {
 
     private static ThreadLocal<String> namespace = new ThreadLocal<String>();
 
+    private NamespaceManager() {}
+
     public static String get() {
         String ns = namespace.get();
         return ns == null ? Namespace.GLOBAL : ns;

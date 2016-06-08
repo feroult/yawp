@@ -6,6 +6,8 @@ public class ServiceLookup {
 
     public static final String SERVICES_PATH = "META-INF/services/";
 
+    private ServiceLookup() {}
+
     public static <T> T lookup(Class<T> clazz) {
         ResourceFinder finder = new ResourceFinder(SERVICES_PATH);
         return lookup(finder, clazz);

@@ -4,6 +4,8 @@ import io.yawp.repository.Namespace;
 
 public class KeyFactory {
 
+    private KeyFactory() {}
+
     private static Key createKey(Key parent, String kind, String name, Long id) {
         String ns = NamespaceManager.get();
         if (Namespace.GLOBAL.equals(ns)) {

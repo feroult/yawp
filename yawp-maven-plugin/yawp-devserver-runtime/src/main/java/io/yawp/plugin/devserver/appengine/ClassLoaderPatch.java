@@ -12,6 +12,8 @@ import java.util.List;
 public class ClassLoaderPatch {
     private static final Class<?>[] parameters = new Class[]{URL.class};
 
+    private ClassLoaderPatch() {}
+
     public static void addFiles(List<String> paths) {
         for (String path : paths) {
             addFile(path);

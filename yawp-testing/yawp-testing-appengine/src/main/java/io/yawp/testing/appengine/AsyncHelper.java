@@ -11,6 +11,8 @@ public class AsyncHelper {
 
     private static CountDownLatch latch = null;
 
+    private AsyncHelper() {}
+
     public synchronized static void awaitAsync(long timeout, TimeUnit unit) {
         if (latch != null) {
             throw new IllegalStateException("more than one wait is not allowed");

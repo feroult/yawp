@@ -6,9 +6,9 @@ public class HttpException extends RuntimeException {
 
     private static final long serialVersionUID = -1369195874459839005L;
 
-    private int httpStatus;
+    private final int httpStatus;
 
-    private String text;
+    private final String text;
 
     public HttpException(int httpStatus, String text) {
         this.httpStatus = httpStatus;

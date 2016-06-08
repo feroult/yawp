@@ -10,6 +10,8 @@ public class DateUtils {
 
     public static final String DATE_FORMAT = "yyyy/MM/dd";
 
+    private DateUtils() {}
+
     public static String fromTimestamp(Date timestamp) {
         return format(timestamp, TIMESTAMP_FORMAT);
     }

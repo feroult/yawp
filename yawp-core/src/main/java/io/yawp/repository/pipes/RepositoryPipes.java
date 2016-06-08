@@ -7,6 +7,8 @@ import io.yawp.repository.query.NoResultException;
 
 public class RepositoryPipes {
 
+    private RepositoryPipes() {}
+
     public static void flux(Repository r, Object source) {
         Class<?> endpointClazz = source.getClass();
 

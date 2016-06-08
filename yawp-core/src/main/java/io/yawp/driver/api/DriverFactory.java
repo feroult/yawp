@@ -5,6 +5,8 @@ import io.yawp.repository.Repository;
 
 public class DriverFactory {
 
+    private DriverFactory() {}
+
     public static Driver getDriver(Repository r) {
         Driver driver = lookup();
         driver.init(r);

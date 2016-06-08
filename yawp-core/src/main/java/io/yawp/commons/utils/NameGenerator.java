@@ -10,6 +10,8 @@ import java.util.UUID;
 public class NameGenerator {
     private static Base64 BASE64 = new Base64(true);
 
+    private NameGenerator() {}
+
     public static String generateFromUUID() {
         UUID uuid = UUID.randomUUID();
         byte[] byteArray = toByteArray(uuid);

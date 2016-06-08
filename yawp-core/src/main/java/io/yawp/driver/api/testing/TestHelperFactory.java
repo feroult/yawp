@@ -5,6 +5,8 @@ import io.yawp.repository.Repository;
 
 public class TestHelperFactory {
 
+    private TestHelperFactory() {}
+
     public static TestHelper getTestHelper(Repository r) {
         TestHelper helper = lookup(TestHelper.class);
 

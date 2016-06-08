@@ -39,6 +39,8 @@ public class SdkResolver {
     private static final String SDK_ARTIFACT_ID = "appengine-java-sdk";
     private static final String SDK_EXTENSION = "zip";
 
+    private SdkResolver() {}
+
     @SuppressWarnings("unchecked")
     public static File getSdk(MavenProject project, RepositorySystem repoSystem, RepositorySystemSession repoSession,
                               List<RemoteRepository>... repos) throws MojoExecutionException {

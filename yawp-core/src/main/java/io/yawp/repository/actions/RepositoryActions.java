@@ -7,6 +7,8 @@ import java.util.Map;
 
 public class RepositoryActions {
 
+    private RepositoryActions() {}
+
     public static Object execute(Repository r, ActionMethod actionMethod, IdRef<?> id, String json, Map<String, String> params) {
         boolean rollback = false;
         atomicBegin(r, actionMethod);

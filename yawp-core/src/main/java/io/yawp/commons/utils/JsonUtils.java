@@ -20,6 +20,8 @@ import java.util.Map.Entry;
 
 public class JsonUtils {
 
+    private JsonUtils() {}
+
     private static Gson buildGson(Repository r) {
         GsonBuilder builder = new GsonBuilder();
         builder.setDateFormat(DateUtils.TIMESTAMP_FORMAT);

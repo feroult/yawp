@@ -17,6 +17,8 @@ public class Environment {
 
     private static final String YAWP_APP_DIR = "yawp.dir";
 
+    private Environment() {}
+
     public static boolean isProduction() {
         if (get() != null) {
             return getOrDefault().equals("production");

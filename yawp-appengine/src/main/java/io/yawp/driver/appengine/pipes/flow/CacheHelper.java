@@ -14,6 +14,8 @@ public class CacheHelper {
 
     public static final long POW_2_15 = (long) Math.pow(2, 15);
 
+    private CacheHelper() {}
+
     public static String createIndexCacheKey(String sinkUri) {
         return String.format("%s-%s", INDEX_PREFIX, sinkUri);
     }

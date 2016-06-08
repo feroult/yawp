@@ -9,6 +9,8 @@ import java.util.List;
 
 public class RepositoryTransformers {
 
+    private RepositoryTransformers() {}
+
     @SuppressWarnings("unchecked")
     public static <F, T> T execute(Repository r, F object, String name) {
         TransformerRunner transformerRunner = new TransformerRunner<F>(r, object.getClass(), name);

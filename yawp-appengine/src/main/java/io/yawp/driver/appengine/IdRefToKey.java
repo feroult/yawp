@@ -11,6 +11,8 @@ import com.google.appengine.api.datastore.KeyFactory;
 
 public class IdRefToKey {
 
+    private IdRefToKey() {}
+
     public static Key toKey(Repository r, IdRef<?> id) {
         return convertWithinRightNamespace(r, id.getClazz(), id);
     }

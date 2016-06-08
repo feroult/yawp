@@ -2,6 +2,8 @@ package io.yawp.repository.query.condition;
 
 public abstract class Condition {
 
+    private Condition() {}
+
     public static BaseCondition c(String field, String operator, Object comparison) {
         return c(field, WhereOperator.toOperator(operator), comparison);
     }

@@ -7,6 +7,8 @@ import java.util.*;
 
 public final class ReflectionUtils {
 
+    private ReflectionUtils() {}
+
     public static List<Field> getImmediateFields(Class<?> clazz) {
         List<Field> finalFields = new ArrayList<>();
         for (Field field : clazz.getDeclaredFields()) {

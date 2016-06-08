@@ -7,6 +7,9 @@ import com.google.appengine.api.taskqueue.QueueFactory;
 import io.yawp.repository.pipes.Pipe;
 
 public class QueueHelper {
+
+    private QueueHelper() {}
+
     public static Queue getPipeQueue(Pipe pipe) {
         if (pipe.getQueueName() == null) {
             return getDefaultQueue();

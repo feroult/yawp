@@ -14,13 +14,10 @@ public class QueueHelper {
         if (pipe.getQueueName() == null) {
             return getDefaultQueue();
         }
-
-        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         return QueueFactory.getQueue(pipe.getQueueName());
     }
 
     public static Queue getDefaultQueue() {
-        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         return QueueFactory.getDefaultQueue();
     }
 }

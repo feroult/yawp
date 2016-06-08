@@ -59,7 +59,6 @@ public class JsonUtils {
 
     @SuppressWarnings("unchecked")
     public static <T> List<T> fromList(Repository r, String json, Class<T> clazz) {
-        ParameterizedTypeImpl type = new ParameterizedTypeImpl(List.class, new Type[]{clazz}, null);
         return (List<T>) fromListRaw(r, json, clazz);
     }
 

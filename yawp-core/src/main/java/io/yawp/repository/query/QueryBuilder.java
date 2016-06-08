@@ -210,7 +210,7 @@ public class QueryBuilder<T> {
     public T only() throws NoResultException, MoreThanOneResultException {
         r.namespace().set(getClazz());
         try {
-            T object = null;
+            T object;
 
             if (isQueryById()) {
                 object = executeQueryById();

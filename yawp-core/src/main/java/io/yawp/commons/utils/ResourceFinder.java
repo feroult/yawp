@@ -869,8 +869,7 @@ public class ResourceFinder {
 
     private static void readJarEntries(URL location, String basePath, Map<String, URL> resources) throws IOException {
         JarURLConnection conn = (JarURLConnection) location.openConnection();
-        JarFile jarfile = null;
-        jarfile = conn.getJarFile();
+        JarFile jarfile = conn.getJarFile();
 
         Enumeration<JarEntry> entries = jarfile.entries();
         while (entries != null && entries.hasMoreElements()) {

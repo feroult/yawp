@@ -914,7 +914,7 @@ public class ResourceFinder {
     private String readContents(URL resource) throws IOException {
         InputStream in = resource.openStream();
         BufferedInputStream reader = null;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         try {
             reader = new BufferedInputStream(in);
@@ -998,7 +998,7 @@ public class ResourceFinder {
                                 continue;
                             }
                             sepIdx += 2;
-                            StringBuffer sb = new StringBuffer(file.length() - sepIdx + resourceName.length());
+                            StringBuilder sb = new StringBuilder(file.length() - sepIdx + resourceName.length());
                             sb.append(file.substring(sepIdx));
                             sb.append(resourceName);
                             entryName = sb.toString();
@@ -1025,7 +1025,7 @@ public class ResourceFinder {
                     if (host != null) {
                         hostLength = host.length();
                     }
-                    StringBuffer buf = new StringBuffer(2 + hostLength + baseFile.length() + resourceName.length());
+                    StringBuilder buf = new StringBuilder(2 + hostLength + baseFile.length() + resourceName.length());
 
                     if (hostLength > 0) {
                         buf.append("//").append(host);
@@ -1075,7 +1075,7 @@ public class ResourceFinder {
     }
 
     private URL targetURL(URL base, String name) throws MalformedURLException {
-        StringBuffer sb = new StringBuffer(base.getFile().length() + name.length());
+        StringBuilder sb = new StringBuilder(base.getFile().length() + name.length());
         sb.append(base.getFile());
         sb.append(name);
         String file = sb.toString();

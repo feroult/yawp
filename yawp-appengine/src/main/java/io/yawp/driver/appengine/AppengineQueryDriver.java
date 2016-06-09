@@ -394,7 +394,7 @@ public class AppengineQueryDriver implements QueryDriver {
     }
 
     private <T> Object getActualListFieldValue(String fieldName, Class<T> clazz, Collection<?> value) {
-        Collection<?> objects = (Collection<?>) value;
+        Collection<?> objects = value;
         List<Object> values = new ArrayList<>();
         for (Object obj : objects) {
             values.add(getActualFieldValue(fieldName, clazz, obj));

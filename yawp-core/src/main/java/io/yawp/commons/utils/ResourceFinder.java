@@ -314,7 +314,7 @@ public class ResourceFinder {
      */
     public Class findClass(String uri) throws IOException, ClassNotFoundException {
         String className = findString(uri);
-        return (Class) classLoader.loadClass(className);
+        return classLoader.loadClass(className);
     }
 
     /**

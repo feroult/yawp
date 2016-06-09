@@ -8,8 +8,12 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RequestContext {
+
+    private final static Logger logger = Logger.getLogger(RequestContext.class.getName());
 
     private HttpServletResponse resp;
 
@@ -84,6 +88,7 @@ public class RequestContext {
         try {
             return JsonUtils.readJson(req.getReader());
         } catch (IOException e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
             throw new RuntimeException();
         }
     }

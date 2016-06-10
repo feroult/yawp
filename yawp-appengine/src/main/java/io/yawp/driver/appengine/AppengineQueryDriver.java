@@ -26,6 +26,9 @@ import java.util.*;
 
 public class AppengineQueryDriver implements QueryDriver {
 
+    // Filter for query
+    private static final String NORMALIZED_FIELD_PREFIX = "__";
+
     private Repository r;
 
     public AppengineQueryDriver(Repository r) {
@@ -276,10 +279,6 @@ public class AppengineQueryDriver implements QueryDriver {
 
         field.set(object, ids);
     }
-
-    // Filter for query
-
-    private static final String NORMALIZED_FIELD_PREFIX = "__";
 
     private Filter createFilter(QueryBuilder<?> builder, BaseCondition condition) throws FalsePredicateException {
         if (condition instanceof SimpleCondition) {

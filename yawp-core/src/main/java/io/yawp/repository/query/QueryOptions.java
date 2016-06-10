@@ -27,10 +27,6 @@ public class QueryOptions {
 
     public String cursor;
 
-    public static QueryOptions parse(String json) {
-        return new QueryOptions(json);
-    }
-
     public QueryOptions(String json) {
         JsonObject jsonObject = (JsonObject) new JsonParser().parse(json);
 
@@ -40,6 +36,10 @@ public class QueryOptions {
         this.limit = parseLimit(jsonObject.get("limit"));
         this.returnCursor = parseReturnCursor(jsonObject.get("cursor"));
         this.cursor = parseCursor(jsonObject.get("cursor"));
+    }
+
+    public static QueryOptions parse(String json) {
+        return new QueryOptions(json);
     }
 
     private String parseCursor(JsonElement jsonElement) {

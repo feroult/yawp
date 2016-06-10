@@ -2,11 +2,6 @@ package io.yawp.commons.utils.kind;
 
 public abstract class KindResolver {
 
-    public abstract String getKind(Class<?> clazz);
-
-    @Deprecated
-    public abstract String getPath(String kind);
-
     private static final String KINDRESOLVER_SETTING_KEY = "yawp.kindresolver";
 
     private static KindResolver kindResolver;
@@ -14,6 +9,11 @@ public abstract class KindResolver {
     static {
         loadKindResolver();
     }
+
+    public abstract String getKind(Class<?> clazz);
+
+    @Deprecated
+    public abstract String getPath(String kind);
 
     private static void loadKindResolver() {
         String kindResolverClazzName = System.getProperty(KINDRESOLVER_SETTING_KEY);

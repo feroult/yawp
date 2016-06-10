@@ -4,8 +4,12 @@ package io.yawp.commons.utils;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class ReflectionUtils {
+
+    private final static Logger logger = Logger.getLogger(ReflectionUtils.class.getName());
 
     private ReflectionUtils() {}
 
@@ -39,6 +43,7 @@ public final class ReflectionUtils {
             try {
                 return clazz.getDeclaredField(fieldName);
             } catch (NoSuchFieldException ex) {
+                logger.log(Level.SEVERE, ex.getMessage(), ex);
                 clazz = clazz.getSuperclass();
             }
         }

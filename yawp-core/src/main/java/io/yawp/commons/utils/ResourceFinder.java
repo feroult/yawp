@@ -37,12 +37,16 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author David Blevins
  * @version $Rev$ $Date$
  */
 public class ResourceFinder {
+
+    private final static Logger logger = Logger.getLogger(ResourceFinder.class.getName());
 
     private final URL[] urls;
     private final String path;
@@ -211,6 +215,7 @@ public class ResourceFinder {
                 String string = readContents(url);
                 strings.add(string);
             } catch (IOException notAvailable) {
+                logger.log(Level.SEVERE, notAvailable.getMessage(), notAvailable);
                 resourcesNotLoaded.add(url.toExternalForm());
             }
         }
@@ -291,6 +296,7 @@ public class ResourceFinder {
                 String value = readContents(url);
                 strings.put(name, value);
             } catch (IOException notAvailable) {
+                logger.log(Level.SEVERE, notAvailable.getMessage(), notAvailable);
                 resourcesNotLoaded.add(url.toExternalForm());
             }
         }
@@ -358,6 +364,7 @@ public class ResourceFinder {
                 Class clazz = classLoader.loadClass(className);
                 classes.add(clazz);
             } catch (Exception notAvailable) {
+                logger.log(Level.SEVERE, notAvailable.getMessage(), notAvailable);
                 resourcesNotLoaded.add(className);
             }
         }
@@ -435,6 +442,7 @@ public class ResourceFinder {
                 Class clazz = classLoader.loadClass(className);
                 classes.put(string, clazz);
             } catch (Exception notAvailable) {
+                logger.log(Level.SEVERE, notAvailable.getMessage(), notAvailable);
                 resourcesNotLoaded.add(className);
             }
         }
@@ -551,6 +559,7 @@ public class ResourceFinder {
                     resourcesNotLoaded.add(className);
                 }
             } catch (Exception notAvailable) {
+                logger.log(Level.SEVERE, notAvailable.getMessage(), notAvailable);
                 resourcesNotLoaded.add(className);
             }
         }
@@ -637,6 +646,7 @@ public class ResourceFinder {
                     resourcesNotLoaded.add(className);
                 }
             } catch (Exception notAvailable) {
+                logger.log(Level.SEVERE, notAvailable.getMessage(), notAvailable);
                 resourcesNotLoaded.add(className);
             }
         }
@@ -738,6 +748,7 @@ public class ResourceFinder {
                 Properties props = loadProperties(url);
                 properties.add(props);
             } catch (Exception notAvailable) {
+                logger.log(Level.SEVERE, notAvailable.getMessage(), notAvailable);
                 resourcesNotLoaded.add(url.toExternalForm());
             }
         }
@@ -812,6 +823,7 @@ public class ResourceFinder {
                 Properties properties = loadProperties(url);
                 propertiesMap.put(string, properties);
             } catch (Exception notAvailable) {
+                logger.log(Level.SEVERE, notAvailable.getMessage(), notAvailable);
                 resourcesNotLoaded.add(url.toExternalForm());
             }
         }
@@ -847,6 +859,7 @@ public class ResourceFinder {
 
                 }
             } catch (Exception e) {
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
 
@@ -906,6 +919,7 @@ public class ResourceFinder {
                 in.close();
                 reader.close();
             } catch (Exception e) {
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
     }
@@ -930,6 +944,7 @@ public class ResourceFinder {
                 in.close();
                 reader.close();
             } catch (Exception e) {
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
     }
@@ -1013,6 +1028,7 @@ public class ResourceFinder {
                             try {
                                 jarFile.close();
                             } catch (Exception e) {
+                                logger.log(Level.SEVERE, e.getMessage(), e);
                             }
                         }
                     }
@@ -1051,6 +1067,7 @@ public class ResourceFinder {
                     try {
                         urlConnection.getInputStream().close();
                     } catch (SecurityException e) {
+                        logger.log(Level.SEVERE, e.getMessage(), e);
                         return null;
                     }
                     // HTTP can return a stream on a non-existent file
@@ -1067,7 +1084,9 @@ public class ResourceFinder {
             } catch (MalformedURLException e) {
                 // Keep iterating through the URL list
             } catch (IOException e) {
+                logger.log(Level.SEVERE, e.getMessage(), e);
             } catch (SecurityException e) {
+                logger.log(Level.SEVERE, e.getMessage(), e);
             }
         }
         return null;

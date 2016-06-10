@@ -213,6 +213,7 @@ public class JoinTask implements DeferredTask {
             try {
                 Thread.sleep(sleep);
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 throw new RuntimeException(e);
             }
         }

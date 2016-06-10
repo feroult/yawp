@@ -22,6 +22,7 @@ public class AsyncHelper {
         try {
             latch.await(timeout, unit);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }

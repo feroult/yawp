@@ -43,8 +43,8 @@ public class AppengineWebAppContext extends WebAppContext {
         this.helper = createHelper();
         this.environment = ApiProxy.getCurrentEnvironment();
         getServletContext().setAttribute(API_PROXY_LOCAL, ApiProxy.getDelegate());
-        getServletContext().setAttribute(APPENGINE_WEB_XML, readAppengineWebXml(getServletContext()));
-        getServletContext().setAttribute(WEB_XML, readWebXml(getServletContext()));
+        getServletContext().setAttribute(APPENGINE_WEB_XML, readAppengineWebXml());
+        getServletContext().setAttribute(WEB_XML, readWebXml());
         SystemProperty.environment.set(SystemProperty.Environment.Value.Development);
         configureUserRealmAppengineHelper();
         super.doStart();
@@ -69,12 +69,12 @@ public class AppengineWebAppContext extends WebAppContext {
         super.doStop();
     }
 
-    private AppEngineWebXml readAppengineWebXml(ServletContext servletContext) {
+    private AppEngineWebXml readAppengineWebXml() {
         AppEngineWebXmlReader reader = new AppEngineWebXmlReader(mojo.getAppDir());
         return reader.readAppEngineWebXml();
     }
 
-    private WebXml readWebXml(ContextHandler.SContext servletContext) {
+    private WebXml readWebXml() {
         return new WebXml() {
             @Override
             public boolean matches(String url) {

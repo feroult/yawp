@@ -211,7 +211,7 @@ public class AppengineQueryDriver implements QueryDriver {
         }
 
         if (fieldModel.isSaveAsLazyJson()) {
-            setLazyJsonProperty(r, object, field, value);
+            setLazyJsonProperty(object, field, value);
             return;
         }
 
@@ -254,7 +254,7 @@ public class AppengineQueryDriver implements QueryDriver {
         field.set(object, JsonUtils.from(r, json, field.getGenericType()));
     }
 
-    private <T> void setLazyJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
+    private <T> void setLazyJsonProperty(T object, Field field, Object value) throws IllegalAccessException {
         String json = ((Text) value).getValue();
         Type type = ((ParameterizedType)field.getGenericType()).getActualTypeArguments()[0];
         field.set(object, LazyJson.$create(type, json));
@@ -371,7 +371,7 @@ public class AppengineQueryDriver implements QueryDriver {
         }
 
         if (fieldModel.isId()) {
-            return getActualKeyFieldValue(clazz, value);
+            return getActualKeyFieldValue(value);
         }
 
         if (fieldModel.isEnum(value)) {
@@ -402,7 +402,7 @@ public class AppengineQueryDriver implements QueryDriver {
         return values;
     }
 
-    private <T> Key getActualKeyFieldValue(Class<T> clazz, Object value) {
+    private <T> Key getActualKeyFieldValue(Object value) {
         IdRef<?> id = (IdRef<?>) value;
         return IdRefToKey.toKey(r, id);
     }

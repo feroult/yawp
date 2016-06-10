@@ -152,7 +152,7 @@ public class Repository implements RepositoryApi {
             return false;
         }
 
-        return beginTransactionForPipes(endpointClazz);
+        return beginTransactionForPipes();
     }
 
     private boolean beginTransactionForPipesOnDestroy(IdRef<?> id) {
@@ -162,10 +162,10 @@ public class Repository implements RepositoryApi {
             return false;
         }
 
-        return beginTransactionForPipes(endpointClazz);
+        return beginTransactionForPipes();
     }
 
-    private boolean beginTransactionForPipes(Class<?> endpointClazz) {
+    private boolean beginTransactionForPipes() {
         if (isTransationInProgress()) {
             return false;
         }

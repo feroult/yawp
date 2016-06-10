@@ -74,7 +74,7 @@ public abstract class FacadeUtils {
         List<String> properties = new ArrayList<String>();
 
         for (Method attribute : facade.getMethods()) {
-            String name = extractNameFromAttribute(facade, attribute, type);
+            String name = extractNameFromAttribute(attribute, type);
             if (name == null) {
                 continue;
             }
@@ -101,7 +101,7 @@ public abstract class FacadeUtils {
         return otherProperties;
     }
 
-    private static String extractNameFromAttribute(Class<?> facade, Method attribute, FacadeType type) {
+    private static String extractNameFromAttribute(Method attribute, FacadeType type) {
         String typePrefix = type.toString().toLowerCase();
         String methodName = attribute.getName();
         if (!methodName.startsWith(typePrefix)) {

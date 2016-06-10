@@ -58,7 +58,7 @@ public class DevServerMojo extends DevserverAbstractMojo {
         try {
             Class<?> clazz = classLoader.loadClass("io.yawp.plugin.devserver.DevServer");
             Constructor<?> constructor = clazz.getConstructor(String.class);
-            Object devserver = constructor.newInstance(createMojoWrapperJson(classLoader));
+            Object devserver = constructor.newInstance(createMojoWrapperJson());
             Method run = clazz.getMethod("run");
             run.invoke(devserver);
 
@@ -67,7 +67,7 @@ public class DevServerMojo extends DevserverAbstractMojo {
         }
     }
 
-    private String createMojoWrapperJson(ClassLoader classLoader) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    private String createMojoWrapperJson() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         MojoWrapper mojo = new MojoWrapper();
         mojo.setEnv(getEnv());
         mojo.setBaseDir(getBaseDir());

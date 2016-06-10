@@ -144,7 +144,7 @@ public class PGQueryDriver implements QueryDriver {
         }
 
         if (fieldModel.isSaveAsLazyJson()) {
-            setLazyJsonProperty(r, object, field, value);
+            setLazyJsonProperty(object, field, value);
             return;
         }
 
@@ -212,7 +212,7 @@ public class PGQueryDriver implements QueryDriver {
         field.set(object, JsonUtils.from(r, json, field.getGenericType()));
     }
 
-    private <T> void setLazyJsonProperty(Repository r, T object, Field field, Object value) throws IllegalAccessException {
+    private <T> void setLazyJsonProperty(T object, Field field, Object value) throws IllegalAccessException {
         String json = (String) value;
         Type type = ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
         field.set(object, LazyJson.$create(type, json));

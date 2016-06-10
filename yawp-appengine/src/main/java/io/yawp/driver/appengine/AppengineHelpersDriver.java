@@ -8,7 +8,12 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class AppengineHelpersDriver implements HelpersDriver {
+
+    private final static Logger logger = Logger.getLogger(AppengineHelpersDriver.class.getName());
 
     @Override
     public void deleteAll() {
@@ -26,7 +31,7 @@ public class AppengineHelpersDriver implements HelpersDriver {
 
     @Override
     public void sync() {
-        System.out.println("appengine helper");
+        logger.log(Level.INFO, "appengine helper");
     }
 
 }

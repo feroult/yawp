@@ -6,8 +6,12 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ShutdownMonitor extends Thread {
+
+    private final static Logger logger = Logger.getLogger(ShutdownMonitor.class.getName());
 
     public static final String DEFAULT_PORT = "8359";
 
@@ -45,8 +49,7 @@ public class ShutdownMonitor extends Thread {
             }
 
             socket.close();
-            // TODO: using real logging
-            System.out.println("Stopping devserver...");
+            logger.log(Level.INFO, "Stopping devserver...");
             shutdown();
 
         } catch (Exception e) {

@@ -19,14 +19,14 @@ public class Datastore {
 
     private static final String SQL_DELETE = "delete from :kind where key @> :key";
 
-    public static Datastore create(ConnectionManager connectionManager) {
-        return new Datastore(connectionManager);
-    }
-
     private ConnectionManager connectionManager;
 
     private Datastore(ConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
+    }
+
+    public static Datastore create(ConnectionManager connectionManager) {
+        return new Datastore(connectionManager);
     }
 
     public Key put(Entity entity) {

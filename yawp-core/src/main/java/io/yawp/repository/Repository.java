@@ -26,20 +26,20 @@ public class Repository implements RepositoryApi {
 
     private TransactionDriver tx;
 
-    public static Repository r() {
-        return new Repository();
-    }
-
-    public static Repository r(String ns) {
-        return new Repository(ns);
-    }
-
     private Repository() {
         this.namespace = new Namespace(driver().namespace());
     }
 
     private Repository(String ns) {
         this.namespace = new Namespace(ns, driver().namespace());
+    }
+
+    public static Repository r() {
+        return new Repository();
+    }
+
+    public static Repository r(String ns) {
+        return new Repository(ns);
     }
 
     @Override

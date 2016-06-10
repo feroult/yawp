@@ -26,6 +26,10 @@ public class EndpointServlet extends HttpServlet {
     public EndpointServlet() {
     }
 
+    protected EndpointServlet(String packagePrefix) {
+        initYawp(packagePrefix);
+    }
+
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
@@ -59,10 +63,6 @@ public class EndpointServlet extends HttpServlet {
 
     protected void setWithHooks(boolean enableHooks) {
         this.enableHooks = enableHooks;
-    }
-
-    protected EndpointServlet(String packagePrefix) {
-        initYawp(packagePrefix);
     }
 
     /**

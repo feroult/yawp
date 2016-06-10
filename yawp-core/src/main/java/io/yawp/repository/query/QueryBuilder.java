@@ -32,14 +32,14 @@ public class QueryBuilder<T> {
 
     private String cursor;
 
-    public static <T> QueryBuilder<T> q(Class<T> clazz, Repository r) {
-        return new QueryBuilder<T>(clazz, r);
-    }
-
     private QueryBuilder(Class<T> clazz, Repository r) {
         this.clazz = clazz;
         this.r = r;
         this.model = new ObjectModel(clazz);
+    }
+
+    public static <T> QueryBuilder<T> q(Class<T> clazz, Repository r) {
+        return new QueryBuilder<T>(clazz, r);
     }
 
     public <N> QueryTransformer<T, N> transform(String transformName) {

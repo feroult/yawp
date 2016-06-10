@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +19,8 @@ public class SqlRunner {
     private class NotImplementedException extends RuntimeException {
 
     }
+
+    private final static Logger logger = Logger.getLogger(SqlRunner.class.getName());
 
     protected String sql;
 
@@ -100,7 +104,7 @@ public class SqlRunner {
                     ps.close();
                 }
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                logger.log(Level.SEVERE, "Exception while closing resource in finally clause", e);
             }
         }
     }
@@ -122,7 +126,7 @@ public class SqlRunner {
                     ps.close();
                 }
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                logger.log(Level.SEVERE, "Exception while closing resource in finally clause", e);
             }
         }
     }

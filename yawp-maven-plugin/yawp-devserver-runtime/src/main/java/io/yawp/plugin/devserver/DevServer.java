@@ -66,6 +66,7 @@ public class DevServer {
             monitor.start();
             monitor.join();
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }

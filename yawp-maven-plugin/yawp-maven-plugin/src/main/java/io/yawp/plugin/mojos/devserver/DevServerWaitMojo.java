@@ -43,6 +43,7 @@ public class DevServerWaitMojo extends DevserverAbstractMojo {
         try {
             Thread.sleep(SLEEP_MILLIS);
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }

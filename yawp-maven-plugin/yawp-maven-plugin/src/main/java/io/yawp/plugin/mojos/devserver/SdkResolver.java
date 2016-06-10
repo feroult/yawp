@@ -44,7 +44,7 @@ public class SdkResolver {
     @SuppressWarnings("unchecked")
     public static File getSdk(MavenProject project, RepositorySystem repoSystem, RepositorySystemSession repoSession,
                               List<RemoteRepository>... repos) throws MojoExecutionException {
-        Artifact artifact = (Artifact) find(project.getPluginArtifacts(), new Predicate<Artifact>() {
+        Artifact artifact = find(project.getPluginArtifacts(), new Predicate<Artifact>() {
             @Override
             public boolean apply(Artifact artifact1) {
                 return artifact1.getArtifactId().equals("appengine-maven-plugin");

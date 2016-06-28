@@ -10,8 +10,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WebAppContextHelper {
+
+    private final static Logger logger = Logger.getLogger(WebAppContextHelper.class.getName());
 
     protected MojoWrapper mojo;
 
@@ -62,8 +66,7 @@ public class WebAppContextHelper {
     }
 
     protected void configureHotDeploy() {
-        // TODO: using real logging
-        System.out.println("HotDeploy scanner: " + mojo.getHotDeployDir());
+        logger.log(Level.INFO, "HotDeploy scanner: " + mojo.getHotDeployDir());
         Scanner scanner = new Scanner();
         scanner.setScanInterval(mojo.getFullScanSeconds());
         scanner.setScanDirs(Arrays.asList(new File(mojo.getHotDeployDir())));
@@ -79,8 +82,7 @@ public class WebAppContextHelper {
                 if (!webapp.isStarted()) {
                     return;
                 }
-                // TODO: using real logging
-                System.out.println(filename + " updated, reloading the webapp!");
+                logger.log(Level.INFO, filename + " updated, reloading the webapp!");
                 restart(webapp);
             }
 

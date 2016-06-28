@@ -6,12 +6,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.postgresql.util.PGobject;
 
 public class SqlRunner {
+
+    private final static Logger logger = Logger.getLogger(SqlRunner.class.getName());
 
     @SuppressWarnings("serial")
     private class NotImplementedException extends RuntimeException {
@@ -89,7 +93,7 @@ public class SqlRunner {
             }
 
         } catch (SQLException e) {
-            System.out.println("problem with sql: " + sql);
+            logger.log(Level.INFO, "problem with sql: " + sql);
             throw new RuntimeException(e);
         } finally {
             try {

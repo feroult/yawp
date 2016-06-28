@@ -1,19 +1,22 @@
 import chai from 'chai';
-import Library from '../lib/yawp.js';
+import yawp from '../src/index';
 
 chai.expect();
 
 const expect = chai.expect;
 
-var lib;
+yawp.config((c) => {
+    c.baseUrl('http://localhost:8080/api');
+})
 
-describe('Given an instance of my library', function () {
-    before(function () {
-        lib = new Library();
-    });
-    describe('when I need the name', function () {
-        it('should return the name', () => {
-            expect(lib.name).to.be.equal('Library');
+describe('Some YAWP! tests in nodejs', () => {
+    it('creates a parent', (done) => {
+        var parent = {
+            name: 'xpto'
+        };
+        yawp('/parents').create(parent).done(function (retrievedParent) {
+            expect(retrievedParent.name).to.be.equal('xpto');
+            done();
         });
     });
 });

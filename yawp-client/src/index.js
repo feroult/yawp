@@ -1,13 +1,6 @@
 import yawp from './yawp';
+import fixtures from './fixtures';
 
-//export default yawp;
+yawp.fixtures = fixtures;
 
-export default class Library {
-    constructor() {
-        this._name = 'Library';
-    }
-
-    get name() {
-        return this._name;
-    }
-}
+export default yawp;

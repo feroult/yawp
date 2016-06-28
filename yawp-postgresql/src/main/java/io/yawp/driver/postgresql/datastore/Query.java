@@ -371,7 +371,7 @@ public class Query {
         }
 
         if (fieldModel.isId()) {
-            return getActualKeyFieldValue(clazz, value);
+            return getActualKeyFieldValue(value);
         }
 
         if (fieldModel.isEnum(value)) {
@@ -402,7 +402,7 @@ public class Query {
         return values;
     }
 
-    private <T> Key getActualKeyFieldValue(Class<T> clazz, Object value) {
+    private <T> Key getActualKeyFieldValue(Object value) {
         IdRef<?> id = (IdRef<?>) value;
         return IdRefToKey.toKey(r, id);
     }

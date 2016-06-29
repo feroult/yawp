@@ -1,6 +1,6 @@
 {
   "name": "yawp-cli",
-  "version": "0.9.0",
+  "version": "1.0.2",
   "description": "YAWP! Framework JS client",
   "main": "lib/yawp.js",
   "scripts": {

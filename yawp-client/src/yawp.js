@@ -1,11 +1,15 @@
 import { extend, baseAjax } from './utils';
 
 var baseUrl = '/api';
+var defaultFetchOptions = {};
 
 function config(callback) {
     var c = {
         baseUrl: function (url) {
             baseUrl = url;
+        },
+        defaultFetchOptions: function (options) {
+            defaultFetchOptions = options;
         }
     };
 
@@ -13,8 +17,17 @@ function config(callback) {
 }
 
 function defaultAjax(type, options) {
-    options.url = baseUrl + options.url;
-    return baseAjax(type, options);
+    var url = baseUrl + options.url;
+    var query = options.query;
+    var body = options.data;
+    delete options.url;
+    delete options.query;
+
+    options.method = type;
+    options.body = body;
+    extend(options, defaultFetchOptions);
+
+    return baseAjax(url, query, options);
 }
 
 function extractId(object) {

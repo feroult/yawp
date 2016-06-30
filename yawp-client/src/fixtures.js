@@ -48,8 +48,8 @@ function bind(fn, endpoint, parentId) {
 }
 
 function reset() {
-    baseAjax('GET', {
-        url: resetUrl,
+    baseAjax(resetUrl, null, {
+        method: 'GET',
         async: false,
     });
 
@@ -91,15 +91,20 @@ function save(endpoint, parentId, data) {
         console.error('not endpoint?!');
     }
 
-    baseAjax('POST', {
-        url: baseUrl + (parentId ? data[parentId] : '') + endpoint,
+    var url = baseUrl + (parentId ? data[parentId] : '') + endpoint;
+    var query = null;
+
+    baseAjax(url, query, {
+        method: 'POST',
         async: false,
-        data: prepareDataJSON(data)
+        body: prepareDataJSON(data)
     }).done(function (retrievedData) {
         retrievedObject = retrievedData;
     }).fail(function (data) {
         throw Error('error: ' + data);
     });
+
+    console.log('r', retrievedObject);
 
     return retrievedObject;
 }

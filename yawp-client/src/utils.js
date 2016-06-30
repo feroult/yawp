@@ -1,5 +1,7 @@
-if(typeof self !== 'undefined') {
-    require('es6-promise').polyfill();
+//require('babel-polyfill');
+
+if (typeof self !== 'undefined') {
+    //require('es6-promise').polyfill();
     require('isomorphic-fetch');
 }
 
@@ -16,7 +18,7 @@ export function extend() {
     return result;
 }
 
-export function baseAjax(type, options) {
+export function baseAjax(url, query, options) {
     var fail,
         done,
         exception,
@@ -46,26 +48,32 @@ export function baseAjax(type, options) {
         }
     };
 
-    var url = options.url + (options.query ? '?' + toUrlParam(options.query) : '');
+    url += (query ? '?' + toUrlParam(options.query) : '');
 
-    var headers = {
+    options.headers = options.headers || {};
+    extend(options.headers, {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-    };
+    });
 
-    fetch(url, {
-        method: type,
-        headers: headers,
-        body: options.data
-    }).then((response) => response.json())
+    console.log('url', url);
+    console.log('options', options);
+
+    //(async function () {
+    //    let response = await fetch(url, options);
+    //    let json = await response.json();
+    //    done && done(json);
+    //})();
+
+    fetch(url, options).then((response) => response.json())
         .then((response) => {
             done && done(response);
             then && then(response);
         })
-        .catch((error) => {
-            fail && fail(error);
-            error && error(error);
-            exception && exception(error);
+        .catch((err) => {
+            fail && fail(err);
+            error && error(err);
+            exception && exception(err);
         });
 
     return callbacks;

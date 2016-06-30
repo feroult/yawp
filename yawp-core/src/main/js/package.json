@@ -1,11 +1,11 @@
 {
   "name": "yawp-cli",
-  "version": "1.0.1",
+  "version": "1.0.16",
   "description": "YAWP! Client",
   "main": "yawp-cli.js",
   "scripts": {
-	"build:webpack": "NODE_ENV=production webpack --config webpack.config.js",
-	"build": "npm run build:webpack",
+    "build:webpack": "NODE_ENV=production webpack --config webpack.config.js",
+    "build": "npm run build:webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

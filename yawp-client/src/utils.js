@@ -1,5 +1,7 @@
-require('es6-promise').polyfill();
-require('isomorphic-fetch');
+if(typeof self !== 'undefined') {
+    require('es6-promise').polyfill();
+    require('isomorphic-fetch');
+}
 
 export function extend() {
     var result = arguments[0] || {};

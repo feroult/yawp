@@ -1,18 +1,21 @@
 {
   "name": "yawp-cli",
-  "version": "1.0.5",
+  "version": "1.0.15",
   "description": "YAWP! Framework JS client",
-  "main": "lib/yawp.min.js",
+  "main": "lib/yawp.js",
   "scripts": {
-    "build": "webpack --mode=build",
+    "build": "webpack --mode=dev",
     "dev": "webpack --progress --colors --watch --mode=dev",
     "test": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js"
   },
   "devDependencies": {
     "babel": "^6.5.2",
+    "babel-cli": "^6.10.1",
     "babel-core": "^6.10.4",
     "babel-eslint": "^6.1.0",
     "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-plugin-add-module-exports": "^0.2.1",
     "chai": "^3.5.0",
     "eslint": "^2.13.1",
     "eslint-loader": "^1.3.0",
@@ -38,9 +41,6 @@
   },
   "homepage": "http://yawp.io",
   "dependencies": {
-    "babel-preset-es2015": "^6.9.0",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "es6-promise": "^3.2.1",
-    "isomorphic-fetch": "^2.2.1"
+    "es6-promise": "^3.2.1"
   }
 }

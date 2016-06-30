@@ -1,24 +1,16 @@
-//require('babel-polyfill');
+import { extend, toUrlParam } from '../commons/utils';
 
 if (typeof self !== 'undefined') {
-    //require('es6-promise').polyfill();
+    require('es6-promise').polyfill();
     require('isomorphic-fetch');
 }
 
-export function extend() {
-    var result = arguments[0] || {};
-
-    for (var i = 1, l = arguments.length; i < l; i++) {
-        var obj = arguments[i];
-        for (var attrname in obj) {
-            result[attrname] = obj[attrname];
-        }
-    }
-
-    return result;
+async function lala() {
+    var x = await y();
+    return x;
 }
 
-export function baseAjax(url, query, options) {
+export default function request(url, query, options) {
     var fail,
         done,
         exception,
@@ -53,7 +45,7 @@ export function baseAjax(url, query, options) {
     options.headers = options.headers || {};
     extend(options.headers, {
         'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json;charset=UTF-8',
     });
 
     console.log('url', url);
@@ -65,8 +57,13 @@ export function baseAjax(url, query, options) {
     //    done && done(json);
     //})();
 
-    fetch(url, options).then((response) => response.json())
+    var fetch2 = fetch(url, options);
+
+    console.log('f', fetch2);
+
+    fetch2.then((response) => response.json())
         .then((response) => {
+            console.log('here 111');
             done && done(response);
             then && then(response);
         })
@@ -76,11 +73,7 @@ export function baseAjax(url, query, options) {
             exception && exception(err);
         });
 
-    return callbacks;
-}
+    console.log('here 222');
 
-function toUrlParam(jsonParams) {
-    return Object.keys(jsonParams).map(function (k) {
-        return encodeURIComponent(k) + '=' + encodeURIComponent(jsonParams[k]);
-    }).join('&');
+    return callbacks;
 }

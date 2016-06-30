@@ -17,6 +17,6 @@
         "valid-jsdoc": 0
     },
     "parserOptions": {
-        "sourceType": "module",
+        "sourceType": "module"
     }
 }

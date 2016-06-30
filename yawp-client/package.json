@@ -1,14 +1,17 @@
 {
   "name": "yawp-cli",
-  "version": "1.0.15",
+  "version": "1.0.21",
   "description": "YAWP! Framework JS client",
-  "main": "lib/yawp.js",
+  "main": "yawp.min.js",
   "scripts": {
-    "build": "webpack --mode=build",
+    "build": "webpack --mode=build --env=node; webpack --mode=build --env=browser",
+    "build-node": "webpack --mode=build --env=node",
+    "build-browser": "webpack --mode=build --env=browser",
     "dev": "webpack --progress --colors --watch --mode=dev",
     "test": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js",
     "prepublish": "npm run build",
-    "analyzer": "webpack --json | webpack-bundle-size-analyzer"
+    "analyzer-node": "webpack --mode=build --json --env=node | webpack-bundle-size-analyzer",
+    "analyzer-browser": "webpack --mode=build --json --env=browser | webpack-bundle-size-analyzer"
   },
   "devDependencies": {
     "babel": "^6.5.2",
@@ -18,9 +21,11 @@
     "babel-loader": "^6.2.4",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-syntax-async-functions": "^6.8.0",
-    "babel-plugin-transform-regenerator": "^6.9.0",
+    "babel-plugin-transform-runtime": "^6.9.0",
     "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "^6.9.0",
+    "babel-preset-node5": "^11.1.0",
+    "babel-preset-stage-0": "^6.5.0",
     "chai": "^3.5.0",
     "eslint": "^2.13.1",
     "eslint-loader": "^1.3.0",
@@ -47,6 +52,7 @@
   },
   "homepage": "http://yawp.io",
   "dependencies": {
+    "es6-promise": "^3.2.1",
     "isomorphic-fetch": "^2.2.1"
   }
 }

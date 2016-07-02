@@ -7,16 +7,16 @@ var env = yargs.argv.env || 'node';
 
 var plugins = [], outputFile;
 
-var libraryName = env === 'node' ? 'node' : 'yawp';
+var libraryName = env === 'node' ? 'index' : 'yawp';
 
 if (mode === 'build') {
     //plugins.push(new webpack.optimize.DedupePlugin());
     //plugins.push(new webpack.optimize.OccurrenceOrderPlugin(true));
-    plugins.push(new webpack.optimize.UglifyJsPlugin({
-        compress: {
-            warnings: false
-        }
-    }));
+    //plugins.push(new webpack.optimize.UglifyJsPlugin({
+    //    compress: {
+    //        warnings: false
+    //    }
+    //}));
 
     outputFile = libraryName + (env === 'node' ? '.js' : '.min.js');
 } else {
@@ -44,7 +44,7 @@ var config = {
     entry: __dirname + '/src/' + env + '/index.js',
     devtool: 'source-map',
     output: {
-        path: __dirname + '/',
+        path: __dirname + '/' + env + '/',
         filename: outputFile,
         library: 'yawp',
         libraryTarget: 'umd',
@@ -53,10 +53,16 @@ var config = {
     module: {
         loaders: [
             {
+                babelrc: false,
                 test: /(\.jsx|\.js)$/,
                 loader: 'babel',
                 exclude: /(node_modules|bower_components)/,
                 query: env === 'node' ? configNode.babel : configBrowser.babel
+            },
+            {
+                babelrc: false,
+                test: /(\.json)$/,
+                loader: 'json'
             }
             //,
             //{
@@ -70,7 +76,8 @@ var config = {
         root: path.resolve('./src'),
         extensions: ['', '.js']
     },
-    plugins: plugins
+    plugins: plugins,
+    target: env
 };
 
 module.exports = config;

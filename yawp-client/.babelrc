@@ -1,0 +1,7 @@
+{
+    "presets": ["es2015", "stage-0"],
+    "plugins": ["babel-plugin-add-module-exports", "syntax-async-functions", ["transform-runtime", {
+           "polyfill": false,
+           "regenerator": true
+       }]]
+}

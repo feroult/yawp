@@ -7,7 +7,7 @@ var env = yargs.argv.env || 'node';
 
 var plugins = [], outputFile;
 
-var libraryName = env === 'node' ? 'index' : 'yawp';
+var libraryName = 'yawp';
 
 if (mode === 'build') {
     //plugins.push(new webpack.optimize.DedupePlugin());
@@ -18,22 +18,13 @@ if (mode === 'build') {
     //    }
     //}));
 
-    outputFile = libraryName + (env === 'node' ? '.js' : '.min.js');
+    outputFile = libraryName + '.min.js';
 } else {
     outputFile = libraryName + '-dev.js';
 }
 
-var configNode = {
-    babel: {
-        presets: ["es2015", "stage-0"],
-        plugins: ["babel-plugin-add-module-exports", "syntax-async-functions", ["transform-runtime", {
-            polyfill: false,
-            regenerator: true
-        }]]
-    }
-};
 
-var configBrowser = {
+var configBabel = {
     babel: {
         presets: ["es2015"],
         plugins: ["babel-plugin-add-module-exports"]
@@ -41,10 +32,10 @@ var configBrowser = {
 };
 
 var config = {
-    entry: __dirname + '/src/' + env + '/index.js',
+    entry: __dirname + '/src/web/index.js',
     devtool: 'source-map',
     output: {
-        path: __dirname + '/' + env + '/',
+        path: __dirname + '/lib/web/',
         filename: outputFile,
         library: 'yawp',
         libraryTarget: 'umd',
@@ -57,7 +48,7 @@ var config = {
                 test: /(\.jsx|\.js)$/,
                 loader: 'babel',
                 exclude: /(node_modules|bower_components)/,
-                query: env === 'node' ? configNode.babel : configBrowser.babel
+                query: configBabel.babel
             },
             {
                 babelrc: false,

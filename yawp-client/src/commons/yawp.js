@@ -68,7 +68,7 @@ export default function (request) {
         }
 
         function fetch(callback) {
-            return baseRequest('GET', options()).done(callback);
+            return baseRequest('GET', options()).then(callback);
         }
 
         function setupQuery() {
@@ -88,7 +88,7 @@ export default function (request) {
 
         function list(callback) {
             setupQuery();
-            return baseRequest('GET', options()).done(callback);
+            return baseRequest('GET', options()).then(callback);
         }
 
         function first(callback) {

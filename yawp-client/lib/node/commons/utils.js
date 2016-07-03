@@ -23,3 +23,4 @@ function toUrlParam(jsonParams) {
         return encodeURIComponent(k) + '=' + encodeURIComponent(jsonParams[k]);
     }).join('&');
 }
+//# sourceMappingURL=utils.js.map

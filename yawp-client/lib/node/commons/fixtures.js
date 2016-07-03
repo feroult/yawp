@@ -10,6 +10,9 @@ exports.default = function (request) {
 
     function config(callback) {
         var c = {
+            async: function async(value) {
+                _async = value;
+            },
             baseUrl: function baseUrl(url) {
                 _baseUrl = url;
             },
@@ -19,8 +22,8 @@ exports.default = function (request) {
             lazyPropertyKeys: function lazyPropertyKeys(array) {
                 _lazyPropertyKeys = array;
             },
-            bind: function bind(key, endpoint, parentId) {
-                api[key] = _bind(fixture, endpoint, parentId);
+            bind: function bind(endpointKey, endpoint, parentId) {
+                api[endpointKey] = _bind(fixture, endpointKey, endpoint, parentId);
             }
         };
 
@@ -34,13 +37,15 @@ exports.default = function (request) {
     var lazy = {};
     var lazyProperties = {};
 
-    var load = {};
+    var cache = {};
+    var queue = [];
 
-    function _bind(fn, endpoint, parentId) {
+    function _bind(fn, endpointKey, endpoint, parentId) {
         var bindFn = function bindFn() {
             var args = Array.prototype.slice.call(arguments, 0);
             args.unshift(parentId);
             args.unshift(endpoint);
+            args.unshift(endpointKey);
             return fn.apply(this, args);
         };
         bindFn.endpoint = endpoint;
@@ -48,12 +53,13 @@ exports.default = function (request) {
     }
 
     function reset() {
-        request(_resetUrl, null, {
+        return request(_resetUrl, null, {
             method: 'GET',
-            synchronous: true
+            async: _async
+        }).then(function () {
+            cache = {};
+            queue = [];
         });
-
-        load = {};
     }
 
     function parseFunctions(object) {
@@ -85,8 +91,6 @@ exports.default = function (request) {
     }
 
     function save(endpoint, parentId, data) {
-        var retrievedObject = null;
-
         if (!endpoint) {
             console.error('not endpoint?!');
         }
@@ -94,25 +98,24 @@ exports.default = function (request) {
         var url = _baseUrl + (parentId ? data[parentId] : '') + endpoint;
         var query = null;
 
-        request(url, query, {
+        var result = request(url, query, {
             method: 'POST',
-            synchronous: true,
+            async: _async,
+            json: true,
             body: prepareDataJSON(data)
-        }).done(function (retrievedData) {
+        });
+
+        if (_async) {
+            return result;
+        }
+
+        var retrievedObject = null;
+        result.done(function (retrievedData) {
             retrievedObject = retrievedData;
         }).fail(function (data) {
             throw Error('error: ' + data);
         });
-
         return retrievedObject;
-    }
-
-    function loadFixture(endpoint, key) {
-        if (!load[endpoint]) {
-            load[endpoint] = {};
-            return null;
-        }
-        return load[endpoint][key];
     }
 
     function hasLazy(endpoint, key) {
@@ -125,8 +128,30 @@ exports.default = function (request) {
         return true;
     }
 
-    function fixture(endpoint, parentId, key, data) {
-        var object = loadFixture(endpoint, key);
+    function saveFixtureToCache(endpointKey, endpoint, parentId, data, key) {
+        var result = save(endpoint, parentId, data);
+
+        if (_async) {
+            result.then(function (object) {
+                cache[endpointKey][key] = object;
+            });
+            return result;
+        }
+
+        cache[endpointKey][key] = result;
+        return result;
+    }
+
+    function loadFixtureFromCache(endpointKey, key) {
+        if (!cache[endpointKey]) {
+            cache[endpointKey] = {};
+            return null;
+        }
+        return cache[endpointKey][key];
+    }
+
+    function fixture(endpointKey, endpoint, parentId, key, data) {
+        var object = loadFixtureFromCache(endpointKey, key);
         if (object) {
             return object;
         }
@@ -139,9 +164,14 @@ exports.default = function (request) {
             }
         }
 
-        object = save(endpoint, parentId, data);
-        load[endpoint][key] = object;
-        return object;
+        // TODO: mark for save and cache is called
+        if (!_async) {
+            return saveFixtureToCache(endpointKey, endpoint, parentId, data, key);
+        } else {
+            queue.push(function () {
+                return saveFixtureToCache(endpointKey, endpoint, parentId, data, key);
+            });
+        }
     }
 
     function map(objects) {
@@ -211,11 +241,28 @@ exports.default = function (request) {
         }
 
         lazyApi.map = lazyMap;
-
         return lazyApi;
     }
 
+    function load(callback) {
+        if (!queue.length) {
+            callback(cache);
+            return;
+        }
+
+        var promise = queue[0]();
+        for (var i = 1, l = queue.length; i < l; i++) {
+            promise = promise.then(queue[i]);
+        }
+
+        promise.then(function () {
+            queue = [];
+            callback(cache);
+        });
+    }
+
     api.lazy = computeLazyApi();
+    api.load = load;
     api.reset = reset;
     api.map = map;
     api.config = config;
@@ -228,7 +275,9 @@ var _utils = require('./utils');
 var _baseUrl = '/fixtures';
 var _resetUrl = '/_ah/yawp/datastore/delete_all';
 var _lazyPropertyKeys = ['id']; // needed till harmony proxies
+var _async = true;
 
 var api = {};
 
 module.exports = exports['default'];
+//# sourceMappingURL=fixtures.js.map

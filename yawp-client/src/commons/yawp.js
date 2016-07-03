@@ -27,6 +27,7 @@ export default function (request) {
 
         options.method = type;
         options.body = body;
+        options.json = true;
         extend(options, defaultFetchOptions);
 
         return request(url, query, options);

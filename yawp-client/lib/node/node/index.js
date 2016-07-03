@@ -17,3 +17,4 @@ yawp.fixtures = fixtures;
 
 exports.default = yawp;
 module.exports = exports['default'];
+//# sourceMappingURL=index.js.map

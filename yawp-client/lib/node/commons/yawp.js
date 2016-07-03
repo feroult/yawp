@@ -28,6 +28,7 @@ exports.default = function (request) {
 
         options.method = type;
         options.body = body;
+        options.json = true;
         (0, _utils.extend)(options, _defaultFetchOptions);
 
         return request(url, query, options);
@@ -290,3 +291,4 @@ var _baseUrl = '/api';
 var _defaultFetchOptions = {};
 
 module.exports = exports['default'];
+//# sourceMappingURL=yawp.js.map

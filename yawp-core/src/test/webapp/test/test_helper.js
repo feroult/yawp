@@ -1,8 +1,9 @@
-(function(t) {
+(function (t) {
 
-    yawp.fixtures.config(function(c) {
+    yawp.fixtures.config(function (c) {
         c.baseUrl('/fixtures');
         c.resetUrl('/_ah/yawp/datastore/delete_all');
+        c.async(false);
 
         c.bind('parent', '/parents');
         c.bind('job', '/jobs');
@@ -12,7 +13,7 @@
     function moduledef(module, options) {
         t.module(module);
         if (options.testStart) {
-            t.testStart(function(details) {
+            t.testStart(function (details) {
                 if (details.module != module) {
                     return;
                 }
@@ -28,7 +29,7 @@
     t.moduledef = moduledef;
     t.skip = skip;
 
-    t.isPhantomJS = function() {
+    t.isPhantomJS = function () {
         return navigator.userAgent.indexOf("PhantomJS") > 0;
     };
 

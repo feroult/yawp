@@ -13,27 +13,37 @@ export default function (url, query, options) {
     var callbacks = {
         fail: function (callback) {
             fail = callback;
-            request.onreadystatechange();
+            if (!options.async) {
+                request.onreadystatechange();
+            }
             return callbacks;
         },
         done: function (callback) {
             done = callback;
-            request.onreadystatechange();
+            if (!options.async) {
+                request.onreadystatechange();
+            }
             return callbacks;
         },
         exception: function (callback) {
             exception = callback;
-            request.onreadystatechange();
+            if (!options.async) {
+                request.onreadystatechange();
+            }
             return callbacks;
         },
         then: function (callback) {
             then = callback;
-            request.onreadystatechange();
+            if (!options.async) {
+                request.onreadystatechange();
+            }
             return callbacks;
         },
         error: function (callback) {
             error = callback;
-            request.onreadystatechange();
+            if (!options.async) {
+                request.onreadystatechange();
+            }
             return callbacks;
         }
     };
@@ -43,10 +53,10 @@ export default function (url, query, options) {
         if (request.readyState === 4) {
             if (request.status === 200) {
                 if (done) {
-                    done(JSON.parse(request.responseText));
+                    done(options.json ? JSON.parse(request.responseText) : request.responseText);
                 }
                 if (then) {
-                    then(JSON.parse(request.responseText));
+                    then(options.json ? JSON.parse(request.responseText) : request.responseText);
                 }
             } else {
                 if (fail) {
@@ -56,13 +66,13 @@ export default function (url, query, options) {
                     error(extend({}, request, {responseJSON: JSON.parse(request.responseText)}));
                 }
                 if (exception) {
-                    exception(JSON.parse(request.responseText));
+                    exception(options.json ? JSON.parse(request.responseText) : request.responseText);
                 }
             }
         }
     };
 
-    request.open(options.method, url, !options.synchronous);
+    request.open(options.method, url, options.async);
     setHeaders(request, options.headers);
     request.send(options.body);
 

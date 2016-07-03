@@ -5,7 +5,7 @@
   "main": "yawp.min.js",
   "scripts": {
     "build": "npm run build-node; npm run build-web",
-    "build-node": "babel src --ignore web --out-dir lib/node",
+    "build-node": "babel src --ignore web --source-maps --out-dir lib/node",
     "build-web": "webpack --mode=build --env=web",
     "dev": "webpack --progress --colors --watch --mode=dev",
     "test": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js",

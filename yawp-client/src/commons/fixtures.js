@@ -65,34 +65,6 @@ export default function (request) {
         });
     }
 
-    function prepareDataJSON(data) {
-        var newData = {};
-        extend(newData, data);
-        parseFunctions(newData);
-        return JSON.stringify(newData);
-    }
-
-    function parseFunctions(object) {
-        var i;
-        for (i in object) {
-            if (!object.hasOwnProperty(i)) {
-                continue;
-            }
-
-            var property = object[i];
-
-            if (property instanceof Function) {
-                object[i] = property();
-                continue;
-            }
-
-            if (property instanceof Object) {
-                parseFunctions(property);
-                continue;
-            }
-        }
-    }
-
     function prepareObject(data) {
         var object = {};
         extend(object, data);
@@ -212,21 +184,42 @@ export default function (request) {
     }
 
     function map(objects) {
-        var result = {};
+        return new Promise((resolve) => {
+            var result = {};
+            var lazyKeys = [];
 
-        for (var i in objects) {
-            var object = objects[i];
+            for (var i in objects) {
+                var object = objects[i];
 
-            var key = object.key;
-            var value = object.value;
+                var key = object.key;
+                var value = object.value;
 
-            if (key instanceof Function) {
-                key = key();
+                if (key instanceof Function) {
+                    lazyKey.push(() => {
+                        return key().then((keyValue) => {
+                            result[keyValue] = value;
+                        });
+                    });
+                    continue;
+                }
+
+                result[key] = value;
             }
 
-            result[key] = value;
-        }
-        return result;
+            if (!lazyKeys.length) {
+                resolve(result);
+                return;
+            }
+
+            var promise = lazyKeys[0]();
+            for (var i = 1, l = lazyKeys.length; i < l; i++) {
+                promise = promise.then(lazyKeys[i]);
+            }
+
+            promise.then(() => {
+                resolve(result);
+            });
+        });
     }
 
     function computeLazyPropertiesApi(apiKey, fixtureKey) {

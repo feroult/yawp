@@ -12,11 +12,11 @@ var libraryName = 'yawp';
 if (mode === 'build') {
     //plugins.push(new webpack.optimize.DedupePlugin());
     //plugins.push(new webpack.optimize.OccurrenceOrderPlugin(true));
-    //plugins.push(new webpack.optimize.UglifyJsPlugin({
-    //    compress: {
-    //        warnings: false
-    //    }
-    //}));
+    plugins.push(new webpack.optimize.UglifyJsPlugin({
+        compress: {
+            warnings: false
+        }
+    }));
 
     outputFile = libraryName + '.min.js';
 } else {

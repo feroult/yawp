@@ -181,7 +181,7 @@ export default function (request) {
         return cache[endpointKey][key];
     }
 
-    function fixture(endpointKey, endpoint, parentId, key, data) {
+    function fixture(endpointKey, endpoint, parentId, key, data, enqueue = true) {
         let object = loadFixtureFromCache(endpointKey, key);
         if (object) {
             return () => {
@@ -191,7 +191,9 @@ export default function (request) {
             }
         }
 
-        if (!data) {
+        var isFixture = !data;
+
+        if (isFixture) {
             if (hasLazy(endpoint, key)) {
                 data = lazy[endpoint][key];
             } else {
@@ -202,7 +204,10 @@ export default function (request) {
         var promiseFn = () => {
             return saveFixtureToCache(endpointKey, endpoint, parentId, data, key);
         };
-        queue.push(promiseFn);
+
+        if (enqueue) {
+            queue.push(promiseFn);
+        }
         return promiseFn;
     }
 
@@ -229,7 +234,7 @@ export default function (request) {
 
         function addLazyPropertyApi(propertyKey) {
             return function () {
-                var saveToCachePromise = api[apiKey](fixtureKey)();
+                var saveToCachePromise = api[apiKey](fixtureKey, null, false)();
                 return saveToCachePromise.then(() => {
                     return cache[apiKey][fixtureKey][propertyKey]
                 });

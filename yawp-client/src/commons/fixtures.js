@@ -65,6 +65,13 @@ export default function (request) {
         });
     }
 
+    function prepareDataJSON(data) {
+        var newData = {};
+        extend(newData, data);
+        parseFunctions(newData);
+        return JSON.stringify(newData);
+    }
+
     function parseFunctions(object) {
         var i;
         for (i in object) {
@@ -86,11 +93,51 @@ export default function (request) {
         }
     }
 
-    function prepareDataJSON(data) {
-        var newData = {};
-        extend(newData, data);
-        parseFunctions(newData);
-        return JSON.stringify(newData);
+    function prepareObject(data) {
+        var object = {};
+        extend(object, data);
+        return new Promise((resolve) => {
+            var lazyProperties = [];
+            loadLazyProperties(lazyProperties, object);
+
+            if (!lazyProperties.length) {
+                resolve(object);
+            }
+
+            var promise = lazyProperties[0]();
+            for (var i = 1, l = lazyProperties.length; i < l; i++) {
+                promise = promise.then(lazyProperties[i]);
+            }
+
+            promise.then(() => {
+                resolve(object);
+            });
+        });
+    }
+
+    function loadLazyProperties(lazyProperties, object) {
+        var i;
+        for (i in object) {
+            if (!object.hasOwnProperty(i)) {
+                continue;
+            }
+
+            var property = object[i];
+
+            if (property instanceof Function) {
+                lazyProperties.push(() => {
+                    return property().then((value) => {
+                        object[i] = value;
+                    });
+                });
+                continue;
+            }
+
+            if (property instanceof Object) {
+                loadLazyProperties(lazyProperties, property);
+                continue;
+            }
+        }
     }
 
     function save(endpoint, parentId, data) {
@@ -98,27 +145,14 @@ export default function (request) {
             console.error('not endpoint?!');
         }
 
-        var url = baseUrl + (parentId ? data[parentId] : '') + endpoint;
-        var query = null;
-
-        var result = request(url, query, {
-            method: 'POST',
-            async: async,
-            json: true,
-            body: prepareDataJSON(data)
+        return prepareObject(data).then((object) => {
+            var url = baseUrl + (parentId ? object[parentId] : '') + endpoint;
+            return request(url, null, {
+                method: 'POST',
+                json: true,
+                body: JSON.stringify(object)
+            });
         });
-
-        if (async) {
-            return result;
-        }
-
-        var retrievedObject = null;
-        result.done(function (retrievedData) {
-            retrievedObject = retrievedData;
-        }).fail(function (data) {
-            throw Error('error: ' + data);
-        });
-        return retrievedObject;
     }
 
     function hasLazy(endpoint, key) {
@@ -133,15 +167,9 @@ export default function (request) {
 
     function saveFixtureToCache(endpointKey, endpoint, parentId, data, key) {
         var result = save(endpoint, parentId, data);
-
-        if (async) {
-            result.then((object) => {
-                cache[endpointKey][key] = object;
-            });
-            return result;
-        }
-
-        cache[endpointKey][key] = result;
+        result.then((object) => {
+            cache[endpointKey][key] = object;
+        });
         return result;
     }
 
@@ -156,25 +184,26 @@ export default function (request) {
     function fixture(endpointKey, endpoint, parentId, key, data) {
         let object = loadFixtureFromCache(endpointKey, key);
         if (object) {
-            return object;
+            return () => {
+                return new Promise((resolve) => {
+                    resolve(object);
+                });
+            }
         }
 
         if (!data) {
             if (hasLazy(endpoint, key)) {
                 data = lazy[endpoint][key];
             } else {
-                return null;
+                throw 'cannot resolve lazy fixture: ' + endpointKey + ' -> ' + key;
             }
         }
 
-        // TODO: mark for save and cache is called
-        if (!async) {
+        var promiseFn = () => {
             return saveFixtureToCache(endpointKey, endpoint, parentId, data, key);
-        } else {
-            queue.push(function () {
-                return saveFixtureToCache(endpointKey, endpoint, parentId, data, key);
-            });
-        }
+        };
+        queue.push(promiseFn);
+        return promiseFn;
     }
 
     function map(objects) {
@@ -200,7 +229,10 @@ export default function (request) {
 
         function addLazyPropertyApi(propertyKey) {
             return function () {
-                return api[apiKey](fixtureKey)[propertyKey];
+                var saveToCachePromise = api[apiKey](fixtureKey)();
+                return saveToCachePromise.then(() => {
+                    return cache[apiKey][fixtureKey][propertyKey]
+                });
             };
         }
 

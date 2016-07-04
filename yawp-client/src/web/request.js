@@ -1,82 +1,27 @@
 import { extend, toUrlParam } from '../commons/utils';
 
 export default function (url, query, options) {
-    var fail
-        , done
-        , exception
-        , then
-        , error
-        , request;
+    return new Promise((resolve, reject) => {
+        var request = new XMLHttpRequest();
 
-    url += (query ? '?' + toUrlParam(query) : '');
+        request.onreadystatechange = function () {
+            resolveOrReject(request, options, resolve, reject);
+        };
 
-    var callbacks = {
-        fail: function (callback) {
-            fail = callback;
-            if (!options.async) {
-                request.onreadystatechange();
-            }
-            return callbacks;
-        },
-        done: function (callback) {
-            done = callback;
-            if (!options.async) {
-                request.onreadystatechange();
-            }
-            return callbacks;
-        },
-        exception: function (callback) {
-            exception = callback;
-            if (!options.async) {
-                request.onreadystatechange();
-            }
-            return callbacks;
-        },
-        then: function (callback) {
-            then = callback;
-            if (!options.async) {
-                request.onreadystatechange();
-            }
-            return callbacks;
-        },
-        error: function (callback) {
-            error = callback;
-            if (!options.async) {
-                request.onreadystatechange();
-            }
-            return callbacks;
+        request.open(options.method, url + (query ? '?' + toUrlParam(query) : ''));
+        setHeaders(request, options.headers);
+        request.send(options.body);
+    });
+}
+
+function resolveOrReject(request, options, resolve, reject) {
+    if (request.readyState === 4) {
+        if (request.status === 200) {
+            resolve(options.json ? JSON.parse(request.responseText) : request.responseText);
+        } else {
+            reject(request);
         }
-    };
-
-    request = new XMLHttpRequest();
-    request.onreadystatechange = function () {
-        if (request.readyState === 4) {
-            if (request.status === 200) {
-                if (done) {
-                    done(options.json ? JSON.parse(request.responseText) : request.responseText);
-                }
-                if (then) {
-                    then(options.json ? JSON.parse(request.responseText) : request.responseText);
-                }
-            } else {
-                if (fail) {
-                    fail(request);
-                }
-                if (error) {
-                    error(extend({}, request, {responseJSON: JSON.parse(request.responseText)}));
-                }
-                if (exception) {
-                    exception(options.json ? JSON.parse(request.responseText) : request.responseText);
-                }
-            }
-        }
-    };
-
-    request.open(options.method, url, options.async);
-    setHeaders(request, options.headers);
-    request.send(options.body);
-
-    return callbacks;
+    }
 }
 
 function setHeaders(request, headers) {

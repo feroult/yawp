@@ -3,7 +3,6 @@
     yawp.fixtures.config(function (c) {
         c.baseUrl('/fixtures');
         c.resetUrl('/_ah/yawp/datastore/delete_all');
-        c.async(false);
 
         c.bind('parent', '/parents');
         c.bind('job', '/jobs');
@@ -11,13 +10,21 @@
     });
 
     function moduledef(module, options) {
+        //t.module(module, {
+        //    beforeEach: function (assert) {
+        //        var done = assert.async();
+        //        console.log('here');
+        //        options.testStart(done);
+        //    }
+        //});
         t.module(module);
         if (options.testStart) {
             t.testStart(function (details) {
                 if (details.module != module) {
                     return;
                 }
-                options.testStart();
+                t.stop();
+                options.testStart(t.start);
             });
         }
     }

@@ -28,10 +28,15 @@ exports.default = function (request) {
             this.baseUrl = DEFAULT_BASE_URL;
             this.resetUrl = DEFAULT_RESET_URL;
             this.lazyProperties = DEFAULT_LAZY_PROPERTIES;
-            this.promise = null;
+            this.init();
         }
 
         (0, _createClass3.default)(Fixtures, [{
+            key: 'init',
+            value: function init() {
+                this.promise = null;
+            }
+        }, {
             key: 'config',
             value: function config(callback) {
                 callback(this);
@@ -39,10 +44,12 @@ exports.default = function (request) {
         }, {
             key: 'reset',
             value: function reset() {
+                var _this = this;
+
                 return request(this.resetUrl, {
                     method: 'GET'
                 }).then(function () {
-                    // do not pass the result to the upstream
+                    _this.init();
                 });
             }
         }, {
@@ -76,10 +83,10 @@ exports.default = function (request) {
         (0, _createClass3.default)(EndpointFixture, [{
             key: 'createApi',
             value: function createApi() {
-                var _this = this;
+                var _this2 = this;
 
                 return function (key, data) {
-                    return _this.fx.chain(_this.load(key, data));
+                    return _this2.fx.chain(_this2.load(key, data));
                 };
             }
         }, {
@@ -96,24 +103,48 @@ exports.default = function (request) {
         }, {
             key: 'createLoadPromiseFn',
             value: function createLoadPromiseFn(key, data) {
-                var _this2 = this;
+                var _this3 = this;
 
                 return function () {
-                    return request(_this2.url(), {
+                    return request(_this3.url(), {
                         method: 'POST',
                         json: true,
-                        body: JSON.stringify(data)
-                    }).then(function (object) {
-                        _this2.api[key] = object;
-                        return object;
+                        body: JSON.stringify(_this3.prepare(data))
+                    }).then(function (response) {
+                        _this3.api[key] = response;
+                        return response;
                     });
                 };
             }
         }, {
+            key: 'prepare',
+            value: function prepare(data) {
+                var object = {};
+                (0, _utils.extend)(object, data);
+
+                for (var key in object) {
+                    if (!object.hasOwnProperty(key)) {
+                        continue;
+                    }
+                    var value = object[key];
+                    if (value instanceof Function) {
+                        object[key] = value();
+                    }
+                }
+                return object;
+            }
+        }, {
             key: 'createLazyPropertyLoader',
             value: function createLazyPropertyLoader(key) {
+                if (this.api[key]) {
+                    return;
+                }
+                var self = this;
                 this.api[key] = this.fx.lazyProperties.reduce(function (map, name) {
-                    map[name] = {};
+                    map[name] = function () {
+                        //console.log('y', self.api[key]);
+                        return self.api[key][name];
+                    };
                     return map;
                 }, {});
             }

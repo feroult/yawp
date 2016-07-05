@@ -11,6 +11,10 @@ export default (request) => {
             this.baseUrl = DEFAULT_BASE_URL;
             this.resetUrl = DEFAULT_RESET_URL;
             this.lazyProperties = DEFAULT_LAZY_PROPERTIES;
+            this.init();
+        }
+
+        init() {
             this.promise = null;
         }
 
@@ -22,7 +26,7 @@ export default (request) => {
             return request(this.resetUrl, {
                 method: 'GET'
             }).then(() => {
-                // do not pass the result to the upstream
+                this.init();
             });
         }
 
@@ -52,6 +56,7 @@ export default (request) => {
             return (key, data) => {
                 return this.fx.chain(this.load(key, data));
             };
+
         }
 
         url() {
@@ -64,19 +69,43 @@ export default (request) => {
         }
 
         createLoadPromiseFn(key, data) {
-            return () => request(this.url(), {
-                method: 'POST',
-                json: true,
-                body: JSON.stringify(data)
-            }).then((object) => {
-                this.api[key] = object;
-                return object;
-            });
+            return () =>
+                request(this.url(), {
+                    method: 'POST',
+                    json: true,
+                    body: JSON.stringify(this.prepare(data))
+                }).then((response) => {
+                    this.api[key] = response;
+                    return response;
+                });
+        }
+
+        prepare(data) {
+            var object = {};
+            extend(object, data);
+
+            for (var key in object) {
+                if (!object.hasOwnProperty(key)) {
+                    continue;
+                }
+                var value = object[key];
+                if (value instanceof Function) {
+                    object[key] = value();
+                }
+            }
+            return object;
         }
 
         createLazyPropertyLoader(key) {
+            if (this.api[key]) {
+                return;
+            }
+            var self = this;
             this.api[key] = this.fx.lazyProperties.reduce(function (map, name) {
-                map[name] = {};
+                map[name] = () => {
+                    //console.log('y', self.api[key]);
+                    return self.api[key][name];
+                }
                 return map;
             }, {});
         }

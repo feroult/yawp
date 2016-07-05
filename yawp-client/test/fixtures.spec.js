@@ -13,12 +13,12 @@ fx.config((c) => {
     c.resetUrl = 'http://localhost:8080/_ah/yawp/datastore/delete_all';
     c.bind('parent', '/parents');
     c.bind('child', '/children');
-    c.bind('job', 'jobs');
+    c.bind('job', '/jobs');
 });
 
 describe('Some YAWP! Fixtures tests in nodejs', () => {
 
-    before((done) => {
+    beforeEach((done) => {
         fx.reset().then(done);
     });
 

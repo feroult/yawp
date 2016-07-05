@@ -19,7 +19,7 @@ fx.config((c) => {
 describe('YAWP! Fixtures', () => {
 
     beforeEach((done) => {
-        fx.reset().then(done);
+        fx.reset(true).then(done);
     });
 
     it('creates a fixture', (done) => {
@@ -34,6 +34,17 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
+    xit('create the same fixture only one time', (done) => {
+        fx.parent('p1', {
+            id: '/parents/1'
+        });
+
+        fx.parent('p1').then((parent) => {
+            expect(parent.id).to.be.equals('/parents/1');
+            done();
+        });
+    });
+
     it('creates a fixture with parentId', (done) => {
         fx.child('c1', {
             parentId: '/parents/1'
@@ -42,7 +53,6 @@ describe('YAWP! Fixtures', () => {
             expect(child.parentId).to.be.equals('/parents/1');
             done();
         });
-
     });
 
     it('creates a fixture with a reference id', (done) => {

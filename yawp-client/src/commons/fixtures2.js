@@ -28,20 +28,25 @@ export default (request) => {
             });
         }
 
-        clear() {
+        clear(all) {
             this.promise = null;
             for (let {name, path} of this.fixtures) {
                 this.bindFixture(name, path);
+                all && this.bindLazy(name, path);
             }
         }
 
         bind(name, path) {
             this.fixtures.push({name, path});
             this.bindFixture(name, path);
+            this.bindLazy(name, path);
         }
 
         bindFixture(name, path) {
             this[name] = new EndpointFixture(this, name, path).api;
+        }
+
+        bindLazy(name, path) {
             this.lazy[name] = new LazyFixture(this, name, path).api;
         }
 

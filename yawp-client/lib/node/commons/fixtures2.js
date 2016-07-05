@@ -51,7 +51,7 @@ exports.default = function (request) {
             }
         }, {
             key: 'clear',
-            value: function clear() {
+            value: function clear(all) {
                 this.promise = null;
                 var _iteratorNormalCompletion = true;
                 var _didIteratorError = false;
@@ -64,6 +64,7 @@ exports.default = function (request) {
                         var path = _step$value.path;
 
                         this.bindFixture(name, path);
+                        all && this.bindLazy(name, path);
                     }
                 } catch (err) {
                     _didIteratorError = true;
@@ -85,11 +86,16 @@ exports.default = function (request) {
             value: function bind(name, path) {
                 this.fixtures.push({ name: name, path: path });
                 this.bindFixture(name, path);
+                this.bindLazy(name, path);
             }
         }, {
             key: 'bindFixture',
             value: function bindFixture(name, path) {
                 this[name] = new EndpointFixture(this, name, path).api;
+            }
+        }, {
+            key: 'bindLazy',
+            value: function bindLazy(name, path) {
                 this.lazy[name] = new LazyFixture(this, name, path).api;
             }
         }, {

@@ -30,6 +30,7 @@ exports.default = function (request) {
             this.lazyProperties = DEFAULT_LAZY_PROPERTIES;
             this.promise = null;
             this.fixtures = [];
+            this.lazy = {};
         }
 
         (0, _createClass3.default)(Fixtures, [{
@@ -58,11 +59,11 @@ exports.default = function (request) {
 
                 try {
                     for (var _iterator = this.fixtures[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var fixture = _step.value;
-                        var name = fixture.name;
-                        var path = fixture.path;
+                        var _step$value = _step.value;
+                        var name = _step$value.name;
+                        var path = _step$value.path;
 
-                        this[name] = new EndpointFixture(this, name, path).api;
+                        this.bindFixture(name, path);
                     }
                 } catch (err) {
                     _didIteratorError = true;
@@ -83,7 +84,13 @@ exports.default = function (request) {
             key: 'bind',
             value: function bind(name, path) {
                 this.fixtures.push({ name: name, path: path });
+                this.bindFixture(name, path);
+            }
+        }, {
+            key: 'bindFixture',
+            value: function bindFixture(name, path) {
                 this[name] = new EndpointFixture(this, name, path).api;
+                this.lazy[name] = new LazyFixture(this, name, path).api;
             }
         }, {
             key: 'chain',
@@ -105,6 +112,12 @@ exports.default = function (request) {
                 this.promise.then(function () {
                     callback();
                 });
+            }
+        }, {
+            key: 'getLazyFor',
+            value: function getLazyFor(name, key) {
+                var lazy = this.lazy[name].self;
+                return lazy.getData(key);
             }
         }]);
         return Fixtures;
@@ -145,6 +158,10 @@ exports.default = function (request) {
             value: function createLoadPromiseFn(key, data) {
                 var _this3 = this;
 
+                if (!data) {
+                    data = this.fx.getLazyFor(this.name, key);
+                }
+
                 return function () {
                     return request(_this3.url(), {
                         method: 'POST',
@@ -162,15 +179,34 @@ exports.default = function (request) {
                 var object = {};
                 (0, _utils.extend)(object, data);
 
-                for (var key in object) {
-                    if (!object.hasOwnProperty(key)) {
-                        continue;
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
+
+                try {
+                    for (var _iterator2 = Object.keys(object)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        var key = _step2.value;
+
+                        var value = object[key];
+                        if (value instanceof Function) {
+                            object[key] = value();
+                        }
                     }
-                    var value = object[key];
-                    if (value instanceof Function) {
-                        object[key] = value();
+                } catch (err) {
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
+                        }
+                    } finally {
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
+                        }
                     }
                 }
+
                 return object;
             }
         }, {
@@ -182,7 +218,6 @@ exports.default = function (request) {
                 var self = this;
                 this.api[key] = this.fx.lazyProperties.reduce(function (map, name) {
                     map[name] = function () {
-                        //console.log('y', self.api[key]);
                         return self.api[key][name];
                     };
                     return map;
@@ -190,6 +225,37 @@ exports.default = function (request) {
             }
         }]);
         return EndpointFixture;
+    }();
+
+    var LazyFixture = function () {
+        function LazyFixture(fx, name, path) {
+            (0, _classCallCheck3.default)(this, LazyFixture);
+
+            this.fx = fx;
+            this.name = name;
+            this.path = path;
+            this.data = {};
+            this.api = this.createApi();
+        }
+
+        (0, _createClass3.default)(LazyFixture, [{
+            key: 'createApi',
+            value: function createApi() {
+                var _this4 = this;
+
+                var api = function api(key, data) {
+                    _this4.data[key] = data;
+                };
+                api.self = this;
+                return api;
+            }
+        }, {
+            key: 'getData',
+            value: function getData(key) {
+                return this.data[key];
+            }
+        }]);
+        return LazyFixture;
     }();
 
     return new Fixtures();

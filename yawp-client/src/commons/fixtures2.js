@@ -13,6 +13,7 @@ export default (request) => {
             this.lazyProperties = DEFAULT_LAZY_PROPERTIES;
             this.promise = null;
             this.fixtures = [];
+            this.lazy = {};
         }
 
         config(callback) {
@@ -30,17 +31,18 @@ export default (request) => {
         clear() {
             this.promise = null;
             for (let {name, path} of this.fixtures) {
-                this.bindFixture.(name, path);
+                this.bindFixture(name, path);
             }
         }
 
         bind(name, path) {
             this.fixtures.push({name, path});
-            this.bindFixture.(name, path);
+            this.bindFixture(name, path);
         }
 
         bindFixture(name, path) {
             this[name] = new EndpointFixture(this, name, path).api;
+            this.lazy[name] = new LazyFixture(this, name, path).api;
         }
 
         chain(promiseFn) {
@@ -62,6 +64,11 @@ export default (request) => {
             });
         }
 
+        getLazyFor(name, key) {
+            var lazy = this.lazy[name].self;
+            return lazy.getData(key);
+        }
+
     }
 
     class EndpointFixture {
@@ -76,7 +83,6 @@ export default (request) => {
             return (key, data) => {
                 return this.fx.chain(this.load(key, data));
             };
-
         }
 
         url() {
@@ -89,6 +95,11 @@ export default (request) => {
         }
 
         createLoadPromiseFn(key, data) {
+
+            if (!data) {
+                data = this.fx.getLazyFor(this.name, key);
+            }
+
             return () =>
                 request(this.url(), {
                     method: 'POST',
@@ -124,6 +135,28 @@ export default (request) => {
                 }
                 return map;
             }, {});
+        }
+    }
+
+    class LazyFixture {
+        constructor(fx, name, path) {
+            this.fx = fx;
+            this.name = name;
+            this.path = path;
+            this.data = {};
+            this.api = this.createApi();
+        }
+
+        createApi() {
+            let api = (key, data) => {
+                this.data[key] = data;
+            };
+            api.self = this;
+            return api;
+        }
+
+        getData(key) {
+            return this.data[key];
         }
     }
 

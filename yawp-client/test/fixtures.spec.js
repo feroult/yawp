@@ -69,7 +69,17 @@ describe('Some YAWP! Fixtures tests in nodejs', () => {
         });
     });
 
-    // test load
+    it('loads a lazy fixture', (done) => {
+        fx.lazy.parent('p1', {name: 'xpto'});
+        fx.parent('p1');
+
+        fx.load(() => {
+            expect(fx.parent.p1.name).to.be.equals('xpto');
+            done();
+        });
+    });
+
+
     // test lazy
 
     //it('loads doesnt load lazy fixtures', (done) => {

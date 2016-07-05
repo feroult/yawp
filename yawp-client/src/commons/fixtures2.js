@@ -2,7 +2,7 @@ import { extend } from './utils';
 
 const DEFAULT_BASE_URL = '/fixtures';
 const DEFAULT_RESET_URL = '/_ah/yawp/datastore/delete_all';
-const DEFAULT_LAZY_PROPERTY_KEYS = ['id']; // needed till harmony proxies
+const DEFAULT_LAZY_PROPERTIES = ['id']; // needed till harmony proxies
 
 export default (request) => {
 
@@ -10,7 +10,8 @@ export default (request) => {
         constructor() {
             this.baseUrl = DEFAULT_BASE_URL;
             this.resetUrl = DEFAULT_RESET_URL;
-            this.lazyPropertyKeys = DEFAULT_LAZY_PROPERTY_KEYS;
+            this.lazyProperties = DEFAULT_LAZY_PROPERTIES;
+            this.promise = null;
         }
 
         config(callback) {
@@ -29,6 +30,14 @@ export default (request) => {
             this[name] = new EndpointFixture(this, name, path).api;
         }
 
+        chain(promiseFn) {
+            if (!this.promise) {
+                this.promise = promiseFn();
+                return this.promise;
+            }
+            return this.promise.then(promiseFn);
+        }
+
     }
 
     class EndpointFixture {
@@ -41,13 +50,21 @@ export default (request) => {
 
         createApi() {
             return (key, data) => {
-                return () => this.load(key, data);
+                return this.fx.chain(this.load(key, data));
             };
         }
 
+        url() {
+            return this.fx.baseUrl + this.path;
+        }
+
         load(key, data) {
-            var url = this.fx.baseUrl + this.path;
-            return request(url, {
+            this.createLazyPropertyLoader(key);
+            return this.createLoadPromiseFn(key, data);
+        }
+
+        createLoadPromiseFn(key, data) {
+            return () => request(this.url(), {
                 method: 'POST',
                 json: true,
                 body: JSON.stringify(data)
@@ -55,6 +72,13 @@ export default (request) => {
                 this.api[key] = object;
                 return object;
             });
+        }
+
+        createLazyPropertyLoader(key) {
+            this.api[key] = this.fx.lazyProperties.reduce(function (map, name) {
+                map[name] = {};
+                return map;
+            }, {});
         }
     }
 

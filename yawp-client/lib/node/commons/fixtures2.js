@@ -18,7 +18,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var DEFAULT_BASE_URL = '/fixtures';
 var DEFAULT_RESET_URL = '/_ah/yawp/datastore/delete_all';
-var DEFAULT_LAZY_PROPERTY_KEYS = ['id']; // needed till harmony proxies
+var DEFAULT_LAZY_PROPERTIES = ['id']; // needed till harmony proxies
 
 exports.default = function (request) {
     var Fixtures = function () {
@@ -27,7 +27,8 @@ exports.default = function (request) {
 
             this.baseUrl = DEFAULT_BASE_URL;
             this.resetUrl = DEFAULT_RESET_URL;
-            this.lazyPropertyKeys = DEFAULT_LAZY_PROPERTY_KEYS;
+            this.lazyProperties = DEFAULT_LAZY_PROPERTIES;
+            this.promise = null;
         }
 
         (0, _createClass3.default)(Fixtures, [{
@@ -49,6 +50,15 @@ exports.default = function (request) {
             value: function bind(name, path) {
                 this[name] = new EndpointFixture(this, name, path).api;
             }
+        }, {
+            key: 'chain',
+            value: function chain(promiseFn) {
+                if (!this.promise) {
+                    this.promise = promiseFn();
+                    return this.promise;
+                }
+                return this.promise.then(promiseFn);
+            }
         }]);
         return Fixtures;
     }();
@@ -69,25 +79,43 @@ exports.default = function (request) {
                 var _this = this;
 
                 return function (key, data) {
-                    return function () {
-                        return _this.load(key, data);
-                    };
+                    return _this.fx.chain(_this.load(key, data));
                 };
+            }
+        }, {
+            key: 'url',
+            value: function url() {
+                return this.fx.baseUrl + this.path;
             }
         }, {
             key: 'load',
             value: function load(key, data) {
+                this.createLazyPropertyLoader(key);
+                return this.createLoadPromiseFn(key, data);
+            }
+        }, {
+            key: 'createLoadPromiseFn',
+            value: function createLoadPromiseFn(key, data) {
                 var _this2 = this;
 
-                var url = this.fx.baseUrl + this.path;
-                return request(url, {
-                    method: 'POST',
-                    json: true,
-                    body: JSON.stringify(data)
-                }).then(function (object) {
-                    _this2.api[key] = object;
-                    return object;
-                });
+                return function () {
+                    return request(_this2.url(), {
+                        method: 'POST',
+                        json: true,
+                        body: JSON.stringify(data)
+                    }).then(function (object) {
+                        _this2.api[key] = object;
+                        return object;
+                    });
+                };
+            }
+        }, {
+            key: 'createLazyPropertyLoader',
+            value: function createLazyPropertyLoader(key) {
+                this.api[key] = this.fx.lazyProperties.reduce(function (map, name) {
+                    map[name] = {};
+                    return map;
+                }, {});
             }
         }]);
         return EndpointFixture;

@@ -16,7 +16,7 @@ fx.config((c) => {
     c.bind('job', '/jobs');
 });
 
-describe('Some YAWP! Fixtures tests in nodejs', () => {
+describe('YAWP! Fixtures', () => {
 
     beforeEach((done) => {
         fx.reset().then(done);
@@ -80,7 +80,23 @@ describe('Some YAWP! Fixtures tests in nodejs', () => {
     });
 
 
-    // test lazy
+    it('loads only required lazy fixtures', () => {
+        fx.lazy.parent('p1', {name: 'xpto1'});
+        fx.lazy.parent('p2', {name: 'xpto2'});
+        fx.parent('p1');
+
+        fx.load(() => {
+            expect(fx.parent.p1.name).to.be.equals('xpto1');
+            expect(fx.parent.p2).to.be.undefined;
+            done();
+        });
+    });
+
+
+    // test doest not create same fixture twice
+    // test doesnt load all lazies
+    // test lazy with reference id
+
 
     //it('loads doesnt load lazy fixtures', (done) => {
     //    fx.lazy.parent('p1', {name: 'xpto1'});

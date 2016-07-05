@@ -29,8 +29,7 @@ export default (request) => {
 
         clear() {
             this.promise = null;
-            for (var fixture of this.fixtures) {
-                let { name, path } = fixture;
+            for (let {name, path} of this.fixtures) {
                 this.bindFixture.(name, path);
             }
         }
@@ -102,14 +101,11 @@ export default (request) => {
         }
 
         prepare(data) {
-            var object = {};
+            let object = {};
             extend(object, data);
 
-            for (var key in object) {
-                if (!object.hasOwnProperty(key)) {
-                    continue;
-                }
-                var value = object[key];
+            for (let key of Object.keys(object)) {
+                let value = object[key];
                 if (value instanceof Function) {
                     object[key] = value();
                 }
@@ -121,10 +117,9 @@ export default (request) => {
             if (this.api[key]) {
                 return;
             }
-            var self = this;
-            this.api[key] = this.fx.lazyProperties.reduce(function (map, name) {
+            let self = this;
+            this.api[key] = this.fx.lazyProperties.reduce((map, name) => {
                 map[name] = () => {
-                    //console.log('y', self.api[key]);
                     return self.api[key][name];
                 }
                 return map;

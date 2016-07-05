@@ -3,7 +3,6 @@ import { extend } from './utils';
 var baseUrl = '/fixtures';
 var resetUrl = '/_ah/yawp/datastore/delete_all';
 var lazyPropertyKeys = ['id']; // needed till harmony proxies
-var async = true;
 
 var api = {};
 
@@ -13,9 +12,6 @@ export default function (request) {
 
     function config(callback) {
         var c = {
-            async: function (value) {
-                async = value;
-            },
             baseUrl: function (url) {
                 baseUrl = url;
             },
@@ -57,8 +53,7 @@ export default function (request) {
 
     function reset() {
         return request(resetUrl, null, {
-            method: 'GET',
-            async: async
+            method: 'GET'
         }).then(() => {
             cache = {};
             queue = [];
@@ -163,9 +158,9 @@ export default function (request) {
             }
         }
 
-        var isFixture = !data;
+        var isLazy = !data;
 
-        if (isFixture) {
+        if (isLazy) {
             if (hasLazy(endpoint, key)) {
                 data = lazy[endpoint][key];
             } else {
@@ -184,7 +179,7 @@ export default function (request) {
     }
 
     function map(objects) {
-        return new Promise((resolve) => {
+        new Promise((resolve) => {
             var result = {};
             var lazyKeys = [];
 
@@ -195,7 +190,7 @@ export default function (request) {
                 var value = object.value;
 
                 if (key instanceof Function) {
-                    lazyKey.push(() => {
+                    lazyKeys.push(() => {
                         return key().then((keyValue) => {
                             result[keyValue] = value;
                         });
@@ -222,6 +217,12 @@ export default function (request) {
         });
     }
 
+    function mapFn(objects) {
+        return function () {
+            return map(objects);
+        };
+    }
+
     function computeLazyPropertiesApi(apiKey, fixtureKey) {
         var i, lazyPropertiesApi = {};
 
@@ -240,12 +241,6 @@ export default function (request) {
         }
 
         return lazyPropertiesApi;
-    }
-
-    function lazyMap(objects) {
-        return function () {
-            return map(objects);
-        };
     }
 
     function computeLazyApi() {
@@ -272,7 +267,7 @@ export default function (request) {
             lazyApi[apiKey] = addLazyApi(apiKey, endpoint);
         }
 
-        lazyApi.map = lazyMap;
+        lazyApi.map = mapFn;
         return lazyApi;
     }
 
@@ -296,7 +291,7 @@ export default function (request) {
     api.lazy = computeLazyApi();
     api.load = load;
     api.reset = reset;
-    api.map = map;
+    api.map = mapFn;
     api.config = config;
 
     return api;

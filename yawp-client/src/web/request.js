@@ -1,7 +1,10 @@
 import { extend, toUrlParam } from '../commons/utils';
 
-export default function (url, query, options) {
+export default function (url, options) {
     return new Promise((resolve, reject) => {
+        var query = options.query;
+        delete options.query;
+
         var request = new XMLHttpRequest();
 
         request.onreadystatechange = function () {

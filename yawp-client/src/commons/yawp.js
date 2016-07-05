@@ -20,17 +20,15 @@ export default function (request) {
 
     function baseRequest(type, options) {
         var url = baseUrl + options.url;
-        var query = options.query;
         var body = options.data;
         delete options.url;
-        delete options.query;
 
         options.method = type;
         options.body = body;
         options.json = true;
         extend(options, defaultFetchOptions);
 
-        return request(url, query, options);
+        return request(url, options);
     }
 
     function extractId(object) {

@@ -11,19 +11,24 @@ if (typeof fetch === 'undefined') {
     var fetch = require('node-fetch');
 }
 
-function request(url, query, options) {
-    url += query ? '?' + (0, _utils.toUrlParam)(options.query) : '';
+function request(url, options) {
+    var query = options.query;
+    delete options.query;
+
+    url += query ? '?' + (0, _utils.toUrlParam)(query) : '';
 
     if (!options.json) {
         return fetch(url, options);
     }
+    return jsonRequest(options, url);
+}
 
+function jsonRequest(options, url) {
     options.headers = options.headers || {};
     (0, _utils.extend)(options.headers, {
         'Accept': 'application/json',
         'Content-Type': 'application/json;charset=UTF-8'
     });
-
     return fetch(url, options).then(function (response) {
         return response.json();
     });

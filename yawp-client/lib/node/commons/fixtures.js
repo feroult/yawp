@@ -10,9 +10,6 @@ exports.default = function (request) {
 
     function config(callback) {
         var c = {
-            async: function async(value) {
-                _async = value;
-            },
             baseUrl: function baseUrl(url) {
                 _baseUrl = url;
             },
@@ -54,40 +51,11 @@ exports.default = function (request) {
 
     function reset() {
         return request(_resetUrl, null, {
-            method: 'GET',
-            async: _async
+            method: 'GET'
         }).then(function () {
             cache = {};
             queue = [];
         });
-    }
-
-    function prepareDataJSON(data) {
-        var newData = {};
-        (0, _utils.extend)(newData, data);
-        parseFunctions(newData);
-        return JSON.stringify(newData);
-    }
-
-    function parseFunctions(object) {
-        var i;
-        for (i in object) {
-            if (!object.hasOwnProperty(i)) {
-                continue;
-            }
-
-            var property = object[i];
-
-            if (property instanceof Function) {
-                object[i] = property();
-                continue;
-            }
-
-            if (property instanceof Object) {
-                parseFunctions(property);
-                continue;
-            }
-        }
     }
 
     function prepareObject(data) {
@@ -190,9 +158,9 @@ exports.default = function (request) {
             };
         }
 
-        var isFixture = !data;
+        var isLazy = !data;
 
-        if (isFixture) {
+        if (isLazy) {
             if (hasLazy(endpoint, key)) {
                 data = lazy[endpoint][key];
             } else {
@@ -211,21 +179,48 @@ exports.default = function (request) {
     }
 
     function map(objects) {
-        var result = {};
+        new Promise(function (resolve) {
+            var result = {};
+            var lazyKeys = [];
 
-        for (var i in objects) {
-            var object = objects[i];
+            for (var i in objects) {
+                var object = objects[i];
 
-            var key = object.key;
-            var value = object.value;
+                var key = object.key;
+                var value = object.value;
 
-            if (key instanceof Function) {
-                key = key();
+                if (key instanceof Function) {
+                    lazyKeys.push(function () {
+                        return key().then(function (keyValue) {
+                            result[keyValue] = value;
+                        });
+                    });
+                    continue;
+                }
+
+                result[key] = value;
             }
 
-            result[key] = value;
-        }
-        return result;
+            if (!lazyKeys.length) {
+                resolve(result);
+                return;
+            }
+
+            var promise = lazyKeys[0]();
+            for (var i = 1, l = lazyKeys.length; i < l; i++) {
+                promise = promise.then(lazyKeys[i]);
+            }
+
+            promise.then(function () {
+                resolve(result);
+            });
+        });
+    }
+
+    function mapFn(objects) {
+        return function () {
+            return map(objects);
+        };
     }
 
     function computeLazyPropertiesApi(apiKey, fixtureKey) {
@@ -247,12 +242,6 @@ exports.default = function (request) {
         }
 
         return lazyPropertiesApi;
-    }
-
-    function lazyMap(objects) {
-        return function () {
-            return map(objects);
-        };
     }
 
     function computeLazyApi() {
@@ -279,7 +268,7 @@ exports.default = function (request) {
             lazyApi[apiKey] = addLazyApi(apiKey, endpoint);
         }
 
-        lazyApi.map = lazyMap;
+        lazyApi.map = mapFn;
         return lazyApi;
     }
 
@@ -303,7 +292,7 @@ exports.default = function (request) {
     api.lazy = computeLazyApi();
     api.load = load;
     api.reset = reset;
-    api.map = map;
+    api.map = mapFn;
     api.config = config;
 
     return api;
@@ -314,7 +303,6 @@ var _utils = require('./utils');
 var _baseUrl = '/fixtures';
 var _resetUrl = '/_ah/yawp/datastore/delete_all';
 var _lazyPropertyKeys = ['id']; // needed till harmony proxies
-var _async = true;
 
 var api = {};
 

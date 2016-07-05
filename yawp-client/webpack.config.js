@@ -3,7 +3,6 @@ var webpack = require('webpack');
 var path = require('path');
 
 var mode = yargs.argv.mode;
-var env = yargs.argv.env || 'node';
 
 var plugins = [], outputFile;
 
@@ -20,7 +19,7 @@ if (mode === 'build') {
 
     outputFile = libraryName + '.min.js';
 } else {
-    outputFile = libraryName + '-dev.js';
+    outputFile = libraryName + '.js';
 }
 
 
@@ -67,8 +66,7 @@ var config = {
         root: path.resolve('./src'),
         extensions: ['', '.js']
     },
-    plugins: plugins,
-    target: env
+    plugins: plugins
 };
 
 module.exports = config;

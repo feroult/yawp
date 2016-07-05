@@ -1,7 +1,7 @@
 import request from './request';
 
 var yawp = require('./../commons/yawp')(request);
-var fixtures = require('./../commons/fixtures')(request);
+var fixtures = require('./../commons/fixtures2')(request);
 
 yawp.fixtures = fixtures;
 

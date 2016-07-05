@@ -11,11 +11,8 @@ export default (request) => {
             this.baseUrl = DEFAULT_BASE_URL;
             this.resetUrl = DEFAULT_RESET_URL;
             this.lazyProperties = DEFAULT_LAZY_PROPERTIES;
-            this.init();
-        }
-
-        init() {
             this.promise = null;
+            this.fixtures = [];
         }
 
         config(callback) {
@@ -26,20 +23,44 @@ export default (request) => {
             return request(this.resetUrl, {
                 method: 'GET'
             }).then(() => {
-                this.init();
+                this.clear();
             });
         }
 
+        clear() {
+            this.promise = null;
+            for (var fixture of this.fixtures) {
+                let { name, path } = fixture;
+                this.bindFixture.(name, path);
+            }
+        }
+
         bind(name, path) {
+            this.fixtures.push({name, path});
+            this.bindFixture.(name, path);
+        }
+
+        bindFixture(name, path) {
             this[name] = new EndpointFixture(this, name, path).api;
         }
 
         chain(promiseFn) {
             if (!this.promise) {
                 this.promise = promiseFn();
-                return this.promise;
+            } else {
+                this.promise = this.promise.then(promiseFn)
             }
-            return this.promise.then(promiseFn);
+            return this.promise;
+        }
+
+        load(callback) {
+            if (!this.promise) {
+                callback();
+                return;
+            }
+            this.promise.then(() => {
+                callback();
+            });
         }
 
     }

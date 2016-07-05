@@ -28,15 +28,11 @@ exports.default = function (request) {
             this.baseUrl = DEFAULT_BASE_URL;
             this.resetUrl = DEFAULT_RESET_URL;
             this.lazyProperties = DEFAULT_LAZY_PROPERTIES;
-            this.init();
+            this.promise = null;
+            this.fixtures = [];
         }
 
         (0, _createClass3.default)(Fixtures, [{
-            key: 'init',
-            value: function init() {
-                this.promise = null;
-            }
-        }, {
             key: 'config',
             value: function config(callback) {
                 callback(this);
@@ -49,12 +45,44 @@ exports.default = function (request) {
                 return request(this.resetUrl, {
                     method: 'GET'
                 }).then(function () {
-                    _this.init();
+                    _this.clear();
                 });
+            }
+        }, {
+            key: 'clear',
+            value: function clear() {
+                this.promise = null;
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = this.fixtures[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var fixture = _step.value;
+                        var name = fixture.name;
+                        var path = fixture.path;
+
+                        this[name] = new EndpointFixture(this, name, path).api;
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
             }
         }, {
             key: 'bind',
             value: function bind(name, path) {
+                this.fixtures.push({ name: name, path: path });
                 this[name] = new EndpointFixture(this, name, path).api;
             }
         }, {
@@ -62,9 +90,21 @@ exports.default = function (request) {
             value: function chain(promiseFn) {
                 if (!this.promise) {
                     this.promise = promiseFn();
-                    return this.promise;
+                } else {
+                    this.promise = this.promise.then(promiseFn);
                 }
-                return this.promise.then(promiseFn);
+                return this.promise;
+            }
+        }, {
+            key: 'load',
+            value: function load(callback) {
+                if (!this.promise) {
+                    callback();
+                    return;
+                }
+                this.promise.then(function () {
+                    callback();
+                });
             }
         }]);
         return Fixtures;

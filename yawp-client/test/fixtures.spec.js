@@ -58,8 +58,17 @@ describe('Some YAWP! Fixtures tests in nodejs', () => {
         });
     });
 
+    it('loads previous fixtures', (done) => {
+        fx.parent('p1', {name: 'xpto1'});
+        fx.parent('p2', {name: 'xpto2'});
 
-    // test reference ids
+        fx.load(() => {
+            expect(fx.parent.p1.name).to.be.equals('xpto1');
+            expect(fx.parent.p2.name).to.be.equals('xpto2');
+            done();
+        });
+    });
+
     // test load
     // test lazy
 

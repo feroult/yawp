@@ -156,7 +156,7 @@ exports.default = function (request) {
         }, {
             key: 'load',
             value: function load(key, data) {
-                this.createLazyPropertyLoader(key);
+                this.createPropertyStubs(key);
                 return this.createLoadPromiseFn(key, data);
             }
         }, {
@@ -169,6 +169,10 @@ exports.default = function (request) {
                 }
 
                 return function () {
+                    if (_this3.isLoaded(key)) {
+                        return _this3.api[key];
+                    }
+
                     return request(_this3.url(), {
                         method: 'POST',
                         json: true,
@@ -216,8 +220,8 @@ exports.default = function (request) {
                 return object;
             }
         }, {
-            key: 'createLazyPropertyLoader',
-            value: function createLazyPropertyLoader(key) {
+            key: 'createPropertyStubs',
+            value: function createPropertyStubs(key) {
                 if (this.api[key]) {
                     return;
                 }
@@ -228,6 +232,12 @@ exports.default = function (request) {
                     };
                     return map;
                 }, {});
+                this.api[key].__stub__ = true;
+            }
+        }, {
+            key: 'isLoaded',
+            value: function isLoaded(key) {
+                return this.api[key] && !this.api[key].__stub__;
             }
         }]);
         return EndpointFixture;

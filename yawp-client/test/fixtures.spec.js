@@ -34,7 +34,7 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
-    xit('create the same fixture only one time', (done) => {
+    it('create the same fixture only one time', (done) => {
         fx.parent('p1', {
             id: '/parents/1'
         });

@@ -95,18 +95,21 @@ export default (request) => {
         }
 
         load(key, data) {
-            this.createLazyPropertyLoader(key);
+            this.createPropertyStubs(key);
             return this.createLoadPromiseFn(key, data);
         }
 
         createLoadPromiseFn(key, data) {
-
             if (!data) {
                 data = this.fx.getLazyFor(this.name, key);
             }
 
-            return () =>
-                request(this.url(), {
+            return () => {
+                if (this.isLoaded(key)) {
+                    return this.api[key];
+                }
+
+                return request(this.url(), {
                     method: 'POST',
                     json: true,
                     body: JSON.stringify(this.prepare(data))
@@ -114,6 +117,7 @@ export default (request) => {
                     this.api[key] = response;
                     return response;
                 });
+            }
         }
 
         prepare(data) {
@@ -129,7 +133,7 @@ export default (request) => {
             return object;
         }
 
-        createLazyPropertyLoader(key) {
+        createPropertyStubs(key) {
             if (this.api[key]) {
                 return;
             }
@@ -140,6 +144,11 @@ export default (request) => {
                 }
                 return map;
             }, {});
+            this.api[key].__stub__ = true;
+        }
+
+        isLoaded(key) {
+            return this.api[key] && !this.api[key].__stub__;
         }
     }
 

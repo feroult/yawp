@@ -43,11 +43,11 @@ export default (request) => {
         }
 
         bindFixture(name, path) {
-            this[name] = new EndpointFixture(this, name, path).api;
+            this[name] = new Fixture(this, name, path).api;
         }
 
         bindLazy(name, path) {
-            this.lazy[name] = new LazyFixture(this, name, path).api;
+            this.lazy[name] = new Lazy(this, name, path).api;
         }
 
         chain(promiseFn) {
@@ -69,14 +69,20 @@ export default (request) => {
             });
         }
 
-        getLazyFor(name, key) {
+        lazyLoadFn(name, key) {
+            return () => {
+
+            }
+        }
+
+        getLazyDataFor(name, key) {
             var lazy = this.lazy[name].self;
             return lazy.getData(key);
         }
 
     }
 
-    class EndpointFixture {
+    class Fixture {
         constructor(fx, name, path) {
             this.fx = fx;
             this.name = name;
@@ -95,13 +101,13 @@ export default (request) => {
         }
 
         load(key, data) {
-            this.createPropertyStubs(key);
+            this.createStubs(key);
             return this.createLoadPromiseFn(key, data);
         }
 
         createLoadPromiseFn(key, data) {
             if (!data) {
-                data = this.fx.getLazyFor(this.name, key);
+                data = this.fx.getLazyDataFor(this.name, key);
             }
 
             return () => {
@@ -109,38 +115,44 @@ export default (request) => {
                     return this.api[key];
                 }
 
-                return request(this.url(), {
-                    method: 'POST',
-                    json: true,
-                    body: JSON.stringify(this.prepare(data))
-                }).then((response) => {
-                    this.api[key] = response;
-                    return response;
-                });
+                return this.prepare(data).then((object) =>
+                    request(this.url(), {
+                        method: 'POST',
+                        json: true,
+                        body: JSON.stringify(object)
+                    }).then((response) => {
+                        this.api[key] = response;
+                        return response;
+                    }));
             }
         }
 
         prepare(data) {
-            let object = {};
-            extend(object, data);
+            return new Promise((resolve) => {
+                let object = {};
+                extend(object, data);
 
-            for (let key of Object.keys(object)) {
-                let value = object[key];
-                if (value instanceof Function) {
-                    object[key] = value();
+                for (let key of Object.keys(object)) {
+                    let value = object[key];
+                    if (value instanceof Function) {
+                        value().then((actualValue) => {
+                            object[key] = actualValue;
+                        });
+                    }
+                    // deep into the object
                 }
-            }
-            return object;
+                return resolve(object);
+            });
         }
 
-        createPropertyStubs(key) {
-            if (this.api[key]) {
+        createStubs(key) {
+            if (this.hasStubs(key)) {
                 return;
             }
             let self = this;
             this.api[key] = this.fx.lazyProperties.reduce((map, name) => {
                 map[name] = () => {
-                    return self.api[key][name];
+                    return new Promise((resolve) => resolve(self.api[key][name]));
                 }
                 return map;
             }, {});
@@ -148,11 +160,15 @@ export default (request) => {
         }
 
         isLoaded(key) {
-            return this.api[key] && !this.api[key].__stub__;
+            return this.api[key] && !this.hasStubs(key);
+        }
+
+        hasStubs(key) {
+            return this.api[key] && this.api[key].__stub__;
         }
     }
 
-    class LazyFixture {
+    class Lazy {
         constructor(fx, name, path) {
             this.fx = fx;
             this.name = name;
@@ -163,6 +179,7 @@ export default (request) => {
 
         createApi() {
             let api = (key, data) => {
+                this.createLazyStubs(key);
                 this.data[key] = data;
             };
             api.self = this;
@@ -171,6 +188,21 @@ export default (request) => {
 
         getData(key) {
             return this.data[key];
+        }
+
+        createLazyStubs(key) {
+            if (this.hasStubs(key)) {
+                return;
+            }
+            this.api[key] = this.fx.lazyProperties.reduce((map, name) => {
+                map[name] = this.fx.lazyLoadFn(name, key);
+                return map;
+            }, {});
+            this.api[key].__stub__ = true;
+        }
+
+        hasStubs(key) {
+            return this.api[key] && this.api[key].__stub__;
         }
     }
 

@@ -101,7 +101,7 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
-    it.only('loads a lazy fixtures with a reference id', (done) => {
+    it('loads a lazy fixtures with a reference id', (done) => {
         fx.lazy.job('j1', {});
         fx.lazy.parent('p1', {jobId: fx.lazy.job.j1.id});
 
@@ -113,31 +113,8 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
-
     // test lazy with reference id
     // test load returns a promise
-
-
-    //it('loads doesnt load lazy fixtures', (done) => {
-    //    fx.lazy.parent('p1', {name: 'xpto1'});
-    //    fx.lazy.parent('p2', {name: 'xpto2'});
-    //
-    //    fx.load((fixtures) => {
-    //        expect(fixtures.length).to.be.empty;
-    //        done();
-    //    });
-    //});
-    //
-    //it('loads fixtures if needed', (done) => {
-    //    fx.lazy.parent('p1', {name: 'xpto1'});
-    //    fx.lazy.parent('p2', {name: 'xpto2'});
-    //
-    //    fx.parent('p1');
-    //
-    //    fx.load((fixtures) => {
-    //        expect(fixtures.parent.p1.name).to.be.equals('xpto1');
-    //        done();
-    //    });
-    //});
+    // test deep into the object
 
 });

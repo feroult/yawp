@@ -1,10 +1,10 @@
 (function (t, yawp, fx, lazy) {
 
     t.moduledef('child rest action', {
-        testStart: function (done) {
+        testStart: function (start) {
             fx.reset().then(function () {
                 fx.parent('parent', {});
-                fx.load(done);
+                fx.load(start);
             });
         }
     });
@@ -12,14 +12,14 @@
     t.asyncTest("create", function (assert) {
         expect(2);
 
-        var parent = fx.parent('parent');
+        var parent = fx.parent.parent;
 
         var child = {
             name: 'xpto',
             parentId: parent.id
         };
 
-        yawp('/children').from(parent).create(child).done(function (retrievedChild) {
+        yawp('/children').from(parent).create(child).then(function (retrievedChild) {
             assert.equal(retrievedChild.name, 'xpto');
             assert.equal(retrievedChild.parentId, parent.id);
             t.start();
@@ -29,14 +29,14 @@
     t.asyncTest("create (with root path)", function (assert) {
         expect(2);
 
-        var parent = fx.parent('parent');
+        var parent = fx.parent.parent;
 
         var child = {
             name: 'xpto',
             parentId: parent.id
         };
 
-        yawp('/children').create(child).done(function (retrievedChild) {
+        yawp('/children').create(child).then(function (retrievedChild) {
             assert.equal(retrievedChild.name, 'xpto');
             assert.equal(retrievedChild.parentId, parent.id);
             t.start();
@@ -46,7 +46,7 @@
     t.asyncTest("create array", function (assert) {
         expect(5);
 
-        var parent = fx.parent('parent');
+        var parent = fx.parent.parent;
 
         var children = [{
             name: 'xpto1',
@@ -56,7 +56,7 @@
             parentId: parent.id
         }];
 
-        yawp('/children').from(parent).create(children).done(function (retrievedChidren) {
+        yawp('/children').from(parent).create(children).then(function (retrievedChidren) {
             assert.equal(retrievedChidren.length, 2)
             assert.equal(retrievedChidren[0].name, 'xpto1');
             assert.equal(retrievedChidren[1].name, 'xpto2');
@@ -69,43 +69,50 @@
     t.asyncTest("update", function (assert) {
         expect(2);
 
-        var parent = fx.parent('parent');
+        var parent = fx.parent.parent;
 
-        var child = fx.child('child', {
+        fx.child('child', {
             name: 'xpto',
             parentId: parent.id
         });
 
-        child.name = 'changed xpto';
+        fx.load(function () {
+            var child = fx.child.child;
 
-        yawp(child.id).update(child).done(function (retrievedChild) {
-            assert.equal(retrievedChild.name, 'changed xpto');
-            assert.equal(retrievedChild.parentId, parent.id);
-            t.start();
+            child.name = 'changed xpto';
+
+            yawp(child.id).update(child).then(function (retrievedChild) {
+                assert.equal(retrievedChild.name, 'changed xpto');
+                assert.equal(retrievedChild.parentId, parent.id);
+                t.start();
+            });
         });
     });
 
     t.asyncTest("show", function (assert) {
         expect(1);
 
-        var parent = fx.parent('parent');
+        var parent = fx.parent.parent;
 
-        var child = fx.child('child', {
+        fx.child('child', {
             name: 'xpto',
             parentId: parent.id
         });
 
-        yawp(child).fetch(function (retrievedChild) {
-            assert.equal(retrievedChild.name, 'xpto');
-            t.start();
-        });
+        fx.load(function () {
+            var child = fx.child.child;
 
+            yawp(child).fetch(function (retrievedChild) {
+                assert.equal(retrievedChild.name, 'xpto');
+                t.start();
+            });
+        });
     });
 
     t.asyncTest("index", function (assert) {
         expect(5);
 
-        var parent = fx.parent('parent');
+        var parent = fx.parent.parent;
 
         fx.child('child1', {
             name: 'xpto1',
@@ -117,53 +124,42 @@
             parentId: parent.id
         });
 
-        var order = [{
-            p: 'name'
-        }];
+        fx.load(function () {
+            var order = [{
+                p: 'name'
+            }];
 
-        yawp('/children').from(parent).order(order).list(function (children) {
-            assert.equal(children.length, 2);
-            assert.equal(children[0].name, 'xpto1');
-            assert.equal(children[1].name, 'xpto2');
-            assert.equal(children[0].parentId, parent.id);
-            assert.equal(children[1].parentId, parent.id);
-            t.start();
+            yawp('/children').from(parent).order(order).list(function (children) {
+                assert.equal(children.length, 2);
+                assert.equal(children[0].name, 'xpto1');
+                assert.equal(children[1].name, 'xpto2');
+                assert.equal(children[0].parentId, parent.id);
+                assert.equal(children[1].parentId, parent.id);
+                t.start();
+            });
         });
     });
 
     t.asyncTest("index global", function (assert) {
         expect(11);
 
-        //var parent1 = fx.parent('parent1', {});
-        //var parent2 = fx.parent('parent2', {});
-        //
-        //fx.child('child1', {
-        //    name: 'xpto1',
-        //    parentId: parent1.id
-        //});
-        //
-        //fx.child('child2', {
-        //    name: 'xpto2',
-        //    parentId: parent2.id
-        //});
+        fx.parent('parent1', {});
+        fx.parent('parent2', {});
 
-        lazy.parent('parent1', {});
-        lazy.parent('parent2', {});
-
-        lazy.child('child1', {
+        fx.child('child1', {
             name: 'xpto1',
-            parentId: lazy.parent('parent1').id
+            parentId: fx.parent.parent1.id
         });
 
-        lazy.child('child2', {
+        fx.child('child2', {
             name: 'xpto2',
-            parentId: lazy.parent('parent2').id
+            parentId: fx.parent.parent2.id
         });
-
-        fx.child('child1');
-        fx.child('child2');
 
         fx.load(function () {
+            var parent1 = fx.parent.parent1;
+            var parent2 = fx.parent.parent2;
+
             yawp('/children').from(parent1).list(function (children) {
                 assert.equal(children.length, 1);
                 assert.equal(children[0].name, 'xpto1');
@@ -198,27 +194,30 @@
     t.asyncTest("destroy", function (assert) {
         expect(2);
 
-        var parent = fx.parent("parent");
+        var parent = fx.parent.parent;
 
-        var child = fx.child('child', {
+        fx.child('child', {
             name: 'xpto',
             parentId: parent.id
         });
 
-        yawp(child.id).destroy(child).done(function (retrievedId) {
-            t.equal(child.id, retrievedId);
+        fx.load(function () {
+            var child = fx.child.child;
 
-        }).then(function () {
-            yawp(child).fetch().fail(function (error) {
-                if (t.isPhantomJS()) {
-                    assert.equal(error.status, 0);
-                } else {
-                    assert.equal(error.status, 404);
-                }
-                t.start();
+            yawp(child.id).destroy(child).then(function (retrievedId) {
+                t.equal(child.id, retrievedId);
+
+            }).then(function () {
+                yawp(child).fetch().catch(function (error) {
+                    if (t.isPhantomJS()) {
+                        assert.equal(error.status, 0);
+                    } else {
+                        assert.equal(error.status, 404);
+                    }
+                    t.start();
+                });
             });
         });
-
     });
 
 })(QUnit, yawp, yawp.fixtures, yawp.fixtures.lazy);

@@ -1,5 +1,6 @@
-import chai from 'chai'
-import yawp, { fx } from '../node';
+import chai from 'chai';
+import yawp, { fx } from '../lib/node/node';
+
 chai.expect();
 
 const expect = chai.expect;

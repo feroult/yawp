@@ -16,45 +16,18 @@
 
 <script>
     (function x(fx) {
-        var lazy = fx.lazy;
+        fx.lazy.job('j1', {name: 'xpto'});
+        fx.lazy.parent('p1', {jobId: fx.lazy.job.j1.id});
 
-        lazy.job('job1', {id: '/jobs/1'});
+        fx.parent('p1');
 
-        lazy.parent('parent1', {});
-        lazy.parent('parent2', {
-            jobsMap: lazy.map([{
-                key: lazy.job('job1').id, value: {name: 'lala'}
-            }])
-        });
-
-        fx.parent('parent2');
-
-//        lazy.job('job2', {id: '/jobs/2'});
-//        lazy.parent('parent3', {
-//            jobsMap: lazy.map([{
-//                key: lazy.job('job2').id, value: {name: 'lele'}
-//            }])
-//        });
-
-//        fx.parent('parent3');
-
-//        lazy.child('child1', {
-//            name: 'xpto1',
-//            parentId: lazy.parent('parent1').id
-////            parentId: lazy.parent.parent1.id
-////            parentId: lazy.parent1.id
-//        });
-//
-//        lazy.child('child2', {
-//            name: 'xpto2',
-//            parentId: lazy.parent('parent2').id
-//        });
-//
-//        fx.child('child1');
-//        fx.child('child2');
-//
         fx.load(function () {
             console.log('done');
+
+            yawp(fx.parent.p1.id).fetch(function (parent) {
+                console.log('p', parent);
+            });
+
         });
 
     })(yawp.fixtures);

@@ -10,13 +10,6 @@
     });
 
     function moduledef(module, options) {
-        //t.module(module, {
-        //    beforeEach: function (assert) {
-        //        var done = assert.async();
-        //        console.log('here');
-        //        options.testStart(done);
-        //    }
-        //});
         t.module(module);
         if (options.testStart) {
             t.testStart(function (details) {

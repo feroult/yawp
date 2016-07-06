@@ -1,5 +1,5 @@
 import chai from 'chai';
-import yawp, { fx } from '../node';
+import yawp, { fx } from '../lib/node/node';
 
 chai.expect();
 

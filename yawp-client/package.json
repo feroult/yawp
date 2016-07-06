@@ -2,7 +2,7 @@
   "name": "yawp-cli",
   "version": "1.0.21",
   "description": "YAWP! Framework JS client",
-  "main": "lib/yawp.min.js",
+  "main": "lib/node/node/index.js",
   "scripts": {
     "build": "npm run build-node; npm run build-web",
     "build-node": "BABEL_ENV=node babel src --ignore web --source-maps --out-dir lib/node",

@@ -1,8 +1,8 @@
 (function(t, yawp, fx) {
 
 	t.moduledef('parent rest action', {
-		testStart : function() {
-			fx.reset();
+		testStart : function(start) {
+			fx.reset().then(start);
 		}
 	});
 
@@ -13,7 +13,7 @@
 			name : 'xpto'
 		};
 
-		yawp('/parents').create(parent).done(function(retrievedParent) {
+		yawp('/parents').create(parent).then(function(retrievedParent) {
 			assert.equal(retrievedParent.name, 'xpto');
 			t.start();
 		});

@@ -9,8 +9,8 @@ yawp.config((c) => {
 });
 
 fx.config((c) => {
-    c.baseUrl = 'http://localhost:8080/fixtures';
-    c.resetUrl = 'http://localhost:8080/_ah/yawp/datastore/delete_all';
+    c.baseUrl('http://localhost:8080/fixtures');
+    c.resetUrl('http://localhost:8080/_ah/yawp/datastore/delete_all');
     c.bind('parent', '/parents');
     c.bind('child', '/children');
     c.bind('job', '/jobs');
@@ -79,6 +79,19 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
+    it('loads a fixture as a promise', (done) => {
+        fx.parent('p1', {name: 'xpto1'});
+
+        fx.load().then(() => {
+            expect(fx.parent.p1.name).to.be.equals('xpto1');
+        }).then(() => {
+            fx.load(() => fx.parent.p1.name).then((name) => {
+                expect(name).to.be.equals('xpto1');
+                done();
+            });
+        });
+    });
+
     it('loads a lazy fixture', (done) => {
         fx.lazy.parent('p1', {name: 'xpto'});
         fx.parent('p1');
@@ -113,7 +126,7 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
-    it('loads a inner object lazy property', (done) => {
+    it('loads an inner object lazy property', (done) => {
         fx.lazy.job('j1', {});
         fx.lazy.parent('p1', {job: {id: fx.lazy.job.j1.id}});
 
@@ -124,8 +137,5 @@ describe('YAWP! Fixtures', () => {
             done();
         });
     });
-
-    // test load returns a promise
-    // test deep into the object
 
 });

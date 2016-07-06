@@ -1,298 +1,247 @@
 import { extend } from './utils';
 
-var baseUrl = '/fixtures';
-var resetUrl = '/_ah/yawp/datastore/delete_all';
-var lazyPropertyKeys = ['id']; // needed till harmony proxies
+const DEFAULT_BASE_URL = '/fixtures';
+const DEFAULT_RESET_URL = '/_ah/yawp/datastore/delete_all';
+const DEFAULT_LAZY_PROPERTIES = ['id']; // needed till harmony proxies
 
-var api = {};
+export default (request) => {
 
-export default function (request) {
+    class Fixtures {
+        constructor() {
+            this._baseUrl = DEFAULT_BASE_URL;
+            this._resetUrl = DEFAULT_RESET_URL;
+            this._lazyProperties = DEFAULT_LAZY_PROPERTIES;
+            this.promise = null;
+            this.fixtures = [];
+            this.lazy = {};
+        }
 
-    // config
+        config(callback) {
+            callback(this);
+        }
 
-    function config(callback) {
-        var c = {
-            baseUrl: function (url) {
-                baseUrl = url;
-            },
-            resetUrl: function (url) {
-                resetUrl = url;
-            },
-            lazyPropertyKeys: function (array) {
-                lazyPropertyKeys = array;
-            },
-            bind: function (endpointKey, endpoint, parentId) {
-                api[endpointKey] = bind(fixture, endpointKey, endpoint, parentId);
+        baseUrl(url) {
+            this._baseUrl = url;
+        }
+
+        resetUrl(url) {
+            this._resetUrl = url;
+        }
+
+        lazyProperties(properties) {
+            this._lazyProperties = properties;
+        }
+
+        reset(all) {
+            return request(this._resetUrl, {
+                method: 'GET'
+            }).then(() => {
+                this.clear(all);
+            });
+        }
+
+        clear(all) {
+            this.promise = null;
+            for (let {name, path} of this.fixtures) {
+                this.bindFixture(name, path);
+                all && this.bindLazy(name, path);
             }
-        };
+        }
 
-        callback(c);
+        bind(name, path) {
+            this.fixtures.push({name, path});
+            this.bindFixture(name, path);
+            this.bindLazy(name);
+        }
 
-        api.lazy = computeLazyApi();
+        bindFixture(name, path) {
+            this[name] = new Fixture(this, name, path).api;
+        }
+
+        bindLazy(name) {
+            this.lazy[name] = new Lazy(this, name).api;
+        }
+
+        chain(promiseFn) {
+            if (!this.promise) {
+                this.promise = promiseFn();
+            } else {
+                this.promise = this.promise.then(promiseFn)
+            }
+            return this.promise;
+        }
+
+        load(callback) {
+            if (!this.promise) {
+                return new Promise(() => callback && callback());
+            }
+            return this.promise.then(() => callback && callback());
+        }
     }
 
-    // lib
+    class Fixture {
+        constructor(fx, name, path) {
+            this.fx = fx;
+            this.name = name;
+            this.path = path;
+            this.api = this.createApi();
+        }
 
-    var lazy = {};
-    var lazyProperties = {};
+        createApi() {
+            var api = (key, data) => {
+                return this.fx.chain(this.load(key, data));
+            };
+            api.self = this;
+            return api;
+        }
 
-    var cache = {};
-    var queue = [];
+        url() {
+            return this.fx._baseUrl + this.path;
+        }
 
-    function bind(fn, endpointKey, endpoint, parentId) {
-        var bindFn = function () {
-            var args = Array.prototype.slice.call(arguments, 0);
-            args.unshift(parentId);
-            args.unshift(endpoint);
-            args.unshift(endpointKey);
-            return fn.apply(this, args);
-        };
-        bindFn.endpoint = endpoint;
-        return bindFn;
-    }
+        load(key, data) {
+            this.createStubs(key);
+            return this.createLoadPromiseFn(key, data);
+        }
 
-    function reset() {
-        return request(resetUrl, null, {
-            method: 'GET'
-        }).then(() => {
-            cache = {};
-            queue = [];
-        });
-    }
+        createLoadPromiseFn(key, data) {
+            if (!data) {
+                data = this.getLazyDataFor(key);
+            }
 
-    function prepareObject(data) {
-        var object = {};
-        extend(object, data);
-        return new Promise((resolve) => {
-            var lazyProperties = [];
-            loadLazyProperties(lazyProperties, object);
+            return () => {
+                if (this.isLoaded(key)) {
+                    return this.api[key];
+                }
 
+                return this.prepare(data).then((object) => {
+                    return request(this.url(), {
+                        method: 'POST',
+                        json: true,
+                        body: JSON.stringify(object)
+                    }).then((response) => {
+                        this.api[key] = response;
+                        return response;
+
+                    })
+                });
+            }
+        }
+
+        getLazyDataFor(key) {
+            var lazy = this.fx.lazy[this.name].self;
+            return lazy.getData(key);
+        }
+
+        prepare(data) {
+            return new Promise((resolve) => {
+                let object = {};
+                extend(object, data);
+
+                let lazyProperties = [];
+                this.inspectLazyProperties(object, lazyProperties);
+                this.resolveLazyProperties(object, lazyProperties, resolve);
+            });
+        }
+
+        resolveLazyProperties(object, lazyProperties, resolve) {
             if (!lazyProperties.length) {
                 resolve(object);
-            }
+            } else {
+                var promise = lazyProperties[0]();
+                for (var i = 1, l = lazyProperties.length; i < l; i++) {
+                    promise = promise.then(lazyProperties[i]);
+                }
 
-            var promise = lazyProperties[0]();
-            for (var i = 1, l = lazyProperties.length; i < l; i++) {
-                promise = promise.then(lazyProperties[i]);
-            }
-
-            promise.then(() => {
-                resolve(object);
-            });
-        });
-    }
-
-    function loadLazyProperties(lazyProperties, object) {
-        var i;
-        for (i in object) {
-            if (!object.hasOwnProperty(i)) {
-                continue;
-            }
-
-            var property = object[i];
-
-            if (property instanceof Function) {
-                lazyProperties.push(() => {
-                    return property().then((value) => {
-                        object[i] = value;
-                    });
-                });
-                continue;
-            }
-
-            if (property instanceof Object) {
-                loadLazyProperties(lazyProperties, property);
-                continue;
-            }
-        }
-    }
-
-    function save(endpoint, parentId, data) {
-        if (!endpoint) {
-            console.error('not endpoint?!');
-        }
-
-        return prepareObject(data).then((object) => {
-            var url = baseUrl + (parentId ? object[parentId] : '') + endpoint;
-            return request(url, null, {
-                method: 'POST',
-                json: true,
-                body: JSON.stringify(object)
-            });
-        });
-    }
-
-    function hasLazy(endpoint, key) {
-        if (!lazy[endpoint]) {
-            return false;
-        }
-        if (!lazy[endpoint][key]) {
-            return false;
-        }
-        return true;
-    }
-
-    function saveFixtureToCache(endpointKey, endpoint, parentId, data, key) {
-        var result = save(endpoint, parentId, data);
-        result.then((object) => {
-            cache[endpointKey][key] = object;
-        });
-        return result;
-    }
-
-    function loadFixtureFromCache(endpointKey, key) {
-        if (!cache[endpointKey]) {
-            cache[endpointKey] = {};
-            return null;
-        }
-        return cache[endpointKey][key];
-    }
-
-    function fixture(endpointKey, endpoint, parentId, key, data, enqueue = true) {
-        let object = loadFixtureFromCache(endpointKey, key);
-        if (object) {
-            return () => {
-                return new Promise((resolve) => {
+                promise.then(() => {
                     resolve(object);
                 });
             }
         }
 
-        var isLazy = !data;
-
-        if (isLazy) {
-            if (hasLazy(endpoint, key)) {
-                data = lazy[endpoint][key];
-            } else {
-                throw 'cannot resolve lazy fixture: ' + endpointKey + ' -> ' + key;
-            }
-        }
-
-        var promiseFn = () => {
-            return saveFixtureToCache(endpointKey, endpoint, parentId, data, key);
-        };
-
-        if (enqueue) {
-            queue.push(promiseFn);
-        }
-        return promiseFn;
-    }
-
-    function map(objects) {
-        new Promise((resolve) => {
-            var result = {};
-            var lazyKeys = [];
-
-            for (var i in objects) {
-                var object = objects[i];
-
-                var key = object.key;
-                var value = object.value;
-
-                if (key instanceof Function) {
-                    lazyKeys.push(() => {
-                        return key().then((keyValue) => {
-                            result[keyValue] = value;
+        inspectLazyProperties(object, lazyProperties) {
+            for (let key of Object.keys(object)) {
+                let value = object[key];
+                if (value instanceof Function) {
+                    lazyProperties.push(() => {
+                        return value().then((actualValue) => {
+                            object[key] = actualValue;
                         });
                     });
                     continue;
                 }
-
-                result[key] = value;
+                if (value instanceof Object) {
+                    this.inspectLazyProperties(value, lazyProperties);
+                    return;
+                }
             }
+        }
 
-            if (!lazyKeys.length) {
-                resolve(result);
+        createStubs(key) {
+            if (this.hasStubs(key)) {
                 return;
             }
-
-            var promise = lazyKeys[0]();
-            for (var i = 1, l = lazyKeys.length; i < l; i++) {
-                promise = promise.then(lazyKeys[i]);
-            }
-
-            promise.then(() => {
-                resolve(result);
-            });
-        });
-    }
-
-    function mapFn(objects) {
-        return function () {
-            return map(objects);
-        };
-    }
-
-    function computeLazyPropertiesApi(apiKey, fixtureKey) {
-        var i, lazyPropertiesApi = {};
-
-        function addLazyPropertyApi(propertyKey) {
-            return function () {
-                var saveToCachePromise = api[apiKey](fixtureKey, null, false)();
-                return saveToCachePromise.then(() => {
-                    return cache[apiKey][fixtureKey][propertyKey]
-                });
-            };
-        }
-
-        for (i = 0; i < lazyPropertyKeys.length; i++) {
-            var propertyKey = lazyPropertyKeys[i];
-            lazyPropertiesApi[propertyKey] = addLazyPropertyApi(propertyKey);
-        }
-
-        return lazyPropertiesApi;
-    }
-
-    function computeLazyApi() {
-        var lazyApi = {};
-
-        function addLazyApi(apiKey, endpoint) {
-            return function (fixtureKey, data) {
-                if (!lazy[endpoint]) {
-                    lazy[endpoint] = {};
-                    lazyProperties[endpoint] = {};
-                } else if (lazy[endpoint][fixtureKey]) {
-                    // lazy fixture already configured, someone is refering a
-                    // lazy property.
-                    return lazyProperties[endpoint][fixtureKey];
+            let self = this;
+            this.api[key] = this.fx._lazyProperties.reduce((map, property) => {
+                map[property] = () => {
+                    return new Promise((resolve) => resolve(self.api[key][property]));
                 }
+                return map;
+            }, {});
+            this.api[key].__stub__ = true;
+        }
 
-                lazy[endpoint][fixtureKey] = data;
-                lazyProperties[endpoint][fixtureKey] = computeLazyPropertiesApi(apiKey, fixtureKey);
+        isLoaded(key) {
+            return this.api[key] && !this.hasStubs(key);
+        }
+
+        hasStubs(key) {
+            return this.api[key] && this.api[key].__stub__;
+        }
+    }
+
+    class Lazy {
+        constructor(fx, name) {
+            this.fx = fx;
+            this.name = name;
+            this.data = {};
+            this.api = this.createApi();
+        }
+
+        createApi() {
+            let api = (key, data) => {
+                this.createLazyStubs(key);
+                this.data[key] = data;
             };
+            api.self = this;
+            return api;
         }
 
-        for (var apiKey in api) {
-            var endpoint = api[apiKey].endpoint;
-            lazyApi[apiKey] = addLazyApi(apiKey, endpoint);
+        getData(key) {
+            return this.data[key];
         }
 
-        lazyApi.map = mapFn;
-        return lazyApi;
+        createLazyStubs(key) {
+            if (this.hasStubs(key)) {
+                return;
+            }
+            this.api[key] = this.fx._lazyProperties.reduce((map, property) => {
+                map[property] = () => {
+                    return this.getFixtureRef().load(key)().then((object) => object[property]);
+                };
+                return map;
+            }, {});
+            this.api[key].__stub__ = true;
+        }
+
+        hasStubs(key) {
+            return this.api[key] && this.api[key].__stub__;
+        }
+
+        getFixtureRef() {
+            return this.fx[this.name].self;
+        }
     }
 
-    function load(callback) {
-        if (!queue.length) {
-            callback(cache);
-            return;
-        }
-
-        var promise = queue[0]();
-        for (var i = 1, l = queue.length; i < l; i++) {
-            promise = promise.then(queue[i]);
-        }
-
-        promise.then(() => {
-            queue = [];
-            callback(cache);
-        });
-    }
-
-    api.lazy = computeLazyApi();
-    api.load = load;
-    api.reset = reset;
-    api.map = mapFn;
-    api.config = config;
-
-    return api;
+    return new Fixtures();
 }

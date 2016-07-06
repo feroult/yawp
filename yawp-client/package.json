@@ -5,14 +5,13 @@
   "main": "lib/yawp.min.js",
   "scripts": {
     "build": "npm run build-node; npm run build-web",
-    "build-node": "babel src --ignore web --source-maps --out-dir lib/node",
+    "build-node": "BABEL_ENV=node babel src --ignore web --source-maps --out-dir lib/node",
     "build-web": "webpack --mode=build",
-    "dev-node": "babel src --ignore web --source-maps --watch --out-dir lib/node",
+    "dev-node": "BABEL_ENV=node babel src --ignore web --source-maps --watch --out-dir lib/node",
     "dev-web": "webpack --progress --colors --watch --mode=dev",
-    "test": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js",
+    "test": "BABEL_ENV=node mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js",
     "prepublish": "npm run build",
-    "analyzer-node": "webpack --mode=build --json --env=node | webpack-bundle-size-analyzer",
-    "analyzer-web": "webpack --mode=build --json --env=web | webpack-bundle-size-analyzer"
+    "analyzer": "webpack --mode=build --json | webpack-bundle-size-analyzer"
   },
   "devDependencies": {
     "babel": "^6.5.2",

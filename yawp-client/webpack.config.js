@@ -32,12 +32,12 @@ var configBabel = {
 };
 
 var config = {
-    entry: __dirname + '/src/web/' + index + '.js',
+    entry: __dirname + '/src/web/index.' + index + '.js',
     devtool: 'source-map',
     output: {
         path: __dirname + '/lib/web/',
         filename: outputFile,
-        library: 'yawp',
+        library: index,
         libraryTarget: 'umd',
         umdNamedDefine: true
     },

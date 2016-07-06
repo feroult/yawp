@@ -60,11 +60,11 @@ exports.default = function (request) {
                 try {
                     for (var _iterator = this.fixtures[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                         var _step$value = _step.value;
-                        var _name = _step$value.name;
+                        var name = _step$value.name;
                         var path = _step$value.path;
 
-                        this.bindFixture(_name, path);
-                        all && this.bindLazy(_name, path);
+                        this.bindFixture(name, path);
+                        all && this.bindLazy(name, path);
                     }
                 } catch (err) {
                     _didIteratorError = true;
@@ -119,12 +119,6 @@ exports.default = function (request) {
                     callback();
                 });
             }
-        }, {
-            key: 'getLazyDataFor',
-            value: function getLazyDataFor(name, key) {
-                var lazy = this.lazy[name].self;
-                return lazy.getData(key);
-            }
         }]);
         return Fixtures;
     }();
@@ -144,9 +138,11 @@ exports.default = function (request) {
             value: function createApi() {
                 var _this2 = this;
 
-                return function (key, data) {
+                var api = function api(key, data) {
                     return _this2.fx.chain(_this2.load(key, data));
                 };
+                api.self = this;
+                return api;
             }
         }, {
             key: 'url',
@@ -194,47 +190,72 @@ exports.default = function (request) {
         }, {
             key: 'prepare',
             value: function prepare(data) {
+                var _this4 = this;
+
                 return new Promise(function (resolve) {
                     var object = {};
                     (0, _utils.extend)(object, data);
 
-                    var _iteratorNormalCompletion2 = true;
-                    var _didIteratorError2 = false;
-                    var _iteratorError2 = undefined;
-
-                    try {
-                        var _loop = function _loop() {
-                            var key = _step2.value;
-
-                            var value = object[key];
-                            if (value instanceof Function) {
-                                value().then(function (actualValue) {
-                                    object[key] = actualValue;
-                                });
-                            }
-                            // deep into the object
-                        };
-
-                        for (var _iterator2 = Object.keys(object)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                            _loop();
-                        }
-                    } catch (err) {
-                        _didIteratorError2 = true;
-                        _iteratorError2 = err;
-                    } finally {
-                        try {
-                            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                                _iterator2.return();
-                            }
-                        } finally {
-                            if (_didIteratorError2) {
-                                throw _iteratorError2;
-                            }
-                        }
+                    var lazyProperties = [];
+                    _this4.inspectLazyProperties(object, lazyProperties);
+                    _this4.resolveLazyProperties(object, lazyProperties, resolve);
+                });
+            }
+        }, {
+            key: 'resolveLazyProperties',
+            value: function resolveLazyProperties(object, lazyProperties, resolve) {
+                if (!lazyProperties.length) {
+                    resolve(object);
+                } else {
+                    var promise = lazyProperties[0]();
+                    for (var i = 1, l = lazyProperties.length; i < l; i++) {
+                        promise = promise.then(lazyProperties[i]);
                     }
 
-                    return resolve(object);
-                });
+                    promise.then(function () {
+                        resolve(object);
+                    });
+                }
+            }
+        }, {
+            key: 'inspectLazyProperties',
+            value: function inspectLazyProperties(object, lazyProperties) {
+                var _iteratorNormalCompletion2 = true;
+                var _didIteratorError2 = false;
+                var _iteratorError2 = undefined;
+
+                try {
+                    var _loop = function _loop() {
+                        var key = _step2.value;
+
+                        var value = object[key];
+                        if (value instanceof Function) {
+                            lazyProperties.push(function () {
+                                return value().then(function (actualValue) {
+                                    object[key] = actualValue;
+                                });
+                            });
+                        }
+                        // deep into the object
+                    };
+
+                    for (var _iterator2 = Object.keys(object)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                        _loop();
+                    }
+                } catch (err) {
+                    _didIteratorError2 = true;
+                    _iteratorError2 = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                            _iterator2.return();
+                        }
+                    } finally {
+                        if (_didIteratorError2) {
+                            throw _iteratorError2;
+                        }
+                    }
+                }
             }
         }, {
             key: 'createStubs',
@@ -281,11 +302,11 @@ exports.default = function (request) {
         (0, _createClass3.default)(Lazy, [{
             key: 'createApi',
             value: function createApi() {
-                var _this4 = this;
+                var _this5 = this;
 
                 var api = function api(key, data) {
-                    _this4.createLazyStubs(key);
-                    _this4.data[key] = data;
+                    _this5.createLazyStubs(key);
+                    _this5.data[key] = data;
                 };
                 api.self = this;
                 return api;
@@ -298,15 +319,15 @@ exports.default = function (request) {
         }, {
             key: 'createLazyStubs',
             value: function createLazyStubs(key) {
-                var _this5 = this;
+                var _this6 = this;
 
                 if (this.hasStubs(key)) {
                     return;
                 }
                 this.api[key] = this.fx.lazyProperties.reduce(function (map, property) {
                     map[property] = function () {
-                        return _this5.fx[name].load(key).then(function () {
-                            return _this5.fx[name][key][property];
+                        return _this6.getFixtureRef().load(key)().then(function (object) {
+                            return object[property];
                         });
                     };
                     return map;
@@ -317,6 +338,11 @@ exports.default = function (request) {
             key: 'hasStubs',
             value: function hasStubs(key) {
                 return this.api[key] && this.api[key].__stub__;
+            }
+        }, {
+            key: 'getFixtureRef',
+            value: function getFixtureRef() {
+                return this.fx[this.name].self;
             }
         }]);
         return Lazy;

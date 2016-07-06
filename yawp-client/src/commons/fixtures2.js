@@ -69,11 +69,6 @@ export default (request) => {
             });
         }
 
-        getLazyDataFor(name, key) {
-            var lazy = this.lazy[name].self;
-            return lazy.getData(key);
-        }
-
     }
 
     class Fixture {
@@ -85,9 +80,11 @@ export default (request) => {
         }
 
         createApi() {
-            return (key, data) => {
+            var api = (key, data) => {
                 return this.fx.chain(this.load(key, data));
             };
+            api.self = this;
+            return api;
         }
 
         url() {
@@ -109,15 +106,18 @@ export default (request) => {
                     return this.api[key];
                 }
 
-                return this.prepare(data).then((object) =>
-                    request(this.url(), {
+                return this.prepare(data).then((object) => {
+                    return request(this.url(), {
                         method: 'POST',
                         json: true,
                         body: JSON.stringify(object)
                     }).then((response) => {
                         this.api[key] = response;
                         return response;
-                    }));
+
+                    })
+                });
+
             }
         }
 
@@ -131,17 +131,39 @@ export default (request) => {
                 let object = {};
                 extend(object, data);
 
-                for (let key of Object.keys(object)) {
-                    let value = object[key];
-                    if (value instanceof Function) {
-                        value().then((actualValue) => {
+                let lazyProperties = [];
+                this.inspectLazyProperties(object, lazyProperties);
+                this.resolveLazyProperties(object, lazyProperties, resolve);
+            });
+        }
+
+        resolveLazyProperties(object, lazyProperties, resolve) {
+            if (!lazyProperties.length) {
+                resolve(object);
+            } else {
+                var promise = lazyProperties[0]();
+                for (var i = 1, l = lazyProperties.length; i < l; i++) {
+                    promise = promise.then(lazyProperties[i]);
+                }
+
+                promise.then(() => {
+                    resolve(object);
+                });
+            }
+        }
+
+        inspectLazyProperties(object, lazyProperties) {
+            for (let key of Object.keys(object)) {
+                let value = object[key];
+                if (value instanceof Function) {
+                    lazyProperties.push(() => {
+                        return value().then((actualValue) => {
                             object[key] = actualValue;
                         });
-                    }
-                    // deep into the object
+                    });
                 }
-                return resolve(object);
-            });
+                // deep into the object
+            }
         }
 
         createStubs(key) {
@@ -195,7 +217,7 @@ export default (request) => {
             }
             this.api[key] = this.fx.lazyProperties.reduce((map, property) => {
                 map[property] = () => {
-                    return this.fx[name].load(key).then(() => this.fx[name][key][property]);
+                    return this.getFixtureRef().load(key)().then((object) => object[property]);
                 };
                 return map;
             }, {});
@@ -204,6 +226,10 @@ export default (request) => {
 
         hasStubs(key) {
             return this.api[key] && this.api[key].__stub__;
+        }
+
+        getFixtureRef() {
+            return this.fx[this.name].self;
         }
     }
 

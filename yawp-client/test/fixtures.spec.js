@@ -34,7 +34,7 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
-    it('create the same fixture only one time', (done) => {
+    it('creates the same fixture only one time', (done) => {
         fx.parent('p1', {
             id: '/parents/1'
         });
@@ -45,7 +45,7 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
-    it('creates a fixture with parentId', (done) => {
+    it('creates a fixture with parent id', (done) => {
         fx.child('c1', {
             parentId: '/parents/1'
         }).then((child) => {
@@ -89,7 +89,6 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
-
     it('loads only required lazy fixtures', () => {
         fx.lazy.parent('p1', {name: 'xpto1'});
         fx.lazy.parent('p2', {name: 'xpto2'});
@@ -102,10 +101,21 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
+    it.only('loads a lazy fixtures with a reference id', (done) => {
+        fx.lazy.job('j1', {});
+        fx.lazy.parent('p1', {jobId: fx.lazy.job.j1.id});
 
-    // test doest not create same fixture twice
-    // test doesnt load all lazies
+        fx.parent('p1');
+
+        fx.load(() => {
+            expect(fx.parent.p1.jobId).to.be.equals(fx.job.j1.id);
+            done();
+        });
+    });
+
+
     // test lazy with reference id
+    // test load returns a promise
 
 
     //it('loads doesnt load lazy fixtures', (done) => {

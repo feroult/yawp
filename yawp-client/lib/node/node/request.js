@@ -17,6 +17,8 @@ function request(url, options) {
 
     url += query ? '?' + (0, _utils.toUrlParam)(query) : '';
 
+    // console.log('request', url, options);
+
     if (!options.json) {
         return fetch(url, options);
     }

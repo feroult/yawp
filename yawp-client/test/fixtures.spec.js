@@ -113,7 +113,18 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
-    // test lazy with reference id
+    it('loads a inner object lazy property', (done) => {
+        fx.lazy.job('j1', {});
+        fx.lazy.parent('p1', {job: {id: fx.lazy.job.j1.id}});
+
+        fx.parent('p1');
+
+        fx.load(() => {
+            expect(fx.parent.p1.job.id).to.be.equals(fx.job.j1.id);
+            done();
+        });
+    });
+
     // test load returns a promise
     // test deep into the object
 

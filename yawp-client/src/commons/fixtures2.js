@@ -20,11 +20,11 @@ export default (request) => {
             callback(this);
         }
 
-        reset() {
+        reset(all) {
             return request(this.resetUrl, {
                 method: 'GET'
             }).then(() => {
-                this.clear();
+                this.clear(all);
             });
         }
 
@@ -39,15 +39,15 @@ export default (request) => {
         bind(name, path) {
             this.fixtures.push({name, path});
             this.bindFixture(name, path);
-            this.bindLazy(name, path);
+            this.bindLazy(name);
         }
 
         bindFixture(name, path) {
             this[name] = new Fixture(this, name, path).api;
         }
 
-        bindLazy(name, path) {
-            this.lazy[name] = new Lazy(this, name, path).api;
+        bindLazy(name) {
+            this.lazy[name] = new Lazy(this, name).api;
         }
 
         chain(promiseFn) {
@@ -161,8 +161,12 @@ export default (request) => {
                             object[key] = actualValue;
                         });
                     });
+                    continue;
                 }
-                // deep into the object
+                if (value instanceof Object) {
+                    this.inspectLazyProperties(value, lazyProperties);
+                    return;
+                }
             }
         }
 
@@ -190,10 +194,9 @@ export default (request) => {
     }
 
     class Lazy {
-        constructor(fx, name, path) {
+        constructor(fx, name) {
             this.fx = fx;
             this.name = name;
-            this.path = path;
             this.data = {};
             this.api = this.createApi();
         }

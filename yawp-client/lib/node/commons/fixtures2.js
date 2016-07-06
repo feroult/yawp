@@ -4,6 +4,10 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _typeof2 = require('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -40,13 +44,13 @@ exports.default = function (request) {
             }
         }, {
             key: 'reset',
-            value: function reset() {
+            value: function reset(all) {
                 var _this = this;
 
                 return request(this.resetUrl, {
                     method: 'GET'
                 }).then(function () {
-                    _this.clear();
+                    _this.clear(all);
                 });
             }
         }, {
@@ -86,7 +90,7 @@ exports.default = function (request) {
             value: function bind(name, path) {
                 this.fixtures.push({ name: name, path: path });
                 this.bindFixture(name, path);
-                this.bindLazy(name, path);
+                this.bindLazy(name);
             }
         }, {
             key: 'bindFixture',
@@ -95,8 +99,8 @@ exports.default = function (request) {
             }
         }, {
             key: 'bindLazy',
-            value: function bindLazy(name, path) {
-                this.lazy[name] = new Lazy(this, name, path).api;
+            value: function bindLazy(name) {
+                this.lazy[name] = new Lazy(this, name).api;
             }
         }, {
             key: 'chain',
@@ -220,6 +224,8 @@ exports.default = function (request) {
         }, {
             key: 'inspectLazyProperties',
             value: function inspectLazyProperties(object, lazyProperties) {
+                var _this5 = this;
+
                 var _iteratorNormalCompletion2 = true;
                 var _didIteratorError2 = false;
                 var _iteratorError2 = undefined;
@@ -235,12 +241,26 @@ exports.default = function (request) {
                                     object[key] = actualValue;
                                 });
                             });
+                            return 'continue';
                         }
-                        // deep into the object
+                        if (value instanceof Object) {
+                            _this5.inspectLazyProperties(value, lazyProperties);
+                            return {
+                                v: void 0
+                            };
+                        }
                     };
 
                     for (var _iterator2 = Object.keys(object)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                        _loop();
+                        var _ret = _loop();
+
+                        switch (_ret) {
+                            case 'continue':
+                                continue;
+
+                            default:
+                                if ((typeof _ret === 'undefined' ? 'undefined' : (0, _typeof3.default)(_ret)) === "object") return _ret.v;
+                        }
                     }
                 } catch (err) {
                     _didIteratorError2 = true;
@@ -289,12 +309,11 @@ exports.default = function (request) {
     }();
 
     var Lazy = function () {
-        function Lazy(fx, name, path) {
+        function Lazy(fx, name) {
             (0, _classCallCheck3.default)(this, Lazy);
 
             this.fx = fx;
             this.name = name;
-            this.path = path;
             this.data = {};
             this.api = this.createApi();
         }
@@ -302,11 +321,11 @@ exports.default = function (request) {
         (0, _createClass3.default)(Lazy, [{
             key: 'createApi',
             value: function createApi() {
-                var _this5 = this;
+                var _this6 = this;
 
                 var api = function api(key, data) {
-                    _this5.createLazyStubs(key);
-                    _this5.data[key] = data;
+                    _this6.createLazyStubs(key);
+                    _this6.data[key] = data;
                 };
                 api.self = this;
                 return api;
@@ -319,14 +338,14 @@ exports.default = function (request) {
         }, {
             key: 'createLazyStubs',
             value: function createLazyStubs(key) {
-                var _this6 = this;
+                var _this7 = this;
 
                 if (this.hasStubs(key)) {
                     return;
                 }
                 this.api[key] = this.fx.lazyProperties.reduce(function (map, property) {
                     map[property] = function () {
-                        return _this6.getFixtureRef().load(key)().then(function (object) {
+                        return _this7.getFixtureRef().load(key)().then(function (object) {
                             return object[property];
                         });
                     };

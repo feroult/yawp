@@ -6,12 +6,11 @@
   "scripts": {
     "build": "npm run build-node; npm run build-web",
     "build-node": "BABEL_ENV=node babel src --ignore web --source-maps --out-dir lib/node",
-    "build-web": "webpack --mode=build",
+    "build-web": "webpack --mode=build --index=yawp; webpack --mode=build --index=yawp.fixtures",
     "dev-node": "BABEL_ENV=node babel src --ignore web --source-maps --watch --out-dir lib/node",
-    "dev-web": "webpack --progress --colors --watch --mode=dev",
     "test": "BABEL_ENV=node mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js",
     "prepublish": "npm run build",
-    "analyzer": "webpack --mode=build --json | webpack-bundle-size-analyzer"
+    "analyzer": "webpack --mode=build --index=yawp --json | webpack-bundle-size-analyzer; webpack --mode=build --index=yawp.fixtures --json | webpack-bundle-size-analyzer"
   },
   "devDependencies": {
     "babel": "^6.5.2",

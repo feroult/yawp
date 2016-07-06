@@ -3,10 +3,11 @@ var webpack = require('webpack');
 var path = require('path');
 
 var mode = yargs.argv.mode;
+var index = yargs.argv.index;
 
 var plugins = [], outputFile;
 
-var libraryName = 'yawp';
+var libraryName = index;
 
 if (mode === 'build') {
     //plugins.push(new webpack.optimize.DedupePlugin());
@@ -31,7 +32,7 @@ var configBabel = {
 };
 
 var config = {
-    entry: __dirname + '/src/web/index.js',
+    entry: __dirname + '/src/web/' + index + '.js',
     devtool: 'source-map',
     output: {
         path: __dirname + '/lib/web/',

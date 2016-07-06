@@ -138,4 +138,6 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
+    // test fx.map
+
 });

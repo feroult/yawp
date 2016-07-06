@@ -60,11 +60,11 @@ exports.default = function (request) {
                 try {
                     for (var _iterator = this.fixtures[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                         var _step$value = _step.value;
-                        var name = _step$value.name;
+                        var _name = _step$value.name;
                         var path = _step$value.path;
 
-                        this.bindFixture(name, path);
-                        all && this.bindLazy(name, path);
+                        this.bindFixture(_name, path);
+                        all && this.bindLazy(_name, path);
                     }
                 } catch (err) {
                     _didIteratorError = true;
@@ -120,11 +120,6 @@ exports.default = function (request) {
                 });
             }
         }, {
-            key: 'lazyLoadFn',
-            value: function lazyLoadFn(name, key) {
-                return function () {};
-            }
-        }, {
             key: 'getLazyDataFor',
             value: function getLazyDataFor(name, key) {
                 var lazy = this.lazy[name].self;
@@ -170,7 +165,7 @@ exports.default = function (request) {
                 var _this3 = this;
 
                 if (!data) {
-                    data = this.fx.getLazyDataFor(this.name, key);
+                    data = this.getLazyDataFor(key);
                 }
 
                 return function () {
@@ -189,6 +184,12 @@ exports.default = function (request) {
                         });
                     });
                 };
+            }
+        }, {
+            key: 'getLazyDataFor',
+            value: function getLazyDataFor(key) {
+                var lazy = this.fx.lazy[this.name].self;
+                return lazy.getData(key);
             }
         }, {
             key: 'prepare',
@@ -242,10 +243,10 @@ exports.default = function (request) {
                     return;
                 }
                 var self = this;
-                this.api[key] = this.fx.lazyProperties.reduce(function (map, name) {
-                    map[name] = function () {
+                this.api[key] = this.fx.lazyProperties.reduce(function (map, property) {
+                    map[property] = function () {
                         return new Promise(function (resolve) {
-                            return resolve(self.api[key][name]);
+                            return resolve(self.api[key][property]);
                         });
                     };
                     return map;
@@ -302,8 +303,12 @@ exports.default = function (request) {
                 if (this.hasStubs(key)) {
                     return;
                 }
-                this.api[key] = this.fx.lazyProperties.reduce(function (map, name) {
-                    map[name] = _this5.fx.lazyLoadFn(name, key);
+                this.api[key] = this.fx.lazyProperties.reduce(function (map, property) {
+                    map[property] = function () {
+                        return _this5.fx[name].load(key).then(function () {
+                            return _this5.fx[name][key][property];
+                        });
+                    };
                     return map;
                 }, {});
                 this.api[key].__stub__ = true;

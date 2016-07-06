@@ -69,12 +69,6 @@ export default (request) => {
             });
         }
 
-        lazyLoadFn(name, key) {
-            return () => {
-
-            }
-        }
-
         getLazyDataFor(name, key) {
             var lazy = this.lazy[name].self;
             return lazy.getData(key);
@@ -107,7 +101,7 @@ export default (request) => {
 
         createLoadPromiseFn(key, data) {
             if (!data) {
-                data = this.fx.getLazyDataFor(this.name, key);
+                data = this.getLazyDataFor(key);
             }
 
             return () => {
@@ -125,6 +119,11 @@ export default (request) => {
                         return response;
                     }));
             }
+        }
+
+        getLazyDataFor(key) {
+            var lazy = this.fx.lazy[this.name].self;
+            return lazy.getData(key);
         }
 
         prepare(data) {
@@ -150,9 +149,9 @@ export default (request) => {
                 return;
             }
             let self = this;
-            this.api[key] = this.fx.lazyProperties.reduce((map, name) => {
-                map[name] = () => {
-                    return new Promise((resolve) => resolve(self.api[key][name]));
+            this.api[key] = this.fx.lazyProperties.reduce((map, property) => {
+                map[property] = () => {
+                    return new Promise((resolve) => resolve(self.api[key][property]));
                 }
                 return map;
             }, {});
@@ -194,8 +193,10 @@ export default (request) => {
             if (this.hasStubs(key)) {
                 return;
             }
-            this.api[key] = this.fx.lazyProperties.reduce((map, name) => {
-                map[name] = this.fx.lazyLoadFn(name, key);
+            this.api[key] = this.fx.lazyProperties.reduce((map, property) => {
+                map[property] = () => {
+                    return this.fx[name].load(key).then(() => this.fx[name][key][property]);
+                };
                 return map;
             }, {});
             this.api[key].__stub__ = true;

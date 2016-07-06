@@ -32,7 +32,7 @@ var configBabel = {
 };
 
 var config = {
-    entry: __dirname + '/src/web/index.' + index + '.js',
+    entry: __dirname + '/src/web/index' + (index === 'yawp' ? '' : '.fixtures' ) + '.js',
     devtool: 'source-map',
     output: {
         path: __dirname + '/lib/web/',

@@ -1,5 +1,8 @@
 language: java
 
+node_js:
+  - "6.1"
+
 sudo: false
 
 addons:

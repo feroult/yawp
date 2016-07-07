@@ -6,12 +6,12 @@ chai.expect();
 const expect = chai.expect;
 
 yawp.config((c) => {
-    c.baseUrl('http://localhost:8080/api');
+    c.baseUrl('http://localhost:8081/api');
 });
 
 fx.config((c) => {
-    c.baseUrl('http://localhost:8080/fixtures');
-    c.resetUrl('http://localhost:8080/_ah/yawp/datastore/delete_all');
+    c.baseUrl('http://localhost:8081/fixtures');
+    c.resetUrl('http://localhost:8081/_ah/yawp/datastore/delete_all');
     c.bind('parent', '/parents');
     c.bind('child', '/children');
     c.bind('job', '/jobs');

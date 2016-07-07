@@ -140,5 +140,6 @@ describe('YAWP! Fixtures', () => {
     });
 
     // test fx.map
+    // test fx.fixture('xx').id ?
 
 });

@@ -11,6 +11,6 @@ tar -xjf phantomjs-2.0.0-ubuntu-12.04.tar.bz2
 cd ..
 export PATH=$PWD/phantomjs-2.0.0:$PATH
 
-# npm
-node --version
-npm install -g npm@'>=3.10.3'
+# node
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get install -y nodejs

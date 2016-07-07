@@ -12,4 +12,5 @@ cd ..
 export PATH=$PWD/phantomjs-2.0.0:$PATH
 
 # npm
+node --version
 npm install -g npm@'>=3.10.3'

@@ -1,8 +1,8 @@
 (function (t, yawp, fx, $) {
 
     t.moduledef('pipes', {
-        testStart: function () {
-            fx.reset();
+        testStart: function (start) {
+            fx.reset().then(start);
         }
     });
 
@@ -23,10 +23,10 @@
                 counterId: '/piped_object_counters/1'
             };
 
-            yawp('/piped_objects').create(object).done(function () {
+            yawp('/piped_objects').create(object).then(function () {
                 callback();
-            }).fail(function () {
-                callback()
+            }).catch(function () {
+                callback();
             });
         }
 
@@ -59,7 +59,7 @@
                 assert.equal(counter.count, 3);
                 callback();
 
-            }).fail(function () {
+            }).catch(function () {
                 if (retries >= MAX_RETRIES) {
                     t.start();
                     return;
@@ -78,7 +78,7 @@
                 count: 0
             };
 
-            yawp.patch(counter).done(function () {
+            yawp.patch(counter).then(function () {
                 $.get('/_ah/yawp/pipes/reload?pipe=io.yawp.repository.pipes.basic.CounterPipe', callback);
             });
         }

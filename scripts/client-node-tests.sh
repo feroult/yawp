@@ -31,7 +31,7 @@ after() {
 run() {
     cd yawp-client
 
-    npm run build
+    npm install
     npm run ci
 
     cd ..

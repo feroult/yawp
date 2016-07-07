@@ -7,3 +7,4 @@ echo "running complete yawp it tests on version: $VERSION"
 mvn clean install -P it
 ./scripts/smoke-tests.sh $VERSION appengine
 ./scripts/smoke-tests.sh $VERSION postgresql
+./scripts/client-node-tests.sh

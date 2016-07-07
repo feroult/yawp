@@ -42,7 +42,9 @@ export default (request) => {
 
         clear(all) {
             this.promise = null;
-            for (let {name, path} of this.fixtures) {
+            for (let i = 0, l = this.fixtures.length; i < l; i++) {
+                var name = this.fixtures[i].name;
+                var path = this.fixtures[i].path;
                 this.bindFixture(name, path);
                 all && this.bindLazy(name, path);
             }
@@ -160,7 +162,11 @@ export default (request) => {
         }
 
         inspectLazyProperties(object, lazyProperties) {
-            for (let key of Object.keys(object)) {
+            for (let key in object) {
+                if (!object.hasOwnProperty(key)) {
+                    continue;
+                }
+
                 let value = object[key];
                 if (value instanceof Function) {
                     lazyProperties.push(() => {

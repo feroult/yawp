@@ -72,32 +72,11 @@ exports.default = function (request) {
             key: 'clear',
             value: function clear(all) {
                 this.promise = null;
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = this.fixtures[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var _step$value = _step.value;
-                        var name = _step$value.name;
-                        var path = _step$value.path;
-
-                        this.bindFixture(name, path);
-                        all && this.bindLazy(name, path);
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
-                    }
+                for (var i = 0, l = this.fixtures.length; i < l; i++) {
+                    var name = this.fixtures[i].name;
+                    var path = this.fixtures[i].path;
+                    this.bindFixture(name, path);
+                    all && this.bindLazy(name, path);
                 }
             }
         }, {
@@ -242,54 +221,37 @@ exports.default = function (request) {
             value: function inspectLazyProperties(object, lazyProperties) {
                 var _this5 = this;
 
-                var _iteratorNormalCompletion2 = true;
-                var _didIteratorError2 = false;
-                var _iteratorError2 = undefined;
-
-                try {
-                    var _loop = function _loop() {
-                        var key = _step2.value;
-
-                        var value = object[key];
-                        if (value instanceof Function) {
-                            lazyProperties.push(function () {
-                                return value().then(function (actualValue) {
-                                    object[key] = actualValue;
-                                });
-                            });
-                            return 'continue';
-                        }
-                        if (value instanceof Object) {
-                            _this5.inspectLazyProperties(value, lazyProperties);
-                            return {
-                                v: void 0
-                            };
-                        }
-                    };
-
-                    for (var _iterator2 = Object.keys(object)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                        var _ret = _loop();
-
-                        switch (_ret) {
-                            case 'continue':
-                                continue;
-
-                            default:
-                                if ((typeof _ret === 'undefined' ? 'undefined' : (0, _typeof3.default)(_ret)) === "object") return _ret.v;
-                        }
+                var _loop = function _loop(key) {
+                    if (!object.hasOwnProperty(key)) {
+                        return 'continue';
                     }
-                } catch (err) {
-                    _didIteratorError2 = true;
-                    _iteratorError2 = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                            _iterator2.return();
-                        }
-                    } finally {
-                        if (_didIteratorError2) {
-                            throw _iteratorError2;
-                        }
+
+                    var value = object[key];
+                    if (value instanceof Function) {
+                        lazyProperties.push(function () {
+                            return value().then(function (actualValue) {
+                                object[key] = actualValue;
+                            });
+                        });
+                        return 'continue';
+                    }
+                    if (value instanceof Object) {
+                        _this5.inspectLazyProperties(value, lazyProperties);
+                        return {
+                            v: void 0
+                        };
+                    }
+                };
+
+                for (var key in object) {
+                    var _ret = _loop(key);
+
+                    switch (_ret) {
+                        case 'continue':
+                            continue;
+
+                        default:
+                            if ((typeof _ret === 'undefined' ? 'undefined' : (0, _typeof3.default)(_ret)) === "object") return _ret.v;
                     }
                 }
             }

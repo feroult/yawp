@@ -12,7 +12,5 @@ cd ..
 export PATH=$PWD/phantomjs-2.0.0:$PATH
 
 # node
-node --version
-nodejs --version
-curl -sL https://deb.nodesource.com/setup_6.x | bash
-apt-get install -y nodejs
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get install -y nodejs

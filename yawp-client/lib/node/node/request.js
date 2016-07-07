@@ -8,7 +8,7 @@ exports.default = request;
 var _utils = require('../commons/utils');
 
 if (typeof fetch === 'undefined') {
-    var fetch = require('node-fetch');
+    var fetch = eval("require('node-fetch')");
 }
 
 function request(url, options) {

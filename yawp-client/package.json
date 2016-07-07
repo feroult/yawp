@@ -1,6 +1,6 @@
 {
   "name": "yawp",
-  "version": "1.0.22",
+  "version": "1.0.24",
   "description": "YAWP! Framework Client",
   "main": "index.js",
   "scripts": {

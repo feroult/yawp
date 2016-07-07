@@ -1,7 +1,7 @@
 import { extend, toUrlParam } from '../commons/utils';
 
 if (typeof fetch === 'undefined') {
-    var fetch = require('node-fetch');
+    var fetch = eval("require('node-fetch')");
 }
 
 export default function request(url, options) {

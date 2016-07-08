@@ -13,16 +13,15 @@ branches:
     - master
 
 script:
- - source ./scripts/complete-it.sh
+# - source ./scripts/complete-it.sh
 
 after_success:
- - mvn clean test jacoco:report coveralls:report
+# - mvn clean test jacoco:report coveralls:report
 
 notifications:
   email:
     recipients:
       - feroult@gmail.com
-      - leonardo.cabral@dextra-sw.com
       - luan.nico@dextra-sw.com
     on_success: change
     on_failure: always

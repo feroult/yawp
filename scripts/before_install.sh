@@ -12,12 +12,6 @@ cd ..
 export PATH=$PWD/phantomjs-2.0.0:$PATH
 
 # node
-sudo apt-get remove -y nodejs
-curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-sudo apt-get install -y nodejs
-find / -name node\* 2>/dev/null
-which node
-node --version
-export PATH=/usr/local/bin/node:$PATH
-which node
+rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install 6
+
 node --version

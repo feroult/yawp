@@ -13,5 +13,3 @@ export PATH=$PWD/phantomjs-2.0.0:$PATH
 
 # node
 rm -rf ~/.nvm && git clone https://github.com/creationix/nvm.git ~/.nvm && (cd ~/.nvm && git checkout `git describe --abbrev=0 --tags`) && source ~/.nvm/nvm.sh && nvm install 6
-
-node --version

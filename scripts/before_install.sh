@@ -12,6 +12,7 @@ cd ..
 export PATH=$PWD/phantomjs-2.0.0:$PATH
 
 # node
+sudo apt-get remove nodejs -Y
 curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
 sudo apt-get install -y nodejs
 node --version

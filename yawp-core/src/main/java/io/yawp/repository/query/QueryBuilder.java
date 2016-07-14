@@ -231,7 +231,7 @@ public class QueryBuilder<T> {
     private T executeQueryOnly() throws MoreThanOneResultException {
         List<T> list = executeQuery();
         if (list.size() == 0) {
-            return null;
+            throw new NoResultException();
         }
         if (list.size() == 1) {
             return list.get(0);

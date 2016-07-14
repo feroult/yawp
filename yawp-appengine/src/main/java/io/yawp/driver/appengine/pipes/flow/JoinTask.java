@@ -7,7 +7,6 @@ import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.pipes.SinkMarker;
-import io.yawp.repository.pipes.SourceMarker;
 import io.yawp.repository.query.NoResultException;
 
 import java.util.*;
@@ -122,7 +121,7 @@ public class JoinTask implements DeferredTask {
 
         for (IdRef<?> sinkId : sinksToSave) {
             logSave(sinkId);
-            r.save(sinkCache.get(sinkId));
+            r.saveWithHooks(sinkCache.get(sinkId));
         }
 
         // TODO: destroy empty sinks?

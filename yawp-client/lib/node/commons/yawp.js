@@ -251,7 +251,9 @@ exports.default = function (request) {
             return this;
         }
 
-        return (0, _utils.extend)({
+        function f() {}
+        h;
+        return (0, _utils.extend)(f, {
             from: from,
             transform: transform,
             sync: sync

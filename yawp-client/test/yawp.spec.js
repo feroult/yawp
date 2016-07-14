@@ -17,7 +17,7 @@ fx.config((c) => {
     c.bind('job', '/jobs');
 });
 
-describe('YAWP! Client', () => {
+describe('YAWP! Regular client', () => {
 
     before((done) => {
         fx.reset().then(done);
@@ -48,4 +48,14 @@ describe('YAWP! Client', () => {
             });
         });
     });
+});
+
+describe("YAWP! New client", () => {
+
+    it('is creates a class function', () => {
+        let Person = new yawp('/people');
+        expect(typeof Person === 'function').to.be.true;
+        expect(Person.where).to.not.be.undefined;
+    });
+
 });

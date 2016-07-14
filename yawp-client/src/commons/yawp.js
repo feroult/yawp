@@ -250,11 +250,17 @@ export default function (request) {
             return this;
         }
 
-        return extend({
+        function f() {
+
+        }
+h
+        return extend(f, {
             from: from,
             transform: transform,
             sync: sync
         }, query(options), repository(options), actions(options));
+
+
     }
 
     function update(object) {

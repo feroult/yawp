@@ -110,8 +110,12 @@ exports.default = function (request) {
                 }
             }, {
                 key: 'fetch',
-                value: function fetch(callback) {
-                    return baseRequest('GET', options).then(callback);
+                value: function fetch(cb) {
+                    var promise = baseRequest('GET', options);
+                    if (cb) {
+                        return promise.then(cb);
+                    }
+                    return promise;
                 }
             }, {
                 key: 'setupQuery',
@@ -132,9 +136,13 @@ exports.default = function (request) {
                 }
             }, {
                 key: 'list',
-                value: function list(callback) {
+                value: function list(cb) {
                     Yawp.setupQuery();
-                    return baseRequest('GET', options).then(callback);
+                    var promise = baseRequest('GET', options).then(callback);
+                    if (cb) {
+                        return promise.then(cb);
+                    }
+                    return promise;
                 }
             }, {
                 key: 'first',

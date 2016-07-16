@@ -75,8 +75,12 @@ export default (request) => {
                 return this;
             }
 
-            static fetch(callback) {
-                return baseRequest('GET', options).then(callback);
+            static fetch(cb) {
+                var promise = baseRequest('GET', options);
+                if (cb) {
+                    return promise.then(cb);
+                }
+                return promise;
             }
 
             static setupQuery() {
@@ -94,9 +98,13 @@ export default (request) => {
                 return url;
             }
 
-            static list(callback) {
+            static list(cb) {
                 Yawp.setupQuery();
-                return baseRequest('GET', options).then(callback);
+                var promise = baseRequest('GET', options);
+                if (cb) {
+                    return promise.then(cb);
+                }
+                return promise;
             }
 
             static first(callback) {
@@ -111,7 +119,7 @@ export default (request) => {
             }
 
             static only(callback) {
-                return list(function (objects) {
+                return Yawp.list(function (objects) {
                     if (objects.length !== 1) {
                         throw 'called only but got ' + objects.length + ' results';
                     }
@@ -130,6 +138,7 @@ export default (request) => {
 
             static update(object) {
                 // TODO: deal with id
+                console.log('update', object);
                 options.data = JSON.stringify(object);
                 return baseRequest('PUT', options);
             }
@@ -199,17 +208,7 @@ export default (request) => {
         return Yawp;
     }
 
-    yawp.config = (callback) => {
-        var c = {
-            baseUrl: (url) => {
-                baseUrl = url;
-            },
-            defaultFetchOptions: (options) => {
-                defaultFetchOptions = options;
-            }
-        };
-        callback(c);
-    };
+    // request
 
     function baseRequest(type, _options) {
         var options = extend({}, _options);
@@ -229,6 +228,41 @@ export default (request) => {
         return request(url, options);
     }
 
+    // base api
 
-    return yawp;
+    function config(callback) {
+        var c = {
+            baseUrl: (url) => {
+                baseUrl = url;
+            },
+            defaultFetchOptions: (options) => {
+                defaultFetchOptions = options;
+            }
+        };
+        callback(c);
+    };
+
+    function update(object) {
+        var id = extractId(object);
+        return yawp(id).update(object);
+    }
+
+    function patch(object) {
+        var id = extractId(object);
+        return yawp(id).patch(object);
+    }
+
+    function destroy(object) {
+        var id = extractId(object);
+        return yawp(id).destroy(object);
+    }
+
+    let baseApi = {
+        config,
+        update,
+        patch,
+        destroy
+    }
+
+    return extend(yawp, baseApi);
 }

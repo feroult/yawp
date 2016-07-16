@@ -10,6 +10,7 @@ import io.yawp.repository.models.parents.Parent;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 public class ParentAction extends Action<Parent> {
 
@@ -113,6 +114,11 @@ public class ParentAction extends Action<Parent> {
     @POST
     @PUT
     public void withVoidReturn() {
+    }
+
+    @GET("empty-list")
+    public List<String> emptyList(IdRef<Parent> id) {
+        return Collections.emptyList();
     }
 
     @GET

@@ -141,4 +141,11 @@ public class ParentCustomActionTest extends ParentServletTestCase {
         String json = post(uri("/parents/%s/with-json-list", parent), "[{ 'stringValue': 'pojo' }, { 'stringValue': 'list' }]");
         assertEquals("pojo list", from(json, String.class));
     }
+
+    @Test
+    public void testReturningEmptyList() {
+        Parent parent = saveParent("xpto");
+        String json = get(uri("/parents/%s/empty-list", parent));
+        assertEquals("[]", json);
+    }
 }

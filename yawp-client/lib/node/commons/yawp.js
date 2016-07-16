@@ -4,6 +4,14 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
 exports.default = function (request) {
 
     function config(callback) {
@@ -201,6 +209,33 @@ exports.default = function (request) {
     }
 
     function yawp(baseArg) {
+
+        var endpointPath = isEndpointPath(baseArg) ? baseArg : undefined;
+
+        var Model = function () {
+            function Model(props) {
+                (0, _classCallCheck3.default)(this, Model);
+
+                (0, _utils.extend)(this, props);
+            }
+
+            (0, _createClass3.default)(Model, [{
+                key: 'save',
+                value: function save() {
+                    var newVar = yawp('/parents').create({ name: 'x' });
+                    console.log('new var', newVar, this);
+                    newVar.catch(function () {
+                        Console.log('hahhaa');
+                    });
+                }
+            }]);
+            return Model;
+        }();
+
+        function isEndpointPath(arg) {
+            return typeof arg === "string" && arg.split('/').length == 2;
+        }
+
         function normalize(arg) {
             if (!arg) {
                 return '';
@@ -212,8 +247,7 @@ exports.default = function (request) {
         }
 
         var ajaxOptions = {
-            url: normalize(baseArg),
-            async: true
+            url: normalize(baseArg)
         };
 
         function options() {
@@ -251,9 +285,7 @@ exports.default = function (request) {
             return this;
         }
 
-        function f() {}
-        h;
-        return (0, _utils.extend)(f, {
+        return (0, _utils.extend)(endpointPath ? Model : {}, {
             from: from,
             transform: transform,
             sync: sync
@@ -286,6 +318,8 @@ exports.default = function (request) {
 };
 
 var _utils = require('./utils');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _baseUrl = '/api';
 var _defaultFetchOptions = {};

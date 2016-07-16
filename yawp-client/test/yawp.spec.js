@@ -1,5 +1,9 @@
 import chai from 'chai';
-import yawp, { fx } from '../index';
+import { fx } from '../index';
+
+// TODO: fix import
+import request from '../src/node/request';
+var yawp = require('../src/commons/yawp2')(request);
 
 chai.expect();
 
@@ -17,45 +21,61 @@ fx.config((c) => {
     c.bind('job', '/jobs');
 });
 
-describe('YAWP! Regular client', () => {
 
-    before((done) => {
-        fx.reset().then(done);
-    });
+describe('YAWP! Client', () => {
+    describe('Basic features', () => {
 
-    it('creates a parent', (done) => {
-        var parent = {
-            name: 'xpto'
-        };
-        yawp('/parents').create(parent).then((retrievedParent) => {
-            expect(retrievedParent.name).to.be.equal('xpto');
-            done();
+        before((done) => {
+            fx.reset().then(done);
         });
-    });
 
-    it('fetches a parent', (done) => {
-        var parent = {
-            id: '/parents/2',
-            name: 'xpto'
-        };
-
-        fx.parent('parent', parent);
-
-        fx.load(() => {
-            yawp('/parents/2').fetch((retrievedParent) => {
+        it('creates a parent', (done) => {
+            let parent = {
+                name: 'xpto'
+            };
+            yawp('/parents').create(parent).then((retrievedParent) => {
                 expect(retrievedParent.name).to.be.equal('xpto');
                 done();
             });
         });
+
+        it('fetches a parent', (done) => {
+            let parent = {
+                id: '/parents/2',
+                name: 'xpto'
+            };
+
+            fx.parent('parent', parent);
+
+            fx.load(() => {
+                yawp('/parents/2').fetch((retrievedParent) => {
+                    expect(retrievedParent.name).to.be.equal('xpto');
+                    done();
+                });
+            });
+        });
     });
-});
 
-describe("YAWP! New client", () => {
+    describe("Class features", () => {
 
-    it('is creates a class function', () => {
-        let Person = new yawp('/people');
-        expect(typeof Person === 'function').to.be.true;
-        expect(Person.where).to.not.be.undefined;
+        let Parent = yawp('/parents');
+
+        it('is creates a class function', () => {
+            expect(typeof Parent === 'function').to.be.true;
+            expect(Parent.where).to.not.be.undefined;
+        });
+
+        it('it creates a instance with properties', () => {
+            let parent = new Parent({name: 'xpto'});
+            expect(parent.name).to.be.equals('xpto');
+        });
+
+        it('it saves itself', (done) => {
+            new Parent({name: 'xpto'}).save().then((parent) => {
+                expect(parent.id).to.be.not.undefined;
+                done();
+            });
+        });
+
     });
-
 });

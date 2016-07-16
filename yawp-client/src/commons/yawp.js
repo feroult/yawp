@@ -199,7 +199,29 @@ export default function (request) {
         };
     }
 
+
     function yawp(baseArg) {
+
+        let endpointPath = isEndpointPath(baseArg) ? baseArg : undefined;
+
+        class Model {
+            constructor(props) {
+                extend(this, props);
+            }
+
+            save() {
+                var newVar = yawp('/parents').create({name: 'x'});
+                console.log('new var', newVar, this);
+                newVar.catch(() => {
+                    Console.log('hahhaa');
+                });
+            }
+        }
+
+        function isEndpointPath(arg) {
+            return typeof arg === "string" && arg.split('/').length == 2;
+        }
+
         function normalize(arg) {
             if (!arg) {
                 return '';
@@ -211,8 +233,7 @@ export default function (request) {
         }
 
         var ajaxOptions = {
-            url: normalize(baseArg),
-            async: true
+            url: normalize(baseArg)
         };
 
         function options() {
@@ -250,16 +271,11 @@ export default function (request) {
             return this;
         }
 
-        function f() {
-
-        }
-h
-        return extend(f, {
+        return extend(endpointPath ? Model : {}, {
             from: from,
             transform: transform,
             sync: sync
         }, query(options), repository(options), actions(options));
-
 
     }
 

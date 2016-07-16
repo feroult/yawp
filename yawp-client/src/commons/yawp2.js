@@ -107,25 +107,28 @@ export default (request) => {
                 return promise;
             }
 
-            static first(callback) {
+            static first(cb) {
                 Yawp.limit(1);
 
                 return Yawp.list(function (objects) {
                     var object = objects.length === 0 ? null : objects[0];
-                    if (callback) {
-                        callback(object);
+                    if (cb) {
+                        return cb(object);
                     }
+                    return object;
                 });
             }
 
-            static only(callback) {
+            static only(cb) {
                 return Yawp.list(function (objects) {
                     if (objects.length !== 1) {
                         throw 'called only but got ' + objects.length + ' results';
                     }
-                    if (callback) {
-                        callback(objects[0]);
+                    var object = objects[0];
+                    if (cb) {
+                        return cb(object);
                     }
+                    return object;
                 });
             }
 
@@ -230,7 +233,7 @@ export default (request) => {
 
     // base api
 
-    function config(callback) {
+    function config(cb) {
         var c = {
             baseUrl: (url) => {
                 baseUrl = url;
@@ -239,7 +242,7 @@ export default (request) => {
                 defaultFetchOptions = options;
             }
         };
-        callback(c);
+        cb(c);
     };
 
     function update(object) {

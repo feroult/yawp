@@ -168,7 +168,7 @@
 
         var where = ['name', '=', 'xpto1'];
 
-        yawp('/children').from(parent1).where(where).only(function (child) {
+        yawp('/children').from(parent1).where(where).only().then(function (child) {
             assert.equal(child.name, 'xpto1');
             t.start();
         });

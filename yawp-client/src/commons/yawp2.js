@@ -36,34 +36,6 @@ export default (request) => {
                 extend(this, props);
             }
 
-            // base
-
-            static config(callback) {
-                var c = {
-                    baseUrl: (url) => {
-                        baseUrl = url;
-                    },
-                    defaultFetchOptions: (options) => {
-                        defaultFetchOptions = options;
-                    }
-                };
-                callback(c);
-            }
-
-            static baseRequest(type, options) {
-                var url = baseUrl + options.url;
-                var body = options.data;
-                delete options.url;
-                delete options.data;
-
-                options.method = type;
-                options.body = body;
-                options.json = true;
-                extend(options, defaultFetchOptions);
-
-                return request(url, options);
-            }
-
             // prepare
 
             static from(parentBaseArg) {
@@ -104,7 +76,7 @@ export default (request) => {
             }
 
             static fetch(callback) {
-                return Yawp.baseRequest('GET', options).then(callback);
+                return baseRequest('GET', options).then(callback);
             }
 
             static setupQuery() {
@@ -153,24 +125,24 @@ export default (request) => {
 
             static create(object) {
                 options.data = JSON.stringify(object);
-                return Yawp.baseRequest('POST', options);
+                return baseRequest('POST', options);
             }
 
             static update(object) {
                 // TODO: deal with id
                 options.data = JSON.stringify(object);
-                return Yawp.baseRequest('PUT', options);
+                return baseRequest('PUT', options);
             }
 
             static patch(object) {
                 // TODO: deal with id
                 options.data = JSON.stringify(object);
-                return Yawp.baseRequest('PATCH', options);
+                return baseRequest('PATCH', options);
             }
 
             static destroy() {
                 // TODO: deal with id
-                return Yawp.baseRequest('DELETE', options);
+                return baseRequest('DELETE', options);
             }
 
             // actions
@@ -198,26 +170,27 @@ export default (request) => {
             }
 
             static get(action) {
-                return Yawp.baseRequest('GET', Yawp.actionOptions(action));
+                return baseRequest('GET', Yawp.actionOptions(action));
             }
 
             static put(action) {
-                return Yawp.baseRequest('PUT', Yawp.actionOptions(action));
+                return baseRequest('PUT', Yawp.actionOptions(action));
             }
 
             static _patch(action) {
-                return Yawp.baseRequest('PATCH', Yawp.actionOptions(action));
+                return baseRequest('PATCH', Yawp.actionOptions(action));
             }
 
             static post(action) {
-                return Yawp.baseRequest('POST', Yawp.actionOptions(action));
+                return baseRequest('POST', Yawp.actionOptions(action));
             }
 
             static _delete(action) {
-                return Yawp.baseRequest('DELETE', Yawp.actionOptions(action));
+                return baseRequest('DELETE', Yawp.actionOptions(action));
             }
 
             // instance method
+
             save() {
                 return Yawp.create(this);
             }
@@ -237,6 +210,25 @@ export default (request) => {
         };
         callback(c);
     };
+
+    function baseRequest(type, _options) {
+        var options = extend({}, _options);
+
+        var url = baseUrl + options.url;
+        var body = options.data;
+        delete options.url;
+        delete options.data;
+
+        options.method = type;
+        options.body = body;
+        options.json = true;
+        extend(options, defaultFetchOptions);
+
+        //console.log('r', url, options);
+
+        return request(url, options);
+    }
+
 
     return yawp;
 }

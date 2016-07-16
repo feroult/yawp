@@ -53,48 +53,18 @@ exports.default = function (request) {
                 (0, _utils.extend)(this, props);
             }
 
-            // base
+            // prepare
 
             (0, _createClass3.default)(Yawp, [{
                 key: 'save',
 
 
                 // instance method
+
                 value: function save() {
                     return Yawp.create(this);
                 }
             }], [{
-                key: 'config',
-                value: function config(callback) {
-                    var c = {
-                        baseUrl: function baseUrl(url) {
-                            _baseUrl = url;
-                        },
-                        defaultFetchOptions: function defaultFetchOptions(options) {
-                            _defaultFetchOptions = options;
-                        }
-                    };
-                    callback(c);
-                }
-            }, {
-                key: 'baseRequest',
-                value: function baseRequest(type, options) {
-                    var url = _baseUrl + options.url;
-                    var body = options.data;
-                    delete options.url;
-                    delete options.data;
-
-                    options.method = type;
-                    options.body = body;
-                    options.json = true;
-                    (0, _utils.extend)(options, _defaultFetchOptions);
-
-                    return request(url, options);
-                }
-
-                // prepare
-
-            }, {
                 key: 'from',
                 value: function from(parentBaseArg) {
                     var parentBase = normalize(parentBaseArg);
@@ -141,7 +111,7 @@ exports.default = function (request) {
             }, {
                 key: 'fetch',
                 value: function fetch(callback) {
-                    return Yawp.baseRequest('GET', options).then(callback);
+                    return baseRequest('GET', options).then(callback);
                 }
             }, {
                 key: 'setupQuery',
@@ -197,27 +167,27 @@ exports.default = function (request) {
                 key: 'create',
                 value: function create(object) {
                     options.data = JSON.stringify(object);
-                    return Yawp.baseRequest('POST', options);
+                    return baseRequest('POST', options);
                 }
             }, {
                 key: 'update',
                 value: function update(object) {
                     // TODO: deal with id
                     options.data = JSON.stringify(object);
-                    return Yawp.baseRequest('PUT', options);
+                    return baseRequest('PUT', options);
                 }
             }, {
                 key: 'patch',
                 value: function patch(object) {
                     // TODO: deal with id
                     options.data = JSON.stringify(object);
-                    return Yawp.baseRequest('PATCH', options);
+                    return baseRequest('PATCH', options);
                 }
             }, {
                 key: 'destroy',
                 value: function destroy() {
                     // TODO: deal with id
-                    return Yawp.baseRequest('DELETE', options);
+                    return baseRequest('DELETE', options);
                 }
 
                 // actions
@@ -251,27 +221,27 @@ exports.default = function (request) {
             }, {
                 key: 'get',
                 value: function get(action) {
-                    return Yawp.baseRequest('GET', Yawp.actionOptions(action));
+                    return baseRequest('GET', Yawp.actionOptions(action));
                 }
             }, {
                 key: 'put',
                 value: function put(action) {
-                    return Yawp.baseRequest('PUT', Yawp.actionOptions(action));
+                    return baseRequest('PUT', Yawp.actionOptions(action));
                 }
             }, {
                 key: '_patch',
                 value: function _patch(action) {
-                    return Yawp.baseRequest('PATCH', Yawp.actionOptions(action));
+                    return baseRequest('PATCH', Yawp.actionOptions(action));
                 }
             }, {
                 key: 'post',
                 value: function post(action) {
-                    return Yawp.baseRequest('POST', Yawp.actionOptions(action));
+                    return baseRequest('POST', Yawp.actionOptions(action));
                 }
             }, {
                 key: '_delete',
                 value: function _delete(action) {
-                    return Yawp.baseRequest('DELETE', Yawp.actionOptions(action));
+                    return baseRequest('DELETE', Yawp.actionOptions(action));
                 }
             }]);
             return Yawp;
@@ -291,6 +261,24 @@ exports.default = function (request) {
         };
         callback(c);
     };
+
+    function baseRequest(type, _options) {
+        var options = (0, _utils.extend)({}, _options);
+
+        var url = _baseUrl + options.url;
+        var body = options.data;
+        delete options.url;
+        delete options.data;
+
+        options.method = type;
+        options.body = body;
+        options.json = true;
+        (0, _utils.extend)(options, _defaultFetchOptions);
+
+        //console.log('r', url, options);
+
+        return request(url, options);
+    }
 
     return yawp;
 };

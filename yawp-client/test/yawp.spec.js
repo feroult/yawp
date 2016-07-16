@@ -21,61 +21,84 @@ fx.config((c) => {
     c.bind('job', '/jobs');
 });
 
+describe('YAWP! Regular Client', () => {
+    beforeEach((done) => {
+        fx.reset().then(done);
+    });
 
-describe('YAWP! Client', () => {
-    describe('Basic features', () => {
-
-        before((done) => {
-            fx.reset().then(done);
+    it('creates a parent', (done) => {
+        yawp('/parents').create({name: 'xpto'}).then((retrievedParent) => {
+            expect(retrievedParent.name).to.be.equal('xpto');
+            done();
         });
+    });
 
-        it('creates a parent', (done) => {
-            let parent = {
-                name: 'xpto'
-            };
-            yawp('/parents').create(parent).then((retrievedParent) => {
+    it('fetches a parent', (done) => {
+        let parent = {
+            id: '/parents/2',
+            name: 'xpto'
+        };
+
+        fx.parent('parent', parent);
+
+        fx.load(() => {
+            yawp('/parents/2').fetch((retrievedParent) => {
                 expect(retrievedParent.name).to.be.equal('xpto');
                 done();
             });
         });
+    });
+});
 
-        it('fetches a parent', (done) => {
-            let parent = {
-                id: '/parents/2',
-                name: 'xpto'
-            };
+describe("YAWP! Class Client", () => {
 
-            fx.parent('parent', parent);
-
-            fx.load(() => {
-                yawp('/parents/2').fetch((retrievedParent) => {
-                    expect(retrievedParent.name).to.be.equal('xpto');
-                    done();
-                });
-            });
-        });
+    beforeEach((done) => {
+        fx.reset().then(done);
     });
 
-    describe("Class features", () => {
+    let ParentFn = yawp('/parents');
 
-        let Parent = yawp('/parents');
+    class Parent extends yawp('/parents') {
+        static myCreate(object) {
+            return super.create(object);
+        }
 
-        it('is creates a class function', () => {
-            expect(typeof Parent === 'function').to.be.true;
-            expect(Parent.where).to.not.be.undefined;
-        });
+        mySave() {
+            return super.save();
+        }
+    }
 
-        it('it creates a instance with properties', () => {
-            let parent = new Parent({name: 'xpto'});
+    it('is creates a class function', () => {
+        expect(typeof ParentFn === 'function').to.be.true;
+        expect(ParentFn.where).to.not.be.undefined;
+    });
+
+    it('it creates a instance with properties', () => {
+        let parent = new ParentFn({name: 'xpto'});
+        expect(parent.name).to.be.equals('xpto');
+    });
+
+    it('it saves itself', (done) => {
+        new ParentFn({name: 'xpto'}).save().then((parent) => {
+            expect(parent.id).to.be.not.undefined;
             expect(parent.name).to.be.equals('xpto');
+            done();
         });
-
-        it('it saves itself', (done) => {
-            new Parent({name: 'xpto'}).save().then((parent) => {
-                expect(parent.id).to.be.not.undefined;
-                done();
-            });
-        });
-
     });
+
+    it('allows static method overriding', (done) => {
+        Parent.myCreate({name: 'xpto'}).then((retrievedParent) => {
+            expect(retrievedParent.name).to.be.equal('xpto');
+            done();
+        });
+    });
+
+    it('allows instance method overriding ', (done) => {
+        new Parent({name: 'xpto'}).mySave().then((parent) => {
+            expect(parent.id).to.be.not.undefined;
+            expect(parent.name).to.be.equals('xpto');
+            done();
+        });
+    });
+
 });

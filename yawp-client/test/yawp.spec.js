@@ -101,4 +101,10 @@ describe("YAWP! Class Client", () => {
         });
     });
 
+    // test save (create or update) on instance
+    // test destroy on instance
+    // test actions over instance
+    // test queries/fetches return instances
+    // test clear previous options
+
 });

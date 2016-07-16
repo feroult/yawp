@@ -199,7 +199,6 @@ export default function (request) {
         };
     }
 
-
     function yawp(baseArg) {
 
         let endpointPath = isEndpointPath(baseArg) ? baseArg : undefined;

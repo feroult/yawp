@@ -22,7 +22,7 @@ function extractId(object) {
 
 export default (request) => {
 
-    function yawp(baseArg) {
+    function yawpFn(baseArg) {
 
         var options = {
             url: normalize(baseArg)
@@ -247,17 +247,17 @@ export default (request) => {
 
     function update(object) {
         var id = extractId(object);
-        return yawp(id).update(object);
+        return yawpFn(id).update(object);
     }
 
     function patch(object) {
         var id = extractId(object);
-        return yawp(id).patch(object);
+        return yawpFn(id).patch(object);
     }
 
     function destroy(object) {
         var id = extractId(object);
-        return yawp(id).destroy(object);
+        return yawpFn(id).destroy(object);
     }
 
     let baseApi = {
@@ -267,5 +267,5 @@ export default (request) => {
         destroy
     }
 
-    return extend(yawp, baseApi);
+    return extend(yawpFn, baseApi);
 }

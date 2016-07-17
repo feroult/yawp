@@ -239,6 +239,31 @@ export default (request) => {
                 var promise = Yawp.destroy();
                 return cb ? promise.then(cb) : promise;
             }
+
+            get(action) {
+                options.url = extractId(this);
+                return Yawp.get(action);
+            }
+
+            put(action) {
+                options.url = extractId(this);
+                return Yawp.put(action);
+            }
+
+            _patch(action) {
+                options.url = extractId(this);
+                return Yawp._patch(action);
+            }
+
+            post(action) {
+                options.url = extractId(this);
+                return Yawp.post(action);
+            }
+
+            _delete(action) {
+                options.url = extractId(this);
+                return Yawp._delete(action);
+            }
         }
 
         Yawp.clear();

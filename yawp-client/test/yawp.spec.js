@@ -136,10 +136,37 @@ describe("YAWP! Class Client", () => {
         });
     });
 
-    // test save (create or update) on instance
-    // test destroy on instance
-    // test actions over instance
+    it('calls actions over itself', (done) => {
+        let parentJson = {
+            id: '/parents/2',
+            name: 'xpto'
+        };
+
+        fx.parent('parent', parentJson);
+
+        fx.load(() => {
+            var parent = new Parent(parentJson);
+            parent.get('all-http-verbs').then((response) => {
+                expect(response).to.be.equals('ok');
+                parent.put('all-http-verbs').then((response) => {
+                    expect(response).to.be.equals('ok');
+                    parent._patch('all-http-verbs').then((response) => {
+                        expect(response).to.be.equals('ok');
+                        parent.post('all-http-verbs').then((response) => {
+                            expect(response).to.be.equals('ok');
+                            parent._delete('all-http-verbs').then((response) => {
+                                expect(response).to.be.equals('ok');
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+        });
+    });
+
+    // save assign id if model is created
     // test queries/fetches return instances
-    // test clear previous options
+    // test es5 inheritance
 
 });

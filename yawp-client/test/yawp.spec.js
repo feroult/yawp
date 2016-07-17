@@ -59,7 +59,6 @@ describe("YAWP! Class Client", () => {
     let ParentFn = yawp('/parents');
 
     class Parent extends yawp('/parents') {
-
         static myCreate(object) {
             return super.create(object);
         }
@@ -225,8 +224,6 @@ describe("YAWP! Class Client", () => {
         });
     });
 
-
-    // test queries/fetches return instances
     // test es5 inheritance
 
 });

@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.yawp</groupId>
         <artifactId>yawp-root</artifactId>
-        <version>1.6.5</version>
+        <version>1.6.6-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -19,6 +19,6 @@
     <modules>
         <module>yawp-testing-core</module>
         <module>yawp-testing-appengine</module>
-        <module>yawp-testing-postgresql</module>        
+        <!--module>yawp-testing-postgresql</module-->
     </modules>
 </project>

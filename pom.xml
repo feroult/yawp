@@ -4,7 +4,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
-    <version>1.6.5</version>
+    <version>1.6.6-SNAPSHOT</version>
 
     <groupId>io.yawp</groupId>
     <artifactId>yawp-root</artifactId>
@@ -20,7 +20,7 @@
     <modules>
         <module>yawp-core</module>
         <module>yawp-appengine</module>
-        <module>yawp-postgresql</module>
+        <!--module>yawp-postgresql</module -->
         <module>yawp-testing</module>
         <module>yawp-maven-plugin</module>
     </modules>

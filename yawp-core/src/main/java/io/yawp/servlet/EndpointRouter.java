@@ -45,6 +45,10 @@ public class EndpointRouter {
             welcome(r);
         }
 
+        if (isMeta(ctx.getUri())) {
+            MetaHandler.handle(r, ctx.getJson());
+        }
+
         this.r = r;
         this.verb = ctx.getHttpVerb();
         this.uri = ctx.getUri();
@@ -61,6 +65,10 @@ public class EndpointRouter {
 
     private boolean isWelcome(String uri) {
         return uri.equals("") || uri.equals("/");
+    }
+
+    private boolean isMeta(String uri) {
+        return uri.matches("^\\/?_meta(\\/.*)?$");
     }
 
     private void welcome(Repository r) {

@@ -33,6 +33,7 @@ public class EndpointFeatures<T> {
         this.transformers = new HashMap<>();
         this.hooks = new HashSet<>();
         this.pipes = new HashSet<>();
+        this.pipesSink = new ArrayList<>();
     }
 
     private void assertValidPathOrKind() {

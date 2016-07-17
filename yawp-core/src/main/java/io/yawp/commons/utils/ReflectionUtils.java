@@ -59,7 +59,7 @@ public final class ReflectionUtils {
     }
 
     public static boolean isJavaClass(Class<?> clazz) {
-        return isBaseClass(clazz) || clazz.getPackage().getName().startsWith("java.") || clazz.getPackage().getName().startsWith("javax.");
+        return isBaseClass(clazz) || (clazz.getPackage() != null && (clazz.getPackage().getName().startsWith("java.") || clazz.getPackage().getName().startsWith("javax.")));
     }
 
     public static Class<?> getFeatureEndpointClazz(Class<?> clazz) {

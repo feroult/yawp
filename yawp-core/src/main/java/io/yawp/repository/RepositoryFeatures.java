@@ -73,6 +73,13 @@ public class RepositoryFeatures {
         return true;
     }
 
+    public void addEndpoint(Class<?> clazz) {
+        EndpointFeatures endpoint = new EndpointFeatures(clazz);
+        endpoints.put(clazz, endpoint);
+        addKindToMap(endpoint);
+        addMapPathKind(endpoint);
+    }
+
     public EndpointFeatures<?> getByClazz(Class<?> clazz) {
         return endpoints.get(clazz);
     }

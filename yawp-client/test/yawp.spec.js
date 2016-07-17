@@ -69,22 +69,14 @@ describe("YAWP! Class Client", () => {
         }
     }
 
-    it('is creates a class function', () => {
+    it('creates a class function', () => {
         expect(typeof ParentFn === 'function').to.be.true;
         expect(ParentFn.where).to.not.be.undefined;
     });
 
-    it('it creates a instance with properties', () => {
+    it('creates a instance with properties', () => {
         let parent = new ParentFn({name: 'xpto'});
         expect(parent.name).to.be.equals('xpto');
-    });
-
-    it('it saves itself', (done) => {
-        new ParentFn({name: 'xpto'}).save().then((parent) => {
-            expect(parent.id).to.be.not.undefined;
-            expect(parent.name).to.be.equals('xpto');
-            done();
-        });
     });
 
     it('allows static method overriding', (done) => {
@@ -102,7 +94,15 @@ describe("YAWP! Class Client", () => {
         });
     });
 
-    it.only('updates itself when it has id', (done) => {
+    it('creates itself', (done) => {
+        new ParentFn({name: 'xpto'}).save().then((parent) => {
+            expect(parent.id).to.be.not.undefined;
+            expect(parent.name).to.be.equals('xpto');
+            done();
+        });
+    });
+
+    it('updates itself', (done) => {
         let parent = {
             id: '/parents/2',
             name: 'xpto'
@@ -115,6 +115,22 @@ describe("YAWP! Class Client", () => {
             new Parent(parent).save((retrievedParent) => {
                 expect(retrievedParent.id).to.be.equals('/parents/2');
                 expect(retrievedParent.name).to.be.equals('xpto2');
+                done();
+            });
+        });
+    });
+
+    it('destroys itself', (done) => {
+        let parent = {
+            id: '/parents/2',
+            name: 'xpto'
+        };
+
+        fx.parent('parent', parent);
+
+        fx.load(() => {
+            new Parent(parent).destroy((retrievedId) => {
+                expect(retrievedId).to.be.equals('/parents/2');
                 done();
             });
         });

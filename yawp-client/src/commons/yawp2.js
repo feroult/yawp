@@ -13,8 +13,12 @@ function normalize(arg) {
     return arg;
 }
 
+function hasId(object) {
+    return object.id;
+}
+
 function extractId(object) {
-    if (object.id) {
+    if (hasId(object)) {
         return object.id;
     }
     throw 'use yawp(id) if your endpoint does not have a @Id field called id';
@@ -24,10 +28,7 @@ export default (request) => {
 
     function yawpFn(baseArg) {
 
-        var options = {
-            url: normalize(baseArg)
-        };
-
+        var options = {};
         var q = {};
 
         class Yawp {
@@ -36,7 +37,36 @@ export default (request) => {
                 extend(this, props);
             }
 
-            // prepare
+            // request
+
+            static clear() {
+                options = {
+                    url: normalize(baseArg)
+                };
+            }
+
+            static prepareRequestOptions() {
+                var _options = extend({}, options);
+                Yawp.clear();
+                return _options;
+            }
+
+            static baseRequest(type) {
+                var options = Yawp.prepareRequestOptions();
+
+                var url = baseUrl + options.url;
+                delete options.url;
+
+                options.method = type;
+                options.json = true;
+                extend(options, defaultFetchOptions);
+
+                //console.log('r', url, options);
+
+                return request(url, options);
+            }
+
+            // query
 
             static from(parentBaseArg) {
                 var parentBase = normalize(parentBaseArg);
@@ -48,8 +78,6 @@ export default (request) => {
                 Yawp.param('t', t);
                 return this;
             }
-
-            // query
 
             static where(data) {
                 if (arguments.length === 1) {
@@ -76,7 +104,7 @@ export default (request) => {
             }
 
             static fetch(cb) {
-                var promise = baseRequest('GET', options);
+                var promise = Yawp.baseRequest('GET');
                 if (cb) {
                     return promise.then(cb);
                 }
@@ -89,18 +117,15 @@ export default (request) => {
                 }
             }
 
-            static url(decode) {
-                Yawp.setupQuery();
-                var url = baseUrl + options.url + (options.query ? '?' + toUrlParam(options.query) : '');
-                if (decode) {
-                    return decodeURIComponent(url);
-                }
-                return url;
-            }
+            //static url(decode) {
+            //    Yawp.setupQuery();
+            //    var url = baseUrl + options.url + (options.query ? '?' + toUrlParam(options.query) : '');
+            //    return decode ? decodeURIComponent(url) : url;
+            //}
 
             static list(cb) {
                 Yawp.setupQuery();
-                var promise = baseRequest('GET', options);
+                var promise = Yawp.baseRequest('GET');
                 if (cb) {
                     return promise.then(cb);
                 }
@@ -112,10 +137,7 @@ export default (request) => {
 
                 return Yawp.list(function (objects) {
                     var object = objects.length === 0 ? null : objects[0];
-                    if (cb) {
-                        return cb(object);
-                    }
-                    return object;
+                    return cb ? cb(object) : object;
                 });
             }
 
@@ -125,47 +147,35 @@ export default (request) => {
                         throw 'called only but got ' + objects.length + ' results';
                     }
                     var object = objects[0];
-                    if (cb) {
-                        return cb(object);
-                    }
-                    return object;
+                    return cb ? cb(object) : object;
                 });
             }
 
             // repository
 
             static create(object) {
-                options.data = JSON.stringify(object);
-                return baseRequest('POST', options);
+                options.body = JSON.stringify(object);
+                return Yawp.baseRequest('POST');
             }
 
             static update(object) {
-                // TODO: deal with id
-                console.log('update', object);
-                options.data = JSON.stringify(object);
-                return baseRequest('PUT', options);
+                options.body = JSON.stringify(object);
+                return Yawp.baseRequest('PUT');
             }
 
             static patch(object) {
-                // TODO: deal with id
-                options.data = JSON.stringify(object);
-                return baseRequest('PATCH', options);
+                options.body = JSON.stringify(object);
+                return Yawp.baseRequest('PATCH');
             }
 
             static destroy() {
-                // TODO: deal with id
-                return baseRequest('DELETE', options);
+                return Yawp.baseRequest('DELETE');
             }
 
             // actions
 
-            static actionOptions(action) {
-                options.url += '/' + action;
-                return options;
-            }
-
             static json(object) {
-                options.data = JSON.stringify(object);
+                options.body = JSON.stringify(object);
                 return this;
             }
 
@@ -181,58 +191,58 @@ export default (request) => {
                 options.query[key] = value;
             }
 
+            static action(verb, path) {
+                options.url += '/' + path;
+                return Yawp.baseRequest(verb);
+            }
+
             static get(action) {
-                return baseRequest('GET', Yawp.actionOptions(action));
+                return Yawp.action('GET', action);
             }
 
             static put(action) {
-                return baseRequest('PUT', Yawp.actionOptions(action));
+                return Yawp.action('PUT', action);
             }
 
             static _patch(action) {
-                return baseRequest('PATCH', Yawp.actionOptions(action));
+                return Yawp.action('PATCH', action);
             }
 
             static post(action) {
-                return baseRequest('POST', Yawp.actionOptions(action));
+                return Yawp.action('POST', action);
             }
 
             static _delete(action) {
-                return baseRequest('DELETE', Yawp.actionOptions(action));
+                return Yawp.action('DELETE', action);
             }
 
             // instance method
 
             save(cb) {
-                var promise = Yawp.create(this);
-                if (cb) {
-                    return promise.then(cb);
+                var promise = this.createOrUpdate();
+                return cb ? promise.then(cb) : promise;
+            }
+
+            createOrUpdate() {
+                var promise;
+                if (hasId(this)) {
+                    options.url = this.id;
+                    promise = Yawp.update(this);
+                } else {
+                    promise = Yawp.create(this);
                 }
                 return promise;
             }
+
+            destroy(cb) {
+                options.url = extractId(this);
+                var promise = Yawp.destroy();
+                return cb ? promise.then(cb) : promise;
+            }
         }
 
+        Yawp.clear();
         return Yawp;
-    }
-
-    // request
-
-    function baseRequest(type, _options) {
-        var options = extend({}, _options);
-
-        var url = baseUrl + options.url;
-        var body = options.data;
-        delete options.url;
-        delete options.data;
-
-        options.method = type;
-        options.body = body;
-        options.json = true;
-        extend(options, defaultFetchOptions);
-
-        //console.log('r', url, options);
-
-        return request(url, options);
     }
 
     // base api

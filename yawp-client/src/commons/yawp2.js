@@ -66,6 +66,10 @@ export default (request) => {
                 return request(url, options);
             }
 
+            static wrapInstance(object) {
+                return new this(object);
+            }
+
             // query
 
             static from(parentBaseArg) {
@@ -103,11 +107,21 @@ export default (request) => {
                 return this;
             }
 
-            static fetch(cb) {
-                var promise = Yawp.baseRequest('GET');
+            static fetch(arg) {
+                let cb = typeof arg === 'function' ? arg : undefined;
+
+                if (arg && !cb) {
+                    options.url += '/' + arg;
+                }
+
+                var promise = Yawp.baseRequest('GET').then((object) => {
+                    return this.wrapInstance(object);
+                });
+
                 if (cb) {
                     return promise.then(cb);
                 }
+
                 return promise;
             }
 
@@ -116,12 +130,6 @@ export default (request) => {
                     Yawp.param('q', JSON.stringify(q));
                 }
             }
-
-            //static url(decode) {
-            //    Yawp.setupQuery();
-            //    var url = baseUrl + options.url + (options.query ? '?' + toUrlParam(options.query) : '');
-            //    return decode ? decodeURIComponent(url) : url;
-            //}
 
             static list(cb) {
                 Yawp.setupQuery();
@@ -135,14 +143,14 @@ export default (request) => {
             static first(cb) {
                 Yawp.limit(1);
 
-                return Yawp.list(function (objects) {
+                return Yawp.list((objects) => {
                     var object = objects.length === 0 ? null : objects[0];
                     return cb ? cb(object) : object;
                 });
             }
 
             static only(cb) {
-                return Yawp.list(function (objects) {
+                return Yawp.list((objects) => {
                     if (objects.length !== 1) {
                         throw 'called only but got ' + objects.length + ' results';
                     }
@@ -229,7 +237,10 @@ export default (request) => {
                     options.url = this.id;
                     promise = Yawp.update(this);
                 } else {
-                    promise = Yawp.create(this);
+                    promise = Yawp.create(this).then((object) => {
+                        this.id = object.id;
+                        return object;
+                    });
                 }
                 return promise;
             }

@@ -95,9 +95,11 @@ describe("YAWP! Class Client", () => {
     });
 
     it('creates itself', (done) => {
-        new ParentFn({name: 'xpto'}).save().then((parent) => {
+        var parent = new Parent({name: 'xpto'});
+        parent.save().then((retrievedParent) => {
             expect(parent.id).to.be.not.undefined;
-            expect(parent.name).to.be.equals('xpto');
+            expect(retrievedParent.id).to.be.not.undefined;
+            expect(retrievedParent.name).to.be.equals('xpto');
             done();
         });
     });
@@ -165,7 +167,20 @@ describe("YAWP! Class Client", () => {
         });
     });
 
-    // save assign id if model is created
+    it('returns a class instance when fetching', (done) => {
+        fx.parent('parent', {
+            id: '/parents/1',
+            name: 'xpto'
+        });
+
+        fx.load(() => {
+            Parent.fetch(1).then((parent) => {
+                expect(parent.constructor.name).to.be.equals('Parent');
+                done();
+            });
+        });
+    });
+
     // test queries/fetches return instances
     // test es5 inheritance
 

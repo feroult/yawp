@@ -38,7 +38,7 @@ function extractId(object) {
 
 exports.default = function (request) {
 
-    function yawp(baseArg) {
+    function yawpFn(baseArg) {
 
         var options = {
             url: normalize(baseArg)
@@ -61,8 +61,12 @@ exports.default = function (request) {
 
                 // instance method
 
-                value: function save() {
-                    return Yawp.create(this);
+                value: function save(cb) {
+                    var promise = Yawp.create(this);
+                    if (cb) {
+                        return promise.then(cb);
+                    }
+                    return promise;
                 }
             }], [{
                 key: 'from',
@@ -138,7 +142,7 @@ exports.default = function (request) {
                 key: 'list',
                 value: function list(cb) {
                     Yawp.setupQuery();
-                    var promise = baseRequest('GET', options).then(callback);
+                    var promise = baseRequest('GET', options);
                     if (cb) {
                         return promise.then(cb);
                     }
@@ -146,26 +150,29 @@ exports.default = function (request) {
                 }
             }, {
                 key: 'first',
-                value: function first(callback) {
+                value: function first(cb) {
                     Yawp.limit(1);
 
                     return Yawp.list(function (objects) {
                         var object = objects.length === 0 ? null : objects[0];
-                        if (callback) {
-                            callback(object);
+                        if (cb) {
+                            return cb(object);
                         }
+                        return object;
                     });
                 }
             }, {
                 key: 'only',
-                value: function only(callback) {
-                    return list(function (objects) {
+                value: function only(cb) {
+                    return Yawp.list(function (objects) {
                         if (objects.length !== 1) {
                             throw 'called only but got ' + objects.length + ' results';
                         }
-                        if (callback) {
-                            callback(objects[0]);
+                        var object = objects[0];
+                        if (cb) {
+                            return cb(object);
                         }
+                        return object;
                     });
                 }
 
@@ -181,6 +188,7 @@ exports.default = function (request) {
                 key: 'update',
                 value: function update(object) {
                     // TODO: deal with id
+                    console.log('update', object);
                     options.data = JSON.stringify(object);
                     return baseRequest('PUT', options);
                 }
@@ -258,17 +266,7 @@ exports.default = function (request) {
         return Yawp;
     }
 
-    yawp.config = function (callback) {
-        var c = {
-            baseUrl: function baseUrl(url) {
-                _baseUrl = url;
-            },
-            defaultFetchOptions: function defaultFetchOptions(options) {
-                _defaultFetchOptions = options;
-            }
-        };
-        callback(c);
-    };
+    // request
 
     function baseRequest(type, _options) {
         var options = (0, _utils.extend)({}, _options);
@@ -288,7 +286,43 @@ exports.default = function (request) {
         return request(url, options);
     }
 
-    return yawp;
+    // base api
+
+    function config(cb) {
+        var c = {
+            baseUrl: function baseUrl(url) {
+                _baseUrl = url;
+            },
+            defaultFetchOptions: function defaultFetchOptions(options) {
+                _defaultFetchOptions = options;
+            }
+        };
+        cb(c);
+    };
+
+    function update(object) {
+        var id = extractId(object);
+        return yawpFn(id).update(object);
+    }
+
+    function patch(object) {
+        var id = extractId(object);
+        return yawpFn(id).patch(object);
+    }
+
+    function destroy(object) {
+        var id = extractId(object);
+        return yawpFn(id).destroy(object);
+    }
+
+    var baseApi = {
+        config: config,
+        update: update,
+        patch: patch,
+        destroy: destroy
+    };
+
+    return (0, _utils.extend)(yawpFn, baseApi);
 };
 
 module.exports = exports['default'];

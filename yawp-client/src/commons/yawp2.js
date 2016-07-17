@@ -203,8 +203,12 @@ export default (request) => {
 
             // instance method
 
-            save() {
-                return Yawp.create(this);
+            save(cb) {
+                var promise = Yawp.create(this);
+                if (cb) {
+                    return promise.then(cb);
+                }
+                return promise;
             }
         }
 

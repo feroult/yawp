@@ -59,6 +59,7 @@ describe("YAWP! Class Client", () => {
     let ParentFn = yawp('/parents');
 
     class Parent extends yawp('/parents') {
+
         static myCreate(object) {
             return super.create(object);
         }
@@ -98,6 +99,24 @@ describe("YAWP! Class Client", () => {
             expect(parent.id).to.be.not.undefined;
             expect(parent.name).to.be.equals('xpto');
             done();
+        });
+    });
+
+    it.only('updates itself when it has id', (done) => {
+        let parent = {
+            id: '/parents/2',
+            name: 'xpto'
+        };
+
+        fx.parent('parent', parent);
+
+        fx.load(() => {
+            parent.name = 'xpto2';
+            new Parent(parent).save((retrievedParent) => {
+                expect(retrievedParent.id).to.be.equals('/parents/2');
+                expect(retrievedParent.name).to.be.equals('xpto2');
+                done();
+            });
         });
     });
 

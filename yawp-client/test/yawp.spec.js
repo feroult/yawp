@@ -181,6 +181,51 @@ describe("YAWP! Class Client", () => {
         });
     });
 
+    it('returns a class instance even for the regular yawp function fetch', (done) => {
+        fx.parent('parent', {
+            id: '/parents/1',
+            name: 'xpto'
+        });
+
+        fx.load(() => {
+            yawp('/parents').fetch(1).then((parent) => {
+                expect(parent.constructor.name).to.be.equals('Yawp');
+                done();
+            });
+        });
+    });
+
+    it('feches and saves using class instances', (done) => {
+        fx.parent('parent', {
+            id: '/parents/1',
+            name: 'xpto'
+        });
+
+        fx.load(() => {
+            Parent.fetch(1).then((parent) => {
+                parent.name = 'xpto2';
+                parent.save((retrievedParent) => {
+                    expect(retrievedParent.name).to.be.equals('xpto2');
+                    done();
+                });
+            });
+        });
+    });
+
+    it('returns an array of class instances when listing', (done) => {
+        fx.parent('parent1', {name: 'xpto1'});
+        fx.parent('parent2', {name: 'xpto2'});
+
+        fx.load(() => {
+            Parent.list((parents) => {
+                expect(parents[0].constructor.name).to.be.equals('Parent');
+                expect(parents[1].constructor.name).to.be.equals('Parent');
+                done();
+            });
+        });
+    });
+
+
     // test queries/fetches return instances
     // test es5 inheritance
 

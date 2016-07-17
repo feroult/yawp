@@ -70,6 +70,10 @@ export default (request) => {
                 return new this(object);
             }
 
+            static wrapArray(objects) {
+                return objects.map((object) => this.wrapInstance(object));
+            }
+
             // query
 
             static from(parentBaseArg) {
@@ -133,7 +137,11 @@ export default (request) => {
 
             static list(cb) {
                 Yawp.setupQuery();
-                var promise = Yawp.baseRequest('GET');
+
+                var promise = Yawp.baseRequest('GET').then((objects) => {
+                    return this.wrapArray(objects);
+                });
+
                 if (cb) {
                     return promise.then(cb);
                 }

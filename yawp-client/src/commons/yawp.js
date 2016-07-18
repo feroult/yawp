@@ -241,7 +241,7 @@ export default (request) => {
                 let sub = class extends base {
                     constructor() {
                         super();
-                        Yawp.assignInstanceMethods(this, base);
+                        Yawp.bindBaseMethods(this, base);
                         if (constructorFn) {
                             constructorFn.apply(this, arguments);
                         } else {
@@ -253,7 +253,7 @@ export default (request) => {
                 return sub;
             }
 
-            static assignInstanceMethods(self, base) {
+            static bindBaseMethods(self, base) {
                 self.base = {};
                 var keys = Object.getOwnPropertyNames(base.prototype);
                 for (let i = 0, l = keys.length; i < l; i++) {

@@ -382,7 +382,7 @@ exports.default = function (request) {
 
                             var _this5 = (0, _possibleConstructorReturn3.default)(this, Object.getPrototypeOf(sub).call(this));
 
-                            Yawp.assignInstanceMethods(_this5, base);
+                            Yawp.bindBaseMethods(_this5, base);
                             if (constructorFn) {
                                 constructorFn.apply(_this5, arguments);
                             } else {

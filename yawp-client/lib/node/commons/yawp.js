@@ -85,7 +85,7 @@ exports.default = function (request) {
                 value: function createOrUpdate() {
                     var _this = this;
 
-                    var promise;
+                    var promise = void 0;
                     if (hasId(this)) {
                         options.url = this.id;
                         promise = Yawp.update(this);
@@ -160,7 +160,7 @@ exports.default = function (request) {
                     options.json = true;
                     (0, _utils.extend)(options, _defaultFetchOptions);
 
-                    //console.log('r', url, options);
+                    //console.log('request', url, options);
 
                     return request(url, options);
                 }
@@ -373,30 +373,38 @@ exports.default = function (request) {
             }, {
                 key: 'subclass',
                 value: function subclass(constructorFn) {
-                    return function (_yawpFn) {
-                        (0, _inherits3.default)(_class, _yawpFn);
+                    var base = yawpFn(baseArg);
+                    var sub = function (_base) {
+                        (0, _inherits3.default)(sub, _base);
 
-                        function _class() {
-                            (0, _classCallCheck3.default)(this, _class);
+                        function sub() {
+                            (0, _classCallCheck3.default)(this, sub);
 
-                            var _this5 = (0, _possibleConstructorReturn3.default)(this, Object.getPrototypeOf(_class).call(this));
+                            var _this5 = (0, _possibleConstructorReturn3.default)(this, Object.getPrototypeOf(sub).call(this));
 
+                            Yawp.assignInstanceMethods(_this5, base);
                             if (constructorFn) {
                                 constructorFn.apply(_this5, arguments);
                             } else {
-                                (0, _get3.default)(Object.getPrototypeOf(_class.prototype), 'constructor', _this5).apply(_this5, arguments);
+                                (0, _get3.default)(Object.getPrototypeOf(sub.prototype), 'constructor', _this5).apply(_this5, arguments);
                             }
                             return _this5;
                         }
 
-                        (0, _createClass3.default)(_class, [{
-                            key: 'superConstructor',
-                            value: function superConstructor() {
-                                (0, _get3.default)(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
-                            }
-                        }]);
-                        return _class;
-                    }(yawpFn(baseArg));
+                        return sub;
+                    }(base);
+                    sub.base = base;
+                    return sub;
+                }
+            }, {
+                key: 'assignInstanceMethods',
+                value: function assignInstanceMethods(self, base) {
+                    self.base = {};
+                    var keys = Object.getOwnPropertyNames(base.prototype);
+                    for (var i = 0, l = keys.length; i < l; i++) {
+                        var key = keys[i];
+                        self.base[key] = base.prototype[key].bind(self);
+                    }
                 }
             }]);
             return Yawp;

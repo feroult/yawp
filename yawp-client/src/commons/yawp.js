@@ -1,7 +1,7 @@
 import { extend } from './utils';
 
-var baseUrl = '/api';
-var defaultFetchOptions = {};
+let baseUrl = '/api';
+let defaultFetchOptions = {};
 
 function normalize(arg) {
     if (!arg) {
@@ -28,8 +28,8 @@ export default (request) => {
 
     function yawpFn(baseArg) {
 
-        var options = {};
-        var q = {};
+        let options = {};
+        let q = {};
 
         class Yawp {
 
@@ -48,22 +48,22 @@ export default (request) => {
             }
 
             static prepareRequestOptions() {
-                var _options = extend({}, options);
+                let _options = extend({}, options);
                 Yawp.clear();
                 return _options;
             }
 
             static baseRequest(type) {
-                var options = Yawp.prepareRequestOptions();
+                let options = Yawp.prepareRequestOptions();
 
-                var url = baseUrl + options.url;
+                let url = baseUrl + options.url;
                 delete options.url;
 
                 options.method = type;
                 options.json = true;
                 extend(options, defaultFetchOptions);
 
-                //console.log('r', url, options);
+                //console.log('request', url, options);
 
                 return request(url, options);
             }
@@ -79,7 +79,7 @@ export default (request) => {
             // query
 
             static from(parentBaseArg) {
-                var parentBase = normalize(parentBaseArg);
+                let parentBase = normalize(parentBaseArg);
                 options.url = parentBase + options.url;
                 return this;
             }
@@ -120,7 +120,7 @@ export default (request) => {
                     options.url += '/' + arg;
                 }
 
-                var promise = Yawp.baseRequest('GET').then((object) => {
+                let promise = Yawp.baseRequest('GET').then((object) => {
                     return this.wrapInstance(object);
                 });
 
@@ -140,7 +140,7 @@ export default (request) => {
             static list(cb) {
                 Yawp.setupQuery();
 
-                var promise = Yawp.baseRequest('GET').then((objects) => {
+                let promise = Yawp.baseRequest('GET').then((objects) => {
                     return this.wrapArray(objects);
                 });
 
@@ -154,7 +154,7 @@ export default (request) => {
                 Yawp.limit(1);
 
                 return Yawp.list((objects) => {
-                    var object = objects.length === 0 ? null : objects[0];
+                    let object = objects.length === 0 ? null : objects[0];
                     return cb ? cb(object) : object;
                 });
             }
@@ -164,7 +164,7 @@ export default (request) => {
                     if (objects.length !== 1) {
                         throw 'called only but got ' + objects.length + ' results';
                     }
-                    var object = objects[0];
+                    let object = objects[0];
                     return cb ? cb(object) : object;
                 });
             }
@@ -237,31 +237,40 @@ export default (request) => {
             // es5 subclassing
 
             static subclass(constructorFn) {
-                return class extends yawpFn(baseArg) {
+                let base = yawpFn(baseArg);
+                let sub = class extends base {
                     constructor() {
                         super();
+                        Yawp.assignInstanceMethods(this, base);
                         if (constructorFn) {
                             constructorFn.apply(this, arguments);
                         } else {
                             super.constructor.apply(this, arguments);
                         }
                     }
-
-                    superConstructor() {
-                        super.constructor.apply(this, arguments);
-                    }
                 };
+                sub.base = base;
+                return sub;
+            }
+
+            static assignInstanceMethods(self, base) {
+                self.base = {};
+                var keys = Object.getOwnPropertyNames(base.prototype);
+                for (let i = 0, l = keys.length; i < l; i++) {
+                    let key = keys[i];
+                    self.base[key] = base.prototype[key].bind(self);
+                }
             }
 
             // instance method
 
             save(cb) {
-                var promise = this.createOrUpdate();
+                let promise = this.createOrUpdate();
                 return cb ? promise.then(cb) : promise;
             }
 
             createOrUpdate() {
-                var promise;
+                let promise;
                 if (hasId(this)) {
                     options.url = this.id;
                     promise = Yawp.update(this);
@@ -276,7 +285,7 @@ export default (request) => {
 
             destroy(cb) {
                 options.url = extractId(this);
-                var promise = Yawp.destroy();
+                let promise = Yawp.destroy();
                 return cb ? promise.then(cb) : promise;
             }
 
@@ -313,7 +322,7 @@ export default (request) => {
     // base api
 
     function config(cb) {
-        var c = {
+        let c = {
             baseUrl: (url) => {
                 baseUrl = url;
             },
@@ -325,17 +334,17 @@ export default (request) => {
     };
 
     function update(object) {
-        var id = extractId(object);
+        let id = extractId(object);
         return yawpFn(id).update(object);
     }
 
     function patch(object) {
-        var id = extractId(object);
+        let id = extractId(object);
         return yawpFn(id).patch(object);
     }
 
     function destroy(object) {
-        var id = extractId(object);
+        let id = extractId(object);
         return yawpFn(id).destroy(object);
     }
 

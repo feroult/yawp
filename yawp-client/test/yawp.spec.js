@@ -232,15 +232,19 @@ describe('YAWP! ES5 class inheritance', () => {
         if (props && props.name === 'change it in constructor') {
             props.name = 'xpto';
         }
-        this.superConstructor(props);
+        this.base.constructor(props);
     });
 
     Parent.myCreate = function (object) {
-        return this.create(object);
+        return this.base.create(object);
     };
 
     Parent.prototype.mySave = function () {
-        return this.save();
+        return this.base.save();
+    };
+
+    Parent.prototype.myAction = function () {
+        return this.base.post('all-http-verbs');
     };
 
     it('inherits static methods', () => {
@@ -266,6 +270,23 @@ describe('YAWP! ES5 class inheritance', () => {
             expect(retrievedParent.id).to.be.not.undefined;
             expect(retrievedParent.name).to.be.equals('xpto');
             done();
+        });
+    });
+
+    it('overrides instance methods with arguments', (done) => {
+        let parentJson = {
+            id: '/parents/2',
+            name: 'xpto'
+        };
+
+        fx.parent('parent', parentJson);
+
+        fx.load(() => {
+            let parent = new Parent(parentJson);
+            parent.myAction().then((response) => {
+                expect(response).to.be.equals('ok');
+                done();
+            });
         });
     });
 

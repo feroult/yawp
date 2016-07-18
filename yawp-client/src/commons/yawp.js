@@ -249,16 +249,17 @@ export default (request) => {
                         }
                     }
                 };
-                sub.base = base;
+                sub.super = base;
                 return sub;
             }
 
             static bindBaseMethods(self, base) {
-                self.base = {};
+                self.super = () => {
+                };
                 var keys = Object.getOwnPropertyNames(base.prototype);
                 for (let i = 0, l = keys.length; i < l; i++) {
                     let key = keys[i];
-                    self.base[key] = base.prototype[key].bind(self);
+                    self.super[key] = base.prototype[key].bind(self);
                 }
             }
 

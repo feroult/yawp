@@ -393,17 +393,17 @@ exports.default = function (request) {
 
                         return sub;
                     }(base);
-                    sub.base = base;
+                    sub.super = base;
                     return sub;
                 }
             }, {
-                key: 'assignInstanceMethods',
-                value: function assignInstanceMethods(self, base) {
-                    self.base = {};
+                key: 'bindBaseMethods',
+                value: function bindBaseMethods(self, base) {
+                    self.super = function () {};
                     var keys = Object.getOwnPropertyNames(base.prototype);
                     for (var i = 0, l = keys.length; i < l; i++) {
                         var key = keys[i];
-                        self.base[key] = base.prototype[key].bind(self);
+                        self.super[key] = base.prototype[key].bind(self);
                     }
                 }
             }]);

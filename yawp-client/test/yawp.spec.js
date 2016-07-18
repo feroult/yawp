@@ -232,19 +232,19 @@ describe('YAWP! ES5 class inheritance', () => {
         if (props && props.name === 'change it in constructor') {
             props.name = 'xpto';
         }
-        this.base.constructor(props);
+        this.super.constructor(props);
     });
 
     Parent.myCreate = function (object) {
-        return this.base.create(object);
+        return this.super.create(object);
     };
 
     Parent.prototype.mySave = function () {
-        return this.base.save();
+        return this.super.save();
     };
 
     Parent.prototype.myAction = function () {
-        return this.base.post('all-http-verbs');
+        return this.super.post('all-http-verbs');
     };
 
     it('inherits static methods', () => {

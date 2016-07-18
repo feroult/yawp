@@ -4,6 +4,7 @@ import { fx } from '../index';
 // TODO: fix import
 import request from '../src/node/request';
 var yawp = require('../src/commons/yawp2')(request);
+//var yawp = require('../lib/node/commons/yawp2')(request);
 
 chai.expect();
 
@@ -21,7 +22,7 @@ fx.config((c) => {
     c.bind('job', '/jobs');
 });
 
-describe('YAWP! Regular Client', () => {
+describe('YAWP! Client', () => {
     beforeEach((done) => {
         fx.reset().then(done);
     });
@@ -50,7 +51,7 @@ describe('YAWP! Regular Client', () => {
     });
 });
 
-describe("YAWP! Class Client", () => {
+describe("YAWP! ES6 class inheritance", () => {
 
     beforeEach((done) => {
         fx.reset().then(done);
@@ -60,11 +61,11 @@ describe("YAWP! Class Client", () => {
 
     class Parent extends yawp('/parents') {
         static myCreate(object) {
-            return super.create(object);
+            return this.create(object);
         }
 
         mySave() {
-            return super.save();
+            return this.save();
         }
     }
 
@@ -224,6 +225,61 @@ describe("YAWP! Class Client", () => {
         });
     });
 
-    // test es5 inheritance
+});
+
+describe('YAWP! ES5 class inheritance', () => {
+
+    beforeEach((done) => {
+        fx.reset().then(done);
+    });
+
+    let Parent = yawp('/parents').subclass(function (props) {
+        if (props && props.name === 'change it in constructor') {
+            props.name = 'xpto';
+        }
+        this.superConstructor(props);
+    });
+
+    Parent.myCreate = function (object) {
+        return this.create(object);
+    };
+
+    Parent.prototype.mySave = function () {
+        return this.save();
+    };
+
+    it('inherits static methods', () => {
+        expect(Parent.where).to.be.not.undefined;
+    });
+
+    it('inherits instance methods', () => {
+        let parent = new Parent();
+        expect(parent.save).to.be.not.undefined;
+    });
+    
+    it('overrides static methods', (done) => {
+        Parent.myCreate({name: 'xpto'}).then((retrievedParent) => {
+            expect(retrievedParent.name).to.be.equal('xpto');
+            done();
+        });
+    });
+
+    it('overrides instance methods', (done) => {
+        var parent = new Parent({name: 'xpto'});
+        parent.mySave().then((retrievedParent) => {
+            expect(parent.id).to.be.not.undefined;
+            expect(retrievedParent.id).to.be.not.undefined;
+            expect(retrievedParent.name).to.be.equals('xpto');
+            done();
+        });
+    });
+
+    it('overrides constructor', (done) => {
+        var parent = new Parent({name: 'change it in constructor'});
+        parent.mySave().then((retrievedParent) => {
+            expect(retrievedParent.name).to.be.equals('xpto');
+            done();
+        });
+    });
 
 });

@@ -4,6 +4,18 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = require('babel-runtime/helpers/inherits');
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _get2 = require('babel-runtime/helpers/get');
+
+var _get3 = _interopRequireDefault(_get2);
+
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -51,7 +63,9 @@ exports.default = function (request) {
             function Yawp(props) {
                 (0, _classCallCheck3.default)(this, Yawp);
 
-                (0, _utils.extend)(this, props);
+                if (props) {
+                    (0, _utils.extend)(this, props);
+                }
             }
 
             // request
@@ -69,14 +83,56 @@ exports.default = function (request) {
             }, {
                 key: 'createOrUpdate',
                 value: function createOrUpdate() {
+                    var _this = this;
+
                     var promise;
                     if (hasId(this)) {
                         options.url = this.id;
                         promise = Yawp.update(this);
                     } else {
-                        promise = Yawp.create(this);
+                        promise = Yawp.create(this).then(function (object) {
+                            _this.id = object.id;
+                            return object;
+                        });
                     }
                     return promise;
+                }
+            }, {
+                key: 'destroy',
+                value: function destroy(cb) {
+                    options.url = extractId(this);
+                    var promise = Yawp.destroy();
+                    return cb ? promise.then(cb) : promise;
+                }
+            }, {
+                key: 'get',
+                value: function get(action) {
+                    options.url = extractId(this);
+                    return Yawp.get(action);
+                }
+            }, {
+                key: 'put',
+                value: function put(action) {
+                    options.url = extractId(this);
+                    return Yawp.put(action);
+                }
+            }, {
+                key: '_patch',
+                value: function _patch(action) {
+                    options.url = extractId(this);
+                    return Yawp._patch(action);
+                }
+            }, {
+                key: 'post',
+                value: function post(action) {
+                    options.url = extractId(this);
+                    return Yawp.post(action);
+                }
+            }, {
+                key: '_delete',
+                value: function _delete(action) {
+                    options.url = extractId(this);
+                    return Yawp._delete(action);
                 }
             }], [{
                 key: 'clear',
@@ -107,6 +163,20 @@ exports.default = function (request) {
                     //console.log('r', url, options);
 
                     return request(url, options);
+                }
+            }, {
+                key: 'wrapInstance',
+                value: function wrapInstance(object) {
+                    return new this(object);
+                }
+            }, {
+                key: 'wrapArray',
+                value: function wrapArray(objects) {
+                    var _this2 = this;
+
+                    return objects.map(function (object) {
+                        return _this2.wrapInstance(object);
+                    });
                 }
 
                 // query
@@ -154,11 +224,23 @@ exports.default = function (request) {
                 }
             }, {
                 key: 'fetch',
-                value: function fetch(cb) {
-                    var promise = Yawp.baseRequest('GET');
+                value: function fetch(arg) {
+                    var _this3 = this;
+
+                    var cb = typeof arg === 'function' ? arg : undefined;
+
+                    if (arg && !cb) {
+                        options.url += '/' + arg;
+                    }
+
+                    var promise = Yawp.baseRequest('GET').then(function (object) {
+                        return _this3.wrapInstance(object);
+                    });
+
                     if (cb) {
                         return promise.then(cb);
                     }
+
                     return promise;
                 }
             }, {
@@ -168,18 +250,17 @@ exports.default = function (request) {
                         Yawp.param('q', JSON.stringify(q));
                     }
                 }
-                //
-                //static url(decode) {
-                //    Yawp.setupQuery();
-                //    var url = baseUrl + options.url + (options.query ? '?' + toUrlParam(options.query) : '');
-                //    return decode ? decodeURIComponent(url) : url;
-                //}
-
             }, {
                 key: 'list',
                 value: function list(cb) {
+                    var _this4 = this;
+
                     Yawp.setupQuery();
-                    var promise = Yawp.baseRequest('GET');
+
+                    var promise = Yawp.baseRequest('GET').then(function (objects) {
+                        return _this4.wrapArray(objects);
+                    });
+
                     if (cb) {
                         return promise.then(cb);
                     }
@@ -285,6 +366,37 @@ exports.default = function (request) {
                 key: '_delete',
                 value: function _delete(action) {
                     return Yawp.action('DELETE', action);
+                }
+
+                // es5 subclassing
+
+            }, {
+                key: 'subclass',
+                value: function subclass(constructorFn) {
+                    return function (_yawpFn) {
+                        (0, _inherits3.default)(_class, _yawpFn);
+
+                        function _class() {
+                            (0, _classCallCheck3.default)(this, _class);
+
+                            var _this5 = (0, _possibleConstructorReturn3.default)(this, Object.getPrototypeOf(_class).call(this));
+
+                            if (constructorFn) {
+                                constructorFn.apply(_this5, arguments);
+                            } else {
+                                (0, _get3.default)(Object.getPrototypeOf(_class.prototype), 'constructor', _this5).apply(_this5, arguments);
+                            }
+                            return _this5;
+                        }
+
+                        (0, _createClass3.default)(_class, [{
+                            key: 'superConstructor',
+                            value: function superConstructor() {
+                                (0, _get3.default)(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
+                            }
+                        }]);
+                        return _class;
+                    }(yawpFn(baseArg));
                 }
             }]);
             return Yawp;

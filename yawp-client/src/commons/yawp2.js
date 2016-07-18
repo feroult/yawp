@@ -34,7 +34,9 @@ export default (request) => {
         class Yawp {
 
             constructor(props) {
-                extend(this, props);
+                if (props) {
+                    extend(this, props);
+                }
             }
 
             // request
@@ -230,6 +232,25 @@ export default (request) => {
 
             static _delete(action) {
                 return Yawp.action('DELETE', action);
+            }
+
+            // es5 subclassing
+
+            static subclass(constructorFn) {
+                return class extends yawpFn(baseArg) {
+                    constructor() {
+                        super();
+                        if (constructorFn) {
+                            constructorFn.apply(this, arguments);
+                        } else {
+                            super.constructor.apply(this, arguments);
+                        }
+                    }
+
+                    superConstructor() {
+                        super.constructor.apply(this, arguments);
+                    }
+                };
             }
 
             // instance method

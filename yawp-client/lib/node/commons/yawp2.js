@@ -446,4 +446,4 @@ exports.default = function (request) {
 };
 
 module.exports = exports['default'];
-//# sourceMappingURL=yawp.js.map
+//# sourceMappingURL=yawp2.js.map

@@ -1,5 +1,5 @@
 import request from './request';
 
-var yawp = require('./../commons/yawp2')(request);
+var yawp = require('./../commons/yawp')(request);
 
 export default yawp;

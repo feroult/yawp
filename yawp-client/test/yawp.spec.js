@@ -1,10 +1,5 @@
 import chai from 'chai';
-import { fx } from '../index';
-
-// TODO: fix import
-import request from '../src/node/request';
-var yawp = require('../src/commons/yawp2')(request);
-//var yawp = require('../lib/node/commons/yawp2')(request);
+import yawp, { fx } from '../index';
 
 chai.expect();
 
@@ -256,7 +251,7 @@ describe('YAWP! ES5 class inheritance', () => {
         let parent = new Parent();
         expect(parent.save).to.be.not.undefined;
     });
-    
+
     it('overrides static methods', (done) => {
         Parent.myCreate({name: 'xpto'}).then((retrievedParent) => {
             expect(retrievedParent.name).to.be.equal('xpto');

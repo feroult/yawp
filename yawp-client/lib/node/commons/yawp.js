@@ -4,6 +4,18 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = require('babel-runtime/helpers/inherits');
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _get2 = require('babel-runtime/helpers/get');
+
+var _get3 = _interopRequireDefault(_get2);
+
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -12,9 +24,391 @@ var _createClass2 = require('babel-runtime/helpers/createClass');
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
+var _utils = require('./utils');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _baseUrl = '/api';
+var _defaultFetchOptions = {};
+
+function normalize(arg) {
+    if (!arg) {
+        return '';
+    }
+    if (arg instanceof Object) {
+        return extractId(arg);
+    }
+    return arg;
+}
+
+function hasId(object) {
+    return object.id;
+}
+
+function extractId(object) {
+    if (hasId(object)) {
+        return object.id;
+    }
+    throw 'use yawp(id) if your endpoint does not have a @Id field called id';
+}
+
 exports.default = function (request) {
 
-    function config(callback) {
+    function yawpFn(baseArg) {
+
+        var options = {};
+        var q = {};
+
+        var Yawp = function () {
+            function Yawp(props) {
+                (0, _classCallCheck3.default)(this, Yawp);
+
+                if (props) {
+                    (0, _utils.extend)(this, props);
+                }
+            }
+
+            // request
+
+            (0, _createClass3.default)(Yawp, [{
+                key: 'save',
+
+
+                // instance method
+
+                value: function save(cb) {
+                    var promise = this.createOrUpdate();
+                    return cb ? promise.then(cb) : promise;
+                }
+            }, {
+                key: 'createOrUpdate',
+                value: function createOrUpdate() {
+                    var _this = this;
+
+                    var promise;
+                    if (hasId(this)) {
+                        options.url = this.id;
+                        promise = Yawp.update(this);
+                    } else {
+                        promise = Yawp.create(this).then(function (object) {
+                            _this.id = object.id;
+                            return object;
+                        });
+                    }
+                    return promise;
+                }
+            }, {
+                key: 'destroy',
+                value: function destroy(cb) {
+                    options.url = extractId(this);
+                    var promise = Yawp.destroy();
+                    return cb ? promise.then(cb) : promise;
+                }
+            }, {
+                key: 'get',
+                value: function get(action) {
+                    options.url = extractId(this);
+                    return Yawp.get(action);
+                }
+            }, {
+                key: 'put',
+                value: function put(action) {
+                    options.url = extractId(this);
+                    return Yawp.put(action);
+                }
+            }, {
+                key: '_patch',
+                value: function _patch(action) {
+                    options.url = extractId(this);
+                    return Yawp._patch(action);
+                }
+            }, {
+                key: 'post',
+                value: function post(action) {
+                    options.url = extractId(this);
+                    return Yawp.post(action);
+                }
+            }, {
+                key: '_delete',
+                value: function _delete(action) {
+                    options.url = extractId(this);
+                    return Yawp._delete(action);
+                }
+            }], [{
+                key: 'clear',
+                value: function clear() {
+                    options = {
+                        url: normalize(baseArg)
+                    };
+                }
+            }, {
+                key: 'prepareRequestOptions',
+                value: function prepareRequestOptions() {
+                    var _options = (0, _utils.extend)({}, options);
+                    Yawp.clear();
+                    return _options;
+                }
+            }, {
+                key: 'baseRequest',
+                value: function baseRequest(type) {
+                    var options = Yawp.prepareRequestOptions();
+
+                    var url = _baseUrl + options.url;
+                    delete options.url;
+
+                    options.method = type;
+                    options.json = true;
+                    (0, _utils.extend)(options, _defaultFetchOptions);
+
+                    //console.log('r', url, options);
+
+                    return request(url, options);
+                }
+            }, {
+                key: 'wrapInstance',
+                value: function wrapInstance(object) {
+                    return new this(object);
+                }
+            }, {
+                key: 'wrapArray',
+                value: function wrapArray(objects) {
+                    var _this2 = this;
+
+                    return objects.map(function (object) {
+                        return _this2.wrapInstance(object);
+                    });
+                }
+
+                // query
+
+            }, {
+                key: 'from',
+                value: function from(parentBaseArg) {
+                    var parentBase = normalize(parentBaseArg);
+                    options.url = parentBase + options.url;
+                    return this;
+                }
+            }, {
+                key: 'transform',
+                value: function transform(t) {
+                    Yawp.param('t', t);
+                    return this;
+                }
+            }, {
+                key: 'where',
+                value: function where(data) {
+                    if (arguments.length === 1) {
+                        q.where = data;
+                    } else {
+                        q.where = [].slice.call(arguments);
+                    }
+                    return this;
+                }
+            }, {
+                key: 'order',
+                value: function order(data) {
+                    q.order = data;
+                    return this;
+                }
+            }, {
+                key: 'sort',
+                value: function sort(data) {
+                    q.sort = data;
+                    return this;
+                }
+            }, {
+                key: 'limit',
+                value: function limit(data) {
+                    q.limit = data;
+                    return this;
+                }
+            }, {
+                key: 'fetch',
+                value: function fetch(arg) {
+                    var _this3 = this;
+
+                    var cb = typeof arg === 'function' ? arg : undefined;
+
+                    if (arg && !cb) {
+                        options.url += '/' + arg;
+                    }
+
+                    var promise = Yawp.baseRequest('GET').then(function (object) {
+                        return _this3.wrapInstance(object);
+                    });
+
+                    if (cb) {
+                        return promise.then(cb);
+                    }
+
+                    return promise;
+                }
+            }, {
+                key: 'setupQuery',
+                value: function setupQuery() {
+                    if (Object.keys(q).length > 0) {
+                        Yawp.param('q', JSON.stringify(q));
+                    }
+                }
+            }, {
+                key: 'list',
+                value: function list(cb) {
+                    var _this4 = this;
+
+                    Yawp.setupQuery();
+
+                    var promise = Yawp.baseRequest('GET').then(function (objects) {
+                        return _this4.wrapArray(objects);
+                    });
+
+                    if (cb) {
+                        return promise.then(cb);
+                    }
+                    return promise;
+                }
+            }, {
+                key: 'first',
+                value: function first(cb) {
+                    Yawp.limit(1);
+
+                    return Yawp.list(function (objects) {
+                        var object = objects.length === 0 ? null : objects[0];
+                        return cb ? cb(object) : object;
+                    });
+                }
+            }, {
+                key: 'only',
+                value: function only(cb) {
+                    return Yawp.list(function (objects) {
+                        if (objects.length !== 1) {
+                            throw 'called only but got ' + objects.length + ' results';
+                        }
+                        var object = objects[0];
+                        return cb ? cb(object) : object;
+                    });
+                }
+
+                // repository
+
+            }, {
+                key: 'create',
+                value: function create(object) {
+                    options.body = JSON.stringify(object);
+                    return Yawp.baseRequest('POST');
+                }
+            }, {
+                key: 'update',
+                value: function update(object) {
+                    options.body = JSON.stringify(object);
+                    return Yawp.baseRequest('PUT');
+                }
+            }, {
+                key: 'patch',
+                value: function patch(object) {
+                    options.body = JSON.stringify(object);
+                    return Yawp.baseRequest('PATCH');
+                }
+            }, {
+                key: 'destroy',
+                value: function destroy() {
+                    return Yawp.baseRequest('DELETE');
+                }
+
+                // actions
+
+            }, {
+                key: 'json',
+                value: function json(object) {
+                    options.body = JSON.stringify(object);
+                    return this;
+                }
+            }, {
+                key: 'params',
+                value: function params(_params) {
+                    options.query = (0, _utils.extend)(options.query, _params);
+                    return this;
+                }
+            }, {
+                key: 'param',
+                value: function param(key, value) {
+                    if (!options.query) {
+                        options.query = {};
+                    }
+                    options.query[key] = value;
+                }
+            }, {
+                key: 'action',
+                value: function action(verb, path) {
+                    options.url += '/' + path;
+                    return Yawp.baseRequest(verb);
+                }
+            }, {
+                key: 'get',
+                value: function get(action) {
+                    return Yawp.action('GET', action);
+                }
+            }, {
+                key: 'put',
+                value: function put(action) {
+                    return Yawp.action('PUT', action);
+                }
+            }, {
+                key: '_patch',
+                value: function _patch(action) {
+                    return Yawp.action('PATCH', action);
+                }
+            }, {
+                key: 'post',
+                value: function post(action) {
+                    return Yawp.action('POST', action);
+                }
+            }, {
+                key: '_delete',
+                value: function _delete(action) {
+                    return Yawp.action('DELETE', action);
+                }
+
+                // es5 subclassing
+
+            }, {
+                key: 'subclass',
+                value: function subclass(constructorFn) {
+                    return function (_yawpFn) {
+                        (0, _inherits3.default)(_class, _yawpFn);
+
+                        function _class() {
+                            (0, _classCallCheck3.default)(this, _class);
+
+                            var _this5 = (0, _possibleConstructorReturn3.default)(this, Object.getPrototypeOf(_class).call(this));
+
+                            if (constructorFn) {
+                                constructorFn.apply(_this5, arguments);
+                            } else {
+                                (0, _get3.default)(Object.getPrototypeOf(_class.prototype), 'constructor', _this5).apply(_this5, arguments);
+                            }
+                            return _this5;
+                        }
+
+                        (0, _createClass3.default)(_class, [{
+                            key: 'superConstructor',
+                            value: function superConstructor() {
+                                (0, _get3.default)(Object.getPrototypeOf(_class.prototype), 'constructor', this).apply(this, arguments);
+                            }
+                        }]);
+                        return _class;
+                    }(yawpFn(baseArg));
+                }
+            }]);
+            return Yawp;
+        }();
+
+        Yawp.clear();
+        return Yawp;
+    }
+
+    // base api
+
+    function config(cb) {
         var c = {
             baseUrl: function baseUrl(url) {
                 _baseUrl = url;
@@ -23,306 +417,33 @@ exports.default = function (request) {
                 _defaultFetchOptions = options;
             }
         };
-
-        callback(c);
-    }
-
-    function baseRequest(type, options) {
-        var url = _baseUrl + options.url;
-        var body = options.data;
-        delete options.url;
-
-        options.method = type;
-        options.body = body;
-        options.json = true;
-        (0, _utils.extend)(options, _defaultFetchOptions);
-
-        return request(url, options);
-    }
-
-    function extractId(object) {
-        if (object.id) {
-            return object.id;
-        }
-        throw 'use yawp(id) if your endpoint does not have a @Id field called id';
-    }
-
-    function query(options) {
-        var q = {};
-
-        function where(data) {
-            if (arguments.length === 1) {
-                q.where = data;
-            } else {
-                q.where = [].slice.call(arguments);
-            }
-            return this;
-        }
-
-        function order(data) {
-            q.order = data;
-            return this;
-        }
-
-        function sort(data) {
-            q.sort = data;
-            return this;
-        }
-
-        function limit(data) {
-            q.limit = data;
-            return this;
-        }
-
-        function fetch(callback) {
-            return baseRequest('GET', options()).then(callback);
-        }
-
-        function setupQuery() {
-            if (Object.keys(q).length > 0) {
-                options.addQueryParameter('q', JSON.stringify(q));
-            }
-        }
-
-        function url(decode) {
-            setupQuery();
-            var url = _baseUrl + options().url + (options().query ? '?' + toUrlParam(options().query) : '');
-            if (decode) {
-                return decodeURIComponent(url);
-            }
-            return url;
-        }
-
-        function list(callback) {
-            setupQuery();
-            return baseRequest('GET', options()).then(callback);
-        }
-
-        function first(callback) {
-            limit(1);
-
-            return list(function (objects) {
-                var object = objects.length === 0 ? null : objects[0];
-                if (callback) {
-                    callback(object);
-                }
-            });
-        }
-
-        function only(callback) {
-            return list(function (objects) {
-                if (objects.length !== 1) {
-                    throw 'called only but got ' + objects.length + ' results';
-                }
-                if (callback) {
-                    callback(objects[0]);
-                }
-            });
-        }
-
-        return {
-            where: where,
-            order: order,
-            sort: sort,
-            limit: limit,
-            fetch: fetch,
-            list: list,
-            first: first,
-            only: only,
-            url: url
-        };
-    }
-
-    function repository(options) {
-        function create(object) {
-            options().data = JSON.stringify(object);
-            return baseRequest('POST', options());
-        }
-
-        function update(object) {
-            options().data = JSON.stringify(object);
-            return baseRequest('PUT', options());
-        }
-
-        function patch(object) {
-            options().data = JSON.stringify(object);
-            return baseRequest('PATCH', options());
-        }
-
-        function destroy() {
-            return baseRequest('DELETE', options());
-        }
-
-        return {
-            create: create,
-            update: update,
-            patch: patch,
-            destroy: destroy
-        };
-    }
-
-    function actions(options) {
-        function actionOptions(action) {
-            options().url += '/' + action;
-            return options();
-        }
-
-        function json(object) {
-            options.setJson(object);
-            return this;
-        }
-
-        function params(params) {
-            options.addQueryParameters(params);
-            return this;
-        }
-
-        function get(action) {
-            return baseRequest('GET', actionOptions(action));
-        }
-
-        function put(action) {
-            return baseRequest('PUT', actionOptions(action));
-        }
-
-        function _patch(action) {
-            return baseRequest('PATCH', actionOptions(action));
-        }
-
-        function post(action) {
-            return baseRequest('POST', actionOptions(action));
-        }
-
-        function _delete(action) {
-            return baseRequest('DELETE', actionOptions(action));
-        }
-
-        return {
-            json: json,
-            params: params,
-            get: get,
-            put: put,
-            _patch: _patch,
-            post: post,
-            _delete: _delete
-        };
-    }
-
-    function yawp(baseArg) {
-
-        var endpointPath = isEndpointPath(baseArg) ? baseArg : undefined;
-
-        var Model = function () {
-            function Model(props) {
-                (0, _classCallCheck3.default)(this, Model);
-
-                (0, _utils.extend)(this, props);
-            }
-
-            (0, _createClass3.default)(Model, [{
-                key: 'save',
-                value: function save() {
-                    var newVar = yawp('/parents').create({ name: 'x' });
-                    console.log('new var', newVar, this);
-                    newVar.catch(function () {
-                        Console.log('hahhaa');
-                    });
-                }
-            }]);
-            return Model;
-        }();
-
-        function isEndpointPath(arg) {
-            return typeof arg === "string" && arg.split('/').length == 2;
-        }
-
-        function normalize(arg) {
-            if (!arg) {
-                return '';
-            }
-            if (arg instanceof Object) {
-                return extractId(arg);
-            }
-            return arg;
-        }
-
-        var ajaxOptions = {
-            url: normalize(baseArg)
-        };
-
-        function options() {
-            return ajaxOptions;
-        }
-
-        options.setJson = function (object) {
-            ajaxOptions.data = JSON.stringify(object);
-        };
-
-        options.addQueryParameters = function (params) {
-            ajaxOptions.query = (0, _utils.extend)(ajaxOptions.query, params);
-        };
-
-        options.addQueryParameter = function (key, value) {
-            if (!ajaxOptions.query) {
-                ajaxOptions.query = {};
-            }
-            ajaxOptions.query[key] = value;
-        };
-
-        function from(parentBaseArg) {
-            var parentBase = normalize(parentBaseArg);
-            options().url = parentBase + options().url;
-            return this;
-        }
-
-        function transform(t) {
-            options.addQueryParameter('t', t);
-            return this;
-        }
-
-        function sync() {
-            ajaxOptions.async = false;
-            return this;
-        }
-
-        return (0, _utils.extend)(endpointPath ? Model : {}, {
-            from: from,
-            transform: transform,
-            sync: sync
-        }, query(options), repository(options), actions(options));
-    }
+        cb(c);
+    };
 
     function update(object) {
         var id = extractId(object);
-        return yawp(id).update(object);
+        return yawpFn(id).update(object);
     }
 
     function patch(object) {
         var id = extractId(object);
-        return yawp(id).patch(object);
+        return yawpFn(id).patch(object);
     }
 
     function destroy(object) {
         var id = extractId(object);
-        return yawp(id).destroy(object);
+        return yawpFn(id).destroy(object);
     }
 
-    var api = {
+    var baseApi = {
         config: config,
         update: update,
         patch: patch,
         destroy: destroy
     };
 
-    return (0, _utils.extend)(yawp, api);
+    return (0, _utils.extend)(yawpFn, baseApi);
 };
-
-var _utils = require('./utils');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _baseUrl = '/api';
-var _defaultFetchOptions = {};
 
 module.exports = exports['default'];
 //# sourceMappingURL=yawp.js.map

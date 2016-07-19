@@ -4,10 +4,12 @@ import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.Pojo;
+
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -89,6 +91,25 @@ public class LazyJsonTest extends EndpointTestCase {
     }
 
     @Test
+    public void testAsMapWithLazyListProperty() {
+        BasicObject object = new BasicObject();
+
+        object.setMapLazyPojoList(createMapWithLazyList());
+
+        String json = JsonUtils.to(object);
+        BasicObject parsedObject = from(json, BasicObject.class);
+
+        // re-serialize / re-parse
+        json = JsonUtils.to(parsedObject);
+        parsedObject = from(json, BasicObject.class);
+
+        List<Pojo> list = parsedObject.getMapLazyPojoList().get("xpto").get();
+        assertEquals(2, list.size());
+        assertEquals("otpx", list.get(0).getStringValue());
+        assertEquals("xpto", list.get(1).getStringValue());
+    }
+
+	@Test
     public void testAsIdRefMapProperty() {
         BasicObject object = new BasicObject();
 
@@ -127,6 +148,11 @@ public class LazyJsonTest extends EndpointTestCase {
         return map;
     }
 
+    private Map<String, LazyJson<List<Pojo>>> createMapWithLazyList() {
+    	Map<String, LazyJson<List<Pojo>>> mapWithLazyList = new HashMap<>();
+    	mapWithLazyList.put("xpto", LazyJson.create(Arrays.asList(new Pojo("otpx"), new Pojo("xpto"))));
+        return mapWithLazyList;
+    }
 
     private Map<IdRef<BasicObject>, Pojo> createPojoIdRefMap() {
         Map<IdRef<BasicObject>, Pojo> map = new HashMap<>();

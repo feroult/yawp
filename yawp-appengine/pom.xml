@@ -43,6 +43,28 @@
             <groupId>com.google.appengine.tools</groupId>
             <artifactId>appengine-pipeline</artifactId>
             <version>0.2.13</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.appengine.tools</groupId>
+                    <artifactId>appengine-gcs-client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.appengine.tools</groupId>
+            <artifactId>appengine-gcs-client</artifactId>
+            <version>0.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.http-client</groupId>
+                    <artifactId>google-http-client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.http-client</groupId>
+            <artifactId>google-http-client</artifactId>
+            <version>1.22.0</version>
         </dependency>
 
         <!-- Development dependencies -->

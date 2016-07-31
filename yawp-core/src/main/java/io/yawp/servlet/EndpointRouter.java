@@ -9,6 +9,7 @@ import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.*;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.models.ObjectHolder;
+import io.yawp.servlet.meta.MetaHandler;
 import io.yawp.servlet.rest.RestAction;
 import org.apache.commons.lang3.StringUtils;
 
@@ -46,7 +47,7 @@ public class EndpointRouter {
         }
 
         if (isMeta(ctx.getUri())) {
-            MetaHandler.handle(r, ctx.getJson());
+            MetaHandler.handle(r, ctx);
         }
 
         this.r = r;

@@ -1,10 +1,10 @@
 package io.yawp.repository;
 
-import io.yawp.repository.actions.ActionKey;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import io.yawp.repository.actions.ActionKey;
 
 public class RepositoryFeatures {
 
@@ -47,9 +47,8 @@ public class RepositoryFeatures {
 
     private void assertIsValidPath(EndpointFeatures<?> endpoint, String endpointPath) {
         if (paths.get(endpointPath) != null) {
-            throw new RuntimeException("Repeated io.yawp path " + endpointPath + " for class "
-                    + endpoint.getClazz().getSimpleName() + " (already found in class " + paths.get(endpointPath).getSimpleName()
-                    + ")");
+            throw new RuntimeException("Repeated io.yawp path " + endpointPath + " for class " + endpoint.getClazz().getSimpleName()
+                    + " (already found in class " + paths.get(endpointPath).getSimpleName() + ")");
         }
         if (!isValidEndpointPath(endpointPath)) {
             throw new RuntimeException("Invalid endpoint path " + endpointPath + " for class " + endpoint.getClazz().getSimpleName());
@@ -73,8 +72,8 @@ public class RepositoryFeatures {
         return true;
     }
 
-    public void addEndpoint(Class<?> clazz) {
-        EndpointFeatures endpoint = new EndpointFeatures(clazz);
+    public <T> void addEndpoint(Class<T> clazz) {
+        EndpointFeatures<T> endpoint = new EndpointFeatures<T>(clazz);
         endpoints.put(clazz, endpoint);
         addKindToMap(endpoint);
         addMapPathKind(endpoint);
@@ -108,5 +107,11 @@ public class RepositoryFeatures {
 
     public Set<Class<?>> getEndpointClazzes() {
         return endpoints.keySet();
+    }
+
+    public void delete(EndpointFeatures<?> endpoint) {
+        endpoints.remove(endpoint.getClazz());
+        paths.remove(endpoint.getEndpointPath());
+        kinds.remove(endpoint.getEndpointKind());
     }
 }

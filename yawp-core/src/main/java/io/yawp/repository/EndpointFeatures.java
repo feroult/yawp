@@ -104,6 +104,10 @@ public class EndpointFeatures<T> {
     public void setActions(Map<ActionKey, ActionMethod> actions) {
         this.actions = actions;
     }
+    
+    public Map<ActionKey, ActionMethod> getActions() {
+		return actions;
+	}
 
     public void setTransformers(Map<String, Method> transformers) {
         this.transformers = transformers;

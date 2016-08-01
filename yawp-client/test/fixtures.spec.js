@@ -1,21 +1,21 @@
 import chai from 'chai';
-import yawp from '../index';
+var yawp = require('../index');
 import fx from '../fx';
 
 chai.expect();
 
 const expect = chai.expect;
 
-yawp.config((c1) => {
-    c1.baseUrl('http://localhost:8081/api');
+yawp.config((c) => {
+    c.baseUrl('http://localhost:8081/api');
 });
 
-fx.config((c2) => {
-    c2.baseUrl('http://localhost:8081/fixtures');
-    c2.resetUrl('http://localhost:8081/_ah/yawp/datastore/delete_all');
-    c2.bind('parent', '/parents');
-    c2.bind('child', '/children');
-    c2.bind('job', '/jobs');
+fx.config((c) => {
+    c.baseUrl('http://localhost:8081/fixtures');
+    c.resetUrl('http://localhost:8081/_ah/yawp/datastore/delete_all');
+    c.bind('parent', '/parents');
+    c.bind('child', '/children');
+    c.bind('job', '/jobs');
 });
 
 describe('YAWP! Fixtures', () => {

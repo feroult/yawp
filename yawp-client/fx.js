@@ -1,3 +1,8 @@
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+
 function node() {
     var yawp = require('./lib/node/node');
     return yawp.fx;
@@ -9,4 +14,4 @@ function web() {
 
 var fx = typeof window === 'undefined' ? node() : web();
 
-export default fx;
+exports.default = fx;

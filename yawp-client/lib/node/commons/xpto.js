@@ -1,7 +1,8 @@
+'use strict';
+
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
 function node() {
     return require('./lib/node/node');
 }
@@ -17,3 +18,4 @@ var fx = lib.fx;
 
 exports.default = yawp;
 exports.fx = fx;
+//# sourceMappingURL=xpto.js.map

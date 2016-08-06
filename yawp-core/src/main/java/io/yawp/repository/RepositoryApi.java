@@ -28,6 +28,10 @@ public interface RepositoryApi {
 
     <T> T save(T object);
 
+    <T> T fetch(IdRef<T> id);
+
+    <T> FutureObject<T> fetchAsync(IdRef<T> id);
+
     Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, String json, Map<String, String> params);
 
     <T> QueryBuilder<T> queryWithHooks(Class<T> clazz);

@@ -1,5 +1,6 @@
 package io.yawp.driver.api;
 
+import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.query.QueryBuilder;
 
@@ -12,4 +13,6 @@ public interface QueryDriver {
     public <T> List<IdRef<T>> ids(QueryBuilder<?> builder);
 
     public <T> T fetch(IdRef<T> id);
+
+    <T> FutureObject<T> fetchAsync(IdRef<T> id);
 }

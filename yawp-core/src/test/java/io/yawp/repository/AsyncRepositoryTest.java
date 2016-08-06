@@ -1,12 +1,12 @@
 package io.yawp.repository;
 
-import static org.junit.Assert.assertEquals;
-
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.HookedObject;
-
+import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class AsyncRepositoryTest extends EndpointTestCase {
 
@@ -47,5 +47,32 @@ public class AsyncRepositoryTest extends EndpointTestCase {
         FutureObject<HookedObject> future = yawp.async().saveWithHooks(object);
         assertEquals("after_save", object.getStringValue());
         assertEquals("xpto after save", future.get().getStringValue());
+    }
+
+    @Test
+    @Ignore
+    public void testDestroy() {
+        IdRef<BasicObject> id = id(BasicObject.class, 1l);
+
+        BasicObject object = new BasicObject();
+        object.setId(id);
+
+        yawp.save(object);
+
+        FutureObject<Void> future = yawp.async().destroy(id);
+    }
+
+    @Test
+    public void testFetchAsync() {
+        IdRef<BasicObject> id = id(BasicObject.class, 1l);
+
+        BasicObject object = new BasicObject("xpto");
+        object.setId(id);
+
+        yawp.save(object);
+
+        FutureObject<BasicObject> future = yawp.async().fetch(id);
+        BasicObject retrievedObject = future.get();
+        assertEquals("xpto", retrievedObject.getStringValue());
     }
 }

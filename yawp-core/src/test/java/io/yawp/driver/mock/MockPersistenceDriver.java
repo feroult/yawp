@@ -3,12 +3,11 @@ package io.yawp.driver.mock;
 import io.yawp.driver.api.PersistenceDriver;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.Repository;
+import io.yawp.repository.models.ObjectHolder;
+import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 
 import java.util.concurrent.Future;
-
-import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 
 public class MockPersistenceDriver implements PersistenceDriver {
 
@@ -51,6 +50,12 @@ public class MockPersistenceDriver implements PersistenceDriver {
     @Override
     public void destroy(IdRef<?> id) {
         MockStore.remove(id, tx());
+    }
+
+    @Override
+    public FutureObject<Void> destroyAsync(IdRef<?> id) {
+        // TODO
+        return null;
     }
 
     private void setIdIfNecessary(ObjectHolder objectHolder) {

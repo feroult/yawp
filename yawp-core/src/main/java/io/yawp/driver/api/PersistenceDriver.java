@@ -11,4 +11,6 @@ public interface PersistenceDriver {
 
     void destroy(IdRef<?> id);
 
+    FutureObject<Void> destroyAsync(IdRef<?> id);
+
 }

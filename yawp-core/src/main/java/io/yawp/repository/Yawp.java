@@ -143,6 +143,19 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
     }
 
     @Override
+    public <T> T fetch(IdRef<T> id) {
+        init();
+        return get().fetch(id);
+
+    }
+
+    @Override
+    public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
+        init();
+        return get().fetchAsync(id);
+    }
+
+    @Override
     public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, String json, Map<String, String> params) {
         init();
         return get().action(id, clazz, actionKey, json, params);

@@ -108,6 +108,26 @@ public class Repository implements RepositoryApi {
         return object;
     }
 
+    @Override
+    public <T> T fetch(IdRef<T> id) {
+        namespace.set(id.getClazz());
+        try {
+            return driver().query().fetch(id);
+        } finally {
+            namespace.reset();
+        }
+    }
+
+    @Override
+    public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
+        namespace.set(id.getClazz());
+        try {
+            return driver().query().fetchAsync(id);
+        } finally {
+            namespace.reset();
+        }
+    }
+
     protected <T> FutureObject<T> saveAsyncWithHooks(T object) {
         namespace.set(object.getClass());
         try {
@@ -226,6 +246,16 @@ public class Repository implements RepositoryApi {
         }
     }
 
+    protected FutureObject<Void> destroyAsync(IdRef<?> id) {
+        namespace.set(id.getClazz());
+        try {
+            FutureObject<Void> future = destroyInternalAsync(id);
+            return future;
+        } finally {
+            namespace.reset();
+        }
+    }
+
     private void destroyInternal(IdRef<?> id) {
         boolean newTransaction = beginTransactionForPipesOnDestroy(id);
         try {
@@ -241,6 +271,12 @@ public class Repository implements RepositoryApi {
             }
         }
     }
+
+    private FutureObject<Void> destroyInternalAsync(IdRef<?> id) {
+        FutureObject<Void> futureObject = driver().persistence().destroyAsync(id);
+        return futureObject;
+    }
+
 
     @Override
     public Class<?> getClazzByKind(String kind) {
@@ -321,4 +357,5 @@ public class Repository implements RepositoryApi {
     public RequestContext getRequestContext() {
         return requestContext;
     }
+
 }

@@ -101,7 +101,7 @@ public class ReflowRefluxTask implements DeferredTask {
     }
 
     private void enqueueNextBatch(String nextCursor) {
-        Queue queue = QueueHelper.getPipeQueue(pipe);
+        Queue queue = QueueHelper.getPipeReflowQueue(pipe);
         queue.add(TaskOptions.Builder.withPayload(new ReflowRefluxTask(pipe, sink, nextCursor)));
     }
 

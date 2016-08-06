@@ -24,7 +24,7 @@ public class MockDriver implements Driver {
 
     @Override
     public QueryDriver query() {
-        return new MockQueryDriver();
+        return new MockQueryDriver(r);
     }
 
     @Override

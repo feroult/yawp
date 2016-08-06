@@ -10,7 +10,7 @@ import java.util.List;
 public class CounterPipe extends Pipe<PipedObject, PipedObjectCounter> {
 
     @Override
-    public String getQueueName() {
+    public String getDefaultQueue() {
         return "default";
     }
 

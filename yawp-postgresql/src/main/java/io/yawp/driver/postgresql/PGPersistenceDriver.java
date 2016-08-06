@@ -51,6 +51,12 @@ public class PGPersistenceDriver implements PersistenceDriver {
         datastore.delete(IdRefToKey.toKey(r, id));
     }
 
+    @Override
+    public FutureObject<Void> destroyAsync(IdRef<?> id) {
+        // TODO
+        return null;
+    }
+
     private Entity createEntity(ObjectHolder objectHolder) {
         IdRef<?> id = objectHolder.getId();
 

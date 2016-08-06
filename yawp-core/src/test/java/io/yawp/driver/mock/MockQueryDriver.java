@@ -1,18 +1,28 @@
 package io.yawp.driver.mock;
 
 import io.yawp.driver.api.QueryDriver;
+import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.condition.BaseCondition;
+import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class MockQueryDriver implements QueryDriver {
+
+    private Repository r;
+
+    public MockQueryDriver(Repository r) {
+        this.r = r;
+    }
 
     @Override
     public <T> List<T> objects(QueryBuilder<?> builder) {
@@ -37,6 +47,13 @@ public class MockQueryDriver implements QueryDriver {
     @Override
     public <T> T fetch(IdRef<T> id) {
         return (T) MockStore.get(id);
+    }
+
+    @Override
+    public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
+        T object = fetch(id);
+        Future<?> futureObject = ConcurrentUtils.constantFuture(object);
+        return new FutureObject<T>(r, futureObject);
     }
 
     private <T> List<T> generateResults(QueryBuilder<?> builder) {

@@ -78,7 +78,7 @@ public class ForkTask implements DeferredTask {
     }
 
     private void enqueue(TaskOptions taskOptions) {
-        Queue queue = QueueHelper.getPipeQueue(pipe);
+        Queue queue = QueueHelper.getPipeJoinQueue(pipe);
         queue.add(taskOptions);
     }
 

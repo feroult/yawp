@@ -47,7 +47,7 @@ public class FanoutTask implements DeferredTask {
     }
 
     private void fanout() {
-        Queue queue = QueueHelper.getPipeQueue(pipe);
+        Queue queue = QueueHelper.getPipeForkQueue(pipe);
 
         for (IdRef<?> sinkId : getSinkIds()) {
             payload.setSinkUri(sinkId);

@@ -56,11 +56,47 @@ public abstract class Pipe<T, S> extends Feature {
     }
 
     /**
-     * Override this method to specify a custom queue for this pipe.
+     * Override this method to specify a custom default queue for this pipe.
      *
      * @return Queue name
      */
-    public String getQueueName() {
+    public String getDefaultQueue() {
+        return null;
+    }
+
+    /**
+     * Override this method to specify a custom fanout queue for this pipe.
+     *
+     * @return Queue name
+     */
+    public String getFanoutQueue() {
+        return null;
+    }
+
+    /**
+     * Override this method to specify a custom fork queue for this pipe.
+     *
+     * @return Queue name
+     */
+    public String getForkQueue() {
+        return null;
+    }
+
+    /**
+     * Override this method to specify a custom join queue for this pipe.
+     *
+     * @return Queue name
+     */
+    public String getJoinQueue() {
+        return null;
+    }
+
+    /**
+     * Override this method to specify a custom reflow queue for this pipe.
+     *
+     * @return Queue name
+     */
+    public String getReflowQueue() {
         return null;
     }
 

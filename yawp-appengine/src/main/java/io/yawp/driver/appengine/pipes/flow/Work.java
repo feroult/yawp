@@ -55,7 +55,7 @@ public class Work {
     }
 
     private void log() {
-        logger.info(String.format("join-work - pipe: %s, sourceId: %s", payload.getPipeClazz().getName(), payload.getSourceId().getUri()));
+        logger.info(String.format("join-work - pipe: %s, sourceId: %s, version: %d", payload.getPipeClazz().getName(), payload.getSourceId().getUri(), payload.getSourceMarker().getVersion()));
     }
 
     private void rememberSourceInSinkMarker(SinkMarker sinkMarker) {

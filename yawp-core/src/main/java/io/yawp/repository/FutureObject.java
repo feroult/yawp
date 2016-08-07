@@ -16,6 +16,8 @@ public class FutureObject<T> {
 
     private T object;
 
+    private boolean resolved = false;
+
     private boolean enableHooks;
 
     public FutureObject(Repository r, Future<IdRef<?>> futureIdRef, T object) {
@@ -29,11 +31,21 @@ public class FutureObject<T> {
         this.futureObject = futureObject;
     }
 
+    public FutureObject(T object) {
+        this.object = object;
+        this.resolved = true;
+    }
+
     public void setEnableHooks(boolean enableHooks) {
         this.enableHooks = enableHooks;
     }
 
     public T get() {
+
+        if (resolved) {
+            return object;
+        }
+
         try {
             if (futureIdRef != null) {
                 setObjectId();
@@ -45,6 +57,7 @@ public class FutureObject<T> {
                 RepositoryHooks.afterSave(r, object);
             }
 
+            this.resolved = true;
             return object;
 
         } catch (InterruptedException | ExecutionException e) {
@@ -57,7 +70,7 @@ public class FutureObject<T> {
         objectHolder.setId(futureIdRef.get());
     }
 
-    private void setObject() throws ExecutionException, InterruptedException {
+    private void setObject() throws InterruptedException, ExecutionException {
         this.object = (T) futureObject.get();
     }
 

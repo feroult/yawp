@@ -3,8 +3,6 @@ package io.yawp.driver.appengine.pipes.flow;
 import com.google.appengine.api.memcache.MemcacheService;
 import com.google.appengine.api.memcache.MemcacheServiceFactory;
 import com.google.appengine.api.taskqueue.DeferredTask;
-import io.yawp.repository.AsyncRepository;
-import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
@@ -16,12 +14,6 @@ import java.util.logging.Logger;
 
 import static io.yawp.driver.appengine.pipes.flow.CacheHelper.POW_2_15;
 import static io.yawp.repository.Yawp.yawp;
-
-// semaphore for joins
-// http://xion.org.pl/2011/12/10/synchronization-through-memcache/
-// http://stackoverflow.com/questions/14907908/google-app-engine-how-to-make-synchronized-actions-using-memcache-or-datastore
-// https://cloud.google.com/appengine/articles/best-practices-for-app-engine-memcache
-
 
 public class JoinTask implements DeferredTask {
 
@@ -39,8 +31,6 @@ public class JoinTask implements DeferredTask {
 
     private transient Repository r;
 
-    private AsyncRepository async;
-
     private transient String indexCacheKey;
 
     private transient String lockCacheKey;
@@ -53,7 +43,7 @@ public class JoinTask implements DeferredTask {
 
     private transient Set<IdRef<?>> sinksToSave;
 
-    private transient Map<IdRef<SinkMarker>, FutureObject<SinkMarker>> sinkMarkerCache;
+    private transient Map<IdRef<SinkMarker>, SinkMarker> sinkMarkerCache;
 
     private transient Set<IdRef<SinkMarker>> sinkMarkersToSave;
 
@@ -65,23 +55,13 @@ public class JoinTask implements DeferredTask {
 
     @Override
     public void run() {
-//        Mutex mutex = new Mutex("join-task-" + sinkGroupUri, 300l, ns);
-//        if (mutex.aquire()) {
-//            try {
         init();
+        log();
         join();
-//            } finally {
-//                mutex.release();
-//            }
-//        } else {
-//            throw new RuntimeException("cannot aquire mutex for: " + sinkGroupUri);
-//        }
     }
 
     private void init() {
-        logger.info(String.format("join-task - sinkGroupId: %s", sinkGroupUri));
         this.r = yawp().namespace(ns);
-        this.async = r.async();
         this.memcache = MemcacheServiceFactory.getMemcacheService();
         this.indexCacheKey = CacheHelper.createIndexCacheKey(sinkGroupUri);
         this.lockCacheKey = CacheHelper.createLockCacheKey(sinkGroupUri, index);
@@ -93,11 +73,10 @@ public class JoinTask implements DeferredTask {
     }
 
     private void log() {
-
+        logger.info(String.format("join-task - sinkGroupId: %s", sinkGroupUri));
     }
 
     private void join() {
-        logger.info("join");
         memcache.increment(indexCacheKey, 1);
         memcache.increment(lockCacheKey, -1 * POW_2_15);
 
@@ -106,28 +85,15 @@ public class JoinTask implements DeferredTask {
     }
 
     private void execute() {
-        logger.info("execute");
-
         List<Work> works = listWorks();
 
         try {
             r.beginX();
-
-            logger.info("cache sink markers");
-            for (Work work : works) {
-                putSinkMarkerOnCache(work.createSinkMarkerId());
-            }
-
-            logger.info("process works");
             for (Work work : works) {
                 executeIfLastVersion(work);
             }
-
-            logger.info("save sink and markers");
             commitIfChanged();
             memcache.delete(lockCacheKey);
-
-            logger.info("finish");
         } finally {
             if (r.isTransationInProgress()) {
                 r.rollback();
@@ -150,7 +116,7 @@ public class JoinTask implements DeferredTask {
         }
 
         for (IdRef<SinkMarker> id : sinkMarkersToSave) {
-            async.save(getSinkMarkerFromCache(id));
+            r.save(sinkMarkerCache.get(id));
         }
 
         for (IdRef<?> sinkId : sinksToSave) {
@@ -168,7 +134,7 @@ public class JoinTask implements DeferredTask {
 
     private void executeIfLastVersion(Work work) {
         IdRef<SinkMarker> sinkMarkerId = work.createSinkMarkerId();
-        SinkMarker sinkMarker = getSinkMarkerFromCache(sinkMarkerId);
+        SinkMarker sinkMarker = getFromCacheOrFetchSinkMarker(sinkMarkerId);
 
         if (sinkMarker.getVersion() >= work.getSourceVersion()) {
             return;
@@ -178,7 +144,7 @@ public class JoinTask implements DeferredTask {
         work.execute(sink, sinkMarker);
 
         sinksToSave.add(work.getSinkId());
-//        sinkMarkerCache.put(sinkMarkerId, sinkMarker);
+        sinkMarkerCache.put(sinkMarkerId, sinkMarker);
         sinkMarkersToSave.add(sinkMarkerId);
     }
 
@@ -210,26 +176,27 @@ public class JoinTask implements DeferredTask {
         }
     }
 
-    private SinkMarker getSinkMarkerFromCache(IdRef<SinkMarker> sinkMarkerId) {
-        SinkMarker sinkMarker = sinkMarkerCache.get(sinkMarkerId).get();
-        if (sinkMarker == null) {
-            sinkMarker = new SinkMarker();
+    private SinkMarker getFromCacheOrFetchSinkMarker(IdRef<SinkMarker> sinkMarkerId) {
+        if (sinkMarkerCache.containsKey(sinkMarkerId)) {
+            return sinkMarkerCache.get(sinkMarkerId);
+        }
+
+        SinkMarker sinkMarker = fetchOrCreateSinkMarker(sinkMarkerId);
+        sinkMarkerCache.put(sinkMarkerId, sinkMarker);
+        return sinkMarker;
+    }
+
+    private SinkMarker fetchOrCreateSinkMarker(IdRef<SinkMarker> sinkMarkerId) {
+        try {
+            return sinkMarkerId.fetch();
+        } catch (NoResultException e) {
+            SinkMarker sinkMarker = new SinkMarker();
             sinkMarker.setId(sinkMarkerId);
             sinkMarker.setParentId(sinkMarkerId.getParentId());
             sinkMarker.setVersion(0L);
             sinkMarker.setPresent(false);
-            sinkMarkerCache.put(sinkMarkerId, new FutureObject<SinkMarker>(sinkMarker));
+            return sinkMarker;
         }
-        return sinkMarker;
-    }
-
-    private void putSinkMarkerOnCache(IdRef<SinkMarker> sinkMarkerId) {
-        FutureObject<SinkMarker> futureSinkMarker = fetchOrCreateSinkMarker(sinkMarkerId);
-        sinkMarkerCache.put(sinkMarkerId, futureSinkMarker);
-    }
-
-    private FutureObject<SinkMarker> fetchOrCreateSinkMarker(IdRef<SinkMarker> sinkMarkerId) {
-        return async.fetch(sinkMarkerId);
     }
 
     private List<Work> listWorks() {

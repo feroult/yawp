@@ -35,7 +35,6 @@ public class ForkTask implements DeferredTask {
     @Override
     public void run() {
         init();
-        log();
         if (!fork()) {
             // requeue
             throw new IllegalStateException();
@@ -43,15 +42,12 @@ public class ForkTask implements DeferredTask {
     }
 
     private void init() {
+        logger.info(String.format("fork-task - pipe: %s, sinkId: %s", payload.getPipeClazz().getName(), payload.getSinkUri()));
         this.r = yawp().namespace(payload.getNs());
         this.pipe = newPipeInstance();
         this.sinkGroupUri = payload.getSinkGroupUri();
         this.indexCacheKey = createIndexCacheKey(sinkGroupUri);
         this.memcache = MemcacheServiceFactory.getMemcacheService(payload.getNs());
-    }
-
-    private void log() {
-        logger.info(String.format("fork-task - pipe: %s, sinkId: %s", payload.getPipeClazz().getName(), payload.getSinkUri()));
     }
 
     private boolean fork() {

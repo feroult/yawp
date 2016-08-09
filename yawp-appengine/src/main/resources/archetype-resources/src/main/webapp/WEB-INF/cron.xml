@@ -1,0 +1,7 @@
+<cronentries>
+    <cron>
+        <url>/_ah/yawp/pipes/flow-drops</url>
+        <description>Flow Pipe Drops</description>
+        <schedule>every 30 minutes</schedule>
+    </cron>
+</cronentries>

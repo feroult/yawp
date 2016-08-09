@@ -3,6 +3,7 @@ package io.yawp.testing.appengine.pipes.flow;
 import io.yawp.driver.appengine.AppengineDriver;
 import io.yawp.driver.appengine.pipes.flow.Payload;
 import io.yawp.driver.appengine.pipes.flow.Work;
+import io.yawp.driver.appengine.pipes.flow.drops.FlowDropsTask;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.pipes.SourceMarker;
 import io.yawp.testing.EndpointTestCaseBase;
@@ -52,6 +53,7 @@ public class FlowDropsTest extends EndpointTestCaseBase {
 
 
         Work work = new Work("x", payload);
+        work.setTimestamp(System.currentTimeMillis() - FlowDropsTask.ELAPSED_TIME_MILLES - 15000);
 
         yawp.save(work);
     }

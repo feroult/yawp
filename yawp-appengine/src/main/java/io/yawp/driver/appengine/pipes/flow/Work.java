@@ -28,12 +28,17 @@ public class Work {
     @Json
     private Payload payload;
 
+    @Index
+    private long timestamp;
+
     public Work() {
+        this(null, null);
     }
 
     public Work(String indexHash, Payload payload) {
         this.indexHash = indexHash;
         this.payload = payload;
+        this.timestamp = System.currentTimeMillis();
     }
 
     public <T, S> void execute(Object sink, SinkMarker sinkMarker) {
@@ -96,5 +101,9 @@ public class Work {
 
     public IdRef<?> getSinkId() {
         return payload.getSinkId();
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 }

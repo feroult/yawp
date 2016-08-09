@@ -20,7 +20,9 @@ import static io.yawp.repository.Yawp.yawp;
 
 public class FlowDropsTask implements DeferredTask {
 
-    public static final int BATCH_SIZE = 100;
+    private static final int BATCH_SIZE = 100;
+
+    public static final int ELAPSED_TIME_MILLES = 1000 * 60 * 20;
 
     private String ns;
 
@@ -90,7 +92,9 @@ public class FlowDropsTask implements DeferredTask {
     }
 
     private QueryBuilder<Work> worksQuery() {
-        QueryBuilder<Work> q = yawp(Work.class);
+        long timestamp = System.currentTimeMillis() - ELAPSED_TIME_MILLES;
+
+        QueryBuilder<Work> q = yawp(Work.class).where("timestamp", "<=", timestamp);
         if (cursor != null) {
             q.setCursor(cursor);
         }

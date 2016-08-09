@@ -55,16 +55,6 @@
 
     <security-constraint>
         <web-resource-collection>
-            <web-resource-name>${artifactId}-tasks</web-resource-name>
-            <url-pattern>/api/_tasks/*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>admin</role-name>
-        </auth-constraint>
-    </security-constraint>
-
-    <security-constraint>
-        <web-resource-collection>
             <web-resource-name>${artifactId}-fixtures</web-resource-name>
             <url-pattern>/fixtures/*</url-pattern>
         </web-resource-collection>
@@ -75,10 +65,30 @@
             <web-resource-name>${artifactId}-tests</web-resource-name>
             <url-pattern>/test/*</url-pattern>
         </web-resource-collection>
+    </security-constraint -->
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>${artifactId}-tasks</web-resource-name>
+            <url-pattern>/api/_tasks/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>${artifactId}-admin</web-resource-name>
+            <url-pattern>/_ah/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
     </security-constraint>
 
     <security-role>
         <role-name>admin</role-name>
-    </security-role -->
+    </security-role>
 
 </web-app>

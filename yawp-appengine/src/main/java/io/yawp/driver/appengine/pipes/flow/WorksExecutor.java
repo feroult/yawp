@@ -1,5 +1,7 @@
 package io.yawp.driver.appengine.pipes.flow;
 
+import io.yawp.repository.AsyncRepository;
+import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
@@ -21,11 +23,13 @@ public class WorksExecutor {
 
     private Repository r;
 
+    private AsyncRepository async;
+
     private Map<IdRef<?>, Object> sinkCache = new HashMap<>();
 
     private Set<IdRef<?>> sinksToSave = new HashSet<>();
 
-    private Map<IdRef<SinkMarker>, SinkMarker> sinkMarkerCache = new HashMap<>();
+    private Map<IdRef<SinkMarker>, FutureObject<SinkMarker>> sinkMarkerCache = new HashMap<>();
 
     private Set<IdRef<SinkMarker>> sinkMarkersToSave = new HashSet<>();
 
@@ -33,14 +37,14 @@ public class WorksExecutor {
         this.r = r;
         this.works = works;
         this.r = yawp().namespace(ns);
+        this.async = r.async();
     }
 
     public void execute() {
         try {
             r.beginX();
-            for (Work work : works) {
-                executeIfLastVersion(work);
-            }
+            cacheSinkMarkers();
+            executeWorks();
             commitIfChanged();
         } finally {
             if (r.isTransationInProgress()) {
@@ -51,7 +55,19 @@ public class WorksExecutor {
 
     public void destroy() {
         for (Work work : works) {
-            r.destroy(work.getId());
+            async.destroy(work.getId());
+        }
+    }
+
+    private void executeWorks() {
+        for (Work work : works) {
+            executeIfLastVersion(work);
+        }
+    }
+
+    private void cacheSinkMarkers() {
+        for (Work work : works) {
+            putSinkMarkerOnCache(work.createSinkMarkerId());
         }
     }
 
@@ -62,11 +78,12 @@ public class WorksExecutor {
         }
 
         for (IdRef<SinkMarker> id : sinkMarkersToSave) {
-            r.save(sinkMarkerCache.get(id));
+            async.save(getSinkMarkerFromCache(id));
         }
 
         for (IdRef<?> sinkId : sinksToSave) {
             logSave(sinkId);
+            // TODO: support pipes at async repoistory operations
             r.saveWithHooks(sinkCache.get(sinkId));
         }
 
@@ -80,7 +97,7 @@ public class WorksExecutor {
 
     private void executeIfLastVersion(Work work) {
         IdRef<SinkMarker> sinkMarkerId = work.createSinkMarkerId();
-        SinkMarker sinkMarker = getFromCacheOrFetchSinkMarker(sinkMarkerId);
+        SinkMarker sinkMarker = getSinkMarkerFromCache(sinkMarkerId);
 
         if (sinkMarker.getVersion() >= work.getSourceVersion()) {
             return;
@@ -90,7 +107,6 @@ public class WorksExecutor {
         work.execute(sink, sinkMarker);
 
         sinksToSave.add(work.getSinkId());
-        sinkMarkerCache.put(sinkMarkerId, sinkMarker);
         sinkMarkersToSave.add(sinkMarkerId);
     }
 
@@ -122,26 +138,22 @@ public class WorksExecutor {
         }
     }
 
-    private SinkMarker getFromCacheOrFetchSinkMarker(IdRef<SinkMarker> sinkMarkerId) {
-        if (sinkMarkerCache.containsKey(sinkMarkerId)) {
-            return sinkMarkerCache.get(sinkMarkerId);
-        }
-
-        SinkMarker sinkMarker = fetchOrCreateSinkMarker(sinkMarkerId);
-        sinkMarkerCache.put(sinkMarkerId, sinkMarker);
-        return sinkMarker;
+    private void putSinkMarkerOnCache(IdRef<SinkMarker> sinkMarkerId) {
+        FutureObject<SinkMarker> futureSinkMarker = async.fetch(sinkMarkerId);
+        sinkMarkerCache.put(sinkMarkerId, futureSinkMarker);
     }
 
-    private SinkMarker fetchOrCreateSinkMarker(IdRef<SinkMarker> sinkMarkerId) {
-        try {
-            return sinkMarkerId.fetch();
-        } catch (NoResultException e) {
-            SinkMarker sinkMarker = new SinkMarker();
+    private SinkMarker getSinkMarkerFromCache(IdRef<SinkMarker> sinkMarkerId) {
+        SinkMarker sinkMarker = sinkMarkerCache.get(sinkMarkerId).get();
+        if (sinkMarker == null) {
+            sinkMarker = new SinkMarker();
             sinkMarker.setId(sinkMarkerId);
             sinkMarker.setParentId(sinkMarkerId.getParentId());
             sinkMarker.setVersion(0L);
             sinkMarker.setPresent(false);
-            return sinkMarker;
+            sinkMarkerCache.put(sinkMarkerId, new FutureObject<SinkMarker>(sinkMarker));
         }
+        return sinkMarker;
     }
+
 }

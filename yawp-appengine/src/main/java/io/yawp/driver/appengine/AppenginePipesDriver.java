@@ -87,7 +87,7 @@ public class AppenginePipesDriver implements PipesDriver {
     }
 
     private void fanout(Pipe pipe, Payload payload) {
-        Queue queue = QueueHelper.getPipeFanoutQueue(pipe);
+        Queue queue = QueueHelper.getPipeForkQueue(pipe);
         queue.add(TaskOptions.Builder.withPayload(new FanoutTask(payload)));
     }
 

@@ -65,15 +65,6 @@ public abstract class Pipe<T, S> extends Feature {
     }
 
     /**
-     * Override this method to specify a custom fanout queue for this pipe.
-     *
-     * @return Queue name
-     */
-    public String getFanoutQueue() {
-        return null;
-    }
-
-    /**
      * Override this method to specify a custom fork queue for this pipe.
      *
      * @return Queue name

@@ -27,10 +27,6 @@ public class QueueHelper {
         return QueueFactory.getQueue(queueName);
     }
 
-    public static Queue getPipeFanoutQueue(Pipe pipe) {
-        return getPipeQueue(pipe, pipe.getFanoutQueue());
-    }
-
     public static Queue getPipeForkQueue(Pipe pipe) {
         return getPipeQueue(pipe, pipe.getForkQueue());
     }

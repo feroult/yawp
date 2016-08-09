@@ -1,7 +1,7 @@
 import { extend } from './utils';
 
 const DEFAULT_BASE_URL = '/fixtures';
-const DEFAULT_RESET_URL = '/_ah/yawp/datastore/delete_all';
+const DEFAULT_RESET_URL = '/_ah/yawp/datastore/delete-all';
 const DEFAULT_LAZY_PROPERTIES = ['id']; // needed till harmony proxies
 
 export default (request) => {

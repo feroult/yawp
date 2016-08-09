@@ -6,7 +6,7 @@
 
 	fx.config(function(c) {
 		c.baseUrl('/fixtures');
-		c.resetUrl('/_ah/yawp/datastore/delete_all');
+		c.resetUrl('/_ah/yawp/datastore/delete-all');
 
 		c.bind('person', '/people');
 	});

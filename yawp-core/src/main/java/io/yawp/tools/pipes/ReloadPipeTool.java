@@ -4,7 +4,7 @@ import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.tools.Tool;
 
-public class ReloadPipe extends Tool {
+public class ReloadPipeTool extends Tool {
 
     public static final String PIPE_PARAM = "pipe";
 

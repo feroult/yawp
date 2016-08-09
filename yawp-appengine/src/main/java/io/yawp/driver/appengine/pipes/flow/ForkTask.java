@@ -47,7 +47,7 @@ public class ForkTask implements DeferredTask {
         this.pipe = newPipeInstance();
         this.sinkGroupUri = payload.getSinkGroupUri();
         this.indexCacheKey = createIndexCacheKey(sinkGroupUri);
-        this.memcache = MemcacheServiceFactory.getMemcacheService();
+        this.memcache = MemcacheServiceFactory.getMemcacheService(payload.getNs());
     }
 
     private void log() {

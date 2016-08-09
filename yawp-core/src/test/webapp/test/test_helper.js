@@ -2,7 +2,7 @@
 
     yawp.fixtures.config(function (c) {
         c.baseUrl('/fixtures');
-        c.resetUrl('/_ah/yawp/datastore/delete_all');
+        c.resetUrl('/_ah/yawp/datastore/delete-all');
 
         c.bind('parent', '/parents');
         c.bind('job', '/jobs');

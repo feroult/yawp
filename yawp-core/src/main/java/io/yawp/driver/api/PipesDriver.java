@@ -13,4 +13,7 @@ public interface PipesDriver {
     void reflow(Pipe pipe, Object object);
 
     void reload(Class<? extends Pipe> pipeClazz);
+
+    void flowDrops();
+
 }

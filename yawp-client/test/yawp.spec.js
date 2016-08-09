@@ -12,7 +12,7 @@ yawp.config((c) => {
 
 fx.config((c) => {
     c.baseUrl('http://localhost:8081/fixtures');
-    c.resetUrl('http://localhost:8081/_ah/yawp/datastore/delete_all');
+    c.resetUrl('http://localhost:8081/_ah/yawp/datastore/delete-all');
     c.bind('parent', '/parents');
     c.bind('child', '/children');
     c.bind('job', '/jobs');

@@ -13,7 +13,7 @@ var _utils = require('./utils');
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var DEFAULT_BASE_URL = '/fixtures';
-var DEFAULT_RESET_URL = '/_ah/yawp/datastore/delete_all';
+var DEFAULT_RESET_URL = '/_ah/yawp/datastore/delete-all';
 var DEFAULT_LAZY_PROPERTIES = ['id']; // needed till harmony proxies
 
 exports.default = function (request) {

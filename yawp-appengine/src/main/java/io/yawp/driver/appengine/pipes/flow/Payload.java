@@ -133,10 +133,7 @@ public class Payload implements Serializable {
     }
 
     public String getSinkGroupUri() {
-        IdRef<?> sinkGroupId = getSinkId();
-        while (sinkGroupId.getParentId() != null) {
-            sinkGroupId = sinkGroupId.getParentId();
-        }
-        return sinkGroupId.getUri();
+        return CacheHelper.getSinkGroupUri(getSinkId());
     }
+
 }

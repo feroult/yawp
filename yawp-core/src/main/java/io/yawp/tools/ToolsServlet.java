@@ -1,8 +1,9 @@
 package io.yawp.tools;
 
 import io.yawp.commons.http.RequestContext;
-import io.yawp.tools.datastore.DeleteAll;
-import io.yawp.tools.pipes.ReloadPipe;
+import io.yawp.tools.datastore.DeleteAllTool;
+import io.yawp.tools.pipes.FlowPipeDropsTool;
+import io.yawp.tools.pipes.ReloadPipeTool;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -21,8 +22,9 @@ public class ToolsServlet extends HttpServlet {
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        routes.put("/datastore/delete_all", DeleteAll.class);
-        routes.put("/pipes/reload", ReloadPipe.class);
+        routes.put("/datastore/delete-all", DeleteAllTool.class);
+        routes.put("/pipes/reload", ReloadPipeTool.class);
+        routes.put("/pipes/flow-drops", FlowPipeDropsTool.class);
     }
 
     @Override

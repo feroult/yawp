@@ -8,6 +8,7 @@ import io.yawp.driver.api.PipesDriver;
 import io.yawp.driver.appengine.pipes.flow.FanoutTask;
 import io.yawp.driver.appengine.pipes.flow.ForkTask;
 import io.yawp.driver.appengine.pipes.flow.Payload;
+import io.yawp.driver.appengine.pipes.flow.drops.FlowDropsNamespaceFanoutTask;
 import io.yawp.driver.appengine.pipes.reflow.ReflowFluxTask;
 import io.yawp.driver.appengine.pipes.reflow.ReflowRefluxTask;
 import io.yawp.driver.appengine.pipes.reload.ReloadPipeJob;
@@ -57,6 +58,12 @@ public class AppenginePipesDriver implements PipesDriver {
         PipelineService service = PipelineServiceFactory.newPipelineService();
         String pipelineId = service.startNewPipeline(new ReloadPipeJob(), pipeClazz);
         ClearPipelineTask.enqueue(pipelineId);
+    }
+
+    @Override
+    public void flowDrops() {
+        Queue queue = QueueHelper.getDefaultQueue();
+        queue.add(TaskOptions.Builder.withPayload(new FlowDropsNamespaceFanoutTask()));
     }
 
     private void enqueue(Pipe pipe, Object source, Object oldSource, boolean present) {

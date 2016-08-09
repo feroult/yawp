@@ -1,5 +1,6 @@
 package io.yawp.driver.appengine.pipes.flow;
 
+import io.yawp.repository.IdRef;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +15,8 @@ public class CacheHelper {
 
     public static final long POW_2_15 = (long) Math.pow(2, 15);
 
-    private CacheHelper() {}
+    private CacheHelper() {
+    }
 
     public static String createIndexCacheKey(String sinkUri) {
         return String.format("%s-%s", INDEX_PREFIX, sinkUri);
@@ -26,6 +28,14 @@ public class CacheHelper {
 
     public static String createLockCacheKey(String sinkUri, Integer index) {
         return String.format("%s-%s-%d", LOCK_PREFIX, sinkUri, index);
+    }
+
+    public static String getSinkGroupUri(IdRef<?> sinkId) {
+        IdRef<?> sinkGroupId = sinkId;
+        while (sinkGroupId.getParentId() != null) {
+            sinkGroupId = sinkGroupId.getParentId();
+        }
+        return sinkGroupId.getUri();
     }
 
     private static String hash(String string) {

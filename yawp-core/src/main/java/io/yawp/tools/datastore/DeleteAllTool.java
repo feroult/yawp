@@ -2,14 +2,14 @@ package io.yawp.tools.datastore;
 
 import io.yawp.tools.Tool;
 
-public class DeleteAll extends Tool {
+public class DeleteAllTool extends Tool {
 
     public static final String CONFIRM_PARAM = "confirm";
 
     @Override
     public void execute() {
         if (!confirm()) {
-            pw.println("use: datastore/delete_all?confirm=" + System.currentTimeMillis());
+            pw.println("use: datastore/delete-all?confirm=" + System.currentTimeMillis());
             return;
         }
 

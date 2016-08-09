@@ -56,8 +56,8 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 
     @Override
     public FutureObject<Void> destroyAsync(IdRef<?> id) {
-        // TODO
-        return null;
+        Future<Void> future = asyncDatastore().delete(IdRefToKey.toKey(r, id));
+        return new FutureObject<Void>(r, future);
     }
 
     private Entity createEntity(ObjectHolder objectHolder) {

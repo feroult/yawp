@@ -54,8 +54,9 @@ public class MockPersistenceDriver implements PersistenceDriver {
 
     @Override
     public FutureObject<Void> destroyAsync(IdRef<?> id) {
-        // TODO
-        return null;
+        destroy(id);
+        Future<Void> future = ConcurrentUtils.constantFuture(null);
+        return new FutureObject<Void>(r, future);
     }
 
     private void setIdIfNecessary(ObjectHolder objectHolder) {

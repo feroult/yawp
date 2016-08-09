@@ -53,8 +53,9 @@ public class PGPersistenceDriver implements PersistenceDriver {
 
     @Override
     public FutureObject<Void> destroyAsync(IdRef<?> id) {
-        // TODO
-        return null;
+        destroy(id);
+        Future<Void> future = ConcurrentUtils.constantFuture(null);
+        return new FutureObject<Void>(r, future);
     }
 
     private Entity createEntity(ObjectHolder objectHolder) {
@@ -135,7 +136,7 @@ public class PGPersistenceDriver implements PersistenceDriver {
         if (fieldModel.isSaveAsJson()) {
             return JsonUtils.to(value);
         }
-        
+
         if (fieldModel.isSaveAsLazyJson()) {
             String json = ((LazyJson) value).getJson();
             if (json == null) {

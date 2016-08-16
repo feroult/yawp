@@ -20,26 +20,31 @@ import java.util.Map.Entry;
 
 public class JsonUtils {
 
-    private JsonUtils() {}
+    private JsonUtils() {
+    }
 
-    private static Gson buildGson(Repository r) {
+    private static Gson gson;
+
+    static {
+        init();
+    }
+
+    private static void init() {
         GsonBuilder builder = new GsonBuilder();
         builder.setDateFormat(DateUtils.TIMESTAMP_FORMAT);
-        builder.registerTypeAdapter(IdRef.class, new IdRefJsonSerializerDeserializer(r));
+        builder.registerTypeAdapter(IdRef.class, new IdRefJsonSerializerDeserializer());
         builder.registerTypeAdapter(LazyJson.class, new LazyJsonDeserializer());
         builder.registerTypeAdapterFactory(new LazyJsonTypeAdapterFactory());
 
-        return builder.create();
+        gson = builder.create();
     }
 
     public static Object from(Repository r, String json, Type type) {
         JsonElement jsonElement = new JsonParser().parse(json);
-        Gson gson = buildGson(r);
         return gson.fromJson(jsonElement, type);
     }
 
     public static String to(Object o) {
-        Gson gson = buildGson(null);
         if (o == null) {
             return gson.toJson(o);
         }

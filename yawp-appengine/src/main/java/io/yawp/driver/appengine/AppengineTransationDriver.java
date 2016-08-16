@@ -13,12 +13,17 @@ public class AppengineTransationDriver implements TransactionDriver {
 
     private AppengineEnvironmentDriver environment;
 
+    private DatastoreService ds;
+
     public AppengineTransationDriver(AppengineEnvironmentDriver environment) {
         this.environment = environment;
     }
 
     private DatastoreService datastore() {
-        return DatastoreServiceFactory.getDatastoreService();
+        if (ds == null) {
+            ds = DatastoreServiceFactory.getDatastoreService();
+        }
+        return ds;
     }
 
     @Override

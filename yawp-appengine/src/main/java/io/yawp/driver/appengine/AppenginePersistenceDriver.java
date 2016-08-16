@@ -21,16 +21,26 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 
     private Repository r;
 
+    private DatastoreService ds;
+
+    private AsyncDatastoreService asyncDs;
+
     public AppenginePersistenceDriver(Repository r) {
         this.r = r;
     }
 
     private DatastoreService datastore() {
-        return DatastoreServiceFactory.getDatastoreService();
+        if (ds == null) {
+            ds = DatastoreServiceFactory.getDatastoreService();
+        }
+        return ds;
     }
 
     private AsyncDatastoreService asyncDatastore() {
-        return DatastoreServiceFactory.getAsyncDatastoreService();
+        if (asyncDs == null) {
+            asyncDs = DatastoreServiceFactory.getAsyncDatastoreService();
+        }
+        return asyncDs;
     }
 
     @Override

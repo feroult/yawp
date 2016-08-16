@@ -21,12 +21,14 @@ import java.util.concurrent.Future;
 
 public class AppengineQueryDriver implements QueryDriver {
 
-    // Filter for query
     private static final String NORMALIZED_FIELD_PREFIX = "__";
 
     private Repository r;
 
+    private DatastoreService ds;
+
     private EntityToObjectConverter toObject;
+
 
     public AppengineQueryDriver(Repository r) {
         this.r = r;
@@ -34,7 +36,10 @@ public class AppengineQueryDriver implements QueryDriver {
     }
 
     private DatastoreService datastore() {
-        return DatastoreServiceFactory.getDatastoreService();
+        if (ds == null) {
+            ds = DatastoreServiceFactory.getDatastoreService();
+        }
+        return ds;
     }
 
     private AsyncDatastoreService asyncDatastore() {

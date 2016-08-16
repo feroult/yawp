@@ -5,11 +5,18 @@ import io.yawp.repository.Repository;
 import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.query.NoResultException;
 
+import java.util.logging.Logger;
+
 public class RepositoryPipes {
 
-    private RepositoryPipes() {}
+    private final static Logger logger = Logger.getLogger(RepositoryPipes.class.getName());
+
+    private RepositoryPipes() {
+    }
 
     public static void flux(Repository r, Object source) {
+        logger.finer("flux");
+
         Class<?> endpointClazz = source.getClass();
 
         if (!isPipeSource(r, endpointClazz)) {
@@ -23,6 +30,8 @@ public class RepositoryPipes {
     }
 
     public static void reflux(Repository r, IdRef<?> id) {
+        logger.finer("reflux");
+
         Class<?> endpointClazz = id.getClazz();
 
         if (!isPipeSource(r, endpointClazz)) {
@@ -44,6 +53,8 @@ public class RepositoryPipes {
     }
 
     public static void updateExisting(Repository r, Object object) {
+        logger.finer("updating existing");
+
         Class<?> endpointClazz = object.getClass();
 
         if (!isPipeSourceOrSink(r, endpointClazz)) {
@@ -68,6 +79,8 @@ public class RepositoryPipes {
             return;
         }
 
+        logger.finer("refluxing old");
+
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipes()) {
             Pipe pipe = Pipe.newInstance(r, pipeClazz);
             r.driver().pipes().refluxOld(pipe, source, oldSource);
@@ -78,6 +91,8 @@ public class RepositoryPipes {
         if (!isPipeSink(r, endpointClazz)) {
             return;
         }
+
+        logger.finer("reflowing sink");
 
         for (Class<? extends Pipe> pipeClazz : r.getEndpointFeatures(endpointClazz).getPipesSink()) {
             Pipe pipe = Pipe.newInstance(r, pipeClazz);

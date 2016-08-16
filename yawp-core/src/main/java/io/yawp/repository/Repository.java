@@ -13,8 +13,11 @@ import io.yawp.repository.query.QueryBuilder;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class Repository implements RepositoryApi {
+
+    private final static Logger logger = Logger.getLogger(Repository.class.getName());
 
     private RepositoryFeatures repositoryFeatures;
 
@@ -86,6 +89,8 @@ public class Repository implements RepositoryApi {
 
     @Override
     public <T> T saveWithHooks(T object) {
+        logger.finer("save object, hooks: true");
+
         namespace.set(object.getClass());
         try {
             RepositoryHooks.beforeSave(this, object);
@@ -99,6 +104,8 @@ public class Repository implements RepositoryApi {
 
     @Override
     public <T> T save(T object) {
+        logger.finer("saving object, hooks: false");
+
         namespace.set(object.getClass());
         try {
             saveInternal(object);
@@ -150,6 +157,8 @@ public class Repository implements RepositoryApi {
     }
 
     private void saveInternal(Object object) {
+        logger.finer("save object internal");
+
         boolean newTransaction = beginTransactionForPipesOnSave(object);
         try {
             updateExistingPipes(object);

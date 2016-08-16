@@ -14,8 +14,11 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.logging.Logger;
 
 public class AppenginePersistenceDriver implements PersistenceDriver {
+
+    private final static Logger logger = Logger.getLogger(AppenginePersistenceDriver.class.getName());
 
     private static final String NORMALIZED_FIELD_PREFIX = "__";
 
@@ -45,10 +48,17 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
 
     @Override
     public void save(Object object) {
+        logger.finer("loading endpoint model");
         ObjectHolder objectHolder = new ObjectHolder(object);
+
+        logger.finer("creating entity");
         Entity entity = createEntity(objectHolder);
         toEntity(objectHolder, entity);
+
+        logger.finer("saving entity");
         saveEntity(objectHolder, entity);
+
+        logger.finer("done");
     }
 
     @Override

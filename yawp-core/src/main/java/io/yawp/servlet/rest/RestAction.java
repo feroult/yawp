@@ -18,8 +18,11 @@ import io.yawp.repository.transformers.RepositoryTransformers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public abstract class RestAction {
+
+    private final static Logger logger = Logger.getLogger(RestAction.class.getName());
 
     private static final String DEFAULT_TRANSFORMER_NAME = "defaults";
 
@@ -107,11 +110,13 @@ public abstract class RestAction {
     public abstract Object action();
 
     public HttpResponse execute() {
-
+        logger.finer("applying shield");
         executeShield();
 
+        logger.finer("executing action");
         Object object = action();
 
+        logger.finer("creating response object");
         if (HttpResponse.class.isInstance(object)) {
             return (HttpResponse) object;
         }

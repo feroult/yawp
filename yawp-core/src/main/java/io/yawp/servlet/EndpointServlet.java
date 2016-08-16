@@ -14,10 +14,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public class EndpointServlet extends HttpServlet {
 
     private static final long serialVersionUID = 8155293897299089610L;
+
+    private final static Logger logger = Logger.getLogger(EndpointServlet.class.getName());
 
     private boolean enableHooks = true;
 
@@ -102,6 +105,8 @@ public class EndpointServlet extends HttpServlet {
     }
 
     public HttpResponse execute(RequestContext ctx) {
+        logger.finer("initializing endpoint request");
+
         try {
             Repository r = getRepository(ctx);
             EndpointRouter router = EndpointRouter.parse(r, ctx);

@@ -35,11 +35,13 @@ public final class RepositoryScanner {
      */
     @Deprecated
     public RepositoryScanner(String packagePrefix) {
+        logger.finer("initializing");
         this.packagePrefix = packagePrefix;
         this.endpointsPackage = new Reflections(packagePrefix);
         this.yawpPackage = new Reflections("io.yawp");
         this.trees = new HashMap<>();
         this.enableHooks = true;
+        logger.finer("done");
     }
 
     /**

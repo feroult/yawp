@@ -125,7 +125,7 @@ public class AppenginePipesDriver implements PipesDriver {
             sourceMarker.setParentId(objectHolder.getId());
         }
 
-        r.save(sourceMarker);
+        r.driver().persistence().save(sourceMarker);
         return sourceMarker;
     }
 }

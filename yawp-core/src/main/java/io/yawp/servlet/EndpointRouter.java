@@ -6,7 +6,10 @@ import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.RequestContext;
 import io.yawp.commons.utils.Environment;
 import io.yawp.commons.utils.JsonUtils;
-import io.yawp.repository.*;
+import io.yawp.repository.EndpointNotFoundException;
+import io.yawp.repository.IdRef;
+import io.yawp.repository.Repository;
+import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.models.ObjectHolder;
 import io.yawp.servlet.rest.RestAction;
@@ -15,8 +18,11 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class EndpointRouter {
+
+    private final static Logger logger = Logger.getLogger(EndpointRouter.class.getName());
 
     private Repository r;
 
@@ -72,6 +78,7 @@ public class EndpointRouter {
     }
 
     public static EndpointRouter parse(Repository r, RequestContext ctx) {
+        logger.finer("parsing endpoint request");
         return new EndpointRouter(r, ctx);
     }
 
@@ -191,6 +198,8 @@ public class EndpointRouter {
     }
 
     private RestAction createRestAction(boolean enableHooks) {
+        logger.finer("creating rest action, verb: " + verb + ", custom=" + customActionKey);
+
         try {
             Class<? extends RestAction> restActionClazz = RestAction.getRestActionClazz(verb, isOverCollection(), isCustomAction());
 

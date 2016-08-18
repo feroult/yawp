@@ -157,8 +157,6 @@ public class Repository implements RepositoryApi {
     }
 
     private void saveInternal(Object object) {
-        logger.finer("save object internal");
-
         boolean newTransaction = beginTransactionForPipesOnSave(object);
         try {
             updateExistingPipes(object);
@@ -172,6 +170,8 @@ public class Repository implements RepositoryApi {
                 rollback();
             }
         }
+
+        logger.finer("saved");
     }
 
     private boolean beginTransactionForPipesOnSave(Object object) {

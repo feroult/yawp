@@ -27,6 +27,8 @@ public class RepositoryPipes {
             Pipe pipe = Pipe.newInstance(r, pipeClazz);
             r.driver().pipes().flux(pipe, source);
         }
+
+        logger.finer("done");
     }
 
     public static void reflux(Repository r, IdRef<?> id) {
@@ -50,6 +52,8 @@ public class RepositoryPipes {
             Pipe pipe = Pipe.newInstance(r, pipeClazz);
             r.driver().pipes().reflux(pipe, source);
         }
+
+        logger.finer("done");
     }
 
     public static void updateExisting(Repository r, Object object) {
@@ -72,6 +76,8 @@ public class RepositoryPipes {
 
         refluxOld(r, endpointClazz, object, oldObject);
         reflowSink(r, endpointClazz, object, oldObject);
+
+        logger.finer("done");
     }
 
     private static void refluxOld(Repository r, Class<?> endpointClazz, Object source, Object oldSource) {

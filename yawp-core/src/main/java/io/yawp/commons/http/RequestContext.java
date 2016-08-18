@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class RequestContext {
+
+    private final static Logger logger = Logger.getLogger(RequestContext.class.getName());
 
     private HttpServletResponse resp;
 
@@ -27,6 +30,8 @@ public class RequestContext {
     }
 
     public RequestContext(HttpServletRequest req, HttpServletResponse resp) {
+        logger.finer("parsing request context");
+
         this.req = req;
         this.resp = resp;
 
@@ -34,6 +39,8 @@ public class RequestContext {
         this.uri = parseUri();
         this.json = parseJson();
         this.params = parseParams();
+
+        logger.finer("done");
     }
 
     public HttpServletRequest req() {

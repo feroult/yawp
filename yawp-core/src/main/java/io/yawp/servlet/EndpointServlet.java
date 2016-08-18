@@ -89,6 +89,8 @@ public class EndpointServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.finer("begin");
+
         HttpResponse httpResponse;
         try {
             httpResponse = execute(new RequestContext(req, resp));
@@ -102,11 +104,11 @@ public class EndpointServlet extends HttpServlet {
             resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, OPTIONS, DELETE");
         }
         response(resp, httpResponse);
+
+        logger.finer("done");
     }
 
     public HttpResponse execute(RequestContext ctx) {
-        logger.finer("initializing endpoint request");
-
         try {
             Repository r = getRepository(ctx);
             EndpointRouter router = EndpointRouter.parse(r, ctx);

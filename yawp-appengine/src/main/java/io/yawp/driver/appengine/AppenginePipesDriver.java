@@ -22,8 +22,11 @@ import io.yawp.repository.pipes.SourceMarker;
 import io.yawp.repository.query.NoResultException;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
 public class AppenginePipesDriver implements PipesDriver {
+
+    private final static Logger logger = Logger.getLogger(AppenginePipesDriver.class.getName());
 
     private Repository r;
 
@@ -92,6 +95,8 @@ public class AppenginePipesDriver implements PipesDriver {
     }
 
     private Payload createPayload(Pipe pipe, Object source, SourceMarker marker, Object oldSource, boolean present) {
+        logger.finer("creating payload");
+
         Payload payload = new Payload();
         payload.setNs(r.namespace().getNs());
         payload.setPipeClazz(pipe.getClass());
@@ -99,6 +104,8 @@ public class AppenginePipesDriver implements PipesDriver {
         payload.setSourceMarkerJson(marker);
         payload.setOldSourceJson(oldSource);
         payload.setPresent(present);
+
+        logger.finer("done");
         return payload;
     }
 
@@ -111,6 +118,8 @@ public class AppenginePipesDriver implements PipesDriver {
     }
 
     private SourceMarker saveSourceMarker(Object source) {
+        logger.finer("saving source marker");
+
         ObjectHolder objectHolder = new ObjectHolder(source);
         IdRef<SourceMarker> markerId = createSourceMarkerId(objectHolder);
 
@@ -126,6 +135,8 @@ public class AppenginePipesDriver implements PipesDriver {
         }
 
         r.driver().persistence().save(sourceMarker);
+
+        logger.finer("done");
         return sourceMarker;
     }
 }

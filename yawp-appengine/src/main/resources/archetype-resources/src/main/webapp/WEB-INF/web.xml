@@ -80,7 +80,7 @@
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>${artifactId}-admin</web-resource-name>
-            <url-pattern>/_ah/*</url-pattern>
+            <url-pattern>/_ah/yawp/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <role-name>admin</role-name>

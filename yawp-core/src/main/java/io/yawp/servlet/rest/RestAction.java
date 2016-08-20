@@ -247,22 +247,18 @@ public abstract class RestAction {
     }
 
     private Shield<?> createShield(EndpointFeatures<?> endpointFeatures) {
-        try {
-            ShieldInfo<?> shieldInfo = endpointFeatures.getShieldInfo();
+        ShieldInfo<?> shieldInfo = endpointFeatures.getShieldInfo();
 
-            Shield<?> shield = shieldInfo.getShieldClazz().newInstance();
-            shield.setRepository(r);
-            shield.setEndpointClazz(endpointClazz);
-            shield.setId(id);
-            shield.setObjects(objects);
-            shield.setRequestJson(requestJson);
-            shield.setParams(params);
-            shield.setActionKey(customActionKey);
-            shield.setActionMethods(shieldInfo.getActionMethods());
-            return shield;
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        Shield<?> shield = shieldInfo.newInstance();
+        shield.setRepository(r);
+        shield.setEndpointClazz(endpointClazz);
+        shield.setId(id);
+        shield.setObjects(objects);
+        shield.setRequestJson(requestJson);
+        shield.setParams(params);
+        shield.setActionKey(customActionKey);
+        shield.setActionMethods(shieldInfo.getActionMethods());
+        return shield;
     }
 
     public void setObjects(List<?> objects) {

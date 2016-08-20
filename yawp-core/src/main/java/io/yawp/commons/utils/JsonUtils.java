@@ -108,8 +108,7 @@ public class JsonUtils {
         if (json == null) {
             return false;
         }
-        JsonElement parsed = new JsonParser().parse(json);
-        return parsed.isJsonArray();
+        return json.charAt(0) == '[';
     }
 
     public static List<String> getProperties(String json) {

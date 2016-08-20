@@ -4,6 +4,8 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.InvalidActionMethodException;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -15,8 +17,11 @@ public class ShieldInfo<T> {
 
     private Map<ActionKey, Method> actionMethods;
 
+    private transient Constructor<? extends Shield<? super T>> constructor;
+
     public ShieldInfo(Class<? extends Shield<? super T>> shieldClazz) {
         this.shieldClazz = shieldClazz;
+        this.constructor = cacheConstructor(shieldClazz);
         parseActionMethods();
     }
 
@@ -50,6 +55,24 @@ public class ShieldInfo<T> {
             return ActionMethod.getActionKeysFor(method);
         } catch (InvalidActionMethodException e) {
             throw new RuntimeException("Invalid action method in shield: " + shieldClazz.getName() + "." + method.getName(), e);
+        }
+    }
+
+    private Constructor<? extends Shield<? super T>> cacheConstructor(Class<? extends Shield<? super T>> shieldClazz) {
+        try {
+            Constructor<? extends Shield<? super T>> constructor = shieldClazz.getConstructor();
+            constructor.setAccessible(true);
+            return constructor;
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Shield<?> newInstance() {
+        try {
+            return constructor.newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 }

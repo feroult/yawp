@@ -2,12 +2,13 @@ package io.yawp.commons.utils;
 
 import com.google.gson.*;
 import io.yawp.commons.utils.json.CustomJsonWriter;
-import io.yawp.commons.utils.json.LazyJsonDeserializer;
 import io.yawp.commons.utils.json.IdRefJsonSerializerDeserializer;
+import io.yawp.commons.utils.json.LazyJsonDeserializer;
 import io.yawp.commons.utils.json.LazyJsonTypeAdapterFactory;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.LazyJson;
 import io.yawp.repository.Repository;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -105,7 +106,7 @@ public class JsonUtils {
     }
 
     public static boolean isJsonArray(String json) {
-        if (json == null) {
+        if (StringUtils.isEmpty(json)) {
             return false;
         }
         return json.charAt(0) == '[';

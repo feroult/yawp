@@ -78,4 +78,7 @@ public final class LazyJson<T> implements Serializable {
         return lazyJson;
     }
 
+    public boolean isParsed() {
+        return object != null;
+    }
 }

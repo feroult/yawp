@@ -216,6 +216,10 @@ public class BasicObject implements Serializable {
         return lazyPojo.get();
     }
 
+    public LazyJson<Pojo> getLazyPojoAsLazyJson() {
+        return lazyPojo;
+    }
+
     public void setLazyPojo(Pojo lazyPojo) {
         this.lazyPojo.set(lazyPojo);
     }

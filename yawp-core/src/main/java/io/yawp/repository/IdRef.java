@@ -20,17 +20,20 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
 
     private static final long serialVersionUID = 2203539386465263956L;
 
-    private Repository r;
+    private transient Repository r;
 
-    private Class<T> clazz;
+    private transient Class<T> clazz;
 
-    private ObjectModel model;
+    private transient ObjectModel model;
 
-    private Long id;
+    private transient Long id;
 
-    private String name;
+    private transient String name;
 
-    private IdRef<?> parentId;
+    private transient IdRef<?> parentId;
+
+    public IdRef() {
+    }
 
     protected IdRef(Repository r, Class<T> clazz, Long id) {
         this.r = r;
@@ -324,6 +327,9 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
 
     @Override
     public String toString() {
+        if (r == null) {
+            return "empty id";
+        }
         return getUri();
     }
 

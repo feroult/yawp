@@ -14,7 +14,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 public class LazyJsonTest extends EndpointTestCase {
-    
+
     @Test
     public void testLaziness() {
         String json = "{\"lazyPojo\":{\"stringValue\":\"xpto\"}}";

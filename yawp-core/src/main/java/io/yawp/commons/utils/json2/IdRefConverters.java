@@ -41,7 +41,7 @@ public class IdRefConverters {
     public static class IdRefConverterFactory implements Factory<Converter<IdRef>> {
         @Override
         public Converter<IdRef> create(Type type, Genson genson) {
-            return new IdRefConverter();
+            return idRefConverter;
         }
     }
 

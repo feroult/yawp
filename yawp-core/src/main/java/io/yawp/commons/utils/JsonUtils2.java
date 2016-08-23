@@ -1,11 +1,12 @@
 package io.yawp.commons.utils;
 
-import com.owlike.genson.GenericType;
-import com.owlike.genson.Genson;
-import com.owlike.genson.GensonBuilder;
+import com.owlike.genson.*;
+import com.owlike.genson.stream.ObjectWriter;
 import io.yawp.commons.utils.json2.BaseGensonBundle;
+import io.yawp.commons.utils.json2.CustomJsonWriter;
 import io.yawp.repository.Repository;
 
+import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,25 @@ public class JsonUtils2 {
     }
 
     public static String to(Object o) {
-        return genson.serialize(o);
+        StringWriter sw = new StringWriter();
+        ObjectWriter writer = createWriter(sw);
+
+        if (o == null) {
+            try {
+                writer.writeNull();
+                writer.flush();
+            } catch (Exception e) {
+                throw new JsonBindingException("Could not serialize null value.", e);
+            }
+        } else {
+            genson.serialize(o, o.getClass(), writer, new Context(genson));
+        }
+
+        return sw.toString();
+    }
+
+    private static ObjectWriter createWriter(StringWriter sw) {
+        return new CustomJsonWriter(sw, genson.isSkipNull(), genson.isHtmlSafe(), false);
     }
 
 }

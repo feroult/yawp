@@ -8,6 +8,11 @@ public class Pojo implements Serializable {
 
     private String stringValue;
 
+    private Long longValue;
+
+    public Pojo() {
+    }
+
     public Pojo(String stringValue) {
         this.stringValue = stringValue;
     }
@@ -20,4 +25,11 @@ public class Pojo implements Serializable {
         this.stringValue = stringValue;
     }
 
+    public Long getLongValue() {
+        return longValue;
+    }
+
+    public void setLongValue(Long longValue) {
+        this.longValue = longValue;
+    }
 }

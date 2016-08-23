@@ -8,6 +8,7 @@ import com.owlike.genson.ext.GensonBundle;
 import com.owlike.genson.reflect.BeanProperty;
 import com.owlike.genson.reflect.VisibilityFilter;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.LazyJson;
 
 import java.lang.reflect.Modifier;
 import java.text.SimpleDateFormat;
@@ -16,6 +17,8 @@ public class BaseGensonBundle extends GensonBundle {
 
     @Override
     public void configure(GensonBuilder builder) {
+//        builder.useRuntimeType(true);
+        builder.setSkipNull(true);
         configureDateFormat(builder);
         configureSchema(builder);
         configureConverters(builder);
@@ -32,6 +35,7 @@ public class BaseGensonBundle extends GensonBundle {
 
     private void configureConverters(GensonBuilder builder) {
         IdRefConverters.configure(builder);
+        LazyJsonConverters.configure(builder);
         builder.withContextualFactory(new CustomContextualFactory());
     }
 
@@ -41,6 +45,9 @@ public class BaseGensonBundle extends GensonBundle {
         public Converter create(BeanProperty property, Genson genson) {
             if (property.getRawClass().isAssignableFrom(IdRef.class)) {
                 return IdRefConverters.idRefConverter;
+            }
+            if (property.getRawClass().isAssignableFrom(LazyJson.class)) {
+                return LazyJsonConverters.get(property.getName(), property.getType());
             }
             return null;
         }

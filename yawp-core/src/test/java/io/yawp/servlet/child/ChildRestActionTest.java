@@ -1,19 +1,18 @@
 package io.yawp.servlet.child;
 
-import static org.junit.Assert.assertEquals;
-
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Parent;
+import org.junit.Test;
 
 import java.util.List;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class ChildRestActionTest extends ChildServletTestCase {
 
     @Test
     public void testCreate() {
-        String json = post(uri("/parents/%s/children", parent), json("{ name: 'xpto', parentId: '%s' }", parent));
+        String json = post(uri("/parents/%s/children", parent), json("{ \"name\": \"xpto\", \"parentId\": \"%s\" }", parent));
 
         Child child = from(json, Child.class);
         assertEquals("xpto", child.getName());
@@ -23,7 +22,7 @@ public class ChildRestActionTest extends ChildServletTestCase {
     @Test
     public void testCreateArray() {
         String json = post(uri("/parents/%s/children", parent),
-                json("[ { name: 'xpto1', parentId: '%s' }, { name: 'xpto2', parentId: '%s' } ]", parent, parent));
+                json("[ { \"name\": \"xpto1\", \"parentId\": \"%s\" }, { \"name\": \"xpto2\", \"parentId\": \"%s\" } ]", parent, parent));
         List<Child> children = fromList(json, Child.class);
 
         assertEquals(2, children.size());
@@ -38,7 +37,7 @@ public class ChildRestActionTest extends ChildServletTestCase {
         Child child = saveChild("xpto", parent);
 
         String json = put(uri("/parents/%s/children/%s", parent, child),
-                json("{ name: 'changed xpto', parentId: '%s', id: '%s' }", parent, child));
+                json("{ \"name\": \"changed xpto\", \"parentId\": \"%s\", \"id\": \"%s\" }", parent, child));
         Child retrievedChild = from(json, Child.class);
 
         assertEquals("changed xpto", retrievedChild.getName());
@@ -113,7 +112,7 @@ public class ChildRestActionTest extends ChildServletTestCase {
     public void testCreateAndShowWithIdAsLong() {
         String uri = uri("/parents/%s/children/1", parent);
 
-        put(uri, "{ name: 'xpto' } ");
+        put(uri, "{ \"name\": \"xpto\" } ");
         String json = get(uri);
 
         Child child = from(json, Child.class);
@@ -125,7 +124,7 @@ public class ChildRestActionTest extends ChildServletTestCase {
     public void testCreateAndShowWithIdAsString() {
         String uri = uri("/parents/%s/children/a", parent);
 
-        put(uri, "{ name: 'xpto' } ");
+        put(uri, "{ \"name\": \"xpto\" } ");
         String json = get(uri);
 
         Child child = from(json, Child.class);

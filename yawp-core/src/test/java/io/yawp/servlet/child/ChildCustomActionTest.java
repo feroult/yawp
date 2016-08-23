@@ -1,12 +1,11 @@
 package io.yawp.servlet.child;
 
-import static org.junit.Assert.assertEquals;
-
 import io.yawp.repository.models.parents.Child;
+import org.junit.Test;
 
 import java.util.List;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class ChildCustomActionTest extends ChildServletTestCase {
 
@@ -42,7 +41,7 @@ public class ChildCustomActionTest extends ChildServletTestCase {
         saveParent();
 
         String json = post(uri("/parents/%s/children/with-json-and-params", parent),
-                "{ 'id': '/basic_objects/1', 'stringValue':  'basic object' }", params("x", "y"));
+                "{ \"id\": \"/basic_objects/1\", \"stringValue\":  \"basic object\" }", params("x", "y"));
 
         assertEquals("basic object y - /basic_objects/1", from(json, String.class));
     }

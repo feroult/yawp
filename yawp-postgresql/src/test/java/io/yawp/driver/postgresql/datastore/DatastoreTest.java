@@ -278,7 +278,7 @@ public class DatastoreTest extends DatastoreTestCase {
         List<Entity> entities = datastore.query(new Query(builder, false));
 
         assertEquals(1, entities.size());
-        assertEquals(27, ((Long) entities.get(0).getProperty("age")).intValue());
+        assertEquals(27, ((Number) entities.get(0).getProperty("age")).intValue());
     }
 
     private <T> void assertJimIsFromAncestor(Class<T> clazz, Class<?> ancestorClazz, Key parentKey) throws FalsePredicateException {

@@ -120,12 +120,12 @@ public class EntityToObjectConverter {
 
     private <T> void setIntProperty(T object, Field field, Object value) throws IllegalAccessException {
         // override
-        field.set(object, ((Long) value).intValue());
+        field.set(object, ((Number) value).intValue());
     }
 
     // override
     private <T> void setLongProperty(T object, Field field, Object value) throws IllegalAccessException {
-        field.set(object, ((Long) value).longValue());
+        field.set(object, ((Number) value).longValue());
     }
 
     // override

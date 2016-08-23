@@ -191,63 +191,63 @@ public class EndpointRouterTest extends ServletTestCase {
     public void testRouteHasValidIds() {
         assertTrue(parse("POST", "/parents", "{}").tryToAdjustIds());
         assertTrue(parse("POST", "/parents", "[{}, {}]").tryToAdjustIds());
-        assertTrue(parse("POST", "/parents", "{id: '/parents/1'}").tryToAdjustIds());
-        assertTrue(parse("POST", "/parents", "[{id: '/parents/1'}, {id: '/parents/2'}]").tryToAdjustIds());
-        assertTrue(parse("POST", "/parents", "[{id: '/parents/1'}, {}]").tryToAdjustIds());
+        assertTrue(parse("POST", "/parents", "{\"id\": \"/parents/1\"}").tryToAdjustIds());
+        assertTrue(parse("POST", "/parents", "[{\"id\": \"/parents/1\"}, {\"id\": \"/parents/2\"}]").tryToAdjustIds());
+        assertTrue(parse("POST", "/parents", "[{\"id\": \"/parents/1\"}, {}]").tryToAdjustIds());
         assertTrue(parse("PUT", "/parents/1", "{}").tryToAdjustIds());
-        assertTrue(parse("PUT", "/parents/1", "{id: '/parents/1'}").tryToAdjustIds());
+        assertTrue(parse("PUT", "/parents/1", "{\"id\": \"/parents/1\"}").tryToAdjustIds());
         assertTrue(parse("PATCH", "/parents/1", "{}").tryToAdjustIds());
-        assertTrue(parse("PATCH", "/parents/1", "{id: '/parents/1'}").tryToAdjustIds());
+        assertTrue(parse("PATCH", "/parents/1", "{\"id\": \"/parents/1\"}").tryToAdjustIds());
 
         assertTrue(parse("POST", "/children", "{}").tryToAdjustIds());
         assertTrue(parse("POST", "/children", "[{}, {}]").tryToAdjustIds());
-        assertTrue(parse("POST", "/children", "{parentId: '/parents/1'}").tryToAdjustIds());
-        assertTrue(parse("POST", "/children", "{id: '/parents/1/children/1'}").tryToAdjustIds());
-        assertTrue(parse("POST", "/children", "[{id: '/parents/1/children/1'}, {id: '/parents/2/children/2'}]").tryToAdjustIds());
-        assertTrue(parse("POST", "/children", "[{id: '/parents/1/children/1'}, {}]").tryToAdjustIds());
+        assertTrue(parse("POST", "/children", "{\"parentId\": \"/parents/1\"}").tryToAdjustIds());
+        assertTrue(parse("POST", "/children", "{\"id\": \"/parents/1/children/1\"}").tryToAdjustIds());
+        assertTrue(parse("POST", "/children", "[{\"id\": \"/parents/1/children/1\"}, {\"id\": \"/parents/2/children/2\"}]").tryToAdjustIds());
+        assertTrue(parse("POST", "/children", "[{\"id\": \"/parents/1/children/1\"}, {}]").tryToAdjustIds());
 
         assertTrue(parse("POST", "/parents/1/children", "{}").tryToAdjustIds());
         assertTrue(parse("POST", "/parents/1/children", "[{}, {}]").tryToAdjustIds());
-        assertTrue(parse("POST", "/parents/1/children", "{id: '/parents/1/children/1'}").tryToAdjustIds());
-        assertTrue(parse("POST", "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/parents/1/children/2'}]")
+        assertTrue(parse("POST", "/parents/1/children", "{\"id\": \"/parents/1/children/1\"}").tryToAdjustIds());
+        assertTrue(parse("POST", "/parents/1/children", "[{\"id\": \"/parents/1/children/1\"}, {\"id\": \"/parents/1/children/2\"}]")
                 .tryToAdjustIds());
         assertTrue(parse("POST", "/parents/1/children", "{}").tryToAdjustIds());
-        assertTrue(parse("POST", "/parents/1/children", "[{id: '/parents/1/children/1'}, {}]").tryToAdjustIds());
+        assertTrue(parse("POST", "/parents/1/children", "[{\"id\": \"/parents/1/children/1\"}, {}]").tryToAdjustIds());
         assertTrue(parse("PUT", "/parents/1/children/1", "{}").tryToAdjustIds());
-        assertTrue(parse("PUT", "/parents/1/children/1", "{id: '/parents/1/children/1'}").tryToAdjustIds());
+        assertTrue(parse("PUT", "/parents/1/children/1", "{\"id\": \"/parents/1/children/1\"}").tryToAdjustIds());
         assertTrue(parse("PATCH", "/parents/1/children/1", "{}").tryToAdjustIds());
-        assertTrue(parse("PATCH", "/parents/1/children/1", "{id: '/parents/1/children/1'}").tryToAdjustIds());
+        assertTrue(parse("PATCH", "/parents/1/children/1", "{\"id\": \"/parents/1/children/1\"}").tryToAdjustIds());
 
         assertTrue(parse("POST", "/grandchildren",
-                "[{id: '/parents/1/children/1/grandchildren/1'}, {id: '/parents/2/children/2/grandchildren/2'}]").tryToAdjustIds());
+                "[{\"id\": \"/parents/1/children/1/grandchildren/1\"}, {\"id\": \"/parents/2/children/2/grandchildren/2\"}]").tryToAdjustIds());
         assertTrue(parse("POST", "/parents/1/grandchildren",
-                "[{id: '/parents/1/children/1/grandchildren/1'}, {id: '/parents/1/children/2/grandchildren/2'}]").tryToAdjustIds());
+                "[{\"id\": \"/parents/1/children/1/grandchildren/1\"}, {\"id\": \"/parents/1/children/2/grandchildren/2\"}]").tryToAdjustIds());
     }
 
     @Test
     public void testInvalidRouteIds() {
-        assertFalse(parse("POST", "/parents", "{id: '/basic_objects/1'}").tryToAdjustIds());
-        assertFalse(parse("POST", "/parents", "[{id: '/parents/1'}, {id: '/basic_objects/1'}]").tryToAdjustIds());
-        assertFalse(parse("PUT", "/parents/1", "{id: '/basic_objects/1'}").tryToAdjustIds());
-        assertFalse(parse("PUT", "/parents/1", "{id: '/parents/2'}").tryToAdjustIds());
-        assertFalse(parse("PATCH", "/parents/1", "{id: '/parents/2'}").tryToAdjustIds());
+        assertFalse(parse("POST", "/parents", "{\"id\": \"/basic_objects/1\"}").tryToAdjustIds());
+        assertFalse(parse("POST", "/parents", "[{\"id\": \"/parents/1\"}, {\"id\": \"/basic_objects/1\"}]").tryToAdjustIds());
+        assertFalse(parse("PUT", "/parents/1", "{\"id\": \"/basic_objects/1\"}").tryToAdjustIds());
+        assertFalse(parse("PUT", "/parents/1", "{\"id\": \"/parents/2\"}").tryToAdjustIds());
+        assertFalse(parse("PATCH", "/parents/1", "{\"id\": \"/parents/2\"}").tryToAdjustIds());
 
-        assertFalse(parse("POST", "/parents/1/children", "{id: '/basic_objects/1'}").tryToAdjustIds());
-        assertFalse(parse("POST", "/parents/1/children", "{id: '/parents/1/children'}").tryToAdjustIds());
-        assertFalse(parse("POST", "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/basic_objects/1'}]")
+        assertFalse(parse("POST", "/parents/1/children", "{\"id\": \"/basic_objects/1\"}").tryToAdjustIds());
+        assertFalse(parse("POST", "/parents/1/children", "{\"id\": \"/parents/1/children\"}").tryToAdjustIds());
+        assertFalse(parse("POST", "/parents/1/children", "[{\"id\": \"/parents/1/children/1\"}, {\"id\": \"/basic_objects/1\"}]")
                 .tryToAdjustIds());
-        assertFalse(parse("POST", "/parents/1/children", "[{id: '/parents/1/children/1'}, {id: '/parents/2/children/2'}]")
+        assertFalse(parse("POST", "/parents/1/children", "[{\"id\": \"/parents/1/children/1\"}, {\"id\": \"/parents/2/children/2\"}]")
                 .tryToAdjustIds());
-        assertFalse(parse("PUT", "/parents/1/children", "{id: '/parents/1/children/1'}").tryToAdjustIds());
-        assertFalse(parse("PUT", "/parents/1/children/1", "{id: '/parents/2/children/1'}").tryToAdjustIds());
+        assertFalse(parse("PUT", "/parents/1/children", "{\"id\": \"/parents/1/children/1\"}").tryToAdjustIds());
+        assertFalse(parse("PUT", "/parents/1/children/1", "{\"id\": \"/parents/2/children/1\"}").tryToAdjustIds());
 
         assertFalse(parse("POST", "/parents/1/grandchildren",
-                "[{id: '/parents/1/children/1/grandchildren/1'}, {id: '/parents/2/children/2/grandchildren/2'}]").tryToAdjustIds());
+                "[{\"id\": \"/parents/1/children/1/grandchildren/1\"}, {\"id\": \"/parents/2/children/2/grandchildren/2\"}]").tryToAdjustIds());
     }
 
     @Test
     public void testInvalidRouteParentIds() {
-        assertFalse(parse("PUT", "/parents/1/children/1", "{parentId: '/parents/2'}").tryToAdjustIds());
-        assertFalse(parse("POST", "/parents/1/children", "{parentId: '/parents/2'}").tryToAdjustIds());
+        assertFalse(parse("PUT", "/parents/1/children/1", "{\"parentId\": \"/parents/2\"}").tryToAdjustIds());
+        assertFalse(parse("POST", "/parents/1/children", "{\"parentId\": \"/parents/2\"}").tryToAdjustIds());
     }
 }

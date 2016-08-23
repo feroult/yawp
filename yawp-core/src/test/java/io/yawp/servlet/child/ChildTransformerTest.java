@@ -1,12 +1,11 @@
 package io.yawp.servlet.child;
 
-import static org.junit.Assert.assertEquals;
-
 import io.yawp.repository.models.parents.Child;
+import org.junit.Test;
 
 import java.util.List;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class ChildTransformerTest extends ChildServletTestCase {
 
@@ -35,7 +34,7 @@ public class ChildTransformerTest extends ChildServletTestCase {
 
     @Test
     public void testCreateTransformer() {
-        String json = post(uri("/parents/%s/children", parent), json("{ name: 'xpto', parentId: '%s' }", parent), params("t", "simple"));
+        String json = post(uri("/parents/%s/children", parent), json("{ \"name\": \"xpto\", \"parentId\": \"%s\" }", parent), params("t", "simple"));
 
         Child child = from(json, Child.class);
         assertEquals("transformed xpto", child.getName());
@@ -45,7 +44,7 @@ public class ChildTransformerTest extends ChildServletTestCase {
     @Test
     public void testCreateArrayTransformer() {
         String json = post(uri("/parents/%s/children", parent),
-                json("[ { name: 'xpto1', parentId: '%s' }, { name: 'xpto2', parentId: '%s' } ]", parent, parent), params("t", "simple"));
+                json("[ { \"name\": \"xpto1\", \"parentId\": \"%s\" }, { \"name\": \"xpto2\", \"parentId\": \"%s\" } ]", parent, parent), params("t", "simple"));
         List<Child> children = fromList(json, Child.class);
 
         assertEquals(2, children.size());
@@ -60,7 +59,7 @@ public class ChildTransformerTest extends ChildServletTestCase {
         Child child = saveChild("xpto", parent);
 
         String json = put(uri("/parents/%s/children/%s", parent, child),
-                json("{ name: 'changed xpto', parentId: '%s', id: '%s' }", parent, child), params("t", "simple"));
+                json("{ \"name\": \"changed xpto\", \"parentId\": \"%s\", \"id\": \"%s\" }", parent, child), params("t", "simple"));
         Child retrievedChild = from(json, Child.class);
 
         assertEquals("transformed changed xpto", retrievedChild.getName());

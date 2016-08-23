@@ -118,27 +118,27 @@ public class ParentCustomActionTest extends ParentServletTestCase {
     @Test
     public void testOverObjectWithJsonString() {
         Parent parent = saveParent("xpto");
-        String json = post(uri("/parents/%s/with-json-string", parent), "{ 'stringValue': 'json string' }");
+        String json = post(uri("/parents/%s/with-json-string", parent), "{ \"stringValue\": \"json string\" }");
         assertEquals("json string", from(json, String.class));
     }
 
     @Test
     public void testOverCollectiontWithJsonObject() {
-        String json = post("/parents/collection-with-json-object", "{ 'stringValue': 'json object' }");
+        String json = post("/parents/collection-with-json-object", "{ \"stringValue\": \"json object\" }");
         assertEquals("json object", from(json, String.class));
     }
 
     @Test
     public void testOverObjectWithJsonObject() {
         Parent parent = saveParent("xpto");
-        String json = post(uri("/parents/%s/with-json-object", parent), "{ 'stringValue': 'json object' }");
+        String json = post(uri("/parents/%s/with-json-object", parent), "{ \"stringValue\": \"json object\" }");
         assertEquals("json object", from(json, String.class));
     }
 
     @Test
     public void testOverObjectWithJsonList() {
         Parent parent = saveParent("xpto");
-        String json = post(uri("/parents/%s/with-json-list", parent), "[{ 'stringValue': 'pojo' }, { 'stringValue': 'list' }]");
+        String json = post(uri("/parents/%s/with-json-list", parent), "[{ \"stringValue\": \"pojo\" }, { \"stringValue\": \"list\" }]");
         assertEquals("pojo list", from(json, String.class));
     }
 

@@ -66,7 +66,7 @@ public class IdRefAsStringTest extends EndpointTestCase {
         Job job1 = saveJob("hehe");
         Job job2 = saveJob("hihi");
 
-        String json = String.format("{id: '/parents/%s', name: 'lala', pastJobIds: ['/jobs/%s', '/jobs/%s']}", parent.getId()
+        String json = String.format("{\"id\": \"/parents/%s\", \"name\": \"lala\", \"pastJobIds\": [\"/jobs/%s\", \"/jobs/%s\"]}", parent.getId()
                 .getSimpleValue(), job1.getId().getSimpleValue(), job2.getId().getSimpleValue());
 
         Parent retrievedParent = JsonUtils.from(yawp, json, Parent.class);

@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 public class RepositoryTest extends EndpointTestCase {
 
-    private static final String DATA_OBJECT_JSON = "{stringValue: 'xpto', textValue: 'text xpto', intValue : 1, longValue : 1, doubleValue : 1.1, booleanValue : true, dateValue : '2013/12/26 23:55:01'}";
+    private static final String DATA_OBJECT_JSON = "{\"stringValue\": \"xpto\", \"textValue\": \"text xpto\", \"intValue\" : 1, \"longValue\" : 1, \"doubleValue\" : 1.1, \"booleanValue\" : true, \"dateValue\" : \"2013/12/26 23:55:01\"}";
 
     @Test
     public void testSaveAllDataProperties() {

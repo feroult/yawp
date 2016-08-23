@@ -1,12 +1,12 @@
 package io.yawp.commons.utils;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.owlike.genson.*;
-import com.owlike.genson.stream.ObjectWriter;
-import io.yawp.commons.utils.json2.BaseGensonBundle;
-import io.yawp.commons.utils.json2.RawJsonWriter;
+import com.google.gson.*;
+import io.yawp.commons.utils.json.CustomJsonWriter;
+import io.yawp.commons.utils.json.IdRefJsonSerializerDeserializer;
+import io.yawp.commons.utils.json.LazyJsonDeserializer;
+import io.yawp.commons.utils.json.LazyJsonTypeAdapterFactory;
+import io.yawp.repository.IdRef;
+import io.yawp.repository.LazyJson;
 import io.yawp.repository.Repository;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,26 +17,53 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-public class JsonUtils {
+public class JsonUtils1 {
 
-    private JsonUtils() {
+    private JsonUtils1() {
     }
 
-    private static Genson genson;
+    private static Gson gson;
 
     static {
-        genson = new GensonBuilder().withBundle(new BaseGensonBundle()).create();
+        init();
     }
 
-    public static <T> T from(Repository r, String json, Class<T> clazz) {
-        return genson.deserialize(json, clazz);
+    private static void init() {
+        GsonBuilder builder = new GsonBuilder();
+        builder.setDateFormat(DateUtils.TIMESTAMP_FORMAT);
+        builder.registerTypeAdapter(IdRef.class, new IdRefJsonSerializerDeserializer());
+        builder.registerTypeAdapter(LazyJson.class, new LazyJsonDeserializer());
+        builder.registerTypeAdapterFactory(new LazyJsonTypeAdapterFactory());
+
+        gson = builder.create();
     }
 
     public static Object from(Repository r, String json, Type type) {
-        return genson.deserialize(json, GenericType.of(type));
+        JsonElement jsonElement = new JsonParser().parse(json);
+        return gson.fromJson(jsonElement, type);
     }
 
+    public static String to(Object o) {
+        if (o == null) {
+            return gson.toJson(o);
+        }
+        StringWriter out = new StringWriter();
+        gson.toJson(o, o.getClass(), new CustomJsonWriter(out));
+        return out.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T from(Repository r, String json, Class<T> clazz) {
+        return (T) from(r, json, (Type) clazz);
+    }
+
+    public static Object fromMap(String json, Type keyType, Type valueType) {
+        return fromMap(json, (Class<?>) keyType, (Class<?>) valueType);
+    }
+
+    @SuppressWarnings("unchecked")
     public static <T> List<T> fromList(Repository r, String json, Class<T> clazz) {
         return (List<T>) fromListRaw(r, json, clazz);
     }
@@ -64,24 +91,6 @@ public class JsonUtils {
         return (Map<K, List<V>>) from(r, json, type);
     }
 
-    public static String to(Object o) {
-        StringWriter sw = new StringWriter();
-        ObjectWriter writer = createWriter(sw);
-
-        if (o == null) {
-            try {
-                writer.writeNull();
-                writer.flush();
-            } catch (Exception e) {
-                throw new JsonBindingException("Could not serialize null value.", e);
-            }
-        } else {
-            genson.serialize(o, o.getClass(), writer, new Context(genson));
-        }
-
-        return sw.toString();
-    }
-
     public static String readJson(BufferedReader reader) {
         StringBuilder sb = new StringBuilder();
         String line = null;
@@ -103,18 +112,14 @@ public class JsonUtils {
         return json.charAt(0) == '[';
     }
 
-    // TODO: remove gson support here
     public static List<String> getProperties(String json) {
         List<String> properties = new ArrayList<String>();
         JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-        for (Map.Entry<String, JsonElement> property : jsonObject.entrySet()) {
+        for (Entry<String, JsonElement> property : jsonObject.entrySet()) {
             properties.add(property.getKey());
         }
         return properties;
     }
 
-    private static ObjectWriter createWriter(StringWriter sw) {
-        return new RawJsonWriter(sw, genson.isSkipNull(), genson.isHtmlSafe(), false);
-    }
 
 }

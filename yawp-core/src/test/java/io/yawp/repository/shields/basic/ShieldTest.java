@@ -1,19 +1,17 @@
 package io.yawp.repository.shields.basic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-
 import io.yawp.commons.utils.ServletTestCase;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.ShieldedObject;
 import io.yawp.repository.models.basic.ShieldedObjectWithDefaults;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class ShieldTest extends ServletTestCase {
 
@@ -39,7 +37,7 @@ public class ShieldTest extends ServletTestCase {
 
         assertGetWithStatus("/shielded_objects", 404);
         assertGetWithStatus("/shielded_objects/1", 200);
-        assertPostWithStatus("/shielded_objects", "{stringValue: 'xpto'}", 404);
+        assertPostWithStatus("/shielded_objects", "{\"stringValue\": \"xpto\"}", 404);
         assertPutWithStatus("/shielded_objects/1", "{id:'/shielded_objects/1', stringValue: 'xpto'}", 200);
         assertDeleteWithStatus("/shielded_objects/1", 404);
     }

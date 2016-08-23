@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
-public class CustomJsonWriter extends JsonWriter {
+public class RawJsonWriter extends JsonWriter {
 
     private Writer writer;
 
-    public CustomJsonWriter(StringWriter writer, boolean skipNull, boolean htmlSafe, boolean indent) {
+    public RawJsonWriter(StringWriter writer, boolean skipNull, boolean htmlSafe, boolean indent) {
         super(writer, skipNull, htmlSafe, indent);
         this.writer = writer;
     }

@@ -47,14 +47,14 @@ public class LazyJsonConverters {
             }
 
             begin(value, writer);
-            write((CustomJsonWriter) writer, value);
+            write((RawJsonWriter) writer, value);
             end(value, writer);
         }
 
-        private void write(CustomJsonWriter writer, LazyJson value) {
+        private void write(RawJsonWriter writer, LazyJson value) {
             String json = value.getJson();
             json = json.substring(1, json.length() - 1);
-            CustomJsonWriter customWriter = writer;
+            RawJsonWriter customWriter = writer;
             customWriter.writeRawString(json);
         }
 

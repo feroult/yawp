@@ -1,6 +1,6 @@
 package io.yawp.repository;
 
-import io.yawp.commons.utils.JsonUtils2;
+import io.yawp.commons.utils.JsonUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
@@ -42,7 +42,7 @@ public final class LazyJson<T> implements Serializable {
         }
 
         if (object == null) {
-            object = (T) JsonUtils2.from(Yawp.yawp(), json, type);
+            object = (T) JsonUtils.from(Yawp.yawp(), json, type);
         }
 
         return object;
@@ -50,7 +50,7 @@ public final class LazyJson<T> implements Serializable {
 
     public String getJson() {
         if (object != null) {
-            json = JsonUtils2.to(object);
+            json = JsonUtils.to(object);
         }
         return json;
     }

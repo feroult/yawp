@@ -101,7 +101,7 @@ public class IdRefAsLongTest extends EndpointTestCase {
         job2.setId(IdRef.create(yawp, Job.class, 2l));
         yawp.save(job2);
 
-        String json = String.format("{id: '/parents/%d', name: 'lala', pastJobIds: ['/jobs/%d', '/jobs/%d']}", parent.getId().asLong(),
+        String json = String.format("{\"id\": \"/parents/%d\", \"name\": \"lala\", \"pastJobIds\": [\"/jobs/%d\", \"/jobs/%d\"]}", parent.getId().asLong(),
                 job1.getId().asLong(), job2.getId().asLong());
 
         Parent retrievedParent = JsonUtils.from(yawp, json, Parent.class);

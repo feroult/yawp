@@ -2,7 +2,6 @@ package io.yawp.repository;
 
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.commons.utils.JsonUtils;
-import io.yawp.commons.utils.JsonUtils2;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.Pojo;
 import org.junit.Test;
@@ -20,7 +19,7 @@ public class LazyJsonTest extends EndpointTestCase {
     public void testLaziness() {
         String json = "{\"lazyPojo\":{\"stringValue\":\"xpto\", \"longValue\":100}}";
 
-        BasicObject object = JsonUtils2.from(yawp, json, BasicObject.class);
+        BasicObject object = JsonUtils.from(yawp, json, BasicObject.class);
 
         assertFalse(object.getLazyPojoAsLazyJson().isParsed());
         assertEquals("xpto", object.getLazyPojo().getStringValue());
@@ -33,7 +32,7 @@ public class LazyJsonTest extends EndpointTestCase {
 
         LazyJson<Pojo> lazyJson = LazyJson.create(pojo);
 
-        assertEquals(JsonUtils.to(pojo), JsonUtils2.to(lazyJson));
+        assertEquals(JsonUtils.to(pojo), JsonUtils.to(lazyJson));
     }
 
     @Test
@@ -60,12 +59,12 @@ public class LazyJsonTest extends EndpointTestCase {
         BasicObject object = new BasicObject();
         object.setLazyPojo(new Pojo("xpto"));
 
-        String json = JsonUtils2.to(object);
-        BasicObject parsedObject = JsonUtils2.from(yawp, json, BasicObject.class);
+        String json = JsonUtils.to(object);
+        BasicObject parsedObject = JsonUtils.from(yawp, json, BasicObject.class);
 
         // re-serialize / re-parse
         json = JsonUtils.to(parsedObject);
-        parsedObject = JsonUtils2.from(yawp, json, BasicObject.class);
+        parsedObject = JsonUtils.from(yawp, json, BasicObject.class);
 
         assertEquals("xpto", parsedObject.getLazyPojo().getStringValue());
     }
@@ -75,12 +74,12 @@ public class LazyJsonTest extends EndpointTestCase {
         BasicObject object = new BasicObject();
         object.setLazyListPojo(Arrays.asList(new Pojo("xpto1"), new Pojo("xpto2")));
 
-        String json = JsonUtils2.to(object);
-        BasicObject parsedObject = JsonUtils2.from(yawp, json, BasicObject.class);
+        String json = JsonUtils.to(object);
+        BasicObject parsedObject = JsonUtils.from(yawp, json, BasicObject.class);
 
         // re-serialize / re-parse
-        json = JsonUtils2.to(parsedObject);
-        parsedObject = JsonUtils2.from(yawp, json, BasicObject.class);
+        json = JsonUtils.to(parsedObject);
+        parsedObject = JsonUtils.from(yawp, json, BasicObject.class);
 
         List<Pojo> lazyListPojo = parsedObject.getLazyListPojo();
         assertEquals("xpto1", lazyListPojo.get(0).getStringValue());
@@ -93,12 +92,12 @@ public class LazyJsonTest extends EndpointTestCase {
 
         object.setLazyMapPojo(createPojoMap());
 
-        String json = JsonUtils2.to(object);
-        BasicObject parsedObject = JsonUtils2.from(yawp, json, BasicObject.class);
+        String json = JsonUtils.to(object);
+        BasicObject parsedObject = JsonUtils.from(yawp, json, BasicObject.class);
 
         // re-serialize / re-parse
-        json = JsonUtils2.to(parsedObject);
-        parsedObject = JsonUtils2.from(yawp, json, BasicObject.class);
+        json = JsonUtils.to(parsedObject);
+        parsedObject = JsonUtils.from(yawp, json, BasicObject.class);
 
         assertEquals("xpto", parsedObject.getLazyMapPojo().get(1l).getStringValue());
     }
@@ -109,12 +108,12 @@ public class LazyJsonTest extends EndpointTestCase {
 
         object.setMapLazyPojoList(createMapWithLazyList());
 
-        String json = JsonUtils2.to(object);
-        BasicObject parsedObject = JsonUtils2.from(yawp, json, BasicObject.class);
+        String json = JsonUtils.to(object);
+        BasicObject parsedObject = JsonUtils.from(yawp, json, BasicObject.class);
 
         // re-serialize / re-parse
-        json = JsonUtils2.to(parsedObject);
-        parsedObject = JsonUtils2.from(yawp, json, BasicObject.class);
+        json = JsonUtils.to(parsedObject);
+        parsedObject = JsonUtils.from(yawp, json, BasicObject.class);
 
         List<Pojo> list = parsedObject.getMapLazyPojoList().get("xpto").get();
         assertEquals(2, list.size());
@@ -129,11 +128,11 @@ public class LazyJsonTest extends EndpointTestCase {
         object.setLazyIdRefMapPojo(createPojoIdRefMap());
 
         String json = JsonUtils.to(object);
-        BasicObject parsedObject = from(json, BasicObject.class);
+        BasicObject parsedObject = JsonUtils.from(yawp, json, BasicObject.class);
 
         // re-serialize / re-parse
         json = JsonUtils.to(parsedObject);
-        parsedObject = from(json, BasicObject.class);
+        parsedObject = JsonUtils.from(yawp, json, BasicObject.class);
 
         assertEquals("xpto", parsedObject.getLazyIdRefMapPojo().get(id(BasicObject.class, 1l)).getStringValue());
     }

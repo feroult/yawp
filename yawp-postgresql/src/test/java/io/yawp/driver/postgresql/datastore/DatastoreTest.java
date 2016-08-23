@@ -1,24 +1,23 @@
 package io.yawp.driver.postgresql.datastore;
 
-import static io.yawp.repository.query.condition.Condition.and;
-import static io.yawp.repository.query.condition.Condition.c;
-import static org.junit.Assert.assertEquals;
-
 import io.yawp.commons.utils.Environment;
 import io.yawp.driver.postgresql.IdRefToKey;
+import io.yawp.driver.postgresql.configuration.InitialContextSetup;
 import io.yawp.driver.postgresql.datastore.models.Child;
 import io.yawp.driver.postgresql.datastore.models.Grandchild;
 import io.yawp.driver.postgresql.datastore.models.Parent;
-import io.yawp.driver.postgresql.configuration.InitialContextSetup;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.driver.postgresql.tools.DatabaseSynchronizer;
 import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.QueryBuilder;
+import org.junit.*;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.*;
+import static io.yawp.repository.query.condition.Condition.and;
+import static io.yawp.repository.query.condition.Condition.c;
+import static org.junit.Assert.assertEquals;
 
 public class DatastoreTest extends DatastoreTestCase {
 
@@ -279,7 +278,7 @@ public class DatastoreTest extends DatastoreTestCase {
         List<Entity> entities = datastore.query(new Query(builder, false));
 
         assertEquals(1, entities.size());
-        assertEquals(27.0, entities.get(0).getProperty("age"));
+        assertEquals(27, ((Long) entities.get(0).getProperty("age")).intValue());
     }
 
     private <T> void assertJimIsFromAncestor(Class<T> clazz, Class<?> ancestorClazz, Key parentKey) throws FalsePredicateException {

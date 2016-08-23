@@ -15,6 +15,10 @@ public class Key {
 
     private String name;
 
+    public Key() {
+
+    }
+
     protected Key(String kind) {
         this.kind = kind;
     }

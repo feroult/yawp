@@ -18,6 +18,7 @@ public class BaseGensonBundle extends GensonBundle {
     }
 
     private void configureDateFormat(GensonBuilder builder) {
+        builder.useDateAsTimestamp(false);
         builder.useDateFormat(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"));
     }
 

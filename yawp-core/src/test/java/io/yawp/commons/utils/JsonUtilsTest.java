@@ -5,10 +5,7 @@ import io.yawp.repository.models.basic.BasicObject;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -20,6 +17,7 @@ public class JsonUtilsTest extends EndpointTestCase {
     }
 
     private static final String DATA_OBJECT_JSON = "{\"intValue\" : 1, \"longValue\" : 1, \"doubleValue\" : 1.1, \"booleanValue\" : true, \"dateValue\" : \"2013/12/26 23:55:01\", \"stringValue\" : \"object1\", \"textValue\": \"text\"}";
+
 
     @Test
     public void testFrom() {
@@ -97,5 +95,13 @@ public class JsonUtilsTest extends EndpointTestCase {
         map = (Map<IdRef<BasicObject>, BasicObject>) JsonUtils.fromMapRaw(yawp, json, keyType, BasicObject.class);
 
         assertEquals("xpto", map.get(id(BasicObject.class, 1l)).getStringValue());
+    }
+
+    @Test
+    public void testDate() {
+        String dateStr = "\"2013/12/26 23:55:01\"";
+        Date date = JsonUtils.from(yawp, dateStr, Date.class);
+        String json = JsonUtils.to(date);
+        assertEquals(dateStr, json);
     }
 }

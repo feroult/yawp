@@ -11,7 +11,7 @@ public class HierarchyTransformerTest extends ServletTestCase {
 
     @Test
     public void testAllObjectsTransformer() {
-        post("/hierarchy_subclasses/1", "{ name: 'john' }");
+        post("/hierarchy_subclasses/1", "{ \"name\": \"john\" }");
 
         String json = get("/hierarchy_subclasses/1", params("t", "allObjectsUpperCase"));
         ObjectSubClass object = from(json, ObjectSubClass.class);
@@ -21,7 +21,7 @@ public class HierarchyTransformerTest extends ServletTestCase {
 
     @Test
     public void testSuperClassTransformer() {
-        post("/hierarchy_subclasses/1", "{ name: 'john' }");
+        post("/hierarchy_subclasses/1", "{ \"name\": \"john\" }");
 
         String json = get("/hierarchy_subclasses/1", params("t", "upperCase"));
         ObjectSubClass object = from(json, ObjectSubClass.class);
@@ -31,7 +31,7 @@ public class HierarchyTransformerTest extends ServletTestCase {
 
     @Test
     public void testMoreSpecificSubClassTransformer() {
-        post("/hierarchy_another-subclasses/1", "{ name: 'john' }");
+        post("/hierarchy_another-subclasses/1", "{ \"name\": \"john\" }");
 
         String json = get("/hierarchy_another-subclasses/1", params("t", "upperCase"));
         AnotherObjectSubClass object = from(json, AnotherObjectSubClass.class);

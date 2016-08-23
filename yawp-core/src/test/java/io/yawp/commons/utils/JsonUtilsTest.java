@@ -1,5 +1,6 @@
 package io.yawp.commons.utils;
 
+import io.yawp.commons.utils.json.ParameterizedTypeImpl;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.basic.BasicObject;
 import org.junit.Test;

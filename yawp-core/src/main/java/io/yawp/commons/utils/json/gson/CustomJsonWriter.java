@@ -1,4 +1,4 @@
-package io.yawp.commons.utils.json1;
+package io.yawp.commons.utils.json.gson;
 
 import com.google.gson.stream.JsonWriter;
 

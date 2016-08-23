@@ -1,20 +1,18 @@
 package io.yawp.servlet.parent;
 
-import static org.junit.Assert.assertEquals;
-
 import io.yawp.repository.models.parents.Job;
 import io.yawp.repository.models.parents.Parent;
+import org.junit.Test;
 
 import java.util.List;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class ParentRestActionTest extends ParentServletTestCase {
 
     @Test
     public void testCreate() {
-        String json = post("/parents", "{ name: 'xpto' } ");
+        String json = post("/parents", "{ \"name\": \"xpto\" } ");
         Parent object = from(json, Parent.class);
 
         assertEquals("xpto", object.getName());
@@ -22,7 +20,7 @@ public class ParentRestActionTest extends ParentServletTestCase {
 
     @Test
     public void testCreateArray() {
-        String json = post("/parents", "[ { name: 'xpto1' }, { name: 'xpto2' } ]");
+        String json = post("/parents", "[ { \"name\": \"xpto1\" }, { \"name\": \"xpto2\" } ]");
         List<Parent> parents = fromList(json, Parent.class);
 
         assertEquals(2, parents.size());
@@ -34,7 +32,7 @@ public class ParentRestActionTest extends ParentServletTestCase {
     public void testUpdate() {
         Parent parent = saveParent("xpto");
 
-        String json = put(uri("/parents/%s", parent), "{ name: 'changed xpto' } ");
+        String json = put(uri("/parents/%s", parent), "{ \"name\": \"changed xpto\" } ");
         Parent retrievedParent = from(json, Parent.class);
 
         assertEquals("changed xpto", retrievedParent.getName());
@@ -49,7 +47,7 @@ public class ParentRestActionTest extends ParentServletTestCase {
         parent.setJobId(job.getId());
         yawp.save(parent);
 
-        String json = patch(uri("/parents/%s", parent), "{ name: 'xpto' } ");
+        String json = patch(uri("/parents/%s", parent), "{ \"name\": \"xpto\" } ");
         Parent retrievedParent = from(json, Parent.class);
 
         assertEquals("xpto", retrievedParent.getName());
@@ -101,7 +99,7 @@ public class ParentRestActionTest extends ParentServletTestCase {
 
     @Test
     public void testCreateAndShowWithIdAsLong() {
-        put("/parents/1", "{ name: 'xpto' } ");
+        put("/parents/1", "{ \"name\": \"xpto\" } ");
         String json = get("/parents/1");
 
         Parent object = from(json, Parent.class);
@@ -110,7 +108,7 @@ public class ParentRestActionTest extends ParentServletTestCase {
 
     @Test
     public void testCreateAndShowWithIdAsString() {
-        put("/parents/a", "{ name: 'xpto' } ");
+        put("/parents/a", "{ \"name\": \"xpto\" } ");
         String json = get("/parents/a");
 
         Parent object = from(json, Parent.class);

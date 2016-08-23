@@ -1,20 +1,19 @@
 package io.yawp.servlet.grandchild;
 
-import static org.junit.Assert.assertEquals;
-
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Grandchild;
 import io.yawp.repository.models.parents.Parent;
+import org.junit.Test;
 
 import java.util.List;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class GrandchildRestActionTest extends GrandchildServletTestCase {
 
     @Test
     public void testCreate() {
-        String json = post(uri("/parents/%s/children/%s/grandchildren", parent, child), json("{ name: 'xpto', childId: '%s' }", child));
+        String json = post(uri("/parents/%s/children/%s/grandchildren", parent, child), json("{ \"name\": \"xpto\", \"childId\": \"%s\" }", child));
 
         Grandchild grandchild = from(json, Grandchild.class);
         assertEquals("xpto", grandchild.getName());
@@ -24,7 +23,7 @@ public class GrandchildRestActionTest extends GrandchildServletTestCase {
     @Test
     public void testCreateArray() {
         String json = post(uri("/parents/%s/children/%s/grandchildren", parent, child),
-                json("[ { name: 'xpto1', childId: '%s' }, { name: 'xpto2', childId: '%s' } ]", child, child));
+                json("[ { \"name\": \"xpto1\", \"childId\": \"%s\" }, { \"name\": \"xpto2\", \"childId\": \"%s\" } ]", child, child));
         List<Grandchild> grandchildren = fromList(json, Grandchild.class);
 
         assertEquals(2, grandchildren.size());
@@ -39,7 +38,7 @@ public class GrandchildRestActionTest extends GrandchildServletTestCase {
         Grandchild grandchild = saveGrandchild("xpto", child);
 
         String json = put(uri("/parents/%s/children/%s/grandchildren/%s", parent, child, grandchild),
-                json("{ name: 'changed xpto', childId: '%s', id: '%s' }", child, grandchild));
+                json("{ \"name\": \"changed xpto\", \"childId\": \"%s\", \"id\": \"%s\" }", child, grandchild));
         Grandchild retrievedGrandchild = from(json, Grandchild.class);
 
         assertEquals("changed xpto", retrievedGrandchild.getName());

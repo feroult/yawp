@@ -1,10 +1,10 @@
 package io.yawp.commons.utils;
 
 import com.google.gson.*;
-import io.yawp.commons.utils.json.CustomJsonWriter;
-import io.yawp.commons.utils.json.IdRefJsonSerializerDeserializer;
-import io.yawp.commons.utils.json.LazyJsonDeserializer;
-import io.yawp.commons.utils.json.LazyJsonTypeAdapterFactory;
+import io.yawp.commons.utils.json1.CustomJsonWriter;
+import io.yawp.commons.utils.json1.IdRefJsonSerializerDeserializer;
+import io.yawp.commons.utils.json1.LazyJsonDeserializer;
+import io.yawp.commons.utils.json1.LazyJsonTypeAdapterFactory;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.LazyJson;
 import io.yawp.repository.Repository;

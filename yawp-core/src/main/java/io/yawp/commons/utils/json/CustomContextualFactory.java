@@ -1,4 +1,4 @@
-package io.yawp.commons.utils.json2;
+package io.yawp.commons.utils.json;
 
 import com.owlike.genson.Converter;
 import com.owlike.genson.Genson;

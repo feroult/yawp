@@ -1,4 +1,4 @@
-package io.yawp.commons.utils.json;
+package io.yawp.commons.utils.json1;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

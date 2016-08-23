@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.owlike.genson.*;
 import com.owlike.genson.stream.ObjectWriter;
-import io.yawp.commons.utils.json2.BaseGensonBundle;
-import io.yawp.commons.utils.json2.RawJsonWriter;
+import io.yawp.commons.utils.json.BaseGensonBundle;
+import io.yawp.commons.utils.json.RawJsonWriter;
 import io.yawp.repository.Repository;
 import org.apache.commons.lang3.StringUtils;
 

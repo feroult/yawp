@@ -38,7 +38,7 @@ public class ShieldTest extends ServletTestCase {
         assertGetWithStatus("/shielded_objects", 404);
         assertGetWithStatus("/shielded_objects/1", 200);
         assertPostWithStatus("/shielded_objects", "{\"stringValue\": \"xpto\"}", 404);
-        assertPutWithStatus("/shielded_objects/1", "{id:'/shielded_objects/1', stringValue: 'xpto'}", 200);
+        assertPutWithStatus("/shielded_objects/1", "{\"id\":\"/shielded_objects/1\", \"stringValue\": \"xpto\"}", 200);
         assertDeleteWithStatus("/shielded_objects/1", 404);
     }
 
@@ -47,7 +47,7 @@ public class ShieldTest extends ServletTestCase {
         saveObject(100l);
 
         assertGetWithStatus("/shielded_objects/100", 200);
-        assertPutWithStatus("/shielded_objects/100", "{id:'/shielded_objects/100', stringValue: 'xpto'}", 200);
+        assertPutWithStatus("/shielded_objects/100", "{\"id\":\"/shielded_objects/100\", \"stringValue\": \"xpto\"}", 200);
         assertDeleteWithStatus("/shielded_objects/100", 200);
     }
 
@@ -55,14 +55,14 @@ public class ShieldTest extends ServletTestCase {
     public void testRouteWithObject() {
         saveObject(200l);
 
-        assertPostWithStatus("/shielded_objects", "{stringValue: 'xpto'}", 404);
-        assertPostWithStatus("/shielded_objects", "{stringValue: 'valid object'}", 200);
+        assertPostWithStatus("/shielded_objects", "{\"stringValue\": \"xpto\"}", 404);
+        assertPostWithStatus("/shielded_objects", "{\"stringValue\": \"valid object\"}", 200);
 
-        assertPostWithStatus("/shielded_objects", "[{stringValue: 'valid object'}, {stringValue: 'xpto'}]", 404);
-        assertPostWithStatus("/shielded_objects", "[{stringValue: 'valid object'}, {stringValue: 'valid object'}]", 200);
+        assertPostWithStatus("/shielded_objects", "[{\"stringValue\": \"valid object\"}, {\"stringValue\": \"xpto\"}]", 404);
+        assertPostWithStatus("/shielded_objects", "[{\"stringValue\": \"valid object\"}, {\"stringValue\": \"valid object\"}]", 200);
 
-        assertPutWithStatus("/shielded_objects/200", "{id:'/shielded_objects/200', stringValue: 'xpto'}", 404);
-        assertPutWithStatus("/shielded_objects/200", "{id:'/shielded_objects/200', stringValue: 'valid object'}", 200);
+        assertPutWithStatus("/shielded_objects/200", "{\"id\":\"/shielded_objects/200\", \"stringValue\": \"xpto\"}", 404);
+        assertPutWithStatus("/shielded_objects/200", "{\"id\":\"/shielded_objects/200\", \"stringValue\": \"valid object\"}", 200);
     }
 
     @Test
@@ -119,11 +119,11 @@ public class ShieldTest extends ServletTestCase {
     public void testCreateWhere() {
         login("kurt");
 
-        assertPostWithStatus("/shielded_objects", "{stringValue: 'ok'}", 200);
-        assertPostWithStatus("/shielded_objects", "{stringValue: 'xpto'}", 403);
+        assertPostWithStatus("/shielded_objects", "{\"stringValue\": \"ok\"}", 200);
+        assertPostWithStatus("/shielded_objects", "{\"stringValue\": \"xpto\"}", 403);
 
-        assertPostWithStatus("/shielded_objects", "[{stringValue: 'ok'}, {stringValue: 'ok'}]", 200);
-        assertPostWithStatus("/shielded_objects", "[{stringValue: 'ok'}, {stringValue: 'xpto'}]", 403);
+        assertPostWithStatus("/shielded_objects", "[{\"stringValue\": \"ok\"}, {\"stringValue\": \"ok\"}]", 200);
+        assertPostWithStatus("/shielded_objects", "[{\"stringValue\": \"ok\"}, {\"stringValue\": \"xpto\"}]", 403);
     }
 
     @Test
@@ -134,20 +134,20 @@ public class ShieldTest extends ServletTestCase {
 
         login("janis");
 
-        assertPostWithStatus("/shielded_objects", "{id: '/shielded_objects/1', stringValue: 'ok-for-janis'}", 200);
-        assertPostWithStatus("/shielded_objects", "{id: '/shielded_objects/3', stringValue: 'ok-for-janis'}", 403);
+        assertPostWithStatus("/shielded_objects", "{\"id\": \"/shielded_objects/1\", \"stringValue\": \"ok-for-janis\"}", 200);
+        assertPostWithStatus("/shielded_objects", "{\"id\": \"/shielded_objects/3\", \"stringValue\": \"ok-for-janis\"}", 403);
 
         assertPostWithStatus("/shielded_objects",
-                "[{id: '/shielded_objects/1', stringValue: 'ok-for-janis'}, {id: '/shielded_objects/2', stringValue: 'ok-for-janis'}]", 200);
+                "[{\"id\": \"/shielded_objects/1\", \"stringValue\": \"ok-for-janis\"}, {\"id\": \"/shielded_objects/2\", \"stringValue\": \"ok-for-janis\"}]", 200);
         assertPostWithStatus("/shielded_objects",
-                "[{id: '/shielded_objects/2', stringValue: 'ok-for-janis'}, {id: '/shielded_objects/3', stringValue: 'ok-for-janis'}]", 403);
+                "[{\"id\": \"/shielded_objects/2\", \"stringValue\": \"ok-for-janis\"}, {\"id\": \"/shielded_objects/3\", \"stringValue\": \"ok-for-janis\"}]", 403);
     }
 
     @Test
     public void testCreateWhereOnMissingExistingObjects() {
         login("janis");
 
-        assertPostWithStatus("/shielded_objects/1", "{stringValue: 'ok-for-janis'}", 200);
+        assertPostWithStatus("/shielded_objects/1", "{\"stringValue\": \"ok-for-janis\"}", 200);
     }
 
     @Test
@@ -156,8 +156,8 @@ public class ShieldTest extends ServletTestCase {
 
         saveObject(1l, "ok");
 
-        assertPutWithStatus("/shielded_objects/1", "{stringValue: 'ok'}", 200);
-        assertPutWithStatus("/shielded_objects/1", "{stringValue: 'xpto'}", 403);
+        assertPutWithStatus("/shielded_objects/1", "{\"stringValue\": \"ok\"}", 200);
+        assertPutWithStatus("/shielded_objects/1", "{\"stringValue\": \"xpto\"}", 403);
     }
 
     @Test
@@ -167,8 +167,8 @@ public class ShieldTest extends ServletTestCase {
 
         login("janis");
 
-        assertPutWithStatus("/shielded_objects/1", "{stringValue: 'ok-for-janis'}", 200);
-        assertPutWithStatus("/shielded_objects/2", "{stringValue: 'ok-for-janis'}", 403);
+        assertPutWithStatus("/shielded_objects/1", "{\"stringValue\": \"ok-for-janis\"}", 200);
+        assertPutWithStatus("/shielded_objects/2", "{\"stringValue\": \"ok-for-janis\"}", 403);
     }
 
     @Test
@@ -197,7 +197,7 @@ public class ShieldTest extends ServletTestCase {
     public void tetCreateFacade() {
         login("amy");
 
-        String json = post("/shielded_objects", "{stringValue: 'xpto', intValue: 99}");
+        String json = post("/shielded_objects", "{\"stringValue\": \"xpto\", \"intValue\": 99}");
 
         ShieldedObject retrievedObject = from(json, ShieldedObject.class);
         assertNull(retrievedObject.getStringValue());
@@ -241,7 +241,7 @@ public class ShieldTest extends ServletTestCase {
     public void testCreateFacadeArray() {
         login("amy");
 
-        String json = post("/shielded_objects", "[{stringValue: 'xpto1', intValue: 99}, {stringValue: 'xpto2', intValue: 99}]");
+        String json = post("/shielded_objects", "[{\"stringValue\": \"xpto1\", \"intValue\": 99}, {\"stringValue\": \"xpto2\", \"intValue\": 99}]");
 
         List<ShieldedObject> retrievedObjects = fromList(json, ShieldedObject.class);
         assertNull(retrievedObjects.get(0).getStringValue());
@@ -261,7 +261,7 @@ public class ShieldTest extends ServletTestCase {
         saveObject(1l, "xpto", 10);
 
         login("amy");
-        String json = put("/shielded_objects/1", "{id: '/shielded_objects/1', stringValue: 'new-xpto', intValue: 99}");
+        String json = put("/shielded_objects/1", "{\"id\": \"/shielded_objects/1\", \"stringValue\": \"new-xpto\", \"intValue\": 99}");
 
         ShieldedObject retrievedObject = from(json, ShieldedObject.class);
         assertEquals("xpto", retrievedObject.getStringValue());
@@ -302,8 +302,8 @@ public class ShieldTest extends ServletTestCase {
 
         assertGetWithStatus("/shielded_objects_with_defaults", 200);
         assertGetWithStatus("/shielded_objects_with_defaults/1", 200);
-        assertPostWithStatus("/shielded_objects_with_defaults", "{stringValue: 'xpto'}", 200);
-        assertPutWithStatus("/shielded_objects_with_defaults/1", "{id:'/shielded_objects_with_defaults/1'}", 200);
+        assertPostWithStatus("/shielded_objects_with_defaults", "{\"stringValue\": \"xpto\"}", 200);
+        assertPutWithStatus("/shielded_objects_with_defaults/1", "{\"id\":\"/shielded_objects_with_defaults/1\"}", 200);
         assertDeleteWithStatus("/shielded_objects_with_defaults/1", 404);
         assertPutWithStatus("/shielded_objects_with_defaults/1/something", 404);
     }
@@ -311,8 +311,8 @@ public class ShieldTest extends ServletTestCase {
 
     @Test
     public void testBeforeShieldHook() {
-        assertPostWithStatus("/shielded_objects", "{stringValue: 'none'}", 404);
-        assertPostWithStatus("/shielded_objects", "{stringValue: 'apply beforeShield'}", 200);
+        assertPostWithStatus("/shielded_objects", "{\"stringValue\": \"none\"}", 404);
+        assertPostWithStatus("/shielded_objects", "{\"stringValue\": \"apply beforeShield\"}", 200);
     }
 
     @Test
@@ -345,8 +345,8 @@ public class ShieldTest extends ServletTestCase {
     private void assertRestActionsStatus(int status) {
         assertGetWithStatus("/shielded_objects", status);
         assertGetWithStatus("/shielded_objects/1", status);
-        assertPostWithStatus("/shielded_objects", "{stringValue: 'xpto'}", status);
-        assertPutWithStatus("/shielded_objects/1", "{id:'/shielded_objects/1', stringValue: 'xpto'}", status);
+        assertPostWithStatus("/shielded_objects", "{\"stringValue\": \"xpto\"}", status);
+        assertPutWithStatus("/shielded_objects/1", "{\"id\":\"/shielded_objects/1\", \"stringValue\": \"xpto\"}", status);
         assertDeleteWithStatus("/shielded_objects/1", status);
         assertPutWithStatus("/shielded_objects/1/something", status);
     }

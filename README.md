@@ -2,7 +2,7 @@
 
 A lightweight REST API framework focused on productivity and scalability. 
 
-The power of Java and Google Appengine for the server, the flexibility of Javascript for the client.
+The power of __Java__ and __Google Appengine__ for the server, the flexibility of __Javascript__ for the client.
 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/)

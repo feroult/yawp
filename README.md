@@ -10,7 +10,7 @@ The power of Java and Google Appengine for the server, the flexibility of Javasc
 
 ## Introduction
 
-1. Everything happens around a plain Java object:
+__Everything happens around a plain Java object:__
 
     ``` java
     @Endpoint(path = "/people")
@@ -21,14 +21,14 @@ The power of Java and Google Appengine for the server, the flexibility of Javasc
     }    
     ```
 
-2. It gives you a complete set of REST APIs under its endpoint:
+__It gives you a complete set of REST APIs under its endpoint:__
 
     * Create
     * Update/Patch
     * Destroy
     * List/Queries
 
-3. Access it from Node.js or a browser with Javascript:
+__Access it from Node.js or a browser with Javascript:__
  
     ``` javascript
     var yawp = require('yawp');
@@ -39,7 +39,7 @@ The power of Java and Google Appengine for the server, the flexibility of Javasc
     });
     ```
      
-4. Customize your server and tune your client with features:
+__Customize your server and tune your client with features:__
 
     * Action Routes
     * Transformers

@@ -17,7 +17,7 @@ Everything happens around a plain Java object:
 public class Person {
     @Id
     IdRef<Person> id;             
-    Sting name;
+    String name;
 }    
 ```
 
@@ -37,7 +37,7 @@ var promise = yawp('/people').create({name: 'janes'}).then(function(person) {
     console.log('created', person.id);
    
     person.name = 'janes joplin';
-    return person.save().then(function() {
+    return person.save(function() {
         console.log('updated');
     });
 });

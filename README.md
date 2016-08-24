@@ -1,6 +1,8 @@
-# YAWP! Framework
+# YAWP!
 
-A very simple and elegant domain specific language / framework in Java that helps you to create amazing REST APIs.
+A lightweight REST API framework focused on productivity and scalability. 
+
+The power of Java and Google Appengine for the server, the flexibility of Javascript for the client.
 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/)
@@ -8,15 +10,42 @@ A very simple and elegant domain specific language / framework in Java that help
 
 ## Introduction
 
-__YAWP!__'s main purpose is to help developers to easily create meaningful and
-scalable APIs to back their REST based applications. It natively supports and
-implements effective usage patterns for the Google Appengine Platform, so you can
-bootstrap your API very quickly with a free (to start) auto-scalable environment.
+1. Everything happens around a plain Java object:
 
-If scalability is not an issue or you'd rather do-it-yourself, you can use the
-PostgreSQL persistence driver to deploy your code on different platforms.
+    ``` java
+    @Endpoint(path = "/people")
+    public class Person {
+        @Id
+        IdRef<Person> id;             
+        Sting name;
+    }    
+    ```
 
-You create your POJOs and __YAWP!__
+2. It gives you a complete set of REST APIs under its endpoint:
+
+    * Create
+    * Update/Patch
+    * Destroy
+    * List/Queries
+
+3. Access it from Node.js or a browser with Javascript:
+ 
+    ``` javascript
+    var yawp = require('yawp');
+     
+    yawp('/people').create({name: 'janes'}).then(function(person) {
+       person.name = 'janes joplin';
+       person.save();
+    });
+    ```
+     
+4. Customize your server and tune your client with features:
+
+    * Action Routes
+    * Transformers
+    * Security Shields
+    * Model Hooks
+    * Asynchronous Pipes
 
 ## Guides
 
@@ -60,6 +89,7 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 
 5. Follow the guidelines to start developing your API:
     * [Your First API](http://yawp.io/guides/getting-started/your-first-api)
+    * [The Javascript Client](http://yawp.io/guides/tutorials/the-javascript-client)
     * [Todo App List Tutorial](http://yawp.io/guides/tutorials/todo-list-app)
     * [API Documentation](http://yawp.io/guides/api/models)    
 

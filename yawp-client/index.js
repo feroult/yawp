@@ -8,6 +8,6 @@ function web() {
 
 var lib = typeof window === 'undefined' ? node() : web();
 
-var yawp = lib.default;
+var yawp = lib.default || lib;
 
 module.exports = yawp;

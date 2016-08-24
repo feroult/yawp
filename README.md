@@ -34,8 +34,12 @@ Access it from Node.js or a browser with Javascript:
 var yawp = require('yawp');
  
 var promise = yawp('/people').create({name: 'janes'}).then(function(person) {
-   person.name = 'janes joplin';
-   return person.save();
+    console.log('created', person.id);
+   
+    person.name = 'janes joplin';
+    return person.save().then(function() {
+        console.log('updated');
+    });
 });
 ```
      

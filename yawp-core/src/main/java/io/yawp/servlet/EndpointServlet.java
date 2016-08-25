@@ -82,7 +82,7 @@ public class EndpointServlet extends HttpServlet {
             this.enableCrossDomain = !DriverFactory.getDriver().environment().isProduction();
         }
 
-        if (this.enableCrossDomain) {
+        if (this.enableCrossDomain && crossDomainOrigin != null && crossDomainHeaders != null && crossDomainMethods != null) {
             this.crossDomainParams.setOrigins(Arrays.asList(crossDomainOrigin.split(", ")));
             this.crossDomainParams.setHeaders(Arrays.asList(crossDomainHeaders.split(", ")));
             this.crossDomainParams.setMethods(Arrays.asList(crossDomainMethods.split(", ")));
@@ -123,7 +123,10 @@ public class EndpointServlet extends HttpServlet {
             httpResponse = e.createResponse();
         }
 
-        if (enableCrossDomain) {
+        if (enableCrossDomain
+                && this.crossDomainParams.getHeaders() != null
+                && this.crossDomainParams.getMethods() != null
+                && this.crossDomainParams.getOrigins() != null) {
 
             resp.setHeader("Access-Control-Allow-Origin", StringUtils.join(this.crossDomainParams.getOrigins(), ", "));
             resp.setHeader("Access-Control-Allow-Headers", StringUtils.join(this.crossDomainParams.getHeaders(), ", "));

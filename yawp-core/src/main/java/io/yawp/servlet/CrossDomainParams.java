@@ -6,9 +6,9 @@ import java.util.List;
  * Created by walidsabihi on 25/08/2016.
  */
 public class CrossDomainParams {
-    List<String> origins;
-    List<String> headers;
-    List<String> methods;
+    List<String> origins = null;
+    List<String> headers = null;
+    List<String> methods = null;
 
     public List<String> getOrigins() {
         return origins;

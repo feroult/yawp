@@ -76,16 +76,27 @@ public class EndpointServlet extends HttpServlet {
                                 String crossDomainOrigin,
                                 String crossDomainHeaders,
                                 String crossDomainMethods) {
+
+        String defaultCrossDomainOrigin = "*";
+        String defaultCrossDomainHeaders = "Origin, X-Requested-With, Content-Type, Accept, Authorization";
+        String defaultCrossDomainMethods = "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD";
+
         if (enableCrossDomainParameter != null) {
             this.enableCrossDomain = Boolean.valueOf(enableCrossDomainParameter);
         } else {
             this.enableCrossDomain = !DriverFactory.getDriver().environment().isProduction();
         }
 
-        if (this.enableCrossDomain && crossDomainOrigin != null && crossDomainHeaders != null && crossDomainMethods != null) {
-            this.crossDomainParams.setOrigins(Arrays.asList(crossDomainOrigin.split(", ")));
-            this.crossDomainParams.setHeaders(Arrays.asList(crossDomainHeaders.split(", ")));
-            this.crossDomainParams.setMethods(Arrays.asList(crossDomainMethods.split(", ")));
+        if (this.enableCrossDomain) {
+            if (crossDomainOrigin != null && crossDomainHeaders != null && crossDomainMethods != null) {
+                this.crossDomainParams.setOrigins(Arrays.asList(crossDomainOrigin.split(", ")));
+                this.crossDomainParams.setHeaders(Arrays.asList(crossDomainHeaders.split(", ")));
+                this.crossDomainParams.setMethods(Arrays.asList(crossDomainMethods.split(", ")));
+            } else {
+                this.crossDomainParams.setOrigins(Arrays.asList(defaultCrossDomainOrigin.split(", ")));
+                this.crossDomainParams.setHeaders(Arrays.asList(defaultCrossDomainHeaders.split(", ")));
+                this.crossDomainParams.setMethods(Arrays.asList(defaultCrossDomainMethods.split(", ")));
+            }
         }
     }
 

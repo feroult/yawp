@@ -44,13 +44,6 @@ public class EndpointServlet extends HttpServlet {
 
         initYawp(config.getInitParameter("packagePrefix"));
 
-        boolean enableCrossDomain = false;
-        if (config.getInitParameter("enableCrossDomain") != null) {
-            enableCrossDomain = Boolean.valueOf(config.getInitParameter("enableCrossDomain"));
-        } else {
-            enableCrossDomain = !DriverFactory.getDriver().environment().isProduction();
-        }
-
         setCrossDomain(this.crossDomainManager.isCrossDomainEnabled(config), config);
     }
 

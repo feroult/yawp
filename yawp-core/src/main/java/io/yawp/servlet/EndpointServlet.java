@@ -28,7 +28,7 @@ public class EndpointServlet extends HttpServlet {
 
     private boolean enableCrossDomain = false;
 
-    private CrossDomainParams crossDomainParams = new CrossDomainParams();
+    private CrossDomainManager crossDomainManager = new CrossDomainManager();
 
     public EndpointServlet() {
     }
@@ -51,10 +51,7 @@ public class EndpointServlet extends HttpServlet {
             enableCrossDomain = !DriverFactory.getDriver().environment().isProduction();
         }
 
-        setCrossDomain(String.valueOf(enableCrossDomain),
-                config.getInitParameter("crossDomainOrigin"),
-                config.getInitParameter("crossDomainHeaders"),
-                config.getInitParameter("crossDomainMethods"));
+        setCrossDomain(this.crossDomainManager.isCrossDomainEnabled(config), config);
     }
 
     @Override
@@ -72,31 +69,15 @@ public class EndpointServlet extends HttpServlet {
         setWithHooks(enableHooks);
     }
 
-    private void setCrossDomain(String enableCrossDomainParameter,
-                                String crossDomainOrigin,
-                                String crossDomainHeaders,
-                                String crossDomainMethods) {
+    private void setCrossDomain(boolean enableCrossDomainParameter,
+                                ServletConfig servletConfig) {
 
-        String defaultCrossDomainOrigin = "*";
-        String defaultCrossDomainHeaders = "Origin, X-Requested-With, Content-Type, Accept, Authorization";
-        String defaultCrossDomainMethods = "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD";
+        this.enableCrossDomain = enableCrossDomainParameter;
 
-        if (enableCrossDomainParameter != null) {
-            this.enableCrossDomain = Boolean.valueOf(enableCrossDomainParameter);
-        } else {
-            this.enableCrossDomain = !DriverFactory.getDriver().environment().isProduction();
-        }
-
-        if (this.enableCrossDomain) {
-            if (crossDomainOrigin != null && crossDomainHeaders != null && crossDomainMethods != null) {
-                this.crossDomainParams.setOrigins(Arrays.asList(crossDomainOrigin.split(", ")));
-                this.crossDomainParams.setHeaders(Arrays.asList(crossDomainHeaders.split(", ")));
-                this.crossDomainParams.setMethods(Arrays.asList(crossDomainMethods.split(", ")));
-            } else {
-                this.crossDomainParams.setOrigins(Arrays.asList(defaultCrossDomainOrigin.split(", ")));
-                this.crossDomainParams.setHeaders(Arrays.asList(defaultCrossDomainHeaders.split(", ")));
-                this.crossDomainParams.setMethods(Arrays.asList(defaultCrossDomainMethods.split(", ")));
-            }
+        if (this.enableCrossDomain && this.crossDomainManager.hasAnyValueSet(servletConfig)) {
+            this.crossDomainManager.setOrigins(crossDomainManager.getOrigins(servletConfig));
+            this.crossDomainManager.setMethods(crossDomainManager.getMethods(servletConfig));
+            this.crossDomainManager.setHeaders(crossDomainManager.getHeaders(servletConfig));
         }
     }
 
@@ -134,15 +115,7 @@ public class EndpointServlet extends HttpServlet {
             httpResponse = e.createResponse();
         }
 
-        if (enableCrossDomain
-                && this.crossDomainParams.getHeaders() != null
-                && this.crossDomainParams.getMethods() != null
-                && this.crossDomainParams.getOrigins() != null) {
-
-            resp.setHeader("Access-Control-Allow-Origin", StringUtils.join(this.crossDomainParams.getOrigins(), ", "));
-            resp.setHeader("Access-Control-Allow-Headers", StringUtils.join(this.crossDomainParams.getHeaders(), ", "));
-            resp.setHeader("Access-Control-Allow-Methods", StringUtils.join(this.crossDomainParams.getMethods(), ", "));
-        }
+        this.crossDomainManager.setResponseHeaders(resp);
         response(resp, httpResponse);
 
         logger.finer("done");

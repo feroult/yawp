@@ -10,7 +10,7 @@ public class CrossDomainManager {
 
     private static final String ENABLE_CROSS_DOMAIN_PARAM = "enableCrossDomain";
 
-    private static final String CROSS_DOMAIN_ORIGIN_PARAM = "crossDomainOrigins";
+    private static final String CROSS_DOMAIN_ORIGIN_PARAM = "crossDomainOrigin";
 
     private static final String CROSS_DOMAIN_METHODS_PARAM = "crossDomainMethods";
 

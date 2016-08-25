@@ -4,7 +4,6 @@ import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.JsonResponse;
 import io.yawp.commons.http.RequestContext;
-import io.yawp.driver.api.DriverFactory;
 import io.yawp.repository.Repository;
 import io.yawp.repository.Yawp;
 
@@ -26,6 +25,8 @@ public class EndpointServlet extends HttpServlet {
 
     private boolean enableCrossDomain = false;
 
+    private CrossDomainManager crossDomainManager = new CrossDomainManager();
+
     public EndpointServlet() {
     }
 
@@ -37,8 +38,9 @@ public class EndpointServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         setWithHooks(config.getInitParameter("enableHooks"));
-        setCrossDomain(config.getInitParameter("enableCrossDomain"));
         initYawp(config.getInitParameter("packagePrefix"));
+
+        crossDomainManager.init(config);
     }
 
     @Override
@@ -54,14 +56,6 @@ public class EndpointServlet extends HttpServlet {
 
         boolean enableHooks = enableHooksParameter == null || Boolean.valueOf(enableHooksParameter);
         setWithHooks(enableHooks);
-    }
-
-    private void setCrossDomain(String enableCrossDomainParameter) {
-        if (enableCrossDomainParameter != null) {
-            this.enableCrossDomain = Boolean.valueOf(enableCrossDomainParameter);
-        } else {
-            this.enableCrossDomain = !DriverFactory.getDriver().environment().isProduction();
-        }
     }
 
     protected void setWithHooks(boolean enableHooks) {
@@ -98,11 +92,7 @@ public class EndpointServlet extends HttpServlet {
             httpResponse = e.createResponse();
         }
 
-        if (enableCrossDomain) {
-            resp.setHeader("Access-Control-Allow-Origin", "*");
-            resp.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-            resp.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD");
-        }
+        crossDomainManager.setResponseHeaders(resp);
         response(resp, httpResponse);
 
         logger.finer("done");

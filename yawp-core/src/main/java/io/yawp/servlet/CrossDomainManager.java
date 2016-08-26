@@ -1,92 +1,102 @@
 package io.yawp.servlet;
 
 import io.yawp.driver.api.DriverFactory;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
-/**
- * Created by walidsabihi on 25/08/2016.
- */
 public class CrossDomainManager {
 
-    String defaultOrigins = "*";
-    String defaultHeaders = "Origin, X-Requested-With, Content-Type, Accept, Authorization";
-    String defaultMethods = "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD";
+    private static final String ENABLE_CROSS_DOMAIN_PARAM = "enableCrossDomain";
 
-    String origins = null;
-    String headers = null;
-    String methods = null;
+    private static final String CROSS_DOMAIN_ORIGIN_PARAM = "crossDomainOrigin";
 
-    public String getOrigins() {
-        return origins;
-    }
-    public String getOrigins(ServletConfig config) {
-        return config.getInitParameter("crossDomainOrigins");
-    }
+    private static final String CROSS_DOMAIN_METHODS_PARAM = "crossDomainMethods";
 
-    public void setOrigins(String origins) {
-        this.origins = origins;
-    }
+    private static final String CROSS_DOMAIN_HEADERS_PARAM = "crossDomainHeaders";
 
-    public String getHeaders() {
-        return headers;
-    }
-    public String getHeaders(ServletConfig config) {
-        return config.getInitParameter("crossDomainHeaders");
-    }
+    public static final String DEFAULT_ORIGIN = "*";
 
-    public void setHeaders(String headers) {
-        this.headers = headers;
-    }
+    public static final String DEFAULT_METHODS = "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD";
 
-    public String getMethods() {
-        return methods;
-    }
-    public String getMethods(ServletConfig config) {
-        return config.getInitParameter("crossDomainMethods");
-    }
+    public static final String DEFAULT_HEADERS = "Origin, X-Requested-With, Content-Type, Accept, Authorization";
 
-    public void setMethods(String methods) {
-        this.methods = methods;
-    }
+    private boolean enableCrossDomain;
 
-    public boolean hasAnyValueSet() {
-        return (origins != null && headers != null && methods != null);
-    }
+    private String origin;
 
-    public boolean hasAnyValueSet(ServletConfig config) {
-        return (config.getInitParameter("crossDomainOrigin") != null
-                && config.getInitParameter("crossDomainHeaders") != null
-                && config.getInitParameter("crossDomainMethods") != null);
-    }
+    private String methods;
 
-    public void setCustomValues(HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", origins);
-        response.setHeader("Access-Control-Allow-Headers", headers);
-        response.setHeader("Access-Control-Allow-Methods", methods);
-    }
+    private String headers;
 
-    public void setDefaultValues(HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", defaultOrigins);
-        response.setHeader("Access-Control-Allow-Headers", defaultHeaders);
-        response.setHeader("Access-Control-Allow-Methods", defaultMethods);
+    public void init(ServletConfig config) {
+        this.enableCrossDomain = isCrossDomainEnabled(config);
+
+        if (enableCrossDomain) {
+            if (hasAnyValueSet(config)) {
+                setOrigin(getOrigin(config));
+                setMethods(getMethods(config));
+                setHeaders(getHeaders(config));
+            } else {
+                setOrigin(DEFAULT_ORIGIN);
+                setMethods(DEFAULT_METHODS);
+                setHeaders(DEFAULT_HEADERS);
+            }
+        }
     }
 
     public void setResponseHeaders(HttpServletResponse response) {
-        if (hasAnyValueSet()) {
-            setCustomValues(response);
-        } else {
-            setDefaultValues(response);
+        if (enableCrossDomain) {
+            if (!StringUtils.isEmpty(origin)) {
+                response.setHeader("Access-Control-Allow-Origin", origin);
+            }
+
+            if (!StringUtils.isEmpty(methods)) {
+                response.setHeader("Access-Control-Allow-Methods", methods);
+            }
+
+            if (!StringUtils.isEmpty(headers)) {
+                response.setHeader("Access-Control-Allow-Headers", headers);
+            }
         }
     }
 
-    public boolean isCrossDomainEnabled(ServletConfig config) {
-        if (config.getInitParameter("enableCrossDomain") != null) {
-            return Boolean.valueOf(config.getInitParameter("enableCrossDomain"));
+    private String getOrigin(ServletConfig config) {
+        return config.getInitParameter(CROSS_DOMAIN_ORIGIN_PARAM);
+    }
+
+    private String getMethods(ServletConfig config) {
+        return config.getInitParameter(CROSS_DOMAIN_METHODS_PARAM);
+    }
+
+    private String getHeaders(ServletConfig config) {
+        return config.getInitParameter(CROSS_DOMAIN_HEADERS_PARAM);
+    }
+
+    private void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    private void setMethods(String methods) {
+        this.methods = methods;
+    }
+
+    private void setHeaders(String headers) {
+        this.headers = headers;
+    }
+
+    private boolean isCrossDomainEnabled(ServletConfig config) {
+        if (config.getInitParameter(ENABLE_CROSS_DOMAIN_PARAM) != null) {
+            return Boolean.valueOf(config.getInitParameter(ENABLE_CROSS_DOMAIN_PARAM));
         } else {
             return !DriverFactory.getDriver().environment().isProduction();
         }
+    }
+
+    public boolean hasAnyValueSet(ServletConfig config) {
+        return (config.getInitParameter(CROSS_DOMAIN_ORIGIN_PARAM) != null
+                || config.getInitParameter(CROSS_DOMAIN_METHODS_PARAM) != null
+                || config.getInitParameter(CROSS_DOMAIN_HEADERS_PARAM) != null);
     }
 }

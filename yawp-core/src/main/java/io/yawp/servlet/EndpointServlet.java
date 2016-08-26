@@ -4,10 +4,8 @@ import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.JsonResponse;
 import io.yawp.commons.http.RequestContext;
-import io.yawp.driver.api.DriverFactory;
 import io.yawp.repository.Repository;
 import io.yawp.repository.Yawp;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -15,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.Logger;
 
 public class EndpointServlet extends HttpServlet {
@@ -41,10 +38,9 @@ public class EndpointServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         setWithHooks(config.getInitParameter("enableHooks"));
-
         initYawp(config.getInitParameter("packagePrefix"));
 
-        setCrossDomain(this.crossDomainManager.isCrossDomainEnabled(config), config);
+        crossDomainManager.init(config);
     }
 
     @Override
@@ -60,18 +56,6 @@ public class EndpointServlet extends HttpServlet {
 
         boolean enableHooks = enableHooksParameter == null || Boolean.valueOf(enableHooksParameter);
         setWithHooks(enableHooks);
-    }
-
-    private void setCrossDomain(boolean enableCrossDomainParameter,
-                                ServletConfig servletConfig) {
-
-        this.enableCrossDomain = enableCrossDomainParameter;
-
-        if (this.enableCrossDomain && this.crossDomainManager.hasAnyValueSet(servletConfig)) {
-            this.crossDomainManager.setOrigins(crossDomainManager.getOrigins(servletConfig));
-            this.crossDomainManager.setMethods(crossDomainManager.getMethods(servletConfig));
-            this.crossDomainManager.setHeaders(crossDomainManager.getHeaders(servletConfig));
-        }
     }
 
     protected void setWithHooks(boolean enableHooks) {
@@ -108,7 +92,7 @@ public class EndpointServlet extends HttpServlet {
             httpResponse = e.createResponse();
         }
 
-        this.crossDomainManager.setResponseHeaders(resp);
+        crossDomainManager.setResponseHeaders(resp);
         response(resp, httpResponse);
 
         logger.finer("done");

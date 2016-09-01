@@ -13,6 +13,7 @@ export default function (url, options) {
 
         request.open(options.method, url + (query ? '?' + toUrlParam(query) : ''));
         setHeaders(request, options.headers);
+        setCrossDomain(request, options.credentials);
         request.send(options.body);
     });
 }
@@ -25,6 +26,13 @@ function resolveOrReject(request, options, resolve, reject) {
             reject(request);
         }
     }
+}
+
+function setCrossDomain(request, credentials) {
+    if (!credentials || credentials === "omit") {
+        return;
+    }
+    request.withCredentials = true;
 }
 
 function setHeaders(request, headers) {

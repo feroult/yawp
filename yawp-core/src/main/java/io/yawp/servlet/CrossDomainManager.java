@@ -4,6 +4,7 @@ import io.yawp.driver.api.DriverFactory;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class CrossDomainManager {
@@ -46,10 +47,14 @@ public class CrossDomainManager {
         }
     }
 
-    public void setResponseHeaders(HttpServletResponse response) {
+    public void setResponseHeaders(HttpServletRequest request, HttpServletResponse response) {
         if (enableCrossDomain) {
             if (!StringUtils.isEmpty(origin)) {
-                response.setHeader("Access-Control-Allow-Origin", origin);
+                if (origin.equals("?")) {
+                    response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+                } else {
+                    response.setHeader("Access-Control-Allow-Origin", origin);
+                }
             }
 
             if (!StringUtils.isEmpty(methods)) {

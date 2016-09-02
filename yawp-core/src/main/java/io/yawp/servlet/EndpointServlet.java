@@ -92,7 +92,7 @@ public class EndpointServlet extends HttpServlet {
             httpResponse = e.createResponse();
         }
 
-        crossDomainManager.setResponseHeaders(resp);
+        crossDomainManager.setResponseHeaders(req, resp);
         response(resp, httpResponse);
 
         logger.finer("done");

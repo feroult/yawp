@@ -91,7 +91,7 @@ public class EndpointTree<T> {
         if (shieldClazzes.size() > 1) {
             throwExceptionMultipleShields(shieldClazzes);
         }
-        return new ShieldInfo<TT>((Class<? extends Shield<? super TT>>) shieldClazzes.iterator().next());
+        return new ShieldInfo<>((Class<? extends Shield<? super TT>>) shieldClazzes.iterator().next());
     }
 
     public Set<Class<? extends Pipe>> loadPipes() {

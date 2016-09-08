@@ -32,7 +32,7 @@ public class Query {
     // TODO: select only keys, today we fetch the entire row from database
     private boolean keysOnly;
 
-    private Map<String, Object> whereBinds = new HashMap<String, Object>();
+    private Map<String, Object> whereBinds = new HashMap<>();
 
     public Query(QueryBuilder<?> builder, boolean keysOnly) {
         this.builder = builder;

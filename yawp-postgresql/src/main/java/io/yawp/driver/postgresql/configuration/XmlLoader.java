@@ -52,7 +52,7 @@ public class XmlLoader {
         try {
             XPath xPath = XPathFactory.newInstance().newXPath();
             NodeList nodes = (NodeList) xPath.evaluate(xpath, item, XPathConstants.NODESET);
-            List<XmlLoader> result = new ArrayList<XmlLoader>();
+            List<XmlLoader> result = new ArrayList<>();
             for (int i = 0; i < nodes.getLength(); i++) {
                 result.add(new XmlLoader(nodes.item(i)));
             }

@@ -18,7 +18,7 @@ public class AppengineUserRealm implements UserRealm {
 
     public static final String[] ROLES = new String[]{USER_ROLE, ADMIN_ROLE};
 
-    Map<String, AppengineUser> users = new HashMap<String, AppengineUser>();
+    Map<String, AppengineUser> users = new HashMap<>();
 
     private LocalServiceTestHelper helper;
 

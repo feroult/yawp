@@ -29,7 +29,7 @@ public abstract class BaseCondition {
     }
 
     public <T> List<T> applyPostFilter(List<T> objects) {
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
 
         for (T object : objects) {
             if (!evaluate(object)) {

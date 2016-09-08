@@ -7,7 +7,7 @@ import java.util.List;
 
 public class PlaceHolder {
 
-    private List<Integer> indexes = new ArrayList<Integer>();
+    private List<Integer> indexes = new ArrayList<>();
 
     private Object value;
 

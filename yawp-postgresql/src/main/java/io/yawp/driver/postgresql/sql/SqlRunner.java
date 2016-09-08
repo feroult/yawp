@@ -14,17 +14,16 @@ import java.util.regex.Pattern;
 import org.postgresql.util.PGobject;
 
 public class SqlRunner {
-
     private final static Logger logger = Logger.getLogger(SqlRunner.class.getName());
+
+    protected String sql;
+
+    protected Map<String, PlaceHolder> placeHolders = new HashMap<>();
 
     @SuppressWarnings("serial")
     private class NotImplementedException extends RuntimeException {
 
     }
-
-    protected String sql;
-
-    protected Map<String, PlaceHolder> placeHolders = new HashMap<String, PlaceHolder>();
 
     public SqlRunner(String sql) {
         this.sql = sql;
@@ -142,8 +141,6 @@ public class SqlRunner {
             PlaceHolder placeHolder = placeHolders.get(key);
             placeHolder.addIndex(index++);
         }
-
-        return;
     }
 
     private void removePlaceHolders() {

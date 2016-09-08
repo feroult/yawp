@@ -24,9 +24,9 @@ public class QueryBuilder<T> {
 
     private BaseCondition condition;
 
-    private List<QueryOrder> preOrders = new ArrayList<QueryOrder>();
+    private List<QueryOrder> preOrders = new ArrayList<>();
 
-    private List<QueryOrder> postOrders = new ArrayList<QueryOrder>();
+    private List<QueryOrder> postOrders = new ArrayList<>();
 
     private Integer limit;
 
@@ -39,7 +39,7 @@ public class QueryBuilder<T> {
     }
 
     public static <T> QueryBuilder<T> q(Class<T> clazz, Repository r) {
-        return new QueryBuilder<T>(clazz, r);
+        return new QueryBuilder<>(clazz, r);
     }
 
     public <N> QueryTransformer<T, N> transform(String transformName) {

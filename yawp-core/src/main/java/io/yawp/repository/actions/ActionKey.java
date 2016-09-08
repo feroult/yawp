@@ -1,11 +1,6 @@
 package io.yawp.repository.actions;
 
 import io.yawp.commons.http.HttpVerb;
-import io.yawp.repository.IdRef;
-
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
 
 public class ActionKey {
 

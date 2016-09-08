@@ -4,7 +4,7 @@ import io.yawp.repository.Namespace;
 
 public class NamespaceManager {
 
-    private static ThreadLocal<String> namespace = new ThreadLocal<String>();
+    private static ThreadLocal<String> namespace = new ThreadLocal<>();
 
     private NamespaceManager() {}
 

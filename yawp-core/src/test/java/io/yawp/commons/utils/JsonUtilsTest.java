@@ -11,14 +11,12 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 
 public class JsonUtilsTest extends EndpointTestCase {
+    private static final String DATA_OBJECT_JSON = "{\"intValue\" : 1, \"longValue\" : 1, \"doubleValue\" : 1.1, \"booleanValue\" : true, \"dateValue\" : \"2013/12/26 23:55:01\", \"stringValue\" : \"object1\", \"textValue\": \"text\"}";
 
     @Test
     public void testXpto() {
         IdRef from = JsonUtils.from(null, "\"/basic_objects/1\"", IdRef.class);
     }
-
-    private static final String DATA_OBJECT_JSON = "{\"intValue\" : 1, \"longValue\" : 1, \"doubleValue\" : 1.1, \"booleanValue\" : true, \"dateValue\" : \"2013/12/26 23:55:01\", \"stringValue\" : \"object1\", \"textValue\": \"text\"}";
-
 
     @Test
     public void testFrom() {

@@ -124,7 +124,7 @@ public class DevServerMojo extends DevserverAbstractMojo {
     public List<String> getAppengineCustomClasspathElements() {
         String sdkRoot = resolveSdkRoot();
 
-        List<String> elements = new ArrayList<String>();
+        List<String> elements = new ArrayList<>();
 
         //elements.add(sdkRoot + "/lib/shared/servlet-api.jar");
         elements.add(sdkRoot + "/lib/shared/el-api.jar");

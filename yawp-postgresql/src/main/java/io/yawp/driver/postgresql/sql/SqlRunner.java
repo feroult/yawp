@@ -142,8 +142,6 @@ public class SqlRunner {
             PlaceHolder placeHolder = placeHolders.get(key);
             placeHolder.addIndex(index++);
         }
-
-        return;
     }
 
     private void removePlaceHolders() {

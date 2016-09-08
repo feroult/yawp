@@ -14,7 +14,7 @@ public class ClassLoaderBuilder {
     private List<URL> urls;
 
     public ClassLoaderBuilder() {
-        urls = new ArrayList<URL>();
+        urls = new ArrayList<>();
     }
 
     public URLClassLoader build(boolean isolated) {

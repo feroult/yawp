@@ -55,7 +55,7 @@ public class PGPersistenceDriver implements PersistenceDriver {
     public FutureObject<Void> destroyAsync(IdRef<?> id) {
         destroy(id);
         Future<Void> future = ConcurrentUtils.constantFuture(null);
-        return new FutureObject<Void>(r, future);
+        return new FutureObject<>(r, future);
     }
 
     private Entity createEntity(ObjectHolder objectHolder) {
@@ -86,7 +86,7 @@ public class PGPersistenceDriver implements PersistenceDriver {
     private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectHolder, Entity entity) {
         Key key = datastore.put(entity);
         Future<?> futureId = ConcurrentUtils.constantFuture(IdRefToKey.toIdRef(r, key, objectHolder.getModel()));
-        return new FutureObject<T>(r, (Future<IdRef<?>>) futureId, (T) objectHolder.getObject());
+        return new FutureObject<>(r, (Future<IdRef<?>>) futureId, (T) objectHolder.getObject());
     }
 
     public void toEntity(ObjectHolder objectHolder, Entity entity) {

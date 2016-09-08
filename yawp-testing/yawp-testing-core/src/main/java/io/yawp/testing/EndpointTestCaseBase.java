@@ -306,7 +306,7 @@ public class EndpointTestCaseBase extends Feature {
     }
 
     protected String parseIds(String format, Object... objects) {
-        List<String> longIds = new ArrayList<String>();
+        List<String> longIds = new ArrayList<>();
 
         for (Object object : objects) {
             ObjectHolder objectHolder = new ObjectHolder(object);
@@ -325,7 +325,7 @@ public class EndpointTestCaseBase extends Feature {
     }
 
     protected Map<String, String> params(String key, String value) {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(key, value);
         return map;
     }

@@ -98,7 +98,7 @@ public class DatabaseSynchronizer {
         SqlRunner runner = new SqlRunner(sql) {
             @Override
             public List<String> collect(ResultSet rs) throws SQLException {
-                List<String> tables = new ArrayList<String>();
+                List<String> tables = new ArrayList<>();
 
                 while (rs.next()) {
                     tables.add(rs.getString("relname"));

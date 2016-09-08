@@ -18,7 +18,7 @@ public class SqlRunner {
 
     protected String sql;
 
-    protected Map<String, PlaceHolder> placeHolders = new HashMap<String, PlaceHolder>();
+    protected Map<String, PlaceHolder> placeHolders = new HashMap<>();
 
     @SuppressWarnings("serial")
     private class NotImplementedException extends RuntimeException {

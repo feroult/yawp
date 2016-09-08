@@ -71,7 +71,7 @@ public class QueryOptions {
             return null;
         }
 
-        List<QueryOrder> orders = new ArrayList<QueryOrder>();
+        List<QueryOrder> orders = new ArrayList<>();
 
         for (JsonElement jsonElement : jsonArray) {
             String entity = getJsonStringValue(jsonElement, "e");
@@ -165,7 +165,7 @@ public class QueryOptions {
     private BaseCondition parseJoinedCondition(JsonObject json) {
         String op = json.get("op").getAsString();
 
-        List<BaseCondition> conditions = new ArrayList<BaseCondition>();
+        List<BaseCondition> conditions = new ArrayList<>();
 
         for (JsonElement jsonElement : json.getAsJsonArray("c")) {
             conditions.add(parseConditionObject(jsonElement.getAsJsonObject()));

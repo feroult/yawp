@@ -45,7 +45,7 @@ public class DatastoreSqlRunner extends SqlRunner {
     }
 
     protected final Object getEntities(ResultSet rs) throws SQLException {
-        List<Entity> entities = new ArrayList<Entity>();
+        List<Entity> entities = new ArrayList<>();
 
         while (rs.next()) {
             entities.add(getEntity(rs));

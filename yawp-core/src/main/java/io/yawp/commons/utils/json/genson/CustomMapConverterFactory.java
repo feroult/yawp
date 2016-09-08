@@ -85,14 +85,14 @@ public class CustomMapConverterFactory implements Factory<Converter<? extends Ma
             return new DefaultConverters.PropertiesConverter(keyAdapter, valueConverter);
 
         if (Hashtable.class.equals(typeOfMap))
-            return new DefaultConverters.HashTableConverter<K, V>(keyAdapter, valueConverter);
+            return new DefaultConverters.HashTableConverter<>(keyAdapter, valueConverter);
 
         if (TreeMap.class.equals(typeOfMap))
-            return new DefaultConverters.TreeMapConverter<K, V>(keyAdapter, valueConverter);
+            return new DefaultConverters.TreeMapConverter<>(keyAdapter, valueConverter);
 
         if (LinkedHashMap.class.equals(typeOfMap))
-            return new DefaultConverters.LinkedHashMapConverter<K, V>(keyAdapter, valueConverter);
+            return new DefaultConverters.LinkedHashMapConverter<>(keyAdapter, valueConverter);
 
-        return new DefaultConverters.HashMapConverter<K, V>(keyAdapter, valueConverter);
+        return new DefaultConverters.HashMapConverter<>(keyAdapter, valueConverter);
     }
 }

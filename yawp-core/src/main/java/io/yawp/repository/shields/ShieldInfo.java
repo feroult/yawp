@@ -34,7 +34,7 @@ public class ShieldInfo<T> {
     }
 
     private void parseActionMethods() {
-        this.actionMethods = new HashMap<ActionKey, Method>();
+        this.actionMethods = new HashMap<>();
 
         Method[] methods = shieldClazz.getDeclaredMethods();
         for (Method method : methods) {

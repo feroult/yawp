@@ -62,7 +62,7 @@ public class WebAppContextHelper {
     }
 
     protected List<String> getCustomClasspathElements() {
-        return new ArrayList<String>();
+        return new ArrayList<>();
     }
 
     protected void configureHotDeploy() {

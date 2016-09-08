@@ -83,7 +83,7 @@ public abstract class ShieldBase<T> extends Feature {
     }
 
     public final Rule<T> allow(boolean allow) {
-        Rule<T> rule = new Rule<T>(yawp, endpointClazz, id, objects);
+        Rule<T> rule = new Rule<>(yawp, endpointClazz, id, objects);
 
         if (allow) {
             rules.add(rule);

@@ -84,7 +84,7 @@ public class JsonUtils {
     }
 
     public static List<String> getProperties(String json) {
-        List<String> properties = new ArrayList<String>();
+        List<String> properties = new ArrayList<>();
         JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
         for (Entry<String, JsonElement> property : jsonObject.entrySet()) {
             properties.add(property.getKey());

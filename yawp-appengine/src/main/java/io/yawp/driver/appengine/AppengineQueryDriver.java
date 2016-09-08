@@ -52,7 +52,7 @@ public class AppengineQueryDriver implements QueryDriver {
         try {
             QueryResultList<Entity> queryResult = generateResults(builder, false);
 
-            List<T> objects = new ArrayList<T>();
+            List<T> objects = new ArrayList<>();
 
             for (Entity entity : queryResult) {
                 objects.add((T) toObject.convert(builder.getModel(), entity));
@@ -97,7 +97,7 @@ public class AppengineQueryDriver implements QueryDriver {
     public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
         Key key = IdRefToKey.toKey(r, id);
         Future<Entity> futureEntity = asyncDatastore().get(key);
-        return new FutureObject<T>(r, new FutureEntityToObject(r, id.getClazz(), futureEntity));
+        return new FutureObject<>(r, new FutureEntityToObject(r, id.getClazz(), futureEntity));
     }
 
     // query

@@ -17,11 +17,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class JsonUtils {
+    private static JsonUtilsBase jsonUtils;
 
     private JsonUtils() {
     }
-
-    private static JsonUtilsBase jsonUtils;
 
     static {
         init();

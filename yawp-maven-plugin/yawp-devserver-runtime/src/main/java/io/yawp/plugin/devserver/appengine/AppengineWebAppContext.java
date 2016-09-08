@@ -9,10 +9,8 @@ import com.google.apphosting.utils.config.AppEngineWebXml;
 import com.google.apphosting.utils.config.AppEngineWebXmlReader;
 import com.google.apphosting.utils.config.WebXml;
 import io.yawp.plugin.devserver.MojoWrapper;
-import org.mortbay.jetty.handler.ContextHandler;
 import org.mortbay.jetty.webapp.WebAppContext;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

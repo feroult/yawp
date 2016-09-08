@@ -12,8 +12,6 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 import static com.owlike.genson.reflect.TypeUtil.*;
-import static com.owlike.genson.reflect.TypeUtil.getRawClass;
-import static com.owlike.genson.reflect.TypeUtil.typeOf;
 import static io.yawp.repository.Yawp.yawp;
 
 public class CustomMapConverterFactory implements Factory<Converter<? extends Map<?, ?>>> {

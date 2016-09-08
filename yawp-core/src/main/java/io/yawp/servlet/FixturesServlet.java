@@ -1,10 +1,8 @@
 package io.yawp.servlet;
 
 import io.yawp.commons.http.ExceptionResponse;
-import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.Driver;
 import io.yawp.driver.api.DriverFactory;
-import io.yawp.repository.Repository;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;

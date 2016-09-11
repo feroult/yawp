@@ -368,13 +368,13 @@ exports.default = function (request) {
                         function sub() {
                             _classCallCheck(this, sub);
 
-                            var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(sub).call(this));
+                            var _this5 = _possibleConstructorReturn(this, (sub.__proto__ || Object.getPrototypeOf(sub)).call(this));
 
                             Yawp.bindBaseMethods(_this5, base);
                             if (constructorFn) {
                                 constructorFn.apply(_this5, arguments);
                             } else {
-                                _get(Object.getPrototypeOf(sub.prototype), 'constructor', _this5).apply(_this5, arguments);
+                                _get(sub.prototype.__proto__ || Object.getPrototypeOf(sub.prototype), 'constructor', _this5).apply(_this5, arguments);
                             }
                             return _this5;
                         }

@@ -29,13 +29,13 @@ after() {
 }
 
 run() {
-    cd yawp-client
+    cd yawp-js/yawp
 
     npm install
     npm run build
     npm run ci
 
-    cd ..
+    cd ../..
 }
 
 before

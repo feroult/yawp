@@ -18,7 +18,7 @@ public final class LazyJson<T> implements Serializable {
     private String json;
 
     public static <T> LazyJson<T> create(T object) {
-        LazyJson<T> lazyJson = new LazyJson<T>();
+        LazyJson<T> lazyJson = new LazyJson<>();
         lazyJson.set(object);
         return lazyJson;
     }

@@ -13,7 +13,7 @@ public class Entity {
 
     private Key key;
 
-    private Map<String, Object> properties = new HashMap<String, Object>();
+    private Map<String, Object> properties = new HashMap<>();
 
     public Entity() {
 

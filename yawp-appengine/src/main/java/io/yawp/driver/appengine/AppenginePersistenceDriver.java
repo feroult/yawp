@@ -77,7 +77,7 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
     @Override
     public FutureObject<Void> destroyAsync(IdRef<?> id) {
         Future<Void> future = asyncDatastore().delete(IdRefToKey.toKey(r, id));
-        return new FutureObject<Void>(r, future);
+        return new FutureObject<>(r, future);
     }
 
     private Entity createEntity(ObjectHolder objectHolder) {
@@ -107,7 +107,7 @@ public class AppenginePersistenceDriver implements PersistenceDriver {
     @SuppressWarnings("unchecked")
     private <T> FutureObject<T> saveEntityAsync(ObjectHolder objectHolder, Entity entity) {
         Future<Key> futureKey = asyncDatastore().put(entity);
-        return new FutureObject<T>(r, new FutureKeyToIdRef(r, futureKey, objectHolder.getModel()), (T) objectHolder.getObject());
+        return new FutureObject<>(r, new FutureKeyToIdRef(r, futureKey, objectHolder.getModel()), (T) objectHolder.getObject());
     }
 
     public void toEntity(ObjectHolder objectHolder, Entity entity) {

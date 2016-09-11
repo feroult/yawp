@@ -24,7 +24,7 @@ public class InitialContextSetup implements InitialContextFactory {
 
     private static class Xpto extends InitialContext {
 
-        Map<String, Object> bindings = new HashMap<String, Object>();
+        Map<String, Object> bindings = new HashMap<>();
 
         public Xpto() throws NamingException {
             super(true);

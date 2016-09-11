@@ -4,7 +4,6 @@ import io.yawp.driver.api.DriverFactory;
 import io.yawp.driver.api.EnvironmentDriver;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.Properties;
 
 public class Environment {

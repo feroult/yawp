@@ -13,18 +13,18 @@ public class RepositoryTransformers {
 
     @SuppressWarnings("unchecked")
     public static <F, T> T execute(Repository r, F object, String name) {
-        TransformerRunner transformerRunner = new TransformerRunner<F>(r, object.getClass(), name);
+        TransformerRunner transformerRunner = new TransformerRunner<>(r, object.getClass(), name);
         return (T) transformerRunner.run(object);
     }
 
     public static <F, T> List<T> execute(Repository r, List<F> list, String name) {
         if (list.size() == 0) {
-            return new ArrayList<T>();
+            return new ArrayList<>();
         }
 
-        TransformerRunner transformerRunner = new TransformerRunner<F>(r, list.get(0).getClass(), name);
+        TransformerRunner transformerRunner = new TransformerRunner<>(r, list.get(0).getClass(), name);
 
-        List<T> transformedList = new ArrayList<T>();
+        List<T> transformedList = new ArrayList<>();
 
         for (F object : list) {
             transformedList.add((T) transformerRunner.run(object));

@@ -105,27 +105,27 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
     }
 
     public <TT> IdRef<TT> createChildId(Class<TT> clazz, Long id) {
-        IdRef<TT> idRef = new IdRef<TT>(r, clazz, id);
+        IdRef<TT> idRef = new IdRef<>(r, clazz, id);
         idRef.setParentId(this);
         return idRef;
     }
 
     public <TT> IdRef<TT> createChildId(Class<TT> clazz, String name) {
-        IdRef<TT> idRef = new IdRef<TT>(r, clazz, name);
+        IdRef<TT> idRef = new IdRef<>(r, clazz, name);
         idRef.setParentId(this);
         return idRef;
     }
 
     public static <TT> IdRef<TT> create(Repository r, Class<TT> clazz, Long id) {
-        return new IdRef<TT>(r, clazz, id);
+        return new IdRef<>(r, clazz, id);
     }
 
     public static <TT> IdRef<TT> create(Repository r, Class<TT> clazz, String name) {
-        return new IdRef<TT>(r, clazz, name);
+        return new IdRef<>(r, clazz, name);
     }
 
     public static <TT> List<IdRef<TT>> create(Repository r, Class<TT> clazz, Long... ids) {
-        List<IdRef<TT>> idRefs = new ArrayList<IdRef<TT>>();
+        List<IdRef<TT>> idRefs = new ArrayList<>();
         for (int i = 0; i < ids.length; i++) {
             idRefs.add(create(r, clazz, ids[i]));
         }
@@ -181,7 +181,7 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
     }
 
     public static <T> List<IdRef<T>> parse(Class<T> clazz, Repository r, List<String> idsString) {
-        ArrayList<IdRef<T>> ids = new ArrayList<IdRef<T>>();
+        ArrayList<IdRef<T>> ids = new ArrayList<>();
         for (String idString : idsString) {
             ids.add(parse(clazz, r, idString));
         }

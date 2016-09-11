@@ -34,8 +34,8 @@ public class CreateRestAction extends RestAction {
     }
 
     private Object saveObjecs(List<?> objects) {
-        List<FutureObject<Object>> futures = new ArrayList<FutureObject<Object>>();
-        List<Object> resultObjects = new ArrayList<Object>();
+        List<FutureObject<Object>> futures = new ArrayList<>();
+        List<Object> resultObjects = new ArrayList<>();
 
         for (Object object : objects) {
             futures.add(saveObjectAsync(object));

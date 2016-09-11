@@ -41,7 +41,7 @@ public class JettyConfiguration {
     }
 
     private void load() {
-        envs = new HashMap<String, DataSourceInfo>();
+        envs = new HashMap<>();
 
         XmlLoader xml = new XmlLoader(path);
         List<XmlLoader> allEnvsXml = xml.find(XPATH_ENVS);

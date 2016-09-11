@@ -34,7 +34,7 @@ public class PGQueryDriver implements QueryDriver {
         try {
             List<Entity> queryResult = generateResults(builder, false);
 
-            List<T> objects = new ArrayList<T>();
+            List<T> objects = new ArrayList<>();
 
             for (Entity entity : queryResult) {
                 objects.add((T) toObject.convert(builder.getModel(), entity));
@@ -52,7 +52,7 @@ public class PGQueryDriver implements QueryDriver {
         try {
             List<Entity> queryResult = generateResults(builder, false);
 
-            List<IdRef<T>> ids = new ArrayList<IdRef<T>>();
+            List<IdRef<T>> ids = new ArrayList<>();
 
             for (Entity entity : queryResult) {
                 ids.add((IdRef<T>) IdRefToKey.toIdRef(r, entity.getKey(), builder.getModel()));
@@ -80,7 +80,7 @@ public class PGQueryDriver implements QueryDriver {
     public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
         T object = fetch(id);
         Future<?> futureObject = ConcurrentUtils.constantFuture(object);
-        return new FutureObject<T>(r, futureObject);
+        return new FutureObject<>(r, futureObject);
     }
 
     // query

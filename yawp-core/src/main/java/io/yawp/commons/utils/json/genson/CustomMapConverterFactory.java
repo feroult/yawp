@@ -12,8 +12,6 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 import static com.owlike.genson.reflect.TypeUtil.*;
-import static com.owlike.genson.reflect.TypeUtil.getRawClass;
-import static com.owlike.genson.reflect.TypeUtil.typeOf;
 import static io.yawp.repository.Yawp.yawp;
 
 public class CustomMapConverterFactory implements Factory<Converter<? extends Map<?, ?>>> {
@@ -87,14 +85,14 @@ public class CustomMapConverterFactory implements Factory<Converter<? extends Ma
             return new DefaultConverters.PropertiesConverter(keyAdapter, valueConverter);
 
         if (Hashtable.class.equals(typeOfMap))
-            return new DefaultConverters.HashTableConverter<K, V>(keyAdapter, valueConverter);
+            return new DefaultConverters.HashTableConverter<>(keyAdapter, valueConverter);
 
         if (TreeMap.class.equals(typeOfMap))
-            return new DefaultConverters.TreeMapConverter<K, V>(keyAdapter, valueConverter);
+            return new DefaultConverters.TreeMapConverter<>(keyAdapter, valueConverter);
 
         if (LinkedHashMap.class.equals(typeOfMap))
-            return new DefaultConverters.LinkedHashMapConverter<K, V>(keyAdapter, valueConverter);
+            return new DefaultConverters.LinkedHashMapConverter<>(keyAdapter, valueConverter);
 
-        return new DefaultConverters.HashMapConverter<K, V>(keyAdapter, valueConverter);
+        return new DefaultConverters.HashMapConverter<>(keyAdapter, valueConverter);
     }
 }

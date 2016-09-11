@@ -97,7 +97,7 @@ public class ObjectModel {
     public List<FieldModel> getFieldModels() {
         List<Field> fields = ReflectionUtils.getFieldsRecursively(clazz);
 
-        List<FieldModel> fieldModels = new ArrayList<FieldModel>();
+        List<FieldModel> fieldModels = new ArrayList<>();
 
         for (Field field : fields) {
             fieldModels.add(new FieldModel(field));

@@ -71,7 +71,7 @@ public abstract class FacadeUtils {
     }
 
     private static List<String> facadeProperties(Class<?> facade, FacadeType type) {
-        List<String> properties = new ArrayList<String>();
+        List<String> properties = new ArrayList<>();
 
         for (Method attribute : facade.getMethods()) {
             String name = extractNameFromAttribute(attribute, type);
@@ -89,7 +89,7 @@ public abstract class FacadeUtils {
     }
 
     private static List<String> otherProperties(Class<?> clazz, List<String> properties) {
-        List<String> otherProperties = new ArrayList<String>();
+        List<String> otherProperties = new ArrayList<>();
         List<Field> fields = ReflectionUtils.getFieldsRecursively(clazz);
         for (Field field : fields) {
             String name = field.getName();

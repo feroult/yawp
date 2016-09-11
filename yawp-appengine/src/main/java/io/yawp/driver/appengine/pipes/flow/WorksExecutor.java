@@ -151,7 +151,7 @@ public class WorksExecutor {
             sinkMarker.setParentId(sinkMarkerId.getParentId());
             sinkMarker.setVersion(0L);
             sinkMarker.setPresent(false);
-            sinkMarkerCache.put(sinkMarkerId, new FutureObject<SinkMarker>(sinkMarker));
+            sinkMarkerCache.put(sinkMarkerId, new FutureObject<>(sinkMarker));
         }
         return sinkMarker;
     }

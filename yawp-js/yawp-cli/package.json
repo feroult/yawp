@@ -6,8 +6,8 @@
     "yawp": "./lib/index.js"
   },
   "scripts": {
-    "build": "npm run build-cli",
-    "build-cli": "babel src --source-maps --out-dir lib",
+    "build": "babel src --source-maps --out-dir lib",
+    "dev": "babel src --source-maps --watch --out-dir lib",
     "test": "mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js",
     "prepublish": "npm run build"
   },
@@ -47,6 +47,7 @@
   },
   "homepage": "http://yawp.io",
   "dependencies": {
+    "yargs": "^5.0.0",
     "yawp": "^1.0.31"
   }
 }

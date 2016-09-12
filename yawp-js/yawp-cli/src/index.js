@@ -1,2 +1,9 @@
 #!/usr/bin/env node
-console.log('Hello, world!');
+
+var yargs = require('yargs');
+
+require('yargs')
+    .usage('Usage: yawp <command> [options]')
+    .commandDir('cmds')
+    .demand(1, '')
+    .argv

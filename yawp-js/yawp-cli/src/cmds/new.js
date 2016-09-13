@@ -1,13 +1,13 @@
 const chalk = require('chalk');
-var shell = require('../shell');
+var runner = require('../runner');
 
 exports.command = 'new <project>';
 
-exports.describe = 'create a new yawp project';
+exports.describe = 'Create a new yawp project';
 
 exports.builder = function (yargs) {
     return yargs
-        .usage('Usage: ' + chalk.bold('yawp') + ' new <project>')
+        .usage('Usage: ' + chalk.bold('yawp') + ' new <project> [options]')
         .demand(1, '')
         .option('package', {
             alias: 'p',
@@ -39,5 +39,5 @@ exports.handler = function (argv) {
         ' -DartifactId=' + project +
         ' -Dversion=' + version
 
-    shell.run(cmd);
+    runner.run(cmd);
 };

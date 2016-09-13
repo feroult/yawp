@@ -1,4 +1,6 @@
 const chalk = require('chalk');
+const repl = require('repl');
+const yawp = require('yawp');
 
 exports.command = 'shell';
 
@@ -16,7 +18,12 @@ exports.builder = function (yargs) {
 };
 
 exports.handler = function (argv) {
-    var host = argv.host;
+    var base = argv.base;
 
-    console.log('here');
+    yawp.config(function (c) {
+        c.baseUrl(base);
+    });
+
+    var r = repl.start('> ');
+    r.context.yawp = yawp;
 };

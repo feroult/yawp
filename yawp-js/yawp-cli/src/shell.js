@@ -42,7 +42,7 @@ export function run(cmd) {
         spinner.stop();
         clearLine();
         if (!hasError) {
-            info(chalk.blue.bold('done!\n'));
+            info(chalk.bold('done!\n'));
         } else {
             error(chalk.red.bold('Error:\n'));
             error(output);

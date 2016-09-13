@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-require('shelljs/global');
+const chalk = require('chalk');
 
 var yargs = require('yargs');
 
 var argv = require('yargs')
-    .usage('Usage: yawp <command> [options]')
+    .usage('Usage: ' + chalk.bold('yawp') + ' <command> [options]')
     .commandDir('cmds')
     .demand(1, '').argv;

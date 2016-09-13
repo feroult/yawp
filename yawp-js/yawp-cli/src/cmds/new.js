@@ -7,11 +7,11 @@ exports.describe = 'create a new yawp project';
 
 exports.builder = function (yargs) {
     return yargs
-        .usage('Usage: yawp new <project>')
+        .usage('Usage: ' + chalk.bold('yawp') + ' new <project>')
         .demand(1, '')
         .option('package', {
             alias: 'p',
-            describe: 'base Java package',
+            describe: 'project java package',
             default: 'project name'
         })
         .option('version', {
@@ -28,8 +28,8 @@ exports.handler = function (argv) {
     var version = argv.version;
 
     console.log('Creating project: ' + chalk.bold(project) +
-                ', package: ' + chalk.bold(pkg) +
-                ', version: ' + chalk.bold(version));
+        ', package: ' + chalk.bold(pkg) +
+        ', version: ' + chalk.bold(version));
 
     var cmd = 'mvn archetype:generate -B' +
         ' -DarchetypeGroupId=io.yawp' +

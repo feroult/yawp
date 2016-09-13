@@ -1,6 +1,8 @@
 const chalk = require('chalk');
 const Spinner = require('cli-spinner').Spinner;
 
+require('shelljs/global');
+
 function info(s) {
     process.stdout.write(s);
 }

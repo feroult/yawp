@@ -1,6 +1,6 @@
 {
   "name": "yawp-cli",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "YAWP! Framework - Command Line Tools",
   "bin": {
     "yawp": "./lib/index.js"

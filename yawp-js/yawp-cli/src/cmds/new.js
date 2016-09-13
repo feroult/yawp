@@ -1,5 +1,5 @@
 const chalk = require('chalk');
-const runner = require('../runner');
+const runner = require('../utils/runner');
 
 exports.command = 'new <project>';
 

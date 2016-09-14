@@ -2,9 +2,13 @@
 const chalk = require('chalk');
 const yargs = require('yargs');
 
-var argv = require('yargs')
+const cmds = [
+    {path: './cmds/new', alias: 'n'},
+    {path: './cmds/console', alias: 'c'}
+];
+
+var args = require('yargs')
     .usage('Usage: ' + chalk.bold('yawp') + ' <command> [options]')
-    .commandDir('cmds')
     .help('help')
     .alias('help', 'h')
     .wrap(null)
@@ -15,4 +19,14 @@ var argv = require('yargs')
         'boolean': chalk.bold('boolean'),
         'default:': chalk.bold('default:')
     })
-    .demand(1, '').argv;
+    .demand(1, '');
+
+cmds.forEach((cmd) => {
+    var cmdModule = require(cmd.path);
+    args.command(cmdModule);
+    if (cmd.alias) {
+        args.command(cmd.alias, false, cmdModule);
+    }
+});
+
+var argv = args.argv;

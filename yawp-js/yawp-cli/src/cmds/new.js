@@ -3,7 +3,7 @@ const runner = require('../utils/runner');
 
 exports.command = 'new <project>';
 
-exports.describe = 'Create a new yawp project';
+exports.describe = 'Create a new project';
 
 exports.builder = function (yargs) {
     return yargs

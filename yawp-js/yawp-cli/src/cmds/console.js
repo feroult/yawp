@@ -4,7 +4,7 @@ const yawp = require('yawp');
 
 exports.command = 'console';
 
-exports.describe = 'Launch the yawp interactive console';
+exports.describe = 'Launch the interactive console';
 
 exports.builder = function (yargs) {
     return yargs

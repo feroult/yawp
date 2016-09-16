@@ -59,6 +59,10 @@ public class Feature {
         return JsonUtils.fromList(yawp, json, clazz);
     }
 
+    public <K, V> Map<K, V> fromMap(String json, Class<K> keyClazz, Class<V> valueClazz) {
+        return JsonUtils.fromMap(yawp, json, keyClazz, valueClazz);
+    }
+    
     public String to(Object object) {
         return JsonUtils.to(object);
     }

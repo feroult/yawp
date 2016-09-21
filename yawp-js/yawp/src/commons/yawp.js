@@ -45,6 +45,7 @@ export default (request) => {
                 options = {
                     url: normalize(baseArg)
                 };
+                q = {};
             }
 
             static prepareRequestOptions() {

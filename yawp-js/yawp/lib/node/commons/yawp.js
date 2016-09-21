@@ -128,6 +128,7 @@ exports.default = function (request) {
                     options = {
                         url: normalize(baseArg)
                     };
+                    q = {};
                 }
             }, {
                 key: 'prepareRequestOptions',

@@ -7,8 +7,12 @@ exports.default = request;
 
 var _utils = require('../commons/utils');
 
+var nodeFetch;
+
 if (typeof fetch === 'undefined') {
-    var fetch = eval("require('node-fetch')");
+    nodeFetch = eval("require('node-fetch')");
+} else {
+    nodeFetch = fetch;
 }
 
 function request(url, options) {
@@ -20,7 +24,7 @@ function request(url, options) {
     // console.log('request', url, options);
 
     if (!options.json) {
-        return fetch(url, options);
+        return nodeFetch(url, options);
     }
     return jsonRequest(options, url);
 }
@@ -31,7 +35,7 @@ function jsonRequest(options, url) {
         'Accept': 'application/json',
         'Content-Type': 'application/json;charset=UTF-8'
     });
-    return fetch(url, options).then(function (response) {
+    return nodeFetch(url, options).then(function (response) {
         return response.json();
     });
 }

@@ -88,8 +88,7 @@ exports.default = function (request) {
             }, {
                 key: 'destroy',
                 value: function destroy(cb) {
-                    options.url = extractId(this);
-                    var promise = Yawp.destroy();
+                    var promise = Yawp.destroy(this);
                     return cb ? promise.then(cb) : promise;
                 }
             }, {
@@ -149,8 +148,6 @@ exports.default = function (request) {
                     options.json = true;
                     (0, _utils.extend)(options, _defaultFetchOptions);
 
-                    //console.log('request', url, options);
-
                     return request(url, options);
                 }
             }, {
@@ -165,6 +162,18 @@ exports.default = function (request) {
 
                     return objects.map(function (object) {
                         return _this2.wrapInstance(object);
+                    });
+                }
+            }, {
+                key: 'wrappedRequest',
+                value: function wrappedRequest(type) {
+                    var _this3 = this;
+
+                    return Yawp.baseRequest(type).then(function (result) {
+                        if (Array === result.constructor) {
+                            return _this3.wrapArray(result);
+                        }
+                        return _this3.wrapInstance(result);
                     });
                 }
 
@@ -214,17 +223,13 @@ exports.default = function (request) {
             }, {
                 key: 'fetch',
                 value: function fetch(arg) {
-                    var _this3 = this;
-
                     var cb = typeof arg === 'function' ? arg : undefined;
 
                     if (arg && !cb) {
                         options.url += '/' + arg;
                     }
 
-                    var promise = Yawp.baseRequest('GET').then(function (object) {
-                        return _this3.wrapInstance(object);
-                    });
+                    var promise = this.wrappedRequest('GET');
 
                     if (cb) {
                         return promise.then(cb);
@@ -242,13 +247,9 @@ exports.default = function (request) {
             }, {
                 key: 'list',
                 value: function list(cb) {
-                    var _this4 = this;
-
                     Yawp.setupQuery();
 
-                    var promise = Yawp.baseRequest('GET').then(function (objects) {
-                        return _this4.wrapArray(objects);
-                    });
+                    var promise = this.wrappedRequest('GET');
 
                     if (cb) {
                         return promise.then(cb);
@@ -283,24 +284,27 @@ exports.default = function (request) {
                 key: 'create',
                 value: function create(object) {
                     options.body = JSON.stringify(object);
-                    return Yawp.baseRequest('POST');
+                    return this.wrappedRequest('POST');
                 }
             }, {
                 key: 'update',
                 value: function update(object) {
+                    options.url = object.id;
                     options.body = JSON.stringify(object);
-                    return Yawp.baseRequest('PUT');
+                    return this.wrappedRequest('PUT');
                 }
             }, {
                 key: 'patch',
                 value: function patch(object) {
+                    options.url = object.id;
                     options.body = JSON.stringify(object);
-                    return Yawp.baseRequest('PATCH');
+                    return this.wrappedRequest('PATCH');
                 }
             }, {
                 key: 'destroy',
-                value: function destroy() {
-                    return Yawp.baseRequest('DELETE');
+                value: function destroy(object) {
+                    options.url = extractId(object);
+                    return this.baseRequest('DELETE');
                 }
 
                 // actions
@@ -369,15 +373,15 @@ exports.default = function (request) {
                         function sub() {
                             _classCallCheck(this, sub);
 
-                            var _this5 = _possibleConstructorReturn(this, (sub.__proto__ || Object.getPrototypeOf(sub)).call(this));
+                            var _this4 = _possibleConstructorReturn(this, (sub.__proto__ || Object.getPrototypeOf(sub)).call(this));
 
-                            Yawp.bindBaseMethods(_this5, base);
+                            Yawp.bindBaseMethods(_this4, base);
                             if (constructorFn) {
-                                constructorFn.apply(_this5, arguments);
+                                constructorFn.apply(_this4, arguments);
                             } else {
-                                _get(sub.prototype.__proto__ || Object.getPrototypeOf(sub.prototype), 'constructor', _this5).apply(_this5, arguments);
+                                _get(sub.prototype.__proto__ || Object.getPrototypeOf(sub.prototype), 'constructor', _this4).apply(_this4, arguments);
                             }
-                            return _this5;
+                            return _this4;
                         }
 
                         return sub;

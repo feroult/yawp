@@ -64,7 +64,6 @@ export default (request) => {
                 options.json = true;
                 extend(options, defaultFetchOptions);
 
-                //console.log('request', url, options);
 
                 return request(url, options);
             }
@@ -75,6 +74,15 @@ export default (request) => {
 
             static wrapArray(objects) {
                 return objects.map((object) => this.wrapInstance(object));
+            }
+
+            static wrappedRequest(type) {
+                return Yawp.baseRequest(type).then((result) => {
+                    if (Array === result.constructor) {
+                        return this.wrapArray(result);
+                    }
+                    return this.wrapInstance(result)
+                });
             }
 
             // query
@@ -121,9 +129,7 @@ export default (request) => {
                     options.url += '/' + arg;
                 }
 
-                let promise = Yawp.baseRequest('GET').then((object) => {
-                    return this.wrapInstance(object);
-                });
+                let promise = this.wrappedRequest('GET');
 
                 if (cb) {
                     return promise.then(cb);
@@ -141,9 +147,7 @@ export default (request) => {
             static list(cb) {
                 Yawp.setupQuery();
 
-                let promise = Yawp.baseRequest('GET').then((objects) => {
-                    return this.wrapArray(objects);
-                });
+                let promise = this.wrappedRequest('GET');
 
                 if (cb) {
                     return promise.then(cb);
@@ -174,21 +178,24 @@ export default (request) => {
 
             static create(object) {
                 options.body = JSON.stringify(object);
-                return Yawp.baseRequest('POST');
+                return this.wrappedRequest('POST');
             }
 
             static update(object) {
+                options.url = object.id;
                 options.body = JSON.stringify(object);
-                return Yawp.baseRequest('PUT');
+                return this.wrappedRequest('PUT');
             }
 
             static patch(object) {
+                options.url = object.id;
                 options.body = JSON.stringify(object);
-                return Yawp.baseRequest('PATCH');
+                return this.wrappedRequest('PATCH');
             }
 
-            static destroy() {
-                return Yawp.baseRequest('DELETE');
+            static destroy(object) {
+                options.url = extractId(object);
+                return this.baseRequest('DELETE');
             }
 
             // actions
@@ -286,8 +293,7 @@ export default (request) => {
             }
 
             destroy(cb) {
-                options.url = extractId(this);
-                let promise = Yawp.destroy();
+                let promise = Yawp.destroy(this);
                 return cb ? promise.then(cb) : promise;
             }
 

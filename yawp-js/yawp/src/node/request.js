@@ -14,7 +14,7 @@ export default function request(url, options) {
 
     url += (query ? '?' + toUrlParam(query) : '');
 
-    // console.log('request', url, options);
+    //console.log('request', url, options);
 
     if (!options.json) {
         return nodeFetch(url, options);
@@ -28,5 +28,5 @@ function jsonRequest(options, url) {
         'Accept': 'application/json',
         'Content-Type': 'application/json;charset=UTF-8',
     });
-    return nodeFetch(url, options).then((response) => response.json());
+    return nodeFetch(url, options).then((response) =>response.json());
 }

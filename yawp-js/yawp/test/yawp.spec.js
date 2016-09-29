@@ -221,6 +221,19 @@ describe("YAWP! ES6 class inheritance", () => {
         });
     });
 
+    it('returns an instance when using with static helpers to create/put/patch', (done) => {
+        Parent.create({name: 'xpto'}).then((parent) => {
+            expect(parent.constructor.name).to.be.equals('Parent');
+            Parent.update(parent).then((parent) => {
+                expect(parent.constructor.name).to.be.equals('Parent');
+                Parent.patch(parent).then((parent) => {
+                    expect(parent.constructor.name).to.be.equals('Parent');
+                    done();
+                });
+            });
+        });
+    });
+
 });
 
 describe('YAWP! ES5 class inheritance', () => {

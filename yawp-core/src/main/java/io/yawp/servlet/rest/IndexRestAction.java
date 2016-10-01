@@ -26,7 +26,6 @@ public class IndexRestAction extends RestAction {
             query.from(id);
         }
 
-
         boolean returnCursor = false;
         if (params.containsKey(QUERY_OPTIONS)) {
             QueryOptions options = QueryOptions.parse(params.get(QUERY_OPTIONS));
@@ -34,22 +33,29 @@ public class IndexRestAction extends RestAction {
             returnCursor = options.returnCursor();
         }
 
-        if (hasTransformer()) {
-            return query.transform(getTransformerName()).list();
-        }
-
         if (hasShieldCondition()) {
             query.and(shield.getWhere());
         }
 
-        List<?> objects = query.list();
-        applyGetFacade(objects);
+        List<?> objects = list(query);
 
         if (returnCursor) {
             Map<String, Object> result = new HashMap<>();
             result.put("results", objects);
             result.put("cursor", query.getCursor());
             return result;
+        }
+        
+        return objects;
+    }
+
+    private List<?> list(QueryBuilder<?> query) {
+        List<?> objects;
+        if (hasTransformer()) {
+            objects = query.transform(getTransformerName()).list();
+        } else {
+            objects = query.list();
+            applyGetFacade(objects);
         }
         return objects;
     }

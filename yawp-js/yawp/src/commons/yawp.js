@@ -50,12 +50,12 @@ export default (request) => {
 
             static prepareRequestOptions() {
                 let _options = extend({}, options);
-                Yawp.clear();
+                this.clear();
                 return _options;
             }
 
             static baseRequest(type) {
-                let options = Yawp.prepareRequestOptions();
+                let options = this.prepareRequestOptions();
 
                 let url = baseUrl + options.url;
                 delete options.url;
@@ -77,7 +77,7 @@ export default (request) => {
             }
 
             static wrappedRequest(type) {
-                return Yawp.baseRequest(type).then((result) => {
+                return this.baseRequest(type).then((result) => {
                     if (Array === result.constructor) {
                         return this.wrapArray(result);
                     }
@@ -94,7 +94,7 @@ export default (request) => {
             }
 
             static transform(t) {
-                Yawp.param('t', t);
+                this.param('t', t);
                 return this;
             }
 
@@ -140,12 +140,12 @@ export default (request) => {
 
             static setupQuery() {
                 if (Object.keys(q).length > 0) {
-                    Yawp.param('q', JSON.stringify(q));
+                    this.param('q', JSON.stringify(q));
                 }
             }
 
             static list(cb) {
-                Yawp.setupQuery();
+                this.setupQuery();
 
                 let promise = this.wrappedRequest('GET');
 
@@ -156,16 +156,16 @@ export default (request) => {
             }
 
             static first(cb) {
-                Yawp.limit(1);
+                this.limit(1);
 
-                return Yawp.list((objects) => {
+                return this.list((objects) => {
                     let object = objects.length === 0 ? null : objects[0];
                     return cb ? cb(object) : object;
                 });
             }
 
             static only(cb) {
-                return Yawp.list((objects) => {
+                return this.list((objects) => {
                     if (objects.length !== 1) {
                         throw 'called only but got ' + objects.length + ' results';
                     }
@@ -194,7 +194,9 @@ export default (request) => {
             }
 
             static destroy(object) {
-                options.url = extractId(object);
+                if (object) {
+                    options.url = extractId(object);
+                }
                 return this.baseRequest('DELETE');
             }
 
@@ -219,27 +221,27 @@ export default (request) => {
 
             static action(verb, path) {
                 options.url += '/' + path;
-                return Yawp.baseRequest(verb);
+                return this.baseRequest(verb);
             }
 
             static get(action) {
-                return Yawp.action('GET', action);
+                return this.action('GET', action);
             }
 
             static put(action) {
-                return Yawp.action('PUT', action);
+                return this.action('PUT', action);
             }
 
             static _patch(action) {
-                return Yawp.action('PATCH', action);
+                return this.action('PATCH', action);
             }
 
             static post(action) {
-                return Yawp.action('POST', action);
+                return this.action('POST', action);
             }
 
             static _delete(action) {
-                return Yawp.action('DELETE', action);
+                return this.action('DELETE', action);
             }
 
             // es5 subclassing
@@ -249,7 +251,7 @@ export default (request) => {
                 let sub = class extends base {
                     constructor() {
                         super();
-                        Yawp.bindBaseMethods(this, base);
+                        this.bindBaseMethods(this, base);
                         if (constructorFn) {
                             constructorFn.apply(this, arguments);
                         } else {
@@ -282,9 +284,9 @@ export default (request) => {
                 let promise;
                 if (hasId(this)) {
                     options.url = this.id;
-                    promise = Yawp.update(this);
+                    promise = this.constructor.update(this);
                 } else {
-                    promise = Yawp.create(this).then((object) => {
+                    promise = this.constructor.create(this).then((object) => {
                         this.id = object.id;
                         return object;
                     });
@@ -293,33 +295,33 @@ export default (request) => {
             }
 
             destroy(cb) {
-                let promise = Yawp.destroy(this);
+                let promise = this.constructor.destroy(this);
                 return cb ? promise.then(cb) : promise;
             }
 
             get(action) {
                 options.url = extractId(this);
-                return Yawp.get(action);
+                return this.constructor.get(action);
             }
 
             put(action) {
                 options.url = extractId(this);
-                return Yawp.put(action);
+                return this.constructor.put(action);
             }
 
             _patch(action) {
                 options.url = extractId(this);
-                return Yawp._patch(action);
+                return this.constructor._patch(action);
             }
 
             post(action) {
                 options.url = extractId(this);
-                return Yawp.post(action);
+                return this.constructor.post(action);
             }
 
             _delete(action) {
                 options.url = extractId(this);
-                return Yawp._delete(action);
+                return this.constructor._delete(action);
             }
         }
 

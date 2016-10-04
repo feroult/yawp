@@ -76,9 +76,9 @@ exports.default = function (request) {
                     var promise = void 0;
                     if (hasId(this)) {
                         options.url = this.id;
-                        promise = Yawp.update(this);
+                        promise = this.constructor.update(this);
                     } else {
-                        promise = Yawp.create(this).then(function (object) {
+                        promise = this.constructor.create(this).then(function (object) {
                             _this.id = object.id;
                             return object;
                         });
@@ -88,38 +88,38 @@ exports.default = function (request) {
             }, {
                 key: 'destroy',
                 value: function destroy(cb) {
-                    var promise = Yawp.destroy(this);
+                    var promise = this.constructor.destroy(this);
                     return cb ? promise.then(cb) : promise;
                 }
             }, {
                 key: 'get',
                 value: function get(action) {
                     options.url = extractId(this);
-                    return Yawp.get(action);
+                    return this.constructor.get(action);
                 }
             }, {
                 key: 'put',
                 value: function put(action) {
                     options.url = extractId(this);
-                    return Yawp.put(action);
+                    return this.constructor.put(action);
                 }
             }, {
                 key: '_patch',
                 value: function _patch(action) {
                     options.url = extractId(this);
-                    return Yawp._patch(action);
+                    return this.constructor._patch(action);
                 }
             }, {
                 key: 'post',
                 value: function post(action) {
                     options.url = extractId(this);
-                    return Yawp.post(action);
+                    return this.constructor.post(action);
                 }
             }, {
                 key: '_delete',
                 value: function _delete(action) {
                     options.url = extractId(this);
-                    return Yawp._delete(action);
+                    return this.constructor._delete(action);
                 }
             }], [{
                 key: 'clear',
@@ -133,13 +133,13 @@ exports.default = function (request) {
                 key: 'prepareRequestOptions',
                 value: function prepareRequestOptions() {
                     var _options = (0, _utils.extend)({}, options);
-                    Yawp.clear();
+                    this.clear();
                     return _options;
                 }
             }, {
                 key: 'baseRequest',
                 value: function baseRequest(type) {
-                    var options = Yawp.prepareRequestOptions();
+                    var options = this.prepareRequestOptions();
 
                     var url = _baseUrl + options.url;
                     delete options.url;
@@ -169,7 +169,7 @@ exports.default = function (request) {
                 value: function wrappedRequest(type) {
                     var _this3 = this;
 
-                    return Yawp.baseRequest(type).then(function (result) {
+                    return this.baseRequest(type).then(function (result) {
                         if (Array === result.constructor) {
                             return _this3.wrapArray(result);
                         }
@@ -189,7 +189,7 @@ exports.default = function (request) {
             }, {
                 key: 'transform',
                 value: function transform(t) {
-                    Yawp.param('t', t);
+                    this.param('t', t);
                     return this;
                 }
             }, {
@@ -241,13 +241,13 @@ exports.default = function (request) {
                 key: 'setupQuery',
                 value: function setupQuery() {
                     if (Object.keys(q).length > 0) {
-                        Yawp.param('q', JSON.stringify(q));
+                        this.param('q', JSON.stringify(q));
                     }
                 }
             }, {
                 key: 'list',
                 value: function list(cb) {
-                    Yawp.setupQuery();
+                    this.setupQuery();
 
                     var promise = this.wrappedRequest('GET');
 
@@ -259,9 +259,9 @@ exports.default = function (request) {
             }, {
                 key: 'first',
                 value: function first(cb) {
-                    Yawp.limit(1);
+                    this.limit(1);
 
-                    return Yawp.list(function (objects) {
+                    return this.list(function (objects) {
                         var object = objects.length === 0 ? null : objects[0];
                         return cb ? cb(object) : object;
                     });
@@ -269,7 +269,7 @@ exports.default = function (request) {
             }, {
                 key: 'only',
                 value: function only(cb) {
-                    return Yawp.list(function (objects) {
+                    return this.list(function (objects) {
                         if (objects.length !== 1) {
                             throw 'called only but got ' + objects.length + ' results';
                         }
@@ -303,7 +303,9 @@ exports.default = function (request) {
             }, {
                 key: 'destroy',
                 value: function destroy(object) {
-                    options.url = extractId(object);
+                    if (object) {
+                        options.url = extractId(object);
+                    }
                     return this.baseRequest('DELETE');
                 }
 
@@ -333,32 +335,32 @@ exports.default = function (request) {
                 key: 'action',
                 value: function action(verb, path) {
                     options.url += '/' + path;
-                    return Yawp.baseRequest(verb);
+                    return this.baseRequest(verb);
                 }
             }, {
                 key: 'get',
                 value: function get(action) {
-                    return Yawp.action('GET', action);
+                    return this.action('GET', action);
                 }
             }, {
                 key: 'put',
                 value: function put(action) {
-                    return Yawp.action('PUT', action);
+                    return this.action('PUT', action);
                 }
             }, {
                 key: '_patch',
                 value: function _patch(action) {
-                    return Yawp.action('PATCH', action);
+                    return this.action('PATCH', action);
                 }
             }, {
                 key: 'post',
                 value: function post(action) {
-                    return Yawp.action('POST', action);
+                    return this.action('POST', action);
                 }
             }, {
                 key: '_delete',
                 value: function _delete(action) {
-                    return Yawp.action('DELETE', action);
+                    return this.action('DELETE', action);
                 }
 
                 // es5 subclassing
@@ -375,7 +377,7 @@ exports.default = function (request) {
 
                             var _this4 = _possibleConstructorReturn(this, (sub.__proto__ || Object.getPrototypeOf(sub)).call(this));
 
-                            Yawp.bindBaseMethods(_this4, base);
+                            _this4.bindBaseMethods(_this4, base);
                             if (constructorFn) {
                                 constructorFn.apply(_this4, arguments);
                             } else {

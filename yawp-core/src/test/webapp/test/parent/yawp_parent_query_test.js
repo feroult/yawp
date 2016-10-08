@@ -60,4 +60,24 @@
         });
     });
 
+    t.asyncTest('post filter with idref', function (assert) {
+        expect(3);
+
+        fx.parent('parent', {
+            lastName: 'xpto',
+            jobId: '/jobs/1'
+        });
+
+        fx.load(function () {
+            var where = ['lastName', '=', 'xpto', 'jobId', '=', '/jobs/1'];
+
+            yawp('/parents').where(where).list(function (parents) {
+                assert.equal(parents.length, 1);
+                assert.equal(parents[0].lastName, 'xpto');
+                assert.equal(parents[0].jobId, '/jobs/1');
+                t.start();
+            });
+        });
+    });
+
 })(QUnit, yawp, yawp.fixtures);

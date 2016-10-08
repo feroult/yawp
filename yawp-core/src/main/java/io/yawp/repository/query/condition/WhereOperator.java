@@ -1,5 +1,7 @@
 package io.yawp.repository.query.condition;
 
+import io.yawp.repository.IdRef;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -187,6 +189,10 @@ public enum WhereOperator {
 
         if (o1 != null && o2 == null) {
             return 1;
+        }
+
+        if (o1 instanceof IdRef) {
+            return o1.toString().compareTo(o2.toString());
         }
 
         Comparable c1 = (Comparable) o1;

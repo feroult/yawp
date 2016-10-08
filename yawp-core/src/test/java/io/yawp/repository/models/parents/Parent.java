@@ -19,6 +19,8 @@ public class Parent {
     @Index
     private String name;
 
+    private String lastName;
+
     @Index
     private IdRef<Job> jobId;
 

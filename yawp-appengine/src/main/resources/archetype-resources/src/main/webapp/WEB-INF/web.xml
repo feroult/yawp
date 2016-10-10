@@ -17,6 +17,15 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>GraphQLServlet</servlet-name>
+        <servlet-class>io.yawp.servlet.GraphQLServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GraphQLServlet</servlet-name>
+        <url-pattern>/graphql</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>EndpointFixturesServlet</servlet-name>
         <servlet-class>io.yawp.servlet.FixturesServlet</servlet-class>
     </servlet>

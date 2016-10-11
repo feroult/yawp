@@ -8,6 +8,8 @@ import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.shields.ShieldInfo;
 
+import graphql.schema.GraphQLObjectType;
+
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -122,6 +124,10 @@ public class EndpointFeatures<T> {
 
     public void setPipesSink(List<Class<? extends Pipe>> pipesSink) {
         this.pipesSink = pipesSink;
+    }
+
+    public GraphQLObjectType toObjectType() {
+        return GraphQLExtractor.parse(this.getEndpointPath(), this.clazz);
     }
 
     @Override

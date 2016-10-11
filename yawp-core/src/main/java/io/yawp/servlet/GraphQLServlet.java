@@ -33,9 +33,16 @@ public class GraphQLServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-	    String body = JsonUtils.readJson(req.getReader());
-	    System.out.println("=============================================" + body);
-	    resp.setStatus(200);
+            String body = JsonUtils.readJson(req.getReader());
+            resp.getWriter().write(response(body).toString());
+            resp.getWriter().flush();
+            resp.getWriter().close();
+            resp.setStatus(200);
+    }
+
+    private String response(String input) {
+        System.out.println(Yawp.yawp().getFeatures().generateSchema());
+        return "ans: " + input;
     }
 
 }

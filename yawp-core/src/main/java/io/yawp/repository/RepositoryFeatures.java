@@ -1,5 +1,9 @@
 package io.yawp.repository;
 
+import graphql.schema.GraphQLObjectType;
+import static graphql.schema.GraphQLObjectType.newObject;
+import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
+
 import io.yawp.repository.actions.ActionKey;
 
 import java.util.HashMap;
@@ -102,4 +106,15 @@ public class RepositoryFeatures {
     public Set<Class<?>> getEndpointClazzes() {
         return endpoints.keySet();
     }
+
+    public GraphQLObjectType generateSchema() {
+        GraphQLObjectType.Builder es = newObject().name("Endpoint");
+        for (EndpointFeatures e : endpoints.values()) {
+            if (!e.getEndpointKind().startsWith("__yawp")) {
+              es.field(newFieldDefinition().name(e.getEndpointKind()).type(e.toObjectType()).build());
+            }
+        }
+        return es.build();
+    }
+
 }

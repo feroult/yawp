@@ -10,9 +10,11 @@ import java.util.Set;
 
 import graphql.schema.DataFetcher;
 import graphql.schema.DataFetchingEnvironment;
+import graphql.schema.GraphQLArgument;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.query.QueryBuilder;
 
 public class RepositoryFeatures {
 
@@ -117,7 +119,8 @@ public class RepositoryFeatures {
                 String name = e.getEndpointKind();
                 GraphQLList type = new GraphQLList(e.toObjectType());
                 DataFetcher fetcher = fetcher(e.getClazz());
-                es.field(newFieldDefinition().name(name).type(type).dataFetcher(fetcher).build());
+                List<GraphQLArgument> args = e.toArgumentList();
+                es.field(newFieldDefinition().name(name).type(type).dataFetcher(fetcher).argument(args).build());
             }
         }
         return es.build();
@@ -126,8 +129,15 @@ public class RepositoryFeatures {
     private DataFetcher fetcher(final Class<?> clazz) {
         return new DataFetcher() {
             @Override
-            public List<?> get(DataFetchingEnvironment environment) {
-                return Yawp.yawp(clazz).list();
+            public List<?> get(DataFetchingEnvironment env) {
+                QueryBuilder<?> query = Yawp.yawp(clazz);
+                for (String arg : env.getArguments().keySet()) {
+                    Object val = env.getArgument(arg);
+                    if (val != null) {
+                        query.where(arg, "=", val);
+                    }
+                }
+                return query.list();
             }
         };
     }

@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import graphql.ExceptionWhileDataFetching;
+import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.schema.GraphQLObjectType;
 import graphql.schema.GraphQLSchema;
@@ -29,16 +31,30 @@ public class GraphQLServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String body = JsonUtils.readJson(req.getReader());
-        resp.getWriter().write(response(body).toString());
-        resp.getWriter().flush();
-        resp.getWriter().close();
-        resp.setStatus(200);
+        ExecutionResult result = executeQuery(body);
+        parseResult(resp, result);
     }
 
-    private String response(String input) {
+    private void parseResult(HttpServletResponse resp, ExecutionResult result) throws IOException {
+        if (result.getErrors().isEmpty()) {
+            writeResponse(resp, 200, result.getData().toString());
+        } else {
+            ((ExceptionWhileDataFetching) result.getErrors().get(0)).getException().printStackTrace();
+            writeResponse(resp, 500, result.getErrors().toString());
+        }
+    }
+
+    private ExecutionResult executeQuery(String body) {
         GraphQLObjectType query = Yawp.yawp().getFeatures().generateGraphQLQuery();
         GraphQL graph = new GraphQL(GraphQLSchema.newSchema().query(query).build());
-        return graph.execute(input).getData().toString();
+        ExecutionResult result = graph.execute(body);
+        return result;
     }
 
+    private void writeResponse(HttpServletResponse resp, int sc, String response) throws IOException {
+        resp.getWriter().write(response);
+        resp.getWriter().flush();
+        resp.getWriter().close();
+        resp.setStatus(sc);
+    }
 }

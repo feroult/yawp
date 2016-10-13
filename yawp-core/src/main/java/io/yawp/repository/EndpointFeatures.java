@@ -1,5 +1,14 @@
 package io.yawp.repository;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import graphql.schema.GraphQLArgument;
+import graphql.schema.GraphQLObjectType;
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
@@ -7,11 +16,6 @@ import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.shields.ShieldInfo;
-
-import graphql.schema.GraphQLObjectType;
-
-import java.lang.reflect.Method;
-import java.util.*;
 
 public class EndpointFeatures<T> {
 
@@ -143,5 +147,9 @@ public class EndpointFeatures<T> {
     @Override
     public int hashCode() {
         return clazz.hashCode();
+    }
+
+    public List<GraphQLArgument> toArgumentList() {
+        return GraphQLExtractor.args(this.clazz);
     }
 }

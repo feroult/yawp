@@ -1,26 +1,30 @@
 package io.yawp.repository.query;
 
-import io.yawp.commons.utils.EndpointTestCase;
-import io.yawp.repository.IdRef;
-import io.yawp.repository.models.basic.BasicObject;
-import io.yawp.repository.models.hierarchy.ObjectSubClass;
-import io.yawp.repository.models.parents.Child;
-import io.yawp.repository.models.parents.Grandchild;
-import io.yawp.repository.models.parents.Parent;
-import io.yawp.repository.query.condition.BaseCondition;
-import org.junit.Test;
+import static io.yawp.repository.models.basic.BasicObject.saveManyBasicObjects;
+import static io.yawp.repository.models.basic.BasicObject.saveOneObject;
+import static io.yawp.repository.query.condition.Condition.and;
+import static io.yawp.repository.query.condition.Condition.c;
+import static io.yawp.repository.query.condition.Condition.or;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static io.yawp.repository.models.basic.BasicObject.saveManyBasicObjects;
-import static io.yawp.repository.models.basic.BasicObject.saveOneObject;
-import static io.yawp.repository.query.condition.Condition.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+
+import io.yawp.commons.utils.EndpointTestCase;
+import io.yawp.repository.IdRef;
+import io.yawp.repository.models.basic.BasicObject;
+import io.yawp.repository.models.basic.Status;
+import io.yawp.repository.models.hierarchy.ObjectSubClass;
+import io.yawp.repository.models.parents.Child;
+import io.yawp.repository.models.parents.Grandchild;
+import io.yawp.repository.models.parents.Parent;
+import io.yawp.repository.query.condition.BaseCondition;
 
 public class DatastoreQueryTest extends EndpointTestCase {
 
@@ -50,6 +54,19 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
         BasicObject fetch = yawp(BasicObject.class).where("id", "=", myObj.getId().toString()).only();
         assertEquals("xpto", fetch.getStringValue());
+    }
+
+    @Test
+    public void testWithEnumAsString() {
+        BasicObject running = new BasicObject("i'm running");
+        running.setStatus(Status.RUNNING);
+        yawp.save(running);
+        BasicObject stopped = new BasicObject("i'm stopped");
+        stopped.setStatus(Status.STOPPED);
+        yawp.save(stopped);
+
+        BasicObject obj = yawp(BasicObject.class).where("status", "=", "STOPPED").only();
+        assertEquals("i'm stopped", obj.getStringValue());
     }
 
     @Test

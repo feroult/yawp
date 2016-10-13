@@ -195,6 +195,10 @@ public enum WhereOperator {
             return o1.toString().compareTo(o2.toString());
         }
 
+        if (o1 instanceof Enum) {
+            return ((Enum) o1).name().compareTo(o2.toString());
+        }
+
         Comparable c1 = (Comparable) o1;
         Comparable c2 = (Comparable) o2;
         return c1.compareTo(c2);

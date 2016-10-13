@@ -1,27 +1,22 @@
 package io.yawp.servlet;
 
-import io.yawp.commons.utils.JsonUtils;
-
-import io.yawp.commons.http.HttpException;
-import io.yawp.commons.http.HttpResponse;
-import io.yawp.commons.http.JsonResponse;
-import io.yawp.commons.http.RequestContext;
-import io.yawp.repository.Repository;
-import io.yawp.repository.Yawp;
+import java.io.IOException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.logging.Logger;
+
+import graphql.GraphQL;
+import graphql.schema.GraphQLObjectType;
+import graphql.schema.GraphQLSchema;
+import io.yawp.commons.utils.JsonUtils;
+import io.yawp.repository.Yawp;
 
 public class GraphQLServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 8155293897299089610L;
-
-    private final static Logger logger = Logger.getLogger(EndpointServlet.class.getName());
+    private static final long serialVersionUID = 8817254175731665140L;
 
     public GraphQLServlet() {
     }
@@ -33,16 +28,17 @@ public class GraphQLServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            String body = JsonUtils.readJson(req.getReader());
-            resp.getWriter().write(response(body).toString());
-            resp.getWriter().flush();
-            resp.getWriter().close();
-            resp.setStatus(200);
+        String body = JsonUtils.readJson(req.getReader());
+        resp.getWriter().write(response(body).toString());
+        resp.getWriter().flush();
+        resp.getWriter().close();
+        resp.setStatus(200);
     }
 
     private String response(String input) {
-        System.out.println(Yawp.yawp().getFeatures().generateSchema());
-        return "ans: " + input;
+        GraphQLObjectType query = Yawp.yawp().getFeatures().generateGraphQLQuery();
+        GraphQL graph = new GraphQL(GraphQLSchema.newSchema().query(query).build());
+        return graph.execute(input).getData().toString();
     }
 
 }

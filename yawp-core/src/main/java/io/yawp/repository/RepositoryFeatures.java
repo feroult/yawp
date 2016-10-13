@@ -1,14 +1,18 @@
 package io.yawp.repository;
 
-import graphql.schema.GraphQLObjectType;
-import static graphql.schema.GraphQLObjectType.newObject;
 import static graphql.schema.GraphQLFieldDefinition.newFieldDefinition;
-
-import io.yawp.repository.actions.ActionKey;
+import static graphql.schema.GraphQLObjectType.newObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import graphql.schema.DataFetcher;
+import graphql.schema.DataFetchingEnvironment;
+import graphql.schema.GraphQLList;
+import graphql.schema.GraphQLObjectType;
+import io.yawp.repository.actions.ActionKey;
 
 public class RepositoryFeatures {
 
@@ -51,9 +55,8 @@ public class RepositoryFeatures {
 
     private void assertIsValidPath(EndpointFeatures<?> endpoint, String endpointPath) {
         if (paths.get(endpointPath) != null) {
-            throw new RuntimeException("Repeated io.yawp path " + endpointPath + " for class "
-                    + endpoint.getClazz().getSimpleName() + " (already found in class " + paths.get(endpointPath).getSimpleName()
-                    + ")");
+            throw new RuntimeException("Repeated io.yawp path " + endpointPath + " for class " + endpoint.getClazz().getSimpleName()
+                    + " (already found in class " + paths.get(endpointPath).getSimpleName() + ")");
         }
         if (!isValidEndpointPath(endpointPath)) {
             throw new RuntimeException("Invalid endpoint path " + endpointPath + " for class " + endpoint.getClazz().getSimpleName());
@@ -107,14 +110,26 @@ public class RepositoryFeatures {
         return endpoints.keySet();
     }
 
-    public GraphQLObjectType generateSchema() {
-        GraphQLObjectType.Builder es = newObject().name("Endpoint");
-        for (EndpointFeatures e : endpoints.values()) {
+    public GraphQLObjectType generateGraphQLQuery() {
+        GraphQLObjectType.Builder es = newObject().name("endpoints");
+        for (EndpointFeatures<?> e : endpoints.values()) {
             if (!e.getEndpointKind().startsWith("__yawp")) {
-              es.field(newFieldDefinition().name(e.getEndpointKind()).type(e.toObjectType()).build());
+                String name = e.getEndpointKind();
+                GraphQLList type = new GraphQLList(e.toObjectType());
+                DataFetcher fetcher = fetcher(e.getClazz());
+                es.field(newFieldDefinition().name(name).type(type).dataFetcher(fetcher).build());
             }
         }
         return es.build();
+    }
+
+    private DataFetcher fetcher(final Class<?> clazz) {
+        return new DataFetcher() {
+            @Override
+            public List<?> get(DataFetchingEnvironment environment) {
+                return Yawp.yawp(clazz).list();
+            }
+        };
     }
 
 }

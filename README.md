@@ -8,49 +8,6 @@ The power of Java and Google Appengine for the server, the flexibility of Javasc
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/)
 [![Join the chat at https://gitter.im/feroult/yawp](https://badges.gitter.im/feroult/yawp.svg)](https://gitter.im/feroult/yawp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## Introduction
-
-Everything happens around a plain Java object:
-
-``` java
-@Endpoint(path = "/people")
-public class Person {
-    @Id
-    IdRef<Person> id;             
-    String name;
-}    
-```
-
-It gives you a complete set of REST APIs under its endpoint:
-
-* Create
-* Update/Patch
-* Destroy
-* List/Queries
-
-Access it from Node.js or a browser with Javascript:
- 
-``` javascript
-var yawp = require('yawp');
- 
-var promise = yawp('/people').create({name: 'janes'}).then(function(person) {
-    console.log('created', person.id);
-   
-    person.name = 'janes joplin';
-    return person.save(function() {
-        console.log('updated');
-    });
-});
-```
-     
-Customize your server and tune your client with extra features:
-
-* Action Routes
-* Transformers
-* Security Shields
-* Model Hooks
-* Asynchronous Pipes
-
 ## Guides
 
 Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).

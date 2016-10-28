@@ -97,6 +97,7 @@ public class EntityToObjectConverter {
 
         if (fieldModel.isListOfIds()) {
             setListOfIdsProperty(object, field, value);
+            return;
         }
 
         field.set(object, value);
@@ -133,7 +134,6 @@ public class EntityToObjectConverter {
     private <T> void setListOfIdsProperty(T object, Field field, Object value) throws IllegalAccessException {
         List<String> uris = (List<String>) value;
         List<IdRef<?>> ids = new ArrayList<>(uris.size());
-        Class<?> listGenericClazz = ReflectionUtils.getListGenericType(field.getGenericType());
 
         for (String uri : uris) {
             ids.add(IdRef.parse(r, HttpVerb.GET, uri));

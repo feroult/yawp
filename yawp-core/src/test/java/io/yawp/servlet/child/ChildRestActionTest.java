@@ -2,6 +2,7 @@ package io.yawp.servlet.child;
 
 import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.models.parents.Parent;
+import io.yawp.repository.models.parents.School;
 import org.junit.Test;
 
 import java.util.List;
@@ -130,5 +131,20 @@ public class ChildRestActionTest extends ChildServletTestCase {
         Child child = from(json, Child.class);
         assertEquals("xpto", child.getName());
         assertEquals(parent.getId(), child.getParentId());
+    }
+
+    @Test
+    public void testCreateAndGetWithListOfIds() {
+        Child ju = saveChild("xpto1", parent);
+        Child marina = saveChild("xpto2", parent);
+
+        School cotuca = new School("Cotuca", ju.getId(), marina.getId());
+        yawp.save(cotuca);
+
+        String json = get(uri("/schools"));
+
+        List<School> list = fromList(json, School.class);
+        assertEquals("Cotuca", list.get(0).getName());
+        assertEquals(2, list.get(0).getChildren().size());
     }
 }

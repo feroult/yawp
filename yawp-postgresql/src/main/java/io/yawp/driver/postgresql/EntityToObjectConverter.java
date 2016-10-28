@@ -161,7 +161,7 @@ public class EntityToObjectConverter {
         Class<?> listGenericClazz = ReflectionUtils.getListGenericType(field.getGenericType());
 
         for (String uri : uris) {
-            ids.add(r.parseId(listGenericClazz, uri));
+            ids.add(IdRef.parse(r, HttpVerb.GET, uri));
         }
 
         field.set(object, ids);

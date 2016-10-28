@@ -248,10 +248,11 @@ export default (request) => {
 
             static subclass(constructorFn) {
                 let base = yawpFn(baseArg);
+                let _super = this;
                 let sub = class extends base {
                     constructor() {
                         super();
-                        this.bindBaseMethods(this, base);
+                        _super.bindBaseMethods(this, base);
                         if (constructorFn) {
                             constructorFn.apply(this, arguments);
                         } else {

@@ -369,6 +369,7 @@ exports.default = function (request) {
                 key: 'subclass',
                 value: function subclass(constructorFn) {
                     var base = yawpFn(baseArg);
+                    var _super = this;
                     var sub = function (_base) {
                         _inherits(sub, _base);
 
@@ -377,7 +378,7 @@ exports.default = function (request) {
 
                             var _this4 = _possibleConstructorReturn(this, (sub.__proto__ || Object.getPrototypeOf(sub)).call(this));
 
-                            _this4.bindBaseMethods(_this4, base);
+                            _super.bindBaseMethods(_this4, base);
                             if (constructorFn) {
                                 constructorFn.apply(_this4, arguments);
                             } else {

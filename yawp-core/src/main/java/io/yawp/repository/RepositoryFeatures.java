@@ -13,8 +13,11 @@ import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.GraphQLArgument;
 import graphql.schema.GraphQLList;
 import graphql.schema.GraphQLObjectType;
+import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.QueryBuilder;
+import io.yawp.repository.shields.Shield;
+import io.yawp.repository.shields.ShieldInfo;
 
 public class RepositoryFeatures {
 
@@ -126,16 +129,41 @@ public class RepositoryFeatures {
         return es.build();
     }
 
+    public Shield<?> defineShield(Class<?> clazz) {
+        EndpointFeatures<?> endpointFeatures = Yawp.yawp().getEndpointFeatures(clazz);
+        if (endpointFeatures.hasShield()) {
+            return createShield(endpointFeatures);
+        }
+        return null;
+    }
+
+    private Shield<?> createShield(EndpointFeatures<?> endpointFeatures) {
+        ShieldInfo<?> shieldInfo = endpointFeatures.getShieldInfo();
+
+        Shield<?> shield = shieldInfo.newInstance();
+        shield.setRepository(Yawp.yawp());
+        shield.setEndpointClazz(endpointFeatures.getClazz());
+        // shield.setActionKey(new ActionKey(HttpVerb.GET, null, false));
+        shield.setActionMethods(shieldInfo.getActionMethods());
+        return shield;
+    }
+
     private DataFetcher fetcher(final Class<?> clazz) {
         return new DataFetcher() {
             @Override
             public List<?> get(DataFetchingEnvironment env) {
+                Shield<?> shield = defineShield(clazz);
+                shield.protectIndex();
+
                 QueryBuilder<?> query = Yawp.yawp(clazz);
                 for (String arg : env.getArguments().keySet()) {
                     Object val = env.getArgument(arg);
                     if (val != null) {
                         query.where(arg, "=", val);
                     }
+                }
+                if (shield.hasCondition()) {
+                    query.where(shield.getWhere());
                 }
                 return query.list();
             }

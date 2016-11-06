@@ -153,16 +153,18 @@ public class RepositoryFeatures {
             @Override
             public List<?> get(DataFetchingEnvironment env) {
                 Shield<?> shield = defineShield(clazz);
-                shield.protectIndex();
+                if (shield != null) {
+                    shield.protectIndex();
+                }
 
-                QueryBuilder<?> query = Yawp.yawp(clazz);
+                QueryBuilder<?> query = Yawp.yawp().query(clazz);
                 for (String arg : env.getArguments().keySet()) {
                     Object val = env.getArgument(arg);
                     if (val != null) {
                         query.where(arg, "=", val);
                     }
                 }
-                if (shield.hasCondition()) {
+                if (shield != null && shield.hasCondition()) {
                     query.where(shield.getWhere());
                 }
                 return query.list();

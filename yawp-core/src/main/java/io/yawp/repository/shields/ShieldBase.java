@@ -8,6 +8,7 @@ import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.InvalidActionMethodException;
+import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.query.condition.BaseCondition;
 
 import java.lang.reflect.InvocationTargetException;
@@ -193,7 +194,13 @@ public abstract class ShieldBase<T> extends Feature {
                 continue;
             }
 
-            FacadeUtils.set(object, existingObjectId.fetch(), facade);
+            try {
+                T current = existingObjectId.fetch();
+                FacadeUtils.set(object, current, facade);
+            } catch (NoResultException ex) {
+                // we are creating a new record with fixed id
+                FacadeUtils.set(object, facade);
+            }
         }
 
     }

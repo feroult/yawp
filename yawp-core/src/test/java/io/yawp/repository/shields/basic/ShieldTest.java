@@ -116,6 +116,12 @@ public class ShieldTest extends ServletTestCase {
     }
 
     @Test
+    public void testCreateWithIdWithFacade() {
+        login("amy");
+        assertPostWithStatus("/shielded_objects/100", "{\"id\" : 100, \"stringValue\": \"ok\"}", 200);
+    }
+
+    @Test
     public void testCreateWhere() {
         login("kurt");
 

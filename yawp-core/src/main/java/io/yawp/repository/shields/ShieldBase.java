@@ -167,13 +167,13 @@ public abstract class ShieldBase<T> extends Feature {
 
     private void throwNotFoundIfNotAllowed() {
         if (!allow) {
-            throw new HttpException(404, "The resquest was not allowed by the endpoint shield " + getClass().getName());
+            throw new HttpException(404, "The request was not allowed by the endpoint shield " + getClass().getName());
         }
     }
 
     private void throwForbiddenIfNotAllowed() {
         if (!allow) {
-            throw new HttpException(403, "The resquest was not allowed by the endpoint shield " + getClass().getName());
+            throw new HttpException(403, "The request was not allowed by the endpoint shield " + getClass().getName());
         }
     }
 

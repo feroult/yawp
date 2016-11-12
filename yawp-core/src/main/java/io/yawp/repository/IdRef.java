@@ -2,6 +2,7 @@ package io.yawp.repository;
 
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.cache.Cache;
 import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.QueryBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -51,6 +52,10 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
 
     public void setParentId(IdRef<?> parentId) {
         this.parentId = parentId;
+    }
+
+    public T memoize() {
+        return Cache.get(this);
     }
 
     public T fetch() {

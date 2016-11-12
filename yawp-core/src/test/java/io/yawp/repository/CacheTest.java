@@ -12,13 +12,13 @@ public class CacheTest extends EndpointTestCase {
     public void testCacheMechanism() {
         BasicObject bo = yawp.save(new BasicObject("test"));
         IdRef<BasicObject> id = bo.getId();
-        Assert.assertEquals("test", Cache.get(id).getStringValue());
+        Assert.assertEquals("test", id.memoize().getStringValue());
 
         bo.setStringValue("changed");
         yawp.save(bo);
-        Assert.assertEquals("test", Cache.get(id).getStringValue());
+        Assert.assertEquals("test", id.memoize().getStringValue());
 
         Cache.clearAll();
-        Assert.assertEquals("changed", Cache.get(id).getStringValue());
+        Assert.assertEquals("changed", id.memoize().getStringValue());
     }
 }

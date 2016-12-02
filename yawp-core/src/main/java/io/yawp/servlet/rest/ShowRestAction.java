@@ -19,17 +19,16 @@ public class ShowRestAction extends RestAction {
     public Object action() {
         QueryBuilder<?> query = query();
 
-        if (hasTransformer()) {
-            Object object = query.transform(getTransformerName()).fetch(id);
-            applyGetFacade(object);
-            return object;
-        }
-
-        if (hasShieldCondition()) {
-            query.and(shield.getWhere());
-        }
-
         try {
+            if (hasTransformer()) {
+                Object object = query.transform(getTransformerName()).fetch(id);
+                applyGetFacade(object);
+                return object;
+            }
+
+            if (hasShieldCondition()) {
+                query.and(shield.getWhere());
+            }
 
             Object object = query.fetch(id);
             applyGetFacade(object);

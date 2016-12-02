@@ -8,6 +8,7 @@ import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 import io.yawp.repository.actions.InvalidActionMethodException;
+import io.yawp.repository.query.NoResultException;
 import io.yawp.repository.query.condition.BaseCondition;
 
 import java.lang.reflect.InvocationTargetException;
@@ -166,13 +167,13 @@ public abstract class ShieldBase<T> extends Feature {
 
     private void throwNotFoundIfNotAllowed() {
         if (!allow) {
-            throw new HttpException(404, "The resquest was not allowed by the endpoint shield " + getClass().getName());
+            throw new HttpException(404, "The request was not allowed by the endpoint shield " + getClass().getName());
         }
     }
 
     private void throwForbiddenIfNotAllowed() {
         if (!allow) {
-            throw new HttpException(403, "The resquest was not allowed by the endpoint shield " + getClass().getName());
+            throw new HttpException(403, "The request was not allowed by the endpoint shield " + getClass().getName());
         }
     }
 
@@ -193,7 +194,13 @@ public abstract class ShieldBase<T> extends Feature {
                 continue;
             }
 
-            FacadeUtils.set(object, existingObjectId.fetch(), facade);
+            try {
+                T current = existingObjectId.fetch();
+                FacadeUtils.set(object, current, facade);
+            } catch (NoResultException ex) {
+                // we are creating a new record with fixed id
+                FacadeUtils.set(object, facade);
+            }
         }
 
     }

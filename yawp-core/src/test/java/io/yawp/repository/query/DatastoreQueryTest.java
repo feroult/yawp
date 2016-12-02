@@ -86,6 +86,15 @@ public class DatastoreQueryTest extends EndpointTestCase {
     }
 
     @Test
+    public void testWithEmptyIn() {
+        BasicObject myObj1 = new BasicObject("xpto1");
+        yawp.save(myObj1);
+
+        List<BasicObject> objects = yawp(BasicObject.class).where("id", "in", Collections.emptyList()).list();
+        assertEquals(0, objects.size());
+    }
+
+    @Test
     public void testWhereWithUnicode() {
         yawp.save(new BasicObject("\u00c1"));
 

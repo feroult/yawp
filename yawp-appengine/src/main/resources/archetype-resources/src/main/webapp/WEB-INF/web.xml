@@ -6,6 +6,30 @@
     <servlet>
         <servlet-name>EndpointServlet</servlet-name>
         <servlet-class>io.yawp.servlet.EndpointServlet</servlet-class>
+        <servlet>
+            <servlet-name>EndpointServlet</servlet-name>
+            <servlet-class>io.yawp.servlet.EndpointServlet</servlet-class>
+            <init-param>
+                <param-name>enableCrossDomain</param-name>
+                <param-value>false</param-value>
+            </init-param>
+            <init-param>
+                <param-name>crossDomainOrigin</param-name>
+                <param-value>?</param-value>
+            </init-param>
+            <init-param>
+                <param-name>crossDomainMethods</param-name>
+                <param-value>GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD</param-value>
+            </init-param>
+            <init-param>
+                <param-name>crossDomainHeaders</param-name>
+                <param-value>Origin, X-Requested-With, Content-Type, Accept, Authorization</param-value>
+            </init-param>
+            <init-param>
+                <param-name>crossDomainAllowCredentials</param-name>
+                <param-value>true</param-value>
+            </init-param>
+        </servlet>
     </servlet>
     <servlet-mapping>
         <servlet-name>EndpointServlet</servlet-name>

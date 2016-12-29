@@ -17,11 +17,15 @@ public class CrossDomainManager {
 
     private static final String CROSS_DOMAIN_HEADERS_PARAM = "crossDomainHeaders";
 
-    public static final String DEFAULT_ORIGIN = "*";
+    private static final String CROSS_DOMAIN_ALLOW_CREDENTIALS_PARAM = "crossDomainAllowCredentials";
+
+    public static final String DEFAULT_ORIGIN = "?";
 
     public static final String DEFAULT_METHODS = "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD";
 
     public static final String DEFAULT_HEADERS = "Origin, X-Requested-With, Content-Type, Accept, Authorization";
+
+    public static final String DEFAULT_ALLOW_CREDENTIALS = "true";
 
     private boolean enableCrossDomain;
 
@@ -31,6 +35,8 @@ public class CrossDomainManager {
 
     private String headers;
 
+    private String allowCredentials;
+
     public void init(ServletConfig config) {
         this.enableCrossDomain = isCrossDomainEnabled(config);
 
@@ -39,10 +45,12 @@ public class CrossDomainManager {
                 setOrigin(getOrigin(config));
                 setMethods(getMethods(config));
                 setHeaders(getHeaders(config));
+                setAllowCredentials(getAllowCredentials(config));
             } else {
                 setOrigin(DEFAULT_ORIGIN);
                 setMethods(DEFAULT_METHODS);
                 setHeaders(DEFAULT_HEADERS);
+                setAllowCredentials(DEFAULT_ALLOW_CREDENTIALS);
             }
         }
     }
@@ -64,6 +72,10 @@ public class CrossDomainManager {
             if (!StringUtils.isEmpty(headers)) {
                 response.setHeader("Access-Control-Allow-Headers", headers);
             }
+
+            if (!StringUtils.isEmpty(allowCredentials)) {
+                response.setHeader("Access-Control-Allow-Credentials", allowCredentials);
+            }
         }
     }
 
@@ -79,6 +91,10 @@ public class CrossDomainManager {
         return config.getInitParameter(CROSS_DOMAIN_HEADERS_PARAM);
     }
 
+    private String getAllowCredentials(ServletConfig config) {
+        return config.getInitParameter(CROSS_DOMAIN_ALLOW_CREDENTIALS_PARAM);
+    }
+
     private void setOrigin(String origin) {
         this.origin = origin;
     }
@@ -89,6 +105,10 @@ public class CrossDomainManager {
 
     private void setHeaders(String headers) {
         this.headers = headers;
+    }
+
+    public void setAllowCredentials(String allowCredentials) {
+        this.allowCredentials = allowCredentials;
     }
 
     private boolean isCrossDomainEnabled(ServletConfig config) {

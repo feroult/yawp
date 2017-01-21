@@ -1,7 +1,9 @@
 package io.yawp.servlet;
 
 import io.yawp.commons.http.HttpException;
+import io.yawp.commons.http.RequestContext;
 import io.yawp.commons.utils.Environment;
+import io.yawp.commons.utils.RequestContextMock;
 import io.yawp.commons.utils.ServletTestCase;
 import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.Repository;
@@ -51,7 +53,6 @@ public class EndpointRouterTest extends ServletTestCase {
     @Before
     public void before() {
         yawp = Repository.r().setFeatures(new RepositoryFeaturesMock(super.yawp.getFeatures()));
-        //yawp.setFeatures(new RepositoryFeaturesMock(yawp.getFeatures()));
     }
 
     private EndpointRouter parse(String uri) {
@@ -185,6 +186,17 @@ public class EndpointRouterTest extends ServletTestCase {
         assertFalse(router.isOverCollection());
         assertTrue(router.isCustomAction());
         assertEquals("action", router.getCustomActionName());
+    }
+
+    @Test
+    public void testCustomActionOptionsRequest() {
+        RequestContext ctx = new RequestContextMock.Builder()
+                .method("OPTIONS")
+                .optionsRequestMethod("PUT")
+                .uri("/parents/1/touched").build();
+
+        EndpointRouter router = EndpointRouter.parse(yawp, ctx);
+        assertEquals("touched", router.getCustomActionName());
     }
 
     @Test

@@ -24,6 +24,8 @@ public class EndpointRouter {
 
     private final static Logger logger = Logger.getLogger(EndpointRouter.class.getName());
 
+    private final RequestContext ctx;
+
     private Repository r;
 
     private RepositoryFeatures features;
@@ -51,6 +53,7 @@ public class EndpointRouter {
             welcome(r);
         }
 
+        this.ctx = ctx;
         this.r = r;
         this.verb = ctx.getHttpVerb();
         this.uri = ctx.getUri();
@@ -126,7 +129,7 @@ public class EndpointRouter {
     }
 
     private ActionKey singleObjectCustomActionKey(String lastToken) {
-        ActionKey actionKey = new ActionKey(verb, lastToken, false);
+        ActionKey actionKey = new ActionKey(rightCustomActionVerb(), lastToken, false);
         if (features.hasCustomAction(id.getClazz(), actionKey)) {
             return actionKey;
         }
@@ -137,11 +140,15 @@ public class EndpointRouter {
     private ActionKey nestedCollectionCustomActionKey(String lastToken) {
         String[] tokens = lastToken.split("/");
 
-        ActionKey actionKey = new ActionKey(verb, tokens[1], true);
+        ActionKey actionKey = new ActionKey(rightCustomActionVerb(), tokens[1], true);
         if (features.hasCustomAction("/" + tokens[0], actionKey)) {
             return actionKey;
         }
         return null;
+    }
+
+    private HttpVerb rightCustomActionVerb() {
+        return verb == HttpVerb.OPTIONS ? HttpVerb.valueOf(ctx.getOptionsRequestMethod()) : verb;
     }
 
     private ActionKey rootCollectionCustomActionKey() {
@@ -151,7 +158,7 @@ public class EndpointRouter {
             return null;
         }
 
-        ActionKey actionKey = new ActionKey(verb, tokens[1], true);
+        ActionKey actionKey = new ActionKey(rightCustomActionVerb(), tokens[1], true);
         if (features.hasCustomAction("/" + tokens[0], actionKey)) {
             return actionKey;
         }
@@ -173,7 +180,7 @@ public class EndpointRouter {
             return true;
         }
 
-        ActionKey actionKey = new ActionKey(verb, lastToken, false);
+        ActionKey actionKey = new ActionKey(rightCustomActionVerb(), lastToken, false);
         return !features.hasCustomAction(id.getClazz(), actionKey);
 
     }

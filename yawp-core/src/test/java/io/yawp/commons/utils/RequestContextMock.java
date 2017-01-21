@@ -1,6 +1,5 @@
 package io.yawp.commons.utils;
 
-
 import io.yawp.commons.http.RequestContext;
 
 import java.util.Map;
@@ -23,6 +22,11 @@ public class RequestContextMock extends RequestContext {
             return this;
         }
 
+        public Builder optionsRequestMethod(String optionsRequestMethod) {
+            mock.optionsRequestMethod = optionsRequestMethod;
+            return this;
+        }
+
         public Builder uri(String uri) {
             mock.uri = uri;
             return this;
@@ -37,7 +41,6 @@ public class RequestContextMock extends RequestContext {
             mock.params = params;
             return this;
         }
-
 
         public RequestContext build() {
             return mock;

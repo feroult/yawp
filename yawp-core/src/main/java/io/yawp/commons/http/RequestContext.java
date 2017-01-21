@@ -20,6 +20,8 @@ public class RequestContext {
 
     protected String method;
 
+    protected String optionsRequestMethod;
+
     protected String uri;
 
     protected String json;
@@ -36,6 +38,7 @@ public class RequestContext {
         this.resp = resp;
 
         this.method = parseMethod();
+        this.optionsRequestMethod = parseOptionsRequestMethod();
         this.uri = parseUri();
         this.json = parseJson();
         this.params = parseParams();
@@ -53,6 +56,10 @@ public class RequestContext {
 
     public String getMethod() {
         return method;
+    }
+
+    public String getOptionsRequestMethod() {
+        return optionsRequestMethod;
     }
 
     public HttpVerb getHttpVerb() {
@@ -81,6 +88,10 @@ public class RequestContext {
 
     private String parseMethod() {
         return req.getMethod();
+    }
+
+    private String parseOptionsRequestMethod() {
+        return !this.method.equalsIgnoreCase("OPTIONS") ? null : req.getHeader("Access-Control-Request-Method");
     }
 
     private String parseUri() {

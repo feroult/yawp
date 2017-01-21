@@ -274,7 +274,7 @@ public abstract class RestAction {
     }
 
     public static Class<? extends RestAction> getRestActionClazz(HttpVerb verb, boolean overCollection, boolean isCustomAction) {
-        if (isCustomAction) {
+        if (verb != HttpVerb.OPTIONS && isCustomAction) {
             return CustomRestAction.class;
         }
 

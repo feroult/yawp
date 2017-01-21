@@ -204,7 +204,7 @@ public class EndpointRouter {
         return customActionKey.getActionName();
     }
 
-    private RestAction createRestAction(boolean enableHooks) {
+    protected RestAction createRestAction(boolean enableHooks) {
         logger.finer("creating rest action, verb: " + verb + ", custom=" + customActionKey);
 
         try {

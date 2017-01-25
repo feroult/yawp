@@ -82,12 +82,18 @@ public class AppengineWebAppContext extends WebAppContext {
     }
 
     private LocalServiceTestHelper createHelper() {
-        LocalServiceTestHelper helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(), createDatastoreServiceTestConfig(), createTaskQueueTestConfig(), new LocalModulesServiceTestConfig(), new LocalMemcacheServiceTestConfig()) {
-            @Override
-            protected LocalServerEnvironment newLocalServerEnvironment() {
-                return new TestLocalServerEnvironment(mojo, super.newLocalServerEnvironment());
-            }
-        };
+        LocalServiceTestHelper helper =
+                new LocalServiceTestHelper(new LocalUserServiceTestConfig(),
+                        createDatastoreServiceTestConfig(),
+                        createTaskQueueTestConfig(),
+                        createSearchTestConfig(),
+                        new LocalModulesServiceTestConfig(),
+                        new LocalMemcacheServiceTestConfig()) {
+                    @Override
+                    protected LocalServerEnvironment newLocalServerEnvironment() {
+                        return new TestLocalServerEnvironment(mojo, super.newLocalServerEnvironment());
+                    }
+                };
         helper.setUp();
         return helper;
     }
@@ -97,6 +103,12 @@ public class AppengineWebAppContext extends WebAppContext {
         config.setShouldCopyApiProxyEnvironment(true);
         config.setDisableAutoTaskExecution(false);
         return config;
+    }
+
+    private LocalSearchServiceTestConfig createSearchTestConfig() {
+        return new LocalSearchServiceTestConfig()
+                .setPersistent(true)
+                .setStorageDirectory("target/appengine-generated");
     }
 
     private LocalDatastoreServiceTestConfig createDatastoreServiceTestConfig() {

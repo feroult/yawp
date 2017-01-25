@@ -18,9 +18,11 @@ public class AppengineTestHelper implements TestHelper {
 
     @Override
     public void setUp() {
+
         helper = new LocalServiceTestHelper(new LocalUserServiceTestConfig(),
                 createDatastoreService(),
                 createTaskQueueTestConfig(),
+                new LocalSearchServiceTestConfig(),
                 new LocalModulesServiceTestConfig(),
                 new LocalMemcacheServiceTestConfig(),
                 new LocalURLFetchServiceTestConfig());

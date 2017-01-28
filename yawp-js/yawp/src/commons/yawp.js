@@ -1,7 +1,9 @@
-import { extend } from './utils';
+import {extend} from './utils';
 
 let baseUrl = '/api';
 let defaultFetchOptions = {};
+let then = undefined;
+let _catch = undefined;
 
 function normalize(arg) {
     if (!arg) {
@@ -64,8 +66,17 @@ export default (request) => {
                 options.json = true;
                 extend(options, defaultFetchOptions);
 
+                var req = request(url, options);
 
-                return request(url, options);
+                if (then) {
+                    req = req.then(then);
+                }
+
+                if (_catch) {
+                    req = req.catch(_catch);
+                }
+
+                return req;
             }
 
             static wrapInstance(object) {
@@ -339,10 +350,16 @@ export default (request) => {
             },
             defaultFetchOptions: (options) => {
                 defaultFetchOptions = options;
+            },
+            then: (fn) => {
+                then = fn;
+            },
+            catch: (fn) => {
+                _catch = fn;
             }
         };
         cb(c);
-    };
+    }
 
     function update(object) {
         let id = extractId(object);

@@ -18,6 +18,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var _baseUrl = '/api';
 var _defaultFetchOptions = {};
+var _then = undefined;
+var _catch2 = undefined;
 
 function normalize(arg) {
     if (!arg) {
@@ -148,7 +150,17 @@ exports.default = function (request) {
                     options.json = true;
                     (0, _utils.extend)(options, _defaultFetchOptions);
 
-                    return request(url, options);
+                    var req = request(url, options);
+
+                    if (_then) {
+                        req = req.then(_then);
+                    }
+
+                    if (_catch2) {
+                        req = req.catch(_catch2);
+                    }
+
+                    return req;
                 }
             }, {
                 key: 'wrapInstance',
@@ -420,10 +432,16 @@ exports.default = function (request) {
             },
             defaultFetchOptions: function defaultFetchOptions(options) {
                 _defaultFetchOptions = options;
+            },
+            then: function then(fn) {
+                _then = fn;
+            },
+            catch: function _catch(fn) {
+                _catch2 = fn;
             }
         };
         cb(c);
-    };
+    }
 
     function update(object) {
         var id = extractId(object);

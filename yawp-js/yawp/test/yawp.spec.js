@@ -78,8 +78,7 @@ describe('YAWP! JS', () => {
             });
         });
 
-
-        it('has global reject hook', (done) => {
+        it('has global catch hook', (done) => {
             yawp.config(c => {
                 c.catch((err) => {
                     throw 'xpto';
@@ -91,7 +90,6 @@ describe('YAWP! JS', () => {
                 done();
             });
         });
-
 
     });
 

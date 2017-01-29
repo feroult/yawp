@@ -15,6 +15,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var DEFAULT_BASE_URL = '/fixtures';
 var DEFAULT_RESET_URL = '/_ah/yawp/datastore/delete-all';
 var DEFAULT_LAZY_PROPERTIES = ['id']; // needed till harmony proxies
+var DEFAULT_FETCH_OPTIONS = {};
 
 exports.default = function (request) {
     var Fixtures = function () {
@@ -24,6 +25,7 @@ exports.default = function (request) {
             this._baseUrl = DEFAULT_BASE_URL;
             this._resetUrl = DEFAULT_RESET_URL;
             this._lazyProperties = DEFAULT_LAZY_PROPERTIES;
+            this._defaultFetchOptions = DEFAULT_FETCH_OPTIONS;
             this.promise = null;
             this.fixtures = [];
             this.lazy = {};
@@ -48,6 +50,11 @@ exports.default = function (request) {
             key: 'lazyProperties',
             value: function lazyProperties(properties) {
                 this._lazyProperties = properties;
+            }
+        }, {
+            key: 'defaultFetchOptions',
+            value: function defaultFetchOptions(options) {
+                (0, _utils.extend)(this._defaultFetchOptions, options);
             }
         }, {
             key: 'reset',
@@ -162,11 +169,15 @@ exports.default = function (request) {
                     }
 
                     return _this3.prepare(data).then(function (object) {
-                        return request(_this3.url(), {
+                        var options = {
                             method: 'POST',
                             json: true,
                             body: JSON.stringify(object)
-                        }).then(function (response) {
+                        };
+
+                        (0, _utils.extend)(options, _this3.fx._defaultFetchOptions);
+
+                        return request(_this3.url(), options).then(function (response) {
                             _this3.api[key] = response;
                             return response;
                         });

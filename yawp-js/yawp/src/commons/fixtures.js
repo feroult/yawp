@@ -1,8 +1,9 @@
-import { extend } from './utils';
+import {extend} from './utils';
 
 const DEFAULT_BASE_URL = '/fixtures';
 const DEFAULT_RESET_URL = '/_ah/yawp/datastore/delete-all';
 const DEFAULT_LAZY_PROPERTIES = ['id']; // needed till harmony proxies
+const DEFAULT_FETCH_OPTIONS = {};
 
 export default (request) => {
 
@@ -11,6 +12,7 @@ export default (request) => {
             this._baseUrl = DEFAULT_BASE_URL;
             this._resetUrl = DEFAULT_RESET_URL;
             this._lazyProperties = DEFAULT_LAZY_PROPERTIES;
+            this._defaultFetchOptions = DEFAULT_FETCH_OPTIONS;
             this.promise = null;
             this.fixtures = [];
             this.lazy = {};
@@ -30,6 +32,10 @@ export default (request) => {
 
         lazyProperties(properties) {
             this._lazyProperties = properties;
+        }
+
+        defaultFetchOptions(options) {
+            extend(this._defaultFetchOptions, options);
         }
 
         reset(all) {
@@ -117,11 +123,15 @@ export default (request) => {
                 }
 
                 return this.prepare(data).then((object) => {
-                    return request(this.url(), {
+                    const options = {
                         method: 'POST',
                         json: true,
                         body: JSON.stringify(object)
-                    }).then((response) => {
+                    };
+
+                    extend(options, this.fx._defaultFetchOptions);
+
+                    return request(this.url(), options).then((response) => {
                         this.api[key] = response;
                         return response;
 

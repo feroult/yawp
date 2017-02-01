@@ -10,18 +10,17 @@ import static org.junit.Assert.*;
 public class IdRefHelpersTest extends EndpointTestCase {
 
     @Test
-    public void testHasSameValue() {
-        assertTrue(id(Parent.class, 1l).hasSameValue(id(Job.class, 1l)));
-        assertTrue(id(Parent.class, "x").hasSameValue(id(Job.class, "x")));
-        assertFalse(id(Parent.class, 1l).hasSameValue(id(Job.class, 2l)));
-        assertFalse(id(Parent.class, "x").hasSameValue(id(Job.class, "y")));
-    }
-
-    @Test
-    public void testFork() {
+    public void testCreateSiblingId() {
         IdRef<Job> jobId = id(Parent.class, 1l).createSiblingId(Job.class);
         assertEquals((Long) 1l, jobId.getId());
     }
 
+    @Test
+    public void testIsSibling() {
+        assertTrue(id(Parent.class, 1l).isSibling(id(Job.class, 1l)));
+        assertTrue(id(Parent.class, "x").isSibling(id(Job.class, "x")));
+        assertFalse(id(Parent.class, 1l).isSibling(id(Job.class, 2l)));
+        assertFalse(id(Parent.class, "x").isSibling(id(Job.class, "y")));
+    }
 
 }

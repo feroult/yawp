@@ -351,7 +351,7 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
         return sb.toString();
     }
 
-    public boolean hasSameValue(IdRef<?> otherId) {
+    public boolean isSibling(IdRef<?> otherId) {
         if (this.name != null) {
             return otherId.name != null && this.name.equals(otherId.name);
         }

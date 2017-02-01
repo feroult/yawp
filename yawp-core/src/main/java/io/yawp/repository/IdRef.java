@@ -6,11 +6,7 @@ import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.QueryBuilder;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,6 +112,17 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
         return idRef;
     }
 
+    public <TT> IdRef<TT> createSiblingId(Class<TT> clazz) {
+        if (this.name != null) {
+            return new IdRef<>(r, clazz, this.name);
+        }
+        return new IdRef<>(r, clazz, this.id);
+    }
+
+    public <TT> IdRef<TT> of(Class<TT> clazz) {
+        return (IdRef<TT>) this;
+    }
+
     public static <TT> IdRef<TT> create(Repository r, Class<TT> clazz, Long id) {
         return new IdRef<>(r, clazz, id);
     }
@@ -172,18 +179,18 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
         return lastIdRef;
     }
 
-    public static IdRef<?> parse(Repository r, String id) {
-        return parse(r, HttpVerb.GET, id);
+    public static IdRef<?> parse(Repository r, String uri) {
+        return parse(r, HttpVerb.GET, uri);
     }
 
-    public static <T> IdRef<T> parse(Class<T> clazz, Repository r, String idString) {
-        return parse(r, HttpVerb.GET, idString);
+    public static <T> IdRef<T> parse(Class<T> clazz, Repository r, String uri) {
+        return parse(r, HttpVerb.GET, uri);
     }
 
-    public static <T> List<IdRef<T>> parse(Class<T> clazz, Repository r, List<String> idsString) {
+    public static <T> List<IdRef<T>> parse(Class<T> clazz, Repository r, List<String> uris) {
         ArrayList<IdRef<T>> ids = new ArrayList<>();
-        for (String idString : idsString) {
-            ids.add(parse(clazz, r, idString));
+        for (String uri : uris) {
+            ids.add(parse(clazz, r, uri));
         }
         return ids;
     }
@@ -344,6 +351,16 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
         return sb.toString();
     }
 
+    public boolean hasSameValue(IdRef<?> otherId) {
+        if (this.name != null) {
+            return otherId.name != null && this.name.equals(otherId.name);
+        }
+        if (this.id != null) {
+            return otherId.id != null && this.id.equals(otherId.id);
+        }
+        return otherId.name == null && otherId.id == null;
+    }
+
     // Serializable
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.writeObject(getUri());
@@ -364,4 +381,5 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
     private void readObjectNoData() throws ObjectStreamException {
 
     }
+
 }

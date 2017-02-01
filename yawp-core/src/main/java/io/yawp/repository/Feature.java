@@ -51,6 +51,11 @@ public class Feature {
         return IdRef.create(yawp, clazz, name);
     }
 
+    public IdRef<?> id(String uri) {
+        return IdRef.parse(yawp, uri);
+    }
+
+
     public <T> T from(String json, Class<T> clazz) {
         return JsonUtils.from(yawp, json, clazz);
     }
@@ -80,4 +85,5 @@ public class Feature {
             throw new RuntimeException(e);
         }
     }
+
 }

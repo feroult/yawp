@@ -4,7 +4,7 @@
     <parent>
         <artifactId>yawp-maven-plugin-root</artifactId>
         <groupId>io.yawp</groupId>
-        <version>1.6.15</version>
+        <version>1.6.16</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -23,12 +23,12 @@
         <dependency>
             <groupId>io.yawp</groupId>
             <artifactId>yawp-core</artifactId>
-            <version>1.6.15</version>
+            <version>1.6.16</version>
         </dependency>
         <dependency>
             <groupId>io.yawp</groupId>
             <artifactId>yawp-devserver-runtime</artifactId>
-            <version>1.6.15</version>
+            <version>1.6.16</version>
         </dependency>
 
         <!-- Maven plugin dependencies -->

@@ -14,5 +14,5 @@ public class ParentShield extends Shield<Parent> {
     @GET
     public void checkIfFixturesServletDisableShields() {
     }
-
+    
 }

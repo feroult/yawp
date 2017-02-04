@@ -148,4 +148,11 @@ public class ParentCustomActionTest extends ParentServletTestCase {
         String json = get(uri("/parents/%s/empty-list", parent));
         assertEquals("[]", json);
     }
+
+    @Test
+    public void testJava8Action() {
+        String json = get("/parents/java8");
+        String s = from(json, String.class);
+        assertEquals("xpto", s);
+    }
 }

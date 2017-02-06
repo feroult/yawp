@@ -18,7 +18,7 @@ import static io.yawp.repository.Yawp.yawp;
 
 public class ToolsServlet extends HttpServlet {
 
-    private Map<String, Class<? extends Tool>> routes = new HashMap<>();
+    protected Map<String, Class<? extends Tool>> routes = new HashMap<>();
 
     @Override
     public void init(ServletConfig config) throws ServletException {

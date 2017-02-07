@@ -7,10 +7,6 @@ public class TestingTaskQueueCallback extends LocalTaskQueueTestConfig.DeferredT
 
     @Override
     public int execute(URLFetchServicePb.URLFetchRequest req) {
-        try {
-            return super.execute(req);
-        } finally {
-            AsyncHelper.release();
-        }
+        return super.execute(req);
     }
 }

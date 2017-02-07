@@ -1,44 +1,35 @@
 package io.yawp.testing.appengine;
 
+import com.google.appengine.api.taskqueue.dev.LocalTaskQueue;
 import com.google.appengine.api.taskqueue.dev.QueueStateInfo;
 import com.google.appengine.tools.development.testing.LocalTaskQueueTestConfig;
 
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 public class AsyncHelper {
 
-    private static CountDownLatch latch = null;
-
-    private AsyncHelper() {}
-
-    public synchronized static void awaitAsync(long timeout, TimeUnit unit) {
-        if (latch != null) {
-            throw new IllegalStateException("more than one wait is not allowed");
-        }
-
-        latch = new CountDownLatch(1);
-        try {
-            latch.await(timeout, unit);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
-        }
+    private AsyncHelper() {
     }
 
-    public static void release() {
-        int countTasks = getCountTasks();
-        
-        // only me == 1
-        if (countTasks == 1) {
-            latch.countDown();
-            latch = null;
+    public synchronized static void awaitAsync(long timeout, TimeUnit unit) {
+        long limit = System.currentTimeMillis() + unit.toMillis(timeout);
+
+        while (true) {
+            if (System.currentTimeMillis() > limit) {
+                throw new RuntimeException("await timout");
+            }
+            if (getCountTasks() == 0) {
+                break;
+            }
+            Thread.yield();
         }
     }
 
     private static int getCountTasks() {
-        Map<String, QueueStateInfo> queueStateInfo = LocalTaskQueueTestConfig.getLocalTaskQueue().getQueueStateInfo();
+        LocalTaskQueue localTaskQueue = LocalTaskQueueTestConfig.getLocalTaskQueue();
+
+        Map<String, QueueStateInfo> queueStateInfo = localTaskQueue.getQueueStateInfo();
 
         int count = 0;
 

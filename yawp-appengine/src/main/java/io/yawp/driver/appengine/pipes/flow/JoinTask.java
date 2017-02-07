@@ -8,12 +8,16 @@ import io.yawp.repository.Repository;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static com.google.appengine.api.utils.SystemProperty.Environment.Value.Production;
+import static com.google.appengine.api.utils.SystemProperty.environment;
 import static io.yawp.driver.appengine.pipes.flow.CacheHelper.POW_2_15;
 import static io.yawp.repository.Yawp.yawp;
 
 public class JoinTask implements DeferredTask {
 
     private final static Logger logger = Logger.getLogger(JoinTask.class.getName());
+
+    private static final boolean isProduction = environment.value() == Production;
 
     private static final int BUSY_WAIT_TIMES = 20;
 
@@ -76,12 +80,14 @@ public class JoinTask implements DeferredTask {
         works.destroy();
     }
 
-
     private List<Work> listWorks() {
         return r.query(Work.class).where("indexHash", "=", indexHash).order("id").list();
     }
 
     private void busyWaitForWriters(int times, int sleep) {
+        if (!isProduction) {
+            return;
+        }
         for (int i = 0; i < times; i++) {
             Long counter = (Long) memcache.get(lockCacheKey);
             if (counter == null || counter < POW_2_15) {

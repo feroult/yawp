@@ -130,13 +130,11 @@ public abstract class RestAction {
     }
 
     private void executeShield() {
-        if (!enableShields) {
-            return;
+        if (enableHooks) {
+            beforeShieldHooks();
         }
 
-        beforeShieldHooks();
-
-        if (hasShield()) {
+        if (enableShields && hasShield()) {
             shield();
         }
     }

@@ -21,6 +21,8 @@ public class EndpointServlet extends HttpServlet {
 
     private final static Logger logger = Logger.getLogger(EndpointServlet.class.getName());
 
+    private boolean enableShields = true;
+
     private boolean enableHooks = true;
 
     private boolean enableCrossDomain = false;
@@ -37,6 +39,7 @@ public class EndpointServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        setWithShields(config.getInitParameter("enableShields"));
         setWithHooks(config.getInitParameter("enableHooks"));
         initYawp(config.getInitParameter("packagePrefix"));
 
@@ -49,6 +52,15 @@ public class EndpointServlet extends HttpServlet {
         Yawp.destroyFeatures();
     }
 
+    private void setWithShields(String enableShieldsParameter) {
+        if (!enableShields) {
+            return;
+        }
+
+        boolean enableShields = enableShieldsParameter == null || Boolean.valueOf(enableShieldsParameter);
+        setWithShields(enableShields);
+    }
+
     private void setWithHooks(String enableHooksParameter) {
         if (!enableHooks) {
             return;
@@ -56,6 +68,10 @@ public class EndpointServlet extends HttpServlet {
 
         boolean enableHooks = enableHooksParameter == null || Boolean.valueOf(enableHooksParameter);
         setWithHooks(enableHooks);
+    }
+
+    protected void setWithShields(boolean enableShields) {
+        this.enableShields = enableShields;
     }
 
     protected void setWithHooks(boolean enableHooks) {
@@ -107,7 +123,7 @@ public class EndpointServlet extends HttpServlet {
                 throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");
             }
 
-            return router.executeRestAction(enableHooks);
+            return router.executeRestAction(enableShields, enableHooks);
 
         } finally {
             Yawp.dispose();

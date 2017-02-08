@@ -199,7 +199,7 @@ public class EndpointRouterTest extends ServletTestCase {
                 .uri("/parents/1/touched").build();
 
         EndpointRouter router = EndpointRouter.parse(yawp, ctx);
-        RestAction restAction = router.createRestAction(true);
+        RestAction restAction = router.createRestAction(true, true);
 
         assertEquals("touched", router.getCustomActionName());
         assertEquals(RoutesRestAction.class, restAction.getClass());

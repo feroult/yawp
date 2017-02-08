@@ -32,7 +32,8 @@ public abstract class RestAction {
 
     protected Repository r;
 
-    // TODO: Remove this flag, it is used only for tests. Hooks are already disabled in the RepositoryScanner class.
+    private boolean enableShields;
+
     protected boolean enableHooks;
 
     protected Class<?> endpointClazz;
@@ -61,6 +62,10 @@ public abstract class RestAction {
 
     public void setRepository(Repository r) {
         this.r = r;
+    }
+
+    public void setEnableShields(boolean enableShields) {
+        this.enableShields = enableShields;
     }
 
     public void setEnableHooks(boolean enableHooks) {
@@ -125,7 +130,7 @@ public abstract class RestAction {
     }
 
     private void executeShield() {
-        if (!enableHooks) {
+        if (!enableShields) {
             return;
         }
 
@@ -307,4 +312,5 @@ public abstract class RestAction {
     private boolean isList(Object object) {
         return List.class.isAssignableFrom(object.getClass());
     }
+
 }

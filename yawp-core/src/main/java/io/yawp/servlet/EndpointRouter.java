@@ -204,7 +204,7 @@ public class EndpointRouter {
         return customActionKey.getActionName();
     }
 
-    protected RestAction createRestAction(boolean enableHooks) {
+    protected RestAction createRestAction(boolean enableShields, boolean enableHooks) {
         logger.finer("creating rest action, verb: " + verb + ", custom=" + customActionKey);
 
         try {
@@ -213,6 +213,7 @@ public class EndpointRouter {
             RestAction action = restActionClazz.newInstance();
 
             action.setRepository(r);
+            action.setEnableShields(enableShields);
             action.setEnableHooks(enableHooks);
             action.setEndpointClazz(endpointClazz);
             action.setId(id);
@@ -243,8 +244,8 @@ public class EndpointRouter {
         return Collections.singletonList(JsonUtils.from(r, requestJson, endpointClazz));
     }
 
-    public HttpResponse executeRestAction(boolean enableHooks) {
-        return createRestAction(enableHooks).execute();
+    public HttpResponse executeRestAction(boolean enableShields, boolean enableHooks) {
+        return createRestAction(enableShields, enableHooks).execute();
     }
 
     public boolean isValid() {

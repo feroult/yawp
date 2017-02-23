@@ -9,12 +9,14 @@ import com.google.apphosting.utils.config.AppEngineWebXml;
 import com.google.apphosting.utils.config.AppEngineWebXmlReader;
 import com.google.apphosting.utils.config.WebXml;
 import io.yawp.plugin.devserver.MojoWrapper;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.mortbay.jetty.webapp.WebAppContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 public class AppengineWebAppContext extends WebAppContext {
 
@@ -69,7 +71,22 @@ public class AppengineWebAppContext extends WebAppContext {
 
     private AppEngineWebXml readAppengineWebXml() {
         AppEngineWebXmlReader reader = new AppEngineWebXmlReader(mojo.getAppDir());
-        return reader.readAppEngineWebXml();
+        AppEngineWebXml appEngineWebXml = reader.readAppEngineWebXml();
+        applySystemProperties(appEngineWebXml);
+        return appEngineWebXml;
+    }
+
+    private void applySystemProperties(AppEngineWebXml appEngineWebXml) {
+        Map<String, String> props = appEngineWebXml.getSystemProperties();
+
+        for (String key : props.keySet()) {
+            System.setProperty(key, interpolate(props.get(key)));
+        }
+    }
+
+    private String interpolate(String s) {
+        StrSubstitutor sub = new StrSubstitutor((Map) System.getProperties(), "${", "}");
+        return sub.replace(s);
     }
 
     private WebXml readWebXml() {

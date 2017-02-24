@@ -77,12 +77,15 @@ public class EndpointRouter {
         welcome.setMessage("Welcome to YAWP!");
         welcome.setVersion(Environment.version());
         welcome.setDriver(r.driver().name());
-        throw new HttpException(200, JsonUtils.to(welcome));
+        throw new
+                HttpException(200, JsonUtils.to(welcome));
     }
 
     public static EndpointRouter parse(Repository r, RequestContext ctx) {
         logger.finer("parsing endpoint request");
-        return new EndpointRouter(r, ctx);
+        EndpointRouter endpointRouter = new EndpointRouter(r, ctx);
+        ctx.setEndpointClazz(endpointRouter.endpointClazz);
+        return endpointRouter;
     }
 
     private void parseAll() {

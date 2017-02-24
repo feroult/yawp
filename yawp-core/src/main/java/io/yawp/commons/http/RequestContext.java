@@ -28,6 +28,8 @@ public class RequestContext {
 
     protected Map<String, String> params;
 
+    protected Class<?> endpointClazz;
+
     public RequestContext() {
     }
 
@@ -118,4 +120,7 @@ public class RequestContext {
         return map;
     }
 
+    public void setEndpointClazz(Class<?> endpointClazz) {
+        this.endpointClazz = endpointClazz;
+    }
 }

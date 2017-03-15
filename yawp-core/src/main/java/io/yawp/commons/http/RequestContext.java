@@ -88,6 +88,14 @@ public class RequestContext {
         return params.get(key);
     }
 
+    public void setEndpointClazz(Class<?> endpointClazz) {
+        this.endpointClazz = endpointClazz;
+    }
+
+    public Class<?> getEndpointClazz() {
+        return endpointClazz;
+    }
+
     private String parseMethod() {
         return req.getMethod();
     }
@@ -118,9 +126,5 @@ public class RequestContext {
         }
 
         return map;
-    }
-
-    public void setEndpointClazz(Class<?> endpointClazz) {
-        this.endpointClazz = endpointClazz;
     }
 }

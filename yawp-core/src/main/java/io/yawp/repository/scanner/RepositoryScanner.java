@@ -25,9 +25,7 @@ public final class RepositoryScanner {
     private String packagePrefix;
 
     private Reflections endpointsPackage;
-
-    private Reflections yawpPackage;
-
+    
     private Map<Class<?>, EndpointTree<?>> trees;
 
     /**
@@ -38,7 +36,6 @@ public final class RepositoryScanner {
         logger.finer("initializing");
         this.packagePrefix = packagePrefix;
         this.endpointsPackage = new Reflections(packagePrefix);
-        this.yawpPackage = new Reflections("io.yawp");
         this.trees = new HashMap<>();
         this.enableHooks = true;
         logger.finer("done");
@@ -106,13 +103,6 @@ public final class RepositoryScanner {
         for (Class<?> endpointClazz : userClazzes) {
             trees.put(endpointClazz, new EndpointTree(endpointClazz));
         }
-
-        Set<Class<?>> yawpClazzes = yawpPackage.getTypesAnnotatedWith(Endpoint.class);
-
-        for (Class<?> endpointClazz : yawpClazzes) {
-            trees.put(endpointClazz, new EndpointTree(endpointClazz));
-        }
-
     }
 
     private List<Class<?>> findEndpointsInHierarchy(Class<?> parameterClazz, Class<?> featureClazz) {
@@ -128,7 +118,6 @@ public final class RepositoryScanner {
         }
         return clazzes;
     }
-
 
     private <T> boolean isEndpointInTheHierarchy(Class<?> endpoint, Class<T> objectClazz) {
         return objectClazz.isAssignableFrom(endpoint);

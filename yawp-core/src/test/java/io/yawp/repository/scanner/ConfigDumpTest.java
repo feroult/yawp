@@ -10,7 +10,7 @@ public class ConfigDumpTest {
     @Test
     public void testSimple() {
         RepositoryScanner scanner = new RepositoryScanner("io.yawp.repository.models.parents");
-        RepositoryFeatures feature = scanner.scan();
+        RepositoryFeatures features = scanner.scan();
 
         assertTrue(true);
     }

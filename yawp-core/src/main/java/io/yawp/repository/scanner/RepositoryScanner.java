@@ -25,7 +25,7 @@ public final class RepositoryScanner {
     private String packagePrefix;
 
     private Reflections endpointsPackage;
-    
+
     private Map<Class<?>, EndpointTree<?>> trees;
 
     /**

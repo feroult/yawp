@@ -1,8 +1,7 @@
-package io.yawp.repository.scanner;
+package io.yawp.repository.features;
 
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.EndpointFeatures;
-import io.yawp.repository.RepositoryFeatures;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
@@ -16,9 +15,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public final class RepositoryScanner {
+public final class FeaturesScanner {
 
-    private final static Logger logger = Logger.getLogger(RepositoryScanner.class.getName());
+    private final static Logger logger = Logger.getLogger(FeaturesScanner.class.getName());
 
     private boolean enableHooks;
 
@@ -32,7 +31,7 @@ public final class RepositoryScanner {
      * @deprecated in 2.0 it will be internal
      */
     @Deprecated
-    public RepositoryScanner(String packagePrefix) {
+    public FeaturesScanner(String packagePrefix) {
         logger.finer("initializing");
         this.packagePrefix = packagePrefix;
         this.endpointsPackage = new Reflections(packagePrefix);
@@ -45,14 +44,14 @@ public final class RepositoryScanner {
      * @deprecated it will be removed in 2.0
      */
     @Deprecated
-    public RepositoryScanner enableHooks(boolean enableHooks) {
+    public FeaturesScanner enableHooks(boolean enableHooks) {
         this.enableHooks = enableHooks;
         return this;
     }
 
-    public RepositoryFeatures scan() {
+    public Features scan() {
         long start = System.currentTimeMillis();
-        RepositoryFeatures repositoryFeatures = new RepositoryFeatures(scanAndLoadAll());
+        Features repositoryFeatures = new Features(scanAndLoadAll());
         long elapsed = System.currentTimeMillis() - start;
         logger.info("YAWP! started in " + elapsed + " ms - package: " + packagePrefix);
         return repositoryFeatures;

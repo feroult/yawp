@@ -7,7 +7,8 @@ import io.yawp.driver.api.Driver;
 import io.yawp.driver.api.TransactionDriver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.QueryBuilder;
-import io.yawp.repository.scanner.RepositoryScanner;
+import io.yawp.repository.features.FeaturesScanner;
+import io.yawp.repository.features.Features;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
 
     public static Yawp yawp = new Yawp();
 
-    private static RepositoryFeatures features;
+    private static Features features;
 
     public static <T> QueryBuilder<T> yawp(Class<T> clazz) {
         init();
@@ -83,7 +84,7 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
             return;
         }
 
-        RepositoryScanner scanner = new RepositoryScanner(packagePrefix);
+        FeaturesScanner scanner = new FeaturesScanner(packagePrefix);
         scanner.enableHooks(true);
         features = scanner.scan();
     }
@@ -107,7 +108,7 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
     }
 
     @Override
-    public Repository setFeatures(RepositoryFeatures repositoryFeatures) {
+    public Repository setFeatures(Features repositoryFeatures) {
         init();
         return get().setFeatures(repositoryFeatures);
     }
@@ -198,7 +199,7 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
     }
 
     @Override
-    public RepositoryFeatures getFeatures() {
+    public Features getFeatures() {
         init();
         return get().getFeatures();
     }

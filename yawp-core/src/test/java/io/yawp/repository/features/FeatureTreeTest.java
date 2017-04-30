@@ -1,4 +1,4 @@
-package io.yawp.repository.scanner;
+package io.yawp.repository.features;
 
 import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.hooks.hierarchy.AbstractHook;

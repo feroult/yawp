@@ -5,6 +5,7 @@ import io.yawp.driver.api.Driver;
 import io.yawp.driver.api.TransactionDriver;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.query.QueryBuilder;
+import io.yawp.repository.features.Features;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ public interface RepositoryApi {
 
     String currentNamespace();
 
-    Repository setFeatures(RepositoryFeatures repositoryFeatures);
+    Repository setFeatures(Features repositoryFeatures);
 
     Repository setRequestContext(RequestContext requestContext);
 
@@ -47,7 +48,7 @@ public interface RepositoryApi {
 
     EndpointFeatures<?> getEndpointFeatures(String endpointPath);
 
-    RepositoryFeatures getFeatures();
+    Features getFeatures();
 
     <T> IdRef<T> parseId(Class<T> clazz, String idString);
 

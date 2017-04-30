@@ -1,15 +1,15 @@
-package io.yawp.repository;
+package io.yawp.repository.features;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class RepositoryFeaturesTest {
+public class FeaturesTest {
 
     @Test
     public void testValidEndpointPaths() {
-        RepositoryFeatures features = new RepositoryFeatures();
+        Features features = new Features();
 
         assertTrue(features.isValidEndpointPath("/parents"));
         assertTrue(features.isValidEndpointPath("/par_ents"));
@@ -18,7 +18,7 @@ public class RepositoryFeaturesTest {
 
     @Test
     public void testInvalidEndpointPaths() {
-        RepositoryFeatures features = new RepositoryFeatures();
+        Features features = new Features();
 
         assertFalse(features.isValidEndpointPath("parents"));
         assertFalse(features.isValidEndpointPath("/123parents"));

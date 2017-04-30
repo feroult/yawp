@@ -3,7 +3,6 @@ package io.yawp.driver.postgresql.datastore;
 import io.yawp.driver.postgresql.datastore.models.Parent;
 import io.yawp.driver.postgresql.sql.ConnectionManager;
 import io.yawp.repository.Yawp;
-import io.yawp.repository.scanner.RepositoryScanner;
 import io.yawp.repository.Repository;
 import org.junit.BeforeClass;
 

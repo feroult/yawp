@@ -3,7 +3,6 @@ package io.yawp.driver.postgresql.tools;
 import io.yawp.commons.utils.Environment;
 import io.yawp.driver.postgresql.configuration.InitialContextSetup;
 import io.yawp.driver.postgresql.datastore.DatastoreTestCase;
-import io.yawp.repository.scanner.RepositoryScanner;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -10,6 +10,7 @@ import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.pipes.RepositoryPipes;
 import io.yawp.repository.query.QueryBuilder;
+import io.yawp.repository.features.Features;
 
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,7 @@ public class Repository implements RepositoryApi {
 
     private final static Logger logger = Logger.getLogger(Repository.class.getName());
 
-    private RepositoryFeatures repositoryFeatures;
+    private Features repositoryFeatures;
 
     private RequestContext requestContext;
 
@@ -62,7 +63,7 @@ public class Repository implements RepositoryApi {
     }
 
     @Override
-    public Repository setFeatures(RepositoryFeatures repositoryFeatures) {
+    public Repository setFeatures(Features repositoryFeatures) {
         this.repositoryFeatures = repositoryFeatures;
         return this;
     }
@@ -304,7 +305,7 @@ public class Repository implements RepositoryApi {
     }
 
     @Override
-    public RepositoryFeatures getFeatures() {
+    public Features getFeatures() {
         return repositoryFeatures;
     }
 

@@ -5,9 +5,9 @@ import io.yawp.commons.http.RequestContext;
 import io.yawp.commons.utils.Environment;
 import io.yawp.commons.utils.RequestContextMock;
 import io.yawp.commons.utils.ServletTestCase;
-import io.yawp.repository.EndpointFeatures;
+import io.yawp.repository.features.EndpointFeatures;
 import io.yawp.repository.Repository;
-import io.yawp.repository.features.Features;
+import io.yawp.repository.features.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.servlet.rest.RestAction;
 import io.yawp.servlet.rest.RoutesRestAction;
@@ -22,11 +22,11 @@ public class EndpointRouterTest extends ServletTestCase {
 
     private Repository yawp;
 
-    private class RepositoryFeaturesMock extends Features {
+    private class RepositoryFeaturesMock extends RepositoryFeatures {
 
-        private Features features;
+        private RepositoryFeatures features;
 
-        public RepositoryFeaturesMock(Features features) {
+        public RepositoryFeaturesMock(RepositoryFeatures features) {
             super(new HashMap<Class<?>, EndpointFeatures<?>>());
             this.features = features;
         }

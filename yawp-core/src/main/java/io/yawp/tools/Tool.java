@@ -1,6 +1,6 @@
 package io.yawp.tools;
 
-import io.yawp.repository.Feature;
+import io.yawp.repository.features.Feature;
 
 import java.io.IOException;
 import java.io.PrintWriter;

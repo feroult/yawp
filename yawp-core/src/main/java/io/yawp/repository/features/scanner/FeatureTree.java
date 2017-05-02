@@ -1,6 +1,6 @@
-package io.yawp.repository.features;
+package io.yawp.repository.features.scanner;
 
-import io.yawp.repository.Feature;
+import io.yawp.repository.features.Feature;
 
 import java.util.HashSet;
 import java.util.Set;

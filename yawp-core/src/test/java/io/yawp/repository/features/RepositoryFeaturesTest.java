@@ -5,11 +5,11 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class FeaturesTest {
+public class RepositoryFeaturesTest {
 
     @Test
     public void testValidEndpointPaths() {
-        Features features = new Features();
+        RepositoryFeatures features = new RepositoryFeatures();
 
         assertTrue(features.isValidEndpointPath("/parents"));
         assertTrue(features.isValidEndpointPath("/par_ents"));
@@ -18,7 +18,7 @@ public class FeaturesTest {
 
     @Test
     public void testInvalidEndpointPaths() {
-        Features features = new Features();
+        RepositoryFeatures features = new RepositoryFeatures();
 
         assertFalse(features.isValidEndpointPath("parents"));
         assertFalse(features.isValidEndpointPath("/123parents"));

@@ -1,6 +1,6 @@
 package io.yawp.repository.hooks;
 
-import io.yawp.repository.Feature;
+import io.yawp.repository.features.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.query.QueryBuilder;
 

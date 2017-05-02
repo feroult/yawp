@@ -1,6 +1,7 @@
 package io.yawp.repository;
 
 import io.yawp.commons.utils.EndpointTestCase;
+import io.yawp.repository.features.Feature;
 import io.yawp.repository.models.parents.Job;
 import org.junit.Test;
 

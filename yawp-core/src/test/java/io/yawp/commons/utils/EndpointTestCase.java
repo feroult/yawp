@@ -3,7 +3,7 @@ package io.yawp.commons.utils;
 import io.yawp.driver.api.DriverNotImplementedException;
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.driver.api.testing.TestHelperFactory;
-import io.yawp.repository.Feature;
+import io.yawp.repository.features.Feature;
 import io.yawp.repository.Repository;
 import io.yawp.repository.Yawp;
 import org.junit.After;

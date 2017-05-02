@@ -1,8 +1,10 @@
-package io.yawp.repository;
+package io.yawp.repository.features;
 
 import io.yawp.commons.http.RequestContext;
 import io.yawp.commons.utils.JsonUtils;
 import io.yawp.commons.utils.ReflectionUtils;
+import io.yawp.repository.IdRef;
+import io.yawp.repository.Repository;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.lang.reflect.Field;

@@ -1,7 +1,7 @@
 package io.yawp.repository.pipes;
 
 import io.yawp.commons.utils.ReflectionUtils;
-import io.yawp.repository.Feature;
+import io.yawp.repository.features.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.pipes.pump.IdPump;

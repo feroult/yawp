@@ -1,4 +1,4 @@
-package io.yawp.repository.features;
+package io.yawp.repository.features.scanner;
 
 import io.yawp.commons.utils.ReflectionUtils;
 import io.yawp.repository.actions.Action;

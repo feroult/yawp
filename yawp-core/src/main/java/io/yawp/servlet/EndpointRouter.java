@@ -9,7 +9,7 @@ import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.EndpointNotFoundException;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
-import io.yawp.repository.features.Features;
+import io.yawp.repository.features.RepositoryFeatures;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.models.ObjectHolder;
 import io.yawp.servlet.rest.RestAction;
@@ -28,7 +28,7 @@ public class EndpointRouter {
 
     private Repository r;
 
-    private Features features;
+    private RepositoryFeatures features;
 
     private String uri;
 

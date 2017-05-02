@@ -2,7 +2,7 @@ package io.yawp.repository.shields;
 
 import io.yawp.commons.http.HttpException;
 import io.yawp.commons.utils.FacadeUtils;
-import io.yawp.repository.Feature;
+import io.yawp.repository.features.Feature;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.actions.ActionKey;

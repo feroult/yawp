@@ -1,4 +1,4 @@
-package io.yawp.repository;
+package io.yawp.repository.features;
 
 import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.actions.ActionKey;

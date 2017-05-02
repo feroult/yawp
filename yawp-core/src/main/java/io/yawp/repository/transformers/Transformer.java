@@ -1,6 +1,6 @@
 package io.yawp.repository.transformers;
 
-import io.yawp.repository.Feature;
+import io.yawp.repository.features.Feature;
 
 /**
  * Transformer API

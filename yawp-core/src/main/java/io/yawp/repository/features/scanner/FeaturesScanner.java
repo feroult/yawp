@@ -1,7 +1,8 @@
-package io.yawp.repository.features;
+package io.yawp.repository.features.scanner;
 
 import io.yawp.commons.utils.ReflectionUtils;
-import io.yawp.repository.EndpointFeatures;
+import io.yawp.repository.features.EndpointFeatures;
+import io.yawp.repository.features.RepositoryFeatures;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.annotations.Endpoint;
 import io.yawp.repository.hooks.Hook;
@@ -49,9 +50,9 @@ public final class FeaturesScanner {
         return this;
     }
 
-    public Features scan() {
+    public RepositoryFeatures scan() {
         long start = System.currentTimeMillis();
-        Features repositoryFeatures = new Features(scanAndLoadAll());
+        RepositoryFeatures repositoryFeatures = new RepositoryFeatures(scanAndLoadAll());
         long elapsed = System.currentTimeMillis() - start;
         logger.info("YAWP! started in " + elapsed + " ms - package: " + packagePrefix);
         return repositoryFeatures;

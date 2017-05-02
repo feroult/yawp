@@ -1,7 +1,7 @@
 package io.yawp.repository.actions;
 
 import io.yawp.commons.utils.JsonUtils;
-import io.yawp.repository.Feature;
+import io.yawp.repository.features.Feature;
 
 /**
  * Action API

@@ -1,6 +1,5 @@
 package io.yawp.repository.features;
 
-import io.yawp.repository.EndpointFeatures;
 import io.yawp.repository.EndpointNotFoundException;
 import io.yawp.repository.actions.ActionKey;
 
@@ -8,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class Features {
+public class RepositoryFeatures {
 
     private Map<Class<?>, EndpointFeatures<?>> endpoints;
 
@@ -16,10 +15,10 @@ public class Features {
 
     private Map<String, Class<?>> kinds;
 
-    protected Features() {
+    protected RepositoryFeatures() {
     }
 
-    public Features(Map<Class<?>, EndpointFeatures<?>> endpoints) {
+    public RepositoryFeatures(Map<Class<?>, EndpointFeatures<?>> endpoints) {
         this.endpoints = endpoints;
         this.paths = new HashMap<>();
         this.kinds = new HashMap<>();

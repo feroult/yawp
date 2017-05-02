@@ -5,7 +5,7 @@ import io.yawp.commons.http.HttpResponse;
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.commons.http.JsonResponse;
 import io.yawp.commons.utils.JsonUtils;
-import io.yawp.repository.EndpointFeatures;
+import io.yawp.repository.features.EndpointFeatures;
 import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;

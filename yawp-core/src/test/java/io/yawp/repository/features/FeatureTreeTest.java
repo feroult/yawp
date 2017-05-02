@@ -1,5 +1,6 @@
 package io.yawp.repository.features;
 
+import io.yawp.repository.features.scanner.FeatureTree;
 import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.hooks.hierarchy.AbstractHook;
 import io.yawp.repository.hooks.hierarchy.AllObjectsHook;

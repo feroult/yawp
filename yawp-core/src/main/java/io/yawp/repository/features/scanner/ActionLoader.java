@@ -1,6 +1,6 @@
-package io.yawp.repository.features;
+package io.yawp.repository.features.scanner;
 
-import io.yawp.repository.EndpointFeatures;
+import io.yawp.repository.features.EndpointFeatures;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.actions.ActionMethod;
 

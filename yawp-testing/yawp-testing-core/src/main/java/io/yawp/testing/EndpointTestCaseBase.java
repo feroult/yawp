@@ -5,9 +5,9 @@ import io.yawp.commons.http.RequestContext;
 import io.yawp.commons.utils.Environment;
 import io.yawp.driver.api.testing.TestHelper;
 import io.yawp.driver.api.testing.TestHelperFactory;
-import io.yawp.repository.Feature;
+import io.yawp.repository.features.Feature;
 import io.yawp.repository.Repository;
-import io.yawp.repository.features.Features;
+import io.yawp.repository.features.RepositoryFeatures;
 import io.yawp.repository.Yawp;
 import io.yawp.repository.models.ObjectHolder;
 import io.yawp.servlet.EndpointServlet;
@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 public class EndpointTestCaseBase extends Feature {
 
-    private static Features features;
+    private static RepositoryFeatures features;
 
     private static EndpointServlet servlet;
 

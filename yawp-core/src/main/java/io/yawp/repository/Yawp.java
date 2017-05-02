@@ -1,7 +1,6 @@
 package io.yawp.repository;
 
-import io.yawp.commons.config.Config;
-import io.yawp.commons.config.FeaturesConfig;
+import io.yawp.commons.config.ConfigFile;
 import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.Driver;
 import io.yawp.driver.api.TransactionDriver;
@@ -72,10 +71,8 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
             return;
         }
 
-        Config config = Config.load();
-        FeaturesConfig featuresConfig = config.getConfig();
-
-        safeLoadFeatures(featuresConfig.getPackages());
+        ConfigFile configFile = ConfigFile.load();
+        safeLoadFeatures(configFile.getConfig().getPackages());
     }
 
     @SuppressWarnings("deprecation")

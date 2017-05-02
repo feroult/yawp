@@ -8,7 +8,7 @@ public class ConfigTest {
 
     @Test
     public void testConfigPackage() {
-        Config config = Config.load();
-        assertEquals("io.yawp", config.getConfig().getPackages());
+        ConfigFile configFile = ConfigFile.load();
+        assertEquals("io.yawp", configFile.getConfig().getPackages());
     }
 }

@@ -1,6 +1,6 @@
 package io.yawp.plugin.mojos.scaffolding.mojo;
 
-import io.yawp.commons.config.Config;
+import io.yawp.commons.config.ConfigFile;
 import io.yawp.plugin.mojos.base.PluginAbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
@@ -25,8 +25,8 @@ public abstract class ScaffolderAbstractMojo extends PluginAbstractMojo {
 
     private void loadYawpPackageFromConfig() {
         configureRuntimeClassLoader();
-        Config config = Config.load();
-        this.yawpPackage = config.getConfig().getPackages();
+        ConfigFile configFile = ConfigFile.load();
+        this.yawpPackage = configFile.getConfig().getPackages();
     }
 
 }

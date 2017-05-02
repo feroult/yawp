@@ -1,7 +1,0 @@
-config:
-  packages: io.yawp.repository.models.parents
-
-endpoints:
-  io.yawp.repository.models.parents.Parent:
-    actions:
-      - io.yawp.repository.models.parents.X

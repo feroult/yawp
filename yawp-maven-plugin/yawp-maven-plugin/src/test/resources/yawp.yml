@@ -1,3 +1,2 @@
-features:
-  default:
-    packagePrefix: yawpapp
+config:
+  packages: yawpapp

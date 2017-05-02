@@ -1,3 +1,2 @@
-features:
-  default:
-    packagePrefix: io.yawp
+config:
+  packages: io.yawp

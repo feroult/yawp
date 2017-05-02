@@ -4,15 +4,12 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
 import java.io.InputStream;
-import java.util.Map;
 
 public class Config {
 
     private static final String DEFAULT_CONFIG = "yawp.yml";
 
-    private static final String DEFAULT_KEY = "default";
-
-    private Map<String, FeaturesConfig> features;
+    private FeaturesConfig config;
 
     public static Config load() {
         return loadYamlFrom(stream(DEFAULT_CONFIG));
@@ -28,16 +25,12 @@ public class Config {
         return (Config) yaml.load(stream);
     }
 
-    public Map<String, FeaturesConfig> getFeatures() {
-        return features;
+    public FeaturesConfig getConfig() {
+        return config;
     }
 
-    public void setFeatures(Map<String, FeaturesConfig> features) {
-        this.features = features;
-    }
-
-    public FeaturesConfig getDefaultFeatures() {
-        return features.get(DEFAULT_KEY);
+    public void setConfig(FeaturesConfig config) {
+        this.config = config;
     }
 
 }

@@ -6,9 +6,9 @@ import io.yawp.commons.http.RequestContext;
 import io.yawp.driver.api.Driver;
 import io.yawp.driver.api.TransactionDriver;
 import io.yawp.repository.actions.ActionKey;
-import io.yawp.repository.query.QueryBuilder;
-import io.yawp.repository.features.FeaturesScanner;
 import io.yawp.repository.features.Features;
+import io.yawp.repository.features.FeaturesScanner;
+import io.yawp.repository.query.QueryBuilder;
 
 import java.util.List;
 import java.util.Map;
@@ -73,9 +73,9 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
         }
 
         Config config = Config.load();
-        FeaturesConfig featuresConfig = config.getDefaultFeatures();
+        FeaturesConfig featuresConfig = config.getConfig();
 
-        safeLoadFeatures(featuresConfig.getPackagePrefix());
+        safeLoadFeatures(featuresConfig.getPackages());
     }
 
     @SuppressWarnings("deprecation")

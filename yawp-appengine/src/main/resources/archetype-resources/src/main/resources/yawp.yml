@@ -1,3 +1,2 @@
-features:
-  default:
-    packagePrefix: ${package}
+config:
+  packages: ${package}

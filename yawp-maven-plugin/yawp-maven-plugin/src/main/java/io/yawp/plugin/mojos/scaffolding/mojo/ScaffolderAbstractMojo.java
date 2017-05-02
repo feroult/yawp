@@ -17,7 +17,7 @@ public abstract class ScaffolderAbstractMojo extends PluginAbstractMojo {
     protected String model;
 
     protected String getYawpPackage() {
-        if(yawpPackage == null) {
+        if (yawpPackage == null) {
             loadYawpPackageFromConfig();
         }
         return yawpPackage;
@@ -26,7 +26,7 @@ public abstract class ScaffolderAbstractMojo extends PluginAbstractMojo {
     private void loadYawpPackageFromConfig() {
         configureRuntimeClassLoader();
         Config config = Config.load();
-        this.yawpPackage = config.getDefaultFeatures().getPackagePrefix();
+        this.yawpPackage = config.getConfig().getPackages();
     }
 
 }

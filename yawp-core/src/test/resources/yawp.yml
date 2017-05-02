@@ -1,3 +1,10 @@
-features:
-  default:
-    packagePrefix: io.yawp
+config:
+  packages: io.yawp
+
+#endpoints:
+#  - io.yawp.repository.models.parents.Parent
+
+
+#features:
+#  default:
+#    packagePrefix: io.yawp

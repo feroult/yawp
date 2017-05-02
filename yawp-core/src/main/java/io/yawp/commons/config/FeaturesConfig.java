@@ -2,14 +2,14 @@ package io.yawp.commons.config;
 
 public class FeaturesConfig {
 
-    private String packagePrefix;
+    private String packages;
 
-    public String getPackagePrefix() {
-        return packagePrefix;
+    public String getPackages() {
+        return packages;
     }
 
-    public void setPackagePrefix(String packagePrefix) {
-        this.packagePrefix = packagePrefix;
+    public void setPackages(String packages) {
+        this.packages = packages;
     }
 
 }

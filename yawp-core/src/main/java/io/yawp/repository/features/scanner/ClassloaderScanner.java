@@ -16,9 +16,9 @@ import java.util.*;
 import java.util.logging.Logger;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public final class FeaturesScanner {
+public final class ClassloaderScanner {
 
-    private final static Logger logger = Logger.getLogger(FeaturesScanner.class.getName());
+    private final static Logger logger = Logger.getLogger(ClassloaderScanner.class.getName());
 
     private boolean enableHooks;
 
@@ -32,7 +32,7 @@ public final class FeaturesScanner {
      * @deprecated in 2.0 it will be internal
      */
     @Deprecated
-    public FeaturesScanner(String packagePrefix) {
+    public ClassloaderScanner(String packagePrefix) {
         logger.finer("initializing");
         this.packagePrefix = packagePrefix;
         this.endpointsPackage = new Reflections(packagePrefix);
@@ -45,7 +45,7 @@ public final class FeaturesScanner {
      * @deprecated it will be removed in 2.0
      */
     @Deprecated
-    public FeaturesScanner enableHooks(boolean enableHooks) {
+    public ClassloaderScanner enableHooks(boolean enableHooks) {
         this.enableHooks = enableHooks;
         return this;
     }

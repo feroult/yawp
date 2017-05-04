@@ -8,7 +8,7 @@ import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.features.EndpointFeatures;
 import io.yawp.repository.features.Feature;
 import io.yawp.repository.features.RepositoryFeatures;
-import io.yawp.repository.features.loader.ClassloaderScanner;
+import io.yawp.repository.features.scanner.ClassloaderScanner;
 import io.yawp.repository.query.QueryBuilder;
 
 import java.util.List;

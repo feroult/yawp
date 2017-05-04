@@ -1,4 +1,4 @@
-package io.yawp.repository.features.loader;
+package io.yawp.repository.features.scanner;
 
 import io.yawp.repository.features.EndpointFeatures;
 

@@ -20,7 +20,7 @@ public final class ClassloaderScanner {
 
     private final static Logger logger = Logger.getLogger(ClassloaderScanner.class.getName());
 
-    private String packagePrefix;
+    private String packages;
 
     private Reflections endpointsPackage;
 
@@ -30,19 +30,19 @@ public final class ClassloaderScanner {
      * @deprecated in 2.0 it will be internal
      */
     @Deprecated
-    public ClassloaderScanner(String packagePrefix) {
+    public ClassloaderScanner(String packages) {
         logger.finer("initializing");
-        this.packagePrefix = packagePrefix;
-        this.endpointsPackage = new Reflections(packagePrefix);
+        this.packages = packages;
+        this.endpointsPackage = new Reflections(packages);
         this.trees = new HashMap<>();
         logger.finer("done");
     }
-    
+
     public RepositoryFeatures scan() {
         long start = System.currentTimeMillis();
         RepositoryFeatures repositoryFeatures = new RepositoryFeatures(scanAndLoadAll());
         long elapsed = System.currentTimeMillis() - start;
-        logger.info("YAWP! started in " + elapsed + " ms - package: " + packagePrefix);
+        logger.info("YAWP! started in " + elapsed + " ms - package: " + packages);
         return repositoryFeatures;
     }
 

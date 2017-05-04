@@ -1,5 +1,6 @@
-package io.yawp.servlet.defaults;
+package io.yawp.repository.transformers.basic;
 
+import io.yawp.repository.models.basic.Product;
 import io.yawp.repository.transformers.Transformer;
 
 public class ProductTransformer extends Transformer<Product> {

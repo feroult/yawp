@@ -14,6 +14,7 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 import java.lang.reflect.Modifier;
 import java.net.URL;
@@ -45,14 +46,19 @@ public final class ClassloaderScanner {
 
     private Reflections buildReflections(String packages) {
         String[] packagesArray = packages.replaceAll(" ", "").split(",");
+
+        FilterBuilder filter = new FilterBuilder();
+
         Set<URL> urls = new HashSet();
 
         for (String packageStr : packagesArray) {
             urls.addAll(ClasspathHelper.forPackage(packageStr));
+            filter.include(FilterBuilder.prefix(packageStr));
         }
 
         return new Reflections(new ConfigurationBuilder()
                 .addUrls(urls)
+                .filterInputsBy(filter)
                 .setScanners(new TypeAnnotationsScanner(), new SubTypesScanner()));
     }
 

@@ -1,4 +1,4 @@
-package io.yawp.servlet.defaults;
+package io.yawp.repository.models.basic;
 
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Endpoint;

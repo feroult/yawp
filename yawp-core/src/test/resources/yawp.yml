@@ -1,5 +1,5 @@
 config:
-  packages: io.yawp
+  packages: io.yawp.repository.models,io.yawp.repository.actions,io.yawp.repository.hooks,io.yawp.repository.pipes,io.yawp.repository.shields,io.yawp.repository.transformers
 
 #endpoints:
 #  - io.yawp.repository.models.parents.Parent

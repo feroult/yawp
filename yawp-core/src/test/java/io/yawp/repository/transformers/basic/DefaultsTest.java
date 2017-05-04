@@ -1,4 +1,4 @@
-package io.yawp.servlet.defaults;
+package io.yawp.repository.transformers.basic;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,6 +6,7 @@ import io.yawp.commons.utils.ServletTestCase;
 
 import java.util.List;
 
+import io.yawp.repository.models.basic.Product;
 import org.junit.Test;
 
 public class DefaultsTest extends ServletTestCase {

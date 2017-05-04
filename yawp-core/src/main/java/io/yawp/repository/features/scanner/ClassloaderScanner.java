@@ -10,8 +10,13 @@ import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.shields.Shield;
 import io.yawp.repository.transformers.Transformer;
 import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.scanners.TypeAnnotationsScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -33,9 +38,22 @@ public final class ClassloaderScanner {
     public ClassloaderScanner(String packages) {
         logger.finer("initializing");
         this.packages = packages;
-        this.endpointsPackage = new Reflections(packages);
+        this.endpointsPackage = buildReflections(packages);
         this.trees = new HashMap<>();
         logger.finer("done");
+    }
+
+    private Reflections buildReflections(String packages) {
+        String[] packagesArray = packages.replaceAll(" ", "").split(",");
+        Set<URL> urls = new HashSet();
+
+        for (String packageStr : packagesArray) {
+            urls.addAll(ClasspathHelper.forPackage(packageStr));
+        }
+
+        return new Reflections(new ConfigurationBuilder()
+                .addUrls(urls)
+                .setScanners(new TypeAnnotationsScanner(), new SubTypesScanner()));
     }
 
     public RepositoryFeatures scan() {

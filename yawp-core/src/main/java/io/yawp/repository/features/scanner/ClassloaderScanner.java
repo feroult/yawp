@@ -1,10 +1,10 @@
 package io.yawp.repository.features.scanner;
 
 import io.yawp.commons.utils.ReflectionUtils;
-import io.yawp.repository.features.EndpointFeatures;
-import io.yawp.repository.features.RepositoryFeatures;
 import io.yawp.repository.actions.Action;
 import io.yawp.repository.annotations.Endpoint;
+import io.yawp.repository.features.EndpointFeatures;
+import io.yawp.repository.features.RepositoryFeatures;
 import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.shields.Shield;
@@ -19,8 +19,6 @@ import java.util.logging.Logger;
 public final class ClassloaderScanner {
 
     private final static Logger logger = Logger.getLogger(ClassloaderScanner.class.getName());
-
-    private boolean enableHooks;
 
     private String packagePrefix;
 
@@ -37,19 +35,9 @@ public final class ClassloaderScanner {
         this.packagePrefix = packagePrefix;
         this.endpointsPackage = new Reflections(packagePrefix);
         this.trees = new HashMap<>();
-        this.enableHooks = true;
         logger.finer("done");
     }
-
-    /**
-     * @deprecated it will be removed in 2.0
-     */
-    @Deprecated
-    public ClassloaderScanner enableHooks(boolean enableHooks) {
-        this.enableHooks = enableHooks;
-        return this;
-    }
-
+    
     public RepositoryFeatures scan() {
         long start = System.currentTimeMillis();
         RepositoryFeatures repositoryFeatures = new RepositoryFeatures(scanAndLoadAll());
@@ -68,10 +56,8 @@ public final class ClassloaderScanner {
         scanActions();
         scanTransformers();
         scanPipes();
-        if (enableHooks) {
-            scanHooks();
-            scanShields();
-        }
+        scanHooks();
+        scanShields();
     }
 
     private Map<Class<?>, EndpointFeatures<?>> loadAll() {

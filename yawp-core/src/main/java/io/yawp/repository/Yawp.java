@@ -84,7 +84,6 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
         }
 
         ClassloaderScanner scanner = new ClassloaderScanner(packagePrefix);
-        scanner.enableHooks(true);
         features = scanner.scan();
     }
 

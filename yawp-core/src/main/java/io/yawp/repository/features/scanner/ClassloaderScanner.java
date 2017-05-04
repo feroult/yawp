@@ -66,7 +66,7 @@ public final class ClassloaderScanner {
         long start = System.currentTimeMillis();
         RepositoryFeatures repositoryFeatures = new RepositoryFeatures(scanAndLoadAll());
         long elapsed = System.currentTimeMillis() - start;
-        logger.info("YAWP! started in " + elapsed + " ms - package: " + packages);
+        logger.info("YAWP! classloader scanner started in " + elapsed + " ms - packages: " + packages);
         return repositoryFeatures;
     }
 

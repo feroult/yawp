@@ -32,10 +32,6 @@ public final class ClassloaderScanner {
 
     private Map<Class<?>, EndpointTree<?>> trees;
 
-    /**
-     * @deprecated in 2.0 it will be internal
-     */
-    @Deprecated
     public ClassloaderScanner(String packages) {
         logger.finer("initializing");
         this.packages = packages;

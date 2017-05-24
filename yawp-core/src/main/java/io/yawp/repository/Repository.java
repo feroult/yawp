@@ -89,7 +89,7 @@ public class Repository implements RepositoryApi {
 
     @Override
     public <T> T saveWithHooks(T object) {
-        logger.finer("save object, hooks: true");
+        logger.info("save object, hooks: true");
 
         namespace.set(object.getClass());
         try {
@@ -285,7 +285,6 @@ public class Repository implements RepositoryApi {
         FutureObject<Void> futureObject = driver().persistence().destroyAsync(id);
         return futureObject;
     }
-
 
     @Override
     public Class<?> getClazzByKind(String kind) {

@@ -84,4 +84,12 @@ public class ObjectHolder {
             throw new RuntimeException(e);
         }
     }
+
+    public IdRef<?> safeGetId() {
+        try {
+            return getId();
+        } catch (Throwable t) {
+            return null;
+        }
+    }
 }

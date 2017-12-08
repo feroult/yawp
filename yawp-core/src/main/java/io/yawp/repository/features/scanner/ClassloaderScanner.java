@@ -104,7 +104,7 @@ public final class ClassloaderScanner {
     }
 
     private void scanEndpoints() {
-        Set<Class<?>> userClazzes = endpointsPackage.getTypesAnnotatedWith(Endpoint.class);
+        Set<Class<?>> userClazzes = endpointsPackage.getTypesAnnotatedWith(Endpoint.class, true);
 
         for (Class<?> endpointClazz : userClazzes) {
             trees.put(endpointClazz, new EndpointTree(endpointClazz));

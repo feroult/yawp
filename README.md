@@ -57,9 +57,14 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 Everyone willing to contribute with YAWP! is welcome. To start developing you
 will need an environment with:
 
-* JDK 1.7+
+* JDK 1.8+
 * Maven 3.3+
 * PostgreSQL 9.4+
+* phantomjs 2+
+
+For postgres, you need to create a database and user accessible for your Unix user (you need to be able to run psql with no args). A simple tutorial for Arch can be found [here](http://www.netarky.com/programming/arch_linux/Arch_Linux_PostgreSQL_database_setup.html).
+
+Phantomjs can be installed from [pacman](https://www.archlinux.org/packages/community/x86_64/phantomjs/) on Arch.
 
 Then follow the [travis-ci build script](../master/.travis.yml) to get your build working.
 

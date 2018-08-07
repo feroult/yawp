@@ -8,9 +8,9 @@ addons:
 before_install:
  - source ./scripts/before_install.sh
 
-branches:
-  only:
-    - master
+#branches:
+#  only:
+#    - master
 
 script:
  - source ./scripts/complete-it.sh

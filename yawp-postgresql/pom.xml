@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.yawp</groupId>
         <artifactId>yawp-root</artifactId>
-        <version>2.0.0alpha</version>
+        <version>2.0.1alpha-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>io.yawp</groupId>
             <artifactId>yawp-core</artifactId>
-            <version>2.0.0alpha</version>
+            <version>2.0.1alpha-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>

@@ -74,7 +74,7 @@ export default (request) => {
             if (!this.promise) {
                 this.promise = promiseFn();
             } else {
-                this.promise = this.promise.then(promiseFn)
+                this.promise = this.promise.then(promiseFn);
             }
             return this.promise;
         }
@@ -135,9 +135,9 @@ export default (request) => {
                         this.api[key] = response;
                         return response;
 
-                    })
+                    });
                 });
-            }
+            };
         }
 
         getLazyDataFor(key) {
@@ -201,7 +201,7 @@ export default (request) => {
             this.api[key] = this.fx._lazyProperties.reduce((map, property) => {
                 map[property] = () => {
                     return new Promise((resolve) => resolve(self.api[key][property]));
-                }
+                };
                 return map;
             }, {});
             this.api[key].__stub__ = true;
@@ -260,4 +260,4 @@ export default (request) => {
     }
 
     return new Fixtures();
-}
+};

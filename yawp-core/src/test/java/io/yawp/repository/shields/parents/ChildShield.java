@@ -2,6 +2,7 @@ package io.yawp.repository.shields.parents;
 
 import static io.yawp.repository.query.condition.Condition.c;
 
+import io.yawp.commons.http.annotation.GET;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.commons.utils.TestLoginManager;
 import io.yawp.repository.IdRef;
@@ -33,8 +34,13 @@ public class ChildShield extends Shield<ShieldedChild> {
         allow(isJanis()).where(c("parent->name", "=", "ok-for-janis"));
     }
 
+    @GET("header")
+    public void header() {
+        allow();
+    }
+
     private boolean isId100(IdRef<?> id) {
-        return id.asLong().equals(100l);
+        return id != null && id.asLong().equals(100l);
     }
 
     private boolean isJanis() {

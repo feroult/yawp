@@ -52,6 +52,23 @@ describe('YAWP! JS', () => {
             });
         });
 
+        it('sets customFetchOptions and uses it', done => {
+            let i = 0;
+            yawp.customFetchOptions(opt => opt.headers = { 'Secret-Panda': `m${i++}` });
+
+            yawp('/shielded_objects').get('header').then(r1 => {
+                expect(r1).to.be.equal('action:m0');
+
+                yawp('/shielded_objects').get('header').then(r2 => {
+                    expect(r2).to.be.equal('action:m1');
+
+                    yawp('/shielded_objects').get('header').then(r3 => {
+                        expect(r3).to.be.equal('action:m2');
+                        done();
+                    });
+                });
+            });
+        });
     });
 
     describe('global hooks', () => {

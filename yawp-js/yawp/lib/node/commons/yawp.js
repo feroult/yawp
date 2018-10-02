@@ -18,6 +18,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var _baseUrl = '/api';
 var _defaultFetchOptions = {};
+var customFetchOptionsFn = null;
 var _then = undefined;
 var _catch2 = undefined;
 
@@ -149,6 +150,7 @@ exports.default = function (request) {
                     options.method = type;
                     options.json = true;
                     (0, _utils.extend)(options, _defaultFetchOptions);
+                    customFetchOptionsFn && customFetchOptionsFn(options);
 
                     var req = request(url, options);
 
@@ -425,6 +427,10 @@ exports.default = function (request) {
 
     // base api
 
+    function customFetchOptions(fn) {
+        customFetchOptionsFn = fn;
+    }
+
     function config(cb) {
         var c = {
             baseUrl: function baseUrl(url) {
@@ -460,6 +466,7 @@ exports.default = function (request) {
 
     var baseApi = {
         config: config,
+        customFetchOptions: customFetchOptions,
         update: update,
         patch: patch,
         destroy: destroy

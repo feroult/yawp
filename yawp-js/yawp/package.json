@@ -8,15 +8,15 @@
     "build-node": "BABEL_ENV=node babel src --ignore web --source-maps --out-dir lib/node",
     "build-web": "webpack --mode=build --index=yawp; webpack --mode=build --index=yawp.fixtures",
     "dev-node": "BABEL_ENV=node babel src --ignore web --source-maps --watch --out-dir lib/node",
-    "test": "BABEL_ENV=node mocha --compilers js:babel-core/register --colors -w ./test/*.spec.js",
-    "ci": "BABEL_ENV=node mocha --compilers js:babel-core/register --colors ./test/*.spec.js",
-    "prepublish": "npm run build",
+    "test": "BABEL_ENV=node mocha --require babel-core/register --colors -w ./test/*.spec.js",
+    "ci": "BABEL_ENV=node mocha --require babel-core/register --colors ./test/*.spec.js",
+    "prepublishOnly": "npm run build",
     "analyzer": "webpack --mode=build --index=yawp --json | webpack-bundle-size-analyzer; webpack --mode=build --index=yawp.fixtures --json | webpack-bundle-size-analyzer"
   },
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-cli": "^6.10.1",
-    "babel-core": "^6.10.4",
+    "babel-core": "^6.26.3",
     "babel-eslint": "^6.1.0",
     "babel-loader": "^6.2.4",
     "babel-plugin-add-module-exports": "^0.2.1",
@@ -30,7 +30,7 @@
     "eslint": "^2.13.1",
     "eslint-loader": "^1.3.0",
     "json-loader": "^0.5.4",
-    "mocha": "^2.5.3",
+    "mocha": "^5.2.0",
     "webpack": "^1.13.1",
     "webpack-bundle-size-analyzer": "^2.0.2",
     "yargs": "^4.7.1"

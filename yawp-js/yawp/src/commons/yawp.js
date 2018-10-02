@@ -2,6 +2,7 @@ import {extend} from './utils';
 
 let baseUrl = '/api';
 let defaultFetchOptions = {};
+let customFetchOptionsFn = null;
 let then = undefined;
 let _catch = undefined;
 
@@ -65,6 +66,7 @@ export default (request) => {
                 options.method = type;
                 options.json = true;
                 extend(options, defaultFetchOptions);
+                customFetchOptionsFn && customFetchOptionsFn(options);
 
                 var req = request(url, options);
 
@@ -343,6 +345,10 @@ export default (request) => {
 
     // base api
 
+    function customFetchOptions(fn) {
+        customFetchOptionsFn = fn;
+    }
+
     function config(cb) {
         let c = {
             baseUrl: (url) => {
@@ -378,6 +384,7 @@ export default (request) => {
 
     let baseApi = {
         config,
+        customFetchOptions,
         update,
         patch,
         destroy

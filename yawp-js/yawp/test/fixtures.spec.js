@@ -104,7 +104,7 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
-    it('loads only required lazy fixtures', () => {
+    it('loads only required lazy fixtures', (done) => {
         fx.lazy.parent('p1', {name: 'xpto1'});
         fx.lazy.parent('p2', {name: 'xpto2'});
         fx.parent('p1');

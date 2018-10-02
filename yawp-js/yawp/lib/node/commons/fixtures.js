@@ -4,13 +4,29 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _typeof2 = require('babel-runtime/helpers/typeof');
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _utils = require('./utils');
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var DEFAULT_BASE_URL = '/fixtures';
 var DEFAULT_RESET_URL = '/_ah/yawp/datastore/delete-all';
@@ -20,7 +36,7 @@ var DEFAULT_FETCH_OPTIONS = {};
 exports.default = function (request) {
     var Fixtures = function () {
         function Fixtures() {
-            _classCallCheck(this, Fixtures);
+            (0, _classCallCheck3.default)(this, Fixtures);
 
             this._baseUrl = DEFAULT_BASE_URL;
             this._resetUrl = DEFAULT_RESET_URL;
@@ -31,7 +47,7 @@ exports.default = function (request) {
             this.lazy = {};
         }
 
-        _createClass(Fixtures, [{
+        (0, _createClass3.default)(Fixtures, [{
             key: 'config',
             value: function config(callback) {
                 callback(this);
@@ -109,7 +125,7 @@ exports.default = function (request) {
             key: 'load',
             value: function load(callback) {
                 if (!this.promise) {
-                    return new Promise(function () {
+                    return new _promise2.default(function () {
                         return callback && callback();
                     });
                 }
@@ -118,13 +134,12 @@ exports.default = function (request) {
                 });
             }
         }]);
-
         return Fixtures;
     }();
 
     var Fixture = function () {
         function Fixture(fx, name, path) {
-            _classCallCheck(this, Fixture);
+            (0, _classCallCheck3.default)(this, Fixture);
 
             this.fx = fx;
             this.name = name;
@@ -132,7 +147,7 @@ exports.default = function (request) {
             this.api = this.createApi();
         }
 
-        _createClass(Fixture, [{
+        (0, _createClass3.default)(Fixture, [{
             key: 'createApi',
             value: function createApi() {
                 var _this2 = this;
@@ -172,7 +187,7 @@ exports.default = function (request) {
                         var options = {
                             method: 'POST',
                             json: true,
-                            body: JSON.stringify(object)
+                            body: (0, _stringify2.default)(object)
                         };
 
                         (0, _utils.extend)(options, _this3.fx._defaultFetchOptions);
@@ -195,7 +210,7 @@ exports.default = function (request) {
             value: function prepare(data) {
                 var _this4 = this;
 
-                return new Promise(function (resolve) {
+                return new _promise2.default(function (resolve) {
                     var object = {};
                     (0, _utils.extend)(object, data);
 
@@ -255,7 +270,7 @@ exports.default = function (request) {
                             continue;
 
                         default:
-                            if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+                            if ((typeof _ret === 'undefined' ? 'undefined' : (0, _typeof3.default)(_ret)) === "object") return _ret.v;
                     }
                 }
             }
@@ -268,7 +283,7 @@ exports.default = function (request) {
                 var self = this;
                 this.api[key] = this.fx._lazyProperties.reduce(function (map, property) {
                     map[property] = function () {
-                        return new Promise(function (resolve) {
+                        return new _promise2.default(function (resolve) {
                             return resolve(self.api[key][property]);
                         });
                     };
@@ -287,13 +302,12 @@ exports.default = function (request) {
                 return this.api[key] && this.api[key].__stub__;
             }
         }]);
-
         return Fixture;
     }();
 
     var Lazy = function () {
         function Lazy(fx, name) {
-            _classCallCheck(this, Lazy);
+            (0, _classCallCheck3.default)(this, Lazy);
 
             this.fx = fx;
             this.name = name;
@@ -301,7 +315,7 @@ exports.default = function (request) {
             this.api = this.createApi();
         }
 
-        _createClass(Lazy, [{
+        (0, _createClass3.default)(Lazy, [{
             key: 'createApi',
             value: function createApi() {
                 var _this6 = this;
@@ -347,7 +361,6 @@ exports.default = function (request) {
                 return this.fx[this.name].self;
             }
         }]);
-
         return Lazy;
     }();
 

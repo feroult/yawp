@@ -4,21 +4,53 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+var _getOwnPropertyNames = require('babel-runtime/core-js/object/get-own-property-names');
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _getOwnPropertyNames2 = _interopRequireDefault(_getOwnPropertyNames);
+
+var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = require('babel-runtime/helpers/inherits');
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _get2 = require('babel-runtime/helpers/get');
+
+var _get3 = _interopRequireDefault(_get2);
+
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _keys = require('babel-runtime/core-js/object/keys');
+
+var _keys2 = _interopRequireDefault(_keys);
+
+var _promise = require('babel-runtime/core-js/promise');
+
+var _promise2 = _interopRequireDefault(_promise);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _utils = require('./utils');
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _baseUrl = '/api';
 var _defaultFetchOptions = {};
-var customFetchOptionsFn = null;
+var _before = undefined;
 var _then = undefined;
 var _catch2 = undefined;
 
@@ -52,7 +84,7 @@ exports.default = function (request) {
 
         var Yawp = function () {
             function Yawp(props) {
-                _classCallCheck(this, Yawp);
+                (0, _classCallCheck3.default)(this, Yawp);
 
                 if (props) {
                     (0, _utils.extend)(this, props);
@@ -61,7 +93,7 @@ exports.default = function (request) {
 
             // request
 
-            _createClass(Yawp, [{
+            (0, _createClass3.default)(Yawp, [{
                 key: 'save',
 
 
@@ -150,19 +182,24 @@ exports.default = function (request) {
                     options.method = type;
                     options.json = true;
                     (0, _utils.extend)(options, _defaultFetchOptions);
-                    customFetchOptionsFn && customFetchOptionsFn(options);
 
-                    var req = request(url, options);
+                    var p = _promise2.default.resolve(_before ? _before(options) : options);
 
-                    if (_then) {
-                        req = req.then(_then);
-                    }
+                    return p.then(function (opt) {
+                        return opt || options;
+                    }).then(function (options) {
+                        var req = request(url, options);
 
-                    if (_catch2) {
-                        req = req.catch(_catch2);
-                    }
+                        if (_then) {
+                            req = req.then(_then);
+                        }
 
-                    return req;
+                        if (_catch2) {
+                            req = req.catch(_catch2);
+                        }
+
+                        return req;
+                    });
                 }
             }, {
                 key: 'wrapInstance',
@@ -254,8 +291,8 @@ exports.default = function (request) {
             }, {
                 key: 'setupQuery',
                 value: function setupQuery() {
-                    if (Object.keys(q).length > 0) {
-                        this.param('q', JSON.stringify(q));
+                    if ((0, _keys2.default)(q).length > 0) {
+                        this.param('q', (0, _stringify2.default)(q));
                     }
                 }
             }, {
@@ -297,21 +334,21 @@ exports.default = function (request) {
             }, {
                 key: 'create',
                 value: function create(object) {
-                    options.body = JSON.stringify(object);
+                    options.body = (0, _stringify2.default)(object);
                     return this.wrappedRequest('POST');
                 }
             }, {
                 key: 'update',
                 value: function update(object) {
                     options.url = object.id;
-                    options.body = JSON.stringify(object);
+                    options.body = (0, _stringify2.default)(object);
                     return this.wrappedRequest('PUT');
                 }
             }, {
                 key: 'patch',
                 value: function patch(object) {
                     options.url = object.id;
-                    options.body = JSON.stringify(object);
+                    options.body = (0, _stringify2.default)(object);
                     return this.wrappedRequest('PATCH');
                 }
             }, {
@@ -328,7 +365,7 @@ exports.default = function (request) {
             }, {
                 key: 'json',
                 value: function json(object) {
-                    options.body = JSON.stringify(object);
+                    options.body = (0, _stringify2.default)(object);
                     return this;
                 }
             }, {
@@ -385,18 +422,18 @@ exports.default = function (request) {
                     var base = yawpFn(baseArg);
                     var _super = this;
                     var sub = function (_base) {
-                        _inherits(sub, _base);
+                        (0, _inherits3.default)(sub, _base);
 
                         function sub() {
-                            _classCallCheck(this, sub);
+                            (0, _classCallCheck3.default)(this, sub);
 
-                            var _this4 = _possibleConstructorReturn(this, (sub.__proto__ || Object.getPrototypeOf(sub)).call(this));
+                            var _this4 = (0, _possibleConstructorReturn3.default)(this, (sub.__proto__ || (0, _getPrototypeOf2.default)(sub)).call(this));
 
                             _super.bindBaseMethods(_this4, base);
                             if (constructorFn) {
                                 constructorFn.apply(_this4, arguments);
                             } else {
-                                _get(sub.prototype.__proto__ || Object.getPrototypeOf(sub.prototype), 'constructor', _this4).apply(_this4, arguments);
+                                (0, _get3.default)(sub.prototype.__proto__ || (0, _getPrototypeOf2.default)(sub.prototype), 'constructor', _this4).apply(_this4, arguments);
                             }
                             return _this4;
                         }
@@ -410,14 +447,13 @@ exports.default = function (request) {
                 key: 'bindBaseMethods',
                 value: function bindBaseMethods(self, base) {
                     self.super = function () {};
-                    var keys = Object.getOwnPropertyNames(base.prototype);
+                    var keys = (0, _getOwnPropertyNames2.default)(base.prototype);
                     for (var i = 0, l = keys.length; i < l; i++) {
                         var key = keys[i];
                         self.super[key] = base.prototype[key].bind(self);
                     }
                 }
             }]);
-
             return Yawp;
         }();
 
@@ -438,6 +474,9 @@ exports.default = function (request) {
             },
             defaultFetchOptions: function defaultFetchOptions(options) {
                 _defaultFetchOptions = options;
+            },
+            before: function before(fn) {
+                _before = fn;
             },
             then: function then(fn) {
                 _then = fn;

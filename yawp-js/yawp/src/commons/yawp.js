@@ -2,6 +2,7 @@ import {extend} from './utils';
 
 let baseUrl = '/api';
 let defaultFetchOptions = {};
+let before = undefined;
 let then = undefined;
 let _catch = undefined;
 
@@ -57,26 +58,30 @@ export default (request) => {
             }
 
             static baseRequest(type) {
-                let options = this.prepareRequestOptions();
+                const options = this.prepareRequestOptions();
 
-                let url = baseUrl + options.url;
+                const url = baseUrl + options.url;
                 delete options.url;
 
                 options.method = type;
                 options.json = true;
                 extend(options, defaultFetchOptions);
 
-                var req = request(url, options);
+                const p = Promise.resolve(before ? before(options) : options);
 
-                if (then) {
-                    req = req.then(then);
-                }
+                return p.then(opt => opt || options).then(options => {
+                    let req = request(url, options);
 
-                if (_catch) {
-                    req = req.catch(_catch);
-                }
+                    if (then) {
+                        req = req.then(then);
+                    }
 
-                return req;
+                    if (_catch) {
+                        req = req.catch(_catch);
+                    }
+
+                    return req;
+                });
             }
 
             static wrapInstance(object) {
@@ -343,6 +348,10 @@ export default (request) => {
 
     // base api
 
+    function customFetchOptions(fn) {
+        customFetchOptionsFn = fn;
+    }
+
     function config(cb) {
         let c = {
             baseUrl: (url) => {
@@ -350,6 +359,9 @@ export default (request) => {
             },
             defaultFetchOptions: (options) => {
                 defaultFetchOptions = options;
+            },
+            before: (fn) => {
+                before = fn;
             },
             then: (fn) => {
                 then = fn;
@@ -378,6 +390,7 @@ export default (request) => {
 
     let baseApi = {
         config,
+        customFetchOptions,
         update,
         patch,
         destroy

@@ -52,6 +52,57 @@ describe('YAWP! JS', () => {
             });
         });
 
+        it('changes field from options within before and uses it', async () => {
+            let i = 0;
+            yawp.config(c => {
+                c.before(opt => {
+                    opt.headers = { 'Secret-Panda': `m${i++}` };
+                });
+            });
+
+            const r1 = await (yawp('/shielded_objects').get('header'));
+            expect(r1).to.be.equal('action:m0');
+
+            const r2 = await (yawp('/shielded_objects').get('header'));
+            expect(r2).to.be.equal('action:m1');
+
+            const r3 = await (yawp('/shielded_objects').get('header'));
+            expect(r3).to.be.equal('action:m2');
+        });
+
+        it('returns new custom fetch options with before and uses it', async () => {
+            let i = 0;
+            yawp.config(c => {
+                c.before(opt => ({ ...opt, headers: { 'Secret-Panda': `m${i++}` }}));
+            });
+
+            const r1 = await (yawp('/shielded_objects').get('header'));
+            expect(r1).to.be.equal('action:m0');
+
+            const r2 = await (yawp('/shielded_objects').get('header'));
+            expect(r2).to.be.equal('action:m1');
+
+            const r3 = await (yawp('/shielded_objects').get('header'));
+            expect(r3).to.be.equal('action:m2');
+        });
+
+        it('set custom options with before in async fashion', async () => {
+            let i = 0;
+            const iGenerator = () => new Promise(r => setTimeout(r(i++)));
+
+            yawp.config(c => {
+                c.before(async opt => ({ ...opt, headers: { 'Secret-Panda': `m${await (iGenerator())}` }}));
+            });
+
+            const r1 = await (yawp('/shielded_objects').get('header'));
+            expect(r1).to.be.equal('action:m0');
+
+            const r2 = await (yawp('/shielded_objects').get('header'));
+            expect(r2).to.be.equal('action:m1');
+
+            const r3 = await (yawp('/shielded_objects').get('header'));
+            expect(r3).to.be.equal('action:m2');
+        });
     });
 
     describe('global hooks', () => {

@@ -2,7 +2,7 @@
     "env": {
         "node": {
             "presets": ["es2015", "stage-0"],
-            "plugins": ["babel-plugin-add-module-exports", "syntax-async-functions"]
+            "plugins": ["babel-plugin-add-module-exports", "syntax-async-functions", "transform-async-to-generator", "transform-runtime"]
         }
     }
 }

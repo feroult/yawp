@@ -71,6 +71,11 @@ public class ObjectShield extends Shield<ShieldedObject> {
         allow(isJanis()).where("stringValue", "=", "ok-for-janis");
     }
 
+    @GET("header")
+    public void header() {
+        allow();
+    }
+
     @PUT("something")
     public void something(IdRef<ShieldedObject> id) {
         allow(isJanis()).where("stringValue", "=", "ok-for-janis");
@@ -92,7 +97,6 @@ public class ObjectShield extends Shield<ShieldedObject> {
         allow(true).where("lala", "=", "lala");
         allow(true).where("xpto", "=", "lala");
     }
-
 
     private boolean isRobert() {
         return is("robert");
@@ -135,7 +139,7 @@ public class ObjectShield extends Shield<ShieldedObject> {
     }
 
     private boolean isId100(IdRef<ShieldedObject> id) {
-        return id.asLong().equals(100l);
+        return id != null && id.asLong().equals(100L);
     }
 
     private boolean hasAppliedBeforeShield(List<ShieldedObject> objects) {

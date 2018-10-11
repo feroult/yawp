@@ -7,6 +7,9 @@ public class OldKindResolver extends KindResolver {
     @Override
     public String getKind(Class<?> clazz) {
         Endpoint endpoint = clazz.getAnnotation(Endpoint.class);
+        if (endpoint == null) {
+            throw new RuntimeException("Invalid entity class " + clazz.getSimpleName() + "; @Endpoint annoation required for this clazz.");
+        }
         return endpoint.path();
     }
 

@@ -25,8 +25,6 @@ public class EndpointServlet extends HttpServlet {
 
     private boolean enableHooks = true;
 
-    private boolean enableCrossDomain = false;
-
     private CrossDomainManager crossDomainManager = new CrossDomainManager();
 
     public EndpointServlet() {

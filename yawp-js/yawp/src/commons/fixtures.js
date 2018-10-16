@@ -228,6 +228,7 @@ export default (request) => {
             let api = (key, data) => {
                 this.createLazyStubs(key);
                 this.data[key] = data;
+                return this.api[key];
             };
             api.self = this;
             return api;

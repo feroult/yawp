@@ -323,6 +323,7 @@ exports.default = function (request) {
                 var api = function api(key, data) {
                     _this6.createLazyStubs(key);
                     _this6.data[key] = data;
+                    return _this6.api[key];
                 };
                 api.self = this;
                 return api;

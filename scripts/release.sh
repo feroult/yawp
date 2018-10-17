@@ -13,4 +13,4 @@ fi
 git push
 killall -9 gpg-agent
 eval "$(gpg-agent --daemon)"
-mvn clean deploy -Prelease
+mvn clean deploy -Prelease -DadditionalJOption=-Xdoclint:none

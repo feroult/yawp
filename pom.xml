@@ -89,6 +89,12 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                            <additionalOptions>-Xdoclint:none</additionalOptions>
+                            <additionalJOptions>-Xdoclint:none</additionalJOptions>
+                            <doclint>none</doclint>
+                        </configuration>
                         <version>2.9.1</version>
                         <executions>
                             <execution>
@@ -157,7 +163,7 @@
             <url>http://www.opensource.org/licenses/mit-license.php</url>
         </license>
     </licenses>
-    
+
     <developers>
         <developer>
             <id>feroult</id>

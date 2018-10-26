@@ -12,6 +12,10 @@ var _stringify = require('babel-runtime/core-js/json/stringify');
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
+var _objectWithoutProperties2 = require('babel-runtime/helpers/objectWithoutProperties');
+
+var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+
 var _promise = require('babel-runtime/core-js/promise');
 
 var _promise2 = _interopRequireDefault(_promise);
@@ -184,10 +188,15 @@ exports.default = function (request) {
                     }
 
                     return _this3.prepare(data).then(function (object) {
+                        var __namespace = object.__namespace,
+                            data = (0, _objectWithoutProperties3.default)(object, ['__namespace']);
+
+                        delete object.__namespace;
                         var options = {
                             method: 'POST',
+                            headers: { namespace: __namespace },
                             json: true,
-                            body: (0, _stringify2.default)(object)
+                            body: (0, _stringify2.default)(data)
                         };
 
                         (0, _utils.extend)(options, _this3.fx._defaultFetchOptions);

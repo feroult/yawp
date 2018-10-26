@@ -140,6 +140,17 @@ describe('YAWP! Fixtures', () => {
         });
     });
 
+    it('sets different namespaces', async () => {
+        fx.job('j1', { name: 'j1' });
+        fx.job('j2', { __namespace: 'other', name: 'j2' });
+
+        await fx.load();
+
+        const r = await (yawp('/jobs').list());
+        expect(r.length).to.be.equals(1);
+        expect(r[0].name).to.be.equals('j1');
+    });
+
     // test fx.map
     // test fx.fixture('xx').id ?
 

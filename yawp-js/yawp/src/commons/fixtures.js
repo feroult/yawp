@@ -123,10 +123,13 @@ export default (request) => {
                 }
 
                 return this.prepare(data).then((object) => {
+                    const { __namespace, ...data } = object;
+                    delete object.__namespace;
                     const options = {
                         method: 'POST',
+                        headers: { namespace: __namespace },
                         json: true,
-                        body: JSON.stringify(object)
+                        body: JSON.stringify(data),
                     };
 
                     extend(options, this.fx._defaultFetchOptions);

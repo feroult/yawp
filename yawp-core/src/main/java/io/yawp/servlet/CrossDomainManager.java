@@ -23,7 +23,7 @@ public class CrossDomainManager {
 
     public static final String DEFAULT_METHODS = "GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD";
 
-    public static final String DEFAULT_HEADERS = "Origin, X-Requested-With, Content-Type, Accept, Authorization";
+    public static final String DEFAULT_HEADERS = "Origin, X-Requested-With, Content-Type, Accept, Authorization, namespace";
 
     public static final String DEFAULT_ALLOW_CREDENTIALS = "true";
 

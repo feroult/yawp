@@ -13,6 +13,7 @@ export default (request) => {
             this._resetUrl = DEFAULT_RESET_URL;
             this._lazyProperties = DEFAULT_LAZY_PROPERTIES;
             this._defaultFetchOptions = DEFAULT_FETCH_OPTIONS;
+            this._defaultNamespace = null;
             this.promise = null;
             this.fixtures = [];
             this.lazy = {};
@@ -20,6 +21,10 @@ export default (request) => {
 
         config(callback) {
             callback(this);
+        }
+
+        defaultNamespace(ns) {
+            this._defaultNamespace = ns;
         }
 
         baseUrl(url) {
@@ -125,9 +130,10 @@ export default (request) => {
                 return this.prepare(data).then((object) => {
                     const { __namespace, ...data } = object;
                     delete object.__namespace;
+                    const namespace = __namespace === undefined ? this.fx._defaultNamespace : __namespace;
                     const options = {
                         method: 'POST',
-                        headers: { namespace: __namespace },
+                        headers: { namespace },
                         json: true,
                         body: JSON.stringify(data),
                     };

@@ -46,6 +46,7 @@ exports.default = function (request) {
             this._resetUrl = DEFAULT_RESET_URL;
             this._lazyProperties = DEFAULT_LAZY_PROPERTIES;
             this._defaultFetchOptions = DEFAULT_FETCH_OPTIONS;
+            this._defaultNamespace = null;
             this.promise = null;
             this.fixtures = [];
             this.lazy = {};
@@ -55,6 +56,11 @@ exports.default = function (request) {
             key: 'config',
             value: function config(callback) {
                 callback(this);
+            }
+        }, {
+            key: 'defaultNamespace',
+            value: function defaultNamespace(ns) {
+                this._defaultNamespace = ns;
             }
         }, {
             key: 'baseUrl',
@@ -192,9 +198,10 @@ exports.default = function (request) {
                             data = (0, _objectWithoutProperties3.default)(object, ['__namespace']);
 
                         delete object.__namespace;
+                        var namespace = __namespace === undefined ? _this3.fx._defaultNamespace : __namespace;
                         var options = {
                             method: 'POST',
-                            headers: { namespace: __namespace },
+                            headers: { namespace: namespace },
                             json: true,
                             body: (0, _stringify2.default)(data)
                         };

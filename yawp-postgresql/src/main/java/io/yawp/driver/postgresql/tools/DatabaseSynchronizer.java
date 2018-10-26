@@ -26,6 +26,8 @@ public class DatabaseSynchronizer {
 
     private static final String SQL_CATALOG_TABLES = "WHERE c.relkind = 'r' AND n.nspname = ANY (CURRENT_SCHEMAS(false))";
 
+    private static final String SQL_CATALOG_TABLES_NS = "WHERE c.relkind = 'r' AND n.nspname = %s (CURRENT_SCHEMAS(false))";
+
     private static final String SQL_TABLE_CREATE = "create table \"%s\" (id bigserial primary key, key jsonb, properties jsonb)";
 
     private ConnectionManager initConnectionManager = new ConnectionManager(DataSourceInfo.INIT_DATASOURCE);
@@ -92,9 +94,24 @@ public class DatabaseSynchronizer {
         }
     }
 
+    public List<String> getExistingNamespaces() {
+        String sql = "select nspname from pg_catalog.pg_namespace";
+        SqlRunner runner = new SqlRunner(sql);
+        return connectionManager.executeQuery(runner);
+    }
+
+    protected List<String> getExistingTables(String namespace) {
+        String where = String.format(SQL_CATALOG_TABLES_NS, namespace);
+        String sql = String.format("%s %s", SQL_CATALOG_SELECT, where);
+        return existingTablesRunner(sql);
+    }
+
     protected List<String> getExistingTables() {
         String sql = String.format("%s %s", SQL_CATALOG_SELECT, SQL_CATALOG_TABLES);
+        return existingTablesRunner(sql);
+    }
 
+    private List<String> existingTablesRunner(final String sql) {
         SqlRunner runner = new SqlRunner(sql) {
             @Override
             public List<String> collect(ResultSet rs) throws SQLException {
@@ -127,6 +144,13 @@ public class DatabaseSynchronizer {
 
     public void recreate(String schema) {
         connectionManager.execute(String.format("drop schema %s cascade; create schema %s;", schema, schema));
+    }
+
+    public void truncateAll(String namespace) {
+        List<String> existingTables = getExistingTables(namespace);
+        for (String table : existingTables) {
+            truncate(table);
+        }
     }
 
     public void truncateAll() {

@@ -21,11 +21,16 @@ function request(url, options) {
 
     url += query ? '?' + (0, _utils.toUrlParam)(query) : '';
 
-    //console.log('request', url, options);
-
-    if (!options.json) {
+    if (options.raw) {
         return nodeFetch(url, options);
     }
+
+    if (!options.json) {
+        return nodeFetch(url, options).then(function (response) {
+            return response.text();
+        });
+    }
+
     return jsonRequest(options, url);
 }
 

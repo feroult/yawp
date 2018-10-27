@@ -147,6 +147,7 @@ describe('YAWP! Fixtures', () => {
         await fx.load();
 
         const r = await (yawp('/jobs').list());
+        console.log(r);
         expect(r.length).to.be.equals(1);
         expect(r[0].name).to.be.equals('j1');
     });

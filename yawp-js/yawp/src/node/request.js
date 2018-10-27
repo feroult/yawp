@@ -14,11 +14,14 @@ export default function request(url, options) {
 
     url += (query ? '?' + toUrlParam(query) : '');
 
-    //console.log('request', url, options);
-
-    if (!options.json) {
+    if (options.raw) {
         return nodeFetch(url, options);
     }
+
+    if (!options.json) {
+        return nodeFetch(url, options).then((response) => response.text());
+    }
+
     return jsonRequest(options, url);
 }
 
@@ -28,5 +31,5 @@ function jsonRequest(options, url) {
         'Accept': 'application/json',
         'Content-Type': 'application/json;charset=UTF-8',
     });
-    return nodeFetch(url, options).then((response) =>response.json());
+    return nodeFetch(url, options).then((response) => response.json());
 }

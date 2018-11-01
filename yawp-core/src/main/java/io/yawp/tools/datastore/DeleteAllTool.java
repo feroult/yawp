@@ -17,7 +17,12 @@ public class DeleteAllTool extends Tool {
     }
 
     private void deleteAll() {
-        yawp.driver().helpers().deleteAll();
+        if (params.containsKey("namespace")) {
+            String namespace = params.get("namespace");
+            yawp.driver().helpers().deleteAll(namespace);
+        } else {
+            yawp.driver().helpers().deleteAll();
+        }
         pw.println("ok");
     }
 

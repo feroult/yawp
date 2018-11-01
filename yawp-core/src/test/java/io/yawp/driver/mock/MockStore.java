@@ -101,6 +101,18 @@ public class MockStore {
         store.clear();
     }
 
+    public static void clear(String namespace) {
+        store.remove(namespace);
+    }
+
+    public static List<String> namespaces() {
+        List<String> nss = new ArrayList<>();
+        for (NamespacedIdRef ns : store.keySet()) {
+            nss.add(ns.getNamespace());
+        }
+        return nss;
+    }
+
     public static String createCursor(Object object) {
         ObjectHolder objectHolder = new ObjectHolder(object);
         String cursor = UUID.randomUUID().toString();

@@ -12,6 +12,10 @@ var _stringify = require('babel-runtime/core-js/json/stringify');
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
+var _objectWithoutProperties2 = require('babel-runtime/helpers/objectWithoutProperties');
+
+var _objectWithoutProperties3 = _interopRequireDefault(_objectWithoutProperties2);
+
 var _promise = require('babel-runtime/core-js/promise');
 
 var _promise2 = _interopRequireDefault(_promise);
@@ -42,6 +46,7 @@ exports.default = function (request) {
             this._resetUrl = DEFAULT_RESET_URL;
             this._lazyProperties = DEFAULT_LAZY_PROPERTIES;
             this._defaultFetchOptions = DEFAULT_FETCH_OPTIONS;
+            this._defaultNamespace = null;
             this.promise = null;
             this.fixtures = [];
             this.lazy = {};
@@ -51,6 +56,11 @@ exports.default = function (request) {
             key: 'config',
             value: function config(callback) {
                 callback(this);
+            }
+        }, {
+            key: 'defaultNamespace',
+            value: function defaultNamespace(ns) {
+                this._defaultNamespace = ns;
             }
         }, {
             key: 'baseUrl',
@@ -184,10 +194,16 @@ exports.default = function (request) {
                     }
 
                     return _this3.prepare(data).then(function (object) {
+                        var __namespace = object.__namespace,
+                            data = (0, _objectWithoutProperties3.default)(object, ['__namespace']);
+
+                        delete object.__namespace;
+                        var namespace = __namespace === undefined ? _this3.fx._defaultNamespace : __namespace;
                         var options = {
                             method: 'POST',
+                            headers: { namespace: namespace },
                             json: true,
-                            body: (0, _stringify2.default)(object)
+                            body: (0, _stringify2.default)(data)
                         };
 
                         (0, _utils.extend)(options, _this3.fx._defaultFetchOptions);

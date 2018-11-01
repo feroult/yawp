@@ -3,6 +3,7 @@ package io.yawp.tools;
 import io.yawp.commons.http.RequestContext;
 import io.yawp.servlet.CrossDomainManager;
 import io.yawp.tools.datastore.DeleteAllTool;
+import io.yawp.tools.datastore.ListNamespacesTool;
 import io.yawp.tools.pipes.FlowPipeDropsTool;
 import io.yawp.tools.pipes.ReloadPipeTool;
 
@@ -28,6 +29,7 @@ public class ToolsServlet extends HttpServlet {
         crossDomainManager.init(config);
 
         routes.put("/datastore/delete-all", DeleteAllTool.class);
+        routes.put("/datastore/namespaces", ListNamespacesTool.class);
         routes.put("/pipes/reload", ReloadPipeTool.class);
         routes.put("/pipes/flow-drops", FlowPipeDropsTool.class);
     }

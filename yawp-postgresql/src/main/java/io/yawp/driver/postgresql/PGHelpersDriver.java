@@ -8,6 +8,7 @@ import io.yawp.driver.postgresql.tools.DatabaseSynchronizer;
 import io.yawp.repository.Yawp;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 import static io.yawp.repository.Yawp.yawp;
@@ -25,6 +26,16 @@ public class PGHelpersDriver implements HelpersDriver {
     public void sync() {
         InitialContextSetup.configure(getJettyConfigFile());
         dbSynchronizer.sync(scanEndpointClazzes());
+    }
+
+    @Override
+    public List<String> listNamespaces() {
+        return dbSynchronizer.getExistingNamespaces();
+    }
+
+    @Override
+    public void deleteAll(String namespace) {
+        dbSynchronizer.truncateAll(namespace);
     }
 
     private Set<Class<?>> scanEndpointClazzes() {

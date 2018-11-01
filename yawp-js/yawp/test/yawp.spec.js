@@ -24,6 +24,7 @@ describe('YAWP! JS', () => {
         yawp.config(c => {
             c.then(undefined);
             c.catch(undefined);
+            c.defaultFetchOptions({});
         });
         fx.reset().then(done);
     });
@@ -103,6 +104,36 @@ describe('YAWP! JS', () => {
             const r3 = await (yawp('/shielded_objects').get('header'));
             expect(r3).to.be.equal('action:m2');
         });
+
+        it('fetches raw', async () => {
+            const parent = {
+                id: '/parents/2',
+                name: 'xpto'
+            };
+
+            fx.parent('parent', parent);
+
+            yawp.config(c => {
+                c.defaultFetchOptions({ raw: true });
+            });
+
+            await fx.load();
+
+            const data = await yawp('/parents/2').fetch();
+
+            expect(data.status).to.be.equal(200);
+
+            const txt = await data.text();
+            expect(typeof txt).to.be.equal('string');
+            expect(JSON.parse(txt).name).to.be.equal('xpto');
+
+            yawp.config(c => {
+                c.then(e => e.json());
+            });
+
+            const data2 = await yawp('/parents/2').fetch();
+            expect(data2.name).to.be.equal('xpto');
+        });
     });
 
     describe('global hooks', () => {
@@ -144,7 +175,7 @@ describe('YAWP! JS', () => {
 
     });
 
-    describe("ES6 class inheritance", () => {
+    describe('ES6 class inheritance', () => {
 
         let ParentFn = yawp('/parents');
 
@@ -326,7 +357,6 @@ describe('YAWP! JS', () => {
                 });
             });
         });
-
     });
 
     describe('ES5 class inheritance', () => {
@@ -400,7 +430,6 @@ describe('YAWP! JS', () => {
                 done();
             });
         });
-
     });
 
 });

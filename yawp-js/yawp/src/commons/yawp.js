@@ -388,13 +388,13 @@ export default (request) => {
         return yawpFn(id).destroy(object);
     }
 
-    let baseApi = {
+    const baseApi = {
         config,
         customFetchOptions,
         update,
         patch,
         destroy
-    }
+    };
 
     return extend(yawpFn, baseApi);
 }

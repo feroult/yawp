@@ -21,7 +21,11 @@ export default function (url, options) {
 function resolveOrReject(request, options, resolve, reject) {
     if (request.readyState === 4) {
         if (request.status === 200) {
-            resolve(options.json ? JSON.parse(request.responseText) : request.responseText);
+            if (options.raw) {
+                resolve(request);
+            } else {
+                resolve(options.json ? JSON.parse(request.responseText) : request.responseText);
+            }
         } else {
             reject(request);
         }

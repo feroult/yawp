@@ -23,12 +23,11 @@ if (mode === 'build') {
     outputFile = libraryName + '.js';
 }
 
-
 var configBabel = {
     babel: {
-        presets: ["es2015"],
-        plugins: ["babel-plugin-add-module-exports"]
-    }
+        presets: ['es2015', 'stage-0'],
+        plugins: ['babel-plugin-add-module-exports', 'syntax-async-functions', 'transform-es2015-destructuring', 'transform-object-rest-spread', 'transform-async-to-generator', 'transform-runtime'],
+    },
 };
 
 var config = {

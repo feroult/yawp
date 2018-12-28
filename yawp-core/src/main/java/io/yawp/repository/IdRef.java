@@ -4,6 +4,7 @@ import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.actions.ActionKey;
 import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.QueryBuilder;
+import io.yawp.servlet.cache.Cache;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.*;
@@ -49,10 +50,28 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
         this.parentId = parentId;
     }
 
+    /**
+     * Fetch from datastore or from request cache (if present)
+     * @return the entity fetched
+     */
     public T fetch() {
+        return Cache.get(this);
+    }
+
+    /**
+     * Force re-fetch from datastore (ignore request cache!)
+     * @return the entity fetched
+     */
+    public T refetch() {
         return fetch(clazz);
     }
 
+    /**
+     * Fetch from datastore and cast to given childClazz (no cache is performed)
+     * @param childClazz the clazz to cast to
+     * @param <TT> The generic parameter of the child clazz
+     * @return the fetched entity
+     */
     public <TT> TT fetch(Class<TT> childClazz) {
         return r.query(childClazz).fetch(this);
     }

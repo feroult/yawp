@@ -6,6 +6,7 @@ import io.yawp.driver.api.testing.TestHelperFactory;
 import io.yawp.repository.features.Feature;
 import io.yawp.repository.Repository;
 import io.yawp.repository.Yawp;
+import io.yawp.servlet.cache.Cache;
 import org.junit.After;
 import org.junit.Before;
 
@@ -22,6 +23,7 @@ public class EndpointTestCase extends Feature {
         yawp = Yawp.yawp();
         helper = testHelperDriver(yawp);
         helper.setUp();
+        Cache.clearAll();
     }
 
     private TestHelper testHelperDriver(Repository r) {

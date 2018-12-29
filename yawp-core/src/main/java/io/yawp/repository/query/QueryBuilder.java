@@ -332,10 +332,7 @@ public class QueryBuilder<T> {
 
         r.namespace().set(getClazz());
         try {
-            List<IdRef<T>> ids = r.driver().query().ids(this);
-
-
-            return ids;
+            return r.driver().query().ids(this);
         } finally {
             r.namespace().reset();
         }

@@ -189,28 +189,24 @@ public class RuleConditionsTest extends EndpointTestCase {
     private BasicObject saveObject(String name) {
         BasicObject object = new BasicObject();
         object.setStringValue(name);
-        yawp.save(object);
-        return object;
+        return yawp.save(object);
     }
 
     protected Parent saveParent(String name) {
         Parent parent = new Parent();
         parent.setName(name);
-        yawp.save(parent);
-        return parent;
+        return yawp.save(parent);
     }
 
     protected Child saveChild(String name, Parent parent) {
         Child child = new Child(name);
         child.setParentId(parent.getId());
-        yawp.save(child);
-        return child;
+        return yawp.save(child);
     }
 
     protected Grandchild saveGrandchild(String name, Child child) {
         Grandchild grandchild = new Grandchild(name);
         grandchild.setChildId(child.getId());
-        yawp.save(grandchild);
-        return grandchild;
+        return yawp.save(grandchild);
     }
 }

@@ -6,6 +6,8 @@ import io.yawp.commons.http.JsonResponse;
 import io.yawp.commons.http.RequestContext;
 import io.yawp.repository.Repository;
 import io.yawp.repository.Yawp;
+import io.yawp.servlet.cache.Cache;
+import io.yawp.servlet.cache.CacheHolder;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -98,6 +100,8 @@ public class EndpointServlet extends HttpServlet {
 
     public HttpResponse execute(RequestContext ctx) {
         try {
+            Cache.clearAll();
+
             Repository r = getRepository(ctx);
             EndpointRouter router = EndpointRouter.parse(r, ctx);
 

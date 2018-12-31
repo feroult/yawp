@@ -1,6 +1,9 @@
 package io.yawp.repository.hooks.basic;
 
 import io.yawp.repository.IdRef;
+import io.yawp.repository.hooks.AfterQueryFetchObject;
+import io.yawp.repository.hooks.AfterQueryIdsObject;
+import io.yawp.repository.hooks.AfterQueryListObject;
 import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.HookedObject;
@@ -41,6 +44,21 @@ public class SpecifObjectHook extends Hook<HookedObject> {
     @Override
     public void afterDestroy(IdRef<HookedObject> id) {
         yawp.save(new BasicObject("afterDestroy test: " + id));
+    }
+
+    @Override
+    public void afterQuery(AfterQueryListObject<HookedObject> obj) {
+        HookTest.AfterQueryTest.msgs.add("list:" + obj.getList().size());
+    }
+
+    @Override
+    public void afterQuery(AfterQueryIdsObject<HookedObject> obj) {
+        HookTest.AfterQueryTest.msgs.add("ids:" + obj.getIds().size());
+    }
+
+    @Override
+    public void afterQuery(AfterQueryFetchObject<HookedObject> obj) {
+        HookTest.AfterQueryTest.msgs.add("fetch:" + obj.getElement().getId());
     }
 
     private boolean isBeforeSaveTest(HookedObject object) {

@@ -6,6 +6,7 @@ import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.HookedObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.yawp.repository.models.basic.ShieldedObject;
@@ -73,5 +74,33 @@ public class HookTest extends EndpointTestCase {
         List<BasicObject> objects = yawp(BasicObject.class).where("stringValue", "=", "afterDestroy test: " + objectToDelete.getId())
                 .list();
         assertEquals(1, objects.size());
+    }
+
+    public static class AfterQueryTest {
+        public static final List<String> msgs = new ArrayList<>();
+    }
+
+    @Test
+    public void testAfterQuery() {
+        AfterQueryTest.msgs.clear();
+        yawp(HookedObject.class).list();
+        assertEquals(1, AfterQueryTest.msgs.size());
+        assertEquals("list:0", AfterQueryTest.msgs.get(0));
+
+        AfterQueryTest.msgs.clear();
+        HookedObject obj = yawp.save(new HookedObject("xpto"));
+        yawp(HookedObject.class).list();
+        assertEquals(1, AfterQueryTest.msgs.size());
+        assertEquals("list:1", AfterQueryTest.msgs.get(0));
+
+        AfterQueryTest.msgs.clear();
+        yawp(HookedObject.class).ids();
+        assertEquals(1, AfterQueryTest.msgs.size());
+        assertEquals("ids:1", AfterQueryTest.msgs.get(0));
+
+        AfterQueryTest.msgs.clear();
+        obj.getId().fetch();
+        assertEquals(1, AfterQueryTest.msgs.size());
+        assertEquals("fetch:" + obj.getId(), AfterQueryTest.msgs.get(0));
     }
 }

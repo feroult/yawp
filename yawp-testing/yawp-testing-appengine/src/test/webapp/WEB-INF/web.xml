@@ -11,11 +11,6 @@
             <param-name>packagePrefix</param-name>
             <param-value>io.yawp</param-value>
         </init-param>
-
-        <init-param>
-            <param-name>enableCrossDomain</param-name>
-            <param-value>true</param-value>
-        </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>EndpointServlet</servlet-name>
@@ -29,11 +24,6 @@
         <init-param>
             <param-name>packagePrefix</param-name>
             <param-value>io.yawp</param-value>
-        </init-param>
-
-        <init-param>
-            <param-name>enableHooks</param-name>
-            <param-value>false</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

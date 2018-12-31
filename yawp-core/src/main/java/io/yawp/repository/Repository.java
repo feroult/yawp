@@ -90,27 +90,14 @@ public class Repository implements RepositoryApi {
     }
 
     @Override
-    public <T> T saveWithHooks(T object) {
-        logger.finer("save object, hooks: true");
+    public <T> T save(T object) {
+        logger.finer("saving object");
 
         namespace.set(object.getClass());
         try {
             RepositoryHooks.beforeSave(this, object);
             saveInternal(object);
             RepositoryHooks.afterSave(this, object);
-        } finally {
-            namespace.reset();
-        }
-        return object;
-    }
-
-    @Override
-    public <T> T save(T object) {
-        logger.finer("saving object, hooks: false");
-
-        namespace.set(object.getClass());
-        try {
-            saveInternal(object);
         } finally {
             namespace.reset();
         }
@@ -137,22 +124,11 @@ public class Repository implements RepositoryApi {
         }
     }
 
-    protected <T> FutureObject<T> saveAsyncWithHooks(T object) {
-        namespace.set(object.getClass());
-        try {
-            RepositoryHooks.beforeSave(this, object);
-            FutureObject<T> future = saveInternalAsync(object, true);
-            return future;
-        } finally {
-            namespace.reset();
-        }
-    }
-
     protected <T> FutureObject<T> saveAsync(T object) {
         namespace.set(object.getClass());
         try {
-            FutureObject<T> future = saveInternalAsync(object, false);
-            return future;
+            RepositoryHooks.beforeSave(this, object);
+            return saveInternalAsync(object);
         } finally {
             namespace.reset();
         }
@@ -168,7 +144,7 @@ public class Repository implements RepositoryApi {
                 commit();
             }
         } finally {
-            if (newTransaction && isTransationInProgress()) {
+            if (newTransaction && isTransactionInProgress()) {
                 rollback();
             }
         }
@@ -197,7 +173,7 @@ public class Repository implements RepositoryApi {
     }
 
     private boolean beginTransactionForPipes() {
-        if (isTransationInProgress()) {
+        if (isTransactionInProgress()) {
             return false;
         }
         begin();
@@ -216,9 +192,14 @@ public class Repository implements RepositoryApi {
         RepositoryPipes.updateExisting(this, object);
     }
 
-    private <T> FutureObject<T> saveInternalAsync(T object, boolean enableHooks) {
+    private <T> FutureObject<T> saveInternalAsync(T object) {
         FutureObject<T> futureObject = driver().persistence().saveAsync(object);
-        futureObject.setEnableHooks(enableHooks);
+        futureObject.setHook(new FutureObjectHook<T>() {
+            @Override
+            public void apply(Repository r, T object) {
+                RepositoryHooks.afterSave(r, object);
+            }
+        });
         return futureObject;
     }
 
@@ -234,15 +215,10 @@ public class Repository implements RepositoryApi {
     }
 
     @Override
-    public <T> QueryBuilder<T> queryWithHooks(Class<T> clazz) {
+    public <T> QueryBuilder<T> query(Class<T> clazz) {
         QueryBuilder<T> q = QueryBuilder.q(clazz, this);
         RepositoryHooks.beforeQuery(this, q, clazz);
         return q;
-    }
-
-    @Override
-    public <T> QueryBuilder<T> query(Class<T> clazz) {
-        return QueryBuilder.q(clazz, this);
     }
 
     @Override
@@ -257,10 +233,16 @@ public class Repository implements RepositoryApi {
         }
     }
 
-    protected FutureObject<Void> destroyAsync(IdRef<?> id) {
+    protected FutureObject<Void> destroyAsync(final IdRef<?> id) {
         namespace.set(id.getClazz());
         try {
             FutureObject<Void> future = destroyInternalAsync(id);
+            future.setHook(new FutureObjectHook<Void>() {
+                @Override
+                public void apply(Repository r, Void object) {
+                    RepositoryHooks.afterDestroy(r, id);
+                }
+            });
             return future;
         } finally {
             namespace.reset();
@@ -277,15 +259,14 @@ public class Repository implements RepositoryApi {
                 commit();
             }
         } finally {
-            if (newTransaction && isTransationInProgress()) {
+            if (newTransaction && isTransactionInProgress()) {
                 rollback();
             }
         }
     }
 
     private FutureObject<Void> destroyInternalAsync(IdRef<?> id) {
-        FutureObject<Void> futureObject = driver().persistence().destroyAsync(id);
-        return futureObject;
+        return driver().persistence().destroyAsync(id);
     }
 
 
@@ -355,7 +336,7 @@ public class Repository implements RepositoryApi {
     }
 
     @Override
-    public boolean isTransationInProgress() {
+    public boolean isTransactionInProgress() {
         return tx != null;
     }
 

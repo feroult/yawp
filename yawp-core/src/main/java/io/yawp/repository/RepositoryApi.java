@@ -26,8 +26,6 @@ public interface RepositoryApi {
 
     AsyncRepository async();
 
-    <T> T saveWithHooks(T object);
-
     <T> T save(T object);
 
     <T> T fetch(IdRef<T> id);
@@ -35,8 +33,6 @@ public interface RepositoryApi {
     <T> FutureObject<T> fetchAsync(IdRef<T> id);
 
     Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, String json, Map<String, String> params);
-
-    <T> QueryBuilder<T> queryWithHooks(Class<T> clazz);
 
     <T> QueryBuilder<T> query(Class<T> clazz);
 
@@ -63,7 +59,7 @@ public interface RepositoryApi {
 
     void commit();
 
-    boolean isTransationInProgress();
+    boolean isTransactionInProgress();
 
     TransactionDriver currentTransaction();
 

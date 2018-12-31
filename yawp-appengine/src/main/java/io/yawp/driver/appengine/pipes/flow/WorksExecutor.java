@@ -47,7 +47,7 @@ public class WorksExecutor {
             executeWorks();
             commitIfChanged();
         } finally {
-            if (r.isTransationInProgress()) {
+            if (r.isTransactionInProgress()) {
                 r.rollback();
             }
         }
@@ -83,8 +83,8 @@ public class WorksExecutor {
 
         for (IdRef<?> sinkId : sinksToSave) {
             logSave(sinkId);
-            // TODO: support pipes at async repoistory operations
-            r.saveWithHooks(sinkCache.get(sinkId));
+            // TODO: support pipes at async repository operations
+            r.save(sinkCache.get(sinkId));
         }
 
         // TODO: destroy empty sinks?

@@ -20,21 +20,8 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.JarURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Vector;
+import java.net.*;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -49,12 +36,16 @@ public class ResourceFinder {
     private final ClassLoader classLoader;
     private final List<String> resourcesNotLoaded = new ArrayList<>();
 
+    private static URL[] nullArray() {
+        return null;
+    }
+
     public ResourceFinder(URL... urls) {
         this(null, Thread.currentThread().getContextClassLoader(), urls);
     }
 
     public ResourceFinder(String path) {
-        this(path, Thread.currentThread().getContextClassLoader(), null);
+        this(path, Thread.currentThread().getContextClassLoader(), nullArray());
     }
 
     public ResourceFinder(String path, URL... urls) {
@@ -62,7 +53,7 @@ public class ResourceFinder {
     }
 
     public ResourceFinder(String path, ClassLoader classLoader) {
-        this(path, classLoader, null);
+        this(path, classLoader, nullArray());
     }
 
     public ResourceFinder(String path, ClassLoader classLoader, URL... urls) {
@@ -134,7 +125,7 @@ public class ResourceFinder {
         String fullUri = path + uri;
 
         Enumeration<URL> resources = getResources(fullUri);
-        List<URL> list = new ArrayList();
+        List<URL> list = new ArrayList<>();
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
             list.add(url);

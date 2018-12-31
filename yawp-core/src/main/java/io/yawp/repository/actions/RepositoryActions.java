@@ -28,7 +28,7 @@ public class RepositoryActions {
     }
 
     private static void atomicCommit(Repository r, boolean rollback) {
-        if (r.isTransationInProgress()) {
+        if (r.isTransactionInProgress()) {
             if (rollback) {
                 throw new RuntimeException(
                         "Running on devserver or unit tests? To test cross-group, default_high_rep_job_policy_unapplied_job_pct must be > 0");
@@ -39,7 +39,7 @@ public class RepositoryActions {
     }
 
     private static void atomicRollback(Repository r) {
-        if (r.isTransationInProgress()) {
+        if (r.isTransactionInProgress()) {
             r.rollback();
         }
     }

@@ -12,10 +12,6 @@ public class AsyncRepository {
         return r.saveAsync(object);
     }
 
-    public <T> FutureObject<T> saveWithHooks(T object) {
-        return r.saveAsyncWithHooks(object);
-    }
-
     public <T> FutureObject<Void> destroy(IdRef<?> id) {
         return r.destroyAsync(id);
     }

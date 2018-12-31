@@ -34,8 +34,6 @@ public abstract class RestAction {
 
     private boolean enableShields;
 
-    protected boolean enableHooks;
-
     protected Class<?> endpointClazz;
 
     protected IdRef<?> id;
@@ -66,10 +64,6 @@ public abstract class RestAction {
 
     public void setEnableShields(boolean enableShields) {
         this.enableShields = enableShields;
-    }
-
-    public void setEnableHooks(boolean enableHooks) {
-        this.enableHooks = enableHooks;
     }
 
     public void setEndpointClazz(Class<?> clazz) {
@@ -122,7 +116,7 @@ public abstract class RestAction {
         Object object = action();
 
         logger.finer("creating response object");
-        if (HttpResponse.class.isInstance(object)) {
+        if (object instanceof HttpResponse) {
             return (HttpResponse) object;
         }
 
@@ -130,36 +124,22 @@ public abstract class RestAction {
     }
 
     private void executeShield() {
-        if (enableHooks) {
-            beforeShieldHooks();
-        }
-
         if (enableShields && hasShield()) {
+            beforeShieldHooks();
             shield();
         }
     }
 
     protected QueryBuilder<?> query() {
-        if (enableHooks) {
-            return r.queryWithHooks(endpointClazz);
-        }
         return r.query(endpointClazz);
     }
 
-    protected void save(Object object) {
-        if (enableHooks) {
-            r.saveWithHooks(object);
-        } else {
-            r.save(object);
-        }
+    protected <T> T save(T object) {
+        return r.save(object);
     }
 
-    protected FutureObject<Object> saveAsync(Object object) {
-        if (enableHooks) {
-            return r.async().saveWithHooks(object);
-        } else {
-            return r.async().save(object);
-        }
+    protected <T> FutureObject<T> saveAsync(T object) {
+        return r.async().save(object);
     }
 
     protected Object transform(Object object) {
@@ -215,7 +195,7 @@ public abstract class RestAction {
         return transformerName != null;
     }
 
-    public void defineTrasnformer() {
+    public void defineTransformer() {
         if (params.containsKey(TRANSFORMER)) {
             transformerName = params.get(TRANSFORMER);
             return;

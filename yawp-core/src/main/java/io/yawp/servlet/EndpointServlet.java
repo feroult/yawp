@@ -23,8 +23,6 @@ public class EndpointServlet extends HttpServlet {
 
     private boolean enableShields = true;
 
-    private boolean enableHooks = true;
-
     private CrossDomainManager crossDomainManager = new CrossDomainManager();
 
     public EndpointServlet() {
@@ -38,7 +36,6 @@ public class EndpointServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         setWithShields(config.getInitParameter("enableShields"));
-        setWithHooks(config.getInitParameter("enableHooks"));
         initYawp(config.getInitParameter("packagePrefix"));
 
         crossDomainManager.init(config);
@@ -59,21 +56,8 @@ public class EndpointServlet extends HttpServlet {
         setWithShields(enableShields);
     }
 
-    private void setWithHooks(String enableHooksParameter) {
-        if (!enableHooks) {
-            return;
-        }
-
-        boolean enableHooks = enableHooksParameter == null || Boolean.valueOf(enableHooksParameter);
-        setWithHooks(enableHooks);
-    }
-
     protected void setWithShields(boolean enableShields) {
         this.enableShields = enableShields;
-    }
-
-    protected void setWithHooks(boolean enableHooks) {
-        this.enableHooks = enableHooks;
     }
 
     /**
@@ -121,7 +105,7 @@ public class EndpointServlet extends HttpServlet {
                 throw new HttpException(400, "Invalid route. Please check uri, json format, object ids and parent structure, etc.");
             }
 
-            return router.executeRestAction(enableShields, enableHooks);
+            return router.executeRestAction(enableShields);
 
         } finally {
             Yawp.dispose();

@@ -41,7 +41,7 @@ public class FlushSourceJob extends Job2<Void, Class<? extends Pipe>, String> {
             r.driver().pipes().flux(pipe, source);
             r.commit();
         } finally {
-            if (r.isTransationInProgress()) {
+            if (r.isTransactionInProgress()) {
                 r.rollback();
             }
         }

@@ -8,7 +8,7 @@ import io.yawp.repository.models.ObjectModel;
 
 import java.util.concurrent.Future;
 
-public class FutureKeyToIdRef extends FutureWrapper<Key, IdRef<?>> {
+public class FutureKeyToIdRef<T> extends FutureWrapper<Key, IdRef<T>> {
 
     private Repository r;
     private ObjectModel model;
@@ -24,9 +24,10 @@ public class FutureKeyToIdRef extends FutureWrapper<Key, IdRef<?>> {
         return t;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    protected IdRef<?> wrap(Key key) throws Exception {
-        return IdRefToKey.toIdRef(r, key, model);
+    protected IdRef<T> wrap(Key key) {
+        return (IdRef<T>) IdRefToKey.toIdRef(r, key, model);
     }
 
 }

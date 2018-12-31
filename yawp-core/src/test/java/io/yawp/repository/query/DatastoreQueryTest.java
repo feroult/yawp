@@ -582,8 +582,8 @@ public class DatastoreQueryTest extends EndpointTestCase {
         ObjectSubClass child = new ObjectSubClass("xpto");
         yawp.save(child);
 
-        ObjectSubClass retrievedObject = yawp(ObjectSubClass.class).where("name", "=", "xpto").only();
-        assertEquals("xpto", retrievedObject.getName());
+        ObjectSubClass retrievedObject = yawp(ObjectSubClass.class).where("name", "=", "xpto + superclass hook").only();
+        assertEquals("xpto + superclass hook", retrievedObject.getName());
     }
 
     @Test(expected = RuntimeException.class)

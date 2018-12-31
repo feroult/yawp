@@ -44,7 +44,7 @@ public class MockPersistenceDriver implements PersistenceDriver {
         MockStore.put(objectHolder.getId(), object, tx());
 
         Future<?> futureId = ConcurrentUtils.constantFuture(objectHolder.getId());
-        return new FutureObject<T>(r, (Future<IdRef<?>>) futureId, (T) object);
+        return new FutureObject<T>(r, (Future<IdRef<T>>) futureId, (T) object);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class MockPersistenceDriver implements PersistenceDriver {
     public FutureObject<Void> destroyAsync(IdRef<?> id) {
         destroy(id);
         Future<Void> future = ConcurrentUtils.constantFuture(null);
-        return new FutureObject<Void>(r, future);
+        return new FutureObject<>(r, future);
     }
 
     private void setIdIfNecessary(ObjectHolder objectHolder) {

@@ -15,7 +15,7 @@ public class AllObjectsHook extends AbstractHook<Object> {
     }
 
     private boolean isHookTest(Object object) {
-        if (!HookedObject.class.isInstance(object)) {
+        if (!(object instanceof HookedObject)) {
             return false;
         }
         HookedObject hooked = (HookedObject) object;

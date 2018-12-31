@@ -79,7 +79,7 @@ public class PGQueryDriver implements QueryDriver {
     @Override
     public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
         T object = fetch(id);
-        Future<?> futureObject = ConcurrentUtils.constantFuture(object);
+        Future<T> futureObject = ConcurrentUtils.constantFuture(object);
         return new FutureObject<>(r, futureObject);
     }
 

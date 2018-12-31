@@ -54,6 +54,30 @@ public class Hook<T> extends Feature {
     }
 
     /**
+     * Override this method to be invoked right after a query is executed,
+     * if that query ends up with a executeQuery call.
+     * @param obj an object containing the query performed and the result.
+     */
+    public void afterQuery(AfterQueryListObject<T> obj) {
+    }
+
+    /**
+     * Override this method to be invoked right after a query is executed,
+     * if that query ends up with a fetch by id operation.
+     * @param obj an object containing the query performed and the result.
+     */
+    public void afterQuery(AfterQueryFetchObject<T> obj) {
+    }
+
+    /**
+     * Override this method to be invoked right after a query is executed,
+     * if that query ends up with an ids only call.
+     * @param obj an object containing the query performed and the result.
+     */
+    public void afterQuery(AfterQueryIdsObject<T> obj) {
+    }
+
+    /**
      * Override this method to be invoked right before the endpoint model
      * is destroyed.
      *

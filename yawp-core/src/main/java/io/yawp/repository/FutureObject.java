@@ -10,23 +10,27 @@ public class FutureObject<T> {
 
     private Repository r;
 
-    private Future<IdRef<?>> futureIdRef;
+    private Future<IdRef<T>> futureIdRef;
 
-    private Future<?> futureObject;
+    private Future<T> futureObject;
 
     private T object;
 
     private boolean resolved = false;
 
-    private boolean enableHooks;
+    private FutureObjectHook<T> hook;
 
-    public FutureObject(Repository r, Future<IdRef<?>> futureIdRef, T object) {
+    public void setHook(FutureObjectHook<T> hook) {
+        this.hook = hook;
+    }
+
+    public FutureObject(Repository r, Future<IdRef<T>> futureIdRef, T object) {
         this.r = r;
         this.futureIdRef = futureIdRef;
         this.object = object;
     }
 
-    public FutureObject(Repository r, Future<?> futureObject) {
+    public FutureObject(Repository r, Future<T> futureObject) {
         this.r = r;
         this.futureObject = futureObject;
     }
@@ -36,12 +40,7 @@ public class FutureObject<T> {
         this.resolved = true;
     }
 
-    public void setEnableHooks(boolean enableHooks) {
-        this.enableHooks = enableHooks;
-    }
-
     public T get() {
-
         if (resolved) {
             return object;
         }
@@ -53,13 +52,12 @@ public class FutureObject<T> {
                 setObject();
             }
 
-            if (enableHooks) {
-                RepositoryHooks.afterSave(r, object);
+            if (hook != null) {
+                hook.apply(r, object);
             }
 
             this.resolved = true;
             return object;
-
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
@@ -71,7 +69,7 @@ public class FutureObject<T> {
     }
 
     private void setObject() throws InterruptedException, ExecutionException {
-        this.object = (T) futureObject.get();
+        this.object = futureObject.get();
     }
 
 }

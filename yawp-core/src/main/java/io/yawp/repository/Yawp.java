@@ -77,7 +77,6 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
         safeLoadFeatures(configFile.getConfig().getPackages());
     }
 
-    @SuppressWarnings("deprecation")
     private static synchronized void safeLoadFeatures(String packagePrefix) {
         if (features != null) {
             return;
@@ -130,12 +129,6 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
     }
 
     @Override
-    public <T> T saveWithHooks(T object) {
-        init();
-        return get().saveWithHooks(object);
-    }
-
-    @Override
     public <T> T save(T object) {
         init();
         return get().save(object);
@@ -158,12 +151,6 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
     public Object action(IdRef<?> id, Class<?> clazz, ActionKey actionKey, String json, Map<String, String> params) {
         init();
         return get().action(id, clazz, actionKey, json, params);
-    }
-
-    @Override
-    public <T> QueryBuilder<T> queryWithHooks(Class<T> clazz) {
-        init();
-        return get().queryWithHooks(clazz);
     }
 
     @Override
@@ -239,9 +226,9 @@ public class Yawp extends ThreadLocal<Repository> implements RepositoryApi {
     }
 
     @Override
-    public boolean isTransationInProgress() {
+    public boolean isTransactionInProgress() {
         init();
-        return get().isTransationInProgress();
+        return get().isTransactionInProgress();
     }
 
     @Override

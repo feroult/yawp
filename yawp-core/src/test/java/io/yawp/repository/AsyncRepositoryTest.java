@@ -35,7 +35,7 @@ public class AsyncRepositoryTest extends EndpointTestCase {
     public void testBeforeSaveHook() {
         HookedObject object = new HookedObject("before_save");
 
-        FutureObject<HookedObject> future = yawp.async().saveWithHooks(object);
+        FutureObject<HookedObject> future = yawp.async().save(object);
         assertEquals("xpto before save", object.getStringValue());
         assertEquals("xpto before save", future.get().getStringValue());
     }
@@ -44,7 +44,7 @@ public class AsyncRepositoryTest extends EndpointTestCase {
     public void testAfterSaveHook() {
         HookedObject object = new HookedObject("after_save");
 
-        FutureObject<HookedObject> future = yawp.async().saveWithHooks(object);
+        FutureObject<HookedObject> future = yawp.async().save(object);
         assertEquals("after_save", object.getStringValue());
         assertEquals("xpto after save", future.get().getStringValue());
     }

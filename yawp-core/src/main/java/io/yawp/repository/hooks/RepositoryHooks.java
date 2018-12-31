@@ -7,6 +7,7 @@ import io.yawp.repository.query.QueryBuilder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 public class RepositoryHooks {
 
@@ -26,6 +27,21 @@ public class RepositoryHooks {
 
     public static <T> void beforeQuery(Repository r, QueryBuilder<T> q, Class<T> clazz) {
         invokeHooks(r, clazz, q, "beforeQuery");
+    }
+
+    public static <T> void afterQueryList(QueryBuilder<T> query, List<T> list) {
+        AfterQueryListObject<T> obj = new AfterQueryListObject<>(query, list);
+        invokeHooks(query.getRepository(), query.getModel().getClazz(), obj,"afterQuery");
+    }
+
+    public static <T> void afterQueryFetch(QueryBuilder<T> query, T element) {
+        AfterQueryFetchObject<T> obj = new AfterQueryFetchObject<>(query, element);
+        invokeHooks(query.getRepository(), query.getModel().getClazz(), obj,"afterQuery");
+    }
+
+    public static <T> void afterQueryIds(QueryBuilder<T> query, List<IdRef<T>> ids) {
+        AfterQueryIdsObject<T> obj = new AfterQueryIdsObject<>(query, ids);
+        invokeHooks(query.getRepository(), query.getModel().getClazz(), obj,"afterQuery");
     }
 
     public static void beforeDestroy(Repository r, IdRef<?> id) {
@@ -64,16 +80,13 @@ public class RepositoryHooks {
         }
     }
 
-    private static Method getMethod(Object hook, String methodName, Class<?> argumentClazz) {
-
+    private static Method getMethod(Object hook, String methodName, Class<?>... argumentClazzes) {
         try {
-            return hook.getClass().getMethod(methodName, argumentClazz);
+            return hook.getClass().getMethod(methodName, argumentClazzes);
         } catch (NoSuchMethodException e) {
             return null;
         } catch (SecurityException e) {
             throw new RuntimeException(e);
         }
-
     }
-
 }

@@ -2,6 +2,7 @@ package io.yawp.repository.query;
 
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
+import io.yawp.repository.hooks.RepositoryHooks;
 import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;
@@ -241,7 +242,9 @@ public class QueryBuilder<T> {
 
     private List<T> executeQuery() {
         List<T> objects = r.driver().query().objects(this);
-        return postFilter(objects);
+        List<T> postFiltered = postFilter(objects);
+        RepositoryHooks.afterQueryList(this, postFiltered);
+        return postFiltered;
     }
 
     private List<T> postFilter(List<T> objects) {
@@ -261,7 +264,9 @@ public class QueryBuilder<T> {
         SimpleCondition c = (SimpleCondition) condition;
         IdRef<T> id = (IdRef<T>) c.getWhereValue();
 
-        return r.driver().query().fetch(id);
+        T retrieved = r.driver().query().fetch(id);
+        RepositoryHooks.afterQueryFetch(this, retrieved);
+        return retrieved;
     }
 
     private boolean isQueryById() {
@@ -333,8 +338,7 @@ public class QueryBuilder<T> {
         r.namespace().set(getClazz());
         try {
             List<IdRef<T>> ids = r.driver().query().ids(this);
-
-
+            RepositoryHooks.afterQueryIds(this, ids);
             return ids;
         } finally {
             r.namespace().reset();
@@ -342,7 +346,6 @@ public class QueryBuilder<T> {
     }
 
     public IdRef<T> onlyId() throws NoResultException, MoreThanOneResultException {
-
         List<IdRef<T>> ids = ids();
 
         if (ids.size() == 0) {

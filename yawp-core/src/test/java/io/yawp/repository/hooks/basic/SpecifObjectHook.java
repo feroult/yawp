@@ -26,7 +26,10 @@ public class SpecifObjectHook extends Hook<HookedObject> {
 
     @Override
     public void beforeQuery(QueryBuilder<HookedObject> q) {
-        q.where("stringValue", "=", "xpto1");
+        if (HookTest.LoggedUser.filter == null) {
+            return;
+        }
+        q.where("stringValue", "=", HookTest.LoggedUser.filter);
     }
 
     @Override

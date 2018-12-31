@@ -19,7 +19,6 @@ public class FixturesServlet extends EndpointServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		setWithShields(false);
-		setWithHooks(false);
 	}
 
 	@Override

@@ -143,11 +143,7 @@ public class EndpointRouter {
     private ActionKey nestedCollectionCustomActionKey(String lastToken) {
         String[] tokens = lastToken.split("/");
 
-        ActionKey actionKey = new ActionKey(rightCustomActionVerb(), tokens[1], true);
-        if (features.hasCustomAction("/" + tokens[0], actionKey)) {
-            return actionKey;
-        }
-        return null;
+        return createActionKey(tokens);
     }
 
     private HttpVerb rightCustomActionVerb() {
@@ -161,6 +157,10 @@ public class EndpointRouter {
             return null;
         }
 
+        return createActionKey(tokens);
+    }
+
+    private ActionKey createActionKey(String[] tokens) {
         ActionKey actionKey = new ActionKey(rightCustomActionVerb(), tokens[1], true);
         if (features.hasCustomAction("/" + tokens[0], actionKey)) {
             return actionKey;
@@ -207,7 +207,7 @@ public class EndpointRouter {
         return customActionKey.getActionName();
     }
 
-    protected RestAction createRestAction(boolean enableShields, boolean enableHooks) {
+    protected RestAction createRestAction(boolean enableShields) {
         logger.finer("creating rest action, verb: " + verb + ", custom=" + customActionKey);
 
         try {
@@ -217,7 +217,6 @@ public class EndpointRouter {
 
             action.setRepository(r);
             action.setEnableShields(enableShields);
-            action.setEnableHooks(enableHooks);
             action.setEndpointClazz(endpointClazz);
             action.setId(id);
             action.setParams(params);
@@ -225,7 +224,7 @@ public class EndpointRouter {
             action.setRequestJson(requestJson);
             action.setObjects(objects);
 
-            action.defineTrasnformer();
+            action.defineTransformer();
             action.defineShield();
 
             return action;
@@ -247,8 +246,8 @@ public class EndpointRouter {
         return Collections.singletonList(JsonUtils.from(r, requestJson, endpointClazz));
     }
 
-    public HttpResponse executeRestAction(boolean enableShields, boolean enableHooks) {
-        return createRestAction(enableShields, enableHooks).execute();
+    public HttpResponse executeRestAction(boolean enableShields) {
+        return createRestAction(enableShields).execute();
     }
 
     public boolean isValid() {

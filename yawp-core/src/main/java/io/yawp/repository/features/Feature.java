@@ -27,10 +27,6 @@ public class Feature {
         return yawp.query(clazz);
     }
 
-    public <T> QueryBuilder<T> yawpWithHooks(Class<T> clazz) {
-        return yawp.queryWithHooks(clazz);
-    }
-
     public boolean isOnRequest() {
         return requestContext != null;
     }

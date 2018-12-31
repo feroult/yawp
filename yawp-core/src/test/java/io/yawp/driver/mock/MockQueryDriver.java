@@ -52,7 +52,7 @@ public class MockQueryDriver implements QueryDriver {
     @Override
     public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
         T object = fetch(id);
-        Future<?> futureObject = ConcurrentUtils.constantFuture(object);
+        Future<T> futureObject = ConcurrentUtils.constantFuture(object);
         return new FutureObject<T>(r, futureObject);
     }
 
@@ -110,10 +110,10 @@ public class MockQueryDriver implements QueryDriver {
     private <T> List<T> applyLimit(QueryBuilder<?> builder, List<T> objects) {
         if (builder.getLimit() != null) {
             int limit = builder.getLimit() > objects.size() ? objects.size() : builder.getLimit();
-            return (List<T>) objects.subList(0, limit);
+            return objects.subList(0, limit);
         }
 
-        return (List<T>) objects;
+        return objects;
     }
 
     private List<Object> queryWhere(QueryBuilder<?> builder) {

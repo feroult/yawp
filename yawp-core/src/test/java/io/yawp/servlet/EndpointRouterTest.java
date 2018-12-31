@@ -72,7 +72,7 @@ public class EndpointRouterTest extends ServletTestCase {
 
         try {
             get("");
-            assertTrue(false);
+            fail();
         } catch (HttpException e) {
             Welcome welcome = from(e.getText(), Welcome.class);
 
@@ -82,7 +82,7 @@ public class EndpointRouterTest extends ServletTestCase {
         }
         try {
             get("/");
-            assertTrue(false);
+            fail();
         } catch (HttpException e) {
             Welcome welcome = from(e.getText(), Welcome.class);
 
@@ -199,7 +199,7 @@ public class EndpointRouterTest extends ServletTestCase {
                 .uri("/parents/1/touched").build();
 
         EndpointRouter router = EndpointRouter.parse(yawp, ctx);
-        RestAction restAction = router.createRestAction(true, true);
+        RestAction restAction = router.createRestAction(true);
 
         assertEquals("touched", router.getCustomActionName());
         assertEquals(RoutesRestAction.class, restAction.getClass());

@@ -1,16 +1,14 @@
 package io.yawp.repository.hooks.basic;
 
-import static org.junit.Assert.assertEquals;
-
 import io.yawp.commons.utils.EndpointTestCase;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.HookedObject;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.yawp.repository.models.basic.ShieldedObject;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class HookTest extends EndpointTestCase {
 
@@ -85,22 +83,22 @@ public class HookTest extends EndpointTestCase {
         AfterQueryTest.msgs.clear();
         yawp(HookedObject.class).list();
         assertEquals(1, AfterQueryTest.msgs.size());
-        assertEquals("list:0", AfterQueryTest.msgs.get(0));
+        assertEquals("type: LIST | obj: 0", AfterQueryTest.msgs.get(0));
 
         AfterQueryTest.msgs.clear();
         HookedObject obj = yawp.save(new HookedObject("xpto"));
         yawp(HookedObject.class).list();
         assertEquals(1, AfterQueryTest.msgs.size());
-        assertEquals("list:1", AfterQueryTest.msgs.get(0));
+        assertEquals("type: LIST | obj: 1", AfterQueryTest.msgs.get(0));
 
         AfterQueryTest.msgs.clear();
         yawp(HookedObject.class).ids();
         assertEquals(1, AfterQueryTest.msgs.size());
-        assertEquals("ids:1", AfterQueryTest.msgs.get(0));
+        assertEquals("type: IDS | obj: 1", AfterQueryTest.msgs.get(0));
 
         AfterQueryTest.msgs.clear();
         obj.getId().fetch();
         assertEquals(1, AfterQueryTest.msgs.size());
-        assertEquals("fetch:" + obj.getId(), AfterQueryTest.msgs.get(0));
+        assertEquals("type: FETCH | obj: " + obj.getId(), AfterQueryTest.msgs.get(0));
     }
 }

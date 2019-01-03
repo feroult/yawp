@@ -1,7 +1,7 @@
 package io.yawp.repository.hooks;
 
-import io.yawp.repository.features.Feature;
 import io.yawp.repository.IdRef;
+import io.yawp.repository.features.Feature;
 import io.yawp.repository.query.QueryBuilder;
 
 /**
@@ -48,33 +48,18 @@ public class Hook<T> extends Feature {
      * Override this method to be invoked right before a query is executed
      * to this endpoint model.
      *
-     * @param obj The {@link BeforeQueryObject<T>} containing the {@link QueryBuilder<T>} and the query type.
+     * @param q The {@link QueryBuilder<T>} of the query being performed.
      */
-    public void beforeQuery(BeforeQueryObject<T> obj) {
+    public void beforeQuery(QueryBuilder<T> q) {
     }
 
     /**
      * Override this method to be invoked right after a query is executed,
-     * if that query ends up with a executeQuery call.
-     * @param obj an object containing the query performed and the result.
+     * to this endpoint model.
+     *
+     * @param q The {@link QueryBuilder<T>} of the query being performed.
      */
-    public void afterQuery(AfterQueryListObject<T> obj) {
-    }
-
-    /**
-     * Override this method to be invoked right after a query is executed,
-     * if that query ends up with a fetch by id operation.
-     * @param obj an object containing the query performed and the result.
-     */
-    public void afterQuery(AfterQueryFetchObject<T> obj) {
-    }
-
-    /**
-     * Override this method to be invoked right after a query is executed,
-     * if that query ends up with an ids only call.
-     * @param obj an object containing the query performed and the result.
-     */
-    public void afterQuery(AfterQueryIdsObject<T> obj) {
+    public void afterQuery(QueryBuilder<T> q) {
     }
 
     /**

@@ -1,10 +1,13 @@
 package io.yawp.repository.hooks.basic;
 
 import io.yawp.repository.IdRef;
-import io.yawp.repository.hooks.*;
+import io.yawp.repository.hooks.Hook;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.HookedObject;
 import io.yawp.repository.query.QueryBuilder;
+import io.yawp.repository.query.QueryType;
+
+import java.util.List;
 
 public class SpecifObjectHook extends Hook<HookedObject> {
 
@@ -25,11 +28,11 @@ public class SpecifObjectHook extends Hook<HookedObject> {
     }
 
     @Override
-    public void beforeQuery(BeforeQueryObject<HookedObject> obj) {
+    public void beforeQuery(QueryBuilder<HookedObject> q) {
         if (HookTest.LoggedUser.filter == null) {
             return;
         }
-        obj.getQuery().where("stringValue", "=", HookTest.LoggedUser.filter);
+        q.where("stringValue", "=", HookTest.LoggedUser.filter);
     }
 
     @Override
@@ -44,18 +47,9 @@ public class SpecifObjectHook extends Hook<HookedObject> {
     }
 
     @Override
-    public void afterQuery(AfterQueryListObject<HookedObject> obj) {
-        HookTest.AfterQueryTest.msgs.add("list:" + obj.getList().size());
-    }
-
-    @Override
-    public void afterQuery(AfterQueryIdsObject<HookedObject> obj) {
-        HookTest.AfterQueryTest.msgs.add("ids:" + obj.getIds().size());
-    }
-
-    @Override
-    public void afterQuery(AfterQueryFetchObject<HookedObject> obj) {
-        HookTest.AfterQueryTest.msgs.add("fetch:" + obj.getElement().getId());
+    public void afterQuery(QueryBuilder<HookedObject> q) {
+        String msg = q.getExecutedQueryType() == QueryType.FETCH ? ((HookedObject) q.getExecutedResponse()).getId().toString() : String.valueOf(((List<?>) q.getExecutedResponse()).size());
+        HookTest.AfterQueryTest.msgs.add("type: " + q.getExecutedQueryType() + " | obj: " + msg);
     }
 
     private boolean isBeforeSaveTest(HookedObject object) {

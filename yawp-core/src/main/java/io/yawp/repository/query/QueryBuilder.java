@@ -30,7 +30,13 @@ public class QueryBuilder<T> {
 
     private String cursor;
 
-    private ForcedResponse<T> forcedResponse;
+    private Map<QueryType, Object> forcedResults = new HashMap<>();
+
+    // results
+
+    private QueryType executedQueryType;
+
+    private Object executedResponse;
 
     private QueryBuilder(Class<T> clazz, Repository r) {
         this.clazz = clazz;
@@ -126,6 +132,14 @@ public class QueryBuilder<T> {
         this.cursor = cursor;
     }
 
+    public QueryType getExecutedQueryType() {
+        return executedQueryType;
+    }
+
+    public Object getExecutedResponse() {
+        return executedResponse;
+    }
+
     public QueryBuilder<T> options(QueryOptions options) {
         if (options.getCondition() != null) {
             where(options.getCondition());
@@ -170,46 +184,46 @@ public class QueryBuilder<T> {
         return model;
     }
 
-    public QueryBuilder<T> forceResponse(ForcedResponse<T> forcedResponse) {
-        this.forcedResponse = forcedResponse;
+    public QueryBuilder<T> forceResult(QueryType type, Object object) {
+        forcedResults.put(type, object);
         return this;
     }
 
-    public QueryBuilder<T> forceResponseList(List<T> list) {
-        ensureForcedResponse();
-        forcedResponse.setList(list);
+    public Object getForcedResult(QueryType type) {
+        return forcedResults.get(type);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<T> getForcedResultList() {
+        return (List<T>) getForcedResult(QueryType.LIST);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<IdRef<T>> getForcedResultIds() {
+        return (List<IdRef<T>>) getForcedResult(QueryType.IDS);
+    }
+
+    @SuppressWarnings("unchecked")
+    private T getForcedResultFetch() {
+        return (T) getForcedResult(QueryType.FETCH);
+    }
+
+    public QueryBuilder<T> clearForcedResult(QueryType type) {
+        forcedResults.remove(type);
         return this;
     }
 
-    public QueryBuilder<T> forceResponseIds(List<IdRef<T>> ids) {
-        ensureForcedResponse();
-        forcedResponse.setIds(ids);
+    public QueryBuilder<T> clearForcedResult() {
+        forcedResults.clear();
         return this;
     }
 
-    public QueryBuilder<T> forceResponseFetch(T id) {
-        ensureForcedResponse();
-        forcedResponse.setById(id);
-        return this;
-    }
-
-    private void ensureForcedResponse() {
-        if (this.forcedResponse == null) {
-            this.forcedResponse = new ForcedResponse<>();
-        }
-    }
-
-    public ForcedResponse<T> getForcedResponse() {
-        return forcedResponse;
-    }
-
-    public QueryBuilder<T> clearForcedResponse() {
-        forcedResponse = null;
-        return this;
+    public boolean hasForcedResponse(QueryType type) {
+        return forcedResults.containsKey(type);
     }
 
     public boolean hasForcedResponse() {
-        return forcedResponse != null;
+        return forcedResults.size() > 0;
     }
 
     public List<T> executeQueryList() {
@@ -282,9 +296,11 @@ public class QueryBuilder<T> {
     }
 
     private List<T> executeQuery() {
-        RepositoryHooks.beforeQuery(this, QueryType.LIST);
-        List<T> list = hasForcedResponse() ? forcedResponse.getList() : doExecuteQuery();
-        RepositoryHooks.afterQueryList(this, list);
+        executedQueryType = QueryType.LIST;
+        RepositoryHooks.beforeQuery(this);
+        List<T> list = hasForcedResponse(executedQueryType) ? getForcedResultList() : doExecuteQuery();
+        executedResponse = list;
+        RepositoryHooks.afterQuery(this);
         return list;
     }
 
@@ -310,9 +326,11 @@ public class QueryBuilder<T> {
         SimpleCondition c = (SimpleCondition) condition;
         IdRef<T> id = (IdRef<T>) c.getWhereValue();
 
-        RepositoryHooks.beforeQuery(this, QueryType.FETCH);
-        T retrieved = hasForcedResponse() ? forcedResponse.getById() : doExecuteQueryById(id);
-        RepositoryHooks.afterQueryFetch(this, retrieved);
+        executedQueryType = QueryType.FETCH;
+        RepositoryHooks.beforeQuery(this);
+        T retrieved = hasForcedResponse(executedQueryType) ? getForcedResultFetch() : doExecuteQueryById(id);
+        executedResponse = retrieved;
+        RepositoryHooks.afterQuery(this);
         return retrieved;
     }
 
@@ -388,9 +406,11 @@ public class QueryBuilder<T> {
 
         r.namespace().set(getClazz());
         try {
-            RepositoryHooks.beforeQuery(this, QueryType.IDS);
-            List<IdRef<T>> ids = hasForcedResponse() ? forcedResponse.getIds() : doFetchIds();
-            RepositoryHooks.afterQueryIds(this, ids);
+            executedQueryType = QueryType.IDS;
+            RepositoryHooks.beforeQuery(this);
+            List<IdRef<T>> ids = hasForcedResponse(executedQueryType) ? getForcedResultIds() : doFetchIds();
+            executedResponse = ids;
+            RepositoryHooks.afterQuery(this);
             return ids;
         } finally {
             r.namespace().reset();

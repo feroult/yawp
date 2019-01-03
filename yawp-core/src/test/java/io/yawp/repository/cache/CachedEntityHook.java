@@ -2,61 +2,43 @@ package io.yawp.repository.cache;
 
 import io.yawp.commons.utils.json.gson.GsonJsonUtils;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.hooks.*;
+import io.yawp.repository.hooks.Hook;
+import io.yawp.repository.query.QueryBuilder;
+import io.yawp.repository.query.QueryType;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CachedEntityHook extends Hook<CachedEntity> {
 
     private static final GsonJsonUtils GSON = new GsonJsonUtils();
-    public static final Map<String, List<CachedEntity>> cacheList = new HashMap<>();
-    public static final Map<String, List<IdRef<CachedEntity>>> cacheIds = new HashMap<>();
-    public static final Map<String, CachedEntity> cacheFetch = new HashMap<>();
+
+    public static final Map<QueryType, Map<String, Object>> caches = new HashMap<>();
+
+    static {
+        caches.put(QueryType.LIST, new HashMap<String, Object>());
+        caches.put(QueryType.FETCH, new HashMap<String, Object>());
+        caches.put(QueryType.IDS, new HashMap<String, Object>());
+    }
 
     @Override
-    public void beforeQuery(BeforeQueryObject<CachedEntity> obj) {
-        if (obj.getQuery().hasCursor() || obj.getQuery().hasForcedResponse()) {
+    public void beforeQuery(QueryBuilder<CachedEntity> q) {
+        if (q.hasCursor() || q.hasForcedResponse()) {
             return;
         }
 
-        String key = GSON.to(obj.getQuery().toMap());
-        switch (obj.getType()) {
-            case LIST:
-                if (cacheList.containsKey(key)) {
-                    obj.getQuery().forceResponseList(cacheList.get(key));
-                }
-                break;
-            case IDS:
-                if (cacheIds.containsKey(key)) {
-                    obj.getQuery().forceResponseIds(cacheIds.get(key));
-                }
-                break;
-            case FETCH:
-                if (cacheFetch.containsKey(key)) {
-                    obj.getQuery().forceResponseFetch(cacheFetch.get(key));
-                }
-                break;
+        String key = GSON.to(q.toMap());
+        Map<String, Object> cache = caches.get(q.getExecutedQueryType());
+        if (cache.containsKey(key)) {
+            q.forceResult(q.getExecutedQueryType(), cache.get(key));
         }
     }
 
     @Override
-    public void afterQuery(AfterQueryFetchObject<CachedEntity> obj) {
-        String key = GSON.to(obj.getQuery().toMap());
-        cacheFetch.put(key, obj.getElement());
-    }
-
-    @Override
-    public void afterQuery(AfterQueryListObject<CachedEntity> obj) {
-        String key = GSON.to(obj.getQuery().toMap());
-        cacheList.put(key, obj.getList());
-    }
-
-    @Override
-    public void afterQuery(AfterQueryIdsObject<CachedEntity> obj) {
-        String key = GSON.to(obj.getQuery().toMap());
-        cacheIds.put(key, obj.getIds());
+    public void afterQuery(QueryBuilder<CachedEntity> q) {
+        String key = GSON.to(q.toMap());
+        Map<String, Object> cache = caches.get(q.getExecutedQueryType());
+        cache.put(key, q.getExecutedResponse());
     }
 
     @Override
@@ -70,8 +52,8 @@ public class CachedEntityHook extends Hook<CachedEntity> {
     }
 
     private void clearAll() {
-        cacheFetch.clear();
-        cacheIds.clear();
-        cacheList.clear();
+        for (Map<String, Object> cache : caches.values()) {
+            cache.clear();
+        }
     }
 }

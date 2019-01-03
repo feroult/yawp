@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static io.yawp.repository.models.basic.BasicObject.saveManyBasicObjects;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -22,7 +21,7 @@ public class DatastoreQueryForcedResponseTest extends EndpointTestCase {
         List<BasicObject> nonForcedList = yawp(BasicObject.class).list();
         assertEquals(1, nonForcedList.size());
 
-        List<BasicObject> forcedList = yawp(BasicObject.class).forceResponseList(Arrays.asList(xpto, xpto)).list();
+        List<BasicObject> forcedList = yawp(BasicObject.class).forceResult(QueryType.LIST, Arrays.asList(xpto, xpto)).list();
         assertEquals(2, forcedList.size());
     }
 
@@ -34,7 +33,7 @@ public class DatastoreQueryForcedResponseTest extends EndpointTestCase {
         BasicObject nonForcedObj = yawp(BasicObject.class).only();
         assertEquals("xpto", nonForcedObj.getStringValue());
 
-        BasicObject forcedObj = yawp(BasicObject.class).forceResponseList(Arrays.asList(fake)).only();
+        BasicObject forcedObj = yawp(BasicObject.class).forceResult(QueryType.LIST, Arrays.asList(fake)).only();
         assertEquals("fake", forcedObj.getStringValue());
     }
 
@@ -46,7 +45,7 @@ public class DatastoreQueryForcedResponseTest extends EndpointTestCase {
         BasicObject nonForcedObj = yawp(BasicObject.class).only();
         assertEquals("xpto", nonForcedObj.getStringValue());
 
-        BasicObject forcedObj = yawp(BasicObject.class).forceResponseList(Arrays.asList(fake)).first();
+        BasicObject forcedObj = yawp(BasicObject.class).forceResult(QueryType.LIST, Arrays.asList(fake)).first();
         assertEquals("fake", forcedObj.getStringValue());
     }
 
@@ -57,7 +56,7 @@ public class DatastoreQueryForcedResponseTest extends EndpointTestCase {
         List<IdRef<BasicObject>> nonForcedList = yawp(BasicObject.class).ids();
         assertEquals(1, nonForcedList.size());
 
-        List<IdRef<BasicObject>> forcedList = yawp(BasicObject.class).forceResponseIds(Arrays.asList(xpto.getId(), xpto.getId())).ids();
+        List<IdRef<BasicObject>> forcedList = yawp(BasicObject.class).forceResult(QueryType.IDS, Arrays.asList(xpto.getId(), xpto.getId())).ids();
         assertEquals(2, forcedList.size());
     }
 
@@ -70,7 +69,7 @@ public class DatastoreQueryForcedResponseTest extends EndpointTestCase {
         IdRef<BasicObject> nonForcedId = yawp(BasicObject.class).onlyId();
         assertEquals(xpto.getId(), nonForcedId);
 
-        IdRef<BasicObject> forcedId = yawp(BasicObject.class).forceResponseIds(Arrays.asList(fake.getId())).onlyId();
+        IdRef<BasicObject> forcedId = yawp(BasicObject.class).forceResult(QueryType.IDS, Arrays.asList(fake.getId())).onlyId();
         assertEquals("/basic_objects/oni", forcedId.toString());
     }
 
@@ -82,13 +81,13 @@ public class DatastoreQueryForcedResponseTest extends EndpointTestCase {
         BasicObject nonForcedObj = yawp.query(BasicObject.class).fetch(xpto.getId());
         assertEquals("xpto", nonForcedObj.getStringValue());
 
-        BasicObject forcedObj = yawp(BasicObject.class).forceResponseFetch(fake).fetch(xpto.getId());
+        BasicObject forcedObj = yawp(BasicObject.class).forceResult(QueryType.FETCH, fake).fetch(xpto.getId());
         assertEquals("fake", forcedObj.getStringValue());
     }
 
     @Test
     public void testClearForcedResponse() {
-        QueryBuilder<BasicObject> q = yawp(BasicObject.class).forceResponseIds(Collections.<IdRef<BasicObject>>emptyList()).clearForcedResponse();
-        assertNull(q.getForcedResponse());
+        QueryBuilder<BasicObject> q = yawp(BasicObject.class).forceResult(QueryType.IDS, Collections.<IdRef<BasicObject>>emptyList()).clearForcedResult();
+        assertNull(q.getForcedResult(QueryType.IDS));
     }
 }

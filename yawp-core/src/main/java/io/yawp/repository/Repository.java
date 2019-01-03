@@ -216,9 +216,7 @@ public class Repository implements RepositoryApi {
 
     @Override
     public <T> QueryBuilder<T> query(Class<T> clazz) {
-        QueryBuilder<T> q = QueryBuilder.q(clazz, this);
-        RepositoryHooks.beforeQuery(this, q, clazz);
-        return q;
+        return QueryBuilder.q(clazz, this);
     }
 
     @Override

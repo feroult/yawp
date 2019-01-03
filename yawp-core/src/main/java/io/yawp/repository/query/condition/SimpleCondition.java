@@ -1,13 +1,11 @@
 package io.yawp.repository.query.condition;
 
-import io.yawp.repository.models.FieldModel;
 import io.yawp.repository.IdRef;
-import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.Repository;
+import io.yawp.repository.models.FieldModel;
+import io.yawp.repository.models.ObjectModel;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class SimpleCondition extends BaseCondition {
 
@@ -62,6 +60,15 @@ public class SimpleCondition extends BaseCondition {
     }
 
     @Override
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("field", field);
+        map.put("whereOperator", whereOperator.toString());
+        map.put("whereValue", whereValue);
+        return map;
+    }
+
+    @Override
     public boolean hasPreFilter() {
         if (isRefField()) {
             return false;
@@ -76,7 +83,7 @@ public class SimpleCondition extends BaseCondition {
     }
 
     private boolean isRefField() {
-        return field.indexOf("->") != -1;
+        return field.contains("->");
     }
 
     @Override

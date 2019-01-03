@@ -2,6 +2,11 @@ package io.yawp.repository.query.condition;
 
 import io.yawp.repository.Repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class JoinedCondition extends BaseCondition {
 
     private LogicalOperator logicalOperator;
@@ -18,8 +23,19 @@ public class JoinedCondition extends BaseCondition {
     }
 
     @Override
-    public void init(Repository r, Class<?> clazz) {
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("logicalOperator", logicalOperator.toString());
+        List<Map<String, Object>> cs = new ArrayList<>();
+        for (BaseCondition c : conditions) {
+            cs.add(c.toMap());
+        }
+        map.put("conditions", cs);
+        return map;
+    }
 
+    @Override
+    public void init(Repository r, Class<?> clazz) {
         boolean allSubConditionsHasPreFilter = true;
         boolean oneSubConditionHasPreFilter = false;
 
@@ -68,10 +84,8 @@ public class JoinedCondition extends BaseCondition {
     }
 
     private boolean evaluateOr(Object object) {
-        boolean result = false;
         for (BaseCondition condition : conditions) {
-            result = result || condition.evaluate(object);
-            if (result) {
+            if (condition.evaluate(object)) {
                 return true;
             }
         }
@@ -79,10 +93,8 @@ public class JoinedCondition extends BaseCondition {
     }
 
     private boolean evaluateAnd(Object object) {
-        boolean result = true;
         for (BaseCondition condition : conditions) {
-            result = result && condition.evaluate(object);
-            if (!result) {
+            if (!condition.evaluate(object)) {
                 return false;
             }
         }

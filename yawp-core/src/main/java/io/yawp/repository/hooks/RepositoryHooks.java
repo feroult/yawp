@@ -4,6 +4,7 @@ import io.yawp.commons.utils.ThrownExceptionsUtils;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.query.QueryBuilder;
+import io.yawp.repository.query.QueryType;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,7 +12,8 @@ import java.util.List;
 
 public class RepositoryHooks {
 
-    private RepositoryHooks() {}
+    private RepositoryHooks() {
+    }
 
     public static void beforeShield(Repository r, Object object) {
         invokeHooks(r, object.getClass(), object, "beforeShield");
@@ -25,23 +27,23 @@ public class RepositoryHooks {
         invokeHooks(r, object.getClass(), object, "afterSave");
     }
 
-    public static <T> void beforeQuery(Repository r, QueryBuilder<T> q, Class<T> clazz) {
-        invokeHooks(r, clazz, q, "beforeQuery");
+    public static <T> void beforeQuery(QueryBuilder<T> query, QueryType type) {
+        invokeHooks(query.getRepository(), query.getModel().getClazz(), new BeforeQueryObject<>(query, type), "beforeQuery");
     }
 
     public static <T> void afterQueryList(QueryBuilder<T> query, List<T> list) {
         AfterQueryListObject<T> obj = new AfterQueryListObject<>(query, list);
-        invokeHooks(query.getRepository(), query.getModel().getClazz(), obj,"afterQuery");
+        invokeHooks(query.getRepository(), query.getModel().getClazz(), obj, "afterQuery");
     }
 
     public static <T> void afterQueryFetch(QueryBuilder<T> query, T element) {
         AfterQueryFetchObject<T> obj = new AfterQueryFetchObject<>(query, element);
-        invokeHooks(query.getRepository(), query.getModel().getClazz(), obj,"afterQuery");
+        invokeHooks(query.getRepository(), query.getModel().getClazz(), obj, "afterQuery");
     }
 
     public static <T> void afterQueryIds(QueryBuilder<T> query, List<IdRef<T>> ids) {
         AfterQueryIdsObject<T> obj = new AfterQueryIdsObject<>(query, ids);
-        invokeHooks(query.getRepository(), query.getModel().getClazz(), obj,"afterQuery");
+        invokeHooks(query.getRepository(), query.getModel().getClazz(), obj, "afterQuery");
     }
 
     public static void beforeDestroy(Repository r, IdRef<?> id) {

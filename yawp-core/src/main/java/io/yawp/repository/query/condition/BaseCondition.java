@@ -1,14 +1,12 @@
 package io.yawp.repository.query.condition;
 
-import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class BaseCondition {
-
-    protected static final Class<?>[] VALID_ID_CLASSES = new Class<?>[]{IdRef.class, Long.class, String.class};
 
     public abstract void init(Repository r, Class<?> clazz);
 
@@ -19,6 +17,8 @@ public abstract class BaseCondition {
     public abstract boolean evaluate(Object object);
 
     public abstract BaseCondition not();
+
+    public abstract Map<String, Object> toMap();
 
     public BaseCondition and(BaseCondition c) {
         return Condition.and(this, c);
@@ -40,5 +40,4 @@ public abstract class BaseCondition {
 
         return result;
     }
-
 }

@@ -1,10 +1,7 @@
 package io.yawp.repository.hooks.basic;
 
 import io.yawp.repository.IdRef;
-import io.yawp.repository.hooks.AfterQueryFetchObject;
-import io.yawp.repository.hooks.AfterQueryIdsObject;
-import io.yawp.repository.hooks.AfterQueryListObject;
-import io.yawp.repository.hooks.Hook;
+import io.yawp.repository.hooks.*;
 import io.yawp.repository.models.basic.BasicObject;
 import io.yawp.repository.models.basic.HookedObject;
 import io.yawp.repository.query.QueryBuilder;
@@ -28,11 +25,11 @@ public class SpecifObjectHook extends Hook<HookedObject> {
     }
 
     @Override
-    public void beforeQuery(QueryBuilder<HookedObject> q) {
+    public void beforeQuery(BeforeQueryObject<HookedObject> obj) {
         if (HookTest.LoggedUser.filter == null) {
             return;
         }
-        q.where("stringValue", "=", HookTest.LoggedUser.filter);
+        obj.getQuery().where("stringValue", "=", HookTest.LoggedUser.filter);
     }
 
     @Override

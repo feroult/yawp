@@ -9,11 +9,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
+import io.yawp.commons.utils.json.gson.GsonJsonUtils;
 import org.junit.Test;
 
 import io.yawp.commons.utils.EndpointTestCase;
@@ -645,6 +643,19 @@ public class DatastoreQueryTest extends EndpointTestCase {
 
         retrievedObject = yawp(BasicObject.class).where("idList", "<", id(BasicObject.class, 999l)).first();
         assertEquals("xpto", retrievedObject.getStringValue());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testToMap() {
+        Map<String, Object> map = yawp(BasicObject.class).where("field", "=", "value").toMap();
+        assertEquals("io.yawp.repository.models.basic.BasicObject", map.get("clazz"));
+        assertEquals(Collections.emptyList(), map.get("preOrders"));
+        assertEquals(Collections.emptyList(), map.get("postOrders"));
+        Map<String, String> condition = (Map<String, String>) map.get("condition");
+        assertEquals("field", condition.get("field"));
+        assertEquals("EQUAL", condition.get("whereOperator"));
+        assertEquals("value", condition.get("whereValue"));
     }
 
     private void assertObjects(List<BasicObject> objects, String... strings) {

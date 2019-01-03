@@ -48,9 +48,9 @@ public class Hook<T> extends Feature {
      * Override this method to be invoked right before a query is executed
      * to this endpoint model.
      *
-     * @param q The {@link QueryBuilder<T>} being hooked.
+     * @param obj The {@link BeforeQueryObject<T>} containing the {@link QueryBuilder<T>} and the query type.
      */
-    public void beforeQuery(QueryBuilder<T> q) {
+    public void beforeQuery(BeforeQueryObject<T> obj) {
     }
 
     /**

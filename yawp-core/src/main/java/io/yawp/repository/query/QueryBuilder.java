@@ -8,10 +8,7 @@ import io.yawp.repository.query.condition.BaseCondition;
 import io.yawp.repository.query.condition.Condition;
 import io.yawp.repository.query.condition.SimpleCondition;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class QueryBuilder<T> {
 
@@ -32,6 +29,8 @@ public class QueryBuilder<T> {
     private Integer limit;
 
     private String cursor;
+
+    private ForcedResponse<T> forcedResponse;
 
     private QueryBuilder(Class<T> clazz, Repository r) {
         this.clazz = clazz;
@@ -171,6 +170,48 @@ public class QueryBuilder<T> {
         return model;
     }
 
+    public QueryBuilder<T> forceResponse(ForcedResponse<T> forcedResponse) {
+        this.forcedResponse = forcedResponse;
+        return this;
+    }
+
+    public QueryBuilder<T> forceResponseList(List<T> list) {
+        ensureForcedResponse();
+        forcedResponse.setList(list);
+        return this;
+    }
+
+    public QueryBuilder<T> forceResponseIds(List<IdRef<T>> ids) {
+        ensureForcedResponse();
+        forcedResponse.setIds(ids);
+        return this;
+    }
+
+    public QueryBuilder<T> forceResponseFetch(T id) {
+        ensureForcedResponse();
+        forcedResponse.setById(id);
+        return this;
+    }
+
+    private void ensureForcedResponse() {
+        if (this.forcedResponse == null) {
+            this.forcedResponse = new ForcedResponse<>();
+        }
+    }
+
+    public ForcedResponse<T> getForcedResponse() {
+        return forcedResponse;
+    }
+
+    public QueryBuilder<T> clearForcedResponse() {
+        forcedResponse = null;
+        return this;
+    }
+
+    public boolean hasForcedResponse() {
+        return forcedResponse != null;
+    }
+
     public List<T> executeQueryList() {
         r.namespace().set(getClazz());
         try {
@@ -241,10 +282,15 @@ public class QueryBuilder<T> {
     }
 
     private List<T> executeQuery() {
+        RepositoryHooks.beforeQuery(this, QueryType.LIST);
+        List<T> list = hasForcedResponse() ? forcedResponse.getList() : doExecuteQuery();
+        RepositoryHooks.afterQueryList(this, list);
+        return list;
+    }
+
+    private List<T> doExecuteQuery() {
         List<T> objects = r.driver().query().objects(this);
-        List<T> postFiltered = postFilter(objects);
-        RepositoryHooks.afterQueryList(this, postFiltered);
-        return postFiltered;
+        return postFilter(objects);
     }
 
     private List<T> postFilter(List<T> objects) {
@@ -264,9 +310,14 @@ public class QueryBuilder<T> {
         SimpleCondition c = (SimpleCondition) condition;
         IdRef<T> id = (IdRef<T>) c.getWhereValue();
 
-        T retrieved = r.driver().query().fetch(id);
+        RepositoryHooks.beforeQuery(this, QueryType.FETCH);
+        T retrieved = hasForcedResponse() ? forcedResponse.getById() : doExecuteQueryById(id);
         RepositoryHooks.afterQueryFetch(this, retrieved);
         return retrieved;
+    }
+
+    private T doExecuteQueryById(IdRef<T> id) {
+        return r.driver().query().fetch(id);
     }
 
     private boolean isQueryById() {
@@ -337,12 +388,17 @@ public class QueryBuilder<T> {
 
         r.namespace().set(getClazz());
         try {
-            List<IdRef<T>> ids = r.driver().query().ids(this);
+            RepositoryHooks.beforeQuery(this, QueryType.IDS);
+            List<IdRef<T>> ids = hasForcedResponse() ? forcedResponse.getIds() : doFetchIds();
             RepositoryHooks.afterQueryIds(this, ids);
             return ids;
         } finally {
             r.namespace().reset();
         }
+    }
+
+    private List<IdRef<T>> doFetchIds() {
+        return r.driver().query().ids(this);
     }
 
     public IdRef<T> onlyId() throws NoResultException, MoreThanOneResultException {
@@ -357,5 +413,20 @@ public class QueryBuilder<T> {
         }
 
         return ids.get(0);
+    }
+
+    public boolean hasCursor() {
+        return cursor != null;
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("clazz", clazz.getCanonicalName());
+        result.put("parentId", parentId == null ? null : parentId.toString());
+        result.put("condition", condition == null ? null : condition.toMap());
+        result.put("preOrders", preOrders);
+        result.put("postOrders", postOrders);
+        result.put("limit", limit);
+        return result;
     }
 }

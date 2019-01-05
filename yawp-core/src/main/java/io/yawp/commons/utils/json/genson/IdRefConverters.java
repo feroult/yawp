@@ -22,7 +22,7 @@ public class IdRefConverters {
     public static class IdRefConverter implements Converter<IdRef> {
         @Override
         public void serialize(IdRef idRef, ObjectWriter writer, Context ctx) throws Exception {
-            writer.writeString(idRef.toString());
+            writer.writeString(idRef.getUri());
         }
 
         @Override

@@ -213,7 +213,7 @@ public class QueryBuilder<T> {
         return this;
     }
 
-    public QueryBuilder<T> clearForcedResult() {
+    public QueryBuilder<T> clearForcedResults() {
         forcedResults.clear();
         return this;
     }

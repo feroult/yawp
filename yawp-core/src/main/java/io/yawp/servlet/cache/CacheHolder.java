@@ -7,34 +7,45 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
-public class CacheHolder<T> {
-	private Map<IdRef<T>, T> cache;
-	private Set<IdRef<T>> noResults;
+public class CacheHolder {
 
-	public CacheHolder() {
-		clear();
-	}
+    private Map<IdRef<?>, Object> cache;
 
-	public void clear() {
-		cache = new HashMap<>();
-		noResults = new HashSet<>();
-	}
+    private Set<IdRef<?>> noResults;
 
-	public T get(IdRef<T> id) {
-		if (cache.containsKey(id)) {
-			return cache.get(id);
-		}
-		if (noResults.contains(id)) {
-			throw new NoResultException();
-		}
-		try {
-			T t = id.refetch();
-			cache.put(id, t);
-			return t;
-		} catch (NoResultException e) {
-			noResults.add(id);
-			throw e;
-		}
-	}
+    public CacheHolder() {
+        clear();
+    }
+
+    public void clear() {
+        cache = new HashMap<>();
+        noResults = new HashSet<>();
+    }
+
+    public <T> void clear(IdRef<T> id) {
+        String threadName = Thread.currentThread().getName();
+        cache.remove(id);
+        noResults.remove(id);
+    }
+
+
+    public Object get(IdRef<?> id) {
+        String threadName = Thread.currentThread().getName();
+        if (cache.containsKey(id)) {
+            return cache.get(id);
+        }
+        if (noResults.contains(id)) {
+            throw new NoResultException();
+        }
+        try {
+            Object t = id.refetch();
+            cache.put(id, t);
+            return t;
+        } catch (NoResultException e) {
+            noResults.add(id);
+            throw e;
+        }
+    }
 }

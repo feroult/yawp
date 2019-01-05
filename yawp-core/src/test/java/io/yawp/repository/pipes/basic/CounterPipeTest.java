@@ -160,12 +160,12 @@ public class CounterPipeTest extends EndpointTestCase {
         PipedObjectCounter counterSink1;
         PipedObjectCounter counterSink2;
 
-        counterSink1 = idSink1.fetch();
+        counterSink1 = idSink1.refetch();
         assertEquals((Integer) 1, counterSink1.getCount());
         assertEquals((Integer) 1, counterSink1.getCountGroupA());
         assertEquals((Integer) 0, counterSink1.getCountGroupB());
 
-        counterSink2 = idSink2.fetch();
+        counterSink2 = idSink2.refetch();
         assertEquals((Integer) 1, counterSink2.getCount());
         assertEquals((Integer) 0, counterSink2.getCountGroupA());
         assertEquals((Integer) 1, counterSink2.getCountGroupB());
@@ -174,12 +174,12 @@ public class CounterPipeTest extends EndpointTestCase {
         yawp.save(objectA);
         awaitAsync(20, TimeUnit.SECONDS);
 
-        counterSink1 = idSink1.fetch();
+        counterSink1 = idSink1.refetch();
         assertEquals((Integer) 0, counterSink1.getCount());
         assertEquals((Integer) 0, counterSink1.getCountGroupA());
         assertEquals((Integer) 0, counterSink1.getCountGroupB());
 
-        counterSink2 = idSink2.fetch();
+        counterSink2 = idSink2.refetch();
         assertEquals((Integer) 2, counterSink2.getCount());
         assertEquals((Integer) 1, counterSink2.getCountGroupA());
         assertEquals((Integer) 1, counterSink2.getCountGroupB());

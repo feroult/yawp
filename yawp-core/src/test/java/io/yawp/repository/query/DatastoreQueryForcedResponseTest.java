@@ -87,7 +87,7 @@ public class DatastoreQueryForcedResponseTest extends EndpointTestCase {
 
     @Test
     public void testClearForcedResponse() {
-        QueryBuilder<BasicObject> q = yawp(BasicObject.class).forceResult(QueryType.IDS, Collections.<IdRef<BasicObject>>emptyList()).clearForcedResult();
+        QueryBuilder<BasicObject> q = yawp(BasicObject.class).forceResult(QueryType.IDS, Collections.<IdRef<BasicObject>>emptyList()).clearForcedResults();
         assertNull(q.getForcedResult(QueryType.IDS));
     }
 }

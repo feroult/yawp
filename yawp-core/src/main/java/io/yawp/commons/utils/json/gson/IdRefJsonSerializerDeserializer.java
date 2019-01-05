@@ -11,7 +11,7 @@ public class IdRefJsonSerializerDeserializer implements JsonSerializer<IdRef<?>>
 
     @Override
     public JsonElement serialize(IdRef<?> idRef, Type type, JsonSerializationContext ctx) {
-        return new JsonPrimitive(idRef.toString());
+        return new JsonPrimitive(idRef.getUri());
     }
 
     @Override

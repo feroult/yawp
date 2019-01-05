@@ -15,10 +15,15 @@ public class SourceMarker {
     private IdRef<?> parentId;
 
     private Long version = 1L;
-    
+
     public void setId(IdRef<SourceMarker> id) {
         this.id = id;
     }
+
+    public IdRef<SourceMarker> getId() {
+        return id;
+    }
+
 
     public void setParentId(IdRef<?> parentId) {
         this.parentId = parentId;

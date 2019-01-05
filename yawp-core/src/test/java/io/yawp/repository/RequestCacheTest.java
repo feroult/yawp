@@ -5,20 +5,19 @@ import io.yawp.repository.models.parents.Child;
 import io.yawp.repository.query.NoResultException;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 public class RequestCacheTest extends EndpointTestCase {
 
-    @Test
-    public void testFetchUseCache() {
+    @Test(expected = NoResultException.class)
+    public void testDestroyInvalidatesCache() {
         Child c1 = yawp.save(new Child("c1"));
+        assertThat(c1.getId().fetch().getName(), is("c1"));
 
-        assertThat(c1.getId().fetch().getName(), is("c1"));
         yawp.destroy(c1.getId());
-        assertThat(c1.getId().fetch().getName(), is("c1"));
+        c1.getId().fetch();
     }
 
     @Test

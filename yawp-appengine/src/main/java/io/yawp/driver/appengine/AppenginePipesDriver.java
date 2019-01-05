@@ -20,6 +20,7 @@ import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.pipes.Pipe;
 import io.yawp.repository.pipes.SourceMarker;
 import io.yawp.repository.query.NoResultException;
+import io.yawp.servlet.cache.Cache;
 
 import java.util.Set;
 import java.util.logging.Logger;
@@ -135,8 +136,11 @@ public class AppenginePipesDriver implements PipesDriver {
         }
 
         r.driver().persistence().save(sourceMarker);
+        r.save(sourceMarker);
+        Cache.clear(sourceMarker.getId());
 
         logger.finer("done");
         return sourceMarker;
     }
+
 }

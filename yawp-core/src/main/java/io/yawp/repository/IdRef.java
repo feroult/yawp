@@ -2,7 +2,9 @@ package io.yawp.repository;
 
 import io.yawp.commons.http.HttpVerb;
 import io.yawp.repository.actions.ActionKey;
+import io.yawp.repository.features.EndpointFeatures;
 import io.yawp.repository.models.ObjectModel;
+import io.yawp.repository.pipes.RepositoryPipes;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.servlet.cache.Cache;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import static io.yawp.repository.Yawp.yawp;
 
@@ -52,6 +55,7 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
 
     /**
      * Fetch from datastore or from request cache (if present)
+     *
      * @return the entity fetched
      */
     public T fetch() {
@@ -60,6 +64,7 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
 
     /**
      * Force re-fetch from datastore (ignore request cache!)
+     *
      * @return the entity fetched
      */
     public T refetch() {
@@ -68,12 +73,13 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
 
     /**
      * Fetch from datastore and cast to given childClazz (no cache is performed)
-     * @param childClazz the clazz to cast to
-     * @param <TT> The generic parameter of the child clazz
+     *
+     * @param anotherClazz the clazz to cast to
+     * @param <TT>         The generic parameter of the child clazz
      * @return the fetched entity
      */
-    public <TT> TT fetch(Class<TT> childClazz) {
-        return r.query(childClazz).fetch(this);
+    public <TT> TT fetch(Class<TT> anotherClazz) {
+        return r.query(anotherClazz).fetch(this);
     }
 
     public <TT> TT child(Class<TT> childClazz) {
@@ -356,15 +362,23 @@ public class IdRef<T> implements Comparable<IdRef<T>>, Serializable {
         if (r == null) {
             return "empty id";
         }
-        return getUri();
+        StringBuilder sb = new StringBuilder();
+        if (parentId != null) {
+            sb.append(parentId.toString());
+        }
+        EndpointFeatures<?> clazz = r.getFeatures().getByClazz(this.clazz);
+        sb.append(StringUtils.isEmpty(clazz.getEndpointPath()) ? "/" + clazz.getEndpointKind() : clazz.getEndpointPath());
+        sb.append("/");
+        sb.append(id != null ? id : name);
+        return sb.toString();
     }
 
     public String getUri() {
         StringBuilder sb = new StringBuilder();
         if (parentId != null) {
-            sb.append(parentId.toString());
+            sb.append(parentId.getUri());
         }
-        sb.append(r.getFeatures().getByClazz(clazz).getEndpointPath());
+        sb.append(r.getFeatures().getByClazz(this.clazz).getEndpointPath());
         sb.append("/");
         sb.append(id != null ? id : name);
         return sb.toString();

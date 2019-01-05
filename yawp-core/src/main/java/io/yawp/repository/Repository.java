@@ -10,8 +10,10 @@ import io.yawp.repository.actions.RepositoryActions;
 import io.yawp.repository.features.EndpointFeatures;
 import io.yawp.repository.features.RepositoryFeatures;
 import io.yawp.repository.hooks.RepositoryHooks;
+import io.yawp.repository.models.ObjectHolder;
 import io.yawp.repository.pipes.RepositoryPipes;
 import io.yawp.repository.query.QueryBuilder;
+import io.yawp.servlet.cache.Cache;
 
 import java.util.List;
 import java.util.Map;
@@ -138,7 +140,8 @@ public class Repository implements RepositoryApi {
         boolean newTransaction = beginTransactionForPipesOnSave(object);
         try {
             updateExistingPipes(object);
-            driver().persistence().save(object);
+            rawSave(object);
+            invalidateCache(object);
             fluxPipes(object);
             if (newTransaction) {
                 commit();
@@ -150,6 +153,10 @@ public class Repository implements RepositoryApi {
         }
 
         logger.finer("saved");
+    }
+
+    private void rawSave(Object object) {
+        driver().persistence().save(object);
     }
 
     private boolean beginTransactionForPipesOnSave(Object object) {
@@ -197,6 +204,7 @@ public class Repository implements RepositoryApi {
         futureObject.setHook(new FutureObjectHook<T>() {
             @Override
             public void apply(Repository r, T object) {
+                invalidateCache(object);
                 RepositoryHooks.afterSave(r, object);
             }
         });
@@ -234,14 +242,8 @@ public class Repository implements RepositoryApi {
     protected FutureObject<Void> destroyAsync(final IdRef<?> id) {
         namespace.set(id.getClazz());
         try {
-            FutureObject<Void> future = destroyInternalAsync(id);
-            future.setHook(new FutureObjectHook<Void>() {
-                @Override
-                public void apply(Repository r, Void object) {
-                    RepositoryHooks.afterDestroy(r, id);
-                }
-            });
-            return future;
+            RepositoryHooks.beforeDestroy(this, id);
+            return destroyInternalAsync(id);
         } finally {
             namespace.reset();
         }
@@ -252,6 +254,7 @@ public class Repository implements RepositoryApi {
         try {
             refluxPipes(id);
             driver().persistence().destroy(id);
+            invalidateCache(id);
             // TODO: Pipes - cleanup sinks
             if (newTransaction) {
                 commit();
@@ -264,7 +267,15 @@ public class Repository implements RepositoryApi {
     }
 
     private FutureObject<Void> destroyInternalAsync(IdRef<?> id) {
-        return driver().persistence().destroyAsync(id);
+        FutureObject<Void> futureObject = driver().persistence().destroyAsync(id);
+        futureObject.setHook(new FutureObjectHook<Void>() {
+            @Override
+            public void apply(Repository r, Void object) {
+                invalidateCache(id);
+                RepositoryHooks.afterDestroy(r, id);
+            }
+        });
+        return futureObject;
     }
 
 
@@ -297,6 +308,14 @@ public class Repository implements RepositoryApi {
     @Override
     public <T> List<IdRef<T>> parseIds(Class<T> clazz, List<String> idsString) {
         return IdRef.parse(clazz, this, idsString);
+    }
+
+    private <T> void invalidateCache(IdRef<T> id) {
+        Cache.clear(id);
+    }
+
+    private void invalidateCache(Object object) {
+        Cache.clear(new ObjectHolder(object).getId());
     }
 
     @Override

@@ -3,45 +3,34 @@ package io.yawp.servlet.cache;
 import io.yawp.repository.IdRef;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Logger;
 
 public class Cache {
 
-	private static class C<T> extends ThreadLocal<CacheHolder<T>> {
-		@Override
-		protected CacheHolder<T> initialValue() {
-			return new CacheHolder<>();
-		}
-	}
+    private final static Logger logger = Logger.getLogger(Cache.class.getName());
 
-	private static final Map<Class<?>, C<?>> ms = new HashMap<>();
+    private static final ThreadLocal<CacheHolder> cache = ThreadLocal.withInitial(CacheHolder::new);
 
-	public static <T> List<T> get(List<IdRef<T>> ids) {
-		List<T> ts = new ArrayList<>();
-		for (IdRef<T> id : ids) {
-			ts.add(get(id));
-		}
-		return ts;
-	}
+    public static <T> List<T> get(List<IdRef<T>> ids) {
+        List<T> objects = new ArrayList<>();
+        for (IdRef<T> id : ids) {
+            objects.add(get(id));
+        }
+        return objects;
+    }
 
-	public static <T> T get(IdRef<T> t) {
-		if (!ms.containsKey(t.getClazz())) {
-			ms.put(t.getClazz(), new C<>());
-		}
-		return getTc(t).get().get(t);
-	}
+    @SuppressWarnings("unchecked")
+    public static <T> T get(IdRef<T> id) {
+        T object = (T) cache.get().get(id);
+        return object;
+    }
 
-	@SuppressWarnings("unchecked")
-	private static <T> C<T> getTc(IdRef<T> t) {
-		return (C<T>) ms.get(t.getClazz());
-	}
+    public static <T> void clear(IdRef<T> id) {
+        cache.get().clear(id);
+    }
 
-	public static void clearAll() {
-		for (C<?> l : ms.values()) {
-			l.get().clear();
-		}
-	}
-
+    public static void clearAll() {
+        cache.get().clear();
+    }
 }

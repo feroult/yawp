@@ -4,7 +4,6 @@ A lightweight REST API framework focused on productivity and scalability.
 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/)
-[![Join the chat at https://gitter.im/feroult/yawp](https://badges.gitter.im/feroult/yawp.svg)](https://gitter.im/feroult/yawp?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Guides
 
@@ -67,10 +66,6 @@ For postgres, you need to create a database and user accessible for your Unix us
 Phantomjs can be installed from [pacman](https://www.archlinux.org/packages/community/x86_64/phantomjs/) on Arch.
 
 Then follow the [travis-ci build script](../master/.travis.yml) to get your build working.
-
-## IRC
-
-Feel free to contact the developers at the IRC channel __#yawp__ at __chat.freenode.net__
 
 ## License
 

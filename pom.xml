@@ -177,17 +177,5 @@
             <email>luan.nico@live.com</email>
             <url>https://github.com/luanpotter</url>
         </developer>
-        <developer>
-            <id>karreiro</id>
-            <name>Guilherme Carreiro</name>
-            <email>karreiro@gmail.com</email>
-            <url>https://github.com/karreiro</url>
-        </developer>
-        <developer>
-            <id>paulovmr</id>
-            <name>Paulo Victor Martins</name>
-            <email>paulovmr@gmail.com</email>
-            <url>https://github.com/paulovmr</url>
-        </developer>
     </developers>
 </project>

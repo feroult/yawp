@@ -1,16 +1,16 @@
 package io.yawp.commons.utils;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
+import java.util.Base64;
 import java.util.UUID;
 
 public class NameGenerator {
-    private static Base64 BASE64 = new Base64(true);
 
-    private NameGenerator() {}
+    private NameGenerator() {
+    }
 
     public static String generateFromUUID() {
         UUID uuid = UUID.randomUUID();
@@ -25,19 +25,19 @@ public class NameGenerator {
     public static UUID convertToUUID(String name) {
         UUID returnValue = null;
         if (StringUtils.isNotBlank(name)) {
-            byte[] decodedArray = BASE64.decode(name);
+            byte[] decodedArray = Base64.getDecoder().decode(name);
             returnValue = fromByteArray(decodedArray);
         }
         return returnValue;
     }
 
     public static String convertToString(String name) {
-        byte[] decodedArray = BASE64.decode(name);
+        byte[] decodedArray = Base64.getDecoder().decode(name);
         return new String(decodedArray);
     }
 
     private static String generate(byte[] byteArray) {
-        byte[] encodedArray = BASE64.encode(byteArray);
+        byte[] encodedArray = Base64.getEncoder().encode(byteArray);
         String returnValue = new String(encodedArray);
         returnValue = StringUtils.removeEnd(returnValue, "\r\n");
         return returnValue.replaceAll("=", "").replaceAll("/", "-").replaceAll("\\+", "\\_");

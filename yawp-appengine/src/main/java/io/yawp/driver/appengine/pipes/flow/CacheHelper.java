@@ -1,9 +1,10 @@
 package io.yawp.driver.appengine.pipes.flow;
 
 import io.yawp.repository.IdRef;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Base64;
 
 public class CacheHelper {
 
@@ -39,8 +40,8 @@ public class CacheHelper {
     }
 
     private static String hash(String string) {
-        byte[] shaArray = DigestUtils.sha1(string);
-        byte[] encodedArray = new Base64().encode(shaArray);
+        byte[] shaArray = DigestUtils.sha(string);
+        byte[] encodedArray = Base64.getEncoder().encode(shaArray);
         String returnValue = new String(encodedArray);
         returnValue = StringUtils.removeEnd(returnValue, "\r\n");
         return returnValue.replaceAll("=", "").replaceAll("/", "-").replaceAll("\\+", "\\_");

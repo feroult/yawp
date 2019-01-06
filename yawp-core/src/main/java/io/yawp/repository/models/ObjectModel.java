@@ -5,6 +5,7 @@ import io.yawp.commons.utils.kind.KindResolver;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.annotations.Id;
 import io.yawp.repository.annotations.ParentId;
+import sun.reflect.ReflectionFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -114,8 +115,16 @@ public class ObjectModel {
         return getIdField().getAnnotation(Id.class).shuffle();
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T createInstance() {
+        try {
+            return createInstanceWithDefaultConstructor();
+        } catch (NoSuchMethodException e) {
+            return createInstanceWithoutDefaultConstructor((Class<T>) clazz);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T createInstanceWithDefaultConstructor() throws NoSuchMethodException {
         try {
             Constructor<T> defaultConstructor = (Constructor<T>) clazz.getDeclaredConstructor(new Class<?>[]{});
             defaultConstructor.setAccessible(true);
@@ -124,13 +133,28 @@ public class ObjectModel {
         } catch (InvocationTargetException e) {
             throw new RuntimeException("An exception was thrown when calling the default constructor of the class " + clazz.getSimpleName()
                     + ": ", e);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("The class " + clazz.getSimpleName()
-                    + " must have a default constructor and cannot be an non-static inner class.", e);
         } catch (InstantiationException e) {
             throw new RuntimeException("The class " + clazz.getSimpleName() + " must cannot be abstract.", e);
         } catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
             throw new RuntimeException("Unexpected error: ", e);
+        }
+    }
+
+    private <T> T createInstanceWithoutDefaultConstructor(Class<T> clazz) {
+        return createInstanceWithoutDefaultConstructor(clazz, Object.class);
+    }
+
+    private <T> T createInstanceWithoutDefaultConstructor(Class<T> clazz,
+                                                          Class<? super T> parent) {
+        try {
+            ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
+            Constructor objDef = parent.getDeclaredConstructor();
+            Constructor intConstr = rf.newConstructorForSerialization(clazz, objDef);
+            return clazz.cast(intConstr.newInstance());
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot createInstanceWithoutDefaultConstructor object", e);
         }
     }
 }

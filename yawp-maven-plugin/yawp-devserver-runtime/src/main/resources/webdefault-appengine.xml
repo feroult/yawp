@@ -322,10 +322,10 @@
         <servlet-class>com.google.apphosting.utils.servlet.TaskQueueViewerServlet</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>_ah_xmpp</servlet-name>
-        <servlet-class>com.google.apphosting.utils.servlet.XmppServlet</servlet-class>
-    </servlet>
+    <!--<servlet>-->
+        <!--<servlet-name>_ah_xmpp</servlet-name>-->
+        <!--<servlet-class>com.google.apphosting.utils.servlet.XmppServlet</servlet-class>-->
+    <!--</servlet>-->
 
     <servlet>
         <servlet-name>_ah_inboundMail</servlet-name>
@@ -482,20 +482,20 @@
         <servlet-class>org.apache.jsp.ah.taskqueueViewerFinal_jsp</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>_ah_xmppHead</servlet-name>
-        <servlet-class>org.apache.jsp.ah.xmppHead_jsp</servlet-class>
-    </servlet>
+    <!--<servlet>-->
+        <!--<servlet-name>_ah_xmppHead</servlet-name>-->
+        <!--<servlet-class>org.apache.jsp.ah.xmppHead_jsp</servlet-class>-->
+    <!--</servlet>-->
 
-    <servlet>
-        <servlet-name>_ah_xmppBody</servlet-name>
-        <servlet-class>org.apache.jsp.ah.xmppBody_jsp</servlet-class>
-    </servlet>
+    <!--<servlet>-->
+        <!--<servlet-name>_ah_xmppBody</servlet-name>-->
+        <!--<servlet-class>org.apache.jsp.ah.xmppBody_jsp</servlet-class>-->
+    <!--</servlet>-->
 
-    <servlet>
-        <servlet-name>_ah_xmppFinal</servlet-name>
-        <servlet-class>org.apache.jsp.ah.xmppFinal_jsp</servlet-class>
-    </servlet>
+    <!--<servlet>-->
+        <!--<servlet-name>_ah_xmppFinal</servlet-name>-->
+        <!--<servlet-class>org.apache.jsp.ah.xmppFinal_jsp</servlet-class>-->
+    <!--</servlet>-->
 
     <servlet>
         <servlet-name>_ah_inboundMailHead</servlet-name>
@@ -598,10 +598,10 @@
         <url-pattern>/_ah/admin/taskqueue</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>_ah_xmpp</servlet-name>
-        <url-pattern>/_ah/admin/xmpp</url-pattern>
-    </servlet-mapping>
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>_ah_xmpp</servlet-name>-->
+        <!--<url-pattern>/_ah/admin/xmpp</url-pattern>-->
+    <!--</servlet-mapping>-->
 
     <servlet-mapping>
         <servlet-name>_ah_inboundMail</servlet-name>
@@ -748,20 +748,20 @@
         <url-pattern>/_ah/taskqueueViewerFinal</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>_ah_xmppHead</servlet-name>
-        <url-pattern>/_ah/xmppHead</url-pattern>
-    </servlet-mapping>
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>_ah_xmppHead</servlet-name>-->
+        <!--<url-pattern>/_ah/xmppHead</url-pattern>-->
+    <!--</servlet-mapping>-->
 
-    <servlet-mapping>
-        <servlet-name>_ah_xmppBody</servlet-name>
-        <url-pattern>/_ah/xmppBody</url-pattern>
-    </servlet-mapping>
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>_ah_xmppBody</servlet-name>-->
+        <!--<url-pattern>/_ah/xmppBody</url-pattern>-->
+    <!--</servlet-mapping>-->
 
-    <servlet-mapping>
-        <servlet-name>_ah_xmppFinal</servlet-name>
-        <url-pattern>/_ah/xmppFinal</url-pattern>
-    </servlet-mapping>
+    <!--<servlet-mapping>-->
+        <!--<servlet-name>_ah_xmppFinal</servlet-name>-->
+        <!--<url-pattern>/_ah/xmppFinal</url-pattern>-->
+    <!--</servlet-mapping>-->
 
     <servlet-mapping>
         <servlet-name>_ah_inboundMailHead</servlet-name>

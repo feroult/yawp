@@ -4,9 +4,18 @@
         <requiredProperty key="yawpVersion">
             <defaultValue>${project.version}</defaultValue>
         </requiredProperty>
+        <requiredProperty key="gitignore">
+            <defaultValue>.gitignore</defaultValue>
+        </requiredProperty>
     </requiredProperties>
-
     <fileSets>
+        <fileSet filtered="true">
+            <directory></directory>
+            <includes>
+                <include>pom-kotlin.xml</include>
+                <include>__gitignore__</include>
+            </includes>
+        </fileSet>
         <fileSet filtered="true" packaged="true">
             <directory>src/main/java</directory>
             <includes>
@@ -17,6 +26,18 @@
             <directory>src/test/java</directory>
             <includes>
                 <include>**/*.java</include>
+            </includes>
+        </fileSet>
+        <fileSet filtered="true" packaged="true">
+            <directory>src/main/kotlin</directory>
+            <includes>
+                <include>**/*.kt</include>
+            </includes>
+        </fileSet>
+        <fileSet filtered="true" packaged="true">
+            <directory>src/test/kotlin</directory>
+            <includes>
+                <include>**/*.kt</include>
             </includes>
         </fileSet>
         <fileSet filtered="true">

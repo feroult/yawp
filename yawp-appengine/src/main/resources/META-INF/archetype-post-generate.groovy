@@ -1,7 +1,7 @@
 import java.nio.file.Path
 import java.nio.file.Paths
 
-Boolean kotlin = System.properties['kotlin'].toBoolean()
+Boolean kotlin = System.properties['kotlin'] != null && System.properties['kotlin'].equals("true")
 Path projectPath = Paths.get(request.outputDirectory, request.artifactId)
 
 def deleteDir = { String path -> projectPath.resolve(path).toFile().deleteDir() }
@@ -18,6 +18,15 @@ def kotlinSetup = {
     renameFile('pom-kotlin.xml', 'pom.xml')
 }
 
+def javaSetup = {
+    println "Java archetype selected"
+    deleteDir('src/main/kotlin')
+    deleteDir('src/test/kotlin')
+    deleteFile('pom-kotlin.xml')
+}
+
 if (kotlin) {
     kotlinSetup()
+} else {
+    javaSetup()
 }

@@ -1,5 +1,3 @@
-# YAWP!
-
 <img src="http://yawp.io/assets/img/boat.png" width="200">
 
 A full-stack REST API framework. 

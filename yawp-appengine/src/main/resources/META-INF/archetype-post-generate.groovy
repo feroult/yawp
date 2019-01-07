@@ -1,7 +1,7 @@
 import java.nio.file.Path
 import java.nio.file.Paths
 
-Boolean kotlin = System.properties['kotlin'] != null && System.properties['kotlin'].equals("true")
+Boolean kotlin = System.properties['lang'] != null && System.properties['lang'].equals("kotlin")
 Path projectPath = Paths.get(request.outputDirectory, request.artifactId)
 
 def deleteDir = { String path -> projectPath.resolve(path).toFile().deleteDir() }
@@ -23,7 +23,6 @@ def javaSetup = {
     deleteDir('src/main/kotlin')
     deleteDir('src/test/kotlin')
     deleteFile('pom-kotlin.xml')
-    renameFile('pom-java.xml', 'pom.xml')
 }
 
 if (kotlin) {

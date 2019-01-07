@@ -70,7 +70,7 @@ Complete [__YAWP!__ Guides](http://yawp.io/guides).
 
         $ curl http://localhost:8080/api/people
         
-    **From Javascript**
+    **From Javascript:**
     
         $ npm install yawp --save
     

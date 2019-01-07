@@ -7,6 +7,30 @@ Any help is appreciated! Comments, suggestions, issues, PR's! Give us a star to 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/)
 
+## Features
+
+__Server__
+
+* Scaffolding
+* Model centric
+* CRUD Routes
+* Query Routes
+* Custom Routes
+* Cache System
+* Transformers
+* Security Shields
+* Lifecycle Hooks
+* Asynchronous Pipes
+* Java or Kotlin
+* App Engine or Postgres
+
+__Client__
+
+* Fluent API
+* Node or Web
+* ES6 Promises
+* ES6 Class extension
+
 ## Guides
 
 Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).

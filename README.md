@@ -19,7 +19,8 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
             -DarchetypeVersion=LATEST \
             -DgroupId=yawpapp \
             -DartifactId=yawpapp \
-            -Dversion=1.0-SNAPSHOT            
+            -Dversion=1.0-SNAPSHOT \
+            -Dlang=kotlin            
 
 2. Change directory to `yawpapp` and start the yawp development server:
 
@@ -34,12 +35,10 @@ Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
 
     **Output:**
 
-    ``` java
+    ``` kotlin
     @Endpoint(path = "/people")
-    public class Person {
-        @Id
-        IdRef<Person> id;
-    }    
+    class Person(@Id
+                 var id: IdRef<Person>)
     ```
     **Try it:**
 

@@ -86,7 +86,7 @@ will need an environment with:
 * PostgreSQL 9.4+
 * phantomjs 2+
 
-For postgres, you need to create a database and user accessible for your Unix user (you need to be able to run psql with no args). A simple tutorial for Arch can be found [here](http://www.netarky.com/programming/arch_linux/Arch_Linux_PostgreSQL_database_setup.html).
+For postgres, you need to create a database and an user with access from your Unix user (you need to be able to run psql with no args). A simple tutorial for Arch can be found [here](http://www.netarky.com/programming/arch_linux/Arch_Linux_PostgreSQL_database_setup.html).
 
 Phantomjs can be installed from [pacman](https://www.archlinux.org/packages/community/x86_64/phantomjs/) on Arch.
 

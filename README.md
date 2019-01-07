@@ -69,6 +69,13 @@ Complete [__YAWP!__ Guides](http://yawp.io/guides).
     **Try it:**
 
         $ curl http://localhost:8080/api/people
+        
+    ** From Javascript **
+    ``` javascript
+    class Person extends yawp('/people') {}
+    const person = new Person({name: 'Janes'});
+    person.save()  
+    ```
 
 5. Follow the guidelines to start developing your API:
     * [Your First API](http://yawp.io/guides/getting-started/your-first-api)

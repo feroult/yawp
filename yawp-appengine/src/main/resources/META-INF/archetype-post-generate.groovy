@@ -14,7 +14,7 @@ def kotlinSetup = {
     println "Kotlin archetype selected"
     deleteDir('src/main/java')
     deleteDir('src/test/java')
-    deleteFile('pom.xml')
+    deleteFile('pom-java.xml')
     renameFile('pom-kotlin.xml', 'pom.xml')
 }
 
@@ -23,6 +23,7 @@ def javaSetup = {
     deleteDir('src/main/kotlin')
     deleteDir('src/test/kotlin')
     deleteFile('pom-kotlin.xml')
+    renameFile('pom-java.xml', 'pom.xml')
 }
 
 if (kotlin) {

@@ -10,6 +10,7 @@
 
     <properties>
         <yawp.version>${yawpVersion}</yawp.version>
+        <yawp.lang>java</yawp.lang>
         <appengine.app.version>1</appengine.app.version>
         <appengine.target.version>1.9.71</appengine.target.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -37,7 +37,7 @@ Complete [__YAWP!__ Guides](http://yawp.io/guides).
 
 ## Getting Started
 
-1. At the command prompt, create a new __YAWP! API__ Kotlin application:
+1. At the command prompt, create a new __YAWP!__ Kotlin application:
 
         $ mvn archetype:generate \
             -DarchetypeGroupId=io.yawp \

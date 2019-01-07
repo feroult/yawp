@@ -1,6 +1,6 @@
 <img src="http://yawp.io/assets/img/boat.png" width="200">
 
-A full-stack REST API framework 
+_A full-stack REST API framework_ 
 
 Any help is appreciated! Comments, suggestions, issues, PR's! Give us a star to help!
 

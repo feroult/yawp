@@ -1,6 +1,5 @@
 package io.yawp.repository.actions;
 
-import io.yawp.commons.utils.JsonUtils;
 import io.yawp.repository.features.Feature;
 
 /**
@@ -19,13 +18,5 @@ import io.yawp.repository.features.Feature;
  * @param <T> The endpoint model type.
  */
 public class Action<T> extends Feature {
-
-    /**
-     * @deprecated use {@link Feature#to(Object)}.
-     */
-    @Deprecated
-    public String json(Object object) {
-        return JsonUtils.to(object);
-    }
 
 }

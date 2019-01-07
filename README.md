@@ -33,7 +33,7 @@ __Client__
 
 ## Guides
 
-Here you can find the complete [__YAWP!__ Guides](http://yawp.io/guides).
+Complete [__YAWP!__ Guides](http://yawp.io/guides).
 
 ## Getting Started
 

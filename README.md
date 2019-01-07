@@ -1,6 +1,8 @@
 # YAWP!
 
-A lightweight REST API framework focused on productivity and scalability. 
+A full-stack REST API framework. 
+
+Any help is appreciated! Comment, suggestions, issues, PR's! Give us a star to help!
 
 [![Build Status](https://travis-ci.org/feroult/yawp.svg)](https://travis-ci.org/feroult/yawp)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.yawp/yawp/)

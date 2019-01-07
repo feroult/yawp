@@ -72,7 +72,12 @@ Complete [__YAWP!__ Guides](http://yawp.io/guides).
         
     **From Javascript**
     ``` javascript
-    class Person extends yawp('/people') {}
+    class Person extends yawp('/people') {
+        save() {
+            console.log('saving...');
+            return super.save();
+        }
+    }
     const person = new Person({name: 'Janes'});
     person.save()  
     ```

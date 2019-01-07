@@ -1,6 +1,7 @@
 package io.yawp.plugin.mojos.scaffolding;
 
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.atteo.evo.inflector.English;
 
 import java.io.IOException;
@@ -10,6 +11,8 @@ import java.util.Properties;
 public class EndpointNaming {
 
     private Properties customPlurals;
+
+    private String lang;
 
     private String input;
 
@@ -23,9 +26,14 @@ public class EndpointNaming {
 
     private String pipeSink;
 
-    public EndpointNaming(String input) {
-        loadCustomPlurals();
+    public EndpointNaming(String lang, String input) {
+        this.lang = lang;
         this.input = input;
+        loadCustomPlurals();
+    }
+
+    public EndpointNaming(String input) {
+        this("java", input);
     }
 
     private void loadCustomPlurals() {
@@ -49,6 +57,13 @@ public class EndpointNaming {
 
     private String capitalize(String word) {
         return WordUtils.capitalize(word, new char[]{'_'}).replaceAll("_", "");
+    }
+
+    private String getExtension() {
+        if (lang.equalsIgnoreCase("kotlin")) {
+            return "kt";
+        }
+        return lang;
     }
 
     public EndpointNaming action(String action) {
@@ -90,7 +105,7 @@ public class EndpointNaming {
     }
 
     public String getFilename() {
-        return String.format("%s/%s.java", getPackageName(), getName());
+        return String.format("%s/%s.%s", getPackageName(), getName(), getExtension());
     }
 
     public String getTestName() {
@@ -98,7 +113,7 @@ public class EndpointNaming {
     }
 
     public String getTestFilename() {
-        return String.format("%s/%s.java", getPackageName(), getTestName());
+        return String.format("%s/%s.%s", getPackageName(), getTestName(), getExtension());
     }
 
     public String getInstance() {
@@ -110,7 +125,7 @@ public class EndpointNaming {
     }
 
     public String getShieldFilename() {
-        return String.format("%s/%s.java", getPackageName(), getShieldName());
+        return String.format("%s/%s.%s", getPackageName(), getShieldName(), getExtension());
     }
 
     public String getActionName() {
@@ -118,7 +133,7 @@ public class EndpointNaming {
     }
 
     public String getActionFilename() {
-        return String.format("%s/%s.java", getPackageName(), getActionName());
+        return String.format("%s/%s.%s", getPackageName(), getActionName(), getExtension());
     }
 
     public String getTransformerName() {
@@ -126,7 +141,7 @@ public class EndpointNaming {
     }
 
     public String getTransformerFilename() {
-        return String.format("%s/%s.java", getPackageName(), getTransformerName());
+        return String.format("%s/%s.%s", getPackageName(), getTransformerName(), getExtension());
     }
 
     public String getHookName() {
@@ -134,7 +149,7 @@ public class EndpointNaming {
     }
 
     public String getHookFilename() {
-        return String.format("%s/%s.java", getPackageName(), getHookName());
+        return String.format("%s/%s.%s", getPackageName(), getHookName(), getExtension());
     }
 
     public String getPipeName() {
@@ -150,7 +165,15 @@ public class EndpointNaming {
     }
 
     public String getPipeFilename() {
-        return String.format("%s/%s.java", getPackageName(), getPipeName());
+        return String.format("%s/%s.%s", getPackageName(), getPipeName(), getExtension());
     }
 
+    public String parsePath(String sourceMain) {
+        return sourceMain.replaceAll("\\$\\{lang\\}", lang).replaceAll("\\$\\{ext\\}", getExtension());
+    }
+
+    public String whitespaces(String value) {
+        int length = Integer.valueOf(value);
+        return StringUtils.repeat(' ', length);
+    }
 }

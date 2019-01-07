@@ -8,12 +8,12 @@ public class TransformerScaffolder extends Scaffolder {
 
     public TransformerScaffolder(Log log, String yawpPackage, String model, String name) {
         super(log, yawpPackage, model);
-        endpointNaming.transformer(name);
+        naming.transformer(name);
     }
 
     @Override
     public void execute(String baseDir) {
-        sourceMainJava(baseDir, endpointNaming.getTransformerFilename(), TRANSFORMER_TEMPLATE);
+        sourceMain(baseDir, naming.getTransformerFilename(), TRANSFORMER_TEMPLATE);
     }
 
 }

@@ -1,0 +1,11 @@
+package ${yawpPackage}.models.${endpoint.packageName}
+
+import io.yawp.repository.IdRef
+import io.yawp.repository.annotations.Endpoint
+import io.yawp.repository.annotations.Id
+
+#set ($indent = ${endpoint.name.length()} + 7)
+@Endpoint(path = "/$endpoint.path")
+class ${endpoint.name}(@Id
+${endpoint.whitespaces($indent)}var id: IdRef<${endpoint.name}>)
+

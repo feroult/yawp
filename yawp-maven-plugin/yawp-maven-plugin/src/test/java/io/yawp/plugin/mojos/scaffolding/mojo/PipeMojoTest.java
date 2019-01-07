@@ -3,12 +3,12 @@ package io.yawp.plugin.mojos.scaffolding.mojo;
 public class PipeMojoTest extends ScaffolderMojoTestCase {
 
     public void testCreatePipe() throws Exception {
-        lookupGoal("pipe");
+        lookupGoalJava("pipe");
         setParameter("name", "counter");
         setParameter("sink", "counter");
         executeGoal();
 
-        assertSourceMain("/person/PersonCounterPipe.java", "public class PersonCounterPipe extends Pipe<Person, Counter>");
+        assertSourceMain("/person/PersonCounterPipe.java", "public class PersonCounterPipe extends Pipe<Person, Counter>", "java");
     }
 
 }

@@ -15,22 +15,32 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 public abstract class Scaffolder {
 
-    private static final String SOURCE_MAIN_JAVA = "src/main/java";
+    private static final String SOURCE_MAIN = "src/main/${lang}";
 
-    private static final String SOURCE_TEST_JAVA = "src/test/java";
+    private static final String SOURCE_TEST = "src/test/${lang}";
 
     private static final String MODELS_FOLDER = "models";
 
     private Log log;
 
-    protected EndpointNaming endpointNaming;
+    private String lang;
+
+    protected EndpointNaming naming;
 
     protected String yawpPackage;
 
+    public Scaffolder(Log log, String lang, String yawpPackage, String model) {
+        this.log = log;
+        this.lang = lang;
+        this.yawpPackage = yawpPackage;
+        this.naming = new EndpointNaming(lang, model);
+    }
+
+    // TODO: remove this
     public Scaffolder(Log log, String yawpPackage, String model) {
         this.log = log;
         this.yawpPackage = yawpPackage;
-        this.endpointNaming = new EndpointNaming(model);
+        this.naming = new EndpointNaming(model);
     }
 
     public void createTo(String baseDir) {
@@ -43,7 +53,7 @@ public abstract class Scaffolder {
     private String parse(String scaffoldingTemplate) {
         VelocityContext context = new VelocityContext();
         context.put("yawpPackage", yawpPackage);
-        context.put("endpoint", endpointNaming);
+        context.put("endpoint", naming);
         return parseTemplate(scaffoldingTemplate, context);
     }
 
@@ -99,21 +109,21 @@ public abstract class Scaffolder {
         }
     }
 
-    private String sourceMainJava() {
-        return String.format("%s/%s/%s", SOURCE_MAIN_JAVA, yawpPackageDir(), MODELS_FOLDER);
+    private String sourceMain() {
+        return String.format("%s/%s/%s", naming.parsePath(SOURCE_MAIN), yawpPackageDir(), MODELS_FOLDER);
     }
 
-    private String sourceTestJava() {
-        return String.format("%s/%s/%s", SOURCE_TEST_JAVA, yawpPackageDir(), MODELS_FOLDER);
+    private String sourceTest() {
+        return String.format("%s/%s/%s", naming.parsePath(SOURCE_TEST), yawpPackageDir(), MODELS_FOLDER);
     }
 
-    protected void sourceMainJava(String baseDir, String filename, String modelTemplate) {
-        String relativeFilename = String.format("%s/%s", sourceMainJava(), filename);
+    protected void sourceMain(String baseDir, String filename, String modelTemplate) {
+        String relativeFilename = String.format("%s/%s", sourceMain(), filename);
         createFile(baseDir, relativeFilename, parse(modelTemplate));
     }
 
-    protected void sourceTestJava(String baseDir, String filename, String modelTemplate) {
-        String relativeFilename = String.format("%s/%s", sourceTestJava(), filename);
+    protected void sourceTest(String baseDir, String filename, String modelTemplate) {
+        String relativeFilename = String.format("%s/%s", sourceTest(), filename);
         createFile(baseDir, relativeFilename, parse(modelTemplate));
     }
 

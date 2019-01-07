@@ -26,38 +26,51 @@ public abstract class ScaffolderMojoTestCase extends AbstractMojoTestCase {
         super.tearDown();
     }
 
-    protected void lookupGoal(String goal) throws Exception {
-        File pom = getTestFile("src/test/resources/pom.xml");
+    protected void lookupGoal(String goal, String lang) throws Exception {
+        File pom = getTestFile(parsePath("src/test/resources/pom-${lang}.xml", lang));
         mojo = lookupMojo(goal, pom);
     }
 
-    protected void executeGoal(String goal) throws Exception, MojoExecutionException {
-        lookupGoal(goal);
+    protected void executeGoalJava(String goal) throws Exception, MojoExecutionException {
+        lookupGoalJava(goal);
         executeGoal();
+    }
+
+    protected void executeGoalKotlin(String goal) throws Exception, MojoExecutionException {
+        lookupGoalKotlin(goal);
+        executeGoal();
+    }
+
+    protected void lookupGoalJava(String goal) throws Exception {
+        lookupGoal(goal, "java");
+    }
+
+    private void lookupGoalKotlin(String goal) throws Exception {
+        lookupGoal(goal, "kotlin");
     }
 
     protected void executeGoal() throws MojoExecutionException, MojoFailureException {
         mojo.execute();
     }
 
-    protected void assertSourceTest(String filename, String content) {
-        File file = getSourceTest(filename);
+    protected void assertSourceTest(String filename, String content, String lang) {
+        File file = getSourceTest(filename, lang);
         assertTrue(file.exists());
         assertFileContains(file, content);
     }
 
-    protected void assertSourceMain(String filename, String content) {
-        File file = getSourceMain(filename);
+    protected void assertSourceMain(String filename, String content, String lang) {
+        File file = getSourceMain(filename, lang);
         assertTrue(file.exists());
         assertFileContains(file, content);
     }
 
-    private File getSourceMain(String filename) {
-        return new File("./target/scaffolding-test/src/main/java/yawpapp/models" + filename);
+    private File getSourceMain(String filename, String lang) {
+        return new File(parsePath("./target/scaffolding-test/src/main/${lang}/yawpapp/models" + filename, lang));
     }
 
-    private File getSourceTest(String filename) {
-        return new File("./target/scaffolding-test/src/test/java/yawpapp/models" + filename);
+    private File getSourceTest(String filename, String lang) {
+        return new File(parsePath("./target/scaffolding-test/src/test/${lang}/yawpapp/models" + filename, lang));
     }
 
     private void assertFileContains(File file, String content) {
@@ -89,4 +102,9 @@ public abstract class ScaffolderMojoTestCase extends AbstractMojoTestCase {
         }
         throw new RuntimeException("Can find parameter: " + fieldName);
     }
+
+    private String parsePath(String path, String lang) {
+        return path.replaceAll("\\$\\{lang\\}", lang);
+    }
+
 }

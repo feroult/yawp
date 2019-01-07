@@ -14,7 +14,7 @@ public class ShieldMojo extends ScaffolderAbstractMojo {
 
     @Override
     public void run() throws MojoExecutionException {
-        ShieldScaffolder scaffolder = new ShieldScaffolder(getLog(), getYawpPackage(), model);
+        ShieldScaffolder scaffolder = new ShieldScaffolder(getLog(), lang, getYawpPackage(), model);
         scaffolder.createTo(baseDir);
     }
 

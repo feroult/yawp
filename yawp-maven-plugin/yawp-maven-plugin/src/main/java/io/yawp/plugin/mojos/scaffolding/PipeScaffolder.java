@@ -8,13 +8,13 @@ public class PipeScaffolder extends Scaffolder {
 
     public PipeScaffolder(Log log, String yawpPackage, String model, String name, String sink) {
         super(log, yawpPackage, model);
-        endpointNaming.pipe(name);
-        endpointNaming.pipeSink(sink);
+        naming.pipe(name);
+        naming.pipeSink(sink);
     }
 
     @Override
     public void execute(String baseDir) {
-        sourceMainJava(baseDir, endpointNaming.getPipeFilename(), PIPE_TEMPLATE);
+        sourceMain(baseDir, naming.getPipeFilename(), PIPE_TEMPLATE);
     }
 
 }

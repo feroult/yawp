@@ -4,15 +4,15 @@ import org.apache.maven.plugin.logging.Log;
 
 public class ShieldScaffolder extends Scaffolder {
 
-    private static final String SHIELD_TEMPLATE = "scaffolding/Shield.java.vm";
+    private static final String SHIELD_TEMPLATE = "scaffolding/${lang}/Shield.${ext}.vm";
 
-    public ShieldScaffolder(Log log, String yawpPackage, String model) {
-        super(log, yawpPackage, model);
+    public ShieldScaffolder(Log log, String lang, String yawpPackage, String model) {
+        super(log, lang, yawpPackage, model);
     }
 
     @Override
     public void execute(String baseDir) {
-        sourceMainJava(baseDir, endpointNaming.getShieldFilename(), SHIELD_TEMPLATE);
+        sourceMain(baseDir, naming.getShieldFilename(), naming.parsePath(SHIELD_TEMPLATE));
     }
 
 }

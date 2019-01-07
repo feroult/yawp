@@ -8,12 +8,12 @@ public class ActionScaffolder extends Scaffolder {
 
     public ActionScaffolder(Log log, String yawpPackage, String model, String name) {
         super(log, yawpPackage, model);
-        endpointNaming.action(name);
+        naming.action(name);
     }
 
     @Override
     public void execute(String baseDir) {
-        sourceMainJava(baseDir, endpointNaming.getActionFilename(), ACTION_TEMPLATE);
+        sourceMain(baseDir, naming.getActionFilename(), ACTION_TEMPLATE);
     }
 
 }

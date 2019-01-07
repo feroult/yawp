@@ -1,0 +1,12 @@
+package ${yawpPackage}.models.${endpoint.packageName}
+
+import io.yawp.repository.shields.Shield
+
+class $endpoint.shieldName : Shield<$endpoint.name>() {
+
+    override fun defaults() {
+        // TODO Auto-generated method stub
+        allow()
+    }
+
+}

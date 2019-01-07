@@ -8,12 +8,12 @@ public class HookScaffolder extends Scaffolder {
 
     public HookScaffolder(Log log, String yawpPackage, String model, String name) {
         super(log, yawpPackage, model);
-        endpointNaming.hook(name);
+        naming.hook(name);
     }
 
     @Override
     public void execute(String baseDir) {
-        sourceMainJava(baseDir, endpointNaming.getHookFilename(), HOOK_TEMPLATE);
+        sourceMain(baseDir, naming.getHookFilename(), HOOK_TEMPLATE);
     }
 
 }

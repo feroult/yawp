@@ -17,6 +17,7 @@
                 <configuration>
                     <env>test</env>
                     <baseDir>./target/scaffolding-test</baseDir>
+                    <lang>java</lang>
                     <model>person</model>
                 </configuration>
             </plugin>

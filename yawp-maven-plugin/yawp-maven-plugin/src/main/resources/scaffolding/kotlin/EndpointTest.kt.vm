@@ -1,0 +1,19 @@
+package ${yawpPackage}.models.${endpoint.packageName}
+
+import org.junit.Assert.assertNotNull
+import org.junit.Test
+
+import ${yawpPackage}.utils.EndpointTestCase
+
+class $endpoint.testName : EndpointTestCase() {
+
+    @Test
+    fun testCreate() {
+        // TODO Auto-generated method stub
+        val json = post("/$endpoint.path", "{}")
+        val $endpoint.instance = from(json, ${endpoint.name}::class.java)
+
+        assertNotNull($endpoint.instance)
+    }
+
+}

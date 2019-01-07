@@ -6,27 +6,21 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 public abstract class ScaffolderAbstractMojo extends PluginAbstractMojo {
 
-    /**
-     * @deprecated it will be removed in 2.0
-     */
-    @Deprecated
-    @Parameter(property = "yawp.package")
-    private String yawpPackage;
+    @Parameter(property = "lang", defaultValue = "java")
+    protected String lang;
 
     @Parameter(property = "model", required = true)
     protected String model;
 
+
     protected String getYawpPackage() {
-        if (yawpPackage == null) {
-            loadYawpPackageFromConfig();
-        }
-        return yawpPackage;
+        return loadYawpPackageFromConfig();
     }
 
-    private void loadYawpPackageFromConfig() {
+    private String loadYawpPackageFromConfig() {
         configureRuntimeClassLoader();
         ConfigFile configFile = ConfigFile.load();
-        this.yawpPackage = configFile.getConfig().getPackages();
+        return configFile.getConfig().getPackages();
     }
 
 }

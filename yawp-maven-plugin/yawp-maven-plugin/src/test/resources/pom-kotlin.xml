@@ -1,0 +1,26 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>yawpapp</groupId>
+    <artifactId>yawpapp</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.yawp</groupId>
+                <artifactId>yawp-maven-plugin</artifactId>
+                <version>${pom.version}</version>
+                <configuration>
+                    <env>test</env>
+                    <baseDir>./target/scaffolding-test</baseDir>
+                    <lang>kotlin</lang>
+                    <model>person</model>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

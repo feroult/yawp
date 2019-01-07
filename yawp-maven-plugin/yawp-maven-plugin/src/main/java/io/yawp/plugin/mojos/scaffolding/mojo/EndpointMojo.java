@@ -13,8 +13,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 public class EndpointMojo extends ScaffolderAbstractMojo {
 
     @Override
-    public void run() throws MojoExecutionException {
-        EndpointScaffolder scaffolder = new EndpointScaffolder(getLog(), getYawpPackage(), model);
+    public void run() {
+        EndpointScaffolder scaffolder = new EndpointScaffolder(getLog(), lang, getYawpPackage(), model);
         scaffolder.createTo(baseDir);
     }
 

@@ -28,8 +28,8 @@ __Client__
 
 * Fluent API
 * Node or Web
-* ES6 Promises
-* ES6 Class extension
+* Promises
+* Class extension
 
 ## Guides
 

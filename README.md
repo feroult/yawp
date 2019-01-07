@@ -71,6 +71,9 @@ Complete [__YAWP!__ Guides](http://yawp.io/guides).
         $ curl http://localhost:8080/api/people
         
     **From Javascript**
+    
+        $ npm install yawp --save
+    
     ``` javascript
     class Person extends yawp('/people') {
         save() {

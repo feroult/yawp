@@ -1,6 +1,6 @@
 <img src="http://yawp.io/assets/img/boat.png" width="200">
 
-_A full-stack REST API framework_ 
+_A Kotlin/Java API framework for Google Appengine and others_ 
 
 Any help is appreciated! Comments, suggestions, issues, PR's! Give us a star to help!
 

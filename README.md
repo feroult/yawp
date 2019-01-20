@@ -1,6 +1,6 @@
 <img src="http://yawp.io/assets/img/boat.png" width="200">
 
-_A Kotlin/Java API framework for Google Appengine and others_ 
+_A Kotlin/Java API framework for Google Appengine_ 
 
 Any help is appreciated! Comments, suggestions, issues, PR's! Give us a star to help!
 

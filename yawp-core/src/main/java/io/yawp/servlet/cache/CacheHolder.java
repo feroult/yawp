@@ -25,14 +25,12 @@ public class CacheHolder {
     }
 
     public <T> void clear(IdRef<T> id) {
-        String threadName = Thread.currentThread().getName();
         cache.remove(id);
         noResults.remove(id);
     }
 
 
     public Object get(IdRef<?> id) {
-        String threadName = Thread.currentThread().getName();
         if (cache.containsKey(id)) {
             return cache.get(id);
         }

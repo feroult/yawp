@@ -347,6 +347,11 @@ public class ShieldTest extends ServletTestCase {
         assertEquals((Integer) 200, objects.get(1).getIntValue());
     }
 
+    @Test
+    public void testShieldThrowsHttpException() {
+        assertPostWithStatus("/shielded_objects/shield-throws-http-exception", "{}", 202);
+    }
+
 
     private void assertRestActionsStatus(int status) {
         assertGetWithStatus("/shielded_objects", status);

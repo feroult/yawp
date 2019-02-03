@@ -250,9 +250,15 @@ public abstract class ShieldBase<T> extends Feature {
     private void invokeCustomActionShield(Method method) {
         try {
             method.invoke(this, createArguments(method));
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (IllegalAccessException | IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            if (e.getCause() instanceof HttpException) {
+                throw (HttpException) e.getCause();
+            }
             throw new RuntimeException(e);
         }
+
     }
 
     private Object[] createArguments(Method method) {

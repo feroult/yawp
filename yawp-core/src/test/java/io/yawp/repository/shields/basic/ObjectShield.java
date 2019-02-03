@@ -1,5 +1,6 @@
 package io.yawp.repository.shields.basic;
 
+import io.yawp.commons.http.HttpException;
 import io.yawp.commons.http.annotation.GET;
 import io.yawp.commons.http.annotation.POST;
 import io.yawp.commons.http.annotation.PUT;
@@ -90,6 +91,11 @@ public class ObjectShield extends Shield<ShieldedObject> {
     @GET("collection")
     public void collection() {
         allow();
+    }
+
+    @POST("shield-throws-http-exception")
+    public void shieldThrowsHttpException() {
+        throw new HttpException(202);
     }
 
     @POST

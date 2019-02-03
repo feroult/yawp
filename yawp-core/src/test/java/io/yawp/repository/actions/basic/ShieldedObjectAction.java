@@ -1,6 +1,7 @@
 package io.yawp.repository.actions.basic;
 
 import io.yawp.commons.http.annotation.GET;
+import io.yawp.commons.http.annotation.POST;
 import io.yawp.commons.http.annotation.PUT;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.actions.Action;
@@ -19,6 +20,10 @@ public class ShieldedObjectAction extends Action<ShieldedObject> {
 
     @GET("collection")
     public void collection() {
+    }
+
+    @POST("shield-throws-http-exception")
+    public void shieldThrowsHttpException() {
     }
 
 }

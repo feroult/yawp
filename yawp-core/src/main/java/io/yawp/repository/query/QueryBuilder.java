@@ -442,6 +442,7 @@ public class QueryBuilder<T> {
     public Map<String, Object> toMap() {
         Map<String, Object> result = new HashMap<>();
         result.put("clazz", clazz.getCanonicalName());
+        result.put("executedQueryType", executedQueryType);
         result.put("parentId", parentId == null ? null : parentId.toString());
         result.put("condition", condition == null ? null : condition.toMap());
         result.put("preOrders", preOrders);

@@ -204,7 +204,7 @@ export default (request) => {
             }
 
             static patch(object) {
-                options.url = object.id;
+                options.url = object.id || options.url;
                 options.body = JSON.stringify(object);
                 return this.wrappedRequest('PATCH');
             }

@@ -135,7 +135,7 @@ describe('YAWP! JS', () => {
             expect(data2.name).to.be.equal('xpto');
         });
 
-        it('path parent', async () => {
+        it('it patches parent', async () => {
             const parent = await yawp('/parents').create({ name: 'xpto' });
             expect(parent.name).to.be.equal('xpto');
             const newParent = await yawp(parent.id).patch({ name: 'bla' });

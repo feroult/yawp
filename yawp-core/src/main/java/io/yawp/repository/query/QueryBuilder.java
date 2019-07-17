@@ -301,12 +301,11 @@ public class QueryBuilder<T> {
         List<T> list = hasForcedResponse(executedQueryType) ? getForcedResultList() : doExecuteQuery();
         executedResponse = list;
         RepositoryHooks.afterQuery(this);
-        return list;
+        return postFilter(list);
     }
 
     private List<T> doExecuteQuery() {
-        List<T> objects = r.driver().query().objects(this);
-        return postFilter(objects);
+        return r.driver().query().objects(this);
     }
 
     private List<T> postFilter(List<T> objects) {
@@ -352,20 +351,17 @@ public class QueryBuilder<T> {
             return;
         }
 
-        Collections.sort(objects, new Comparator<Object>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                for (QueryOrder order : postOrders) {
-                    int compare = order.compare(o1, o2);
+        objects.sort((o1, o2) -> {
+            for (QueryOrder order : postOrders) {
+                int compare = order.compare(o1, o2);
 
-                    if (compare == 0) {
-                        continue;
-                    }
-
-                    return compare;
+                if (compare == 0) {
+                    continue;
                 }
-                return 0;
+
+                return compare;
             }
+            return 0;
         });
     }
 
@@ -403,7 +399,10 @@ public class QueryBuilder<T> {
         if (hasPostFilter() || hasPostOrder()) {
             throw new RuntimeException("ids() cannot be used with post query filter or order. You may need to add @Index to your model attributes.");
         }
+        return idsIgnoringPost();
+    }
 
+    public List<IdRef<T>> idsIgnoringPost() {
         r.namespace().set(getClazz());
         try {
             executedQueryType = QueryType.IDS;

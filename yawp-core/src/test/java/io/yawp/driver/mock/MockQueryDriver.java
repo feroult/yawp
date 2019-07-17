@@ -10,149 +10,151 @@ import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.condition.BaseCondition;
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Future;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toMap;
 
 public class MockQueryDriver implements QueryDriver {
 
-    private Repository r;
+	private Repository r;
 
-    public MockQueryDriver(Repository r) {
-        this.r = r;
-    }
+	public MockQueryDriver(Repository r) {
+		this.r = r;
+	}
 
-    @Override
-    public <T> List<T> objects(QueryBuilder<?> builder) {
-        return generateResults(builder);
-    }
+	@Override
+	public <T> List<T> objects(QueryBuilder<?> builder) {
+		return generateResults(builder);
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) {
-        List<IdRef<T>> ids = new ArrayList<IdRef<T>>();
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) {
+		List<IdRef<T>> ids = new ArrayList<>();
 
-        List<Object> objects = generateResults(builder);
-        for (Object object : objects) {
-            ObjectHolder objectHolder = new ObjectHolder(object);
-            ids.add((IdRef<T>) objectHolder.getId());
-        }
+		List<Object> objects = generateResults(builder);
+		for (Object object : objects) {
+			ObjectHolder objectHolder = new ObjectHolder(object);
+			ids.add((IdRef<T>) objectHolder.getId());
+		}
 
-        return ids;
-    }
+		return ids;
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T fetch(IdRef<T> id) {
-        return (T) MockStore.get(id);
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T fetch(IdRef<T> id) {
+		return (T) MockStore.get(id);
+	}
 
-    @Override
-    public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
-        T object = fetch(id);
-        Future<T> futureObject = ConcurrentUtils.constantFuture(object);
-        return new FutureObject<T>(r, futureObject);
-    }
+	@Override
+	public <T> Map<IdRef<T>, T> fetchAll(List<IdRef<T>> ids) {
+		return ids.stream().collect(toMap(Function.identity(), this::fetch));
+	}
 
-    private <T> List<T> generateResults(QueryBuilder<?> builder) {
-        List<Object> objects = queryWhere(builder);
+	@Override
+	public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
+		T object = fetch(id);
+		Future<T> futureObject = ConcurrentUtils.constantFuture(object);
+		return new FutureObject<>(r, futureObject);
+	}
 
-        sortList(builder, objects);
+	private <T> List<T> generateResults(QueryBuilder<?> builder) {
+		List<Object> objects = queryWhere(builder);
 
-        List<T> resultFromCursor = applyCursor(builder, objects);
-        List<T> result = applyLimit(builder, resultFromCursor);
+		sortList(builder, objects);
 
-        updateCursor(builder, result);
+		List<T> resultFromCursor = applyCursor(builder, objects);
+		List<T> result = applyLimit(builder, resultFromCursor);
 
-        return result;
-    }
+		updateCursor(builder, result);
 
-    @SuppressWarnings("unchecked")
-    private <T> List<T> applyCursor(QueryBuilder<?> builder, List<Object> objects) {
-        if (builder.getCursor() == null) {
-            return (List<T>) objects;
-        }
+		return result;
+	}
 
-        List<T> result = new ArrayList<T>();
+	@SuppressWarnings("unchecked")
+	private <T> List<T> applyCursor(QueryBuilder<?> builder, List<Object> objects) {
+		if (builder.getCursor() == null) {
+			return (List<T>) objects;
+		}
 
-        IdRef<?> cursorId = MockStore.getCursor(builder.getCursor());
-        boolean startAdd = false;
+		List<T> result = new ArrayList<>();
 
-        for (Object object : objects) {
-            if (startAdd) {
-                result.add((T) object);
-                continue;
-            }
-            ObjectHolder objectHolder = new ObjectHolder(object);
-            if (cursorId.equals(objectHolder.getId())) {
-                startAdd = true;
-            }
-        }
+		IdRef<?> cursorId = MockStore.getCursor(builder.getCursor());
+		boolean startAdd = false;
 
-        return result;
-    }
+		for (Object object : objects) {
+			if (startAdd) {
+				result.add((T) object);
+				continue;
+			}
+			ObjectHolder objectHolder = new ObjectHolder(object);
+			if (cursorId.equals(objectHolder.getId())) {
+				startAdd = true;
+			}
+		}
 
-    private <T> void updateCursor(QueryBuilder<?> builder, List<T> result) {
-        if (result.size() == 0) {
-            return;
-        }
-        T cursorObject = result.get(result.size() - 1);
+		return result;
+	}
 
-        if (builder.getCursor() == null) {
-            builder.setCursor(MockStore.createCursor(cursorObject));
-        } else {
-            MockStore.updateCursor(builder.getCursor(), cursorObject);
-        }
-    }
+	private <T> void updateCursor(QueryBuilder<?> builder, List<T> result) {
+		if (result.size() == 0) {
+			return;
+		}
+		T cursorObject = result.get(result.size() - 1);
 
-    private <T> List<T> applyLimit(QueryBuilder<?> builder, List<T> objects) {
-        if (builder.getLimit() != null) {
-            int limit = builder.getLimit() > objects.size() ? objects.size() : builder.getLimit();
-            return objects.subList(0, limit);
-        }
+		if (builder.getCursor() == null) {
+			builder.setCursor(MockStore.createCursor(cursorObject));
+		} else {
+			MockStore.updateCursor(builder.getCursor(), cursorObject);
+		}
+	}
 
-        return objects;
-    }
+	private <T> List<T> applyLimit(QueryBuilder<?> builder, List<T> objects) {
+		if (builder.getLimit() != null) {
+			int limit = builder.getLimit() > objects.size() ? objects.size() : builder.getLimit();
+			return objects.subList(0, limit);
+		}
 
-    private List<Object> queryWhere(QueryBuilder<?> builder) {
-        List<Object> objectsInStore = MockStore.list(builder.getModel().getClazz(), builder.getParentId());
+		return objects;
+	}
 
-        BaseCondition condition = builder.getCondition();
-        List<Object> result = new ArrayList<Object>();
+	private List<Object> queryWhere(QueryBuilder<?> builder) {
+		List<Object> objectsInStore = MockStore.list(builder.getModel().getClazz(), builder.getParentId());
 
-        for (Object object : objectsInStore) {
-            if (condition != null && !condition.evaluate(object)) {
-                continue;
-            }
+		BaseCondition condition = builder.getCondition();
+		List<Object> result = new ArrayList<>();
 
-            result.add(object);
-        }
-        return result;
-    }
+		for (Object object : objectsInStore) {
+			if (condition != null && !condition.evaluate(object)) {
+				continue;
+			}
 
-    public void sortList(QueryBuilder<?> builder, List<?> objects) {
-        final List<QueryOrder> preOrders = builder.getPreOrders();
+			result.add(object);
+		}
+		return result;
+	}
 
-        if (preOrders.size() == 0) {
-            return;
-        }
+	public void sortList(QueryBuilder<?> builder, List<?> objects) {
+		final List<QueryOrder> preOrders = builder.getPreOrders();
 
-        Collections.sort(objects, new Comparator<Object>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                for (QueryOrder order : preOrders) {
-                    int compare = order.compare(o1, o2);
+		if (preOrders.size() == 0) {
+			return;
+		}
 
-                    if (compare == 0) {
-                        continue;
-                    }
+		objects.sort((o1, o2) -> {
+			for (QueryOrder order : preOrders) {
+				int compare = order.compare(o1, o2);
 
-                    return compare;
-                }
-                return 0;
-            }
-        });
-    }
+				if (compare == 0) {
+					continue;
+				}
+
+				return compare;
+			}
+			return 0;
+		});
+	}
 }

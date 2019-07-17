@@ -9,6 +9,7 @@ import io.yawp.repository.FutureObject;
 import io.yawp.repository.IdRef;
 import io.yawp.repository.Repository;
 import io.yawp.repository.models.FieldModel;
+import io.yawp.repository.models.ObjectModel;
 import io.yawp.repository.query.QueryBuilder;
 import io.yawp.repository.query.QueryOrder;
 import io.yawp.repository.query.condition.*;
@@ -18,347 +19,364 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.Future;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toMap;
 
 public class AppengineQueryDriver implements QueryDriver {
 
-    private static final String NORMALIZED_FIELD_PREFIX = "__";
+	private static final String NORMALIZED_FIELD_PREFIX = "__";
 
-    private Repository r;
+	private Repository r;
 
-    private DatastoreService ds;
+	private DatastoreService ds;
 
-    private EntityToObjectConverter toObject;
+	private EntityToObjectConverter toObject;
 
 
-    public AppengineQueryDriver(Repository r) {
-        this.r = r;
-        this.toObject = new EntityToObjectConverter(r);
-    }
+	public AppengineQueryDriver(Repository r) {
+		this.r = r;
+		this.toObject = new EntityToObjectConverter(r);
+	}
 
-    private DatastoreService datastore() {
-        if (ds == null) {
-            ds = DatastoreServiceFactory.getDatastoreService();
-        }
-        return ds;
-    }
+	private DatastoreService datastore() {
+		if (ds == null) {
+			ds = DatastoreServiceFactory.getDatastoreService();
+		}
+		return ds;
+	}
 
-    private AsyncDatastoreService asyncDatastore() {
-        return DatastoreServiceFactory.getAsyncDatastoreService();
-    }
+	private AsyncDatastoreService asyncDatastore() {
+		return DatastoreServiceFactory.getAsyncDatastoreService();
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> List<T> objects(QueryBuilder<?> builder) {
-        try {
-            QueryResultList<Entity> queryResult = generateResults(builder, false);
+	@Override
+	public <T> List<T> objects(QueryBuilder<?> builder) {
+		try {
+			QueryResultList<Entity> queryResult = generateResults(builder, false);
 
-            List<T> objects = new ArrayList<>();
+			List<T> objects = new ArrayList<>();
 
-            for (Entity entity : queryResult) {
-                objects.add((T) toObject.convert(builder.getModel(), entity));
-            }
+			for (Entity entity : queryResult) {
+				objects.add(convertEntityToT(entity, builder.getModel()));
+			}
 
-            return objects;
-        } catch (FalsePredicateException e) {
-            return Collections.emptyList();
-        }
-    }
+			return objects;
+		} catch (FalsePredicateException e) {
+			return Collections.emptyList();
+		}
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) {
-        try {
-            QueryResultList<Entity> queryResult = generateResults(builder, true);
-            List<IdRef<T>> ids = new ArrayList<>();
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) {
+		try {
+			QueryResultList<Entity> queryResult = generateResults(builder, true);
+			List<IdRef<T>> ids = new ArrayList<>();
 
-            for (Entity entity : queryResult) {
-                ids.add((IdRef<T>) IdRefToKey.toIdRef(r, entity.getKey(), builder.getModel()));
-            }
+			for (Entity entity : queryResult) {
+				ids.add((IdRef<T>) IdRefToKey.toIdRef(r, entity.getKey(), builder.getModel()));
+			}
 
-            return ids;
-        } catch (FalsePredicateException e) {
-            return Collections.emptyList();
-        }
-    }
+			return ids;
+		} catch (FalsePredicateException e) {
+			return Collections.emptyList();
+		}
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T fetch(IdRef<T> id) {
-        try {
-            Key key = IdRefToKey.toKey(r, id);
-            Entity entity = datastore().get(key);
-            return (T) toObject.convert(id.getModel(), entity);
-        } catch (EntityNotFoundException e) {
-            return null;
-        }
-    }
+	@Override
+	public <T> T fetch(IdRef<T> id) {
+		try {
+			Key key = IdRefToKey.toKey(r, id);
+			Entity entity = datastore().get(key);
+			return convertEntityToT(entity, id.getModel());
+		} catch (EntityNotFoundException e) {
+			return null;
+		}
+	}
 
-    @Override
-    public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
-        Key key = IdRefToKey.toKey(r, id);
-        Future<Entity> futureEntity = asyncDatastore().get(key);
-        return new FutureObject<>(r, new FutureEntityToObject(r, id.getClazz(), futureEntity));
-    }
+	@SuppressWarnings("unchecked")
+	private <T> T convertEntityToT(Entity entity, ObjectModel model) {
+		return (T) toObject.convert(model, entity);
+	}
 
-    // query
+	@Override
+	public <T> Map<IdRef<T>, T> fetchAll(List<IdRef<T>> list) {
+		Map<Key, IdRef<T>> idMapper = list.stream().collect(toMap(id -> IdRefToKey.toKey(r, id), Function.identity()));
+		Map<Key, Entity> result = datastore().get(idMapper.keySet());
+		return result.entrySet().stream().map(e1 -> {
+			IdRef<T> id = idMapper.get(e1.getKey());
+			return new AbstractMap.SimpleEntry<>(id, this.<T>convertEntityToT(e1.getValue(), id.getModel()));
+		}).collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+	}
 
-    private QueryResultList<Entity> generateResults(QueryBuilder<?> builder, boolean keysOnly) throws FalsePredicateException {
-        QueryResultList<Entity> queryResult = prepareQuery(builder, keysOnly).asQueryResultList(configureFetchOptions(builder));
-        setCursor(builder, queryResult);
-        return queryResult;
-    }
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
+		Key key = IdRefToKey.toKey(r, id);
+		Future<Entity> futureEntity = asyncDatastore().get(key);
+		return new FutureObject<>(r, new FutureEntityToObject(r, id.getClazz(), futureEntity));
+	}
 
-    private FetchOptions configureFetchOptions(QueryBuilder<?> builder) {
-        FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
+	// query
 
-        if (builder.getLimit() != null) {
-            fetchOptions.limit(builder.getLimit());
-        }
-        if (builder.getCursor() != null) {
-            fetchOptions.startCursor(Cursor.fromWebSafeString(builder.getCursor()));
-        }
-        return fetchOptions;
-    }
+	private QueryResultList<Entity> generateResults(QueryBuilder<?> builder, boolean keysOnly) throws FalsePredicateException {
+		QueryResultList<Entity> queryResult = prepareQuery(builder, keysOnly).asQueryResultList(configureFetchOptions(builder));
+		setCursor(builder, queryResult);
+		return queryResult;
+	}
 
-    private void setCursor(QueryBuilder<?> builder, QueryResultList<Entity> queryResult) {
-        if (queryResult.getCursor() != null) {
-            builder.setCursor(queryResult.getCursor().toWebSafeString());
-        }
-    }
+	private FetchOptions configureFetchOptions(QueryBuilder<?> builder) {
+		FetchOptions fetchOptions = FetchOptions.Builder.withDefaults();
 
-    private PreparedQuery prepareQuery(QueryBuilder<?> builder, boolean keysOnly) throws FalsePredicateException {
-        Query q = new Query(builder.getModel().getKind());
+		if (builder.getLimit() != null) {
+			fetchOptions.limit(builder.getLimit());
+		}
+		if (builder.getCursor() != null) {
+			fetchOptions.startCursor(Cursor.fromWebSafeString(builder.getCursor()));
+		}
+		return fetchOptions;
+	}
 
-        if (keysOnly) {
-            q.setKeysOnly();
-        }
+	private void setCursor(QueryBuilder<?> builder, QueryResultList<Entity> queryResult) {
+		if (queryResult.getCursor() != null) {
+			builder.setCursor(queryResult.getCursor().toWebSafeString());
+		}
+	}
 
-        prepareQueryAncestor(builder, q);
-        prepareQueryWhere(builder, q);
-        prepareQueryOrder(builder, q);
+	private PreparedQuery prepareQuery(QueryBuilder<?> builder, boolean keysOnly) throws FalsePredicateException {
+		Query q = new Query(builder.getModel().getKind());
 
-        return datastore().prepare(q);
-    }
+		if (keysOnly) {
+			q.setKeysOnly();
+		}
 
-    private void prepareQueryOrder(QueryBuilder<?> builder, Query q) {
-        if (builder.getPreOrders().isEmpty()) {
-            return;
-        }
+		prepareQueryAncestor(builder, q);
+		prepareQueryWhere(builder, q);
+		prepareQueryOrder(builder, q);
 
-        for (QueryOrder order : builder.getPreOrders()) {
-            String string = getActualFieldName(order.getProperty(), builder.getModel().getClazz());
-            q.addSort(string, getSortDirection(order));
-        }
-    }
+		return datastore().prepare(q);
+	}
 
-    private void prepareQueryWhere(QueryBuilder<?> builder, Query q) throws FalsePredicateException {
-        BaseCondition condition = builder.getCondition();
-        if (condition != null && condition.hasPreFilter()) {
-            q.setFilter(createFilter(builder, condition));
-        }
-    }
+	private void prepareQueryOrder(QueryBuilder<?> builder, Query q) {
+		if (builder.getPreOrders().isEmpty()) {
+			return;
+		}
 
-    private void prepareQueryAncestor(QueryBuilder<?> builder, Query q) {
-        IdRef<?> parentId = builder.getParentId();
-        if (parentId == null) {
-            return;
-        }
-        q.setAncestor(IdRefToKey.toKey(r, parentId));
-    }
+		for (QueryOrder order : builder.getPreOrders()) {
+			String string = getActualFieldName(order.getProperty(), builder.getModel().getClazz());
+			q.addSort(string, getSortDirection(order));
+		}
+	}
 
-    public SortDirection getSortDirection(QueryOrder order) {
-        if (order.isDesc()) {
-            return SortDirection.DESCENDING;
-        }
-        if (order.isAsc()) {
-            return SortDirection.ASCENDING;
-        }
-        throw new RuntimeException("Invalid sort direction");
-    }
+	private void prepareQueryWhere(QueryBuilder<?> builder, Query q) throws FalsePredicateException {
+		BaseCondition condition = builder.getCondition();
+		if (condition != null && condition.hasPreFilter()) {
+			q.setFilter(createFilter(builder, condition));
+		}
+	}
 
-    private Filter createFilter(QueryBuilder<?> builder, BaseCondition condition) throws FalsePredicateException {
-        if (condition instanceof SimpleCondition) {
-            return createSimpleFilter(builder, (SimpleCondition) condition);
-        }
-        if (condition instanceof JoinedCondition) {
-            return createJoinedFilter(builder, (JoinedCondition) condition);
-        }
-        throw new RuntimeException("Invalid condition class: " + condition.getClass());
-    }
+	private void prepareQueryAncestor(QueryBuilder<?> builder, Query q) {
+		IdRef<?> parentId = builder.getParentId();
+		if (parentId == null) {
+			return;
+		}
+		q.setAncestor(IdRefToKey.toKey(r, parentId));
+	}
 
-    private Filter createSimpleFilter(QueryBuilder<?> builder, SimpleCondition condition) throws FalsePredicateException {
-        String field = condition.getField();
-        Class<?> clazz = builder.getModel().getClazz();
-        Object whereValue = condition.getWhereValue();
-        WhereOperator whereOperator = condition.getWhereOperator();
+	public SortDirection getSortDirection(QueryOrder order) {
+		if (order.isDesc()) {
+			return SortDirection.DESCENDING;
+		}
+		if (order.isAsc()) {
+			return SortDirection.ASCENDING;
+		}
+		throw new RuntimeException("Invalid sort direction");
+	}
 
-        String actualFieldName = getActualFieldName(field, clazz);
-        Object actualValue = getActualFieldValue(field, clazz, whereValue);
+	private Filter createFilter(QueryBuilder<?> builder, BaseCondition condition) throws FalsePredicateException {
+		if (condition instanceof SimpleCondition) {
+			return createSimpleFilter(builder, (SimpleCondition) condition);
+		}
+		if (condition instanceof JoinedCondition) {
+			return createJoinedFilter(builder, (JoinedCondition) condition);
+		}
+		throw new RuntimeException("Invalid condition class: " + condition.getClass());
+	}
 
-        if (whereOperator == WhereOperator.IN && listSize(whereValue) == 0) {
-            throw new FalsePredicateException();
-        }
+	private Filter createSimpleFilter(QueryBuilder<?> builder, SimpleCondition condition) throws FalsePredicateException {
+		String field = condition.getField();
+		Class<?> clazz = builder.getModel().getClazz();
+		Object whereValue = condition.getWhereValue();
+		WhereOperator whereOperator = condition.getWhereOperator();
 
-        return new FilterPredicate(actualFieldName, getFilterOperator(whereOperator), actualValue);
-    }
+		String actualFieldName = getActualFieldName(field, clazz);
+		Object actualValue = getActualFieldValue(field, clazz, whereValue);
 
-    private Filter createJoinedFilter(QueryBuilder<?> builder, JoinedCondition joinedCondition) throws FalsePredicateException {
-        BaseCondition[] conditions = joinedCondition.getConditions();
-        LogicalOperator logicalOperator = joinedCondition.getLogicalOperator();
+		if (whereOperator == WhereOperator.IN && listSize(whereValue) == 0) {
+			throw new FalsePredicateException();
+		}
 
-        List<Filter> filters = new ArrayList<>();
-        for (int i = 0; i < conditions.length; i++) {
-            try {
-                BaseCondition condition = conditions[i];
-                if (!condition.hasPreFilter()) {
-                    continue;
-                }
+		return new FilterPredicate(actualFieldName, getFilterOperator(whereOperator), actualValue);
+	}
 
-                filters.add(createFilter(builder, condition));
-            } catch (FalsePredicateException e) {
-                if (logicalOperator == LogicalOperator.AND) {
-                    throw e;
-                }
-            }
-        }
+	private Filter createJoinedFilter(QueryBuilder<?> builder, JoinedCondition joinedCondition) throws FalsePredicateException {
+		BaseCondition[] conditions = joinedCondition.getConditions();
+		LogicalOperator logicalOperator = joinedCondition.getLogicalOperator();
 
-        if (filters.isEmpty()) {
-            throw new FalsePredicateException();
-        }
+		List<Filter> filters = new ArrayList<>();
+		for (int i = 0; i < conditions.length; i++) {
+			try {
+				BaseCondition condition = conditions[i];
+				if (!condition.hasPreFilter()) {
+					continue;
+				}
 
-        if (filters.size() == 1) {
-            return filters.get(0);
-        }
+				filters.add(createFilter(builder, condition));
+			} catch (FalsePredicateException e) {
+				if (logicalOperator == LogicalOperator.AND) {
+					throw e;
+				}
+			}
+		}
 
-        Filter[] filtersArray = filters.toArray(new Filter[filters.size()]);
+		if (filters.isEmpty()) {
+			throw new FalsePredicateException();
+		}
 
-        if (logicalOperator == LogicalOperator.AND) {
-            return CompositeFilterOperator.and(filtersArray);
-        }
-        if (logicalOperator == LogicalOperator.OR) {
-            return CompositeFilterOperator.or(filtersArray);
-        }
+		if (filters.size() == 1) {
+			return filters.get(0);
+		}
 
-        throw new RuntimeException("Invalid logical operator: " + logicalOperator);
-    }
+		Filter[] filtersArray = filters.toArray(new Filter[filters.size()]);
 
-    private <T> String getActualFieldName(String fieldName, Class<T> clazz) {
-        Field field = ReflectionUtils.getFieldRecursively(clazz, fieldName);
-        FieldModel fieldModel = new FieldModel(field);
+		if (logicalOperator == LogicalOperator.AND) {
+			return CompositeFilterOperator.and(filtersArray);
+		}
+		if (logicalOperator == LogicalOperator.OR) {
+			return CompositeFilterOperator.or(filtersArray);
+		}
 
-        if (fieldModel.isId()) {
-            return Entity.KEY_RESERVED_PROPERTY;
-        }
+		throw new RuntimeException("Invalid logical operator: " + logicalOperator);
+	}
 
-        if (fieldModel.isIndexNormalizable()) {
-            return NORMALIZED_FIELD_PREFIX + fieldName;
-        }
+	private <T> String getActualFieldName(String fieldName, Class<T> clazz) {
+		Field field = ReflectionUtils.getFieldRecursively(clazz, fieldName);
+		FieldModel fieldModel = new FieldModel(field);
 
-        return fieldName;
-    }
+		if (fieldModel.isId()) {
+			return Entity.KEY_RESERVED_PROPERTY;
+		}
 
-    public <T> Object getActualFieldValue(String fieldName, Class<T> clazz, Object value) {
-        Field field = ReflectionUtils.getFieldRecursively(clazz, fieldName);
-        FieldModel fieldModel = new FieldModel(field);
+		if (fieldModel.isIndexNormalizable()) {
+			return NORMALIZED_FIELD_PREFIX + fieldName;
+		}
 
-        if (fieldModel.isCollection(value)) {
-            return getActualListFieldValue(fieldName, clazz, (Collection<?>) value);
-        }
+		return fieldName;
+	}
 
-        if (fieldModel.isId()) {
-            return getActualKeyFieldValue(value);
-        }
+	public <T> Object getActualFieldValue(String fieldName, Class<T> clazz, Object value) {
+		Field field = ReflectionUtils.getFieldRecursively(clazz, fieldName);
+		FieldModel fieldModel = new FieldModel(field);
 
-        if (fieldModel.isEnum(value)) {
-            return value.toString();
-        }
+		if (fieldModel.isCollection(value)) {
+			return getActualListFieldValue(fieldName, clazz, (Collection<?>) value);
+		}
 
-        if (fieldModel.isIndexNormalizable()) {
-            return normalizeValue(value);
-        }
+		if (fieldModel.isId()) {
+			return getActualKeyFieldValue(value);
+		}
 
-        if (value instanceof IdRef) {
-            return ((IdRef<?>) value).getUri();
-        }
+		if (fieldModel.isEnum(value)) {
+			return value.toString();
+		}
 
-        if (fieldModel.isDate() && value instanceof String) {
-            return DateUtils.toTimestamp((String) value);
-        }
+		if (fieldModel.isIndexNormalizable()) {
+			return normalizeValue(value);
+		}
 
-        return value;
-    }
+		if (value instanceof IdRef) {
+			return ((IdRef<?>) value).getUri();
+		}
 
-    private <T> Object getActualListFieldValue(String fieldName, Class<T> clazz, Collection<?> value) {
-        Collection<?> objects = value;
-        List<Object> values = new ArrayList<>();
-        for (Object obj : objects) {
-            values.add(getActualFieldValue(fieldName, clazz, obj));
-        }
-        return values;
-    }
+		if (fieldModel.isDate() && value instanceof String) {
+			return DateUtils.toTimestamp((String) value);
+		}
 
-    private <T> Key getActualKeyFieldValue(Object value) {
-        IdRef<?> id = (IdRef<?>) value;
-        return IdRefToKey.toKey(r, id);
-    }
+		return value;
+	}
 
-    private FilterOperator getFilterOperator(WhereOperator whereOperator) {
-        switch (whereOperator) {
-            case EQUAL:
-                return FilterOperator.EQUAL;
-            case GREATER_THAN:
-                return FilterOperator.GREATER_THAN;
-            case GREATER_THAN_OR_EQUAL:
-                return FilterOperator.GREATER_THAN_OR_EQUAL;
-            case IN:
-                return FilterOperator.IN;
-            case LESS_THAN:
-                return FilterOperator.LESS_THAN;
-            case LESS_THAN_OR_EQUAL:
-                return FilterOperator.LESS_THAN_OR_EQUAL;
-            case NOT_EQUAL:
-                return FilterOperator.NOT_EQUAL;
-            default:
-                throw new RuntimeException("Invalid where operator: " + whereOperator);
-        }
-    }
+	private <T> Object getActualListFieldValue(String fieldName, Class<T> clazz, Collection<?> value) {
+		Collection<?> objects = value;
+		List<Object> values = new ArrayList<>();
+		for (Object obj : objects) {
+			values.add(getActualFieldValue(fieldName, clazz, obj));
+		}
+		return values;
+	}
 
-    private Object normalizeValue(Object o) {
-        if (o == null) {
-            return null;
-        }
+	private <T> Key getActualKeyFieldValue(Object value) {
+		IdRef<?> id = (IdRef<?>) value;
+		return IdRefToKey.toKey(r, id);
+	}
 
-        if (!o.getClass().equals(String.class)) {
-            return o;
-        }
+	private FilterOperator getFilterOperator(WhereOperator whereOperator) {
+		switch (whereOperator) {
+			case EQUAL:
+				return FilterOperator.EQUAL;
+			case GREATER_THAN:
+				return FilterOperator.GREATER_THAN;
+			case GREATER_THAN_OR_EQUAL:
+				return FilterOperator.GREATER_THAN_OR_EQUAL;
+			case IN:
+				return FilterOperator.IN;
+			case LESS_THAN:
+				return FilterOperator.LESS_THAN;
+			case LESS_THAN_OR_EQUAL:
+				return FilterOperator.LESS_THAN_OR_EQUAL;
+			case NOT_EQUAL:
+				return FilterOperator.NOT_EQUAL;
+			default:
+				throw new RuntimeException("Invalid where operator: " + whereOperator);
+		}
+	}
 
-        return StringUtils.stripAccents((String) o).toLowerCase();
-    }
+	private Object normalizeValue(Object o) {
+		if (o == null) {
+			return null;
+		}
 
-    public int listSize(Object value) {
-        if (value == null) {
-            return 0;
-        }
-        if (value.getClass().isArray()) {
-            return Array.getLength(value);
-        }
-        if (Collection.class.isAssignableFrom(value.getClass())) {
-            return Collection.class.cast(value).size();
-        }
-        if (Iterable.class.isAssignableFrom(value.getClass())) {
-            return iterableSize(value);
-        }
-        throw new RuntimeException("Value used with operator 'in' is not an array or list.");
-    }
+		if (!o.getClass().equals(String.class)) {
+			return o;
+		}
 
-    private int iterableSize(Object value) {
-        Iterator<?> it = Iterable.class.cast(value).iterator();
-        int i = 0;
-        while (it.hasNext()) {
-            it.next();
-            i++;
-        }
-        return i;
-    }
+		return StringUtils.stripAccents((String) o).toLowerCase();
+	}
+
+	public int listSize(Object value) {
+		if (value == null) {
+			return 0;
+		}
+		if (value.getClass().isArray()) {
+			return Array.getLength(value);
+		}
+		if (Collection.class.isAssignableFrom(value.getClass())) {
+			return Collection.class.cast(value).size();
+		}
+		if (Iterable.class.isAssignableFrom(value.getClass())) {
+			return iterableSize(value);
+		}
+		throw new RuntimeException("Value used with operator 'in' is not an array or list.");
+	}
+
+	private int iterableSize(Object value) {
+		Iterator<?> it = Iterable.class.cast(value).iterator();
+		int i = 0;
+		while (it.hasNext()) {
+			it.next();
+			i++;
+		}
+		return i;
+	}
 
 }

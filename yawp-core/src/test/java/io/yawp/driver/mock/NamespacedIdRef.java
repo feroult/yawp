@@ -39,16 +39,14 @@ public class NamespacedIdRef {
         } else if (!id.equals(other.id))
             return false;
         if (namespace == null) {
-            if (other.namespace != null)
-                return false;
-        } else if (!namespace.equals(other.namespace))
-            return false;
-        return true;
+            return other.namespace == null;
+        } else {
+            return namespace.equals(other.namespace);
+        }
     }
 
     public boolean isFrom(String currentNamespace) {
-        currentNamespace = currentNamespace == null ? "" : currentNamespace;
-        return this.namespace.equals(currentNamespace);
+        return this.namespace.equals(currentNamespace == null ? "" : currentNamespace);
     }
 
 }

@@ -16,9 +16,9 @@ public class CachedEntityHook extends Hook<CachedEntity> {
     public static final Map<QueryType, Map<String, Object>> caches = new HashMap<>();
 
     static {
-        caches.put(QueryType.LIST, new HashMap<String, Object>());
-        caches.put(QueryType.FETCH, new HashMap<String, Object>());
-        caches.put(QueryType.IDS, new HashMap<String, Object>());
+        caches.put(QueryType.LIST, new HashMap<>());
+        caches.put(QueryType.FETCH, new HashMap<>());
+        caches.put(QueryType.IDS, new HashMap<>());
     }
 
     @Override

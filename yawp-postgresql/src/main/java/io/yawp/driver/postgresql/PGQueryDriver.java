@@ -12,81 +12,91 @@ import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Future;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toMap;
 
 public class PGQueryDriver implements QueryDriver {
 
-    private Repository r;
+	private Repository r;
 
-    private Datastore datastore;
+	private Datastore datastore;
 
-    private EntityToObjectConverter toObject;
+	private EntityToObjectConverter toObject;
 
-    public PGQueryDriver(Repository r, ConnectionManager connectionManager) {
-        this.r = r;
-        this.datastore = Datastore.create(connectionManager);
-        this.toObject = new EntityToObjectConverter(r);
-    }
+	public PGQueryDriver(Repository r, ConnectionManager connectionManager) {
+		this.r = r;
+		this.datastore = Datastore.create(connectionManager);
+		this.toObject = new EntityToObjectConverter(r);
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> List<T> objects(QueryBuilder<?> builder) {
-        try {
-            List<Entity> queryResult = generateResults(builder, false);
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> List<T> objects(QueryBuilder<?> builder) {
+		try {
+			List<Entity> queryResult = generateResults(builder, false);
 
-            List<T> objects = new ArrayList<>();
+			List<T> objects = new ArrayList<>();
 
-            for (Entity entity : queryResult) {
-                objects.add((T) toObject.convert(builder.getModel(), entity));
-            }
+			for (Entity entity : queryResult) {
+				objects.add((T) toObject.convert(builder.getModel(), entity));
+			}
 
-            return objects;
-        } catch (FalsePredicateException e) {
-            return Collections.emptyList();
-        }
-    }
+			return objects;
+		} catch (FalsePredicateException e) {
+			return Collections.emptyList();
+		}
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) {
-        try {
-            List<Entity> queryResult = generateResults(builder, false);
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> List<IdRef<T>> ids(QueryBuilder<?> builder) {
+		try {
+			List<Entity> queryResult = generateResults(builder, false);
 
-            List<IdRef<T>> ids = new ArrayList<>();
+			List<IdRef<T>> ids = new ArrayList<>();
 
-            for (Entity entity : queryResult) {
-                ids.add((IdRef<T>) IdRefToKey.toIdRef(r, entity.getKey(), builder.getModel()));
-            }
+			for (Entity entity : queryResult) {
+				ids.add((IdRef<T>) IdRefToKey.toIdRef(r, entity.getKey(), builder.getModel()));
+			}
 
-            return ids;
-        } catch (FalsePredicateException e) {
-            return Collections.emptyList();
-        }
-    }
+			return ids;
+		} catch (FalsePredicateException e) {
+			return Collections.emptyList();
+		}
+	}
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T fetch(IdRef<T> id) {
-        try {
-            Key key = IdRefToKey.toKey(r, id);
-            Entity entity = datastore.get(key);
-            return (T) toObject.convert(id.getModel(), entity);
-        } catch (EntityNotFoundException e) {
-            return null;
-        }
-    }
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T fetch(IdRef<T> id) {
+		try {
+			Key key = IdRefToKey.toKey(r, id);
+			Entity entity = datastore.get(key);
+			return (T) toObject.convert(id.getModel(), entity);
+		} catch (EntityNotFoundException e) {
+			return null;
+		}
+	}
 
-    @Override
-    public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
-        T object = fetch(id);
-        Future<T> futureObject = ConcurrentUtils.constantFuture(object);
-        return new FutureObject<>(r, futureObject);
-    }
+	@Override
+	public <T> Map<IdRef<T>, T> fetchAll(List<IdRef<T>> list) {
+		// TODO implement this in an efficient manner
+		return list.stream().collect(toMap(Function.identity(), this::fetch));
+	}
 
-    // query
+	@Override
+	public <T> FutureObject<T> fetchAsync(IdRef<T> id) {
+		T object = fetch(id);
+		Future<T> futureObject = ConcurrentUtils.constantFuture(object);
+		return new FutureObject<>(r, futureObject);
+	}
 
-    private List<Entity> generateResults(QueryBuilder<?> builder, boolean keysOnly) throws FalsePredicateException {
-        return datastore.query(new Query(builder, keysOnly));
-    }
+	// query
+
+	private List<Entity> generateResults(QueryBuilder<?> builder, boolean keysOnly) throws FalsePredicateException {
+		return datastore.query(new Query(builder, keysOnly));
+	}
 
 }

@@ -20,6 +20,8 @@ public abstract class BaseCondition {
 
     public abstract Map<String, Object> toMap();
 
+    public abstract BaseCondition clone();
+
     public BaseCondition and(BaseCondition c) {
         return Condition.and(this, c);
     }

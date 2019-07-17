@@ -21,13 +21,13 @@ public class SimpleCondition extends BaseCondition {
 
     private Object whereValue;
 
-    public SimpleCondition(String field, WhereOperator whereOperator, Object value) {
+    public SimpleCondition(String field, WhereOperator whereOperator, Object whereValue) {
         this.field = field;
         this.whereOperator = whereOperator;
-        this.whereValue = value;
+        this.whereValue = whereValue;
 
         if (whereOperator == WhereOperator.IN) {
-            assertIsList(value);
+            assertIsList(whereValue);
         }
     }
 
@@ -66,6 +66,11 @@ public class SimpleCondition extends BaseCondition {
         map.put("whereOperator", whereOperator.toString());
         map.put("whereValue", whereValue);
         return map;
+    }
+
+    @Override
+    public BaseCondition clone() {
+        return new SimpleCondition(field, whereOperator, whereValue);
     }
 
     @Override

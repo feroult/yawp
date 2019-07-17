@@ -41,11 +41,11 @@ public class MockHttpServletResponse implements HttpServletResponse {
     }
 
     @Override
-    public void sendError(int i, String s) throws IOException {
+    public void sendError(int i, String s) {
     }
 
     @Override
-    public void sendError(int i) throws IOException {
+    public void sendError(int i) {
     }
 
     @Override
@@ -95,12 +95,12 @@ public class MockHttpServletResponse implements HttpServletResponse {
     }
 
     @Override
-    public ServletOutputStream getOutputStream() throws IOException {
+    public ServletOutputStream getOutputStream() {
         return new MockServletOutputStream();
     }
 
     @Override
-    public PrintWriter getWriter() throws IOException {
+    public PrintWriter getWriter() {
         return null;
     }
 
@@ -128,7 +128,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
     }
 
     @Override
-    public void flushBuffer() throws IOException {
+    public void flushBuffer() {
     }
 
     @Override

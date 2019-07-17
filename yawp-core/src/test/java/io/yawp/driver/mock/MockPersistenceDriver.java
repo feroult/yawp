@@ -27,11 +27,11 @@ public class MockPersistenceDriver implements PersistenceDriver {
     }
 
     private String tx() {
-        MockTransactionDriver transationDriver = (MockTransactionDriver) r.currentTransaction();
-        if (transationDriver == null) {
+        MockTransactionDriver transactionDriver = (MockTransactionDriver) r.currentTransaction();
+        if (transactionDriver == null) {
             return null;
         }
-        return transationDriver.getTx();
+        return transactionDriver.getTx();
     }
 
     @SuppressWarnings("unchecked")

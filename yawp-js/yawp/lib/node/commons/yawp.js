@@ -347,7 +347,7 @@ exports.default = function (request) {
             }, {
                 key: 'patch',
                 value: function patch(object) {
-                    options.url = object.id;
+                    options.url = object.id || options.url;
                     options.body = (0, _stringify2.default)(object);
                     return this.wrappedRequest('PATCH');
                 }

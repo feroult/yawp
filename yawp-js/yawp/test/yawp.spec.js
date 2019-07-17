@@ -134,6 +134,13 @@ describe('YAWP! JS', () => {
             const data2 = await yawp('/parents/2').fetch();
             expect(data2.name).to.be.equal('xpto');
         });
+
+        it('it patches parent', async () => {
+            const parent = await yawp('/parents').create({ name: 'xpto' });
+            expect(parent.name).to.be.equal('xpto');
+            const newParent = await yawp(parent.id).patch({ name: 'bla' });
+            expect(newParent.name).to.be.equal('bla');
+        });
     });
 
     describe('global hooks', () => {

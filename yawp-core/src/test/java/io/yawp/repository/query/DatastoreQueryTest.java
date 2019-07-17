@@ -5,9 +5,7 @@ import static io.yawp.repository.models.basic.BasicObject.saveOneObject;
 import static io.yawp.repository.query.condition.Condition.and;
 import static io.yawp.repository.query.condition.Condition.c;
 import static io.yawp.repository.query.condition.Condition.or;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.*;
 
@@ -656,6 +654,17 @@ public class DatastoreQueryTest extends EndpointTestCase {
         assertEquals("field", condition.get("field"));
         assertEquals("EQUAL", condition.get("whereOperator"));
         assertEquals("value", condition.get("whereValue"));
+    }
+
+    @Test
+    public void testClone() {
+        QueryBuilder<BasicObject> q1 = yawp(BasicObject.class).where("field", "=", "value");
+        QueryBuilder<BasicObject> q2 = q1.clone();
+
+        assertEquals(q1.getClazz(), q2.getClazz());
+        assertEquals(q1.getCursor(), q2.getCursor());
+        assertNotEquals(q1.getCondition(), q2.getCondition());
+        assertEquals(q1.getCondition().toMap(), q2.getCondition().toMap());
     }
 
     private void assertObjects(List<BasicObject> objects, String... strings) {

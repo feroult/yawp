@@ -443,8 +443,10 @@ public class QueryBuilder<T> {
 
 	public QueryBuilder<T> clone() {
 		QueryBuilder<T> q = new QueryBuilder<>(clazz, r);
-		q.parentId = parentId;
 		q.condition = condition.clone();
+		q.condition.init(r, clazz);
+
+		q.parentId = parentId;
 		q.preOrders = preOrders.stream().map(QueryOrder::clone).collect(toList());
 		q.postOrders = postOrders.stream().map(QueryOrder::clone).collect(toList());
 		q.limit = limit;

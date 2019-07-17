@@ -443,10 +443,21 @@ public class QueryBuilder<T> {
 
 	public QueryBuilder<T> clone() {
 		QueryBuilder<T> q = new QueryBuilder<>(clazz, r);
+
+		if (condition != null) {
+			q.condition = condition.clone();
+			q.condition.init(r, clazz);
+		}
+
+		if (preOrders != null) {
+			q.preOrders = preOrders.stream().map(QueryOrder::clone).collect(toList());
+		}
+
+		if (postOrders != null) {
+			q.postOrders = postOrders.stream().map(QueryOrder::clone).collect(toList());
+		}
+
 		q.parentId = parentId;
-		q.condition = condition.clone();
-		q.preOrders = preOrders.stream().map(QueryOrder::clone).collect(toList());
-		q.postOrders = postOrders.stream().map(QueryOrder::clone).collect(toList());
 		q.limit = limit;
 		return q;
 	}

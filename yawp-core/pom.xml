@@ -64,7 +64,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.16</version>
+            <version>1.31</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

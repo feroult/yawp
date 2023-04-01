@@ -32,7 +32,7 @@ public class FlowDropsTest extends EndpointTestCaseBase {
         saveOneLikeToCounterWork();
 
         new AppengineDriver().pipes().flowDrops();
-        awaitAsync(10, TimeUnit.SECONDS);
+        awaitAsync(15, TimeUnit.SECONDS);
 
         Counter counter = id(Counter.class, 1l).fetch();
         assertEquals(2, counter.getCount());

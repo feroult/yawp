@@ -22,6 +22,7 @@ public class FlowDropsTask implements DeferredTask {
 
     private static final int BATCH_SIZE = 100;
 
+    private static volatile boolean hasExecuted;
     public static final int ELAPSED_TIME_MILLES = 1000 * 60 * 20;
 
     private String ns;
@@ -63,6 +64,11 @@ public class FlowDropsTask implements DeferredTask {
         for (String sinkGroupUri : worksBySinkGroup.keySet()) {
             join(worksBySinkGroup.get(sinkGroupUri));
         }
+        hasExecuted = true;
+    }
+    
+    public static boolean getHasExecuted() {
+        return hasExecuted;
     }
 
     private void join(List<Work> worksList) {

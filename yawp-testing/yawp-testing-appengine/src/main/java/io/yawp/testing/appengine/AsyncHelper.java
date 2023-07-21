@@ -13,6 +13,9 @@ public class AsyncHelper {
     }
 
     public synchronized static void awaitAsync(long timeout, TimeUnit unit) {
+        while (! io.yawp.driver.appengine.pipes.flow.drops.FlowDropsTask.getHasExecuted()) {
+            Thread.yield();
+        }
         long limit = System.currentTimeMillis() + unit.toMillis(timeout);
 
         while (true) {
